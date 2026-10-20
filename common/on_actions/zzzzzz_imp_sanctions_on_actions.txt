@@ -1,0 +1,122 @@
+# Original Script by: Moveably; source 1970 startup and original refresh/cleanup/events only.
+on_actions = {
+on_monthly_LIC = {
+		effect = {
+			IMP_sanctions_refresh_world = yes
+		}
+	}
+
+
+
+on_annex = {
+		effect = {
+			FROM = {
+				clear_array = imp_fin_sanc_by_us 
+				clear_array = imp_eco_sanc_by_us
+				clear_array = imp_dip_sanc_by_us
+				clear_array = imp_mil_sanc_by_us
+				clear_array = imp_fin_sanc_on_us
+				clear_array = imp_eco_sanc_on_us
+				clear_array = imp_dip_sanc_on_us
+				clear_array = imp_mil_sanc_on_us
+			}
+
+			every_country = {
+				if = { 
+					limit = { is_in_array = { array = imp_fin_sanc_by_us value = FROM } }
+					remove_from_array = { imp_fin_sanc_by_us = FROM }
+				}
+				if = { 
+					limit = { is_in_array = { array = imp_eco_sanc_by_us value = FROM } }
+					remove_from_array = { imp_eco_sanc_by_us = FROM }
+				}
+				if = { 
+					limit = { is_in_array = { array = imp_dip_sanc_by_us value = FROM } }
+					remove_from_array = { imp_dip_sanc_by_us = FROM }
+				}
+				if = { 
+					limit = { is_in_array = { array = imp_mil_sanc_by_us value = FROM } }
+					remove_from_array = { imp_mil_sanc_by_us = FROM }
+				}
+				
+				if = { 
+					limit = { is_in_array = { array = imp_fin_sanc_on_us value = FROM } }
+					remove_from_array = { imp_fin_sanc_on_us = FROM }
+				}
+				if = { 
+					limit = { is_in_array = { array = imp_eco_sanc_on_us value = FROM } }
+					remove_from_array = { imp_eco_sanc_on_us = FROM }
+				}
+				if = { 
+					limit = { is_in_array = { array = imp_dip_sanc_on_us value = FROM } }
+					remove_from_array = { imp_dip_sanc_on_us = FROM }
+				}
+				if = { 
+					limit = { is_in_array = { array = imp_mil_sanc_on_us value = FROM } }
+					remove_from_array = { imp_mil_sanc_on_us = FROM }
+				}
+			}
+		}
+	}
+
+on_monthly = {
+        effect = {
+            if = { 
+                limit = { 
+                    NOT = { has_country_flag = imp_sanction_event_cd }
+                }
+
+                if = {
+                    limit = { 
+						check_variable = { imp_dip_sanctions_p > 0.25 }  
+						NOT = { has_country_flag = imp_dip_sanction_event_cd }
+					}
+
+                    set_country_flag = { flag = imp_sanction_event_cd days = 90 value = 1 }
+					set_country_flag = { flag = imp_dip_sanction_event_cd days = 360 value = 1 }
+                    imp_dip_event = yes
+                }
+                else_if = {
+                    limit = { 
+						check_variable = { imp_eco_sanctions_p > 0.25 } 
+						NOT = { has_country_flag = imp_eco_sanction_event_cd } 
+					}
+
+                    set_country_flag = { flag = imp_sanction_event_cd days = 90 value = 1 }
+					set_country_flag = { flag = imp_eco_sanction_event_cd days = 360 value = 1 }
+                    imp_eco_event = yes
+                }
+                else_if = {
+                    limit = { 
+						check_variable = { imp_fin_sanctions_p > 0.25 }
+						NOT = { has_country_flag = imp_fin_sanction_event_cd }   
+					}
+
+                    set_country_flag = { flag = imp_sanction_event_cd days = 90 value = 1 }
+					set_country_flag = { flag = imp_fin_sanction_event_cd days = 360 value = 1 }
+                    imp_fin_event = yes
+                }
+				else_if = {
+                    limit = { 
+						check_variable = { imp_mil_sanctions_p > 0.25 } 
+						NOT = { has_country_flag = imp_mil_sanction_event_cd }   
+					}
+
+                    set_country_flag = { flag = imp_sanction_event_cd days = 90 value = 1 }
+					set_country_flag = { flag = imp_mil_sanction_event_cd days = 360 value = 1 }
+                    imp_mil_event = yes
+                }
+				
+				if = {
+                    limit = { 
+						check_variable = { imp_sanctions_blowback_p > 0.25 } 
+						NOT = { has_country_flag = imp_bb_sanction_event_cd }   
+					}
+
+					set_country_flag = { flag = imp_bb_sanction_event_cd days = 180 value = 1 }
+                    imp_bb_event = yes
+                }
+            }
+        }
+    }
+}

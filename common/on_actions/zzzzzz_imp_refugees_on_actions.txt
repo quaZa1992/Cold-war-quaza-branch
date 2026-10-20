@@ -1,0 +1,64 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+on_actions = {
+
+    ### Refugees Calculations
+    on_weekly = {
+        effect = {
+            if = {
+                limit = { 
+                    has_war = yes
+                }
+                imp_refugees_calc_refs = yes
+            }
+        }
+    }
+
+    # Every month, we send refugees to neighbours. 
+    on_monthly_LIC = {
+        effect = {
+            clear_array = global.refugee_origin_nations
+            clear_array = global.refugee_origin_nations_amounts
+
+            ## Release every country's refugees
+            every_country = { 
+                if = {
+                    limit = { check_variable = { imp_monthly_refugees_local_k > 0 } }
+
+                    # Record the origin nation
+                    add_to_array = { global.refugee_origin_nations = THIS }
+                    set_variable = { imp_old_ref_last_month = imp_m_r_statistic_k }
+                    add_to_array = { global.refugee_origin_nations_amounts = imp_old_ref_last_month }
+                    
+                    imp_refugees_local_calc = yes
+                    set_variable = { imp_monthly_refugees_local_k = 0 }
+                }
+            }
+
+            ## Calculate Every Nation's Migration Attraction Weight
+            set_variable = { global.total_ref_score = 0 }
+            every_country = {
+                imp_refugees_attraction_score_calc = yes
+            }
+
+            ## Calculate international refugees
+            every_country = {
+                imp_refugees_international_divide_calc = yes  
+            }
+            set_variable = { global.imp_monthly_refugees_global_k = 0 }
+             every_country = {
+                imp_refugee_cost_calc = yes
+            }
+
+            set_variable = { global.imp_taken_test = 0 }
+            every_country = {
+                if = { 
+                limit = { NOT = { has_country_flag = imp_ref_report_off } }
+                    country_event = imp_refugee_event.2
+                }
+            }
+        }
+    }
+}

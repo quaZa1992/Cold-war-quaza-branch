@@ -1,0 +1,1053 @@
+SPR_1970_initialize_franco_system = {
+	set_country_flag = SPR_1970_party_names_active
+	if = {
+		limit = { NOT = { has_country_flag = SPR_1970_franco_system_enabled } }
+		set_country_flag = SPR_1970_franco_system_enabled
+		# The generic MD policy and internal-faction helpers only operate on an
+		# existing law/faction idea. The 1970 history block deliberately owns
+		# these baselines so focus rewards cannot fall through to filler PP.
+		add_ideas = {
+			corruption_level_04
+			bureau_02
+			defence_01
+			police_03
+			edu_03
+			health_03
+			social_02
+			the_military
+			intelligence_community
+			labour_unions
+		}
+		set_variable = { the_military_opinion = 70 }
+		set_variable = { intelligence_community_opinion = 65 }
+		set_variable = { labour_unions_opinion = 30 }
+		initialize_internal_faction_dynamic_modifiers = yes
+		set_variable = { SPR_1970_franco_health = 85 }
+		set_variable = { SPR_1970_bunker_influence = 55 }
+		set_variable = { SPR_1970_aperturista_influence = 35 }
+		set_variable = { SPR_1970_operation_ogre_security = 0 }
+		add_dynamic_modifier = { modifier = SPR_1970_failing_health_dynamic_modifier }
+		activate_mission = SPR_1970_succession_clock
+		country_event = { id = SPR_1970.1 days = 1 }
+	}
+	update_party_name = yes
+	SPR_1970_clamp_franco_variables = yes
+	SPR_1970_update_franco_dynamic_modifier = yes
+}
+
+# Internal-faction helpers double positive gains for autocratic governments
+# and mutate temp_opinion in place. These wrappers preserve the exact value
+# advertised by the static focus tooltip and restore it after every call.
+SPR_1970_prepare_exact_internal_faction_opinion = {
+	set_temp_variable = { SPR_1970_requested_internal_faction_opinion = temp_opinion }
+	if = {
+		limit = {
+			check_variable = { temp_opinion > 0 }
+			OR = {
+				AND = { has_variable = ruling_party check_variable = { ruling_party = 0 } }
+				AND = { has_variable = ruling_party check_variable = { ruling_party = 7 } }
+				AND = { has_variable = ruling_party check_variable = { ruling_party = 13 } }
+				AND = { has_variable = ruling_party check_variable = { ruling_party = 21 } }
+				AND = { has_variable = ruling_party check_variable = { ruling_party = 22 } }
+			}
+		}
+		multiply_temp_variable = { temp_opinion = 0.5 }
+	}
+}
+
+SPR_1970_restore_exact_internal_faction_opinion = {
+	set_temp_variable = { temp_opinion = SPR_1970_requested_internal_faction_opinion }
+}
+
+SPR_1970_change_the_military_opinion_exact = {
+	SPR_1970_prepare_exact_internal_faction_opinion = yes
+	change_the_military_opinion = yes
+	SPR_1970_restore_exact_internal_faction_opinion = yes
+}
+
+SPR_1970_change_intelligence_community_opinion_exact = {
+	SPR_1970_prepare_exact_internal_faction_opinion = yes
+	change_intelligence_community_opinion = yes
+	SPR_1970_restore_exact_internal_faction_opinion = yes
+}
+
+SPR_1970_change_industrial_conglomerates_opinion_exact = {
+	SPR_1970_prepare_exact_internal_faction_opinion = yes
+	change_industrial_conglomerates_opinion = yes
+	SPR_1970_restore_exact_internal_faction_opinion = yes
+}
+
+SPR_1970_change_labour_unions_opinion_exact = {
+	SPR_1970_prepare_exact_internal_faction_opinion = yes
+	change_labour_unions_opinion = yes
+	SPR_1970_restore_exact_internal_faction_opinion = yes
+}
+
+# Guard the stock MD law helpers against their cap/floor +150 PP fallbacks.
+# The modest-corruption case is handled directly because the global helper
+# removes the wrong idea at that tier.
+SPR_1970_increase_corruption_safely = {
+	if = {
+		limit = { has_idea = corruption_level_03 }
+		swap_ideas = { remove_idea = corruption_level_03 add_idea = corruption_level_04 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_idea = corruption_level_01
+				has_idea = corruption_level_02
+				has_idea = corruption_level_04
+				has_idea = corruption_level_05
+				has_idea = corruption_level_06
+				has_idea = corruption_level_07
+				has_idea = corruption_level_08
+				has_idea = corruption_level_09
+			}
+		}
+		increase_corruption = yes
+	}
+}
+
+SPR_1970_decrease_corruption_safely = {
+	if = {
+		limit = {
+			OR = {
+				has_idea = corruption_level_02
+				has_idea = corruption_level_03
+				has_idea = corruption_level_04
+				has_idea = corruption_level_05
+				has_idea = corruption_level_06
+				has_idea = corruption_level_07
+				has_idea = corruption_level_08
+				has_idea = corruption_level_09
+				has_idea = corruption_level_10
+			}
+		}
+		decrease_corruption = yes
+	}
+}
+
+SPR_1970_increase_policing_budget_safely = {
+	if = {
+		limit = { OR = { has_idea = police_01 has_idea = police_02 has_idea = police_03 has_idea = police_04 } }
+		increase_policing_budget = yes
+	}
+}
+
+SPR_1970_decrease_policing_budget_safely = {
+	if = {
+		limit = { OR = { has_idea = police_02 has_idea = police_03 has_idea = police_04 has_idea = police_05 } }
+		decrease_policing_budget = yes
+	}
+}
+
+SPR_1970_increase_military_spending_safely = {
+	if = {
+		limit = { has_idea = defence_00 }
+		swap_ideas = { remove_idea = defence_00 add_idea = defence_01 }
+	}
+	else_if = {
+		limit = { has_idea = defence_01 }
+		swap_ideas = { remove_idea = defence_01 add_idea = defence_02 }
+	}
+	else_if = {
+		limit = { has_idea = defence_02 }
+		swap_ideas = { remove_idea = defence_02 add_idea = defence_03 }
+	}
+	else_if = {
+		limit = { has_idea = defence_03 }
+		swap_ideas = { remove_idea = defence_03 add_idea = defence_04 }
+	}
+	else_if = {
+		limit = { has_idea = defence_04 }
+		swap_ideas = { remove_idea = defence_04 add_idea = defence_05 }
+	}
+	else_if = {
+		limit = { has_idea = defence_05 }
+		swap_ideas = { remove_idea = defence_05 add_idea = defence_06 }
+	}
+	else_if = {
+		limit = { has_idea = defence_06 }
+		swap_ideas = { remove_idea = defence_06 add_idea = defence_07 }
+	}
+	else_if = {
+		limit = { has_idea = defence_07 }
+		swap_ideas = { remove_idea = defence_07 add_idea = defence_08 }
+	}
+	else_if = {
+		limit = { has_idea = defence_08 }
+		swap_ideas = { remove_idea = defence_08 add_idea = defence_09 }
+	}
+	ingame_update_setup = yes
+}
+
+SPR_1970_increase_social_spending_safely = {
+	if = {
+		limit = { OR = { has_idea = social_01 has_idea = social_02 has_idea = social_03 has_idea = social_04 has_idea = social_05 } }
+		increase_social_spending = yes
+	}
+}
+
+SPR_1970_increase_healthcare_budget_safely = {
+	if = {
+		limit = { OR = { has_idea = health_01 has_idea = health_02 has_idea = health_03 has_idea = health_04 has_idea = health_05 } }
+		increase_healthcare_budget = yes
+	}
+}
+
+# These construction effects deliberately contain no Treasury payment. The
+# standard MD helpers include much larger fixed costs (and the office helper
+# also adds a power plant), which would make the focus tooltip misleading.
+SPR_1970_build_one_civilian_factory = {
+	random_owned_controlled_state = {
+		limit = {
+			free_building_slots = {
+				building = industrial_complex
+				size > 0
+				include_locked = yes
+			}
+			OR = {
+				is_in_home_area = yes
+				NOT = {
+					owner = {
+						any_owned_state = {
+							free_building_slots = {
+								building = industrial_complex
+								size > 0
+								include_locked = yes
+							}
+							is_in_home_area = yes
+						}
+					}
+				}
+			}
+		}
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+		}
+	}
+}
+
+SPR_1970_build_one_office = {
+	random_owned_controlled_state = {
+		limit = {
+			free_building_slots = {
+				building = offices
+				size > 0
+				include_locked = yes
+			}
+			OR = {
+				is_in_home_area = yes
+				NOT = {
+					owner = {
+						any_owned_state = {
+							free_building_slots = {
+								building = offices
+								size > 0
+								include_locked = yes
+							}
+							is_in_home_area = yes
+						}
+					}
+				}
+			}
+		}
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = offices
+			level = 1
+			instant_build = yes
+		}
+	}
+}
+
+SPR_1970_build_one_infrastructure = {
+	random_owned_controlled_state = {
+		limit = {
+			free_building_slots = {
+				building = infrastructure
+				size > 0
+			}
+			OR = {
+				is_in_home_area = yes
+				NOT = {
+					owner = {
+						any_owned_state = {
+							free_building_slots = {
+								building = infrastructure
+								size > 0
+							}
+							is_in_home_area = yes
+						}
+					}
+				}
+			}
+		}
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+		}
+	}
+}
+
+SPR_1970_clamp_franco_variables = {
+	clamp_variable = { var = SPR_1970_franco_health min = 0 max = 100 }
+	clamp_variable = { var = SPR_1970_bunker_influence min = 0 max = 100 }
+	clamp_variable = { var = SPR_1970_aperturista_influence min = 0 max = 100 }
+	clamp_variable = { var = SPR_1970_operation_ogre_security min = 0 max = 100 }
+}
+
+SPR_1970_update_franco_dynamic_modifier = {
+	set_variable = { SPR_1970_franco_health_pp_gain = 0 }
+	set_variable = { SPR_1970_franco_health_stability_factor = 0 }
+	set_variable = { SPR_1970_franco_health_bureaucracy_factor = 0 }
+	set_variable = { SPR_1970_aperturista_drift = 0 }
+	set_variable = { SPR_1970_bunker_drift = 0 }
+
+	if = {
+		limit = { check_variable = { SPR_1970_franco_health > 70 } }
+		set_variable = { SPR_1970_franco_health_pp_gain = -0.10 }
+		set_variable = { SPR_1970_franco_health_stability_factor = -0.015 }
+		set_variable = { SPR_1970_franco_health_bureaucracy_factor = 0.01 }
+	}
+	else_if = {
+		limit = { check_variable = { SPR_1970_franco_health > 50 } }
+		set_variable = { SPR_1970_franco_health_pp_gain = -0.20 }
+		set_variable = { SPR_1970_franco_health_stability_factor = -0.03 }
+		set_variable = { SPR_1970_franco_health_bureaucracy_factor = 0.025 }
+	}
+	else_if = {
+		limit = { check_variable = { SPR_1970_franco_health > 30 } }
+		set_variable = { SPR_1970_franco_health_pp_gain = -0.35 }
+		set_variable = { SPR_1970_franco_health_stability_factor = -0.06 }
+		set_variable = { SPR_1970_franco_health_bureaucracy_factor = 0.05 }
+	}
+	else = {
+		set_variable = { SPR_1970_franco_health_pp_gain = -0.50 }
+		set_variable = { SPR_1970_franco_health_stability_factor = -0.10 }
+		set_variable = { SPR_1970_franco_health_bureaucracy_factor = 0.08 }
+	}
+
+	# Factional drift follows the size of the lead rather than treating a narrow
+	# plurality and overwhelming institutional control as equivalent.
+	set_temp_variable = { SPR_1970_influence_lead = SPR_1970_aperturista_influence }
+	set_temp_variable = { SPR_1970_opposing_influence = SPR_1970_bunker_influence }
+	multiply_temp_variable = { SPR_1970_opposing_influence = -1 }
+	add_to_temp_variable = { SPR_1970_influence_lead = SPR_1970_opposing_influence }
+
+	if = {
+		limit = { check_variable = { SPR_1970_influence_lead > 0 } }
+		if = {
+			limit = { check_variable = { SPR_1970_influence_lead > 29 } }
+			set_variable = { SPR_1970_aperturista_drift = 0.05 }
+		}
+		else_if = {
+			limit = { check_variable = { SPR_1970_influence_lead > 9 } }
+			set_variable = { SPR_1970_aperturista_drift = 0.03 }
+		}
+		else = {
+			set_variable = { SPR_1970_aperturista_drift = 0.01 }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { SPR_1970_influence_lead < 0 } }
+		multiply_temp_variable = { SPR_1970_influence_lead = -1 }
+		if = {
+			limit = { check_variable = { SPR_1970_influence_lead > 29 } }
+			set_variable = { SPR_1970_bunker_drift = 0.05 }
+		}
+		else_if = {
+			limit = { check_variable = { SPR_1970_influence_lead > 9 } }
+			set_variable = { SPR_1970_bunker_drift = 0.03 }
+		}
+		else = {
+			set_variable = { SPR_1970_bunker_drift = 0.01 }
+		}
+	}
+
+	if = {
+		limit = { has_country_flag = SPR_1970_franco_dead }
+		if = {
+			limit = { has_dynamic_modifier = { modifier = SPR_1970_failing_health_dynamic_modifier } }
+			remove_dynamic_modifier = { modifier = SPR_1970_failing_health_dynamic_modifier }
+		}
+	}
+	else = {
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = SPR_1970_failing_health_dynamic_modifier } } }
+			add_dynamic_modifier = { modifier = SPR_1970_failing_health_dynamic_modifier }
+		}
+		force_update_dynamic_modifier = yes
+	}
+}
+
+SPR_1970_initialize_transition_modifier = {
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_juan_carlos_path
+			NOT = { has_country_flag = SPR_1970_transition_modifier_initialized }
+		}
+		set_variable = { SPR_1970_transition_political_power_factor = 0 }
+		set_variable = { SPR_1970_transition_stability_factor = 0 }
+		set_variable = { SPR_1970_transition_democratic_drift = 0.01 }
+		set_variable = { SPR_1970_transition_drift_defence_factor = 0 }
+		set_variable = { SPR_1970_transition_bureaucracy_cost_multiplier_modifier = 0 }
+		set_variable = { SPR_1970_transition_police_cost_multiplier_modifier = 0 }
+		set_variable = { SPR_1970_transition_tax_gain_multiplier_modifier = 0 }
+		set_variable = { SPR_1970_transition_trade_opinion_factor = 0 }
+		set_variable = { SPR_1970_transition_research_speed_factor = 0 }
+		set_variable = { SPR_1970_transition_foreign_influence_defense_modifier = 0 }
+
+		if = {
+			limit = { has_country_flag = SPR_1970_prince_prepared }
+			add_to_variable = { SPR_1970_transition_political_power_factor = 0.01 }
+		}
+		if = {
+			limit = { has_country_flag = SPR_1970_prince_acted_as_head_of_state }
+			add_to_variable = { SPR_1970_transition_stability_factor = 0.01 }
+			add_to_variable = { SPR_1970_transition_democratic_drift = 0.01 }
+		}
+		set_country_flag = SPR_1970_transition_modifier_initialized
+	}
+
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_juan_carlos_path
+			has_dynamic_modifier = { modifier = SPR_1970_falangist_modifier }
+		}
+		remove_dynamic_modifier = { modifier = SPR_1970_falangist_modifier }
+	}
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_juan_carlos_path
+			has_dynamic_modifier = { modifier = SPR_1970_continuity_modifier }
+		}
+		remove_dynamic_modifier = { modifier = SPR_1970_continuity_modifier }
+	}
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_juan_carlos_path
+			NOT = { has_dynamic_modifier = { modifier = SPR_1970_transition_modifier } }
+		}
+		add_dynamic_modifier = { modifier = SPR_1970_transition_modifier }
+	}
+}
+
+SPR_1970_initialize_falangist_modifier = {
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_falangist_path
+			NOT = { has_country_flag = SPR_1970_falangist_modifier_initialized }
+		}
+		set_variable = { SPR_1970_falangist_political_power_factor = 0.02 }
+		set_variable = { SPR_1970_falangist_stability_factor = -0.04 }
+		set_variable = { SPR_1970_falangist_war_support_factor = 0.03 }
+		set_variable = { SPR_1970_falangist_nationalist_drift = 0.04 }
+		set_variable = { SPR_1970_falangist_drift_defence_factor = 0 }
+		set_variable = { SPR_1970_falangist_recruitable_population_factor = 0 }
+		set_variable = { SPR_1970_falangist_industrial_capacity_factory = 0 }
+		set_variable = { SPR_1970_falangist_consumer_goods_factor = 0 }
+		set_variable = { SPR_1970_falangist_research_speed_factor = 0 }
+		set_variable = { SPR_1970_falangist_trade_opinion_factor = 0 }
+		set_variable = { SPR_1970_falangist_army_org_factor = 0 }
+		set_variable = { SPR_1970_falangist_foreign_influence_defense_modifier = 0.05 }
+		set_variable = { SPR_1970_falangist_tax_gain_multiplier_modifier = 0 }
+		set_country_flag = SPR_1970_falangist_modifier_initialized
+	}
+
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_falangist_path
+			has_dynamic_modifier = { modifier = SPR_1970_transition_modifier }
+		}
+		remove_dynamic_modifier = { modifier = SPR_1970_transition_modifier }
+	}
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_falangist_path
+			has_dynamic_modifier = { modifier = SPR_1970_continuity_modifier }
+		}
+		remove_dynamic_modifier = { modifier = SPR_1970_continuity_modifier }
+	}
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_falangist_path
+			NOT = { has_dynamic_modifier = { modifier = SPR_1970_falangist_modifier } }
+		}
+		add_dynamic_modifier = { modifier = SPR_1970_falangist_modifier }
+	}
+}
+
+SPR_1970_initialize_continuity_modifier = {
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_continuity_path
+			NOT = { has_country_flag = SPR_1970_continuity_modifier_initialized }
+		}
+		set_variable = { SPR_1970_continuity_political_power_factor = 0.01 }
+		set_variable = { SPR_1970_continuity_stability_factor = 0.01 }
+		set_variable = { SPR_1970_continuity_war_support_factor = 0 }
+		set_variable = { SPR_1970_continuity_nationalist_drift = 0.02 }
+		set_variable = { SPR_1970_continuity_democratic_drift = 0 }
+		set_variable = { SPR_1970_continuity_drift_defence_factor = 0 }
+		set_variable = { SPR_1970_continuity_bureaucracy_cost_multiplier_modifier = 0 }
+		set_variable = { SPR_1970_continuity_police_cost_multiplier_modifier = 0 }
+		set_variable = { SPR_1970_continuity_research_speed_factor = 0 }
+		set_variable = { SPR_1970_continuity_industrial_capacity_factory = 0 }
+		set_variable = { SPR_1970_continuity_foreign_influence_defense_modifier = 0.03 }
+		set_variable = { SPR_1970_continuity_army_org_factor = 0 }
+		set_variable = { SPR_1970_continuity_trade_opinion_factor = 0 }
+		if = {
+			limit = { has_country_flag = SPR_1970_carrero_survived_operation_ogre }
+			add_to_variable = { SPR_1970_continuity_political_power_factor = 0.03 }
+			add_to_variable = { SPR_1970_continuity_bureaucracy_cost_multiplier_modifier = -0.02 }
+			add_to_variable = { SPR_1970_continuity_nationalist_drift = 0.01 }
+		}
+		set_country_flag = SPR_1970_continuity_modifier_initialized
+	}
+
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_continuity_path
+			has_dynamic_modifier = { modifier = SPR_1970_transition_modifier }
+		}
+		remove_dynamic_modifier = { modifier = SPR_1970_transition_modifier }
+	}
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_continuity_path
+			has_dynamic_modifier = { modifier = SPR_1970_falangist_modifier }
+		}
+		remove_dynamic_modifier = { modifier = SPR_1970_falangist_modifier }
+	}
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_continuity_path
+			NOT = { has_dynamic_modifier = { modifier = SPR_1970_continuity_modifier } }
+		}
+		add_dynamic_modifier = { modifier = SPR_1970_continuity_modifier }
+	}
+}
+
+SPR_1970_monthly_franco_update = {
+	add_to_variable = { SPR_1970_franco_health = -1 }
+
+	if = {
+		limit = {
+			NOT = { check_variable = { SPR_1970_franco_health > 70 } }
+			NOT = { has_country_flag = SPR_1970_rhetoric_incident_resolved }
+		}
+		country_event = { id = SPR_1970.4 days = 2 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { SPR_1970_franco_health > 50 } }
+			NOT = { has_country_flag = SPR_1970_medical_bulletin_event_fired }
+		}
+		set_country_flag = SPR_1970_medical_bulletin_event_fired
+		country_event = { id = SPR_1970.5 days = 2 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { SPR_1970_franco_health > 30 } }
+			NOT = { has_country_flag = SPR_1970_transfer_pressure_event_fired }
+		}
+		set_country_flag = SPR_1970_transfer_pressure_event_fired
+		country_event = { id = SPR_1970.6 days = 2 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { SPR_1970_franco_health > 0 } }
+			NOT = { has_country_flag = SPR_1970_franco_dead }
+		}
+		country_event = { id = SPR_1970.11 }
+	}
+
+	SPR_1970_clamp_franco_variables = yes
+	SPR_1970_update_franco_dynamic_modifier = yes
+}
+
+SPR_1970_initialize_operation_ogre = {
+	set_country_flag = SPR_1970_operation_ogre_active
+	set_variable = { SPR_1970_operation_ogre_security = 20 }
+	if = {
+		limit = { has_country_flag = SPR_1970_security_apparatus_empowered }
+		add_to_variable = { SPR_1970_operation_ogre_security = 10 }
+	}
+	if = {
+		limit = { has_idea = SPR_1970_state_of_exception }
+		add_to_variable = { SPR_1970_operation_ogre_security = 10 }
+	}
+	if = {
+		limit = { has_country_flag = SPR_1970_managed_opening_adopted }
+		add_to_variable = { SPR_1970_operation_ogre_security = 5 }
+	}
+	SPR_1970_clamp_franco_variables = yes
+}
+
+SPR_1970_resolve_operation_ogre = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = SPR_1970_operation_ogre_resolved }
+			check_variable = { SPR_1970_operation_ogre_security > 69 }
+		}
+		country_event = { id = SPR_1970.10 }
+	}
+	else_if = {
+		limit = { NOT = { has_country_flag = SPR_1970_operation_ogre_resolved } }
+		country_event = { id = SPR_1970.9 }
+	}
+}
+
+# The general MD party helper always invokes the modern country-leader cycle.
+# The 1970 scenario needs the same party arrays and politics state without
+# creating or advancing any 2000-era Spanish leaders.
+SPR_1970_change_ruling_party_without_leader = {
+	clear_variable = ruling_party
+	clear_array = gov_coalition_array
+	set_temp_variable = { SPR_1970_party_to_add = rul_party_temp }
+	set_variable = { ruling_party = SPR_1970_party_to_add }
+
+	if = {
+		limit = { check_variable = { rul_party_temp < 4 } }
+		if = {
+			limit = { check_variable = { enable_elections = 0 } }
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = yes
+			}
+		}
+		else = {
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = no
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = { check_variable = { enable_elections = 0 } }
+			set_politics = {
+				ruling_party = nationalist
+				elections_allowed = yes
+			}
+		}
+		else = {
+			set_politics = {
+				ruling_party = nationalist
+				elections_allowed = no
+			}
+		}
+	}
+
+	update_government_coalition_strength = yes
+	update_party_name = yes
+	set_coalition_drift = yes
+	SPR_1970_refresh_democratic_cabinet_spirit = yes
+}
+
+# Succession replaces the permanent offices and alignments of Franco's final
+# government. Optional or already-expired ideas are checked individually so
+# the focus tooltip never promises to remove a spirit Spain does not possess.
+# Temporary emergency effects keep their own duration and are not swept away
+# by an unrelated change of government.
+SPR_1970_clear_superseded_franco_era_spirits = {
+	if = {
+		limit = { has_idea = SPR_1970_carrero_blanco_government }
+		remove_ideas = SPR_1970_carrero_blanco_government
+	}
+	if = {
+		limit = { has_idea = SPR_1970_carrero_vacuum }
+		remove_ideas = SPR_1970_carrero_vacuum
+	}
+	if = {
+		limit = { has_idea = SPR_1970_juan_carlos_designated_successor }
+		remove_ideas = SPR_1970_juan_carlos_designated_successor
+	}
+	if = {
+		limit = { has_idea = SPR_1970_aperturista_networks }
+		remove_ideas = SPR_1970_aperturista_networks
+	}
+	if = {
+		limit = { has_idea = SPR_1970_managed_opening }
+		remove_ideas = SPR_1970_managed_opening
+	}
+	if = {
+		limit = { has_idea = SPR_1970_spirit_of_february_idea }
+		remove_ideas = SPR_1970_spirit_of_february_idea
+	}
+	if = {
+		limit = { has_idea = SPR_1970_prince_acting_head_of_state_idea }
+		remove_ideas = SPR_1970_prince_acting_head_of_state_idea
+	}
+}
+
+SPR_1970_apply_franco_death = {
+	set_country_flag = SPR_1970_franco_dead
+	clr_country_flag = IMP_1970_historical_politics
+	clr_country_flag = SPR_1970_franco_system_enabled
+	clr_country_flag = SPR_1970_operation_ogre_active
+	if = {
+		limit = {
+			has_country_flag = SPR_1970_carrero_is_prime_minister
+			NOT = { has_country_flag = SPR_1970_operation_ogre_resolved }
+		}
+		set_country_flag = SPR_1970_carrero_survived_operation_ogre
+	}
+	set_country_flag = SPR_1970_operation_ogre_resolved
+	clr_country_flag = SPR_1970_carrero_is_prime_minister
+	if = {
+		limit = { has_active_mission = SPR_1970_succession_clock }
+		remove_mission = SPR_1970_succession_clock
+	}
+	if = {
+		limit = { has_active_mission = SPR_1970_operation_ogre_countdown }
+		remove_mission = SPR_1970_operation_ogre_countdown
+	}
+	if = {
+		limit = { has_dynamic_modifier = { modifier = SPR_1970_failing_health_dynamic_modifier } }
+		remove_dynamic_modifier = { modifier = SPR_1970_failing_health_dynamic_modifier }
+	}
+	set_temp_variable = { rul_party_temp = 22 }
+	# The MD helper uses 0 for elections enabled and 1 for elections disabled.
+	set_temp_variable = { enable_elections = 1 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	create_country_leader = {
+		name = "Council of Regency"
+		ideology = Nat_Autocracy
+		traits = { nationalist_Nat_Autocracy }
+	}
+	add_ideas = SPR_1970_interregnum
+	add_stability = -0.05
+	add_political_power = -75
+}
+
+SPR_1970_install_juan_carlos_government = {
+	set_temp_variable = { rul_party_temp = 23 }
+	set_temp_variable = { enable_elections = 1 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	set_temp_variable = { party_index = 23 }
+	set_temp_variable = { party_popularity_increase = 0.10 }
+	change_relative_party_popularity = yes
+	create_country_leader = {
+		name = "Juan Carlos I"
+		picture = "juan_carlos_i.dds"
+		ideology = Monarchist
+		traits = { nationalist_Monarchist king military_career }
+	}
+	set_country_flag = SPR_1970_juan_carlos_installed
+}
+
+SPR_1970_install_suarez_government = {
+	set_temp_variable = { rul_party_temp = 1 }
+	set_temp_variable = { enable_elections = 1 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	create_country_leader = {
+		name = "Adolfo Suarez"
+		ideology = conservatism
+		traits = { western_conservatism career_politician }
+	}
+	set_country_flag = SPR_1970_suarez_installed
+	update_party_name = yes
+}
+
+SPR_1970_hold_first_free_elections = {
+	set_temp_variable = { rul_party_temp = 1 }
+	set_temp_variable = { enable_elections = 0 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	set_temp_variable = { party_index = 1 }
+	set_temp_variable = { party_popularity_increase = 0.08 }
+	set_temp_variable = { temp_outlook_increase = 0.08 }
+	change_relative_party_popularity = yes
+	if = {
+		limit = { NOT = { has_country_flag = SPR_1970_suarez_installed } }
+		create_country_leader = {
+			name = "Adolfo Suarez"
+			ideology = conservatism
+			traits = { western_conservatism career_politician }
+		}
+		set_country_flag = SPR_1970_suarez_installed
+	}
+	set_politics = {
+		elections_allowed = yes
+		election_frequency = 48
+		last_election = "1977.6.15"
+	}
+}
+
+SPR_1970_install_falangist_government = {
+	set_temp_variable = { rul_party_temp = 21 }
+	set_temp_variable = { enable_elections = 1 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	swap_ideas = {
+		remove_idea = labour_unions
+		add_idea = industrial_conglomerates
+	}
+	set_temp_variable = { party_index = 21 }
+	set_temp_variable = { party_popularity_increase = 0.12 }
+	set_temp_variable = { temp_outlook_increase = 0.06 }
+	change_relative_party_popularity = yes
+	create_country_leader = {
+		name = "Jose Antonio Giron de Velasco"
+		ideology = Nat_Fascism
+		traits = { nationalist_Nat_Fascism }
+	}
+	set_country_flag = SPR_1970_giron_installed
+}
+
+SPR_1970_install_continuity_government = {
+	set_temp_variable = { rul_party_temp = 22 }
+	set_temp_variable = { enable_elections = 1 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	swap_ideas = {
+		remove_idea = labour_unions
+		add_idea = industrial_conglomerates
+	}
+	set_temp_variable = { party_index = 22 }
+	set_temp_variable = { party_popularity_increase = 0.12 }
+	set_temp_variable = { temp_outlook_increase = 0.06 }
+	change_relative_party_popularity = yes
+	if = {
+		limit = { has_country_flag = SPR_1970_carrero_survived_operation_ogre }
+		create_country_leader = {
+			name = "Luis Carrero Blanco"
+			ideology = Nat_Autocracy
+			traits = { nationalist_Nat_Autocracy military_career }
+		}
+	}
+	else = {
+		create_country_leader = {
+			name = "Carlos Arias Navarro"
+			ideology = Nat_Autocracy
+			traits = { nationalist_Nat_Autocracy }
+		}
+	}
+	set_country_flag = SPR_1970_continuity_leader_installed
+}
+
+SPR_1970_install_utrera_government = {
+	set_temp_variable = { rul_party_temp = 21 }
+	set_temp_variable = { enable_elections = 1 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	create_country_leader = {
+		name = "Jose Utrera Molina"
+		ideology = Nat_Fascism
+		traits = { nationalist_Nat_Fascism }
+	}
+	set_country_flag = SPR_1970_utrera_installed
+}
+
+SPR_1970_install_national_salvation_directorate = {
+	set_country_flag = SPR_1970_national_salvation_directorate_installed
+	set_temp_variable = { rul_party_temp = 22 }
+	set_temp_variable = { enable_elections = 1 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	create_country_leader = {
+		name = "National Salvation Directorate"
+		ideology = Nat_Autocracy
+		traits = { nationalist_Nat_Autocracy military_career }
+	}
+}
+
+SPR_1970_install_felipe_gonzalez_government = {
+	set_temp_variable = { rul_party_temp = 3 }
+	set_temp_variable = { enable_elections = 0 }
+	SPR_1970_change_ruling_party_without_leader = yes
+	set_temp_variable = { party_index = 3 }
+	set_temp_variable = { party_popularity_increase = 0.12 }
+	set_temp_variable = { temp_outlook_increase = 0.12 }
+	change_relative_party_popularity = yes
+	create_country_leader = {
+		name = "Felipe Gonzalez"
+		picture = "gfx/leaders/SPR/gonzales.dds"
+		ideology = socialism
+		traits = { western_socialism career_politician }
+	}
+	set_politics = {
+		elections_allowed = yes
+		election_frequency = 48
+		last_election = "1982.10.28"
+	}
+	set_country_flag = SPR_1970_felipe_gonzalez_installed
+	SPR_1970_refresh_democratic_cabinet_spirit = yes
+}
+
+# Cabinet programmes are election-persistent unlocks, but only the highest
+# tier belonging to the party currently in government may be active.
+SPR_1970_refresh_democratic_cabinet_spirit = {
+	if = {
+		limit = {
+			original_tag = SPR
+			IMP_is_1970_scenario = yes
+			has_country_flag = SPR_1970_party_system_1982
+			has_country_flag = SPR_1970_democracy_consolidated
+			has_elections = yes
+		}
+
+		if = { limit = { has_idea = SPR_1970_conservative_programme_1_idea } remove_ideas = SPR_1970_conservative_programme_1_idea }
+		if = { limit = { has_idea = SPR_1970_conservative_programme_2_idea } remove_ideas = SPR_1970_conservative_programme_2_idea }
+		if = { limit = { has_idea = SPR_1970_conservative_programme_3_idea } remove_ideas = SPR_1970_conservative_programme_3_idea }
+		if = { limit = { has_idea = SPR_1970_liberal_renewal_1_idea } remove_ideas = SPR_1970_liberal_renewal_1_idea }
+		if = { limit = { has_idea = SPR_1970_liberal_renewal_2_idea } remove_ideas = SPR_1970_liberal_renewal_2_idea }
+		if = { limit = { has_idea = SPR_1970_liberal_renewal_3_idea } remove_ideas = SPR_1970_liberal_renewal_3_idea }
+		if = { limit = { has_idea = SPR_1970_socialist_modernisation_1_idea } remove_ideas = SPR_1970_socialist_modernisation_1_idea }
+		if = { limit = { has_idea = SPR_1970_socialist_modernisation_2_idea } remove_ideas = SPR_1970_socialist_modernisation_2_idea }
+		if = { limit = { has_idea = SPR_1970_socialist_modernisation_3_idea } remove_ideas = SPR_1970_socialist_modernisation_3_idea }
+		if = { limit = { has_idea = SPR_1970_eurocommunist_programme_1_idea } remove_ideas = SPR_1970_eurocommunist_programme_1_idea }
+		if = { limit = { has_idea = SPR_1970_eurocommunist_programme_2_idea } remove_ideas = SPR_1970_eurocommunist_programme_2_idea }
+		if = { limit = { has_idea = SPR_1970_eurocommunist_programme_3_idea } remove_ideas = SPR_1970_eurocommunist_programme_3_idea }
+
+		if = {
+			limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 1 } } }
+			if = { limit = { has_country_flag = SPR_1970_ap_programme_3_unlocked } add_ideas = SPR_1970_conservative_programme_3_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_ap_programme_2_unlocked } add_ideas = SPR_1970_conservative_programme_2_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_ap_programme_1_unlocked } add_ideas = SPR_1970_conservative_programme_1_idea }
+		}
+		else_if = {
+			limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 2 } } }
+			if = { limit = { has_country_flag = SPR_1970_cds_programme_3_unlocked } add_ideas = SPR_1970_liberal_renewal_3_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_cds_programme_2_unlocked } add_ideas = SPR_1970_liberal_renewal_2_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_cds_programme_1_unlocked } add_ideas = SPR_1970_liberal_renewal_1_idea }
+		}
+		else_if = {
+			limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 3 } } }
+			if = { limit = { has_country_flag = SPR_1970_psoe_programme_3_unlocked } add_ideas = SPR_1970_socialist_modernisation_3_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_psoe_programme_2_unlocked } add_ideas = SPR_1970_socialist_modernisation_2_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_psoe_programme_1_unlocked } add_ideas = SPR_1970_socialist_modernisation_1_idea }
+		}
+		else_if = {
+			limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 4 } } }
+			if = { limit = { has_country_flag = SPR_1970_pce_programme_3_unlocked } add_ideas = SPR_1970_eurocommunist_programme_3_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_pce_programme_2_unlocked } add_ideas = SPR_1970_eurocommunist_programme_2_idea }
+			else_if = { limit = { has_country_flag = SPR_1970_pce_programme_1_unlocked } add_ideas = SPR_1970_eurocommunist_programme_1_idea }
+		}
+	}
+}
+
+# Called only when the global election system has already retired the active
+# leader. It recreates the appropriate 1970-era leader without touching the
+# modern Spanish leader counters.
+SPR_1970_set_scenario_leader = {
+	if = {
+		limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 3 } } }
+		create_country_leader = {
+			name = "Felipe Gonzalez"
+			picture = "gfx/leaders/SPR/gonzales.dds"
+			ideology = socialism
+			traits = { western_socialism career_politician }
+		}
+	}
+	else_if = {
+		limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 1 } } }
+		if = {
+			limit = { has_country_flag = SPR_1970_party_system_1982 }
+			create_country_leader = {
+				name = "Manuel Fraga"
+				ideology = conservatism
+				traits = { western_conservatism career_politician }
+			}
+		}
+		else_if = {
+			limit = { date < 1981.2.25 }
+			create_country_leader = {
+				name = "Adolfo Suarez"
+				ideology = conservatism
+				traits = { western_conservatism career_politician }
+			}
+		}
+		else = {
+			create_country_leader = {
+				name = "Leopoldo Calvo-Sotelo"
+				ideology = conservatism
+				traits = { western_conservatism career_politician }
+			}
+		}
+	}
+	else_if = {
+		limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 2 } } }
+		if = {
+			limit = { has_country_flag = SPR_1970_party_system_1982 }
+			create_country_leader = {
+				name = "Adolfo Suarez"
+				ideology = liberalism
+				traits = { western_liberalism career_politician }
+			}
+		}
+		else = {
+			create_country_leader = {
+				name = "Joaquin Garrigues Walker"
+				ideology = liberalism
+				traits = { western_liberalism career_politician }
+			}
+		}
+	}
+	else_if = {
+		limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 4 } } }
+		create_country_leader = {
+			name = "Santiago Carrillo"
+			ideology = communist_state
+			traits = { emerging_communist_state career_politician }
+		}
+	}
+	else_if = {
+		limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 23 } } }
+		create_country_leader = {
+			name = "Juan Carlos I"
+			picture = "juan_carlos_i.dds"
+			ideology = Monarchist
+			traits = { nationalist_Monarchist king military_career }
+		}
+	}
+	else_if = {
+		limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 21 } } }
+		if = {
+			limit = { has_country_flag = SPR_1970_utrera_installed }
+			create_country_leader = {
+				name = "Jose Utrera Molina"
+				ideology = Nat_Fascism
+				traits = { nationalist_Nat_Fascism }
+			}
+		}
+		else = {
+			create_country_leader = {
+				name = "Jose Antonio Giron de Velasco"
+				ideology = Nat_Fascism
+				traits = { nationalist_Nat_Fascism }
+			}
+		}
+	}
+	else_if = {
+		limit = { AND = { has_variable = ruling_party check_variable = { ruling_party = 22 } } }
+		if = {
+			limit = { has_country_flag = SPR_1970_national_salvation_directorate_installed }
+			create_country_leader = {
+				name = "National Salvation Directorate"
+				ideology = Nat_Autocracy
+				traits = { nationalist_Nat_Autocracy military_career }
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = SPR_1970_carrero_survived_operation_ogre }
+			create_country_leader = {
+				name = "Luis Carrero Blanco"
+				ideology = Nat_Autocracy
+				traits = { nationalist_Nat_Autocracy military_career }
+			}
+		}
+		else = {
+			create_country_leader = {
+				name = "Carlos Arias Navarro"
+				ideology = Nat_Autocracy
+				traits = { nationalist_Nat_Autocracy }
+			}
+		}
+	}
+	# Other electoral outcomes deliberately fall through. The global election
+	# effect then generates a leader matching the winning ideology instead of
+	# assigning an unrelated Francoist leader.
+	SPR_1970_refresh_democratic_cabinet_spirit = yes
+}

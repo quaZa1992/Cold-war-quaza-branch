@@ -1,0 +1,493 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+scripted_diplomatic_actions = {
+	imp_money_transfer = {
+		visible = {
+			always = yes
+		}
+
+		selectable = {
+			if = {
+				limit = {
+					ROOT = { has_country_flag = imp_moneytool_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = yes
+				}
+			}
+		}
+
+		can_be_sent = {
+			check_variable = { ROOT.gift_size > 0 }
+		}
+
+		on_sent_effect = {
+			ROOT = { set_country_flag = { flag = imp_moneytool_cd days = 35 } }
+		}
+
+		complete_effect = {
+			subtract_from_variable = { ROOT.treasury = ROOT.gift_size }
+			add_to_variable = { treasury = ROOT.gift_size }
+
+			# Clear Variables
+			set_variable = { ROOT.gift_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+
+		reject_effect = {
+			# Clear Variables
+			set_variable = { ROOT.gift_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+
+		receive_description = IMP_MONEY_TRANSFER_RECEIVE_DESC
+		accept_title = IMP_MONEY_TRANSFER_ACCEPT_TITLE
+		accept_description = IMP_MONEY_TRANSFER_ACCEPT_DESC
+		reject_title = IMP_MONEY_TRANSFER_REJECT_TITLE
+		reject_description = IMP_MONEY_TRANSFER_REJECT_DESC
+
+		send_scripted_gui = imp_money_transfer_scripted_gui
+	
+		requires_acceptance = yes
+	
+		can_be_accepted = {
+			always = yes
+		}
+
+		ai_desire = {
+			base = -10
+		}
+
+		ai_acceptance = {
+			base_desire = {
+				base = 10
+			}
+		}
+	}
+
+	imp_subsidies = {
+		visible = {
+			NOT = {
+				check_variable = { active_subsidies@ROOT > 0 }
+				check_variable = { ROOT.active_subsidies@THIS > 0 }
+			}
+		}
+
+		selectable = {
+			if = {
+				limit = {
+					ROOT = { has_country_flag = imp_moneytool_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = yes
+				}
+			}
+		}
+
+		can_be_sent = {
+			check_variable = { ROOT.subsidies_size > 0 }
+		}
+
+		on_sent_effect = {
+			ROOT = { set_country_flag = { flag = imp_moneytool_cd days = 35 } }
+		}
+
+		complete_effect = 
+		{
+			set_variable = { ROOT.active_subsidies@THIS = ROOT.subsidies_size }
+			calculate_subsidies_in = yes
+			ROOT = { calculate_subsidies_out = yes }
+
+			# Clear Variables
+			set_variable = { ROOT.subsidies_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+
+		
+		reject_effect = {
+			# Clear Variables
+			set_variable = { ROOT.subsidies_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+		
+		receive_description = IMP_SUBSIDIES_RECEIVE_DESC
+		accept_title = IMP_SUBSIDIES_ACCEPT_TITLE
+		accept_description = IMP_SUBSIDIES_ACCEPT_DESC
+		reject_title = IMP_SUBSIDIES_REJECT_TITLE
+		reject_description = IMP_SUBSIDIES_REJECT_DESC
+
+		send_scripted_gui = imp_subsidies_scripted_gui
+	
+		requires_acceptance = yes
+	
+		can_be_accepted = {
+			always = yes
+		}
+
+		ai_desire = {
+			base = -10
+		}
+
+		ai_acceptance = {
+			base_desire = {
+				base = 10
+			}
+		}
+	}
+
+	imp_subsidies_cancel = {
+		visible = {
+			check_variable = { ROOT.active_subsidies@THIS > 0 }
+		}
+
+		selectable = {
+			if = {
+				limit = {
+					ROOT = { has_country_flag = imp_moneytool_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = yes
+				}
+			}
+		}
+
+		complete_effect = {
+			clear_variable = ROOT.active_subsidies@THIS
+			calculate_subsidies_in = yes
+			ROOT = { calculate_subsidies_out = yes }
+
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+			# Calculate the subsidies
+		}
+		
+		accept_title = IMP_SUBSIDIES_CANCEL_ACCEPT_TITLE
+		accept_description = IMP_SUBSIDIES_CANCEL_ACCEPT_DESC
+
+		requires_acceptance = no
+
+		ai_desire = {
+			base = -10
+		}
+	}
+
+	imp_subsidies_cancel_incoming = {
+		visible = {
+			check_variable = { active_subsidies@ROOT > 0 }
+		}
+
+		selectable = {
+			if = {
+				limit = {
+					ROOT = { has_country_flag = imp_moneytool_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = yes
+				}
+			}
+		}
+
+		on_sent_effect = {
+			ROOT = { set_country_flag = { flag = imp_moneytool_cd days = 35 } }
+		}
+
+		complete_effect = {
+			clear_variable = active_subsidies@ROOT
+			ROOT = { calculate_subsidies_in = yes }
+			calculate_subsidies_out = yes
+
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+
+		accept_title = IMP_SUBSIDIES_CANCEL_ACCEPT_TITLE
+		accept_description = IMP_SUBSIDIES_CANCEL_ACCEPT_DESC
+
+		requires_acceptance = no
+
+		ai_desire = {
+			base = -10
+		}
+
+		ai_acceptance = {
+			base_desire = {
+				base = 10
+			}
+		}
+	}
+
+	imp_bond_purchase = {
+		visible = {
+			always = yes
+		}
+
+		selectable = {
+			if = {
+				limit = {
+					ROOT = { has_country_flag = imp_moneytool_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = yes
+				}
+			}
+		}
+
+		can_be_sent = {
+			check_variable = { ROOT.bond_size > 0 }
+		}
+
+		on_sent_effect = {
+			ROOT = { set_country_flag = { flag = imp_moneytool_cd days = 35 } }
+		}
+
+		complete_effect = {
+			subtract_from_variable = { ROOT.treasury = ROOT.bond_size }
+			add_to_variable = { treasury = ROOT.bond_size }
+			
+			# Remember the money owed.
+			add_to_variable = { ROOT.given_bonds@THIS = ROOT.bond_total }
+			
+			# Reset values
+			set_variable = { ROOT.bond_total = 0 }
+			set_variable = { ROOT.bond_size = 0 }
+			set_variable = { ROOT.bond_interest = 0 }
+
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+
+			# Calculate the bond sizes
+			ROOT = { calculate_new_bonds_held = yes }
+			calculate_new_bonds_owed = yes
+		}
+
+		reject_effect = {
+			# Reset values
+			set_variable = { ROOT.bond_total = 0 }
+			set_variable = { ROOT.bond_size = 0 }
+			set_variable = { ROOT.bond_interest = 0 }
+
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+		
+		send_scripted_gui = imp_bond_purchase_scripted_gui
+	
+		requires_acceptance = yes
+
+		receive_description = IMP_BOND_PURCHASE_RECEIVE_DESC
+		accept_title = IMP_BOND_PURCHASE_ACCEPT_TITLE
+		accept_description = IMP_BOND_PURCHASE_ACCEPT_DESC
+		reject_title = IMP_BOND_PURCHASE_REJECT_TITLE
+		reject_description = IMP_BOND_PURCHASE_REJECT_DESC
+
+		can_be_accepted = {
+			always = yes
+		}
+
+		ai_desire = {
+			base = -10
+		}
+
+		ai_acceptance = {
+			base_desire = {
+				base = -10
+			}
+		}
+	}
+
+	imp_bond_buyback = {
+		visible = {
+			check_variable = { given_bonds@ROOT > 0 }
+		}
+		
+		selectable = {
+			if = {
+				limit = {
+					ROOT = { has_country_flag = imp_moneytool_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = yes
+				}
+			}
+		}
+		
+		can_be_sent = {
+			check_variable = { ROOT.bond_buyback_size > 0 }
+		}
+
+		on_sent_effect = {
+			ROOT = { set_country_flag = { flag = imp_moneytool_cd days = 35 } }
+		}
+		
+		complete_effect = {
+			# Add the money to the treasury
+			subtract_from_variable = { ROOT.treasury = ROOT.bond_buyback_size }
+			add_to_variable = { treasury = ROOT.bond_buyback_size }
+
+			subtract_from_variable = { given_bonds@ROOT = ROOT.bond_buyback_size }
+
+			# Reset values
+			set_variable = { ROOT.bond_buyback_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+
+			# Calculate the bond sizes
+			calculate_new_bonds_held = yes
+			ROOT = { calculate_new_bonds_owed = yes }
+		}
+
+		reject_effect = {
+			# Reset values
+			set_variable = { ROOT.bond_buyback_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+		
+		receive_description = IMP_BOND_BUYBACK_RECEIVE_DESC
+		accept_title = IMP_BOND_BUYBACK_ACCEPT_TITLE
+		accept_description = IMP_BOND_BUYBACK_ACCEPT_DESC
+		reject_title = IMP_BOND_BUYBACK_REJECT_TITLE
+		reject_description = IMP_BOND_BUYBACK_REJECT_DESC
+
+		send_scripted_gui = imp_bond_buyback_scripted_gui
+	
+		requires_acceptance = yes
+
+		can_be_accepted = {
+			always = yes
+		}
+
+		ai_desire = {
+			base = -10
+		}
+
+		ai_acceptance = {
+			base_desire = {
+				base = -10
+			}
+		}
+	}
+
+	imp_bond_sell = {
+		visible = {
+			check_variable = { ROOT.given_bonds@THIS > 0 }
+		}
+		
+		selectable = {
+			if = {
+				limit = {
+					ROOT = { has_country_flag = imp_moneytool_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = IMP_MONEYTOOL_COOLDOWN
+					always = yes
+				}
+			}
+		}
+		
+		can_be_sent = {
+			check_variable = { ROOT.bond_sell_size > 0 }
+		}
+
+		on_sent_effect = {
+			ROOT = { set_country_flag = { flag = imp_moneytool_cd days = 35 } }
+		}
+		
+		complete_effect = {
+			# Add the money to the treasury
+			set_temp_variable = { bond_sale_t = ROOT.bond_sell_size }
+			divide_temp_variable = { bond_sale_t = 2 }
+			add_to_variable = { ROOT.treasury = bond_sale_t }
+
+			# Is the sell-off big enough to matter? 25% of total debt?
+			set_temp_variable = { selloff_p = ROOT.bond_sell_size }
+			divide_temp_variable = { selloff_p = debt }
+			if = { 
+				limit = { check_variable = { selloff_p > 0.25 } }
+				set_country_flag = { flag = imp_recent_major_bond_selloff days = 45 value = 1 }
+			}
+			else_if = {
+				limit = { check_variable = { selloff_p > 0.10 } }
+				set_country_flag = { flag = imp_recent_minor_bond_selloff days = 45 value = 1 }
+			}
+
+			# Add the money to the debt.
+			add_to_variable = { debt = ROOT.bond_sell_size }
+
+			# Remove the money from the bonds owed.
+			subtract_from_variable = { ROOT.given_bonds@THIS = ROOT.bond_sell_size }
+
+			# Reset values
+			set_variable = { ROOT.bond_sell_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+
+			# Calculate the bond sizes
+			ROOT = { calculate_new_bonds_held = yes }
+			calculate_new_bonds_owed = yes
+		}
+
+		reject_effect = {
+			# Reset values
+			set_variable = { ROOT.bond_sell_size = 0 }
+			ROOT = { clr_country_flag = imp_moneytool_cd }
+		}
+		
+		receive_description = IMP_BOND_SELL_RECEIVE_DESC
+		accept_title = IMP_BOND_SELL_ACCEPT_TITLE
+		accept_description = IMP_BOND_SELL_ACCEPT_DESC
+		reject_title = IMP_BOND_SELL_REJECT_TITLE
+		reject_description = IMP_BOND_SELL_REJECT_DESC
+
+		send_scripted_gui = imp_bond_sell_scripted_gui
+	
+		requires_acceptance = no
+
+		ai_desire = {
+			base = -10
+		}
+	}
+}

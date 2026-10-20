@@ -1,0 +1,208 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+scripted_gui = {
+	Imp_RTT_gui = {
+		context_type = selected_state_context
+		window_name = "Imp_RTT"
+		parent_window_token = selected_state_view
+
+		visible = {
+			OR = {
+				NOT = { is_owned_by = ROOT }
+				NOT = { is_controlled_by = ROOT }
+			}
+			ROOT = 
+			{
+				NOT = {
+					has_resources_rights = {
+						state = PREV
+					}
+				}
+			}
+		}
+
+		effects = {
+			RTT_request_click = {
+				
+				ROOT = { 
+					set_variable = { imp_resource_target = PREV }
+					set_country_flag = { flag = RTT_cooldown days = 30 value = 1 }
+					country_event = { id = RW_event.10 }
+				}
+			}
+		}
+
+		triggers = {
+			RTT_request_click_enabled = {
+				OR = {
+					oil > 0
+					aluminium > 0
+					rubber > 0
+					tungsten > 0
+					steel > 0
+					chromium > 0
+					microchips > 0
+					composites > 0
+				}
+				ROOT = 
+				{
+					NOT = {
+						has_country_flag = RTT_cooldown
+						has_resources_rights = {
+							state = PREV
+						}
+					}
+				}
+			}
+		}
+	}
+
+	Imp_RTC_gui = 
+	{
+		context_type = selected_state_context
+		window_name = "Imp_RTC"
+		parent_window_token = selected_state_view
+
+		visible = {
+			OR = {
+				NOT = { is_owned_by = ROOT }
+				NOT = { is_controlled_by = ROOT }
+			}
+			ROOT = {
+				OR = {
+				has_resources_rights = {
+					state = PREV
+					resources = { oil }
+				}
+				has_resources_rights = {
+					state = PREV
+					resources = { steel }
+				}
+				has_resources_rights = {
+					state = PREV
+					resources = { aluminium }
+				}
+				has_resources_rights = {
+					state = PREV
+					resources = { chromium  }
+				}
+				has_resources_rights = {
+					state = PREV
+					resources = { rubber }
+				}
+				has_resources_rights = {
+					state = PREV
+					resources = { tungsten }
+				}
+				has_resources_rights = { state = PREV resources = { microchips } }
+				has_resources_rights = { state = PREV resources = { composites } }
+			}
+			}
+		}
+
+		effects = {
+			RTT_cancel_click = {
+
+				ROOT = { 
+					set_variable = { imp_resource_target = PREV }
+					set_country_flag = { flag = RTT_cooldown days = 30 value = 1 }
+					country_event = { id = RW_event.11 }
+				}
+			}
+		}
+
+		triggers = {
+			RTT_cancel_click_enabled = {
+				ROOT = 
+				{
+					NOT = { has_country_flag = RTT_cooldown }
+					OR = {
+						has_resources_rights = {
+							state = PREV
+							resources = { oil }
+						}
+						has_resources_rights = {
+							state = PREV
+							resources = { steel }
+						}
+						has_resources_rights = {
+							state = PREV
+							resources = { aluminium }
+						}
+						has_resources_rights = {
+							state = PREV
+							resources = { chromium  }
+						}
+						has_resources_rights = {
+							state = PREV
+							resources = { rubber }
+						}
+						has_resources_rights = {
+							state = PREV
+							resources = { tungsten }
+						}
+						has_resources_rights = { state = PREV resources = { microchips } }
+						has_resources_rights = { state = PREV resources = { composites } }
+					}
+				}
+			}
+		}
+	}
+
+	Imp_TBT_gui = {
+		context_type = selected_state_context
+		window_name = "Imp_TBT"
+		parent_window_token = selected_state_view
+
+		visible = {
+			OR = {
+				is_owned_by = ROOT
+			}
+			OR = {
+				oil > 0
+				aluminium > 0
+				rubber > 0
+				tungsten > 0
+				steel > 0
+				chromium > 0
+				microchips > 0
+				composites > 0
+			}
+		}
+
+		effects = {
+			TBT_confirm_click = {
+				save_event_target_as = TB_target_province
+				CONTROLLER = {
+					country_event = { id = RW_event.6 }
+				}
+				ROOT = {
+					set_country_flag = { flag = RTT_cooldown days = 30 value = 1 }
+				}
+				#refresh_gui = yes
+			}
+		}
+
+		triggers = {
+			TBT_confirm_click_enabled = {
+				OR = {
+					oil > 0
+					aluminium > 0
+					rubber > 0
+					tungsten > 0
+					steel > 0
+					chromium > 0
+					microchips > 0
+					composites > 0
+				}
+				ROOT = { NOT = { has_country_flag = RTT_cooldown } }
+			}
+		}
+
+		ai_enabled = {
+			always = no
+		}
+	}
+}

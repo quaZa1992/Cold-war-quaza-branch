@@ -1,0 +1,106 @@
+imp_eco_globalism_tick = { 
+    # First decide the equilibrium point.
+    set_variable = { globalism_value_eq = modifier@globalism_equilibrium }
+    clamp_variable = { var = globalism_value_eq min = 0 max = 100 }
+
+    # Then decide how much it changes
+    set_temp_variable = { glob_rate_multiplier = 1 }
+    add_to_temp_variable = { glob_rate_multiplier = modifier@globalism_rate_multiplier }
+    set_variable = { globalism_value_rate = 0.2 }
+    multiply_variable = { globalism_value_rate = glob_rate_multiplier }
+
+    set_temp_variable = { globalism_rvr_t = globalism_value_rate }
+
+    # Then change it.
+    if =  {
+        # It either needs to go down...
+        limit = { 
+            check_variable = { globalism_value > globalism_value_eq }
+        }
+        set_temp_variable = { glob_diff = globalism_value }
+        subtract_from_temp_variable = { glob_diff = globalism_value_eq }
+        clamp_temp_variable = { var = globalism_rvr_t min = 0 max = glob_diff }
+        subtract_from_variable = { globalism_value = globalism_rvr_t }
+    }
+    else_if = {
+        # Or it needs to go up...
+        limit = { 
+            check_variable = { globalism_value < globalism_value_eq }
+        }
+        set_temp_variable = { glob_diff = globalism_value_eq }
+        subtract_from_temp_variable = { glob_diff = globalism_value }
+        clamp_temp_variable = { var = globalism_rvr_t min = 0 max = glob_diff }
+        add_to_variable = { globalism_value = globalism_rvr_t }
+    }
+
+    imp_eco_globalism_modifier = yes
+}
+
+imp_eco_globalism_modifier = 
+{
+    if = { 
+        limit = { 
+            NOT = {
+                has_dynamic_modifier = { modifier = imp_globalism_modifier }
+            }
+        }
+        add_dynamic_modifier = { modifier = imp_globalism_modifier }
+        set_variable = { globalism_value = globalism_value_eq }
+    }
+
+    set_temp_variable = { glob_scaled = globalism_value }
+    divide_temp_variable = { glob_scaled = 100 }
+
+    ## War support factor = -20% at 100 Globalism. +20% at 0 Globalism.
+    set_variable = { imp_globalism_mod_warsup = 0.2 }
+    set_temp_variable = { ws_mod_t = -0.4 }
+    multiply_temp_variable = { ws_mod_t = glob_scaled }
+    add_to_variable = { imp_globalism_mod_warsup = ws_mod_t }
+    clamp_variable = { var = imp_globalism_mod_warsup min = -0.2 max = 0.2 }
+
+    ## Sanction Resistance. 80% at 0 Globalism. 0% at 100 Globalism.
+    set_variable = { imp_globalism_mod_sancres = 0.8 }
+    subtract_from_variable = { imp_globalism_mod_sancres = glob_scaled }
+    clamp_variable = { var = imp_globalism_mod_sancres min = 0 max = 1 }
+
+    ## Sanction Effectiveness. -80% at 0 Globalism, 0% at 100 Globalism.
+    set_variable = { imp_globalism_mod_sanceff = -0.8 }
+    add_to_variable = { imp_globalism_mod_sanceff = glob_scaled }
+    clamp_variable = { var = imp_globalism_mod_sanceff min = -1 max = 0 }
+
+    ## Productivity Growth -1 at 0 Globalism, +1 at 100 Globalism.
+    set_variable = { imp_globalism_mod_prod = -1 }
+    set_temp_variable = { prod_mod_t = glob_scaled }
+    multiply_temp_variable = { prod_mod_t = 2 }
+    add_to_variable = { imp_globalism_mod_prod = prod_mod_t }
+    clamp_variable = { var = imp_globalism_mod_prod min = -1 max = 1 }
+
+    ## Return on investment. -3 at 0 Globalism, +3 at 100 Globalism
+    set_variable = { imp_globalism_mod_roi = -0.02 }
+    set_temp_variable = { roi_mod_t = glob_scaled }
+    multiply_temp_variable = { roi_mod_t = 0.04 }
+    add_to_variable = { imp_globalism_mod_roi = roi_mod_t }
+    clamp_variable = { var = imp_globalism_mod_roi min = -0.03 max = 0.03 }
+
+    ## Interest Rate +2.5 at 0 globalism. 0 at 50 globalism or higher.
+    if = { 
+        limit = { 
+            check_variable = { globalism_value < 50 }
+        }
+        set_temp_variable = { glob_min_t = globalism_value }
+        divide_temp_variable = { glob_min_t = 50 }
+        multiply_temp_variable = { glob_min_t = 2.5 }
+        set_variable = { imp_globalism_mod_int = 2.5 }
+        subtract_from_variable = { imp_globalism_mod_int = glob_min_t }
+    }
+    else = { 
+        set_variable = { imp_globalism_mod_int = 0 }
+    }
+    clamp_variable = { var = imp_globalism_mod_int min = 0 max = 2.5 }
+
+    ## Investment Duration Receiving & Sending +50% at 0 Globalism. +0% at 100 Globalism.
+    ## Also Foreign Influence!
+    set_variable = { imp_globalism_mod_inv = 0.5 }
+    subtract_from_variable = { imp_globalism_mod_inv = glob_scaled }
+    clamp_variable = { var = imp_globalism_mod_inv max = 1 min = 0 }
+}

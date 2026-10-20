@@ -1,0 +1,595 @@
+add_namespace = USA_1970
+
+###############################################################
+# Watergate: optional crisis after a high-risk campaign-intelligence course
+###############################################################
+
+country_event = {
+	id = USA_1970.10
+	title = USA_1970.10.t
+	desc = USA_1970.10.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	trigger = {
+		original_tag = USA
+		IMP_is_1970_scenario = yes
+		has_country_flag = USA_1970_nixon_presidency
+		has_country_flag = USA_1970_watergate_exposure
+		AND = { has_variable = ruling_party check_variable = { ruling_party = 1 } }
+	}
+
+	option = {
+		name = USA_1970.10.a
+		ai_chance = { base = 85 }
+		hidden_effect = { kill_country_leader = yes }
+		create_country_leader = {
+			name = "Gerald Ford"
+			ideology = conservatism
+			traits = { western_conservatism career_politician }
+		}
+		clr_country_flag = USA_1970_nixon_presidency
+		set_country_flag = USA_1970_watergate_resignation
+		add_stability = 0.03
+		add_political_power = -75
+		USA_congress_small_support = yes
+		set_temp_variable = { temp_change = -0.02 }
+		USA_change_domestic_political_power_change = yes
+	}
+	option = {
+		name = USA_1970.10.b
+		ai_chance = { base = 15 }
+		hidden_effect = { kill_country_leader = yes }
+		create_country_leader = {
+			name = "Richard Nixon"
+			picture = "gfx/Leaders/USA/USA_Coldwar_Nixon.dds"
+			ideology = conservatism
+			traits = { western_conservatism career_politician }
+		}
+		clr_country_flag = USA_1970_nixon_presidency
+		set_country_flag = USA_1970_watergate_survived
+		add_stability = -0.07
+		add_political_power = 100
+		USA_congress_medium_opposition = yes
+		set_temp_variable = { temp_change = -0.05 }
+		USA_change_domestic_drift_defense_change = yes
+		set_temp_variable = { temp_change = 0.03 }
+		USA_change_domestic_civ_intel_change = yes
+	}
+}
+
+###############################################################
+# Atlantic burden sharing
+###############################################################
+
+country_event = {
+	id = USA_1970.100
+	title = USA_1970.100.t
+	desc = USA_1970.100.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.100.a
+		ai_chance = { base = 45 }
+		add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+		USA = {
+			add_opinion_modifier = { target = PREV modifier = minor_improve_trade }
+			USA_1970_register_atlantic_acceptance = yes
+			country_event = { id = USA_1970.190 days = 1 }
+		}
+		set_country_flag = USA_1970_atlantic_bargain_partner
+	}
+	option = {
+		name = USA_1970.100.b
+		ai_chance = { base = 35 }
+		USA = { country_event = { id = USA_1970.101 days = 1 } }
+	}
+	option = {
+		name = USA_1970.100.c
+		ai_chance = { base = 20 }
+		add_opinion_modifier = { target = USA modifier = recent_actions_negative }
+		USA = { country_event = { id = USA_1970.191 days = 1 } }
+	}
+}
+
+country_event = {
+	id = USA_1970.101
+	title = USA_1970.101.t
+	desc = USA_1970.101.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.101.a
+		ai_chance = { base = 60 }
+		set_temp_variable = { treasury_change = -5.00 }
+		modify_treasury_effect = yes
+		add_opinion_modifier = { target = FROM modifier = minor_improve_trade }
+		FROM = {
+			add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+			set_country_flag = USA_1970_atlantic_bargain_partner
+			country_event = { id = USA_1970.192 days = 1 }
+		}
+		USA_1970_register_atlantic_acceptance = yes
+	}
+	option = {
+		name = USA_1970.101.b
+		ai_chance = { base = 40 }
+		FROM = { country_event = { id = USA_1970.193 days = 1 } }
+	}
+}
+
+###############################################################
+# Triangular diplomacy and commercial trade proposals
+###############################################################
+
+country_event = {
+	id = USA_1970.110
+	title = USA_1970.110.t
+	desc = USA_1970.110.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.110.a
+		ai_chance = { base = 40 }
+		set_temp_variable = { receiver_nation = ROOT.id }
+		set_temp_variable = { sender_nation = USA.id }
+		set_improved_trade_agreement = yes
+		add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+		if = {
+			limit = { NOT = { has_country_flag = USA_1970_theater_trade_partner } }
+			set_country_flag = USA_1970_theater_trade_partner
+			USA = {
+				USA_1970_register_theater_acceptance = yes
+				country_event = { id = USA_1970.190 days = 1 }
+			}
+		}
+	}
+	option = {
+		name = USA_1970.110.b
+		ai_chance = { base = 35 }
+		USA = { country_event = { id = USA_1970.111 days = 1 } }
+	}
+	option = {
+		name = USA_1970.110.c
+		ai_chance = { base = 25 }
+		USA = { country_event = { id = USA_1970.191 days = 1 } }
+	}
+}
+
+country_event = {
+	id = USA_1970.111
+	title = USA_1970.111.t
+	desc = USA_1970.111.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.111.a
+		ai_chance = { base = 55 }
+		add_political_power = -25
+		set_temp_variable = { receiver_nation = FROM.id }
+		set_temp_variable = { sender_nation = USA.id }
+		set_improved_trade_agreement = yes
+		FROM = {
+			set_country_flag = USA_1970_theater_trade_partner
+			country_event = { id = USA_1970.192 days = 1 }
+		}
+		USA_1970_register_theater_acceptance = yes
+	}
+	option = {
+		name = USA_1970.111.b
+		ai_chance = { base = 45 }
+		FROM = { country_event = { id = USA_1970.193 days = 1 } }
+	}
+}
+
+###############################################################
+# Arab trade and energy compact
+###############################################################
+
+country_event = {
+	id = USA_1970.120
+	title = USA_1970.120.t
+	desc = USA_1970.120.d
+	picture = GFX_handshake_black
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.120.a
+		ai_chance = { base = 45 }
+		set_temp_variable = { receiver_nation = ROOT.id }
+		set_temp_variable = { sender_nation = USA.id }
+		set_improved_trade_agreement = yes
+		add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+		if = {
+			limit = { NOT = { has_country_flag = USA_1970_arab_compact_partner } }
+			set_country_flag = USA_1970_arab_compact_partner
+			USA = {
+				USA_1970_register_arab_compact_acceptance = yes
+				country_event = { id = USA_1970.190 days = 1 }
+			}
+		}
+	}
+	option = {
+		name = USA_1970.120.b
+		ai_chance = { base = 30 }
+		USA = { country_event = { id = USA_1970.121 days = 1 } }
+	}
+	option = {
+		name = USA_1970.120.c
+		ai_chance = { base = 25 }
+		USA = { country_event = { id = USA_1970.191 days = 1 } }
+	}
+}
+
+country_event = {
+	id = USA_1970.121
+	title = USA_1970.121.t
+	desc = USA_1970.121.d
+	picture = GFX_handshake_black
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.121.a
+		ai_chance = { base = 55 }
+		add_political_power = -25
+		set_temp_variable = { receiver_nation = FROM.id }
+		set_temp_variable = { sender_nation = USA.id }
+		set_improved_trade_agreement = yes
+		FROM = {
+			set_country_flag = USA_1970_arab_compact_partner
+			country_event = { id = USA_1970.192 days = 1 }
+		}
+		USA_1970_register_arab_compact_acceptance = yes
+	}
+	option = {
+		name = USA_1970.121.b
+		ai_chance = { base = 45 }
+		FROM = { country_event = { id = USA_1970.193 days = 1 } }
+	}
+}
+
+###############################################################
+# Honest-broker shuttle diplomacy
+###############################################################
+
+country_event = {
+	id = USA_1970.130
+	title = USA_1970.130.t
+	desc = USA_1970.130.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.130.a
+		ai_chance = { base = 45 }
+		add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+		if = {
+			limit = { NOT = { has_country_flag = USA_1970_broker_partner } }
+			set_country_flag = USA_1970_broker_partner
+			USA = {
+				add_opinion_modifier = { target = PREV modifier = minor_improve_trade }
+				USA_1970_register_broker_acceptance = yes
+				country_event = { id = USA_1970.190 days = 1 }
+			}
+		}
+	}
+	option = {
+		name = USA_1970.130.b
+		ai_chance = { base = 30 }
+		USA = { country_event = { id = USA_1970.131 days = 1 } }
+	}
+	option = {
+		name = USA_1970.130.c
+		ai_chance = { base = 25 }
+		USA = { country_event = { id = USA_1970.191 days = 1 } }
+	}
+}
+
+country_event = {
+	id = USA_1970.131
+	title = USA_1970.131.t
+	desc = USA_1970.131.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.131.a
+		ai_chance = { base = 60 }
+		add_political_power = -25
+		add_opinion_modifier = { target = FROM modifier = minor_improve_trade }
+		FROM = {
+			add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+			set_country_flag = USA_1970_broker_partner
+			country_event = { id = USA_1970.192 days = 1 }
+		}
+		USA_1970_register_broker_acceptance = yes
+	}
+	option = {
+		name = USA_1970.131.b
+		ai_chance = { base = 40 }
+		FROM = { country_event = { id = USA_1970.193 days = 1 } }
+	}
+}
+
+###############################################################
+# Maritime basing negotiations
+###############################################################
+
+country_event = {
+	id = USA_1970.140
+	title = USA_1970.140.t
+	desc = USA_1970.140.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.140.a
+		ai_chance = { base = 45 }
+		give_military_access = USA
+		add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+		if = {
+			limit = { NOT = { has_country_flag = USA_1970_maritime_basing_partner } }
+			set_country_flag = USA_1970_maritime_basing_partner
+			USA = {
+				set_country_flag = USA_1970_basing_access
+				USA_1970_register_theater_acceptance = yes
+				country_event = { id = USA_1970.190 days = 1 }
+			}
+		}
+	}
+	option = {
+		name = USA_1970.140.b
+		ai_chance = { base = 30 }
+		USA = { country_event = { id = USA_1970.141 days = 1 } }
+	}
+	option = {
+		name = USA_1970.140.c
+		ai_chance = { base = 25 }
+		USA = { country_event = { id = USA_1970.191 days = 1 } }
+	}
+}
+
+country_event = {
+	id = USA_1970.141
+	title = USA_1970.141.t
+	desc = USA_1970.141.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.141.a
+		ai_chance = { base = 55 }
+		set_temp_variable = { treasury_change = -10.00 }
+		modify_treasury_effect = yes
+		FROM = {
+			give_military_access = USA
+			set_country_flag = USA_1970_maritime_basing_partner
+			country_event = { id = USA_1970.192 days = 1 }
+		}
+		set_country_flag = USA_1970_basing_access
+		USA_1970_register_theater_acceptance = yes
+	}
+	option = {
+		name = USA_1970.141.b
+		ai_chance = { base = 45 }
+		FROM = { country_event = { id = USA_1970.193 days = 1 } }
+	}
+}
+
+###############################################################
+# North American and globalization trade offers
+###############################################################
+
+country_event = {
+	id = USA_1970.150
+	title = USA_1970.150.t
+	desc = USA_1970.150.d
+	picture = GFX_handshake_black
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.150.a
+		ai_chance = { base = 50 }
+		set_temp_variable = { receiver_nation = ROOT.id }
+		set_temp_variable = { sender_nation = USA.id }
+		set_improved_trade_agreement = yes
+		add_opinion_modifier = { target = USA modifier = minor_improve_trade }
+		if = {
+			limit = { NOT = { has_country_flag = USA_1970_commercial_partner } }
+			set_country_flag = USA_1970_commercial_partner
+			USA = {
+				USA_1970_register_commercial_acceptance = yes
+				country_event = { id = USA_1970.190 days = 1 }
+			}
+		}
+	}
+	option = {
+		name = USA_1970.150.b
+		ai_chance = { base = 30 }
+		USA = { country_event = { id = USA_1970.151 days = 1 } }
+	}
+	option = {
+		name = USA_1970.150.c
+		ai_chance = { base = 20 }
+		USA = { country_event = { id = USA_1970.191 days = 1 } }
+	}
+}
+
+country_event = {
+	id = USA_1970.151
+	title = USA_1970.151.t
+	desc = USA_1970.151.d
+	picture = GFX_handshake_black
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.151.a
+		ai_chance = { base = 60 }
+		add_political_power = -25
+		set_temp_variable = { receiver_nation = FROM.id }
+		set_temp_variable = { sender_nation = USA.id }
+		set_improved_trade_agreement = yes
+		FROM = {
+			set_country_flag = USA_1970_commercial_partner
+			country_event = { id = USA_1970.192 days = 1 }
+		}
+		USA_1970_register_commercial_acceptance = yes
+	}
+	option = {
+		name = USA_1970.151.b
+		ai_chance = { base = 40 }
+		FROM = { country_event = { id = USA_1970.193 days = 1 } }
+	}
+}
+
+###############################################################
+# Security assistance to Israel
+###############################################################
+
+country_event = {
+	id = USA_1970.170
+	title = USA_1970.170.t
+	desc = USA_1970.170.d
+	picture = GFX_handshake_black
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.170.a
+		ai_chance = { base = 55 }
+		if = {
+			limit = { USA = { NOT = { has_country_flag = USA_1970_israel_package_completed } } }
+			set_country_flag = USA_1970_israel_security_partner
+			USA = {
+				enbo_usa_send_monetary_package_to_israel_effect = yes
+				USA_1970_register_israel_acceptance = yes
+				USA_1970_send_israel_package_reactions = yes
+				set_country_flag = USA_1970_israel_package_completed
+				country_event = { id = USA_1970.190 days = 1 }
+			}
+			enbo_apply_aipac_happy_to_usa = yes
+		}
+	}
+	option = {
+		name = USA_1970.170.b
+		ai_chance = { base = 30 }
+		USA = { country_event = { id = USA_1970.171 days = 1 } }
+	}
+	option = {
+		name = USA_1970.170.c
+		ai_chance = { base = 15 }
+		add_opinion_modifier = { target = USA modifier = recent_actions_negative }
+		USA = { country_event = { id = USA_1970.191 days = 1 } }
+	}
+}
+
+country_event = {
+	id = USA_1970.171
+	title = USA_1970.171.t
+	desc = USA_1970.171.d
+	picture = GFX_handshake_black
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.171.a
+		ai_chance = { base = 60 }
+		if = {
+			limit = { NOT = { has_country_flag = USA_1970_israel_package_completed } }
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+			enbo_usa_send_monetary_package_to_israel_effect = yes
+			USA_1970_register_israel_acceptance = yes
+			USA_1970_send_israel_package_reactions = yes
+			set_country_flag = USA_1970_israel_package_completed
+			FROM = {
+				set_country_flag = USA_1970_israel_security_partner
+				enbo_apply_aipac_happy_to_usa = yes
+				country_event = { id = USA_1970.192 days = 1 }
+			}
+		}
+	}
+	option = {
+		name = USA_1970.171.b
+		ai_chance = { base = 40 }
+		FROM = { country_event = { id = USA_1970.193 days = 1 } }
+	}
+}
+
+###############################################################
+# Regional response to direct security assistance for Israel
+###############################################################
+
+country_event = {
+	id = USA_1970.160
+	title = USA_1970.160.t
+	desc = USA_1970.160.d
+	picture = GFX_declined_offer_no
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.160.a
+		ai_chance = { base = 55 }
+		add_opinion_modifier = { target = USA modifier = recent_actions_negative }
+		USA = { add_opinion_modifier = { target = PREV modifier = recent_actions_negative } }
+	}
+	option = {
+		name = USA_1970.160.b
+		ai_chance = { base = 45 }
+		add_opinion_modifier = { target = USA modifier = small_increase }
+	}
+}
+
+###############################################################
+# Generic diplomatic reply notices for multiplayer roleplay
+###############################################################
+
+country_event = {
+	id = USA_1970.190
+	title = USA_1970.190.t
+	desc = USA_1970.190.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.190.a
+	}
+}
+
+country_event = {
+	id = USA_1970.191
+	title = USA_1970.191.t
+	desc = USA_1970.191.d
+	picture = GFX_declined_offer_no
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.191.a
+	}
+}
+
+country_event = {
+	id = USA_1970.192
+	title = USA_1970.192.t
+	desc = USA_1970.192.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.192.a
+	}
+}
+
+country_event = {
+	id = USA_1970.193
+	title = USA_1970.193.t
+	desc = USA_1970.193.d
+	picture = GFX_declined_offer_no
+	is_triggered_only = yes
+
+	option = {
+		name = USA_1970.193.a
+	}
+}

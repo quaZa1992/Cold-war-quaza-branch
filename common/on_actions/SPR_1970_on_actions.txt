@@ -1,0 +1,99 @@
+on_actions = {
+	on_daily_SPR = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = SPR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = SPR_1970_franco_system_enabled }
+					NOT = { has_country_flag = SPR_1970_franco_dead }
+					date < 1975.11.20
+				}
+				SPR_1970_initialize_franco_system = yes
+			}
+			if = {
+				limit = {
+					original_tag = SPR
+					IMP_is_1970_scenario = yes
+					has_country_flag = SPR_1970_franco_system_enabled
+					NOT = { has_country_flag = SPR_1970_franco_dead }
+					NOT = { has_active_mission = SPR_1970_succession_clock }
+					date < 1975.11.20
+				}
+				activate_mission = SPR_1970_succession_clock
+			}
+
+			if = {
+				limit = {
+					original_tag = SPR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = SPR_1970_franco_dead }
+					has_country_flag = SPR_1970_carrero_is_prime_minister
+					NOT = { has_country_flag = SPR_1970_operation_ogre_resolved }
+					date > 1973.12.19
+				}
+				if = {
+					limit = { has_country_flag = SPR_1970_operation_ogre_active }
+					SPR_1970_resolve_operation_ogre = yes
+				}
+				else = {
+					country_event = { id = SPR_1970.9 }
+				}
+			}
+
+			if = {
+				limit = {
+					original_tag = SPR
+					IMP_is_1970_scenario = yes
+					has_country_flag = SPR_1970_franco_system_enabled
+					NOT = { has_country_flag = SPR_1970_franco_dead }
+					date > 1975.11.19
+				}
+				country_event = { id = SPR_1970.11 }
+			}
+		}
+	}
+
+	on_monthly_SPR = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = SPR
+					IMP_is_1970_scenario = yes
+					has_country_flag = SPR_1970_franco_system_enabled
+					NOT = { has_country_flag = SPR_1970_franco_dead }
+				}
+				SPR_1970_monthly_franco_update = yes
+			}
+		}
+	}
+
+	# The explicit election-leader and local government helpers perform the
+	# authoritative refresh. These hooks provide a second safe refresh for
+	# government changes caused by decisions, events or console intervention.
+	on_ruling_party_change = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = SPR
+					IMP_is_1970_scenario = yes
+					has_country_flag = SPR_1970_party_system_1982
+				}
+				SPR_1970_refresh_democratic_cabinet_spirit = yes
+			}
+		}
+	}
+
+	on_new_term_election = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = SPR
+					IMP_is_1970_scenario = yes
+					has_country_flag = SPR_1970_party_system_1982
+				}
+				SPR_1970_refresh_democratic_cabinet_spirit = yes
+			}
+		}
+	}
+}

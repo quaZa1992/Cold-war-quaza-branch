@@ -1,0 +1,568 @@
+# -----------------------------------------------------------------------------
+# Libya 1970 support effects
+#
+# Public effects in this file are deliberately idempotent. A focus can only
+# advance the matching burden, and every idea swap/removal first verifies that
+# its source idea exists.
+# -----------------------------------------------------------------------------
+
+LBA_1970_refresh_oil_control = {
+	if = {
+		limit = { NOT = { has_variable = lba_oil_nationalisation } }
+		set_variable = { lba_oil_nationalisation = 0.10 }
+	}
+	clamp_variable = {
+		var = lba_oil_nationalisation
+		min = 0.10
+		max = 1
+	}
+
+	set_variable = { LBA_1970_oil_tax_effect = lba_oil_nationalisation }
+	multiply_variable = { LBA_1970_oil_tax_effect = 0.20 }
+	set_variable = { LBA_1970_oil_resource_export_effect = lba_oil_nationalisation }
+	multiply_variable = { LBA_1970_oil_resource_export_effect = 0.25 }
+	set_variable = { LBA_1970_oil_export_effect = lba_oil_nationalisation }
+	multiply_variable = { LBA_1970_oil_export_effect = 0.35 }
+	set_variable = { LBA_1970_oil_resource_effect = lba_oil_nationalisation }
+	multiply_variable = { LBA_1970_oil_resource_effect = 0.15 }
+	set_variable = { LBA_1970_oil_workforce_effect = lba_oil_nationalisation }
+	multiply_variable = { LBA_1970_oil_workforce_effect = -0.10 }
+	set_variable = { LBA_1970_oil_influence_defense_effect = lba_oil_nationalisation }
+	multiply_variable = { LBA_1970_oil_influence_defense_effect = 0.20 }
+
+	# The global money pulse consumes this coefficient directly. The final oil
+	# revenue state receives a higher coefficient than the standard Libyan NOC.
+	if = {
+		limit = { has_idea = LBA_1970_oil_revenue_state }
+		set_variable = { oil_nationalisation_income = 0.020 }
+	}
+	else = {
+		set_variable = { oil_nationalisation_income = 0.014 }
+	}
+	multiply_variable = { oil_nationalisation_income = lba_oil_nationalisation }
+	set_variable = { libya_oil_nationalisation_additional_income = resource_produced@oil }
+	multiply_variable = { libya_oil_nationalisation_additional_income = oil_nationalisation_income }
+
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = LBA_1970_oil_sovereignty_dynamic_modifier } }
+		}
+		add_dynamic_modifier = { modifier = LBA_1970_oil_sovereignty_dynamic_modifier }
+	}
+	force_update_dynamic_modifier = yes
+}
+
+# Civil wars use the generic Libya on-action to copy scenario state from FROM
+# to ROOT. Keep the 1970 branch on its dedicated oil model and carry only its
+# own system flags; the legacy 2000 oil/Green Book mechanics must stay absent.
+LBA_1970_inherit_civil_war_state = {
+	set_country_flag = LBA_1970_party_names_active
+	set_country_flag = LBA_1970_no_tribal_system
+	set_country_flag = LBA_tribalism_disabled
+	set_country_flag = LBA_prevent_giving_tribal_traits
+	lba_disable_tribalism = yes
+	remove_dynamic_modifier = { modifier = libya_oil_nationalisation_dynamic_modifier }
+	remove_dynamic_modifier = { modifier = libya_gaddafi_instability_dynamic_modifier }
+	remove_dynamic_modifier = { modifier = LBA_new_green_book }
+
+	if = {
+		limit = { FROM = { has_variable = lba_oil_nationalisation } }
+		set_variable = { lba_oil_nationalisation = FROM.lba_oil_nationalisation }
+	}
+	LBA_1970_refresh_oil_control = yes
+
+	if = { limit = { FROM = { has_country_flag = LBA_1970_system_initialized } } set_country_flag = LBA_1970_system_initialized }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_arab_socialist_union } } set_country_flag = LBA_1970_arab_socialist_union }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_foreign_bases_closed } } set_country_flag = LBA_1970_foreign_bases_closed }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_noc_founded } } set_country_flag = LBA_1970_noc_founded }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_oil_partner_agreed } } set_country_flag = LBA_1970_oil_partner_agreed }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_oil_partner_algeria } } set_country_flag = LBA_1970_oil_partner_algeria }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_oil_partner_italy } } set_country_flag = LBA_1970_oil_partner_italy }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_oil_partner_france } } set_country_flag = LBA_1970_oil_partner_france }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_oil_partner_soviet } } set_country_flag = LBA_1970_oil_partner_soviet }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_jamahiriya_proclaimed } } set_country_flag = LBA_1970_jamahiriya_proclaimed }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_muhayshi_government } } set_country_flag = LBA_1970_muhayshi_government }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_national_oil_corporation } } set_country_flag = LBA_1970_national_oil_corporation }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_oil_revenue_model } } set_country_flag = LBA_1970_oil_revenue_model }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_chad_war_fought } } set_country_flag = LBA_1970_chad_war_fought }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_system_historical } } set_country_flag = LBA_1970_system_historical }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_nfsl_government } } set_country_flag = LBA_1970_nfsl_government }
+	if = { limit = { FROM = { has_country_flag = LBA_1970_senussi_restoration } } set_country_flag = LBA_1970_senussi_restoration }
+}
+
+LBA_1970_close_covert_channels = {
+	clr_country_flag = LBA_1970_irish_channel_open
+	clr_country_flag = LBA_1970_irish_arms_available
+	clr_country_flag = LBA_1970_irish_channel_maintained
+	clr_country_flag = LBA_1970_palestinian_training_available
+	clr_country_flag = LBA_1970_foreign_training_available
+	clr_country_flag = LBA_1970_resistance_liaison_available
+	if = { limit = { has_idea = LBA_1970_exile_networks } remove_ideas = LBA_1970_exile_networks }
+}
+
+LBA_1970_release_assistance_slot = {
+	if = { limit = { check_variable = { LBA_1970_assistance_active > 0 } } subtract_from_variable = { LBA_1970_assistance_active = 1 } }
+	clamp_variable = { var = LBA_1970_assistance_active min = 0 }
+}
+
+LBA_1970_clear_previous_political_order = {
+	LBA_1970_close_covert_channels = yes
+	if = { limit = { has_idea = LBA_1970_rcc_crisis } remove_ideas = LBA_1970_rcc_crisis }
+	if = { limit = { has_idea = LBA_1970_state_directed_economy } remove_ideas = LBA_1970_state_directed_economy }
+	if = { limit = { has_idea = LBA_1970_controlled_joint_ventures } remove_ideas = LBA_1970_controlled_joint_ventures }
+	if = { limit = { has_idea = LBA_1970_cultural_revolution_campaign } remove_ideas = LBA_1970_cultural_revolution_campaign }
+	if = { limit = { has_idea = LBA_1970_jamahiriya_declared } remove_ideas = LBA_1970_jamahiriya_declared }
+	if = { limit = { has_idea = LBA_1970_jamahiriya_system_historical } remove_ideas = LBA_1970_jamahiriya_system_historical }
+	if = { limit = { has_idea = LBA_1970_revolutionary_committees } remove_ideas = LBA_1970_revolutionary_committees }
+	if = { limit = { has_idea = LBA_1970_green_charter } remove_ideas = LBA_1970_green_charter }
+	if = { limit = { has_idea = LBA_1970_pragmatic_jamahiriya } remove_ideas = LBA_1970_pragmatic_jamahiriya }
+	if = { limit = { has_idea = LBA_1970_african_union_architect } remove_ideas = LBA_1970_african_union_architect }
+	if = { limit = { has_idea = LBA_1970_african_development_partner } remove_ideas = LBA_1970_african_development_partner }
+	if = { limit = { has_idea = LBA_1970_collective_rcc } remove_ideas = LBA_1970_collective_rcc }
+	if = { limit = { has_idea = LBA_1970_constitutional_republic } remove_ideas = LBA_1970_constitutional_republic }
+	if = { limit = { has_idea = LBA_1970_republican_councils } remove_ideas = LBA_1970_republican_councils }
+	if = { limit = { has_idea = LBA_1970_nfsl_transition } remove_ideas = LBA_1970_nfsl_transition }
+	if = { limit = { has_idea = LBA_1970_nfsl_civic_administration } remove_ideas = LBA_1970_nfsl_civic_administration }
+	if = { limit = { has_idea = LBA_1970_civilian_security_oversight } remove_ideas = LBA_1970_civilian_security_oversight }
+	if = { limit = { has_idea = LBA_1970_royal_transition } remove_ideas = LBA_1970_royal_transition }
+	if = { limit = { has_idea = LBA_1970_royal_basic_law } remove_ideas = LBA_1970_royal_basic_law }
+	if = { limit = { has_idea = LBA_1970_parliamentary_monarchy } remove_ideas = LBA_1970_parliamentary_monarchy }
+	if = { limit = { has_idea = LBA_1970_royal_executive_rule } remove_ideas = LBA_1970_royal_executive_rule }
+	clr_country_flag = LBA_1970_system_historical
+	clr_country_flag = LBA_1970_jamahiriya_proclaimed
+}
+
+LBA_1970_initialize_system = {
+	if = {
+		limit = {
+			original_tag = LBA
+			NOT = { has_country_flag = LBA_1970_system_initialized }
+		}
+		set_country_flag = LBA_1970_system_initialized
+		set_country_flag = LBA_1970_party_names_active
+		set_country_flag = LBA_1970_no_tribal_system
+		set_country_flag = LBA_prevent_giving_tribal_traits
+		if = {
+			limit = { NOT = { has_country_flag = LBA_tribalism_disabled } }
+			lba_disable_tribalism = yes
+			set_country_flag = LBA_tribalism_disabled
+		}
+
+		# Party index 7 is Autocracy under the Emerging outlook in MD.
+		IMP_1970_profile_emerging_autocracy = yes
+		# Libya has its own staged RCC -> ASU -> Jamahiriya names below the
+		# Autocracy subideology. Do not let the static 1970 start-name override
+		# mask those later focus-driven changes in the ruling-party display.
+		clr_country_flag = IMP_1970_historical_politics
+		clr_country_flag = party8_banned
+		set_country_flag = free_ban_parties
+		set_partyall_banned = yes
+
+		# Native education mechanic: do not duplicate literacy with a static idea.
+		set_variable = { literacy_rate = 0.25 }
+		EDU_learn_your_ABCs_with_dread = yes
+
+		# The 1970 snapshot does not inherit the 2000 history block. Supply the
+		# minimum MD law/faction baseline required by spending and opinion helpers,
+		# without creating duplicate law-category ideas in modded start setups.
+		if = {
+			limit = { NOT = { has_idea = sunni } }
+			add_ideas = sunni
+		}
+		if = {
+			limit = { NOT = { has_idea = LoAS_member } }
+			add_ideas = LoAS_member
+		}
+		if = {
+			limit = { NOT = { has_idea = OAU_member } }
+			add_ideas = OAU_member
+		}
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						has_idea = corruption_level_01
+						has_idea = corruption_level_02
+						has_idea = corruption_level_03
+						has_idea = corruption_level_04
+						has_idea = corruption_level_05
+						has_idea = corruption_level_06
+						has_idea = corruption_level_07
+						has_idea = corruption_level_08
+						has_idea = corruption_level_09
+						has_idea = corruption_level_10
+					}
+				}
+			}
+			add_ideas = corruption_level_05
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = bureau_01 has_idea = bureau_02 has_idea = bureau_03 has_idea = bureau_04 has_idea = bureau_05 } } }
+			add_ideas = bureau_01
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = defence_00 has_idea = defence_01 has_idea = defence_02 has_idea = defence_03 has_idea = defence_04 has_idea = defence_05 has_idea = defence_06 has_idea = defence_07 has_idea = defence_08 has_idea = defence_09 } } }
+			add_ideas = defence_01
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = police_01 has_idea = police_02 has_idea = police_03 has_idea = police_04 has_idea = police_05 } } }
+			add_ideas = police_02
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = edu_01 has_idea = edu_02 has_idea = edu_03 has_idea = edu_04 has_idea = edu_05 } } }
+			add_ideas = edu_01
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = health_01 has_idea = health_02 has_idea = health_03 has_idea = health_04 has_idea = health_05 has_idea = health_06 } } }
+			add_ideas = health_01
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = social_01 has_idea = social_02 has_idea = social_03 has_idea = social_04 has_idea = social_05 has_idea = social_06 } } }
+			add_ideas = social_01
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = md_closed_economy has_idea = consumption_economy has_idea = semi_consumption_economy has_idea = mixed_economy has_idea = export_economy has_idea = globalized_trade_economy } } }
+			add_ideas = export_economy
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = no_military has_idea = volunteer_army has_idea = partial_draft_army has_idea = draft_army } } }
+			add_ideas = partial_draft_army
+		}
+		if = {
+			limit = { NOT = { OR = { has_idea = officer_baptism_by_fire has_idea = officer_basic_training has_idea = officer_advanced_training has_idea = officer_military_school has_idea = officer_military_academy has_idea = officer_international_education } } }
+			add_ideas = officer_basic_training
+		}
+		if = {
+			limit = { NOT = { has_idea = the_military } }
+			add_ideas = the_military
+		}
+		if = {
+			limit = { NOT = { has_idea = intelligence_community } }
+			add_ideas = intelligence_community
+		}
+		if = {
+			limit = { NOT = { has_idea = labour_unions } }
+			add_ideas = labour_unions
+		}
+		if = {
+			limit = { NOT = { has_idea = fossil_fuel_industry } }
+			add_ideas = fossil_fuel_industry
+		}
+		if = {
+			limit = { NOT = { has_variable = the_military_opinion } }
+			set_variable = { the_military_opinion = 65 }
+		}
+		if = {
+			limit = { NOT = { has_variable = intelligence_community_opinion } }
+			set_variable = { intelligence_community_opinion = 60 }
+		}
+		if = {
+			limit = { NOT = { has_variable = labour_unions_opinion } }
+			set_variable = { labour_unions_opinion = 40 }
+		}
+		if = {
+			limit = { NOT = { has_variable = fossil_fuel_industry_opinion } }
+			set_variable = { fossil_fuel_industry_opinion = 60 }
+		}
+		initialize_internal_faction_dynamic_modifiers = yes
+
+		add_ideas = {
+			LBA_1970_fragmented_administration_1
+			LBA_1970_neglected_infrastructure_1
+			LBA_1970_foreign_oil_concessions_1
+			LBA_1970_underdeveloped_agriculture_1
+			LBA_1970_unprepared_army_1
+			LBA_1970_foreign_bases
+		}
+
+		set_variable = { lba_oil_nationalisation = 0.10 }
+		LBA_1970_refresh_oil_control = yes
+
+		# In country scope, give_military_access means ROOT grants access to target.
+		if = {
+			limit = {
+				country_exists = ENG
+				NOT = { gives_military_access_to = ENG }
+			}
+			give_military_access = ENG
+		}
+		if = {
+			limit = {
+				country_exists = USA
+				NOT = { gives_military_access_to = USA }
+			}
+			give_military_access = USA
+		}
+	}
+}
+
+LBA_1970_close_foreign_bases = {
+	if = {
+		limit = {
+			country_exists = ENG
+			gives_military_access_to = ENG
+		}
+		ENG = {
+			diplomatic_relation = {
+				country = ROOT
+				relation = military_access
+				active = no
+			}
+		}
+	}
+	if = {
+		limit = {
+			country_exists = USA
+			gives_military_access_to = USA
+		}
+		USA = {
+			diplomatic_relation = {
+				country = ROOT
+				relation = military_access
+				active = no
+			}
+		}
+	}
+
+	if = {
+		limit = { has_idea = LBA_1970_foreign_bases }
+		swap_ideas = {
+			remove_idea = LBA_1970_foreign_bases
+			add_idea = LBA_1970_full_sovereignty
+		}
+	}
+	else_if = {
+		limit = { NOT = { has_idea = LBA_1970_full_sovereignty } }
+		add_ideas = LBA_1970_full_sovereignty
+	}
+	set_country_flag = LBA_1970_foreign_bases_closed
+}
+
+LBA_1970_improve_administration = {
+	if = {
+		limit = { has_idea = LBA_1970_fragmented_administration_1 }
+		swap_ideas = {
+			remove_idea = LBA_1970_fragmented_administration_1
+			add_idea = LBA_1970_fragmented_administration_2
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_fragmented_administration_2 }
+		swap_ideas = {
+			remove_idea = LBA_1970_fragmented_administration_2
+			add_idea = LBA_1970_fragmented_administration_3
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_fragmented_administration_3 }
+		remove_ideas = LBA_1970_fragmented_administration_3
+	}
+}
+
+LBA_1970_improve_infrastructure = {
+	if = {
+		limit = { has_idea = LBA_1970_neglected_infrastructure_1 }
+		swap_ideas = {
+			remove_idea = LBA_1970_neglected_infrastructure_1
+			add_idea = LBA_1970_neglected_infrastructure_2
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_neglected_infrastructure_2 }
+		swap_ideas = {
+			remove_idea = LBA_1970_neglected_infrastructure_2
+			add_idea = LBA_1970_neglected_infrastructure_3
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_neglected_infrastructure_3 }
+		remove_ideas = LBA_1970_neglected_infrastructure_3
+	}
+}
+
+LBA_1970_improve_oil_control = {
+	if = {
+		limit = { has_idea = LBA_1970_foreign_oil_concessions_1 }
+		swap_ideas = {
+			remove_idea = LBA_1970_foreign_oil_concessions_1
+			add_idea = LBA_1970_foreign_oil_concessions_2
+		}
+		set_variable = { lba_oil_nationalisation = 0.35 }
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_foreign_oil_concessions_2 }
+		swap_ideas = {
+			remove_idea = LBA_1970_foreign_oil_concessions_2
+			add_idea = LBA_1970_foreign_oil_concessions_3
+		}
+		set_variable = { lba_oil_nationalisation = 0.60 }
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_foreign_oil_concessions_3 }
+		swap_ideas = {
+			remove_idea = LBA_1970_foreign_oil_concessions_3
+			add_idea = LBA_1970_national_oil_corporation
+		}
+		set_variable = { lba_oil_nationalisation = 0.85 }
+		set_country_flag = LBA_1970_national_oil_corporation
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_national_oil_corporation }
+		swap_ideas = {
+			remove_idea = LBA_1970_national_oil_corporation
+			add_idea = LBA_1970_oil_revenue_state
+		}
+		set_variable = { lba_oil_nationalisation = 1 }
+		set_country_flag = LBA_1970_oil_revenue_model
+	}
+	LBA_1970_refresh_oil_control = yes
+}
+
+# Foreign oil missions only begin after the requested country accepts.
+# All four routes share one lock; a refusal leaves the other offers available.
+LBA_1970_accept_algerian_oil_mission = {
+	clr_country_flag = LBA_1970_oil_offer_pending
+	set_country_flag = LBA_1970_oil_partner_agreed
+	set_country_flag = LBA_1970_oil_partner_algeria
+	add_ideas = LBA_1970_algerian_petroleum_mission
+	add_opinion_modifier = { target = ALG modifier = large_commercial_relations }
+	set_temp_variable = { treasury_change = -2.50 }
+	modify_treasury_effect = yes
+}
+
+LBA_1970_accept_italian_oil_mission = {
+	clr_country_flag = LBA_1970_oil_offer_pending
+	set_country_flag = LBA_1970_oil_partner_agreed
+	set_country_flag = LBA_1970_oil_partner_italy
+	add_ideas = LBA_1970_foreign_petroleum_contractors
+	add_opinion_modifier = { target = ITA modifier = large_commercial_relations }
+	set_temp_variable = { percent_change = 2 }
+	set_temp_variable = { tag_index = ITA }
+	set_temp_variable = { influence_target = LBA }
+	change_influence_percentage = yes
+	set_temp_variable = { treasury_change = -7.50 }
+	modify_treasury_effect = yes
+}
+
+LBA_1970_accept_french_oil_mission = {
+	clr_country_flag = LBA_1970_oil_offer_pending
+	set_country_flag = LBA_1970_oil_partner_agreed
+	set_country_flag = LBA_1970_oil_partner_france
+	add_ideas = LBA_1970_french_petroleum_mission
+	add_opinion_modifier = { target = FRA modifier = large_commercial_relations }
+	set_temp_variable = { percent_change = 2 }
+	set_temp_variable = { tag_index = FRA }
+	set_temp_variable = { influence_target = LBA }
+	change_influence_percentage = yes
+	set_temp_variable = { treasury_change = -7.50 }
+	modify_treasury_effect = yes
+}
+
+LBA_1970_accept_soviet_oil_mission = {
+	clr_country_flag = LBA_1970_oil_offer_pending
+	set_country_flag = LBA_1970_oil_partner_agreed
+	set_country_flag = LBA_1970_oil_partner_soviet
+	add_ideas = LBA_1970_soviet_petroleum_mission
+	add_opinion_modifier = { target = SOV modifier = large_commercial_relations }
+	set_temp_variable = { percent_change = 4 }
+	set_temp_variable = { tag_index = SOV }
+	set_temp_variable = { influence_target = LBA }
+	change_influence_percentage = yes
+	set_temp_variable = { treasury_change = -5.00 }
+	modify_treasury_effect = yes
+}
+
+LBA_1970_improve_agriculture = {
+	if = {
+		limit = { has_idea = LBA_1970_underdeveloped_agriculture_1 }
+		swap_ideas = {
+			remove_idea = LBA_1970_underdeveloped_agriculture_1
+			add_idea = LBA_1970_underdeveloped_agriculture_2
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_underdeveloped_agriculture_2 }
+		swap_ideas = {
+			remove_idea = LBA_1970_underdeveloped_agriculture_2
+			add_idea = LBA_1970_underdeveloped_agriculture_3
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_underdeveloped_agriculture_3 }
+		remove_ideas = LBA_1970_underdeveloped_agriculture_3
+	}
+}
+
+LBA_1970_improve_army = {
+	if = {
+		limit = { has_idea = LBA_1970_unprepared_army_1 }
+		swap_ideas = {
+			remove_idea = LBA_1970_unprepared_army_1
+			add_idea = LBA_1970_unprepared_army_2
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_unprepared_army_2 }
+		swap_ideas = {
+			remove_idea = LBA_1970_unprepared_army_2
+			add_idea = LBA_1970_unprepared_army_3
+		}
+	}
+	else_if = {
+		limit = { has_idea = LBA_1970_unprepared_army_3 }
+		remove_ideas = LBA_1970_unprepared_army_3
+	}
+}
+
+LBA_1970_raise_literacy_small = {
+	if = {
+		limit = { has_variable = literacy_rate }
+		set_temp_variable = { LR_change = 0.04 }
+		update_literacy_rate = yes
+	}
+}
+
+LBA_1970_raise_literacy_large = {
+	if = {
+		limit = { has_variable = literacy_rate }
+		set_temp_variable = { LR_change = 0.08 }
+		update_literacy_rate = yes
+	}
+}
+
+LBA_1970_proclaim_jamahiriya = {
+	if = {
+		limit = { NOT = { has_idea = LBA_1970_jamahiriya_declared } }
+		add_ideas = LBA_1970_jamahiriya_declared
+	}
+	set_country_flag = LBA_1970_jamahiriya_proclaimed
+	set_country_flag = LBA_1970_party_names_active
+	set_cosmetic_tag = LBA_1985_JAMAHIRIYA
+
+	# Keep the Jamahiriya on the mod-native Autocracy party index, without
+	# resetting the complete popularity array a second time.
+	set_politics = {
+		ruling_party = communism
+		elections_allowed = no
+	}
+	if = {
+		limit = { NOT = { AND = { has_variable = ruling_party check_variable = { ruling_party = 7 } } } }
+		clear_variable = ruling_party
+		clear_array = gov_coalition_array
+		set_variable = { ruling_party = 7 }
+		
+		startup_politics = yes
+	}
+	clr_country_flag = party8_banned
+	set_country_flag = free_ban_parties
+	set_partyall_banned = yes
+}
+
+LBA_1970_set_system_historical = {
+	if = {
+		limit = { NOT = { has_idea = LBA_1970_jamahiriya_system_historical } }
+		add_ideas = LBA_1970_jamahiriya_system_historical
+	}
+	set_country_flag = LBA_1970_system_historical
+}
+

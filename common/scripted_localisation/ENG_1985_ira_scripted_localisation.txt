@@ -1,0 +1,223 @@
+# =============================================================================
+# ENG 1985 - IRA tracker scripted localisations
+# =============================================================================
+# Three dynamic-text functions consumed by the tracker GUI window via
+#   text = "[ENG_ira_threat_phase_text]"
+# Each picks the first text block whose trigger matches and substitutes the
+# matching loc key from MD_focus_ENG_1985_l_english.yml /
+# ENG_1985_ira_foreign_support_l_english.yml.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Threat phase: derived from ENG_ira_militancy + ENG_ira_support
+# -----------------------------------------------------------------------------
+defined_text = {
+	name = ENG_ira_threat_phase_text
+	text = {
+		trigger = { check_variable = { ENG_ira_militancy < 30 } }
+		localization_key = ENG_ira_threat_phase_low
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_militancy < 60 } }
+		localization_key = ENG_ira_threat_phase_medium
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_militancy < 80 }
+		}
+		localization_key = ENG_ira_threat_phase_high
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_militancy > 79 } }
+		localization_key = ENG_ira_threat_phase_critical
+	}
+}
+
+# -----------------------------------------------------------------------------
+# Active sponsors: do any non-British countries currently have an IRA cooldown
+# flag set? If so, the British player can hit Convoy Interdiction.
+# -----------------------------------------------------------------------------
+defined_text = {
+	name = ENG_ira_active_sponsors_text
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_foreign_funding > 30 }
+		}
+		localization_key = ENG_ira_active_sponsors_some
+	}
+	text = {
+		localization_key = ENG_ira_active_sponsors_none
+	}
+}
+
+# -----------------------------------------------------------------------------
+# Next event: which random IRA event is currently armed?
+# Order matters - we report the most severe armed event first.
+# -----------------------------------------------------------------------------
+defined_text = {
+	name = ENG_ira_next_event_text
+	text = {
+		trigger = { has_country_flag = ENG_1985_ira_startup_grace }
+		localization_key = ENG_ira_next_event_grace
+	}
+	text = {
+		trigger = { has_country_flag = ENG_1985_ira_recent_incident_report }
+		localization_key = ENG_ira_next_event_cooldown
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_militancy > 82 }
+			check_variable = { ENG_ira_support > 50 }
+			NOT = { has_country_flag = ENG_1985_ira_startup_grace }
+			NOT = { has_country_flag = ENG_1985_ira_recent_incident_report }
+			NOT = { has_country_flag = ENG_1985_recent_ira_major_plot }
+		}
+		localization_key = ENG_ira_next_event_major
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_loyalist_tension > 65 }
+			NOT = { has_country_flag = ENG_1985_ira_startup_grace }
+			NOT = { has_country_flag = ENG_1985_ira_recent_incident_report }
+			NOT = { has_country_flag = ENG_1985_recent_loyalist_backlash }
+		}
+		localization_key = ENG_ira_next_event_loyalist
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_foreign_funding > 55 }
+			NOT = { has_country_flag = ENG_1985_ira_startup_grace }
+			NOT = { has_country_flag = ENG_1985_ira_recent_incident_report }
+			NOT = { has_country_flag = ENG_1985_recent_ira_arms_event }
+		}
+		localization_key = ENG_ira_next_event_arms
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_intelligence_penetration > 65 }
+			OR = {
+				check_variable = { ENG_ira_militancy > 45 }
+				check_variable = { ENG_ira_foreign_funding > 45 }
+			}
+			NOT = { has_country_flag = ENG_1985_ira_startup_grace }
+			NOT = { has_country_flag = ENG_1985_ira_recent_incident_report }
+			NOT = { has_country_flag = ENG_1985_recent_intelligence_breakthrough }
+		}
+		localization_key = ENG_ira_next_event_intel
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_peace_progress > 65 }
+			check_variable = { ENG_ira_militancy < 45 }
+			NOT = { has_country_flag = ENG_1985_ira_startup_grace }
+			NOT = { has_country_flag = ENG_1985_ira_recent_incident_report }
+			NOT = { has_country_flag = ENG_1985_recent_settlement_window }
+		}
+		localization_key = ENG_ira_next_event_settlement
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_militancy > 65 }
+			NOT = { has_country_flag = ENG_1985_ira_startup_grace }
+			NOT = { has_country_flag = ENG_1985_ira_recent_incident_report }
+			NOT = { has_country_flag = ENG_1985_recent_ira_bombing }
+		}
+		localization_key = ENG_ira_next_event_belfast
+	}
+	text = {
+		localization_key = ENG_ira_next_event_safe
+	}
+}
+
+defined_text = {
+	name = ENG_ira_monthly_drift_text
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_foreign_funding > 40 }
+			check_variable = { ENG_ira_security_pressure > 60 }
+		}
+		localization_key = ENG_ira_monthly_drift_contested
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_foreign_funding > 40 } }
+		localization_key = ENG_ira_monthly_drift_funding
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_security_pressure > 60 } }
+		localization_key = ENG_ira_monthly_drift_security
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_peace_progress > 35 } }
+		localization_key = ENG_ira_monthly_drift_peace
+	}
+	text = {
+		localization_key = ENG_ira_monthly_drift_baseline
+	}
+}
+
+defined_text = {
+	name = ENG_ira_irish_cooperation_text
+	text = {
+		trigger = { has_country_flag = ENG_1985_irish_republican_veto }
+		localization_key = ENG_ira_irish_cooperation_republican
+	}
+	text = {
+		trigger = { has_country_flag = ENG_1985_irish_cooperation_refused }
+		localization_key = ENG_ira_irish_cooperation_refused
+	}
+	text = {
+		trigger = {
+			has_country_flag = ENG_1985_irish_security_cooperation
+			has_country_flag = ENG_1985_irish_intelligence_liaison
+		}
+		localization_key = ENG_ira_irish_cooperation_full
+	}
+	text = {
+		trigger = { has_country_flag = ENG_1985_irish_security_cooperation }
+		localization_key = ENG_ira_irish_cooperation_security
+	}
+	text = {
+		trigger = { has_country_flag = ENG_1985_backchannels_open }
+		localization_key = ENG_ira_irish_cooperation_backchannels
+	}
+	text = {
+		trigger = { has_country_flag = ENG_1985_awaiting_irish_backchannel_response }
+		localization_key = ENG_ira_irish_cooperation_pending
+	}
+	text = {
+		localization_key = ENG_ira_irish_cooperation_none
+	}
+}
+
+defined_text = {
+	name = ENG_ira_policy_advice_text
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_militancy > 82 }
+			check_variable = { ENG_ira_support > 50 }
+		}
+		localization_key = ENG_ira_policy_advice_major
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_foreign_funding > 55 } }
+		localization_key = ENG_ira_policy_advice_funding
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_loyalist_tension > 65 } }
+		localization_key = ENG_ira_policy_advice_loyalist
+	}
+	text = {
+		trigger = {
+			check_variable = { ENG_ira_peace_progress > 60 }
+			check_variable = { ENG_ira_militancy < 45 }
+		}
+		localization_key = ENG_ira_policy_advice_settlement
+	}
+	text = {
+		trigger = { check_variable = { ENG_ira_intelligence_penetration < 25 } }
+		localization_key = ENG_ira_policy_advice_intel
+	}
+	text = {
+		localization_key = ENG_ira_policy_advice_balanced
+	}
+}

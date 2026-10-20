@@ -1,0 +1,179 @@
+add_namespace = CSTO
+country_event = { #X country wanna join CSTO, this event for Russia
+	id = CSTO.1
+	title = CSTO.1.t
+	desc = CSTO.1.d
+	picture = GFX_join_the_csto
+	is_triggered_only = yes
+
+	option = { #We accept!
+		name = CSTO.1.a
+		log = "[GetDateText]: [This.GetName]: CSTO.1.a executed"
+		FROM = { country_event = { id = CSTO.3 hours = 6 } }
+		ai_chance = {
+			base = 90
+			modifier = {
+				factor = 0.6
+				NOT = { has_government = FROM }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { has_war = yes }
+			}
+		}
+	}
+
+	option = { #We refuse
+		name = CSTO.1.b
+		log = "[GetDateText]: [This.GetName]: CSTO.1.b executed"
+		FROM = { country_event = { id = CSTO.2 hours = 6 } }
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				NOT = { has_government = FROM }
+			}
+			modifier = {
+				factor = 10
+				FROM = { has_war = yes }
+			}
+		}
+	}
+}
+
+country_event = { #Russia refused request to join CSTO
+	id = CSTO.2
+	title = CSTO.2.t
+	desc = CSTO.2.d
+	picture = GFX_join_the_csto
+
+	is_triggered_only = yes
+
+	option = {
+		name = CSTO.2.a
+	}
+}
+
+country_event = { #X country got invitation from Russia
+	id = CSTO.3
+	title = CSTO.3.t
+	desc = CSTO.3.d
+	picture = GFX_join_the_csto
+
+	is_triggered_only = yes
+
+	option = { #We accept!
+		name = CSTO.3.a
+		log = "[GetDateText]: [This.GetName]: CSTO.3.a executed"
+		CSTO_join = yes
+		ai_chance = {
+			base = 90
+			modifier = {
+				add = 10
+				UKR = {
+					OR = {
+						has_idea = UKR_east_strengthened
+						has_idea = UKR_east_dominant
+					}
+				}
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { has_government = FROM }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { has_war = yes }
+			}
+		}
+	}
+
+	option = { #We refuse
+		name = CSTO.3.b
+		log = "[GetDateText]: [This.GetName]: CSTO.3.b executed"
+		add_political_power = 50
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				NOT = { has_government = FROM }
+			}
+			modifier = {
+				factor = 10
+				FROM = { has_war = yes }
+			}
+		}
+	}
+}
+
+news_event = { #X country joined the CSTO news
+	id = CSTO.4
+	title = CSTO.4.t
+	desc = CSTO.4.d
+	picture = GFX_news_csto
+
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = CSTO.4.a
+		trigger = {
+			original_tag = FROM
+		}
+	}
+	option = {
+		name = CSTO.4.b
+		trigger = {
+			original_tag = SOV
+		}
+	}
+	option = {
+		name = CSTO.4.c
+		trigger = {
+			NOT = {
+				OR = {
+					original_tag = FROM
+					original_tag = SOV
+				}
+			}
+		}
+	}
+}
+
+news_event = { #X country left the CSTO news
+	id = CSTO.5
+	title = CSTO.5.t
+	desc = CSTO.5.d
+	picture = GFX_news_csto
+
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = CSTO.5.a
+		trigger = { original_tag = FROM }
+	}
+	option = {
+		name = CSTO.5.b
+		trigger = { NOT = { original_tag = FROM } }
+	}
+}
+
+news_event = { #CSTO converted to offensive alliance
+	id = CSTO.6
+	title = CSTO.6.t
+	desc = CSTO.6.d
+	picture = GFX_news_csto
+
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = CSTO.6.a
+		trigger = { has_idea = CSTO_member }
+	}
+	option = {
+		name = CSTO.6.b
+		trigger = { NOT = { has_idea = CSTO_member } }
+	}
+}

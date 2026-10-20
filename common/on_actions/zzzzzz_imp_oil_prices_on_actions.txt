@@ -1,0 +1,113 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+on_actions = {
+    on_startup = {
+        effect = {
+            set_variable = { global.imp_global_oil_price = 75 }
+            set_variable = { global.imp_global_oil_price_equilibrium = 75 }            
+            # MD Cold War: show the price in dollars of the day (1970: 75 = 1.80 USD, the January 1970
+            # posted price of Arabian Light; later OPEC price level and consumer prices). The model keeps 75.
+            if = {
+                limit = {
+                    country_exists = USA
+                    USA = { IMP_is_1970_scenario = yes }
+                }
+                set_variable = { global.imp_oil_price_base_unit = 0.024 }
+            }
+            else = {
+                set_variable = { global.imp_oil_price_base_unit = 1 }
+            }
+            # on_startup has no country scope; the display effect needs one.
+            if = {
+                limit = { country_exists = USA }
+                USA = { imp_update_oil_price_display = yes }
+            }
+            every_country = {
+                add_dynamic_modifier = { modifier = imp_oil_prices }
+                imp_set_trade_policy_base = yes
+            }
+        }
+    }
+
+    ### Set the largest oil producers & Calculate dependencies
+    on_monthly_LIC = {
+        effect = {
+            set_variable = { global.numRelCforOilDep = 0 }
+            set_variable = { global.tot_dep = 0 }
+
+            imp_calculate_oil_producers = yes
+            imp_calculate_oil_dependency = yes
+
+            ## Calculate global dependence.
+            divide_variable = { global.tot_dep = global.numRelCforOilDep }
+        }
+    }
+
+    ### Change the Oil Price
+    on_weekly_LIC = {
+        effect = {
+                imp_calculate_oil_equilibrium = yes
+                imp_weekly_oil_price_change = yes
+        }
+    }
+
+    ### Random Global Oil Events
+    on_monthly_LIC = {
+        effect = { 
+            if = {
+                limit = { 
+                    NOT = { has_global_flag = imp_oil_random_event_done }
+                }
+
+                imp_random_global_oil_event = yes
+
+                set_global_flag = { 
+                    flag = imp_oil_random_event_done 
+                    days = 232 
+                    value = 1
+                }
+            }
+        }
+    }
+
+    ### National Oil Events & Oil Pol
+    on_monthly = {
+        effect = {
+            imp_set_trade_policy = yes
+
+            if = { 
+                limit = {
+                    NOT = { has_country_flag = imp_national_oil_event_cd } 
+                }
+
+                if = { 
+                    limit = { 
+                        has_dynamic_modifier = { modifier = imp_oil_prices_high }
+                    }
+                    imp_random_high_oil_event = yes
+                }
+                else_if = {
+                    limit = {
+                        has_dynamic_modifier = { modifier = imp_oil_prices_low }
+                    }
+                    imp_random_low_oil_event = yes
+                }
+
+                set_country_flag = {
+                    flag = imp_national_oil_event_cd
+                    days = 98
+                    value = 1
+                }
+            }
+        }
+    }
+
+    ### Automatic Spikes when War
+    on_war_relation_added = {
+        effect = {
+            imp_oil_war_event = yes
+        }
+    }
+}

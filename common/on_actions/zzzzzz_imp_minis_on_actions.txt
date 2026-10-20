@@ -1,0 +1,255 @@
+on_actions = {
+on_monthly_LUX = { 
+        effect = { 
+            add_to_variable = { global.resource_spawner_counter = 1 }
+            if = { 
+                limit = { 
+                    check_variable = { global.resource_spawner_counter > 40 }
+                }
+
+                random_list = { 
+                    5 = {
+                        random_state = { 
+                            limit = {
+                                OWNER = {
+                                    is_ai = no
+                                    has_war = no
+                                    check_variable = { gdp_total < 1000 } # Let's pick a smaller nation. Give them something nice.
+                                    NOT = { 
+                                        has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+                                    }
+                                }
+                                is_coastal = no
+                                is_capital = no
+                            }
+                            save_event_target_as = target_state
+                            PREV = { news_event = imp_minis.2 }
+                        }
+                    }
+                    5 = {
+                        random_state = { 
+                            limit = {
+                                OWNER = {
+                                    is_ai = no
+                                    has_war = no
+                                    has_idea = imp_ni_resource_extraction_mandate
+                                    NOT = { 
+                                        has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+                                    }
+                                }
+                                is_coastal = no
+                                is_capital = no
+                            }
+                            save_event_target_as = target_state
+                            PREV = { news_event = imp_minis.2 }
+                        }
+                    }
+                    90 = {
+                        # Nothing happens.
+                    }
+                }
+            }
+        }
+    }
+
+on_daily = {
+		effect = {
+            if = { 
+                limit = {
+                    is_ai = yes
+                    NOT = { has_country_flag = USA_1985_iraq_market_access }
+                    NOT = { has_country_flag = USA_1985_iran_market_access }
+                }
+                set_rule = { can_access_market = no }
+            }
+            else_if = {
+                limit = {
+                    OR = {
+                        has_country_flag = USA_1985_iraq_market_access
+                        has_country_flag = USA_1985_iran_market_access
+                    }
+                }
+                set_rule = { can_access_market = yes }
+            }
+            else_if =
+            {  
+                limit = { NOT = { has_idea = international_sanctions } }
+                set_rule = { can_access_market = yes }
+            }
+        }
+    }
+
+on_weekly = {
+        effect = {
+            # Set minimum corporate tax rate to 15%
+            if = {
+                limit = { 
+                    is_ai = no
+                    check_variable = { corporate_tax_rate < 15 }
+                    NOT = { has_idea = rentier_state }
+                }
+                set_variable = { corporate_tax_rate = 15 }
+            }
+        }
+    }
+
+on_monthly = {
+        effect = { 
+            imp_set_investment_caps = yes
+            ## Add Base Spirits
+            add_ideas = imp_oooplanes
+        }
+    }
+
+on_monthly = {
+		effect = {
+            if = { 
+                limit = { casualties > 0 }
+                if = {
+                    limit = { check_variable = { imp_calc_casualties_k < casualties_k } }
+
+                    # Calculate the monthly casualties_civs_to_be_removed
+                    set_variable = { imp_monthly_casualties_k = casualties_k }
+                    subtract_from_variable = { imp_monthly_casualties_k = imp_calc_casualties_k }
+                    
+                    # Update counter for next tick
+                    set_variable = { imp_calc_casualties_k = casualties_k } 
+
+                    # Update total, campaign wide casualties
+                    add_to_variable = { imp_total_casualties_k = imp_monthly_casualties_k }
+
+                    # Calculate monthly dead - round to nearest int we don't want half dead
+                    set_variable = { imp_monthly_dead = imp_monthly_casualties_k }
+                    multiply_variable = { imp_monthly_dead = 1000 }
+                    multiply_variable = { imp_monthly_dead = 0.4 }
+                    round_variable = imp_monthly_dead
+
+                    # Update total, campaign wide dead
+                    set_variable = { imp_monthly_dead_k = imp_monthly_dead }
+                    divide_variable = { imp_monthly_dead_k = 1000 }
+                    add_to_variable = { imp_total_dead_k = imp_monthly_dead_k }
+
+                    # Remove the dead from a random state that can afford the casualties
+                    set_temp_variable = { cas_t = 0 }
+                    subtract_from_temp_variable = { cas_t = imp_monthly_dead }
+
+                    # We pick only one random state. There's really no need to make more lag over spreading out the casualties over more than 1 state, since the numbers won't be that high.
+                    random_core_state = 
+                    {
+                        limit = { state_population_k > imp_monthly_dead_k }
+                        add_manpower = cas_t
+                    }
+
+                    if = { 
+                        limit = { is_ai = no 
+                        NOT = { has_country_flag = imp_dead_report_off } 
+                    }
+                        country_event = Imp_war_cas_event.1
+                    }
+
+                    imp_calc_casualty_cost = yes
+                }
+                else = 
+                {
+                    # Something went wrong. Just reset.
+                    set_variable = { imp_calc_casualties_k = casualties_k } 
+                    set_variable = { imp_monthly_casualties = 0 }
+                    set_variable = { imp_monthly_dead = 0 }
+                }
+            }
+            else =
+            {
+                # No war / Casualties
+                set_variable = { imp_monthly_casualties = 0 }
+                set_variable = { imp_monthly_dead = 0 }
+            }
+        }
+    }
+
+on_monthly_LUX = { 
+        effect = { 
+            add_to_variable = { global.res_red_counter = 1 }
+            if = { 
+                limit = { 
+                    check_variable = { global.res_red_counter > 5 }
+                }
+                set_variable = { global.res_red_counter = 0 }
+
+                set_temp_variable = { oil_exp_t = 0 }
+                set_temp_variable = { oil_imp_t = 0}
+                every_country = { 
+                    add_to_variable = { oil_exp_t = resource_exported@oil }
+                    add_to_variable = { oil_imp_t = resource_imported@oil }
+                }
+
+                set_temp_variable = { oil_trade_surplus = oil_exp_t }
+                subtract_from_temp_variable = { oil_trade_surplus = oil_imp_t }
+
+                if = { 
+                    limit = { 
+                        check_variable = { oil_trade_surplus > 1000 }
+                    }
+                    set_temp_variable = { oil_reduction = 50 }
+                }
+                else_if = { 
+                    limit = { 
+                        check_variable = { oil_trade_surplus > 500 }
+                    }
+                    set_temp_variable = { oil_reduction = 25 }
+                }
+                else_if = { 
+                    limit = { 
+                        check_variable = { oil_trade_surplus > 250 }
+                    }
+                    set_temp_variable = { oil_reduction = 12 }
+                }
+                else_if = { 
+                    limit = { 
+                        check_variable = { oil_trade_surplus > 125 }
+                    }
+                    set_temp_variable = { oil_reduction = 6 }
+                }
+                else = { 
+                    set_temp_variable = { oil_reduction = 0 }
+                }
+
+                for_loop_effect = { 
+                    end = oil_reduction
+                    value = i
+                    random_state = { 
+                        limit = { 
+                            oil > 6
+                        }
+                        add_resource = {
+                            type = oil
+                            amount = -2
+                        }
+                        log = "deleted 2 from [?THIS.GetName]"
+                    }
+                }
+            }
+        }
+    }
+
+on_monthly = { 
+        effect = {
+            if = {
+                limit = {
+                    ROOT = {
+                      has_idea = imp_ni_innovation_ecosystem
+                      check_variable = { innovation_ecosystem_counter > 1 }
+                    }
+  
+                }
+                ROOT = {
+                  country_event = imp_minis.4
+                }
+            }
+            else = {
+              ROOT = {
+                  add_to_variable = { innovation_ecosystem_counter = 1 }
+                }
+            }
+        }
+    }
+}

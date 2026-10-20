@@ -1,0 +1,80 @@
+NATO_decisions = {
+	allowed = {
+		NOT = { has_global_flag = GAME_RULE_nato_disabled }
+		NATO_possible_countries = yes
+	}
+
+	icon = GFX_decision_generic_join_nato
+	scripted_gui = nato_gui_info_display
+	priority = 100
+
+	visible = {
+		NOT = { has_global_flag = GAME_RULE_nato_disabled }
+		EH_is_megastate_country = no
+	}
+}
+
+NATO_ukraine_help = {
+	allowed = {
+		NOT = { has_global_flag = GAME_RULE_nato_disabled }
+		NATO_possible_countries = yes
+		NOT = { original_tag = UKR }
+		NOT = { original_tag = SOV }
+	}
+
+	icon = GFX_decision_category_generic_foreign_policy
+	priority = 100
+
+	visible = {
+		NOT = { has_global_flag = GAME_RULE_nato_disabled }
+		EH_is_megastate_country = no
+		has_idea = NATO_member
+		UKR = {
+			has_war_with = SOV
+			is_in_faction = no
+			OR = {
+				has_government = democratic
+				has_government = neutrality
+			}
+		}
+	}
+}
+
+NATO_CSTO_agreement = {
+	allowed = {
+		NOT = { has_global_flag = GAME_RULE_nato_disabled }
+		OR = {
+			NATO_possible_countries = yes
+			original_tag = SOV
+		}
+	}
+
+	icon = GFX_decision_generic_join_nato
+	priority = 100
+	visible_when_empty = yes
+
+	visible = {
+		OR = {
+			has_idea = NATO_member
+			has_idea = CSTO_member
+		}
+		SOV = { NOT = { has_idea = NATO_member } }
+		NOT = { has_global_flag = GAME_RULE_nato_disabled }
+		NOT = { has_global_flag = NATO_CSTO_treaty_adandoned }
+	}
+}
+
+CSTO_management = {
+	allowed = {
+		NOT = { has_global_flag = GAME_RULE_csto_disabled }
+		is_post_soviet_state = yes
+	}
+
+	icon = GFX_faction_icon_csto_miniature
+	priority = 100
+
+	visible = {
+		is_faction_leader = yes
+		has_idea = CSTO_member
+	}
+}

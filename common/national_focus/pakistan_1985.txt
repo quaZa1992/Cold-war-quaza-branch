@@ -1,0 +1,1432 @@
+# =====================================================================
+# Pakistan 1985 — IMPERIA Cold War Sub-Mod
+# Focus Tree: PAK_1985_focus
+# Author: IMPERIA 1985 Submod (Pakistan, Jan 1985)
+#
+# Pressure-cooker tree centered on:
+#   1) The Bomb Above Bread (Bhutto's "we will eat grass" pact)
+#   2) Army or Civilian Rule (Zia / Junejo / Restore Party Politics)
+#   3) Afghan Frontline State and Indian Shadow
+#
+# Cross-references existing systems (modify_treasury_effect,
+# add_relative_party_popularity, increase_corruption, etc.) consistent
+# with the mod's IMPERIA style.
+# =====================================================================
+
+focus_tree = {
+	id = PAK_1985_focus
+	country = { base = 0 }
+
+	continuous_focus_position = { x = 50 y = 1800 }
+	shared_focus = COMMONWEALTH_shared_focus
+	initial_show_position = { x = 25 y = 0 }
+
+	default = no
+
+	###############################################################
+	# === SECTION 1: OPENING — STATE OF THE REPUBLIC ==============
+	###############################################################
+
+	# === STARTING FOCUS — State of the Republic, 1985 ===
+	focus = {
+		id = PAK_1985_state_of_the_republic
+		icon = GFX_goal_generic_national_unity
+		x = 20
+		y = 0
+		cost = 5
+		ai_will_do = { base = 1000 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_state_of_the_republic"
+			add_political_power = 75
+			add_stability = 0.03
+			# ensure starting variables (sanity)
+			if = {
+				limit = { NOT = { has_idea = PAK_1985_zia_martial_law } }
+				add_ideas = PAK_1985_zia_martial_law
+			}
+			if = {
+				limit = { check_variable = { PAK_1985_nuclear_program_progress < 1 } }
+				set_variable = { PAK_1985_nuclear_program_progress = 35 }
+			}
+		}
+	}
+
+	# === The Afghan Frontline acknowledgement ===
+	focus = {
+		id = PAK_1985_acknowledge_frontline
+		icon = position_armies
+		x = -6
+		y = 1
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 5
+		prerequisite = { focus = PAK_1985_state_of_the_republic }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_acknowledge_frontline"
+			add_war_support = 0.05
+			add_political_power = 30
+			add_to_variable = { PAK_1985_us_tolerance = 10 }
+			add_to_variable = { PAK_1985_saudi_financing = 10 }
+		}
+	}
+
+	# === The Indian Shadow ===
+	focus = {
+		id = PAK_1985_the_indian_shadow
+		icon = the_montreux_convention
+		x = 0
+		y = 1
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 5
+		prerequisite = { focus = PAK_1985_state_of_the_republic }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_the_indian_shadow"
+			add_war_support = 0.07
+			add_political_power = 40
+			add_to_variable = { PAK_1985_indian_nuclear_pressure = 10 }
+			add_ideas = PAK_1985_the_indian_shadow_idea
+		}
+	}
+
+	# === Kahuta Under Watch acknowledgement ===
+	focus = {
+		id = PAK_1985_kahuta_under_watch
+		icon = nuclear_program
+		x = 6
+		y = 1
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 5
+		prerequisite = { focus = PAK_1985_state_of_the_republic }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_kahuta_under_watch"
+			add_political_power = 25
+			add_to_variable = { PAK_1985_detection_pressure = 6 }
+			add_ideas = PAK_1985_kahuta_under_watch_idea
+		}
+	}
+
+	# === The Bhutto Warning — quote ===
+	focus = {
+		id = PAK_1985_the_bhutto_warning
+		icon = nuclear_program
+		x = 0
+		y = 2
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_the_indian_shadow }
+		prerequisite = { focus = PAK_1985_kahuta_under_watch }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_the_bhutto_warning"
+			add_political_power = 75
+			add_war_support = 0.05
+			add_stability = -0.02
+			country_event = { id = pak_1985_nuclear.1 days = 2 } # We Shall Eat Grass — choice event
+			add_to_variable = { PAK_1985_indian_nuclear_pressure = 5 }
+		}
+	}
+
+	###############################################################
+	# === SECTION 2: NATIONAL PRIORITY (3-WAY EXCLUSIVE) ==========
+	###############################################################
+
+	# === Choose National Priority — anchor for the 3 main paths ===
+	focus = {
+		id = PAK_1985_choose_national_priority
+		icon = adopt_the_peoples_constitution
+		x = 0
+		y = 3
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_the_bhutto_warning }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_choose_national_priority"
+			add_political_power = 50
+		}
+	}
+
+	# === PATH A: The Bomb Above Bread (Bhutto path — hard nuclear) ===
+	focus = {
+		id = PAK_1985_the_bomb_above_bread
+		icon = nuclear_program
+		x = -8
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_choose_national_priority }
+		mutually_exclusive = {
+			focus = PAK_1985_managed_ambiguity
+			focus = PAK_1985_development_before_deterrence
+		}
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_the_bomb_above_bread"
+			add_political_power = 75
+			add_war_support = 0.10
+			add_stability = -0.05
+			set_country_flag = PAK_1985_path_bomb
+			add_ideas = PAK_1985_we_shall_eat_grass
+			add_to_variable = { PAK_1985_economic_neglect = 20 }
+			add_to_variable = { PAK_1985_nuclear_program_progress = 5 }
+			country_event = { id = pak_1985_nuclear.10 days = 1 }
+		}
+	}
+
+	# === PATH B: Managed Ambiguity ===
+	focus = {
+		id = PAK_1985_managed_ambiguity
+		icon = GFX_goal_generic_national_unity
+		x = 0
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_choose_national_priority }
+		mutually_exclusive = {
+			focus = PAK_1985_the_bomb_above_bread
+			focus = PAK_1985_development_before_deterrence
+		}
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_managed_ambiguity"
+			add_political_power = 50
+			add_stability = 0.03
+			set_country_flag = PAK_1985_path_ambiguity
+			add_ideas = PAK_1985_managed_ambiguity_idea
+			subtract_from_variable = { PAK_1985_detection_pressure = 8 }
+		}
+	}
+
+	# === PATH C: Development Before Deterrence (gates economy tree) ===
+	focus = {
+		id = PAK_1985_development_before_deterrence
+		icon = BRA_economic_liberalization
+		x = 8
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_choose_national_priority }
+		mutually_exclusive = {
+			focus = PAK_1985_the_bomb_above_bread
+			focus = PAK_1985_managed_ambiguity
+		}
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_development_before_deterrence"
+			add_political_power = 50
+			add_stability = 0.05
+			set_country_flag = PAK_1985_path_development
+			add_ideas = PAK_1985_bread_before_the_bomb
+			subtract_from_variable = { PAK_1985_nuclear_program_progress = 10 }
+			subtract_from_variable = { PAK_1985_detection_pressure = 12 }
+		}
+	}
+
+	###############################################################
+	# === SECTION 3: BOMB ABOVE BREAD — NUCLEAR MINIGAME ==========
+	###############################################################
+
+	# === Bhutto's Nuclear Legacy ===
+	focus = {
+		id = PAK_1985_bhuttos_nuclear_legacy
+		icon = nuclear_program
+		x = -10
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_the_bomb_above_bread }
+		ai_will_do = { factor = 90 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_bhuttos_nuclear_legacy"
+			add_political_power = 50
+			add_war_support = 0.05
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.04 }
+			set_temp_variable = { temp_outlook_increase = 0.04 }
+			change_relative_party_popularity = yes
+			add_to_variable = { PAK_1985_nuclear_program_progress = 4 }
+		}
+	}
+
+	# === Empower Abdul Qadeer Khan ===
+	focus = {
+		id = PAK_1985_empower_aq_khan
+		icon = GFX_focus_research
+		x = -8
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_the_bomb_above_bread }
+		ai_will_do = { factor = 95 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_empower_aq_khan"
+			add_research_slot = 1
+			add_ideas = PAK_1985_aq_khan_network_idea
+			add_to_variable = { PAK_1985_nuclear_program_progress = 8 }
+			add_to_variable = { PAK_1985_aq_khan_network = 15 }
+			add_to_variable = { PAK_1985_detection_pressure = 6 }
+		}
+	}
+
+	# === Shield the Kahuta Complex ===
+	focus = {
+		id = PAK_1985_shield_kahuta
+		icon = generic_oppression
+		x = -6
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_the_bomb_above_bread }
+		ai_will_do = { factor = 80 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_shield_kahuta"
+			add_ideas = PAK_1985_kahuta_secured_idea
+			subtract_from_variable = { PAK_1985_detection_pressure = 10 }
+			set_temp_variable = { treasury_change = -25.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	# === Divert National Resources ===
+	focus = {
+		id = PAK_1985_divert_national_resources
+		icon = lookin_for_beans
+		x = -10
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_bhuttos_nuclear_legacy }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_divert_national_resources"
+			add_stability = -0.07
+			add_to_variable = { PAK_1985_economic_neglect = 18 }
+			add_to_variable = { PAK_1985_nuclear_program_progress = 12 }
+			set_temp_variable = { treasury_change = -45.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	# === A Nation Under Sacrifice ===
+	focus = {
+		id = PAK_1985_nation_under_sacrifice
+		icon = generic_local_self_management
+		x = -10
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_divert_national_resources }
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_nation_under_sacrifice"
+			add_war_support = 0.08
+			add_stability = -0.05
+			add_to_variable = { PAK_1985_economic_neglect = 12 }
+			add_to_variable = { PAK_1985_nuclear_program_progress = 6 }
+			swap_ideas = {
+				remove_idea = PAK_1985_we_shall_eat_grass
+				add_idea = PAK_1985_we_shall_eat_grass_2
+			}
+		}
+	}
+
+	# === Seek Chinese Assistance ===
+	focus = {
+		id = PAK_1985_seek_chinese_assistance
+		icon = align_to_china
+		x = -8
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_empower_aq_khan }
+		ai_will_do = { factor = 85 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_seek_chinese_assistance"
+			add_to_variable = { PAK_1985_chinese_assistance = 25 }
+			add_to_variable = { PAK_1985_nuclear_program_progress = 10 }
+			add_to_variable = { PAK_1985_detection_pressure = 5 }
+			subtract_from_variable = { PAK_1985_us_tolerance = 5 }
+			CHI = {
+				add_opinion_modifier = { target = PAK modifier = large_increase }
+			}
+			reverse_add_opinion_modifier = { target = CHI modifier = large_increase }
+			add_ideas = PAK_1985_chinese_assistance_idea
+			country_event = { id = pak_1985_nuclear.20 days = 5 } # Beijing's Quiet Hand
+		}
+	}
+
+	# === Procurement Networks in Western Europe (URENCO/Almelo abstract) ===
+	focus = {
+		id = PAK_1985_procurement_networks
+		icon = GFX_idea_spy_intel
+		x = -6
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_empower_aq_khan }
+		prerequisite = { focus = PAK_1985_shield_kahuta }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_procurement_networks"
+			add_to_variable = { PAK_1985_aq_khan_network = 20 }
+			add_to_variable = { PAK_1985_nuclear_program_progress = 8 }
+			add_to_variable = { PAK_1985_detection_pressure = 14 }
+			add_ideas = PAK_1985_procurement_networks_idea
+			country_event = { id = pak_1985_nuclear.30 days = 10 } # Suspicious Procurement in Europe
+		}
+	}
+
+	# === Exploit Overseas Scientific Contacts ===
+	focus = {
+		id = PAK_1985_overseas_scientific_contacts
+		icon = research_bonus
+		x = -4
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_shield_kahuta }
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_overseas_scientific_contacts"
+			add_research_slot = 1
+			add_to_variable = { PAK_1985_nuclear_program_progress = 5 }
+			add_to_variable = { PAK_1985_aq_khan_network = 8 }
+			add_to_variable = { PAK_1985_detection_pressure = 8 }
+		}
+	}
+
+	# === Compartmentalize the Program ===
+	focus = {
+		id = PAK_1985_compartmentalize_program
+		icon = GFX_idea_spy_intel
+		x = -6
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_procurement_networks }
+		prerequisite = { focus = PAK_1985_seek_chinese_assistance }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_compartmentalize_program"
+			subtract_from_variable = { PAK_1985_detection_pressure = 14 }
+			add_to_variable = { PAK_1985_nuclear_program_progress = 3 }
+			add_ideas = PAK_1985_compartmentalized_program_idea
+		}
+	}
+
+	# === The Pressler Pressure (mid-game crisis trigger) ===
+	focus = {
+		id = PAK_1985_pressler_pressure
+		icon = Generic_Ripping_Papers
+		x = -4
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_overseas_scientific_contacts }
+		available = {
+			OR = {
+				check_variable = { PAK_1985_detection_pressure > 50 }
+				date > 1986.6.1
+			}
+		}
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_pressler_pressure"
+			add_political_power = -40
+			add_stability = -0.03
+			add_ideas = PAK_1985_under_pressler_shadow
+			country_event = { id = pak_1985_nuclear.40 days = 3 }
+		}
+	}
+
+	# === Accelerate Uranium Enrichment ===
+	focus = {
+		id = PAK_1985_accelerate_enrichment
+		icon = nuclear_program
+		x = -8
+		y = 8
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 12
+		prerequisite = { focus = PAK_1985_nation_under_sacrifice }
+		prerequisite = { focus = PAK_1985_compartmentalize_program }
+		available = {
+			check_variable = { PAK_1985_nuclear_program_progress > 60 }
+		}
+		ai_will_do = { factor = 80 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_accelerate_enrichment"
+			add_to_variable = { PAK_1985_nuclear_program_progress = 18 }
+			add_to_variable = { PAK_1985_detection_pressure = 10 }
+			add_to_variable = { PAK_1985_economic_neglect = 8 }
+			set_temp_variable = { treasury_change = -55.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	# === The Islamic Bomb (capstone) ===
+	focus = {
+		id = PAK_1985_the_islamic_bomb
+		icon = nuclear_program
+		x = -6
+		y = 9
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 15
+		prerequisite = { focus = PAK_1985_accelerate_enrichment }
+		prerequisite = { focus = PAK_1985_pressler_pressure }
+		available = {
+			check_variable = { PAK_1985_nuclear_program_progress > 95 }
+		}
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_the_islamic_bomb"
+			add_war_support = 0.20
+			add_stability = 0.10
+			add_political_power = 200
+			set_country_flag = PAK_1985_has_the_bomb
+			add_ideas = PAK_1985_the_islamic_bomb_idea
+			add_to_variable = { PAK_1985_detection_pressure = 25 }
+			# Massive rivalry shift
+			RAJ = {
+				add_opinion_modifier = { target = PAK modifier = large_decrease }
+			}
+			reverse_add_opinion_modifier = { target = RAJ modifier = large_decrease }
+			# Nuclear tech if available
+			set_technology = {
+				nuclear_technology = 1
+				reactor1 = 1
+				reactor2 = 1
+			}
+			# Saudi/Sunni prestige
+			add_to_variable = { PAK_1985_saudi_financing = 20 }
+			news_event = { id = pak_1985_nuclear.50 days = 2 }
+		}
+	}
+
+	# === First Cold Test ===
+	focus = {
+		id = PAK_1985_first_cold_test
+		icon = generic_research
+		x = -8
+		y = 10
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 12
+		prerequisite = { focus = PAK_1985_the_islamic_bomb }
+		ai_will_do = { factor = 80 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_first_cold_test"
+			add_war_support = 0.05
+			if = {
+				limit = { has_dlc = "Gotterdammerung" }
+				complete_special_project = sp:sp_nuclear_warhead_program
+			}
+			set_technology = {
+				nuclear_technology = 1
+			}
+			country_event = { id = pak_1985_nuclear.51 days = 1 }
+		}
+	}
+
+	# === Build a Delivery System (Ghauri / Hatf) ===
+	focus = {
+		id = PAK_1985_build_delivery_system
+		icon = mlw_sam_sites
+		x = -4
+		y = 10
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 12
+		prerequisite = { focus = PAK_1985_the_islamic_bomb }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_build_delivery_system"
+			if = {
+				limit = { has_dlc = "Gotterdammerung" }
+				set_technology = {
+					ballistic_missile = 1
+					IRBM = 1
+					IRBM1 = 1
+					TEL_launched_missiles = 1
+				}
+				complete_special_project = sp:sp_missile_project
+			}
+			add_war_support = 0.03
+			set_temp_variable = { treasury_change = -40.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	# === Doctrine of First Use ===
+	focus = {
+		id = PAK_1985_doctrine_first_use
+		icon = position_armies
+		x = -6
+		y = 11
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_first_cold_test }
+		prerequisite = { focus = PAK_1985_build_delivery_system }
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_doctrine_first_use"
+			add_war_support = 0.10
+			add_political_power = 50
+			add_ideas = PAK_1985_first_use_doctrine
+		}
+	}
+
+	###############################################################
+	# === SECTION 4: MANAGED AMBIGUITY (CENTRE PATH) ==============
+	###############################################################
+
+	focus = {
+		id = PAK_1985_keep_program_denied
+		icon = GFX_idea_spy_intel
+		x = -1
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_managed_ambiguity }
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_keep_program_denied"
+			subtract_from_variable = { PAK_1985_detection_pressure = 10 }
+			add_to_variable = { PAK_1985_us_tolerance = 8 }
+			add_to_variable = { PAK_1985_nuclear_program_progress = 2 }
+			add_political_power = 30
+		}
+	}
+
+	focus = {
+		id = PAK_1985_balance_washington_beijing
+		icon = GFX_goal_generic_positive_trade_relations
+		x = 1
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_managed_ambiguity }
+		ai_will_do = { factor = 40 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_balance_washington_beijing"
+			add_political_power = 40
+			add_to_variable = { PAK_1985_us_tolerance = 8 }
+			add_to_variable = { PAK_1985_chinese_assistance = 8 }
+		}
+	}
+
+	focus = {
+		id = PAK_1985_slow_steady_progress
+		icon = GFX_focus_research
+		x = 0
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_keep_program_denied }
+		prerequisite = { focus = PAK_1985_balance_washington_beijing }
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_slow_steady_progress"
+			add_research_slot = 1
+			add_to_variable = { PAK_1985_nuclear_program_progress = 4 }
+			subtract_from_variable = { PAK_1985_detection_pressure = 5 }
+		}
+	}
+
+	focus = {
+		id = PAK_1985_threshold_state
+		icon = nuclear_program
+		x = 0
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 12
+		prerequisite = { focus = PAK_1985_slow_steady_progress }
+		available = {
+			check_variable = { PAK_1985_nuclear_program_progress > 70 }
+		}
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_threshold_state"
+			add_political_power = 75
+			add_stability = 0.03
+			add_war_support = 0.05
+			set_country_flag = PAK_1985_threshold_state_flag
+			add_ideas = PAK_1985_threshold_deterrence_idea
+		}
+	}
+
+	###############################################################
+	# === SECTION 5: DEVELOPMENT BEFORE DETERRENCE (GATE) =========
+	###############################################################
+
+	# Gate focus: Bread Before the Bomb
+	focus = {
+		id = PAK_1985_bread_before_bomb_focus
+		icon = BRA_economic_liberalization
+		x = 8
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_development_before_deterrence }
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_bread_before_bomb_focus"
+			add_stability = 0.05
+			add_political_power = 40
+			set_temp_variable = { treasury_change = 25.00 }
+			modify_treasury_effect = yes
+			subtract_from_variable = { PAK_1985_economic_neglect = 10 }
+		}
+	}
+
+	# === A. Agrarian Pakistan ===
+	focus = {
+		id = PAK_1985_indus_irrigation
+		icon = agriculture
+		x = 4
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_bread_before_bomb_focus }
+		ai_will_do = { factor = 40 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_indus_irrigation"
+			422 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = infrastructure
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_ideas = PAK_1985_indus_irrigation_idea
+			set_temp_variable = { treasury_change = -30.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = PAK_1985_wheat_security
+		icon = agriculture
+		x = 4
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_indus_irrigation }
+		ai_will_do = { factor = 35 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_wheat_security"
+			add_stability = 0.04
+			add_ideas = PAK_1985_wheat_security_idea
+		}
+	}
+
+	focus = {
+		id = PAK_1985_mechanize_countryside
+		icon = agriculture
+		x = 4
+		y = 8
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_wheat_security }
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_mechanize_countryside"
+			add_research_slot = 1
+			set_temp_variable = { treasury_change = -25.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	# === B. Textile and Light Industry ===
+	focus = {
+		id = PAK_1985_karachi_industry
+		icon = construct_factory
+		x = 6
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_bread_before_bomb_focus }
+		ai_will_do = { factor = 35 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_karachi_industry"
+			421 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			set_temp_variable = { treasury_change = -35.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = PAK_1985_textile_exports
+		icon = sing_on_rise
+		x = 6
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_karachi_industry }
+		ai_will_do = { factor = 35 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_textile_exports"
+			add_ideas = PAK_1985_textile_export_boom
+			set_temp_variable = { treasury_change = 25.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = PAK_1985_export_processing_zones
+		icon = GFX_goal_generic_positive_trade_relations
+		x = 6
+		y = 8
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_textile_exports }
+		ai_will_do = { factor = 25 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_export_processing_zones"
+			set_temp_variable = { treasury_change = 35.00 }
+			modify_treasury_effect = yes
+			add_ideas = PAK_1985_export_processing_zones_idea
+		}
+	}
+
+	# === C. Remittance and Gulf Ties ===
+	focus = {
+		id = PAK_1985_export_labour_gulf
+		icon = migration
+		x = 8
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_bread_before_bomb_focus }
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_export_labour_gulf"
+			add_to_variable = { PAK_1985_saudi_financing = 15 }
+			set_temp_variable = { treasury_change = 20.00 }
+			modify_treasury_effect = yes
+			SAU = {
+				add_opinion_modifier = { target = PAK modifier = large_increase }
+			}
+		}
+	}
+
+	focus = {
+		id = PAK_1985_remittance_flows
+		icon = positive_gold
+		x = 8
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_export_labour_gulf }
+		ai_will_do = { factor = 25 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_remittance_flows"
+			add_ideas = PAK_1985_remittance_economy_idea
+			set_temp_variable = { treasury_change = 30.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = PAK_1985_islamic_banking
+		icon = positive_gold
+		x = 8
+		y = 8
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_remittance_flows }
+		ai_will_do = { factor = 25 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_islamic_banking"
+			add_political_power = 30
+			add_to_variable = { PAK_1985_islamization_pressure = 5 }
+			add_ideas = PAK_1985_islamic_banking_idea
+		}
+	}
+
+	# === D. Technocratic Development ===
+	focus = {
+		id = PAK_1985_planning_commission
+		icon = research_bonus
+		x = 10
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_bread_before_bomb_focus }
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_planning_commission"
+			add_research_slot = 1
+			add_political_power = 40
+		}
+	}
+
+	focus = {
+		id = PAK_1985_strategic_ports
+		icon = GFX_goal_generic_construct_infrastructure
+		x = 10
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_planning_commission }
+		ai_will_do = { factor = 25 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_strategic_ports"
+			421 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			navy_experience = 15
+			set_temp_variable = { treasury_change = -35.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = PAK_1985_national_development_program
+		icon = BRA_economic_liberalization
+		x = 6
+		y = 9
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 15
+		prerequisite = { focus = PAK_1985_mechanize_countryside }
+		prerequisite = { focus = PAK_1985_export_processing_zones }
+		prerequisite = { focus = PAK_1985_islamic_banking }
+		prerequisite = { focus = PAK_1985_strategic_ports }
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_national_development_program"
+			add_stability = 0.10
+			add_political_power = 100
+			subtract_from_variable = { PAK_1985_economic_neglect = 30 }
+			add_ideas = PAK_1985_development_state_idea
+		}
+	}
+
+	###############################################################
+	# === SECTION 6: ARMY & STATE (ZIA HARDLINE) ==================
+	###############################################################
+
+	focus = {
+		id = PAK_1985_army_and_state
+		icon = position_armies
+		x = -16
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_choose_national_priority }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_army_and_state"
+			add_political_power = 50
+			add_to_variable = { PAK_1985_military_control = 6 }
+		}
+	}
+
+	focus = {
+		id = PAK_1985_guardians_of_republic
+		icon = nationalist_administration
+		x = -18
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_army_and_state }
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_guardians_of_republic"
+			add_war_support = 0.05
+			add_to_variable = { PAK_1985_military_control = 8 }
+			add_ideas = PAK_1985_military_ascendancy
+		}
+	}
+
+	focus = {
+		id = PAK_1985_empower_isi
+		icon = GFX_idea_spy_intel
+		x = -14
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_army_and_state }
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_empower_isi"
+			add_political_power = 30
+			add_ideas = PAK_1985_isi_deep_state
+			add_to_variable = { PAK_1985_military_control = 8 }
+		}
+	}
+
+	focus = {
+		id = PAK_1985_military_first_budgeting
+		icon = generic_civil_support
+		x = -16
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_guardians_of_republic }
+		prerequisite = { focus = PAK_1985_empower_isi }
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_military_first_budgeting"
+			army_experience = 20
+			set_temp_variable = { treasury_change = -30.00 }
+			modify_treasury_effect = yes
+			add_to_variable = { PAK_1985_economic_neglect = 8 }
+			add_ideas = PAK_1985_cost_of_strategic_parity
+		}
+	}
+
+	focus = {
+		id = PAK_1985_eighth_amendment
+		icon = adopt_the_peoples_constitution
+		x = -18
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_guardians_of_republic }
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_eighth_amendment"
+			add_political_power = 75
+			add_stability = 0.04
+			add_to_variable = { PAK_1985_military_control = 10 }
+		}
+	}
+
+	focus = {
+		id = PAK_1985_islamization_above
+		icon = islam
+		x = -14
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_empower_isi }
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_islamization_above"
+			add_political_power = 40
+			add_stability = 0.03
+			add_to_variable = { PAK_1985_islamization_pressure = 12 }
+			add_ideas = PAK_1985_islamization_from_above
+		}
+	}
+
+	focus = {
+		id = PAK_1985_fortress_pakistan
+		icon = fortification
+		x = -16
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 12
+		prerequisite = { focus = PAK_1985_military_first_budgeting }
+		prerequisite = { focus = PAK_1985_eighth_amendment }
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_fortress_pakistan"
+			add_war_support = 0.05
+			421 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+			}
+			set_temp_variable = { treasury_change = -40.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	###############################################################
+	# === SECTION 7: CONTROLLED CIVILIANIZATION (JUNEJO) =========
+	###############################################################
+
+	focus = {
+		id = PAK_1985_controlled_civilianization
+		icon = generic_civil_support
+		x = 16
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_choose_national_priority }
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_controlled_civilianization"
+			add_political_power = 40
+			add_stability = 0.03
+			subtract_from_variable = { PAK_1985_military_control = 5 }
+		}
+	}
+
+	focus = {
+		id = PAK_1985_bring_in_junejo
+		icon = pass_legislation
+		x = 14
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_controlled_civilianization }
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_bring_in_junejo"
+			add_political_power = 40
+			create_country_leader = {
+				name = "Muhammad Khan Junejo"
+				picture = "gfx/leaders/PAK/PAK_Muhammad_Khan_Junejo.dds.dds"
+				expire = "1993.3.18"
+				ideology = Neutral_Autocracy
+				traits = {
+				}
+			}
+			set_country_flag = PAK_1985_junejo_path
+		}
+	}
+
+	focus = {
+		id = PAK_1985_parliament_without_parties
+		icon = political_power_bonus
+		x = 16
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_controlled_civilianization }
+		ai_will_do = { factor = 25 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_parliament_without_parties"
+			add_political_power = 30
+			add_stability = 0.02
+			set_temp_variable = { party_index = 13 }
+			set_temp_variable = { party_popularity_increase = 0.06 }
+			set_temp_variable = { temp_outlook_increase = 0.06 }
+			change_relative_party_popularity = yes
+		}
+	}
+
+	focus = {
+		id = PAK_1985_soften_martial_rule
+		icon = peace_with_minorities
+		x = 18
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_controlled_civilianization }
+		ai_will_do = { factor = 20 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_soften_martial_rule"
+			add_stability = 0.05
+			add_political_power = 30
+			subtract_from_variable = { PAK_1985_military_control = 5 }
+			swap_ideas = {
+				remove_idea = PAK_1985_zia_martial_law
+				add_idea = PAK_1985_managed_civilian_facade
+			}
+		}
+	}
+
+	focus = {
+		id = PAK_1985_limited_civilian_admin
+		icon = generic_civil_support
+		x = 16
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_bring_in_junejo }
+		prerequisite = { focus = PAK_1985_parliament_without_parties }
+		prerequisite = { focus = PAK_1985_soften_martial_rule }
+		ai_will_do = { factor = 30 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_limited_civilian_admin"
+			add_political_power = 60
+			add_stability = 0.05
+			add_ideas = PAK_1985_civilian_facade_idea
+		}
+	}
+
+	###############################################################
+	# === SECTION 8: RESTORE PARTY POLITICS (ALT-HIST) ============
+	###############################################################
+
+	focus = {
+		id = PAK_1985_restore_party_politics
+		icon = adopt_the_peoples_constitution
+		x = 22
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_choose_national_priority }
+		available = {
+			has_completed_focus = PAK_1985_controlled_civilianization
+		}
+		ai_will_do = { factor = 5 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_restore_party_politics"
+			add_political_power = -50
+			add_stability = -0.05
+			subtract_from_variable = { PAK_1985_military_control = 10 }
+			country_event = { id = pak_1985_political.5 days = 7 } # coup risk
+		}
+	}
+
+	focus = {
+		id = PAK_1985_end_non_party_system
+		icon = pass_legislation
+		x = 22
+		y = 5
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_restore_party_politics }
+		ai_will_do = { factor = 5 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_end_non_party_system"
+			add_political_power = 40
+			add_stability = 0.05
+			set_temp_variable = { party_index = 6 }
+			set_temp_variable = { party_popularity_increase = 0.10 }
+			set_temp_variable = { temp_outlook_increase = 0.10 }
+			change_relative_party_popularity = yes
+		}
+	}
+
+	focus = {
+		id = PAK_1985_curb_security_state
+		icon = generic_oppression
+		x = 22
+		y = 6
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_end_non_party_system }
+		ai_will_do = { factor = 5 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_curb_security_state"
+			add_stability = 0.05
+			subtract_from_variable = { PAK_1985_military_control = 12 }
+			swap_ideas = {
+				remove_idea = PAK_1985_zia_martial_law
+				add_idea = PAK_1985_civilian_revival_idea
+			}
+		}
+	}
+
+	focus = {
+		id = PAK_1985_parliamentary_revival
+		icon = adopt_the_peoples_constitution
+		x = 22
+		y = 7
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = { focus = PAK_1985_curb_security_state }
+		ai_will_do = { factor = 5 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_parliamentary_revival"
+			add_political_power = 100
+			add_stability = 0.10
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = yes
+			}
+			country_event = { id = pak_1985_political.10 days = 1 }
+		}
+	}
+
+	###############################################################
+	# === SECTION 9: AFGHAN STRATEGY ==============================
+	###############################################################
+
+	focus = {
+		id = PAK_1985_host_the_jihad
+		icon = islam
+		x = -10
+		y = 2
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_acknowledge_frontline }
+		ai_will_do = { factor = 80 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_host_the_jihad"
+			add_war_support = 0.05
+			add_to_variable = { PAK_1985_us_tolerance = 12 }
+			add_to_variable = { PAK_1985_saudi_financing = 12 }
+			add_to_variable = { PAK_1985_islamization_pressure = 5 }
+			add_ideas = PAK_1985_frontline_state_idea
+		}
+	}
+
+	focus = {
+		id = PAK_1985_channel_american_aid
+		icon = scw_intervention_nat
+		x = -12
+		y = 3
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_host_the_jihad }
+		ai_will_do = { factor = 75 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_channel_american_aid"
+			add_to_variable = { PAK_1985_us_tolerance = 15 }
+			set_temp_variable = { treasury_change = 60.00 }
+			modify_treasury_effect = yes
+			USA = {
+				add_opinion_modifier = { target = PAK modifier = large_increase }
+			}
+			reverse_add_opinion_modifier = { target = USA modifier = large_increase }
+		}
+	}
+
+	focus = {
+		id = PAK_1985_coordinate_with_cia
+		icon = GFX_idea_spy_intel
+		x = -10
+		y = 3
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_host_the_jihad }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_coordinate_with_cia"
+			add_to_variable = { PAK_1985_us_tolerance = 10 }
+			subtract_from_variable = { PAK_1985_detection_pressure = 6 }
+			army_experience = 10
+			add_ideas = PAK_1985_cia_isi_partnership
+		}
+	}
+
+	focus = {
+		id = PAK_1985_saudi_money
+		icon = positive_gold
+		x = -8
+		y = 3
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 7
+		prerequisite = { focus = PAK_1985_host_the_jihad }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_saudi_money"
+			add_to_variable = { PAK_1985_saudi_financing = 18 }
+			add_to_variable = { PAK_1985_islamization_pressure = 4 }
+			set_temp_variable = { treasury_change = 30.00 }
+			modify_treasury_effect = yes
+			SAU = {
+				add_opinion_modifier = { target = PAK modifier = large_increase }
+			}
+		}
+	}
+
+	focus = {
+		id = PAK_1985_refugee_burden
+		icon = Generic_Red_Crescent
+		x = -10
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 5
+		prerequisite = {
+			focus = PAK_1985_channel_american_aid
+			focus = PAK_1985_coordinate_with_cia
+			focus = PAK_1985_saudi_money
+		}
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_refugee_burden"
+			add_stability = -0.04
+			add_ideas = PAK_1985_refugee_burden_idea
+		}
+	}
+
+	focus = {
+		id = PAK_1985_strategic_depth
+		icon = position_armies
+		x = -8
+		y = 4
+		relative_position_id = PAK_1985_state_of_the_republic
+		cost = 10
+		prerequisite = {
+			focus = PAK_1985_channel_american_aid
+			focus = PAK_1985_coordinate_with_cia
+			focus = PAK_1985_saudi_money
+		}
+		ai_will_do = { factor = 50 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus PAK_1985_strategic_depth"
+			add_political_power = 50
+			add_war_support = 0.05
+			add_ideas = PAK_1985_strategic_depth_idea
+			# influence Afghanistan
+			AFG = {
+				PAK = {
+					add_opinion_modifier = { target = AFG modifier = large_increase }
+				}
+			}
+		}
+	}
+
+}

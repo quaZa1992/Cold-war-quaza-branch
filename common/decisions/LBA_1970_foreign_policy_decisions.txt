@@ -1,0 +1,145 @@
+LBA_1970_foreign_policy_category = {
+	# The directorate raises the concurrent limit from one to two missions.
+	LBA_1970_offer_palestinian_training = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 35
+		days_re_enable = 365
+		visible = { has_country_flag = LBA_1970_palestinian_training_available country_exists = PAL emerging_autocracy_are_in_power = yes }
+		available = {
+			check_variable = { var = LBA_1970_assistance_active value = LBA_1970_assistance_capacity compare = less_than }
+			check_variable = { treasury > 2 }
+			PAL = { NOT = { has_idea = LBA_1970_foreign_training_recipient } }
+		}
+		complete_effect = {
+			add_to_variable = { LBA_1970_assistance_active = 1 }
+			PAL = { country_event = { id = LBA1970Foreign.9 days = 1 } }
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	LBA_1970_offer_foreign_training = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 40
+		# Curated tags are filtered again by actual OAU membership below.
+		targets = {
+			PAL ALG AGL BEN BFA BOT BUR CAM CAR CDI CHA CNG COM DJI DRC EGU EGY ERI ETH
+			GAB GAH GAM GUI GUB KEN LIB LES MAD MAL MAU MLW MOZ MRT NAM NIG NGR
+			RWA SAF SAO SEN SEY SHA SIE SOM SUD SWA TNZ TOG TUN UGA VER ZIM ZAM
+		}
+		days_re_enable = 365
+		visible = { has_country_flag = LBA_1970_foreign_training_available emerging_autocracy_are_in_power = yes }
+		target_trigger = { FROM = { exists = yes NOT = { original_tag = LBA } OR = { has_idea = OAU_member original_tag = PAL } } }
+		available = {
+			check_variable = { var = LBA_1970_assistance_active value = LBA_1970_assistance_capacity compare = less_than }
+			check_variable = { treasury > 2 }
+			FROM = { NOT = { has_idea = LBA_1970_foreign_training_recipient } NOT = { has_war_with = ROOT } }
+		}
+		complete_effect = {
+			add_to_variable = { LBA_1970_assistance_active = 1 }
+			FROM = { country_event = { id = LBA1970Foreign.9 days = 1 } }
+		}
+		ai_will_do = { base = 60 }
+	}
+
+	LBA_1970_offer_sahel_development = {
+		icon = GFX_decision_generic_construction
+		cost = 40
+		targets = { CHA MAL NGR }
+		days_re_enable = 365
+		visible = { has_country_flag = LBA_1970_sahel_aid_available }
+		target_trigger = { FROM = { exists = yes OR = { original_tag = CHA original_tag = MAL original_tag = NGR } } }
+		available = {
+			check_variable = { var = LBA_1970_assistance_active value = LBA_1970_assistance_capacity compare = less_than }
+			check_variable = { treasury > 3 }
+			FROM = { NOT = { has_idea = LBA_1970_sahel_development_project } NOT = { has_war_with = ROOT } }
+		}
+		complete_effect = {
+			add_to_variable = { LBA_1970_assistance_active = 1 }
+			FROM = { country_event = { id = LBA1970Foreign.10 days = 1 } }
+		}
+		ai_will_do = { base = 75 }
+	}
+
+	LBA_1970_offer_sirte_cooperation = {
+		icon = GFX_decision_generic_construction
+		cost = 45
+		targets = {
+			ALG AGL BEN BFA BOT BUR CAM CAR CDI CHA CNG COM DJI DRC EGU EGY ERI ETH
+			GAB GAH GAM GUI GUB KEN LIB LES MAD MAL MAU MLW MOZ MRT NAM NIG NGR
+			RWA SAF SAO SEN SEY SHA SIE SOM SUD SWA TNZ TOG TUN UGA VER ZIM ZAM
+		}
+		days_re_enable = 365
+		visible = { has_country_flag = LBA_1970_sirte_cooperation_available }
+		target_trigger = { FROM = { exists = yes has_idea = OAU_member NOT = { original_tag = LBA } } }
+		available = {
+			check_variable = { var = LBA_1970_assistance_active value = LBA_1970_assistance_capacity compare = less_than }
+			check_variable = { treasury > 3 }
+			FROM = { NOT = { has_idea = LBA_1970_sirte_cooperation_partner } NOT = { has_war_with = ROOT } }
+		}
+		complete_effect = {
+			add_to_variable = { LBA_1970_assistance_active = 1 }
+			FROM = { country_event = { id = LBA1970Foreign.11 days = 1 } }
+		}
+		ai_will_do = { base = 75 }
+	}
+
+	LBA_1970_ship_arms_to_ira = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 40
+		days_re_enable = 365
+		visible = { has_country_flag = LBA_1970_irish_arms_available country_exists = ENG emerging_autocracy_are_in_power = yes }
+		available = {
+			has_country_flag = LBA_1970_irish_channel_open
+			has_equipment = { infantry_weapons_type > 99 }
+			has_equipment = { cnc_equipment_type > 29 }
+			check_variable = { treasury > 2 }
+		}
+		complete_effect = {
+			add_equipment_to_stockpile = { type = infantry_weapons_type amount = -100 producer = ROOT }
+			add_equipment_to_stockpile = { type = cnc_equipment_type amount = -30 producer = ROOT }
+			set_temp_variable = { treasury_change = -2.00 }
+			modify_treasury_effect = yes
+			if = {
+				limit = { ENG = { has_country_flag = ENG_1985_ira_mechanic_active } }
+				ENG = {
+					add_to_variable = { ENG_ira_foreign_funding = 8 }
+					add_to_variable = { ENG_ira_militancy = 3 }
+					ENG_1985_ira_clamp_values = yes
+				}
+			}
+			ENG = { country_event = { id = LBA1970Foreign.12 days = 1 } }
+		}
+		ai_will_do = { base = 0 }
+	}
+
+	LBA_1970_sponsor_resistance_network = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 50
+		targets = {
+			USA SOV ENG FRA GER ITA CHI JAP IND PAK PER IRQ ISR SAU SYR EGY SUD
+			ALG TUN MOR CHA MAL NGR NIG ETH KEN UGA TNZ CNG DRC AGL MOZ SAF
+			YEM CUB TUR GRE SPR POR HOL BEL CAN AST
+		}
+		days_re_enable = 365
+		visible = { has_country_flag = LBA_1970_resistance_liaison_available emerging_autocracy_are_in_power = yes }
+		target_trigger = { FROM = { exists = yes NOT = { original_tag = LBA } NOT = { is_subject_of = ROOT } } }
+		available = {
+			command_power > 19
+			check_variable = { treasury > 2 }
+			check_variable = { var = LBA_1970_assistance_active value = LBA_1970_assistance_capacity compare = less_than }
+			FROM = { NOT = { has_idea = LBA_1970_resistance_pressure } }
+		}
+		complete_effect = {
+			add_command_power = -20
+			add_to_variable = { LBA_1970_assistance_active = 1 }
+			set_temp_variable = { treasury_change = -2.00 }
+			modify_treasury_effect = yes
+			FROM = {
+				add_timed_idea = { idea = LBA_1970_resistance_pressure days = 180 }
+				country_event = { id = LBA1970Foreign.13 days = 1 }
+			}
+			country_event = { id = LBA1970Foreign.90 days = 180 }
+		}
+		ai_will_do = { base = 0 }
+	}
+}

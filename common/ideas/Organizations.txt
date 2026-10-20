@@ -1,0 +1,255 @@
+ideas = {
+	country = {
+		#European Union
+		EU_member = {
+			picture = european_union_member
+			allowed_civil_war = { always = yes }
+			on_add = {
+				log = "[GetDateText]: [Root.GetName]: add idea EU_member"
+				if = {
+					limit = { NOT = { is_in_array = { global.EU_member = THIS } } }
+					add_to_array = { global.EU_member = THIS }
+				}
+				EU_init_default_europeanism = yes
+				EU_adopt_passed_laws = yes
+			}
+			on_remove = {
+				log = "[GetDateText]: [Root.GetName]: remove idea EU_member"
+				if = {
+					limit = { is_in_array = { global.EU_member = THIS } }
+					remove_from_array = { global.EU_member = THIS }
+				}
+
+				# Clear EU Configuration as a Safety Measure
+				set_country_flag = EUU_do_not_remove_eu_idea
+				leaving_EU = yes
+				clr_country_flag = EUU_do_not_remove_eu_idea
+			}
+
+			modifier = {
+				democratic_drift = 0.05
+				neutrality_drift = 0.03
+				political_power_factor = -0.2
+				war_support_factor = -0.05
+				trade_opinion_factor = 0.15
+				stability_factor = 0.05
+				consumer_goods_factor = -0.05
+			}
+		}
+
+		#The permanent members of the United Nations Security Council
+		p5_member = {
+			picture = p5_member
+
+			on_add = {
+				log = "[GetDateText]: [Root.GetName]: Idea p5_member added"
+				if = {
+					limit = { NOT = { is_in_array = { global.p5_sc_members = THIS } } }
+					add_to_array = { global.p5_sc_members = THIS }
+				}
+				if = {
+					limit = { NOT = { is_in_array = { global.security_council_members = THIS } } }
+					add_to_array = { global.security_council_members = THIS }
+				}
+			}
+
+			on_remove = {
+				log = "[GetDateText]: [Root.GetName]: Idea p5_member removed"
+				if = {
+					limit = { is_in_array = { global.p5_sc_members = THIS } }
+					remove_from_array = { global.p5_sc_members = THIS }
+				}
+				if = {
+					limit = { is_in_array = { global.security_council_members = THIS } }
+					remove_from_array = { global.security_council_members = THIS }
+				}
+			}
+
+			modifier = {
+				political_power_gain = 0.5
+			}
+		}
+		#Group of Seven
+		g7_member = {
+
+			modifier = {
+				political_power_gain = 0.1
+				#stability_factor = -0.05
+			}
+		}
+		#GUAM Organization
+		idea_GUAM_member_state = {
+			picture = GUAM
+			modifier = {
+				political_power_factor = 0.03
+				trade_opinion_factor = 0.10
+				stability_factor = 0.05
+			}
+		}
+		idea_GUAM_member_state_2 = {
+			picture = GUAM
+			modifier = {
+				political_power_factor = 0.05
+				trade_opinion_factor = 0.20
+				stability_factor = 0.05
+			}
+		}
+		#Commonwealth of Independent States
+		CIS_member_state_idea = {
+
+			picture = CIS_member_idea
+			modifier = {
+				custom_modifier_tooltip = CIS_all_spirits_idea_tt
+			}
+			cancel = {
+				OR = {
+					has_government = nationalist
+					has_government = fascism
+					has_war_with = SOV
+					NOT = {
+						SOV = {
+							has_idea = CIS_member_state_idea
+						}
+					}
+				}
+			}
+		}
+		# Antarctic Treaty
+		at_member = {
+			on_add = {
+				if = {
+					limit = { NOT = { is_in_array = { global.at_members = THIS } } }
+					add_to_array = { global.at_members = THIS }
+				}
+				if = {
+					limit = { NOT = { has_dynamic_modifier = { modifier = antarctica_laboratory_dynamic_modifier } } }
+					add_dynamic_modifier = { modifier = antarctica_laboratory_dynamic_modifier }
+				}
+				antarctica_rebuild_regular_at_member_list = yes
+			}
+
+			on_remove = {
+				if = {
+					limit = { is_in_array = { global.at_members = THIS } }
+					remove_from_array = { global.at_members = THIS }
+				}
+				if = {
+					limit = { is_in_array = { global.atcp_members = THIS } }
+					remove_from_array = { global.atcp_members = THIS }
+				}
+				clr_country_flag = is_antarctica_atcp_consultative_member
+				clr_country_flag = antarctica_atcp_application_pending
+				antarctica_rebuild_regular_at_member_list = yes
+				antarctica_clear_laboratory_country_effects = yes
+			}
+
+			modifier = {
+				political_power_gain = 0.15
+				research_speed_factor = 0.08
+				opinion_gain_monthly_factor = 0.05
+			}
+		}
+
+		antarctica_small_treaty_admin_cost_1 = {
+			picture = BRA_dasp
+			allowed_civil_war = { always = yes }
+			modifier = {
+				political_power_cost = 0.15
+				antarctica_lab_iteration_progress_modifier = 0.04
+				education_cost_multiplier_modifier = 0.025
+				bureaucracy_cost_multiplier_modifier = 0.025
+			}
+		}
+
+		antarctica_small_treaty_admin_cost_2 = {
+			picture = BRA_dasp
+			allowed_civil_war = { always = yes }
+			modifier = {
+				political_power_cost = 0.3
+				antarctica_lab_iteration_progress_modifier = 0.08
+				education_cost_multiplier_modifier = 0.05
+				bureaucracy_cost_multiplier_modifier = 0.05
+			}
+		}
+	}
+	hidden_ideas = {
+		CIS_united_anti_air_idea = {
+
+			picture = CIS_member_idea
+			modifier = {
+				supply_combat_penalties_on_core_factor = -0.03
+				army_core_attack_factor = 0.01
+				army_core_defence_factor = 0.02
+			}
+			cancel = {
+				NOT = {
+					has_idea = CIS_member_state_idea
+				}
+			}
+		}
+		CIS_anti_terror_idea = {
+
+			picture = CIS_member_idea
+			modifier = {
+				fascism_drift = -0.01
+				stability_factor = 0.01
+			}
+			cancel = {
+				NOT = {
+					has_idea = CIS_member_state_idea
+				}
+			}
+		}
+		CIS_bank_idea = {
+
+			picture = CIS_member_idea
+			modifier = {
+				econ_cycle_upg_cost_multiplier_modifier = -0.02
+				trade_opinion_factor = 0.10
+			}
+			cancel = {
+				NOT = {
+					has_idea = CIS_member_state_idea
+				}
+			}
+		}
+		CIS_council_leaders_idea = {
+
+			picture = CIS_member_idea
+			modifier = {
+				political_power_factor = 0.05
+			}
+			cancel = {
+				NOT = {
+					has_idea = CIS_member_state_idea
+				}
+			}
+		}
+		CIS_confederation_member_idea = {
+
+			picture = CIS_member_idea
+			cancel = {
+				OR = {
+					NOT = {
+						has_idea = CIS_member_state_idea
+					}
+					SOV = {
+						NOT = {
+							has_government = democratic
+						}
+					}
+				}
+			}
+			on_remove = {
+				SOV = {
+					country_event = { id = sov_liberals.21 days = 1 }
+					release_puppet = ROOT
+					set_autonomy = {
+						target = ROOT
+						autonomy_state = autonomy_free
+					}
+				}
+			}
+		}
+	}
+}

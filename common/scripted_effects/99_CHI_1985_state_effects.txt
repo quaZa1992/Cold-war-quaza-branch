@@ -1,0 +1,191 @@
+# =============================================================================
+# CHINA 1985 - Scripted Effects (Imperia RP Cold War)
+# =============================================================================
+# Mirrors the SOV_1985 outlook system in spirit but kept simpler — the focus
+# tree drives single CHI_<var> sliders rather than party-popularity arrays.
+# Each focus that mutates a slider does its add_to_variable inline; this file
+# only handles initialisation, clamping, and the once-a-month refresh that
+# pushes the slider values into the dynamic modifier multipliers.
+# =============================================================================
+
+CHI_1985_initialize_state_system = {
+	set_country_flag = CHI_1985_state_system_enabled
+
+	# --- Reform / political variables -------------------------------------
+	set_variable = { CHI_reform_momentum = 55 }
+	set_variable = { CHI_conservative_elder_power = 60 }
+	set_variable = { CHI_party_control = 78 }
+	set_variable = { CHI_central_authority = 65 }
+	set_variable = { CHI_provincial_experimentation = 30 }
+
+	# --- Economy variables ------------------------------------------------
+	set_variable = { CHI_marketization_level = 35 }
+	set_variable = { CHI_inflation_pressure = 28 }
+	set_variable = { CHI_corruption_pressure = 32 }
+	set_variable = { CHI_coastal_growth = 30 }
+	set_variable = { CHI_inland_neglect = 25 }
+	set_variable = { CHI_foreign_investment = 22 }
+	set_variable = { CHI_special_economic_zone_success = 20 }
+	set_variable = { CHI_rural_industry = 18 }
+	set_variable = { CHI_research_freedom = 35 }
+
+	# --- Society / political pressure ------------------------------------
+	set_variable = { CHI_student_mobilization = 18 }
+	set_variable = { CHI_rural_discontent = 22 }
+
+	# --- PLA variables ---------------------------------------------------
+	set_variable = { CHI_pla_modernization = 20 }
+	set_variable = { CHI_pla_bloat = 80 }
+	set_variable = { CHI_pla_professionalization = 25 }
+	set_variable = { CHI_veteran_resettlement_pressure = 0 }
+	set_variable = { CHI_deterrence_confidence = 30 }
+
+	# --- Foreign-policy variables ----------------------------------------
+	set_variable = { CHI_us_technology_access = 22 }
+	set_variable = { CHI_soviet_threat_perception = 70 }
+	set_variable = { CHI_sino_soviet_normalization = 5 }
+	set_variable = { CHI_us_tension = 18 }
+	set_variable = { CHI_pakistan_alignment = 50 }
+	set_variable = { CHI_india_tension = 35 }
+	set_variable = { CHI_vietnam_border_pressure = 55 }
+	set_variable = { CHI_afghanistan_concern = 38 }
+	set_variable = { CHI_non_aligned_influence = 30 }
+	set_variable = { CHI_global_arms_market_influence = 20 }
+	set_variable = { CHI_foreign_currency_reserves = 18 }
+	set_variable = { CHI_international_suspicion = 20 }
+
+	# --- Reunification variables -----------------------------------------
+	set_variable = { CHI_taiwan_pressure = 45 }
+	set_variable = { CHI_hong_kong_confidence = 35 }
+	set_variable = { CHI_one_country_two_systems_credibility = 25 }
+
+	# Add the dynamic modifier wrapper so all sliders push effects in-game.
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = CHI_1985_state_dynamic_modifier } }
+		}
+		add_dynamic_modifier = { modifier = CHI_1985_state_dynamic_modifier }
+	}
+
+	CHI_1985_monthly_state_update = yes
+}
+
+# -----------------------------------------------------------------------------
+# Clamps + refresh — call this from focus completion_rewards and on_actions.
+# -----------------------------------------------------------------------------
+
+CHI_1985_clamp_state_system = {
+	clamp_variable = { var = CHI_reform_momentum min = 0 max = 100 }
+	clamp_variable = { var = CHI_conservative_elder_power min = 0 max = 100 }
+	clamp_variable = { var = CHI_party_control min = 0 max = 100 }
+	clamp_variable = { var = CHI_central_authority min = 0 max = 100 }
+	clamp_variable = { var = CHI_provincial_experimentation min = 0 max = 100 }
+	clamp_variable = { var = CHI_marketization_level min = 0 max = 100 }
+	clamp_variable = { var = CHI_inflation_pressure min = 0 max = 100 }
+	clamp_variable = { var = CHI_corruption_pressure min = 0 max = 100 }
+	clamp_variable = { var = CHI_coastal_growth min = 0 max = 100 }
+	clamp_variable = { var = CHI_inland_neglect min = 0 max = 100 }
+	clamp_variable = { var = CHI_foreign_investment min = 0 max = 100 }
+	clamp_variable = { var = CHI_special_economic_zone_success min = 0 max = 100 }
+	clamp_variable = { var = CHI_rural_industry min = 0 max = 100 }
+	clamp_variable = { var = CHI_research_freedom min = 0 max = 100 }
+	clamp_variable = { var = CHI_student_mobilization min = 0 max = 100 }
+	clamp_variable = { var = CHI_rural_discontent min = 0 max = 100 }
+	clamp_variable = { var = CHI_pla_modernization min = 0 max = 100 }
+	clamp_variable = { var = CHI_pla_bloat min = 0 max = 100 }
+	clamp_variable = { var = CHI_pla_professionalization min = 0 max = 100 }
+	clamp_variable = { var = CHI_veteran_resettlement_pressure min = 0 max = 100 }
+	clamp_variable = { var = CHI_deterrence_confidence min = 0 max = 100 }
+	clamp_variable = { var = CHI_us_technology_access min = 0 max = 100 }
+	clamp_variable = { var = CHI_soviet_threat_perception min = 0 max = 100 }
+	clamp_variable = { var = CHI_sino_soviet_normalization min = 0 max = 100 }
+	clamp_variable = { var = CHI_us_tension min = 0 max = 100 }
+	clamp_variable = { var = CHI_pakistan_alignment min = 0 max = 100 }
+	clamp_variable = { var = CHI_india_tension min = 0 max = 100 }
+	clamp_variable = { var = CHI_vietnam_border_pressure min = 0 max = 100 }
+	clamp_variable = { var = CHI_afghanistan_concern min = 0 max = 100 }
+	clamp_variable = { var = CHI_non_aligned_influence min = 0 max = 100 }
+	clamp_variable = { var = CHI_global_arms_market_influence min = 0 max = 100 }
+	clamp_variable = { var = CHI_foreign_currency_reserves min = 0 max = 100 }
+	clamp_variable = { var = CHI_international_suspicion min = 0 max = 100 }
+	clamp_variable = { var = CHI_taiwan_pressure min = 0 max = 100 }
+	clamp_variable = { var = CHI_hong_kong_confidence min = 0 max = 100 }
+	clamp_variable = { var = CHI_one_country_two_systems_credibility min = 0 max = 100 }
+}
+
+# -----------------------------------------------------------------------------
+# Compute the multipliers consumed by the dynamic modifier from the sliders.
+# Pattern lifted from SOV_1985_monthly_outlook_update — keep numbers small,
+# this fires monthly.
+# -----------------------------------------------------------------------------
+
+CHI_1985_monthly_state_update = {
+	if = {
+		limit = { has_country_flag = CHI_1985_state_system_enabled }
+
+		CHI_1985_clamp_state_system = yes
+
+		# --- Reform pressure -> stability swing + productivity boost -----
+		# stability_factor = (CHI_reform_momentum - 50) * 0.0015
+		set_variable = { CHI_reform_pressure_stability_factor = CHI_reform_momentum }
+		subtract_from_variable = { CHI_reform_pressure_stability_factor = 50 }
+		multiply_variable = { CHI_reform_pressure_stability_factor = 0.0015 }
+
+		# productivity_growth_modifier = CHI_reform_momentum * 0.0008
+		set_variable = { CHI_reform_pressure_productivity_growth_modifier = CHI_reform_momentum }
+		multiply_variable = { CHI_reform_pressure_productivity_growth_modifier = 0.0008 }
+
+		# political_power_factor = -(CHI_inflation_pressure + CHI_corruption_pressure - 50) * 0.0015
+		set_variable = { CHI_reform_pressure_political_power_factor = CHI_inflation_pressure }
+		add_to_variable = { CHI_reform_pressure_political_power_factor = CHI_corruption_pressure }
+		subtract_from_variable = { CHI_reform_pressure_political_power_factor = 50 }
+		multiply_variable = { CHI_reform_pressure_political_power_factor = -0.0015 }
+
+		# consumer_goods_factor = (CHI_inflation_pressure - 30) * 0.001 (positive = bad)
+		set_variable = { CHI_reform_pressure_consumer_goods_factor = CHI_inflation_pressure }
+		subtract_from_variable = { CHI_reform_pressure_consumer_goods_factor = 30 }
+		multiply_variable = { CHI_reform_pressure_consumer_goods_factor = 0.001 }
+
+		# --- Party control -> stability + drift defence + research drag --
+		set_variable = { CHI_party_control_stability_factor = CHI_party_control }
+		subtract_from_variable = { CHI_party_control_stability_factor = 50 }
+		multiply_variable = { CHI_party_control_stability_factor = 0.001 }
+
+		set_variable = { CHI_party_control_drift_defence_factor = CHI_party_control }
+		multiply_variable = { CHI_party_control_drift_defence_factor = 0.0025 }
+
+		set_variable = { CHI_party_control_political_power_factor = CHI_party_control }
+		subtract_from_variable = { CHI_party_control_political_power_factor = 60 }
+		multiply_variable = { CHI_party_control_political_power_factor = 0.001 }
+
+		# Higher party_control = less academic freedom = less research speed
+		set_variable = { CHI_party_control_research_speed_factor = CHI_party_control }
+		subtract_from_variable = { CHI_party_control_research_speed_factor = 60 }
+		multiply_variable = { CHI_party_control_research_speed_factor = -0.0008 }
+
+		# --- PLA modernization -> army org + planning + training time ----
+		set_variable = { CHI_pla_modernization_army_org_factor = CHI_pla_modernization }
+		subtract_from_variable = { CHI_pla_modernization_army_org_factor = 30 }
+		multiply_variable = { CHI_pla_modernization_army_org_factor = 0.0015 }
+
+		set_variable = { CHI_pla_modernization_planning_speed = CHI_pla_modernization }
+		multiply_variable = { CHI_pla_modernization_planning_speed = 0.002 }
+
+		# More modernization = less training time penalty
+		set_variable = { CHI_pla_modernization_training_time_factor = CHI_pla_modernization }
+		multiply_variable = { CHI_pla_modernization_training_time_factor = -0.0015 }
+
+		# --- Coastal/Inland gap -> stability + productivity + consumer goods
+		set_temp_variable = { CHI_temp_gap = CHI_coastal_growth }
+		subtract_from_temp_variable = { CHI_temp_gap = CHI_inland_neglect }
+
+		set_variable = { CHI_coastal_gap_stability_factor = CHI_temp_gap }
+		multiply_variable = { CHI_coastal_gap_stability_factor = -0.001 }
+
+		set_variable = { CHI_coastal_gap_productivity_growth_modifier = CHI_temp_gap }
+		multiply_variable = { CHI_coastal_gap_productivity_growth_modifier = 0.001 }
+
+		set_variable = { CHI_coastal_gap_consumer_goods_factor = CHI_temp_gap }
+		multiply_variable = { CHI_coastal_gap_consumer_goods_factor = -0.0008 }
+	}
+}

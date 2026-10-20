@@ -1,0 +1,204 @@
+<div id="coldwar-cyprus-design">
+  <style>
+    #coldwar-cyprus-design .cw-graph { position: relative; margin-top: 16px; }
+    #coldwar-cyprus-design .cw-edges { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+    #coldwar-cyprus-design .cw-node { position: absolute; transform: translate(-50%, -50%); }
+    #coldwar-cyprus-design .cw-label { display: block; text-align: center; overflow-wrap: anywhere; margin-bottom: 6px; }
+    #coldwar-cyprus-design .cw-details { margin-top: 16px; overflow-wrap: anywhere; }
+    #coldwar-cyprus-design .cw-code { white-space: pre-wrap; overflow-wrap: anywhere; }
+    #coldwar-cyprus-design .cw-mobile { display: none; }
+    #coldwar-cyprus-design .cw-atlas { width: 100%; display: block; }
+    #coldwar-cyprus-design .cw-state { margin-top: 12px; }
+    #coldwar-cyprus-design .cw-legend { margin: 12px 0; }
+    #coldwar-cyprus-design .cw-mobile li { margin: 12px 0; }
+    #coldwar-cyprus-design .cw-mobile button { max-width: 100%; }
+    #coldwar-cyprus-design .cw-graph svg text { fill: var(--foreground); }
+    @media (max-width: 559px) {
+      #coldwar-cyprus-design .cw-graph { display: none; }
+      #coldwar-cyprus-design .cw-mobile { display: block; }
+    }
+  </style>
+  <h2>Cold War Cyprus · 1970</h2>
+  <div class="viz-row"><span class="viz-badge">Design proposal</span><span id="cw-count" class="text-small"></span></div>
+  <div class="viz-controls">
+    <label class="form-label">Tree section
+      <select class="form-select" id="cw-section" aria-label="Focus tree section"></select>
+    </label>
+    <button class="btn" type="button" id="cw-spirits">Starting position</button>
+    <button class="btn" type="button" id="cw-atlas">Tree structure</button>
+  </div>
+  <div id="cw-content"></div>
+  <div id="cw-details" class="cw-details" aria-live="polite"></div>
+  <script>
+  (() => {
+    const root = document.getElementById('coldwar-cyprus-design');
+    const data = __COLDWAR_DATA__;
+    const content = root.querySelector('#cw-content');
+    const detail = root.querySelector('#cw-details');
+    const select = root.querySelector('#cw-section');
+    const byId = new Map(data.focuses.map(n => [n.id,n]));
+    let current = 'constitution';
+    let selected = null;
+    let mode = 'tree';
+    const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const sign = value => value > 0 ? '+'+value : String(value);
+    const numeric = (key,value) => {
+      if (key === 'interest_rate_multiplier_modifier') return sign(value)+' pp interest';
+      if (key === 'productivity_growth_modifier') return sign(value)+' monthly base growth';
+      return sign(Number((value*100).toFixed(2)))+'%';
+    };
+    const outcomeText = node => {
+      const parts=[];
+      if (node.treasury_cost_gdp_percent) parts.push(node.treasury_cost_gdp_percent+'% GDP project cost');
+      if (node.political_power) parts.push(sign(node.political_power)+' political power');
+      if (node.stability) parts.push(sign(Number((node.stability*100).toFixed(2)))+' pp stability');
+      if (node.tension) parts.push(sign(node.tension)+' tension');
+      if (node.settlement) parts.push(sign(node.settlement)+' settlement progress');
+      if (node.settlement_credit_target) parts.push('Shared reform-credit ceiling '+node.settlement_credit_target+'/10; only previously uncredited progress applies');
+      if (node.research) parts.push('1 × 25% research bonus: '+node.research);
+      return parts;
+    };
+    root.querySelector('#cw-count').textContent = data.focuses.length+' focuses · '+data.parties.length+' major party routes · '+data.meta.counts.mutually_exclusive_pairs+' exclusive pairs';
+    const shared=document.createElement('optgroup'); shared.label='Shared sectors'; select.append(shared);
+    for (const section of data.sections.filter(s=>!s.id.startsWith('party_'))) {
+      const opt=document.createElement('option'); opt.value=section.id; opt.textContent=section.title; shared.append(opt);
+    }
+    for (const outlook of ['Western','Emerging','Salafist','Non-Aligned','Nationalist']) {
+      const group=document.createElement('optgroup'); group.label=outlook; select.append(group);
+      for (const party of data.parties.filter(p=>p.outlook===outlook)) {
+        const opt=document.createElement('option'); opt.value='party_'+party.index; opt.textContent=party.index+' · '+party.title; group.append(opt);
+      }
+    }
+    function save() {
+      if (window.openai && window.openai.setWidgetState) window.openai.setWidgetState({modelContent:{section:current,focus:selected},privateContent:{mode}}).catch(()=>{});
+    }
+    function chooseFocus(id,remember=true) {
+      const n=byId.get(id); if (!n) return;
+      selected=id;
+      for (const b of content.querySelectorAll('[data-focus]')) {
+        const active=b.dataset.focus===id;
+        b.classList.toggle('btn-primary',active); b.setAttribute('aria-pressed',String(active));
+      }
+      const effects=Object.entries(n.modifiers).map(([key,value])=>`<tr><td><code>${esc(key)}</code></td><td class="text-end tabular-nums">${esc(numeric(key,value))}</td></tr>`).join('');
+      const immediate=outcomeText(n);
+      const prerequisites=n.prerequisite_groups.map(g=>'('+g.map(id=>byId.get(id).title).join(' OR ')+')').join(' AND ');
+      detail.innerHTML=`<h3>${esc(n.title)}</h3><div class="text-small"><code>${esc(n.id)}</code> · ${n.days} days · MD (${n.x}, ${n.y})</div>
+        ${n.party!==null?'<div class="cw-state">Active only while party '+n.party+' governs.</div>':''}
+        ${immediate.length?'<ul>'+immediate.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>':''}
+        ${effects?'<table class="table table-sm"><thead><tr><th>Proposed modifier</th><th class="text-end">Value</th></tr></thead><tbody>'+effects+'</tbody></table>':''}
+        ${n.duration_days?'<div>Modifier duration: '+n.duration_days+' days.</div>':''}
+        ${prerequisites?'<div class="cw-state">Requires: '+esc(prerequisites)+'</div>':''}
+        ${n.excludes.length?'<div class="cw-state">Excludes: '+n.excludes.map(id=>esc(byId.get(id).title)).join('; ')+'</div>':''}
+        ${n.requirements?'<div class="cw-state">Condition: '+esc(n.requirements)+'</div>':''}
+        ${n.note?'<div class="cw-state">'+esc(n.note)+'</div>':''}
+        ${n.event_contract?'<div class="cw-state">Outcome contract: '+esc(data.event_contracts[n.event_contract])+'</div>':''}
+        ${n.removes.length?'<div class="cw-state">Conditional replacement/removal: '+n.removes.map(esc).join(', ')+'</div>':''}
+        <details class="cw-state"><summary>Effect syntax and party gate · design only</summary><pre class="cw-code"><code>${esc(n.available_code+'\n# Reward sketch; new COLDWAR definitions are still required.\n'+n.reward_code)}</code></pre></details>`;
+      if (remember) save();
+    }
+    function wireFocusButtons() {
+      for (const button of content.querySelectorAll('[data-focus]')) button.addEventListener('click',()=>chooseFocus(button.dataset.focus));
+    }
+    function renderTree() {
+      mode='tree'; select.value=current;
+      const section=data.sections.find(s=>s.id===current);
+      const party=data.parties.find(p=>'party_'+p.index===current);
+      const nodes=data.focuses.filter(n=>n.section===current);
+      const minX=Math.min(...nodes.map(n=>n.x)), maxX=Math.max(...nodes.map(n=>n.x));
+      const minY=Math.min(...nodes.map(n=>n.y)), maxY=Math.max(...nodes.map(n=>n.y));
+      content.innerHTML=`<h3>${esc(section.title)}</h3><div>${esc(section.description)}</div>
+        ${party?'<div class="cw-state text-small">'+esc(party.status)+' · '+esc(party.leader)+'<br>Gate: ruling_party = '+party.index+'; '+esc(party.formation)+'</div>':''}
+        <div class="cw-legend text-small">Solid links: prerequisites · dotted horizontal link ×: mutually exclusive · select a focus for effects</div>
+        <div class="cw-graph" role="group" aria-label="${esc(section.title)} focus tree"></div>
+        <ol class="cw-mobile"></ol>`;
+      const graph=content.querySelector('.cw-graph');
+      const width=Math.max(280,root.clientWidth);
+      const unit=Math.min(65,(width-24)/(maxX-minX+4));
+      const left=(width-(maxX-minX)*unit)/2;
+      const row=144;
+      const height=(maxY-minY)*row+100;
+      const coords=n=>({x:left+(n.x-minX)*unit,y:48+(n.y-minY)*row});
+      graph.style.height=height+'px';
+      graph.innerHTML=`<svg class="cw-edges" width="${width}" height="${height}" aria-hidden="true"></svg>`;
+      const list=content.querySelector('.cw-mobile');
+      const boxes=new Map();
+      for (const n of nodes) {
+        const xy=coords(n), box=document.createElement('div'); box.className='cw-node';
+        box.style.left=xy.x+'px';box.style.top=xy.y+'px';box.style.width=Math.min(168,unit*3.1)+'px';
+        box.innerHTML=`<span class="cw-label">${esc(n.title)}</span><button class="btn btn-block" type="button" data-focus="${n.id}" aria-label="${esc(n.title)} · ${n.days} days" aria-pressed="false">${n.days}d · effects</button>`;
+        graph.append(box);
+        boxes.set(n.id,box);
+        const li=document.createElement('li');
+        li.innerHTML=`<button class="btn" type="button" data-focus="${n.id}" aria-pressed="false">${esc(n.title)} · ${n.days}d</button><div class="text-small">${n.prerequisite_groups.length?'After '+esc(n.prerequisite_groups.map(g=>g.map(id=>byId.get(id).title).join(' OR ')).join(' AND ')):'Section root'}${n.excludes.length?' · excludes '+n.excludes.map(id=>esc(byId.get(id).title)).join(', '):''}</div>`;
+        list.append(li);
+      }
+      const origin=graph.getBoundingClientRect();
+      const rect=id=>{
+        const r=boxes.get(id).getBoundingClientRect();
+        return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};
+      };
+      let paths='';
+      for(const n of nodes){
+        const to=coords(n),target=rect(n.id);
+        for(const group of n.prerequisite_groups)for(const id of group){
+          const p=byId.get(id);if(!p||p.section!==current)continue;
+          const from=coords(p),source=rect(p.id),start=source.bottom+5,end=target.top-5,middle=(start+end)/2;
+          paths+=`<path d="M${from.x},${start}V${middle}H${to.x}V${end}" fill="none" stroke="var(--border)" stroke-width="1.5"/>`;
+        }
+        for(const id of n.excludes)if(n.id<id){
+          const other=byId.get(id);if(other.section!==current)continue;
+          const r=rect(other.id),a=target.left<r.left?target:r,b=target.left<r.left?r:target;
+          const y=to.y+24,mid=(a.right+b.left)/2;
+          paths+=`<path d="M${a.right+5},${y}H${b.left-5}" fill="none" stroke="var(--muted-foreground)" stroke-width="1" stroke-dasharray="3 4"/><text x="${mid}" y="${y-4}" text-anchor="middle">×</text>`;
+        }
+      }
+      graph.querySelector('svg').innerHTML=paths;
+      wireFocusButtons();
+      chooseFocus(nodes.some(n=>n.id===selected)?selected:nodes[0].id,false);
+    }
+    function startingPosition(remember=true) {
+      mode='spirits';
+      content.innerHTML=`<h3>January 1970 · Starting position</h3><div>CYP controls states 145 and 146. Britain controls state 812. Makarios III governs at party index 1; diplomacy remains non-aligned.</div>
+        <table class="table table-sm"><thead><tr><th>Starting spirit</th><th>Scope / proposed effects</th></tr></thead><tbody>${data.starting_spirits.filter(s=>s.activation==='start').map(s=>`<tr><td>${esc(s.title)}<div class="text-small">${esc(s.note)}</div></td><td>${esc(s.scope)}<br>${Object.entries(s.modifiers).map(([k,v])=>esc(k)+': '+esc(numeric(k,v))).join('<br>')}</td></tr>`).join('')}</tbody></table>
+        <div class="cw-state">New scenario tracks: tension 55/100; settlement progress 10/100. These are balance proposals, not historical statistics.</div>
+        <div class="cw-state">Displacement and Missing Persons / Shattered Communities are conditional crisis consequences, not additional starting spirits.</div>`;
+      detail.innerHTML=''; if(remember)save();
+    }
+    function atlas(remember=true) {
+      mode='atlas';
+      content.innerHTML='<h3>Tree structure · MD coordinates</h3><div class="text-small">Four shared sectors; recovery below the economy; 24 political islands in six banks. Each political island contains ten bespoke focuses and two policy forks.</div>';
+      const width=Math.max(280,root.clientWidth), padding=18;
+      const svgNS='http://www.w3.org/2000/svg';
+      const svg=document.createElementNS(svgNS,'svg');svg.classList.add('cw-atlas');
+      svg.setAttribute('viewBox','0 0 '+width+' 400');svg.setAttribute('role','img');svg.setAttribute('aria-label','Resolved MD coordinates for all '+data.focuses.length+' focuses. Political islands are arranged in four columns and six banks.');
+      const sx=x=>padding+(x+2)/138*(width-padding*2), sy=y=>20+y/65*360;
+      for (const n of data.focuses) {
+        const dot=document.createElementNS(svgNS,'circle');dot.setAttribute('cx',sx(n.x));dot.setAttribute('cy',sy(n.y));
+        dot.setAttribute('r','1.8');dot.setAttribute('fill',n.party===null?'var(--viz-series-1)':'var(--muted-foreground)');svg.append(dot);
+      }
+      content.append(svg);
+      const table=document.createElement('table');table.className='table table-sm';
+      table.innerHTML='<thead><tr><th>Sector / bank</th><th>MD anchor coordinates</th></tr></thead><tbody>'+data.sections.filter(s=>!s.id.startsWith('party_')).map(s=>'<tr><td>'+esc(s.title)+'</td><td>'+s.anchor.join(', ')+'</td></tr>').join('')+
+        Array.from({length:6},(_,i)=>'<tr><td>Party bank '+(i+1)+' · indices '+(i*4)+'–'+(i*4+3)+'</td><td>x86 / 100 / 114 / 128; y'+(i*11)+'</td></tr>').join('')+'</tbody>';
+      content.append(table);detail.innerHTML='';if(remember)save();
+    }
+    select.addEventListener('change',()=>{current=select.value;selected=null;renderTree();save();});
+    root.querySelector('#cw-spirits').addEventListener('click',startingPosition);
+    root.querySelector('#cw-atlas').addEventListener('click',atlas);
+    function restore(state) {
+      if (!state) return false;
+      const mc=state.modelContent||{},pc=state.privateContent||{};
+      if (data.sections.some(s=>s.id===mc.section)) current=mc.section;
+      if (byId.has(mc.focus)) selected=mc.focus;
+      if (pc.mode==='spirits') startingPosition(false); else if(pc.mode==='atlas') atlas(false); else renderTree();
+      return true;
+    }
+    if (!restore(window.openai&&window.openai.widgetState)) renderTree();
+    window.addEventListener('openai:set_globals',event=>restore(event.detail&&event.detail.globals&&event.detail.globals.widgetState));
+    let lastWidth=root.clientWidth;
+    new ResizeObserver(()=>{
+      if (Math.abs(root.clientWidth-lastWidth)>4) {lastWidth=root.clientWidth;if(mode==='tree')renderTree();}
+    }).observe(root);
+  })();
+  </script>
+</div>

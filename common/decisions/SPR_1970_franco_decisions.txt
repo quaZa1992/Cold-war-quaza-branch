@@ -1,0 +1,221 @@
+SPR_1970_franco_succession_category = {
+	SPR_1970_succession_clock = {
+		icon = GFX_decision_generic_political_discourse
+		days_mission_timeout = 2149
+		is_good = no
+		visible = {
+			has_country_flag = SPR_1970_franco_system_enabled
+			NOT = { has_country_flag = SPR_1970_franco_dead }
+		}
+		cancel_trigger = { has_country_flag = SPR_1970_franco_dead }
+		timeout_effect = {
+			if = {
+				limit = { NOT = { has_country_flag = SPR_1970_franco_dead } }
+				country_event = { id = SPR_1970.11 }
+			}
+		}
+	}
+
+	SPR_1970_convene_the_medical_council = {
+		icon = GFX_decision_ISR_healthcare_button
+		cost = 45
+		days_remove = 20
+		days_re_enable = 120
+		fire_only_once = no
+		visible = { has_country_flag = SPR_1970_franco_system_enabled }
+		available = { check_variable = { SPR_1970_franco_health < 91 } }
+		complete_effect = {
+			set_temp_variable = { treasury_change = -1.00 }
+			modify_treasury_effect = yes
+			add_to_variable = { SPR_1970_franco_health = 5 }
+			SPR_1970_clamp_franco_variables = yes
+			SPR_1970_update_franco_dynamic_modifier = yes
+		}
+		ai_will_do = { base = 4 }
+	}
+
+	SPR_1970_rest_at_el_pardo = {
+		icon = GFX_decision_ISR_healthcare_button
+		cost = 35
+		days_remove = 14
+		days_re_enable = 90
+		fire_only_once = no
+		visible = { has_country_flag = SPR_1970_franco_system_enabled }
+		available = { check_variable = { SPR_1970_franco_health < 94 } }
+		complete_effect = {
+			add_stability = -0.01
+			add_to_variable = { SPR_1970_franco_health = 4 }
+			add_to_variable = { SPR_1970_aperturista_influence = 1 }
+			SPR_1970_clamp_franco_variables = yes
+			SPR_1970_update_franco_dynamic_modifier = yes
+		}
+		ai_will_do = { base = 3 }
+	}
+
+	SPR_1970_stage_a_public_appearance = {
+		icon = GFX_decision_propaganda
+		cost = 25
+		days_remove = 10
+		days_re_enable = 90
+		fire_only_once = no
+		visible = { has_country_flag = SPR_1970_franco_system_enabled }
+		available = { check_variable = { SPR_1970_franco_health > 20 } }
+		complete_effect = {
+			add_stability = 0.015
+			add_to_variable = { SPR_1970_franco_health = -3 }
+			add_to_variable = { SPR_1970_bunker_influence = 4 }
+			SPR_1970_clamp_franco_variables = yes
+			SPR_1970_update_franco_dynamic_modifier = yes
+		}
+		ai_will_do = { base = 2 }
+	}
+
+	SPR_1970_delegate_routine_to_carrero = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 40
+		days_remove = 21
+		days_re_enable = 120
+		fire_only_once = no
+		visible = {
+			has_country_flag = SPR_1970_franco_system_enabled
+			has_country_flag = SPR_1970_carrero_is_prime_minister
+		}
+		complete_effect = {
+			add_to_variable = { SPR_1970_franco_health = 3 }
+			add_to_variable = { SPR_1970_bunker_influence = 3 }
+			add_to_variable = { SPR_1970_aperturista_influence = -1 }
+			SPR_1970_clamp_franco_variables = yes
+			SPR_1970_update_franco_dynamic_modifier = yes
+		}
+		ai_will_do = { base = 4 }
+	}
+
+	SPR_1970_hear_the_aperturistas = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 35
+		days_remove = 14
+		days_re_enable = 100
+		fire_only_once = no
+		visible = { has_country_flag = SPR_1970_franco_system_enabled }
+		complete_effect = {
+			add_to_variable = { SPR_1970_aperturista_influence = 6 }
+			add_to_variable = { SPR_1970_bunker_influence = -4 }
+			SPR_1970_clamp_franco_variables = yes
+			SPR_1970_update_franco_dynamic_modifier = yes
+		}
+		ai_will_do = {
+			base = 2
+			modifier = { add = 4 has_country_flag = SPR_1970_managed_opening_adopted }
+		}
+	}
+
+	SPR_1970_receive_the_bunker_delegation = {
+		icon = GFX_decision_generic_political_rally
+		cost = 35
+		days_remove = 14
+		days_re_enable = 100
+		fire_only_once = no
+		visible = { has_country_flag = SPR_1970_franco_system_enabled }
+		complete_effect = {
+			add_to_variable = { SPR_1970_bunker_influence = 6 }
+			add_to_variable = { SPR_1970_aperturista_influence = -4 }
+			SPR_1970_clamp_franco_variables = yes
+			SPR_1970_update_franco_dynamic_modifier = yes
+		}
+		ai_will_do = {
+			base = 2
+			modifier = { add = 4 has_idea = SPR_1970_state_of_exception }
+		}
+	}
+}
+
+SPR_1970_operation_ogre_category = {
+	SPR_1970_operation_ogre_countdown = {
+		icon = GFX_decision_spr_political_assassination
+		days_mission_timeout = 137
+		is_good = no
+		visible = {
+			has_country_flag = SPR_1970_operation_ogre_active
+			NOT = { has_country_flag = SPR_1970_operation_ogre_resolved }
+		}
+		cancel_trigger = { has_country_flag = SPR_1970_operation_ogre_resolved }
+		timeout_effect = { SPR_1970_resolve_operation_ogre = yes }
+	}
+
+	SPR_1970_rotate_the_prime_ministers_route = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 50
+		days_remove = 21
+		fire_only_once = yes
+		visible = { NOT = { has_country_flag = SPR_1970_ogre_route_rotated } }
+		complete_effect = {
+			set_country_flag = SPR_1970_ogre_route_rotated
+			set_temp_variable = { treasury_change = -0.50 }
+			modify_treasury_effect = yes
+			add_to_variable = { SPR_1970_operation_ogre_security = 25 }
+			SPR_1970_clamp_franco_variables = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = { add = 10 is_historical_focus_on = no }
+		}
+	}
+
+	SPR_1970_infiltrate_eta_safehouses = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 60
+		days_remove = 28
+		fire_only_once = yes
+		visible = { NOT = { has_country_flag = SPR_1970_ogre_safehouses_infiltrated } }
+		complete_effect = {
+			set_country_flag = SPR_1970_ogre_safehouses_infiltrated
+			set_temp_variable = { treasury_change = -1.50 }
+			modify_treasury_effect = yes
+			add_stability = -0.01
+			add_to_variable = { SPR_1970_operation_ogre_security = 20 }
+			SPR_1970_clamp_franco_variables = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = { add = 8 is_historical_focus_on = no }
+		}
+	}
+
+	SPR_1970_authorize_an_armored_convoy = {
+		icon = GFX_decision_generic_police_action
+		cost = 40
+		days_remove = 18
+		fire_only_once = yes
+		visible = { NOT = { has_country_flag = SPR_1970_ogre_armored_convoy } }
+		complete_effect = {
+			set_country_flag = SPR_1970_ogre_armored_convoy
+			set_temp_variable = { treasury_change = -1.00 }
+			modify_treasury_effect = yes
+			add_to_variable = { SPR_1970_operation_ogre_security = 15 }
+			SPR_1970_clamp_franco_variables = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = { add = 7 is_historical_focus_on = no }
+		}
+	}
+
+	SPR_1970_preserve_the_public_routine = {
+		icon = GFX_decision_propaganda
+		cost = 0
+		days_remove = 10
+		fire_only_once = yes
+		visible = { NOT = { has_country_flag = SPR_1970_ogre_public_routine } }
+		complete_effect = {
+			set_country_flag = SPR_1970_ogre_public_routine
+			add_political_power = 60
+			add_stability = 0.015
+			add_to_variable = { SPR_1970_operation_ogre_security = -15 }
+			SPR_1970_clamp_franco_variables = yes
+		}
+		ai_will_do = {
+			base = 10
+			modifier = { factor = 0 is_historical_focus_on = no }
+		}
+	}
+}

@@ -1,0 +1,2181 @@
+# Libya, 1970-2000: the Revolutionary Republic and the Jamahiriya.
+# This tree is deliberately isolated from the 1985 and 2000 Libya tree.
+focus_tree = {
+	id = LBA_1970_focus
+
+	country = {
+		base = 0
+		modifier = {
+			add = 100
+			original_tag = LBA
+			IMP_is_1970_scenario = yes
+		}
+	}
+
+	default = no
+	shared_focus = AFRICAN_UNION_shared_focus
+	initial_show_position = { x = 15 y = 0 }
+	continuous_focus_position = { x = 15 y = 32 }
+
+	###############################################################
+	# I. THE REVOLUTIONARY REPUBLIC
+	###############################################################
+
+	focus = {
+		id = LBA_1970_a_revolution_barely_one_year_old
+		icon = revolutionary_government
+		x = 15
+		y = 0
+		cost = 2
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_revolution_barely_one_year_old"
+			custom_effect_tooltip = LBA_1970_starting_burdens_tt
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	focus = {
+		id = LBA_1970_consolidate_the_rcc
+		icon = national_unity
+		x = 15
+		y = 1
+		cost = 5
+		prerequisite = { focus = LBA_1970_a_revolution_barely_one_year_old }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_consolidate_the_rcc"
+			LBA_1970_improve_administration = yes
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	# Sovereignty
+	focus = {
+		id = LBA_1970_close_the_foreign_bases
+		icon = military_bases
+		x = 9
+		y = 2
+		cost = 5
+		prerequisite = { focus = LBA_1970_consolidate_the_rcc }
+		available = { original_tag = LBA is_subject = no }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_close_the_foreign_bases"
+			LBA_1970_close_foreign_bases = yes
+			if = { limit = { country_exists = ENG } ENG = { add_opinion_modifier = { target = ROOT modifier = insult } } }
+			if = { limit = { country_exists = USA } USA = { add_opinion_modifier = { target = ROOT modifier = insult } } }
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_a_sovereign_mediterranean_state
+		icon = focus_generic_armed_neutrality
+		x = 9
+		y = 3
+		cost = 5
+		prerequisite = { focus = LBA_1970_close_the_foreign_bases }
+		available = { original_tag = LBA is_subject = no }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_sovereign_mediterranean_state"
+			add_war_support = 0.03
+			391 = { add_building_construction = { type = dockyard level = 1 instant_build = yes } }
+			add_doctrine_cost_reduction = { name = LBA_1970_mediterranean_doctrine_bonus cost_reduction = 0.30 uses = 1 category = naval_doctrine }
+			if = { limit = { country_exists = EGY } EGY = { add_opinion_modifier = { target = ROOT modifier = given_gift } } }
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	# Revolutionary administration
+	focus = {
+		id = LBA_1970_the_arab_socialist_union
+		icon = Generic_Factionalism
+		x = 12
+		y = 2
+		cost = 5
+		prerequisite = { focus = LBA_1970_consolidate_the_rcc }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_arab_socialist_union"
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			change_relative_party_popularity = yes
+			custom_effect_tooltip = LBA_1970_arab_socialist_union_tt
+			hidden_effect = { set_country_flag = LBA_1970_arab_socialist_union }
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_a_revolutionary_administration
+		icon = examine_foreign_laws
+		x = 12
+		y = 3
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_arab_socialist_union }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_revolutionary_administration"
+			LBA_1970_improve_administration = yes
+			391 = {
+				add_building_construction = { type = offices level = 1 instant_build = yes }
+				if = {
+					limit = { free_building_slots = { building = internet_station size > 0 } }
+					add_building_construction = { type = internet_station level = 1 instant_build = yes }
+				}
+			}
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	# Oil sovereignty
+	focus = {
+		id = LBA_1970_renegotiate_the_concessions
+		icon = oil_trade
+		x = 15
+		y = 2
+		cost = 5
+		prerequisite = { focus = LBA_1970_consolidate_the_rcc }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_renegotiate_the_concessions"
+			set_temp_variable = { treasury_change = 5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	# The NOC was founded in 1970. Offers secure expertise for its later expansion.
+	focus = {
+		id = LBA_1970_establish_the_national_oil_corporation
+		icon = oil_corpos
+		x = 15
+		y = 3
+		cost = 5
+		prerequisite = { focus = LBA_1970_renegotiate_the_concessions }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_establish_the_national_oil_corporation"
+			set_country_flag = LBA_1970_noc_founded
+			LBA_1970_improve_oil_control = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	# Each offer triggers a foreign decision. A refusal leaves the other offers open.
+	focus = {
+		id = LBA_1970_request_algerian_oil_assistance
+		icon = align_to_algeria
+		x = 11
+		y = 4
+		cost = 5
+		prerequisite = { focus = LBA_1970_establish_the_national_oil_corporation }
+		available = {
+			original_tag = LBA
+			country_exists = ALG
+			NOT = { has_war_with = ALG }
+			NOT = { has_country_flag = LBA_1970_oil_partner_agreed }
+			NOT = { has_country_flag = LBA_1970_oil_offer_pending }
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			custom_effect_tooltip = LBA_1970_algerian_oil_offer_tt
+			hidden_effect = {
+				set_country_flag = LBA_1970_oil_offer_pending
+				ALG = { country_event = { id = LBA1970Oil.1 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 500 modifier = { add = 1500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_retain_foreign_technical_staff
+		icon = italy_deal
+		x = 14
+		y = 4
+		cost = 5
+		prerequisite = { focus = LBA_1970_establish_the_national_oil_corporation }
+		available = {
+			original_tag = LBA
+			country_exists = ITA
+			NOT = { has_war_with = ITA }
+			NOT = { has_country_flag = LBA_1970_oil_partner_agreed }
+			NOT = { has_country_flag = LBA_1970_oil_offer_pending }
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			custom_effect_tooltip = LBA_1970_italian_oil_offer_tt
+			hidden_effect = {
+				set_country_flag = LBA_1970_oil_offer_pending
+				ITA = { country_event = { id = LBA1970Oil.2 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 180 }
+	}
+
+	focus = {
+		id = LBA_1970_request_french_oil_engineers
+		icon = trade_with_france
+		x = 17
+		y = 4
+		cost = 5
+		prerequisite = { focus = LBA_1970_establish_the_national_oil_corporation }
+		available = {
+			original_tag = LBA
+			country_exists = FRA
+			NOT = { has_war_with = FRA }
+			NOT = { has_country_flag = LBA_1970_oil_partner_agreed }
+			NOT = { has_country_flag = LBA_1970_oil_offer_pending }
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			custom_effect_tooltip = LBA_1970_french_oil_offer_tt
+			hidden_effect = {
+				set_country_flag = LBA_1970_oil_offer_pending
+				FRA = { country_event = { id = LBA1970Oil.3 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 120 }
+	}
+
+	focus = {
+		id = LBA_1970_invite_soviet_petroleum_specialists
+		icon = sov_engineer_troops
+		x = 20
+		y = 4
+		cost = 5
+		prerequisite = { focus = LBA_1970_establish_the_national_oil_corporation }
+		available = {
+			original_tag = LBA
+			country_exists = SOV
+			NOT = { has_war_with = SOV }
+			NOT = { has_country_flag = LBA_1970_oil_partner_agreed }
+			NOT = { has_country_flag = LBA_1970_oil_offer_pending }
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			custom_effect_tooltip = LBA_1970_soviet_oil_offer_tt
+			hidden_effect = {
+				set_country_flag = LBA_1970_oil_offer_pending
+				SOV = { country_event = { id = LBA1970Oil.4 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 80 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_six_month_technical_transfer
+		icon = maghreb_oil
+		x = 15
+		y = 5
+		cost = 26 # 182 days after an offer is accepted
+		prerequisite = {
+			focus = LBA_1970_request_algerian_oil_assistance
+			focus = LBA_1970_retain_foreign_technical_staff
+			focus = LBA_1970_request_french_oil_engineers
+			focus = LBA_1970_invite_soviet_petroleum_specialists
+		}
+		available = {
+			original_tag = LBA
+			has_country_flag = LBA_1970_oil_partner_agreed
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_six_month_technical_transfer"
+			LBA_1970_improve_oil_control = yes
+			if = { limit = { owns_state = 397 } 397 = { add_resource = { type = oil amount = 2 } } }
+			add_tech_bonus = {
+				name = LBA_1970_oil_technical_transfer_bonus
+				bonus = 0.30
+				uses = 1
+				category = CAT_fuel_refining
+				category = CAT_excavation
+			}
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	# A slow domestic fallback prevents a four-way diplomatic refusal from deadlocking the tree.
+	focus = {
+		id = LBA_1970_domestic_oil_training
+		icon = oil_production
+		x = 20
+		y = 5
+		cost = 26
+		prerequisite = { focus = LBA_1970_establish_the_national_oil_corporation }
+		available = {
+			original_tag = LBA
+			NOT = { has_country_flag = LBA_1970_oil_partner_agreed }
+			NOT = { has_country_flag = LBA_1970_oil_offer_pending }
+			OR = { has_completed_focus = LBA_1970_request_algerian_oil_assistance NOT = { country_exists = ALG } has_war_with = ALG }
+			OR = { has_completed_focus = LBA_1970_retain_foreign_technical_staff NOT = { country_exists = ITA } has_war_with = ITA }
+			OR = { has_completed_focus = LBA_1970_request_french_oil_engineers NOT = { country_exists = FRA } has_war_with = FRA }
+			OR = { has_completed_focus = LBA_1970_invite_soviet_petroleum_specialists NOT = { country_exists = SOV } has_war_with = SOV }
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_domestic_oil_training"
+			LBA_1970_improve_oil_control = yes
+			if = { limit = { owns_state = 397 } 397 = { add_resource = { type = oil amount = 1 } } }
+			set_temp_variable = { treasury_change = -12.50 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 50 }
+	}
+
+	focus = {
+		id = LBA_1970_libyanise_the_oil_sector
+		icon = modern_refinery_industry
+		x = 15
+		y = 6
+		cost = 10
+		prerequisite = {
+			focus = LBA_1970_six_month_technical_transfer
+			focus = LBA_1970_domestic_oil_training
+		}
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_libyanise_the_oil_sector"
+			if = { limit = { has_idea = LBA_1970_algerian_petroleum_mission } remove_ideas = LBA_1970_algerian_petroleum_mission }
+			if = { limit = { has_idea = LBA_1970_foreign_petroleum_contractors } remove_ideas = LBA_1970_foreign_petroleum_contractors }
+			if = { limit = { has_idea = LBA_1970_french_petroleum_mission } remove_ideas = LBA_1970_french_petroleum_mission }
+			if = { limit = { has_idea = LBA_1970_soviet_petroleum_mission } remove_ideas = LBA_1970_soviet_petroleum_mission }
+			LBA_1970_improve_oil_control = yes
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_oil_revenues_for_the_people
+		icon = libyan_oil
+		x = 15
+		y = 7
+		cost = 10
+		prerequisite = { focus = LBA_1970_libyanise_the_oil_sector }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_oil_revenues_for_the_people"
+			LBA_1970_improve_oil_control = yes
+			if = {
+				limit = { OR = { has_idea = edu_01 has_idea = edu_02 has_idea = edu_03 has_idea = edu_04 } }
+				increase_education_budget = yes
+			}
+			set_temp_variable = { treasury_change = -7.50 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+	# Literacy, agriculture and basic infrastructure
+	focus = {
+		id = LBA_1970_a_national_literacy_campaign
+		icon = education_reform
+		x = 23
+		y = 2
+		cost = 10
+		prerequisite = { focus = LBA_1970_consolidate_the_rcc }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_national_literacy_campaign"
+			LBA_1970_raise_literacy_small = yes
+			if = {
+				limit = { OR = { has_idea = edu_01 has_idea = edu_02 has_idea = edu_03 has_idea = edu_04 } }
+				increase_education_budget = yes
+			}
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_primary_schools_and_rural_teachers
+		icon = education_reform
+		x = 23
+		y = 3
+		cost = 10
+		prerequisite = { focus = LBA_1970_a_national_literacy_campaign }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_primary_schools_and_rural_teachers"
+			LBA_1970_raise_literacy_large = yes
+			391 = { add_building_construction = { type = offices level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_create_the_ministry_of_agriculture
+		icon = agriculture
+		x = 23
+		y = 4
+		cost = 5
+		prerequisite = { focus = LBA_1970_primary_schools_and_rural_teachers }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_create_the_ministry_of_agriculture"
+			LBA_1970_improve_agriculture = yes
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_roads_power_and_schools
+		icon = construct_infrastructure
+		x = 23
+		y = 5
+		cost = 10
+		prerequisite = { focus = LBA_1970_create_the_ministry_of_agriculture }
+		available = { original_tag = LBA controls_state = 391 controls_state = 395 }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_roads_power_and_schools"
+			LBA_1970_improve_infrastructure = yes
+			391 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			395 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			LBA_1970_raise_literacy_large = yes
+			set_temp_variable = { treasury_change = -7.50 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_the_revolution_delivers
+		icon = economic_prosperity
+		x = 15
+		y = 8
+		cost = 10
+		prerequisite = { focus = LBA_1970_a_sovereign_mediterranean_state }
+		prerequisite = { focus = LBA_1970_a_revolutionary_administration }
+		prerequisite = { focus = LBA_1970_oil_revenues_for_the_people }
+		prerequisite = { focus = LBA_1970_roads_power_and_schools }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_revolution_delivers"
+			if = {
+				limit = { OR = { has_idea = health_01 has_idea = health_02 has_idea = health_03 has_idea = health_04 has_idea = health_05 } }
+				increase_healthcare_budget = yes
+			}
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	###############################################################
+	# II. FROM REVOLUTIONARY REPUBLIC TO JAMAHIRIYA
+	###############################################################
+
+	focus = {
+		id = LBA_1970_launch_the_popular_revolution
+		icon = revolutionary_primitivism
+		x = 15
+		y = 9
+		cost = 5
+		prerequisite = { focus = LBA_1970_the_revolution_delivers }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_launch_the_popular_revolution"
+			LBA_1970_improve_administration = yes
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	focus = {
+		id = LBA_1970_the_cultural_revolution
+		icon = Generic_Ripping_Papers
+		x = 15
+		y = 10
+		cost = 5
+		prerequisite = { focus = LBA_1970_launch_the_popular_revolution }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_cultural_revolution"
+			add_timed_idea = { idea = LBA_1970_cultural_revolution_campaign days = 730 }
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	focus = {
+		id = LBA_1970_green_book_peoples_authority
+		icon = Green_book
+		x = 13
+		y = 11
+		cost = 5
+		prerequisite = { focus = LBA_1970_the_cultural_revolution }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_green_book_peoples_authority"
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.02 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_green_book_workers_as_partners
+		icon = central_planned_economy2
+		x = 19
+		y = 16
+		cost = 5
+		prerequisite = { focus = LBA_1970_proclaim_the_jamahiriya }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_green_book_workers_as_partners"
+			add_tech_bonus = { name = LBA_1970_green_book_economy_bonus bonus = 0.30 uses = 1 category = CAT_industry }
+		}
+		ai_will_do = { base = 300 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_green_book_social_foundations
+		icon = family
+		x = 19
+		y = 17
+		cost = 5
+		prerequisite = { focus = LBA_1970_green_book_workers_as_partners }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_green_book_social_foundations"
+			LBA_1970_raise_literacy_small = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_the_1975_rcc_crisis
+		icon = Generic_Factionalism
+		x = 9
+		y = 11
+		cost = 5
+		prerequisite = { focus = LBA_1970_the_cultural_revolution }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_1975_rcc_crisis"
+			add_ideas = LBA_1970_rcc_crisis
+			country_event = { id = LBA1970RCC.1 days = 1 }
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	focus = {
+		id = LBA_1970_gaddafi_prevails
+		icon = Fatherly_leader
+		x = 9
+		y = 12
+		cost = 5
+		prerequisite = { focus = LBA_1970_the_1975_rcc_crisis }
+		mutually_exclusive = { focus = LBA_1970_muhayshi_seizes_the_rcc }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_gaddafi_prevails"
+			if = { limit = { has_idea = LBA_1970_rcc_crisis } remove_ideas = LBA_1970_rcc_crisis }
+			set_country_flag = LBA_1970_gaddafi_won_rcc_crisis
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	# Counterfactual 1975 break: Muhayshi's officers replace Gaddafi before
+	# the Jamahiriya is proclaimed. This is a separate republic, not a Gaddafi model.
+	focus = {
+		id = LBA_1970_muhayshi_seizes_the_rcc
+		icon = Generic_Factionalism
+		x = 6
+		y = 12
+		cost = 5
+		prerequisite = { focus = LBA_1970_the_1975_rcc_crisis }
+		mutually_exclusive = { focus = LBA_1970_gaddafi_prevails }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_muhayshi_seizes_the_rcc"
+			if = { limit = { has_idea = LBA_1970_rcc_crisis } remove_ideas = LBA_1970_rcc_crisis }
+			set_country_flag = LBA_1970_muhayshi_government
+			set_cosmetic_tag = LBA_ARAB_REPUBLIC_1970
+			create_country_leader = {
+				name = "Umar Muhayshi"
+				ideology = Autocracy
+				expire = "2000.1.1"
+			}
+			LBA_1970_improve_army = yes
+		}
+		ai_will_do = { base = 100 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_restore_collective_rcc_rule
+		icon = national_unity
+		x = 6
+		y = 13
+		cost = 5
+		prerequisite = { focus = LBA_1970_muhayshi_seizes_the_rcc }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_restore_collective_rcc_rule"
+			LBA_1970_clear_previous_political_order = yes
+			add_ideas = LBA_1970_collective_rcc
+			LBA_1970_improve_administration = yes
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_rebuild_the_ministries
+		icon = focus_generic_improve_the_administration
+		x = 6
+		y = 14
+		cost = 10
+		prerequisite = { focus = LBA_1970_restore_collective_rcc_rule }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes controls_state = 391 }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_rebuild_the_ministries"
+			LBA_1970_improve_administration = yes
+			391 = { add_building_construction = { type = offices level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_a_constitutional_arab_republic
+		icon = Election_graphics
+		x = 6
+		y = 15
+		cost = 10
+		prerequisite = { focus = LBA_1970_rebuild_the_ministries }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_constitutional_arab_republic"
+			if = { limit = { has_idea = LBA_1970_collective_rcc } remove_ideas = LBA_1970_collective_rcc }
+			add_ideas = LBA_1970_constitutional_republic
+			decrease_corruption = yes
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_repair_relations_with_egypt
+		icon = align_to_egypt
+		x = 6
+		y = 16
+		cost = 10
+		prerequisite = { focus = LBA_1970_a_constitutional_arab_republic }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes country_exists = EGY }
+	bypass = { NOT = { country_exists = EGY } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_repair_relations_with_egypt"
+			EGY = { country_event = { id = LBA1970Foreign.4 days = 1 } }
+			custom_effect_tooltip = LBA_1970_egypt_rapprochement_offer_tt
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	# The post-coup republic has its own institutions, budget and officer corps.
+	focus = {
+		id = LBA_1970_local_consultative_councils
+		icon = Election_graphics
+		x = 0
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_a_constitutional_arab_republic }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_ideas = LBA_1970_republican_councils
+			set_temp_variable = { treasury_change = -2.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_provincial_budget
+		icon = focus_generic_improve_the_administration
+		x = 0
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_local_consultative_councils }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_improve_infrastructure = yes
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_noc_under_the_republic
+		icon = libyan_oil
+		x = 3
+		y = 17
+		cost = 5
+		prerequisite = { focus = LBA_1970_a_constitutional_arab_republic }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_refresh_oil_control = yes
+			custom_effect_tooltip = LBA_1970_noc_continuity_tt
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_budget_for_schools_and_water
+		icon = education_reform
+		x = 3
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_noc_under_the_republic }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_raise_literacy_small = yes
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_contracted_industrial_projects
+		icon = industrial_complexes
+		x = 3
+		y = 19
+		cost = 10
+		prerequisite = { focus = LBA_1970_budget_for_schools_and_water }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes controls_state = 391 }
+		cancel_if_invalid = yes
+		completion_reward = {
+			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -4.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_republican_officer_corps
+		icon = general_staff
+		x = 6
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_repair_relations_with_egypt }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_improve_army = yes
+			army_experience = 15
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_border_security_pact
+		icon = diplomacy
+		x = 6
+		y = 18
+		cost = 5
+		prerequisite = { focus = LBA_1970_republican_officer_corps }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes country_exists = EGY }
+	bypass = { NOT = { country_exists = EGY } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			EGY = { country_event = { id = LBA1970Foreign.5 days = 1 } }
+			custom_effect_tooltip = LBA_1970_egypt_border_pact_offer_tt
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_republican_arab_diplomacy
+		icon = align_to_arab_league
+		x = 6
+		y = 19
+		cost = 10
+		prerequisite = { focus = LBA_1970_border_security_pact }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { country_exists = SYR } SYR = { country_event = { id = LBA1970Foreign.6 days = 1 } } }
+			if = { limit = { country_exists = SUD } SUD = { country_event = { id = LBA1970Foreign.6 days = 1 } } }
+			custom_effect_tooltip = LBA_1970_republican_trade_offer_tt
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_codify_the_third_international_theory
+		icon = Green_book
+		x = 15
+		y = 13
+		cost = 10
+		prerequisite = { focus = LBA_1970_green_book_peoples_authority }
+		prerequisite = { focus = LBA_1970_gaddafi_prevails }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_codify_the_third_international_theory"
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			change_relative_party_popularity = yes
+			add_tech_bonus = { name = LBA_1970_third_theory_bonus bonus = 0.30 uses = 1 category = CAT_industry }
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	focus = {
+		id = LBA_1970_proclaim_the_jamahiriya
+		icon = revolutionary_government
+		x = 15
+		y = 14
+		cost = 10
+		prerequisite = { focus = LBA_1970_codify_the_third_international_theory }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_proclaim_the_jamahiriya"
+			LBA_1970_proclaim_jamahiriya = yes
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 1000 }
+	}
+
+	###############################################################
+	# III. THE HISTORICAL JAMAHIRIYA
+	###############################################################
+
+	# Political side branches after proclamation are policy choices, not
+	# competing Gaddafi regimes. Muhayshi's alternative diverged in 1975.
+	focus = {
+		id = LBA_1970_balance_the_dual_state
+		icon = Green_book
+		x = 15
+		y = 15
+		cost = 5
+		prerequisite = { focus = LBA_1970_proclaim_the_jamahiriya }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_balance_the_dual_state"
+			LBA_1970_set_system_historical = yes
+		}
+		ai_will_do = { base = 200 modifier = { add = 1000 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_gaddafi_above_the_institutions
+		icon = Fatherly_leader
+		x = 15
+		y = 16
+		cost = 5
+		prerequisite = { focus = LBA_1970_balance_the_dual_state }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+			has_country_flag = LBA_1970_system_historical
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_gaddafi_above_the_institutions"
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 200 modifier = { add = 1000 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_organise_revolutionary_committees
+		icon = Green_book
+		x = 15
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_gaddafi_above_the_institutions }
+		available = { original_tag = LBA has_country_flag = LBA_1970_system_historical has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_organise_revolutionary_committees"
+			add_ideas = LBA_1970_revolutionary_committees
+		}
+		ai_will_do = { base = 200 modifier = { add = 1000 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_manage_the_security_services
+		icon = secret_police
+		x = 15
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_organise_revolutionary_committees }
+		available = { original_tag = LBA has_country_flag = LBA_1970_system_historical has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_manage_the_security_services"
+			if = {
+				limit = { has_intelligence_agency = no }
+				create_intelligence_agency = yes
+			}
+			else = { upgrade_intelligence_agency = upgrade_passive_defense }
+			add_tech_bonus = { name = LBA_1970_security_services_bonus bonus = 0.30 uses = 1 category = CAT_computing }
+		}
+		ai_will_do = { base = 200 modifier = { add = 1000 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_the_great_green_charter
+		icon = Green_book
+		x = 15
+		y = 19
+		cost = 10
+		prerequisite = { focus = LBA_1970_manage_the_security_services }
+		available = { original_tag = LBA has_country_flag = LBA_1970_system_historical has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_great_green_charter"
+			add_ideas = LBA_1970_green_charter
+		}
+		ai_will_do = { base = 200 modifier = { add = 1000 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_the_jamahiriya_endures
+		icon = national_unity
+		x = 15
+		y = 20
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_great_green_charter }
+		available = { original_tag = LBA has_country_flag = LBA_1970_system_historical has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_jamahiriya_endures"
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 200 modifier = { add = 1000 is_historical_focus_on = yes } }
+	}
+
+	###############################################################
+	# IV. DEVELOPMENT, THE ARMED FORCES AND FOREIGN POLICY
+	###############################################################
+
+	# Human capital and the Great Man-Made River
+	focus = {
+		id = LBA_1970_libyanise_the_technical_workforce
+		icon = education_reform
+		x = 12
+		y = 14
+		cost = 10
+		prerequisite = { focus = LBA_1970_proclaim_the_jamahiriya }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_libyanise_the_technical_workforce"
+			LBA_1970_raise_literacy_large = yes
+			add_tech_bonus = { name = LBA_1970_technical_workforce_bonus bonus = 0.50 uses = 1 category = CAT_computing }
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_establish_the_gmmr_authority
+		icon = water_conservation
+		x = 12
+		y = 15
+		cost = 10
+		prerequisite = { focus = LBA_1970_libyanise_the_technical_workforce }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_establish_the_gmmr_authority"
+			LBA_1970_improve_infrastructure = yes
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_gmmr_phase_one_sarir_to_benghazi
+		icon = baku_erzurum
+		x = 12
+		y = 16
+		cost = 10
+		prerequisite = { focus = LBA_1970_establish_the_gmmr_authority }
+		available = { original_tag = LBA controls_state = 395 controls_state = 397 }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_gmmr_phase_one_sarir_to_benghazi"
+			LBA_1970_improve_infrastructure = yes
+			LBA_1970_improve_agriculture = yes
+			395 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			397 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -10.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_gmmr_phase_two_hasawna_to_tripoli
+		icon = baku_supsa
+		x = 12
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_gmmr_phase_one_sarir_to_benghazi }
+		available = { original_tag = LBA controls_state = 391 controls_state = 919 }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_gmmr_phase_two_hasawna_to_tripoli"
+			LBA_1970_improve_agriculture = yes
+			391 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			919 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -12.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	# Oil-development models
+	focus = {
+		id = LBA_1970_complete_state_control
+		icon = central_planned_economy3
+		x = 2
+		y = 14
+		cost = 10
+		prerequisite = { focus = LBA_1970_proclaim_the_jamahiriya }
+		mutually_exclusive = { focus = LBA_1970_minority_foreign_partners }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_complete_state_control"
+			add_ideas = LBA_1970_state_directed_economy
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			change_relative_party_popularity = yes
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_state_industrial_boards
+		icon = central_planned_economy2
+		x = 2
+		y = 15
+		cost = 10
+		prerequisite = { focus = LBA_1970_complete_state_control }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_state_industrial_boards"
+			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			add_tech_bonus = { name = LBA_1970_state_industrial_boards_bonus bonus = 0.50 uses = 1 category = CAT_industry }
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_minority_foreign_partners
+		icon = trade_with_europe
+		x = 9
+		y = 14
+		cost = 10
+		prerequisite = { focus = LBA_1970_proclaim_the_jamahiriya }
+		mutually_exclusive = { focus = LBA_1970_complete_state_control }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_minority_foreign_partners"
+			add_ideas = LBA_1970_controlled_joint_ventures
+			add_tech_bonus = { name = LBA_1970_minority_foreign_partners_bonus bonus = 0.50 uses = 1 category = CAT_industry }
+			if = { limit = { country_exists = ITA } ITA = { add_opinion_modifier = { target = ROOT modifier = given_gift_ten } } }
+		}
+		ai_will_do = { base = 200 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_joint_ventures_on_libyan_terms
+		icon = italy_trade
+		x = 9
+		y = 15
+		cost = 10
+		prerequisite = { focus = LBA_1970_minority_foreign_partners }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_joint_ventures_on_libyan_terms"
+			395 = { add_building_construction = { type = offices level = 1 instant_build = yes } }
+			if = { limit = { country_exists = ITA } ITA = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } } }
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	# Armed forces
+	focus = {
+		id = LBA_1970_the_army_of_the_revolution
+		icon = Generic_Army_Focus_Red02
+		x = 25
+		y = 14
+		cost = 10
+		prerequisite = { focus = LBA_1970_proclaim_the_jamahiriya }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_army_of_the_revolution"
+			LBA_1970_improve_army = yes
+			army_experience = 15
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_soviet_arms_contracts
+		icon = examine_foreign_small_arms
+		x = 25
+		y = 15
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_army_of_the_revolution }
+		available = { original_tag = LBA country_exists = SOV }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_soviet_arms_contracts"
+			add_tech_bonus = { name = LBA_1970_soviet_arms_bonus bonus = 0.50 uses = 2 category = CAT_armor }
+			SOV = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } }
+			set_temp_variable = { treasury_change = -8.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_a_guard_centred_army
+		icon = Focus_Examine_Foreign_Tanks
+		x = 22
+		y = 16
+		cost = 10
+		prerequisite = { focus = LBA_1970_soviet_arms_contracts }
+		mutually_exclusive = { focus = LBA_1970_a_professional_officer_corps }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_guard_centred_army"
+			LBA_1970_improve_army = yes
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 250 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_the_chadian_gamble
+		icon = attack_chad
+		x = 22
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_a_guard_centred_army }
+		available = {
+			original_tag = LBA
+			country_exists = CHA
+			is_subject = no
+			NOT = { is_in_faction_with = CHA }
+			CHA = {
+				owns_state = 580
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+		bypass = {
+			OR = {
+				owns_state = 580
+				NOT = { country_exists = CHA }
+			}
+		}
+		will_lead_to_war_with = CHA
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_chadian_gamble"
+			add_state_claim = 580
+			if = {
+				limit = { NOT = { has_war_with = CHA } }
+				create_wargoal = {
+					target = CHA
+					type = take_state_focus
+					generator = { 580 }
+				}
+			}
+			add_opinion_modifier = { target = CHA modifier = rival }
+			CHA = { add_opinion_modifier = { target = ROOT modifier = rival } }
+		}
+		ai_will_do = { base = 250 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_lessons_of_the_toyota_war
+		icon = LIB_toyota
+		x = 22
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_chadian_gamble }
+		available = {
+			original_tag = LBA
+			OR = {
+				has_country_flag = LBA_1970_chad_war_fought
+				has_war_with = CHA
+				controls_state = 580
+				owns_state = 580
+				NOT = { country_exists = CHA }
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_lessons_of_the_toyota_war"
+			LBA_1970_improve_army = yes
+			add_doctrine_cost_reduction = { name = LBA_1970_toyota_war_lessons cost_reduction = 0.50 uses = 1 category = land_doctrine }
+		}
+		ai_will_do = { base = 250 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_a_professional_officer_corps
+		icon = general_staff
+		x = 28
+		y = 16
+		cost = 10
+		prerequisite = { focus = LBA_1970_soviet_arms_contracts }
+		mutually_exclusive = { focus = LBA_1970_a_guard_centred_army }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_professional_officer_corps"
+			LBA_1970_improve_army = yes
+			if = {
+				limit = { has_idea = LBA_1970_unprepared_army_3 }
+				remove_ideas = LBA_1970_unprepared_army_3
+			}
+			add_doctrine_cost_reduction = { name = LBA_1970_professional_officers cost_reduction = 0.50 uses = 2 category = land_doctrine }
+		}
+		ai_will_do = { base = 200 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_accept_border_arbitration
+		icon = Generic_Red_Crescent
+		x = 28
+		y = 17
+		cost = 5
+		prerequisite = { focus = LBA_1970_a_professional_officer_corps }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_accept_border_arbitration"
+			add_stability = 0.03
+			if = { limit = { country_exists = CHA } CHA = { add_opinion_modifier = { target = ROOT modifier = gratitude } } }
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_claim_the_gulf_of_sidra
+		icon = Libyan_Air_Force_1
+		x = 25
+		y = 16
+		cost = 5
+		prerequisite = { focus = LBA_1970_soviet_arms_contracts }
+		available = { original_tag = LBA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_claim_the_gulf_of_sidra"
+			navy_experience = 10
+			add_war_support = 0.03
+			if = { limit = { country_exists = USA } USA = { add_opinion_modifier = { target = ROOT modifier = maritime_border_dispute } } }
+		}
+		ai_will_do = { base = 250 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_harden_the_air_defences
+		icon = air_defense
+		x = 25
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_claim_the_gulf_of_sidra }
+		available = { original_tag = LBA controls_state = 391 }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_harden_the_air_defences"
+			add_tech_bonus = { name = LBA_1970_air_defence_bonus bonus = 0.50 uses = 2 category = CAT_anti_air category = CAT_manpads }
+			391 = { add_building_construction = { type = radar_station level = 1 instant_build = yes } }
+			395 = { add_building_construction = { type = air_base level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -6.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 250 modifier = { add = 700 is_historical_focus_on = yes } }
+	}
+
+	# Arab policy and the African turn
+	focus = {
+		id = LBA_1970_the_tripoli_charter
+		icon = align_to_arab_league
+		x = 34
+		y = 14
+		cost = 5
+		prerequisite = { focus = LBA_1970_proclaim_the_jamahiriya }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_tripoli_charter"
+			if = { limit = { country_exists = EGY } EGY = { add_opinion_modifier = { target = ROOT modifier = given_gift_ten } } }
+			if = { limit = { country_exists = SUD } SUD = { add_opinion_modifier = { target = ROOT modifier = given_gift_ten } } }
+			if = { limit = { country_exists = SYR } SYR = { add_opinion_modifier = { target = ROOT modifier = given_gift_ten } } }
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_the_federation_of_arab_republics
+		icon = one_state_isr_pal
+		x = 34
+		y = 15
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_tripoli_charter }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_federation_of_arab_republics"
+			if = { limit = { country_exists = EGY } EGY = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } } }
+			if = { limit = { country_exists = SUD } SUD = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } } }
+			if = { limit = { country_exists = SYR } SYR = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } } }
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_support_liberation_movements
+		icon = flames_of_rebellion
+		x = 31
+		y = 16
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_federation_of_arab_republics }
+		available = {
+			original_tag = LBA
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_support_liberation_movements"
+			if = {
+				limit = { has_intelligence_agency = no }
+				create_intelligence_agency = yes
+			}
+			else = { upgrade_intelligence_agency = upgrade_psycho_warfare }
+			army_experience = 10
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.02 }
+			change_relative_party_popularity = yes
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+			set_variable = { LBA_1970_assistance_capacity = 1 }
+			set_variable = { LBA_1970_assistance_active = 0 }
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_arab_unity_frustrated
+		icon = Generic_Factionalism
+	x = 44
+		y = 16
+		cost = 5
+		prerequisite = { focus = LBA_1970_the_federation_of_arab_republics }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_arab_unity_frustrated"
+			if = { limit = { country_exists = EGY } EGY = { add_opinion_modifier = { target = ROOT modifier = insult } } }
+			if = { limit = { country_exists = SUD } SUD = { add_opinion_modifier = { target = ROOT modifier = insult } } }
+			if = { limit = { country_exists = SYR } SYR = { add_opinion_modifier = { target = ROOT modifier = insult } } }
+			add_political_power = 50
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_turn_toward_africa
+		icon = goal_JAP_diplomacy_africa
+	x = 44
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_arab_unity_frustrated }
+		available = { original_tag = LBA has_idea = OAU_member emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_turn_toward_africa"
+			every_country = {
+				limit = { has_idea = OAU_member NOT = { original_tag = LBA } }
+				add_opinion_modifier = { target = ROOT modifier = given_gift }
+			}
+			set_temp_variable = { treasury_change = -4.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	###############################################################
+	# V. PLAYER-DRIVEN FOREIGN ASSISTANCE
+	###############################################################
+	# Four independent lanes, with no scripted crisis or sanctions outcome.
+	focus = {
+		id = LBA_1970_fund_palestinian_organisations
+		icon = one_state_isr_pal
+		x = 31
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_support_liberation_movements }
+		available = { original_tag = LBA country_exists = PAL emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			PAL = { country_event = { id = LBA1970Foreign.1 days = 1 } }
+			custom_effect_tooltip = LBA_1970_palestinian_funding_offer_tt
+		}
+		ai_will_do = { base = 300 }
+	}
+
+	focus = {
+		id = LBA_1970_palestinian_arms_workshops
+		icon = examine_foreign_small_arms
+		x = 31
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_fund_palestinian_organisations }
+		available = { original_tag = LBA country_exists = PAL emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			PAL = { country_event = { id = LBA1970Foreign.2 days = 1 } }
+			custom_effect_tooltip = LBA_1970_palestinian_workshops_offer_tt
+		}
+		ai_will_do = { base = 300 }
+	}
+
+	focus = {
+		id = LBA_1970_palestinian_training_mission
+		icon = general_staff
+		x = 31
+		y = 19
+		cost = 10
+		prerequisite = { focus = LBA_1970_palestinian_arms_workshops }
+		available = { original_tag = LBA country_exists = PAL emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			set_country_flag = LBA_1970_palestinian_training_available
+			custom_effect_tooltip = LBA_1970_palestinian_training_unlock_tt
+		}
+		ai_will_do = { base = 300 }
+	}
+
+	focus = {
+		id = LBA_1970_arab_liberation_diplomacy
+		icon = align_to_arab_league
+		x = 31
+		y = 20
+		cost = 5
+		prerequisite = { focus = LBA_1970_palestinian_training_mission }
+		available = { original_tag = LBA country_exists = PAL emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { country_exists = EGY } EGY = { country_event = { id = LBA1970Foreign.3 days = 1 } } }
+			if = { limit = { country_exists = SYR } SYR = { country_event = { id = LBA1970Foreign.3 days = 1 } } }
+			custom_effect_tooltip = LBA_1970_arab_diplomacy_offer_tt
+		}
+		ai_will_do = { base = 300 }
+	}
+
+	focus = {
+		id = LBA_1970_open_irish_republican_channels
+		icon = flames_of_rebellion
+		x = 35
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_support_liberation_movements }
+		available = { original_tag = LBA country_exists = ENG emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			set_country_flag = LBA_1970_irish_channel_open
+			custom_effect_tooltip = LBA_1970_irish_contact_unlock_tt
+		}
+		ai_will_do = { base = 100 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_irish_arms_network
+		icon = black_market
+		x = 35
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_open_irish_republican_channels }
+		available = { original_tag = LBA country_exists = ENG emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			set_country_flag = LBA_1970_irish_arms_available
+			custom_effect_tooltip = LBA_1970_irish_arms_unlock_tt
+		}
+		ai_will_do = { base = 100 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_maintain_irish_channel
+		icon = flames_of_rebellion
+		x = 34
+		y = 19
+		cost = 5
+		prerequisite = { focus = LBA_1970_irish_arms_network }
+		mutually_exclusive = { focus = LBA_1970_close_irish_channel }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = { set_country_flag = LBA_1970_irish_channel_maintained }
+		ai_will_do = { base = 100 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_close_irish_channel
+		icon = diplomacy
+	x = 37
+		y = 19
+		cost = 5
+		prerequisite = { focus = LBA_1970_irish_arms_network }
+		mutually_exclusive = { focus = LBA_1970_maintain_irish_channel }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			clr_country_flag = LBA_1970_irish_channel_open
+			clr_country_flag = LBA_1970_irish_arms_available
+			if = { limit = { country_exists = ENG } ENG = { add_opinion_modifier = { target = ROOT modifier = given_gift_ten } } }
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_foreign_assistance_directorate
+		icon = national_unity
+	x = 40
+		y = 17
+		cost = 10
+		prerequisite = { focus = LBA_1970_support_liberation_movements }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_to_variable = { LBA_1970_assistance_capacity = 1 }
+			set_temp_variable = { treasury_change = -2.00 }
+			modify_treasury_effect = yes
+			custom_effect_tooltip = LBA_1970_assistance_capacity_tt
+		}
+		ai_will_do = { base = 300 }
+	}
+
+	focus = {
+		id = LBA_1970_train_foreign_cadres
+		icon = general_staff
+	x = 40
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_foreign_assistance_directorate }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			set_country_flag = LBA_1970_foreign_training_available
+			custom_effect_tooltip = LBA_1970_foreign_training_unlock_tt
+		}
+		ai_will_do = { base = 300 }
+	}
+
+	focus = {
+		id = LBA_1970_host_exile_networks
+		icon = secret_police
+	x = 40
+		y = 19
+		cost = 10
+		prerequisite = { focus = LBA_1970_train_foreign_cadres }
+		available = { original_tag = LBA has_intelligence_agency = yes emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { NOT = { has_idea = LBA_1970_exile_networks } } add_ideas = LBA_1970_exile_networks }
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_resistance_liaison_bureau
+		icon = flames_of_rebellion
+	x = 40
+		y = 20
+		cost = 10
+		prerequisite = { focus = LBA_1970_host_exile_networks }
+		available = { original_tag = LBA has_intelligence_agency = yes emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			set_country_flag = LBA_1970_resistance_liaison_available
+			custom_effect_tooltip = LBA_1970_resistance_liaison_unlock_tt
+		}
+		ai_will_do = { base = 100 modifier = { factor = 0 is_historical_focus_on = yes } }
+	}
+
+	# Continental diplomacy remains available without coercive escalation.
+	focus = {
+		id = LBA_1970_aid_the_sahel
+		icon = Generic_Red_Crescent
+	x = 44
+		y = 18
+		cost = 10
+		prerequisite = { focus = LBA_1970_turn_toward_africa }
+		available = { original_tag = LBA emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_aid_the_sahel"
+			set_country_flag = LBA_1970_sahel_aid_available
+			custom_effect_tooltip = LBA_1970_sahel_aid_unlock_tt
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_lead_within_the_oau
+		icon = goal_JAP_diplomacy_africa
+	x = 44
+		y = 19
+		cost = 10
+		prerequisite = { focus = LBA_1970_aid_the_sahel }
+		available = { original_tag = LBA has_idea = OAU_member emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_lead_within_the_oau"
+			every_country = {
+				limit = { has_idea = OAU_member NOT = { original_tag = LBA } }
+				add_opinion_modifier = { target = ROOT modifier = given_gift }
+			}
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_convene_the_sirte_summit
+		icon = align_to_african_union
+	x = 44
+		y = 20
+		cost = 10
+		prerequisite = { focus = LBA_1970_lead_within_the_oau }
+		available = { original_tag = LBA has_war = no emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_convene_the_sirte_summit"
+			set_country_flag = LBA_1970_sirte_cooperation_available
+			custom_effect_tooltip = LBA_1970_sirte_cooperation_unlock_tt
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_the_9_9_99_declaration
+		icon = AFR_western_frank
+	x = 44
+		y = 21
+		cost = 5
+		prerequisite = { focus = LBA_1970_convene_the_sirte_summit }
+		available = { original_tag = LBA has_idea = OAU_member emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_9_9_99_declaration"
+			if = { limit = { NOT = { has_idea = LBA_1970_african_development_partner } } add_ideas = LBA_1970_african_development_partner }
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	###############################################################
+	# VI. THE MILLENNIUM HAND-OFFS
+	###############################################################
+
+	focus = {
+		id = LBA_1970_the_pragmatic_jamahiriya
+		icon = Green_book
+		x = 15
+		y = 21
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_jamahiriya_endures }
+		available = {
+			original_tag = LBA
+			has_completed_focus = LBA_1970_lead_within_the_oau
+			has_completed_focus = LBA_1970_gmmr_phase_two_hasawna_to_tripoli
+			has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes }
+			emerging_autocracy_are_in_power = yes
+			has_country_flag = LBA_1970_system_historical
+		}
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_pragmatic_jamahiriya"
+			add_ideas = LBA_1970_pragmatic_jamahiriya
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			change_relative_party_popularity = yes
+		}
+		ai_will_do = { base = 200 modifier = { add = 1200 is_historical_focus_on = yes } }
+	}
+
+	focus = {
+		id = LBA_1970_champion_an_african_union
+		icon = align_to_african_union
+	x = 44
+		y = 22
+		cost = 10
+		prerequisite = { focus = LBA_1970_the_9_9_99_declaration }
+		available = { original_tag = LBA has_idea = OAU_member emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		cancel_if_invalid = yes
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_champion_an_african_union"
+			add_ideas = LBA_1970_african_union_architect
+			country_event = { id = AfricanUnion.4 }
+			every_country = {
+				limit = { has_idea = AU_member NOT = { original_tag = LBA } }
+				add_opinion_modifier = { target = ROOT modifier = given_gift }
+			}
+		}
+		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+	}
+
+	###############################################################
+	# VI. ALTERNATIVE RULING PARTIES
+	###############################################################
+	# Islands use actual MD ruling-party triggers, not party popularity.
+	focus = {
+		id = LBA_1970_nfsl_provisional_government
+		icon = Election_graphics
+		x = 22
+		y = 24
+		cost = 5
+		available = { original_tag = LBA has_completed_focus = LBA_1970_the_1975_rcc_crisis neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_clear_previous_political_order = yes
+			clr_country_flag = LBA_1970_muhayshi_government
+			clr_country_flag = LBA_1970_senussi_restoration
+			set_country_flag = LBA_1970_nfsl_government
+			add_ideas = LBA_1970_nfsl_transition
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_dissolve_revolutionary_committees
+		icon = focus_generic_improve_the_administration
+		x = 18
+		y = 25
+		cost = 5
+		prerequisite = { focus = LBA_1970_nfsl_provisional_government }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { has_idea = LBA_1970_revolutionary_committees } remove_ideas = LBA_1970_revolutionary_committees }
+			LBA_1970_improve_administration = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_independent_election_commission
+		icon = Election_graphics
+		x = 18
+		y = 26
+		cost = 10
+		prerequisite = { focus = LBA_1970_dissolve_revolutionary_committees }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { has_idea = LBA_1970_nfsl_transition } swap_ideas = { remove_idea = LBA_1970_nfsl_transition add_idea = LBA_1970_nfsl_civic_administration } }
+			set_temp_variable = { treasury_change = -2.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_elect_constituent_assembly
+		icon = Election_graphics
+		x = 18
+		y = 27
+		cost = 10
+		prerequisite = { focus = LBA_1970_independent_election_commission }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			set_politics = { ruling_party = neutrality elections_allowed = yes }
+			set_country_flag = LBA_1970_constituent_elections_open
+			custom_effect_tooltip = LBA_1970_constituent_assembly_tt
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_audit_the_noc
+		icon = libyan_oil
+		x = 22
+		y = 25
+		cost = 5
+		prerequisite = { focus = LBA_1970_nfsl_provisional_government }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			decrease_corruption = yes
+			LBA_1970_refresh_oil_control = yes
+			custom_effect_tooltip = LBA_1970_noc_continuity_tt
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_small_business_credit
+		icon = industrial_complexes
+		x = 22
+		y = 26
+		cost = 10
+		prerequisite = { focus = LBA_1970_audit_the_noc }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes controls_state = 391 }
+		cancel_if_invalid = yes
+		completion_reward = {
+			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_review_foreign_contracts
+		icon = trade_with_europe
+		x = 22
+		y = 27
+		cost = 10
+		prerequisite = { focus = LBA_1970_small_business_credit }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { country_exists = ITA } ITA = { country_event = { id = LBA1970Foreign.7 days = 1 } } }
+			custom_effect_tooltip = LBA_1970_italian_contract_offer_tt
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_civilian_control_of_security
+		icon = secret_police
+		x = 26
+		y = 25
+		cost = 10
+		prerequisite = { focus = LBA_1970_nfsl_provisional_government }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_ideas = LBA_1970_civilian_security_oversight
+			if = { limit = { has_idea = LBA_1970_exile_networks } remove_ideas = LBA_1970_exile_networks }
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_review_overseas_commitments
+		icon = diplomacy
+		x = 26
+		y = 26
+		cost = 5
+		prerequisite = { focus = LBA_1970_civilian_control_of_security }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = { LBA_1970_close_covert_channels = yes }
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_reopen_diplomatic_missions
+		icon = diplomacy
+		x = 26
+		y = 27
+		cost = 10
+		prerequisite = { focus = LBA_1970_review_overseas_commitments }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { country_exists = ENG } ENG = { country_event = { id = LBA1970Foreign.8 days = 1 } } }
+			if = { limit = { country_exists = USA } USA = { country_event = { id = LBA1970Foreign.8 days = 1 } } }
+			if = { limit = { country_exists = EGY } EGY = { country_event = { id = LBA1970Foreign.8 days = 1 } } }
+			custom_effect_tooltip = LBA_1970_diplomatic_mission_offer_tt
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_restore_the_crown
+		icon = Fatherly_leader
+		x = 39
+		y = 24
+		cost = 5
+		available = { original_tag = LBA has_completed_focus = LBA_1970_the_1975_rcc_crisis nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_clear_previous_political_order = yes
+			clr_country_flag = LBA_1970_muhayshi_government
+			clr_country_flag = LBA_1970_nfsl_government
+			set_country_flag = LBA_1970_senussi_restoration
+			add_ideas = LBA_1970_royal_transition
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_interim_basic_law
+		icon = Election_graphics
+		x = 35
+		y = 25
+		cost = 10
+		prerequisite = { focus = LBA_1970_restore_the_crown }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { has_idea = LBA_1970_royal_transition } swap_ideas = { remove_idea = LBA_1970_royal_transition add_idea = LBA_1970_royal_basic_law } }
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_parliamentary_crown
+		icon = Election_graphics
+	x = 33
+		y = 26
+		cost = 10
+		prerequisite = { focus = LBA_1970_interim_basic_law }
+		mutually_exclusive = { focus = LBA_1970_royal_executive }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { has_idea = LBA_1970_royal_basic_law } swap_ideas = { remove_idea = LBA_1970_royal_basic_law add_idea = LBA_1970_parliamentary_monarchy } }
+			set_politics = { ruling_party = nationalist elections_allowed = yes }
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_royal_executive
+		icon = Fatherly_leader
+		x = 36
+		y = 26
+		cost = 10
+		prerequisite = { focus = LBA_1970_interim_basic_law }
+		mutually_exclusive = { focus = LBA_1970_parliamentary_crown }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { has_idea = LBA_1970_royal_basic_law } swap_ideas = { remove_idea = LBA_1970_royal_basic_law add_idea = LBA_1970_royal_executive_rule } }
+			set_politics = { ruling_party = nationalist elections_allowed = no }
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	focus = {
+		id = LBA_1970_provincial_representation
+		icon = national_unity
+		x = 35
+		y = 27
+		cost = 10
+		prerequisite = { focus = LBA_1970_parliamentary_crown focus = LBA_1970_royal_executive }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_improve_administration = yes
+			set_temp_variable = { treasury_change = -2.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_review_the_oil_settlement
+		icon = libyan_oil
+		x = 39
+		y = 25
+		cost = 10
+		prerequisite = { focus = LBA_1970_restore_the_crown }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_refresh_oil_control = yes
+			custom_effect_tooltip = LBA_1970_royal_oil_review_tt
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_royal_development_budget
+		icon = industrial_complexes
+		x = 39
+		y = 26
+		cost = 10
+		prerequisite = { focus = LBA_1970_review_the_oil_settlement }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes controls_state = 391 }
+		cancel_if_invalid = yes
+		completion_reward = {
+			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			set_temp_variable = { treasury_change = -3.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_schools_beyond_the_coast
+		icon = education_reform
+		x = 39
+		y = 27
+		cost = 10
+		prerequisite = { focus = LBA_1970_royal_development_budget }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_raise_literacy_small = yes
+			set_temp_variable = { treasury_change = -2.00 }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_rebuild_a_national_army
+		icon = general_staff
+		x = 43
+		y = 25
+		cost = 10
+		prerequisite = { focus = LBA_1970_restore_the_crown }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			LBA_1970_improve_army = yes
+			add_doctrine_cost_reduction = { name = LBA_1970_royal_army_doctrine cost_reduction = 0.30 uses = 1 category = land_doctrine }
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_regional_reconciliation
+		icon = diplomacy
+		x = 43
+		y = 26
+		cost = 5
+		prerequisite = { focus = LBA_1970_rebuild_a_national_army }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { country_exists = EGY } EGY = { country_event = { id = LBA1970Foreign.8 days = 1 } } }
+			if = { limit = { country_exists = TUN } TUN = { country_event = { id = LBA1970Foreign.8 days = 1 } } }
+			custom_effect_tooltip = LBA_1970_regional_reconciliation_tt
+		}
+		ai_will_do = { base = 200 }
+	}
+
+	focus = {
+		id = LBA_1970_mediterranean_agreements
+		icon = trade_with_europe
+		x = 43
+		y = 27
+		cost = 10
+		prerequisite = { focus = LBA_1970_regional_reconciliation }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes }
+		cancel_if_invalid = yes
+		completion_reward = {
+			if = { limit = { country_exists = ENG } ENG = { country_event = { id = LBA1970Foreign.7 days = 1 } } }
+			if = { limit = { country_exists = ITA } ITA = { country_event = { id = LBA1970Foreign.7 days = 1 } } }
+			custom_effect_tooltip = LBA_1970_mediterranean_offer_tt
+		}
+		ai_will_do = { base = 200 }
+	}
+}

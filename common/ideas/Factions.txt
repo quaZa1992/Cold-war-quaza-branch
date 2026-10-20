@@ -1,0 +1,342 @@
+ideas = {
+	country = {
+
+		#North Atlanic Treaty Organization
+		NATO_member = {
+			picture = NATO_member
+			allowed_civil_war = { has_government = democratic }
+			on_add = {
+				log = "[GetDateText]: [Root.GetName]: add idea NATO_member"
+				if = {
+					limit = { NOT = { is_in_array = { global.nato_members = THIS } } }
+					add_to_array = { global.nato_members = THIS }
+				}
+				update_nato_dirty_variable = yes
+			}
+			on_remove = {
+				log = "[GetDateText]: [Root.GetName]: remove idea NATO_member"
+				if = {
+					limit = { is_in_array = { global.nato_members = THIS } }
+					remove_from_array = { global.nato_members = THIS }
+				}
+				update_nato_dirty_variable = yes
+			}
+
+			cancel = {
+				OR = {
+					is_in_faction = no
+					is_subject = yes # This is to have new puppets not be subjects
+				}
+			}
+
+			modifier = {
+				custom_modifier_tooltip = mdcw_NATO_member_tooltip_conditional
+				democratic_drift = 0.02
+				defensive_war_stability_factor = 0.03
+				war_support_factor = 0.02
+			}
+		}
+
+		#Resistance Axis
+		faction_resistance_axis_member = {
+
+
+			picture = faction_resistance_axis_member
+
+			allowed_civil_war = {
+				has_idea = shia
+			}
+
+			cancel = {
+				is_in_faction = no
+			}
+
+			modifier = {
+				send_volunteer_size = 2
+				send_volunteer_divisions_required = -0.20
+				send_volunteers_tension = -0.05
+				custom_modifier_tooltip = faction_resistance_axis_member_TT
+			}
+		}
+
+		#CSTO
+		CSTO_member = {
+			picture = CSTO_member
+			allowed_civil_war = { has_government = communism }
+			on_add = {
+				log = "[GetDateText]: [Root.GetName]: add idea CSTO_member"
+				if = {
+					limit = { NOT = { is_in_array = { global.CSTO_member = THIS } } }
+					add_to_array = { global.CSTO_member = THIS }
+				}
+			}
+			on_remove = {
+				log = "[GetDateText]: [Root.GetName]: remove idea CSTO_member"
+				if = {
+					limit = { is_in_array = { global.CSTO_member = THIS } }
+					remove_from_array = { global.CSTO_member = THIS }
+				}
+			}
+
+			cancel = {
+				OR = {
+					# CSTO dissolves if its patron is subjugated
+					SOV = { is_subject = yes }
+					# Drop the spirit once the holder is neither in Russia's faction nor its subject
+					AND = {
+						NOT = { is_in_faction_with = SOV }
+						NOT = { is_subject_of = SOV }
+					}
+				}
+			}
+
+			modifier = {
+				custom_modifier_tooltip = CSTO_member_tooltip
+			}
+		}
+
+		#UNASUL Joint Defense Mechanism
+		UNASUL_member = {
+			picture = unasur_member
+			allowed_civil_war = { always = yes }
+
+			cancel = {
+				OR = {
+					is_in_faction = no
+					NOT = { has_faction_template = faction_template_unasul }
+				}
+			}
+
+			modifier = { custom_modifier_tooltip = UNASUL_member_tooltip }
+		}
+
+		#GCC Member
+		idea_gcc_member_state = {
+			on_add = {
+				log = "[GetDateText]: [Root.GetName]: add idea idea_gcc_member_state"
+				if = {
+					limit = { NOT = { is_in_array = { global.gcc_member_state = THIS } } }
+					add_to_array = { global.gcc_member_state = THIS }
+				}
+			}
+			on_remove = {
+				log = "[GetDateText]: [Root.GetName]: remove idea idea_gcc_member_state"
+				if = {
+					limit = { is_in_array = { global.gcc_member_state = THIS } }
+					remove_from_array = { global.gcc_member_state = THIS }
+				}
+			}
+
+			picture = gcc_member
+
+			allowed_civil_war = { no_jihadist_government = yes }
+			cancel = { jihadist_government = yes }
+
+			modifier = {
+				political_power_factor = 0.10
+				trade_opinion_factor = 0.10
+				local_resources_oil_factor = 0.10
+				local_resources_aluminium_factor = 0.10
+				local_resources_rubber_factor = 0.10
+				local_resources_tungsten_factor = 0.10
+				local_resources_steel_factor = 0.10
+				local_resources_chromium_factor = 0.10
+				ai_get_ally_desire_factor = -1000
+				custom_modifier_tooltip = idea_gcc_member_state_TT
+			}
+		}
+
+		#British Commonwealth Alliance
+		#Monroe Alliance
+		#CENTO Member
+		faction_cento_alliance = {
+			picture = CENTO_faction
+			cancel = {
+				is_in_faction = no
+			}
+
+			modifier = {
+				custom_modifier_tooltip = faction_cento_TT
+			}
+		}
+
+		# ASO Member
+		faction_aso_alliance = {
+			picture = generic_partnership
+			cancel = {
+				is_in_faction = no
+			}
+
+			modifier = {
+				custom_modifier_tooltip = faction_aso_TT
+			}
+		}
+
+		#SEATO Member
+		faction_seato_alliance = {
+			picture = morale_bonus
+			cancel = {
+				is_in_faction = no
+			}
+
+			modifier = {
+				custom_modifier_tooltip = faction_seato_TT
+			}
+		}
+
+		#IMPERIAL BLOC MEMBER
+		faction_imperial_bloc_alliance = {
+			picture = triumphant_will
+			cancel = {
+				is_in_faction = no
+			}
+
+			modifier = {
+				custom_modifier_tooltip = faction_imperial_bloc_TT
+			}
+		}
+
+		#BRICS Member
+		faction_brics_alliance = {
+			picture = bricks
+
+			cancel = {
+				is_in_faction = no
+			}
+
+			modifier = {
+				custom_modifier_tooltip = faction_brics_TT
+			}
+		}
+
+		#MTO Member
+		faction_mto_alliance = {
+
+			picture = mto_idea
+		}
+
+		#TAJ Member
+		faction_taj_alliance = {
+
+			picture = generic_partnership
+		}
+
+		#Red Europe Pact Member
+		REP_member = {
+
+
+			picture = communism5 # TODO: Add a faction icon
+
+			cancel = {
+				OR = {
+					is_in_faction = no
+					NOT = {
+						is_in_faction_with = POL
+					}
+					POL = {
+						is_subject = yes
+					}
+				}
+			}
+
+			modifier = {
+				political_power_gain = 0.15
+				communism_drift = 0.5
+				hidden_modifier = {
+					ai_badass_factor = 0.35
+					ai_focus_peaceful_factor = -0.15
+					ai_get_ally_desire_factor = 1
+				}
+				faction_trade_opinion_factor = 0.15
+				enemy_justify_war_goal_time = 0.15
+			}
+
+			rule = {
+				can_boost_other_ideologies = no
+			}
+		}
+
+		#Society Of Muslim Brothers
+		muslim_brotherhood_faction_member = {
+
+			picture = ummah_focus # TODO: Add a faction icon
+
+			modifier = {
+				neutrality_drift = 0.10
+				fascism_drift = 0.05
+				custom_modifier_tooltip = muslim_brotherhood_faction_member_tt
+				custom_modifier_tooltip = muslim_brotherhood_faction_member_tt2
+				education_cost_multiplier_modifier = -0.05
+				social_cost_multiplier_modifier = -0.05
+			}
+		}
+
+		# Warsaw Pact Idea
+		faction_warsaw_pact_idea = {
+			picture = warsaw_pact_idea
+			on_add = {
+				if = {
+					limit = { NOT = { is_in_array = { global.WARSAW_PACT_member = THIS.id } } }
+					add_to_array = { global.WARSAW_PACT_member = THIS.id }
+				}
+			}
+			on_remove = {
+				if = {
+					limit = { is_in_array = { global.WARSAW_PACT_member = THIS.id } }
+					remove_from_array = { global.WARSAW_PACT_member = THIS.id }
+				}
+			}
+			cancel = {
+				NOT = { has_autonomy_state = autonomy_warsaw }
+				SOV = {
+					NOT = {
+						OR = {
+							emerging_communist_state_are_in_power = yes
+							emerging_anarchist_communism_are_in_power = yes
+							emerging_reactionaries_are_in_power = yes
+						}
+					}
+				}
+			}
+			modifier = {
+				custom_modifier_tooltip = faction_warsaw_pact_member_tt
+				send_volunteer_size = 5
+				send_volunteer_divisions_required = -0.25
+				send_volunteers_tension = -0.15
+				air_volunteer_cap = 25
+				coordination_bonus = 0.08
+				army_org_factor = 0.10
+				communism_drift = 0.02
+			}
+		}
+	
+		Warsaw_Pact_member = {
+			picture = warsaw_pact_idea
+
+			allowed_civil_war = {
+				has_government = communism
+			}
+
+			cancel = {
+				OR = {
+					is_in_faction = no
+					NOT = {
+						is_in_faction_with = SOV
+					}
+					SOV = {
+						is_subject = yes
+					}
+				}
+			}
+
+			modifier = {
+				custom_modifier_tooltip = Warsaw_Pact_member_tooltip
+				communism_drift = 0.005
+				defensive_war_stability_factor = 0.02
+				army_org_factor = 0.02
+				coordination_bonus = 0.01
+				planning_speed = 0.03
+			}
+		}
+	}
+}

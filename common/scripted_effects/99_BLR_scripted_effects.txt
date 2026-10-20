@@ -1,0 +1,182 @@
+modify_batka_support = {
+	custom_effect_tooltip = BLR_batka_tt
+	add_to_variable = { batka = modify_batka }
+	clamp_variable = { var = batka min = 0 max = 100 }
+
+	batka_deleted = yes
+	if = {
+		limit = { check_variable = { batka > 79 } }
+		add_ideas = BLR_batka_very_strong
+	}
+	else_if = {
+		limit = {
+			check_variable = { batka < 80 }
+			check_variable = { batka > 59 }
+		}
+		add_ideas = BLR_batka_strong
+	}
+	else_if = {
+		limit = {
+			check_variable = { batka < 60 }
+			check_variable = { batka > 39 }
+		}
+		add_ideas = BLR_batka_medium
+	}
+	else_if = {
+		limit = {
+			check_variable = { batka < 40 }
+			check_variable = { batka > 19 }
+		}
+		add_ideas = BLR_batka_weak
+	}
+	else_if = {
+		limit = { check_variable = { batka < 20 } }
+		add_ideas = BLR_batka_very_weak
+	}
+}
+BLR_modify_tractors_support = {
+	custom_effect_tooltip = BLR_tractors_TT
+	add_to_variable = { BLR_tractors = BLR_modify_tractors }
+	clamp_variable = { var = BLR_tractors min = 0 max = 30000 }
+}
+
+modify_white_legion_support = {
+	custom_effect_tooltip = BLR_white_legions_TT
+	add_to_variable = { white_legion = modify_white_legion }
+	clamp_variable = { var = white_legion min = 0 max = 4000 }
+}
+
+batka_deleted = {
+	hidden_effect = {
+		remove_ideas = {
+			BLR_batka_very_weak
+			BLR_batka_weak
+			BLR_batka_medium
+			BLR_batka_strong
+			BLR_batka_very_strong
+		}
+	}
+}
+
+KGB_idea_belarus = {
+	if = {
+		limit = { has_idea = BLR_kgb2 }
+		swap_ideas = {
+			remove_idea = BLR_kgb2
+			add_idea = BLR_kgb3
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_kgb1 }
+		swap_ideas = {
+			remove_idea = BLR_kgb1
+			add_idea = BLR_kgb2
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_kgb }
+		swap_ideas = {
+			remove_idea = BLR_kgb
+			add_idea = BLR_kgb1
+		}
+	}
+	else_if = {
+		limit = { NOT = { has_idea = BLR_kgb } }
+		add_ideas = BLR_kgb1
+	}
+}
+AGRO_idea_belarus = {
+	if = {
+		limit = { has_idea = BLR_agriculture2 }
+		swap_ideas = {
+			remove_idea = BLR_agriculture2
+			add_idea = BLR_agriculture3
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_agriculture }
+		swap_ideas = {
+			remove_idea = BLR_agriculture
+			add_idea = BLR_agriculture2
+		}
+	}
+}
+BLR_idea_currency_crisis = {
+	if = {
+		limit = { has_idea = BLR_unstable_national_currency }
+		swap_ideas = {
+			remove_idea = BLR_unstable_national_currency
+			add_idea = BLR_unstable_national_currency2
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_unstable_national_currency3 }
+		swap_ideas = {
+			remove_idea = BLR_unstable_national_currency3
+			add_idea = BLR_unstable_national_currency2
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_unstable_national_currency4 }
+		swap_ideas = {
+			remove_idea = BLR_unstable_national_currency4
+			add_idea = BLR_unstable_national_currency2
+		}
+	}
+	else_if = {
+		limit = { NOT = { has_idea = BLR_unstable_national_currency2 } }
+		add_ideas = BLR_unstable_national_currency2
+	}
+}
+BLR_idea_army = {
+	if = {
+		limit = { has_idea = BLR_reforming_army2 }
+		swap_ideas = {
+			remove_idea = BLR_reforming_army2
+			add_idea = BLR_reforming_army3
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_reforming_army1 }
+		swap_ideas = {
+			remove_idea = BLR_reforming_army1
+			add_idea = BLR_reforming_army2
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_reforming_army }
+		swap_ideas = {
+			remove_idea = BLR_reforming_army
+			add_idea = BLR_reforming_army1
+		}
+	}
+	else_if = {
+		limit = { has_idea = BLR_outdated_army }
+		swap_ideas = {
+			remove_idea = BLR_outdated_army
+			add_idea = BLR_reforming_army
+		}
+	}
+}
+
+# Attaches only the political modifier the current government still qualifies for. The backing
+# variables live on the country and survive detachment, so a path's accumulated focus bonuses
+# return intact if its ideology comes back.
+BLR_update_political_modifiers = {
+	if = { limit = { has_dynamic_modifier = { modifier = BLR_belarus_nati_modifier } } remove_dynamic_modifier = { modifier = BLR_belarus_nati_modifier } }
+	if = { limit = { has_dynamic_modifier = { modifier = BLR_belarus_kommi_modifier } } remove_dynamic_modifier = { modifier = BLR_belarus_kommi_modifier } }
+	if = {
+		limit = {
+			has_completed_focus = BLR_constitution_from_1994
+			has_government = nationalist
+		}
+		add_dynamic_modifier = { modifier = BLR_belarus_nati_modifier }
+	}
+	else_if = {
+		limit = {
+			has_completed_focus = BLR_Communism_start
+			emerging_communist_state_are_in_power = yes
+		}
+		add_dynamic_modifier = { modifier = BLR_belarus_kommi_modifier }
+	}
+}

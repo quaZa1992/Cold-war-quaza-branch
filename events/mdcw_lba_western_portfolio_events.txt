@@ -1,0 +1,112 @@
+add_namespace = LibyaColdWar
+
+country_event = {
+	id = LibyaColdWar.10
+	title = LibyaColdWar.10.t
+	desc = LibyaColdWar.10.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+
+	option = {
+		name = LibyaColdWar.10.a
+		log = "[GetDateText]: [This.GetName]: LibyaColdWar.10.a executed"
+		ai_chance = {
+			base = 45
+			modifier = {
+				factor = 1.5
+				has_opinion = {
+					target = FROM
+					value > 40
+				}
+			}
+			modifier = {
+				factor = 0.5
+				has_opinion = {
+					target = FROM
+					value < -30
+				}
+			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					has_war_with = FROM
+					FROM = { has_country_flag = LBA_1985_lockerbie_happened }
+				}
+			}
+		}
+		add_ideas = LBA_libyan_capital_inflows
+		set_temp_variable = { treasury_change = 2.5 }
+		modify_treasury_effect = yes
+		add_opinion_modifier = {
+			target = FROM
+			modifier = large_increase
+		}
+		FROM = {
+			set_temp_variable = { treasury_change = -2.5 }
+			modify_treasury_effect = yes
+			add_to_variable = { int_investments = 2.5 }
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_increase
+			}
+			if = {
+				limit = { ROOT = { original_tag = ENG } }
+				set_country_flag = LBA_western_portfolio_eng
+			}
+			if = {
+				limit = { ROOT = { original_tag = ITA } }
+				set_country_flag = LBA_western_portfolio_ita
+			}
+			if = {
+				limit = { ROOT = { original_tag = FRA } }
+				set_country_flag = LBA_western_portfolio_fra
+			}
+			if = {
+				limit = { ROOT = { original_tag = GER } }
+				set_country_flag = LBA_western_portfolio_ger
+			}
+			if = {
+				limit = { ROOT = { original_tag = SWI } }
+				set_country_flag = LBA_western_portfolio_swi
+			}
+			if = {
+				limit = { ROOT = { original_tag = MLT } }
+				set_country_flag = LBA_western_portfolio_mlt
+			}
+			if = {
+				limit = { ROOT = { original_tag = SPR } }
+				set_country_flag = LBA_western_portfolio_spr
+			}
+			LBA_update_western_portfolio = yes
+		}
+	}
+
+	option = {
+		name = LibyaColdWar.10.b
+		log = "[GetDateText]: [This.GetName]: LibyaColdWar.10.b executed"
+		ai_chance = {
+			base = 55
+			modifier = {
+				factor = 0.5
+				has_opinion = {
+					target = FROM
+					value > 40
+				}
+			}
+			modifier = {
+				factor = 1.5
+				has_opinion = {
+					target = FROM
+					value < -30
+				}
+			}
+		}
+		add_opinion_modifier = {
+			target = FROM
+			modifier = small_decrease
+		}
+		FROM = {
+			add_political_power = -15
+		}
+	}
+}

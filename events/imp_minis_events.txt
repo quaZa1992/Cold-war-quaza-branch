@@ -1,0 +1,204 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+add_namespace = imp_minis
+
+# Insult Decay
+country_event = {
+	id = imp_minis.1
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		remove_opinion_modifier = {
+			target = FROM
+			modifier = opinion_imp_insulted_us
+		}
+		FROM = {
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_imp_insulted_us
+			}
+		}
+	}
+}
+
+# Resource Lottery
+news_event = {
+	id = imp_minis.2
+	title = imp_minis.2.t
+	desc = imp_minis.2.d
+	
+	picture = GFX_imp_mini_resource_found
+
+	major = yes
+	is_triggered_only = yes
+
+	option = {
+		name = imp_minis.2.o1
+
+		trigger = {
+			NOT = { 
+				tag = target_state.OWNER
+			}
+		}
+	}
+
+	option = { 
+		name = imp_minis.2.o2
+
+		trigger = {
+			tag = target_state.OWNER
+		}
+
+		event_target:target_state = { 
+			random_list = {
+				50 = {
+					add_resource = {
+						type = chromium
+						amount = global.resource_spawner_counter
+					}
+					set_variable = { global.resource_spawner_counter = 0 }
+				}
+				50 = {
+					add_resource = {
+						type = tungsten
+						amount = global.resource_spawner_counter
+					}
+					set_variable = { global.resource_spawner_counter = 0 }
+				}
+			}
+
+		}
+	}
+}
+
+# Volunteers returning
+country_event = {
+	id = imp_minis.3
+	title = imp_minis.3.t
+	desc = imp_minis.3.d
+	
+	picture = GFX_imp_mini_vol_back
+
+	major = yes
+	is_triggered_only = yes
+
+	immediate = { 
+		hidden_effect = {
+			## 75% come back unscathed.
+			set_temp_variable = { t_volunteers_return = FROM.volunteers_from_k@ROOT }
+			multiply_temp_variable = { t_volunteers_return = 750 }
+			add_manpower = t_volunteers_return
+
+			## 25% are wounded
+			set_temp_variable = { t_volunteers_cas_k = FROM.volunteers_from_k@ROOT }
+			multiply_temp_variable = { t_volunteers_cas_k = 0.25 }
+
+			## 25% of those are dead dead
+			set_temp_variable = { t_volunteers_dead = t_volunteers_cas_k }
+			multiply_temp_variable = { t_volunteers_dead = 0.25 }
+			add_to_variable = { imp_total_dead_k = t_volunteers_dead } # Add to death count
+			multiply_temp_variable = { t_volunteers_dead = 1000 } 
+
+			set_temp_variable = { cas_t = 0 }
+			subtract_from_temp_variable = { cas_t = t_volunteers_dead }
+			random_core_state = 
+			{
+				limit = { state_population_k > t_volunteers_dead_k }
+				add_manpower = cas_t
+			}
+
+			## The rest are "just" casualties
+			multiply_temp_variable = { t_volunteers_cas_k = 0.75 }
+			add_to_variable = { imp_total_casualties_k = t_volunteers_cas_k }
+	
+			imp_calc_casualty_cost = yes
+
+			FROM = { 
+				remove_from_array = { 
+					array = volunteers_receiving
+					value = ROOT
+				}
+				set_variable = { volunteers_from_k@ROOT = 0 }
+			}
+		}
+	}
+
+	option = {
+		name = imp_minis.3.o1
+	}
+}
+
+country_event = {
+	id = imp_minis.4
+	title = imp_minis.4.t
+	desc = imp_minis.4.d
+	
+	picture = GFX_imp_mini_vol_back
+
+	major = yes
+	is_triggered_only = yes
+
+	immediate = { 
+		hidden_effect = {
+			set_variable = { innovation_ecosystem_counter = 0 }
+		}
+	}
+
+	option = {
+		name = imp_minis.4.o1
+		random_list = {
+			25 = {
+				add_breakthrough_progress = {
+				specialization = specialization_land
+				value = 1
+				}
+				add_tech_bonus = {
+					name = GENERIC_develop_armor_prototypes
+					uses = 1
+					bonus = 0.25
+					category = CAT_armor
+				}
+			}
+			25 = {
+				add_breakthrough_progress = {
+				specialization = specialization_naval
+				value = 1
+				}
+				add_tech_bonus = {
+					name = naval_bonus
+					bonus = 0.25
+					uses = 1
+					category = CAT_naval_modules
+				}
+			}
+			25 = {
+				add_breakthrough_progress = {
+				specialization = specialization_air
+				value = 1
+				}
+				add_tech_bonus = {
+					name = GENERIC_air_force_reform
+					uses = 1
+					bonus = 0.25
+					category = CAT_aircraft
+				}
+			}
+			25 = {
+				add_breakthrough_progress = {
+				specialization = specialization_nuclear
+				value = 1
+				}
+				add_tech_bonus = {
+					name = GENERIC_network_infrastructure
+					bonus = 0.25
+					uses = 1
+					category = CAT_industry
+				}
+			}
+		}
+	}
+}

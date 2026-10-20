@@ -1,0 +1,230 @@
+USA_1985_raise_influence = {
+	set_temp_variable = { tag_index = USA }
+	change_influence_percentage = yes
+}
+
+USA_1985_reduce_soviet_influence = {
+	set_temp_variable = { tag_index = SOV }
+	change_influence_percentage = yes
+}
+
+USA_1985_pay_operation_cyclone_equipment = {
+	if = {
+		limit = { has_equipment = { infantry_weapons_1 > 3999 } }
+		add_equipment_to_stockpile = { type = infantry_weapons_1 amount = -4000 producer = USA }
+	}
+	if = {
+		limit = { has_equipment = { AA_Equipment > 249 } }
+		add_equipment_to_stockpile = { type = AA_Equipment amount = -250 producer = USA }
+	}
+	if = {
+		limit = { has_equipment = { cnc_equipment_type > 499 } }
+		add_equipment_to_stockpile = { type = cnc_equipment_type amount = -500 producer = USA }
+	}
+}
+
+USA_1985_apply_operation_cyclone = {
+	set_country_flag = USA_1985_operation_cyclone_active
+	USA_1985_pay_operation_cyclone_equipment = yes
+	add_political_power = -35
+	if = {
+		limit = { country_exists = SOV }
+		SOV = {
+			add_timed_idea = { idea = USA_1985_operation_cyclone_bleeding days = 365 }
+			add_stability = -0.01
+		}
+	}
+	if = {
+		limit = { country_exists = AFG }
+		set_temp_variable = { influence_target = AFG }
+		set_temp_variable = { percent_change = 5 }
+		USA_1985_raise_influence = yes
+		if = {
+			limit = { country_exists = SOV }
+			set_temp_variable = { influence_target = AFG }
+			set_temp_variable = { percent_change = -6 }
+			USA_1985_reduce_soviet_influence = yes
+		}
+	}
+}
+
+USA_1985_apply_contra_pressure = {
+	set_country_flag = USA_1985_contra_network_active
+	add_political_power = -45
+	if = {
+		limit = { country_exists = NIC }
+		NIC = {
+			add_timed_idea = { idea = USA_1985_contra_insurgency_pressure days = 365 }
+			add_stability = -0.03
+			if = {
+				limit = { NOT = { has_civil_war = yes } }
+				start_civil_war = {
+					ideology = democratic
+					size = 0.35
+				}
+			}
+		}
+		set_temp_variable = { influence_target = NIC }
+		set_temp_variable = { percent_change = 8 }
+		USA_1985_raise_influence = yes
+		if = {
+			limit = { country_exists = SOV }
+			set_temp_variable = { influence_target = NIC }
+			set_temp_variable = { percent_change = -5 }
+			USA_1985_reduce_soviet_influence = yes
+		}
+		if = {
+			limit = { country_exists = CUB }
+			set_temp_variable = { tag_index = CUB }
+			set_temp_variable = { influence_target = NIC }
+			set_temp_variable = { percent_change = -5 }
+			change_influence_percentage = yes
+		}
+	}
+}
+
+USA_1985_apply_unita_support = {
+	set_country_flag = USA_1985_unita_network_active
+	add_political_power = -35
+	if = {
+		limit = { country_exists = UNI }
+		UNI = {
+			add_timed_idea = { idea = USA_1985_unita_covert_supply days = 365 }
+			add_equipment_to_stockpile = { type = infantry_weapons_1 amount = 2500 producer = USA }
+			add_equipment_to_stockpile = { type = L_AT_Equipment amount = 250 producer = USA }
+			add_equipment_to_stockpile = { type = AA_Equipment amount = 100 producer = USA }
+			add_equipment_to_stockpile = { type = cnc_equipment_type amount = 350 producer = USA }
+		}
+		set_temp_variable = { influence_target = UNI }
+		set_temp_variable = { percent_change = 8 }
+		USA_1985_raise_influence = yes
+	}
+	if = {
+		limit = { country_exists = SAF }
+		SAF = {
+			add_timed_idea = { idea = USA_1985_south_african_covert_support days = 365 }
+			if = {
+				limit = { NOT = { has_country_flag = USA_1985_received_savimbi_offsite_factories } }
+				set_country_flag = USA_1985_received_savimbi_offsite_factories
+				add_offsite_building = { type = industrial_complex level = 2 }
+			}
+		}
+		set_temp_variable = { influence_target = SAF }
+		set_temp_variable = { percent_change = 5 }
+		USA_1985_raise_influence = yes
+	}
+	if = {
+		limit = { country_exists = CUB }
+		CUB = {
+			add_timed_idea = { idea = USA_1985_cuban_overseas_war_costs days = 365 }
+			add_stability = -0.01
+		}
+	}
+}
+
+USA_1985_apply_contra_government_recognition = {
+	if = {
+		limit = { country_exists = NIC }
+		NIC = {
+			set_country_flag = USA_1985_contra_government_recognized
+			add_stability = 0.03
+			add_opinion_modifier = { target = USA modifier = large_increase }
+		}
+		set_temp_variable = { influence_target = NIC }
+		set_temp_variable = { percent_change = 15 }
+		USA_1985_raise_influence = yes
+		if = {
+			limit = { country_exists = SOV }
+			set_temp_variable = { influence_target = NIC }
+			set_temp_variable = { percent_change = -10 }
+			USA_1985_reduce_soviet_influence = yes
+		}
+		if = {
+			limit = { country_exists = CUB }
+			set_temp_variable = { tag_index = CUB }
+			set_temp_variable = { influence_target = NIC }
+			set_temp_variable = { percent_change = -8 }
+			change_influence_percentage = yes
+		}
+	}
+}
+
+USA_1985_apply_iraq_cia_intel = {
+	if = {
+		limit = { country_exists = IRQ }
+		IRQ = {
+			add_timed_idea = { idea = USA_1985_cia_battlefield_intelligence days = 90 }
+			add_opinion_modifier = { target = USA modifier = large_increase }
+		}
+		set_temp_variable = { influence_target = IRQ }
+		set_temp_variable = { percent_change = 4 }
+		USA_1985_raise_influence = yes
+	}
+}
+
+USA_1985_apply_iran_cia_intel = {
+	if = {
+		limit = { country_exists = PER }
+		PER = {
+			add_timed_idea = { idea = USA_1985_cia_battlefield_intelligence days = 90 }
+			add_opinion_modifier = { target = USA modifier = medium_increase }
+		}
+		set_temp_variable = { influence_target = PER }
+		set_temp_variable = { percent_change = 4 }
+		USA_1985_raise_influence = yes
+	}
+}
+
+USA_1985_open_iraq_market_access = {
+	if = {
+		limit = { country_exists = IRQ }
+		IRQ = {
+			set_country_flag = USA_1985_iraq_market_access
+			give_market_access = USA
+			set_rule = { can_access_market = yes }
+			add_ideas = USA_1985_us_arms_market_access
+			add_opinion_modifier = { target = USA modifier = large_increase }
+			add_ai_strategy = { type = equipment_market_spend_factories value = 25 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = infantry_weapons_type value = 3000 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = artillery_equipment value = 400 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = AA_Equipment value = 250 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = L_AT_Equipment value = 300 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = cnc_equipment_type value = 300 }
+		}
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = infantry value = 300 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = artillery value = 200 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = anti_air value = 150 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = anti_tank value = 150 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = motorized value = 100 }
+		set_temp_variable = { influence_target = IRQ }
+		set_temp_variable = { percent_change = 6 }
+		USA_1985_raise_influence = yes
+	}
+}
+
+USA_1985_open_iran_market_access = {
+	if = {
+		limit = { country_exists = PER }
+		PER = {
+			set_country_flag = USA_1985_iran_market_access
+			give_market_access = USA
+			set_rule = { can_access_market = yes }
+			add_ideas = USA_1985_us_arms_market_access
+			add_opinion_modifier = { target = USA modifier = medium_increase }
+			add_ai_strategy = { type = equipment_market_spend_factories value = 20 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = infantry_weapons_type value = 2500 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = artillery_equipment value = 300 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = AA_Equipment value = 200 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = L_AT_Equipment value = 250 }
+			add_ai_strategy = { type = equipment_market_buying_threshold id = cnc_equipment_type value = 250 }
+		}
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = infantry value = 250 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = artillery value = 150 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = anti_air value = 125 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = anti_tank value = 125 }
+		add_ai_strategy = { type = equipment_market_for_sale_factor id = motorized value = 75 }
+		set_temp_variable = { influence_target = PER }
+		set_temp_variable = { percent_change = 5 }
+		USA_1985_raise_influence = yes
+	}
+}

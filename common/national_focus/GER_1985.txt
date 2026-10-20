@@ -1,0 +1,1214 @@
+## Federal Republic of Germany 1985 Focus Tree
+## Imperia Cold War start
+focus_tree = {
+	id = GER_1985_focus
+	country = { base = 0 }
+
+	continuous_focus_position = { x = 50 y = 1800 }
+	initial_show_position = { x = 25 y = 0 }
+
+	default = no
+
+	shortcut = {
+		name = GER_1985_Economy
+		target = GER_1985_social_market_under_pressure
+		scroll_wheel_factor = 0.80
+	}
+
+	shortcut = {
+		name = GER_1985_Security
+		target = GER_1985_frontline_state
+		scroll_wheel_factor = 0.80
+	}
+
+	shortcut = {
+		name = GER_1985_Politics
+		target = GER_1985_state_of_the_parties
+		scroll_wheel_factor = 0.80
+	}
+
+	shortcut = {
+		name = GER_1985_Reunification
+		target = GER_1985_bonn_channels
+		scroll_wheel_factor = 0.80
+	}
+
+	###############################################################
+	# SECTION 1: OPENING - BONN REPUBLIC
+	###############################################################
+
+	focus = {
+		id = GER_1985_bonn_republic
+		icon = german_confederation2
+		x = 25
+		y = 0
+		cost = 5
+		ai_will_do = { base = 1000 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_bonn_republic"
+			add_political_power = 50
+			add_stability = 0.03
+			if = {
+				limit = { NOT = { has_idea = GER_idea_germany_divided } }
+				add_ideas = GER_idea_germany_divided
+			}
+			if = {
+				limit = { NOT = { has_idea = GER_idea_unemployment_crisis2 } }
+				add_ideas = GER_idea_unemployment_crisis2
+			}
+			if = {
+				limit = { NOT = { has_idea = GER_1985_social_market_consensus } }
+				add_ideas = GER_1985_social_market_consensus
+			}
+			set_temp_variable = { temp_opinion = 2 }
+			change_labour_unions_opinion = yes
+			set_temp_variable = { temp_opinion = 2 }
+			change_industrial_conglomerates_opinion = yes
+			set_temp_variable = { temp_opinion = 2 }
+			change_small_medium_business_owners_opinion = yes
+		}
+	}
+
+	###############################################################
+	# SECTION 2: ECONOMY - SOCIAL MARKET UNDER PRESSURE
+	###############################################################
+
+	focus = {
+		id = GER_1985_social_market_under_pressure
+		icon = industrialization
+		x = -18
+		y = 1
+		relative_position_id = GER_1985_bonn_republic
+		cost = 5
+		prerequisite = { focus = GER_1985_bonn_republic }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_social_market_under_pressure"
+			add_political_power = 35
+			add_stability = 0.02
+			set_temp_variable = { temp_opinion = 3 }
+			change_industrial_conglomerates_opinion = yes
+			set_temp_variable = { temp_opinion = 3 }
+			change_labour_unions_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_employment_pact
+		icon = poor_economy
+		x = -4
+		y = 1
+		relative_position_id = GER_1985_social_market_under_pressure
+		cost = 7
+		prerequisite = { focus = GER_1985_social_market_under_pressure }
+		mutually_exclusive = { focus = GER_1985_market_reform_cabinet }
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_employment_pact"
+			add_political_power = -35
+			add_stability = 0.03
+			swap_ideas = {
+				remove_idea = GER_idea_unemployment_crisis2
+				add_idea = GER_1985_active_labour_market
+			}
+			set_temp_variable = { temp_opinion = 5 }
+			change_labour_unions_opinion = yes
+			set_temp_variable = { treasury_change = -6.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_public_works_program
+		icon = industry_civilian
+		x = -2
+		y = 1
+		relative_position_id = GER_1985_employment_pact
+		cost = 7
+		prerequisite = { focus = GER_1985_employment_pact }
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_public_works_program"
+			two_random_industrial_complex = yes
+			two_random_infrastructure = yes
+			set_temp_variable = { temp_opinion = 3 }
+			change_labour_unions_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_co_determination_model
+		icon = Generic_Working_Class_Family
+		x = -6
+		y = 2
+		relative_position_id = GER_1985_employment_pact
+		cost = 6
+		prerequisite = { focus = GER_1985_employment_pact }
+		ai_will_do = { factor = 55 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_co_determination_model"
+			add_ideas = GER_1985_co_determination_model_idea
+			add_stability = 0.02
+			set_temp_variable = { temp_opinion = 4 }
+			change_labour_unions_opinion = yes
+			set_temp_variable = { temp_opinion = 2 }
+			change_industrial_conglomerates_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_high_technology_program
+		icon = research_bonus
+		x = 0
+		y = 2
+		relative_position_id = GER_1985_employment_pact
+		cost = 7
+		prerequisite = { focus = GER_1985_public_works_program }
+		ai_will_do = { factor = 75 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_high_technology_program"
+			add_research_slot = 1
+			add_ideas = GER_1985_high_tech_push
+			add_tech_bonus = {
+				name = GER_1985_microelectronics_bonus
+				bonus = 0.50
+				uses = 2
+				category = CAT_information_technology
+				category = CAT_microchips
+			}
+			set_temp_variable = { treasury_change = -8.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_export_machine
+		icon = foreign_capital
+		x = -2
+		y = 3
+		relative_position_id = GER_1985_high_technology_program
+		cost = 6
+		prerequisite = { focus = GER_1985_high_technology_program }
+		ai_will_do = { factor = 80 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_export_machine"
+			two_office_construction = yes
+			add_tech_bonus = {
+				name = GER_1985_machine_tools_bonus
+				bonus = 0.50
+				uses = 1
+				category = CAT_industry
+			}
+			set_temp_variable = { temp_opinion = 4 }
+			change_small_medium_business_owners_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_market_reform_cabinet
+		icon = GENERIC_austerity_measures
+		x = 4
+		y = 1
+		relative_position_id = GER_1985_social_market_under_pressure
+		cost = 7
+		prerequisite = { focus = GER_1985_social_market_under_pressure }
+		mutually_exclusive = { focus = GER_1985_employment_pact }
+		ai_will_do = { factor = 45 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_market_reform_cabinet"
+			add_political_power = 55
+			add_stability = -0.02
+			add_ideas = GER_1985_market_liberalization
+			set_temp_variable = { corp_change = -4 }
+			modify_corporate_tax_rate_effect = yes
+			set_temp_variable = { temp_opinion = 5 }
+			change_industrial_conglomerates_opinion = yes
+			set_temp_variable = { temp_opinion = -4 }
+			change_labour_unions_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_tax_simplification
+		icon = GENERIC_austerity_measures
+		x = 2
+		y = 2
+		relative_position_id = GER_1985_market_reform_cabinet
+		cost = 6
+		prerequisite = { focus = GER_1985_market_reform_cabinet }
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_ECONOMY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_tax_simplification"
+			add_political_power = 35
+			set_temp_variable = { treasury_change = 10.00 }
+			modify_treasury_effect = yes
+			set_temp_variable = { temp_opinion = 3 }
+			change_small_medium_business_owners_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_privatization_cases
+		icon = foreign_capital
+		x = 6
+		y = 2
+		relative_position_id = GER_1985_market_reform_cabinet
+		cost = 6
+		prerequisite = { focus = GER_1985_market_reform_cabinet }
+		ai_will_do = { factor = 45 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_privatization_cases"
+			two_office_construction = yes
+			add_political_power = 30
+			add_stability = -0.01
+			set_temp_variable = { temp_opinion = 3 }
+			change_international_bankers_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_service_economy_shift
+		icon = Tourism_is_our_oil
+		x = 2
+		y = 4
+		relative_position_id = GER_1985_social_market_under_pressure
+		cost = 8
+		prerequisite = { focus = GER_1985_social_market_under_pressure }
+		available = {
+			OR = {
+				has_completed_focus = GER_1985_export_machine
+				has_completed_focus = GER_1985_privatization_cases
+			}
+		}
+		ai_will_do = { factor = 90 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_service_economy_shift"
+			add_stability = 0.02
+			one_office_construction = yes
+			add_tech_bonus = {
+				name = GER_1985_services_bonus
+				bonus = 0.50
+				uses = 1
+				category = CAT_information_technology
+				category = CAT_microchips
+			}
+		}
+	}
+
+	###############################################################
+	# SECTION 3: SECURITY - FRONTLINE STATE
+	###############################################################
+
+	focus = {
+		id = GER_1985_frontline_state
+		icon = position_armies
+		x = 0
+		y = 1
+		relative_position_id = GER_1985_bonn_republic
+		cost = 5
+		prerequisite = { focus = GER_1985_bonn_republic }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_frontline_state"
+			add_war_support = 0.03
+			add_political_power = 30
+			set_temp_variable = { temp_opinion = 3 }
+			change_the_military_opinion = yes
+			set_temp_variable = { temp_opinion = 2 }
+			change_intelligence_community_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_stasi_counterintelligence
+		icon = secret_police
+		x = -5
+		y = 1
+		relative_position_id = GER_1985_frontline_state
+		cost = 6
+		prerequisite = { focus = GER_1985_frontline_state }
+		ai_will_do = { factor = 85 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_stasi_counterintelligence"
+			add_ideas = GER_1985_bfv_counterintelligence
+			add_stability = 0.02
+			set_temp_variable = { temp_opinion = 5 }
+			change_intelligence_community_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_clean_ministries
+		icon = control_judiciary
+		x = -5
+		y = 2
+		relative_position_id = GER_1985_frontline_state
+		cost = 6
+		prerequisite = { focus = GER_1985_stasi_counterintelligence }
+		ai_will_do = { factor = 75 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_clean_ministries"
+			add_political_power = 25
+			add_stability = 0.03
+			if = {
+				limit = { DDR = { exists = yes } }
+				DDR = {
+					add_to_variable = { DDR_stasi_penetration = -5 }
+					add_to_variable = { DDR_regime_panic = 3 }
+					DDR_1985_monthly_state_crisis_update = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_modernize_bundeswehr
+		icon = position_armies
+		x = 0
+		y = 1
+		relative_position_id = GER_1985_frontline_state
+		cost = 7
+		prerequisite = { focus = GER_1985_frontline_state }
+		ai_will_do = { factor = 90 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_modernize_bundeswehr"
+			add_ideas = GER_1985_bundeswehr_modernization
+			add_war_support = 0.04
+			two_random_arms_factory = yes
+			set_temp_variable = { temp_opinion = 5 }
+			change_the_military_opinion = yes
+			set_temp_variable = { temp_opinion = 3 }
+			change_defense_industry_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_leopard_and_marder
+		icon = NATO_squad_doctrine
+		x = -2
+		y = 2
+		relative_position_id = GER_1985_modernize_bundeswehr
+		cost = 6
+		prerequisite = { focus = GER_1985_modernize_bundeswehr }
+		ai_will_do = { factor = 75 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_leopard_and_marder"
+			add_tech_bonus = {
+				name = GER_1985_leopard_bonus
+				bonus = 0.50
+				uses = 2
+				category = CAT_armor
+			}
+			two_random_arms_factory = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_luftwaffe_readiness
+		icon = nato_nation
+		x = 2
+		y = 2
+		relative_position_id = GER_1985_modernize_bundeswehr
+		cost = 6
+		prerequisite = { focus = GER_1985_modernize_bundeswehr }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_luftwaffe_readiness"
+			add_doctrine_cost_reduction = {
+				name = GER_1985_air_defence_bonus
+				cost_reduction = 0.5
+				uses = 2
+				category = air_doctrine
+			}
+			add_war_support = 0.03
+		}
+	}
+
+	focus = {
+		id = GER_1985_missile_decision
+		icon = SIA_missiles
+		x = 5
+		y = 1
+		relative_position_id = GER_1985_frontline_state
+		cost = 6
+		prerequisite = { focus = GER_1985_frontline_state }
+		ai_will_do = { factor = 80 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_missile_decision"
+			add_political_power = 25
+			add_war_support = 0.02
+		}
+	}
+
+	focus = {
+		id = GER_1985_accept_pershing
+		icon = SIA_missiles
+		x = 3
+		y = 2
+		relative_position_id = GER_1985_missile_decision
+		cost = 7
+		prerequisite = { focus = GER_1985_missile_decision }
+		mutually_exclusive = { focus = GER_1985_reject_pershing }
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_INTERNATIONAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_accept_pershing"
+			add_ideas = GER_1985_nato_dual_track
+			add_war_support = 0.07
+			add_stability = -0.02
+			add_tech_bonus = {
+				name = GER_1985_missile_bonus
+				bonus = 0.50
+				uses = 2
+				category = CAT_missiles
+				category = CAT_orbital_launch_vehicles
+			}
+			USA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_slight_positive_opinion
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_reject_pershing
+		icon = peace
+		x = 7
+		y = 2
+		relative_position_id = GER_1985_missile_decision
+		cost = 7
+		prerequisite = { focus = GER_1985_missile_decision }
+		mutually_exclusive = { focus = GER_1985_accept_pershing }
+		ai_will_do = { factor = 35 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_reject_pershing"
+			add_ideas = GER_1985_peace_movement
+			add_stability = 0.03
+			add_war_support = -0.06
+			SOV = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_very_slight_positive_opinion
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_european_defence_identity
+		icon = european_union_integration
+		x = 5
+		y = 3
+		relative_position_id = GER_1985_missile_decision
+		cost = 7
+		prerequisite = { focus = GER_1985_missile_decision }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_INTERNATIONAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_european_defence_identity"
+			add_ideas = GER_1985_european_defence_policy
+			add_stability = 0.01
+			add_doctrine_cost_reduction = {
+				name = GER_1985_land_doctrine_bonus
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_professional_core
+		icon = conscription
+		x = -2
+		y = 3
+		relative_position_id = GER_1985_modernize_bundeswehr
+		cost = 6
+		prerequisite = { focus = GER_1985_leopard_and_marder }
+		mutually_exclusive = { focus = GER_1985_territorial_defence }
+		ai_will_do = { factor = 55 }
+		search_filters = { FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_professional_core"
+			add_stability = 0.02
+			add_war_support = -0.02
+			add_ideas = GER_1985_professional_bundeswehr
+			set_temp_variable = { temp_opinion = 3 }
+			change_the_military_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_territorial_defence
+		icon = conscription
+		x = 2
+		y = 3
+		relative_position_id = GER_1985_modernize_bundeswehr
+		cost = 6
+		prerequisite = { focus = GER_1985_luftwaffe_readiness }
+		mutually_exclusive = { focus = GER_1985_professional_core }
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_territorial_defence"
+			add_war_support = 0.05
+			add_stability = -0.01
+			add_ideas = GER_1985_territorial_defence_network
+			set_temp_variable = { temp_opinion = 4 }
+			change_the_military_opinion = yes
+		}
+	}
+
+	###############################################################
+	# SECTION 4: POLITICS - PARTIES OF THE BONN SYSTEM
+	###############################################################
+
+	focus = {
+		id = GER_1985_state_of_the_parties
+		icon = adopt_the_peoples_constitution
+		x = 18
+		y = 1
+		relative_position_id = GER_1985_bonn_republic
+		cost = 5
+		prerequisite = { focus = GER_1985_bonn_republic }
+		ai_will_do = { factor = 100 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_state_of_the_parties"
+			add_political_power = 50
+			add_stability = 0.01
+		}
+	}
+
+	focus = {
+		id = GER_1985_kohl_mandate
+		icon = democratic_stability
+		x = -8
+		y = 1
+		relative_position_id = GER_1985_state_of_the_parties
+		cost = 6
+		prerequisite = { focus = GER_1985_state_of_the_parties }
+		mutually_exclusive = {
+			focus = GER_1985_spd_recovery
+			focus = GER_1985_green_breakthrough
+			focus = GER_1985_national_conservative_current
+		}
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_kohl_mandate"
+			add_political_power = 55
+			add_stability = 0.03
+			clear_variable = ruling_party
+			set_variable = { ruling_party = 1 }
+			set_politics = { ruling_party = democratic elections_allowed = yes }
+			set_temp_variable = { party_index = 1 }
+			set_temp_variable = { party_popularity_increase = 0.04 }
+			change_relative_party_popularity = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_fiscal_consolidation
+		icon = GENERIC_austerity_measures
+		x = -1
+		y = 1
+		relative_position_id = GER_1985_kohl_mandate
+		cost = 6
+		prerequisite = { focus = GER_1985_kohl_mandate }
+		ai_will_do = { factor = 75 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_fiscal_consolidation"
+			add_political_power = 40
+			add_stability = 0.02
+			set_temp_variable = { treasury_change = 8.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_reaffirm_nato
+		icon = nato_nation
+		x = -3
+		y = 2
+		relative_position_id = GER_1985_kohl_mandate
+		cost = 6
+		prerequisite = { focus = GER_1985_fiscal_consolidation }
+		ai_will_do = { factor = 85 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_MILITARY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_reaffirm_nato"
+			add_war_support = 0.04
+			add_stability = 0.02
+			USA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_slight_positive_opinion
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_deepen_european_integration
+		icon = european_union_integration
+		x = 1
+		y = 2
+		relative_position_id = GER_1985_kohl_mandate
+		cost = 6
+		prerequisite = { focus = GER_1985_fiscal_consolidation }
+		ai_will_do = { factor = 80 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_ECONOMY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_deepen_european_integration"
+			add_political_power = 25
+			add_stability = 0.02
+			FRA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = franco_german_friendship
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_spd_recovery
+		icon = market_socialism
+		x = -2
+		y = 1
+		relative_position_id = GER_1985_state_of_the_parties
+		cost = 6
+		prerequisite = { focus = GER_1985_state_of_the_parties }
+		mutually_exclusive = {
+			focus = GER_1985_kohl_mandate
+			focus = GER_1985_green_breakthrough
+			focus = GER_1985_national_conservative_current
+		}
+		ai_will_do = { factor = 45 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_spd_recovery"
+			add_political_power = 40
+			add_stability = 0.02
+			clear_variable = ruling_party
+			set_variable = { ruling_party = 3 }
+			set_politics = { ruling_party = democratic elections_allowed = yes }
+			set_temp_variable = { party_index = 3 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			change_relative_party_popularity = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_ostpolitik_revival
+		icon = peace
+		x = -1
+		y = 1
+		relative_position_id = GER_1985_spd_recovery
+		cost = 6
+		prerequisite = { focus = GER_1985_spd_recovery }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_ostpolitik_revival"
+			add_political_power = 30
+			add_stability = 0.03
+			if = {
+				limit = { DDR = { exists = yes } }
+				DDR = {
+					add_to_variable = { DDR_west_dependency = 5 }
+					add_to_variable = { DDR_reform_pressure = 3 }
+					DDR_1985_monthly_state_crisis_update = yes
+				}
+			}
+			SOV = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_very_slight_positive_opinion
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_expand_welfare_state
+		icon = welfare
+		x = -3
+		y = 2
+		relative_position_id = GER_1985_spd_recovery
+		cost = 6
+		prerequisite = { focus = GER_1985_ostpolitik_revival }
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_expand_welfare_state"
+			add_stability = 0.04
+			add_political_power = -25
+			set_temp_variable = { GER_welfare_cost_change = 0.03 }
+			update_GER_welfare_cost = yes
+			set_temp_variable = { temp_opinion = 4 }
+			change_labour_unions_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_red_green_dialogue
+		icon = Green_logo
+		x = 1
+		y = 2
+		relative_position_id = GER_1985_spd_recovery
+		cost = 6
+		prerequisite = { focus = GER_1985_ostpolitik_revival }
+		ai_will_do = { factor = 55 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_red_green_dialogue"
+			add_stability = 0.01
+			add_war_support = -0.02
+			set_temp_variable = { party_index = 17 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			change_relative_party_popularity = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_green_breakthrough
+		icon = Green_logo
+		x = 4
+		y = 1
+		relative_position_id = GER_1985_state_of_the_parties
+		cost = 6
+		prerequisite = { focus = GER_1985_state_of_the_parties }
+		mutually_exclusive = {
+			focus = GER_1985_kohl_mandate
+			focus = GER_1985_spd_recovery
+			focus = GER_1985_national_conservative_current
+		}
+		ai_will_do = { factor = 25 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_green_breakthrough"
+			add_political_power = 35
+			add_stability = 0.01
+			add_war_support = -0.04
+			clear_variable = ruling_party
+			set_variable = { ruling_party = 17 }
+			set_politics = { ruling_party = neutrality elections_allowed = yes }
+			set_temp_variable = { party_index = 17 }
+			set_temp_variable = { party_popularity_increase = 0.06 }
+			change_relative_party_popularity = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_anti_nuclear_mobilization
+		icon = green_biomass_plant
+		x = -1
+		y = 1
+		relative_position_id = GER_1985_green_breakthrough
+		cost = 6
+		prerequisite = { focus = GER_1985_green_breakthrough }
+		ai_will_do = { factor = 40 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_anti_nuclear_mobilization"
+			add_ideas = GER_1985_peace_movement
+			add_stability = 0.02
+			add_war_support = -0.05
+			set_temp_variable = { temp_opinion = 4 }
+			change_labour_unions_opinion = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_chernobyl_lessons
+		icon = green_projects
+		x = -2
+		y = 2
+		relative_position_id = GER_1985_green_breakthrough
+		cost = 6
+		prerequisite = { focus = GER_1985_anti_nuclear_mobilization }
+		ai_will_do = { factor = 45 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_chernobyl_lessons"
+			add_ideas = GER_1985_ecological_transition
+			add_stability = 0.01
+			set_temp_variable = { treasury_change = -5.00 }
+			modify_treasury_effect = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_ecological_industry
+		icon = champagne_green
+		x = 0
+		y = 2
+		relative_position_id = GER_1985_green_breakthrough
+		cost = 6
+		prerequisite = { focus = GER_1985_chernobyl_lessons }
+		ai_will_do = { factor = 55 }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_ecological_industry"
+			add_tech_bonus = {
+				name = GER_1985_green_industry_bonus
+				bonus = 0.50
+				uses = 1
+				category = CAT_industry
+			}
+			one_office_construction = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_national_conservative_current
+		icon = german_nationalism
+		x = 10
+		y = 1
+		relative_position_id = GER_1985_state_of_the_parties
+		cost = 6
+		prerequisite = { focus = GER_1985_state_of_the_parties }
+		mutually_exclusive = {
+			focus = GER_1985_kohl_mandate
+			focus = GER_1985_spd_recovery
+			focus = GER_1985_green_breakthrough
+		}
+		ai_will_do = { factor = 15 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_PROPAGANDA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_national_conservative_current"
+			add_ideas = GER_1985_national_revisionism
+			add_war_support = 0.05
+			add_stability = -0.04
+			clear_variable = ruling_party
+			set_variable = { ruling_party = 20 }
+			set_politics = { ruling_party = nationalist elections_allowed = yes }
+			set_temp_variable = { party_index = 20 }
+			set_temp_variable = { party_popularity_increase = 0.06 }
+			change_relative_party_popularity = yes
+		}
+	}
+
+	focus = {
+		id = GER_1985_schlussstrich_debate
+		icon = german_nationalism
+		x = -1
+		y = 1
+		relative_position_id = GER_1985_national_conservative_current
+		cost = 7
+		prerequisite = { focus = GER_1985_national_conservative_current }
+		ai_will_do = { factor = 20 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_PROPAGANDA }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_schlussstrich_debate"
+			add_political_power = 35
+			add_war_support = 0.06
+			add_stability = -0.05
+			remove_ideas = german_legacy
+			add_popularity = {
+				ideology = nationalist
+				popularity = 0.04
+			}
+			FRA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_great_negative_opinion
+				}
+			}
+			POL = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_great_negative_opinion
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_assert_sovereignty
+		icon = renounce_treaty
+		x = 1
+		y = 2
+		relative_position_id = GER_1985_national_conservative_current
+		cost = 7
+		prerequisite = { focus = GER_1985_schlussstrich_debate }
+		ai_will_do = { factor = 20 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INTERNATIONAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_assert_sovereignty"
+			add_political_power = 45
+			add_stability = -0.02
+			remove_ideas = GER_idea_war_reparations
+			USA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_slight_negative_opinion
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_independent_deterrent
+		icon = SIA_missiles
+		x = 3
+		y = 3
+		relative_position_id = GER_1985_national_conservative_current
+		cost = 8
+		prerequisite = { focus = GER_1985_assert_sovereignty }
+		mutually_exclusive = { focus = GER_1985_anti_nuclear_mobilization }
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_independent_deterrent"
+			clr_country_flag = GER_no_nuclear
+			add_war_support = 0.10
+			add_stability = -0.06
+			add_tech_bonus = {
+				name = GER_1985_nuclear_weapons_bonus
+				bonus = 0.50
+				uses = 2
+				category = CAT_nuclear_weapons
+			}
+		}
+	}
+
+	###############################################################
+	# SECTION 5: GERMAN QUESTION - BONN AND EAST BERLIN
+	###############################################################
+
+	focus = {
+		id = GER_1985_bonn_channels
+		icon = german_confederation
+		x = 0
+		y = 5
+		relative_position_id = GER_1985_bonn_republic
+		cost = 6
+		prerequisite = { focus = GER_1985_bonn_republic }
+		available = {
+			OR = {
+				has_completed_focus = GER_1985_ostpolitik_revival
+				has_completed_focus = GER_1985_reaffirm_nato
+				has_completed_focus = GER_1985_stasi_counterintelligence
+			}
+		}
+		ai_will_do = { factor = 90 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_bonn_channels"
+			add_ideas = GER_1985_reunification_momentum
+			add_political_power = 35
+			if = {
+				limit = { DDR = { exists = yes } }
+				DDR = {
+					add_to_variable = { DDR_west_dependency = 5 }
+					add_to_variable = { DDR_reform_pressure = 4 }
+					DDR_1985_monthly_state_crisis_update = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_expand_westfernsehen
+		icon = Socialist_Radio
+		x = -4
+		y = 1
+		relative_position_id = GER_1985_bonn_channels
+		cost = 6
+		prerequisite = { focus = GER_1985_bonn_channels }
+		ai_will_do = { factor = 70 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_expand_westfernsehen"
+			add_political_power = -15
+			if = {
+				limit = { DDR = { exists = yes } }
+				DDR = { DDR_1985_apply_west_german_pressure = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_support_church_networks
+		icon = family
+		x = 0
+		y = 1
+		relative_position_id = GER_1985_bonn_channels
+		cost = 6
+		prerequisite = { focus = GER_1985_bonn_channels }
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_support_church_networks"
+			add_political_power = -20
+			if = {
+				limit = { DDR = { exists = yes } }
+				DDR = {
+					add_to_variable = { DDR_church_opposition_strength = 8 }
+					add_to_variable = { DDR_reform_pressure = 5 }
+					add_to_variable = { DDR_stasi_penetration = 2 }
+					DDR_1985_monthly_state_crisis_update = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_credit_leverage
+		icon = foreign_capital
+		x = 4
+		y = 1
+		relative_position_id = GER_1985_bonn_channels
+		cost = 6
+		prerequisite = { focus = GER_1985_bonn_channels }
+		ai_will_do = { factor = 60 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_ECONOMY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_credit_leverage"
+			add_political_power = -25
+			if = {
+				limit = { DDR = { exists = yes } }
+				DDR = {
+					add_to_variable = { DDR_west_dependency = 8 }
+					add_to_variable = { DDR_reform_pressure = 6 }
+					add_to_variable = { DDR_moscow_trust = -4 }
+					add_to_variable = { DDR_supply_pressure = -4 }
+					DDR_1985_monthly_state_crisis_update = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_confederal_formula
+		icon = german_confederation
+		x = -2
+		y = 2
+		relative_position_id = GER_1985_bonn_channels
+		cost = 7
+		prerequisite = { focus = GER_1985_expand_westfernsehen }
+		prerequisite = { focus = GER_1985_support_church_networks }
+		ai_will_do = { factor = 65 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_confederal_formula"
+			add_stability = 0.03
+			add_political_power = 30
+			SOV = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = GER_very_slight_positive_opinion
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_managed_reunification
+		icon = GER_unified
+		x = -2
+		y = 3
+		relative_position_id = GER_1985_bonn_channels
+		cost = 10
+		prerequisite = { focus = GER_1985_confederal_formula }
+		prerequisite = { focus = GER_1985_credit_leverage }
+		ai_will_do = { factor = 55 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_managed_reunification"
+			add_political_power = 75
+			add_stability = 0.04
+			remove_ideas = GER_idea_germany_divided
+			set_country_flag = GER_united
+			set_cosmetic_tag = GER
+			if = {
+				limit = { DDR = { exists = yes } }
+				annex_country = { target = DDR transfer_troops = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_hardline_reunification_demand
+		icon = annex_country
+		x = 6
+		y = 2
+		relative_position_id = GER_1985_bonn_channels
+		cost = 8
+		prerequisite = { focus = GER_1985_national_conservative_current }
+		prerequisite = { focus = GER_1985_modernize_bundeswehr }
+		mutually_exclusive = { focus = GER_1985_confederal_formula }
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_hardline_reunification_demand"
+			add_war_support = 0.10
+			add_stability = -0.06
+			if = {
+				limit = { DDR = { exists = yes } }
+				create_wargoal = {
+					type = annex_everything
+					target = DDR
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GER_1985_germany_in_europe
+		icon = european_union_integration
+		x = 0
+		y = 4
+		relative_position_id = GER_1985_bonn_channels
+		cost = 8
+		prerequisite = { focus = GER_1985_bonn_channels }
+		available = {
+			OR = {
+				has_completed_focus = GER_1985_managed_reunification
+				has_completed_focus = GER_1985_deepen_european_integration
+			}
+		}
+		ai_will_do = { factor = 85 }
+		search_filters = { FOCUS_FILTER_INTERNATIONAL FOCUS_FILTER_ECONOMY }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus GER_1985_germany_in_europe"
+			add_stability = 0.04
+			add_political_power = 50
+			FRA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = franco_german_friendship
+				}
+			}
+			set_temp_variable = { temp_opinion = 3 }
+			change_industrial_conglomerates_opinion = yes
+			set_temp_variable = { temp_opinion = 3 }
+			change_labour_unions_opinion = yes
+		}
+	}
+}

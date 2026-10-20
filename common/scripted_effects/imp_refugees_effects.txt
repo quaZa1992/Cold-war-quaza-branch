@@ -1,0 +1,339 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+## Calculate how many refugees a country generates. Country scope.
+imp_refugees_calc_refs = 
+{
+	every_owned_state = {
+		if = {
+			## We only want this to run on states that are contested. E.g. frontline states
+			limit = { 
+				ROOT = { NOT = { has_full_control_of_state = PREV } }
+			}
+
+			## Every week, 0.25% of a state's population will be displaced.
+			set_temp_variable = { imp_displaced_pops_k = state_population_k }
+			divide_temp_variable = { imp_displaced_pops_k = 400 }
+
+			## Add them to the total stats
+			ROOT = { add_to_variable = { imp_civ_casualties_k = imp_displaced_pops_k } }
+
+			## Remove them from the state's population.
+			set_temp_variable = { imp_ref_t = 0 }
+			subtract_from_temp_variable = { imp_ref_t = imp_displaced_pops_k }
+			multiply_temp_variable = { imp_ref_t = 1000 }
+			add_manpower = imp_ref_t
+
+			## Nations with low gdpc often produce more internally displaced & casualties than states with higher gdpc
+			## For the sake of a clear cutoff point, let's say 20k USD gdpc
+			if = {
+				## This is for conflicts in nations above 20k GDP
+				limit = { check_variable = { ROOT.gdp_per_capita > 20 } }
+
+				## First wave: ~20% of the refugees are casualties and will die. 
+
+				## Second wave: ~40% of the refugees will flee into bordering nations.
+				set_temp_variable = { imp_ref_local_k_t = imp_displaced_pops_k }
+				multiply_temp_variable = { imp_ref_local_k_t = 0.40 }
+				ROOT = { add_to_variable = { imp_monthly_refugees_local_k = imp_ref_local_k_t } }
+
+				# Update statistics
+				add_to_variable = { global.imp_total_refugees_k = imp_ref_local_k_t }
+				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_local_k_t } }
+				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_local_k_t } }
+
+				## Third wave: ~40% of the refugees will flee to the international refugee pool
+				set_temp_variable = { imp_ref_int_k_t = imp_displaced_pops_k }
+				multiply_temp_variable = { imp_ref_int_k_t = 0.40 }
+				add_to_variable = { global.imp_monthly_refugees_global_k = imp_ref_int_k_t }
+
+				# Update Statistics
+				add_to_variable = { global.imp_total_refugees_k = imp_ref_int_k_t }
+				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_int_k_t } }
+				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_int_k_t } }
+			}
+			else = {
+				## This is for conflicts in nations below 20k GDP
+
+				## First wave: ~50% of the refugees are casualties and will die. 
+
+				## Second wave: ~30% of the refugees will flee into bordering nations.
+				set_temp_variable = { imp_ref_local_k_t = imp_displaced_pops_k }
+				multiply_temp_variable = { imp_ref_local_k_t = 0.30 }
+				ROOT = { add_to_variable = { imp_monthly_refugees_local_k = imp_ref_local_k_t } }
+
+				# Update statistics
+				add_to_variable = { global.imp_total_refugees_k = imp_ref_local_k_t }
+				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_local_k_t } }
+				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_local_k_t } }
+
+				## Third wave: ~20% of the refugees will flee to the international refugee pool
+				set_temp_variable = { imp_ref_int_k_t = imp_displaced_pops_k }
+				multiply_temp_variable = { imp_ref_int_k_t = 0.20 }
+				add_to_variable = { global.imp_monthly_refugees_global_k = imp_ref_int_k_t }
+
+				# Update Statistics
+				add_to_variable = { global.imp_total_refugees_k = imp_ref_int_k_t }
+				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_int_k_t } }
+				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_int_k_t } }
+			}
+		}
+	}
+}
+
+## Calculate where a nation's refugees go. Country Scope.
+imp_refugees_local_calc = 
+{
+	# Store the old total ref value for the event.
+	set_variable = { imp_m_r_statistic_k = 0 }
+
+	## Check how many eligable neighbours there are.
+	clear_temp_array = local_refugee_targets_t
+	set_temp_variable = { num_c_t = 0 }
+	every_neighbor_country = 
+	{
+		if = {
+			limit = { 
+				check_variable = { max_manpower_k > 500 }
+				has_war = no
+			}
+
+			add_to_temp_variable = { num_c_t = 1 } 
+			add_to_temp_array = { local_refugee_targets_t = THIS }
+		}
+	}
+
+	## Divide the local refugees among neighbours equally. This is a bit unrealistic, but not worth the calculations.
+	if = { 
+		limit = { check_variable = { num_c_t > 0 } }
+		
+		## Set the amount of refugees per neighbour.
+		set_temp_variable = { local_refugees_per_country_k_t = imp_monthly_refugees_local_k }
+		divide_temp_variable = { local_refugees_per_country_k_t = num_c_t }
+		set_temp_variable = { local_refugees_per_country_t = local_refugees_per_country_k_t }
+		multiply_temp_variable = { local_refugees_per_country_t = 1000 }
+		round_temp_variable = local_refugees_per_country_t
+
+		for_each_scope_loop =
+		{
+			array = local_refugee_targets_t
+
+			if = { 
+				limit = { NOT = { has_idea = closed_borders } }
+				#random_core_state = 
+				#{
+				#	limit = { state_population_k > 50 }
+				#	add_manpower = local_refugees_per_country_t
+				#}
+				add_to_variable = { imp_refugees_taken_k = local_refugees_per_country_k_t }
+
+				if = { 
+					limit = { 
+						check_variable = { local_refugees_per_country_k_t  > 20 }
+						NOT = { has_country_flag = refugee_wave_cd }
+					}
+					set_country_flag = { flag = refugee_wave_cd days = 180 value = 1 }
+					country_event = imp_refugee_event.3
+				}
+			}
+			else = 
+			{
+				add_to_variable = { global.imp_monthly_refugees_global_k = local_refugees_per_country_k_t } 
+				
+				## If you have closed borders, you will not accept refugees. The refugees will go into the global pool.
+				# You will get an event.
+				if = {
+					limit = { 
+						NOT = { has_idea = imp_refugee_block_costs } 
+						NOT = { has_country_flag = imp_refugee_event_1_fired }
+					}
+
+					country_event = imp_refugee_event.1
+					set_country_flag = { flag = imp_refugee_event_1_fired days = 7 value = 1 }
+				}
+			}
+		}
+	}
+	else = {
+		## If there's no neighbours, send all international.
+		add_to_variable = { global.imp_monthly_refugees_global_k = imp_monthly_refugees_local_k }
+	}
+}
+
+## Calculate A Nation's Refugee Attraction score. Country Scope
+imp_refugees_attraction_score_calc = 
+{
+	if = {
+		limit = { check_variable = { gdp_per_capita > 10 } }
+		
+		### Refugee attraction rate is calculated by taking a nation's gdp and multiplying that by a factor of GDP/C
+		### e.g. larger nations and richer nations get relatively more international refugees
+		### Nations under 10gdpc don't get any.
+
+		set_variable = { imp_refugee_attraction_score = gdp_total }
+		divide_variable = { imp_refugee_attraction_score = 1000 }
+
+		set_temp_variable = { imp_ref_gdpc_adj_t = gdp_per_capita }
+		divide_temp_variable = { imp_ref_gdpc_adj_t = 100 }
+
+		multiply_variable = { imp_refugee_attraction_score = imp_ref_gdpc_adj_t }
+
+		## Then multiply this number by the nation's open borders policy.
+
+		if = {
+			limit = { has_idea = slightly_regulated_immigration }
+			multiply_variable = { imp_refugee_attraction_score = 0.75 }
+		}
+		else_if = {
+			limit = { has_idea = regulated_immigration }
+			multiply_variable = { imp_refugee_attraction_score = 0.50 }
+		}
+		else_if = {
+			limit = { has_idea = heavily_regulated_immigration }
+			multiply_variable = { imp_refugee_attraction_score = 0.25 }
+		}
+		else_if = {
+			limit = { has_idea = closed_borders }
+			multiply_variable = { imp_refugee_attraction_score = 0 }
+		}
+
+		## Add Pull Modifier
+		set_temp_variable = { ref_mod = 1 }
+		add_to_temp_variable = { ref_mod = modifier@imp_refugee_pull_modifier }
+		clamp_temp_variable = { var = ref_mod min = 0 max = 2 }
+		multiply_variable = { imp_refugee_attraction_score = ref_mod }
+
+		add_to_variable = { global.total_ref_score = imp_refugee_attraction_score }
+	}
+	else = {
+		set_variable = { imp_refugee_attraction_score = 0 }
+	}
+}
+
+## Calculate division of international refugees. Country Scope
+imp_refugees_international_divide_calc = 
+{
+	## Ignore nations with no refugee score
+	if = {
+		limit = { check_variable = { imp_refugee_attraction_score > 0 } }
+
+		set_temp_variable = { refugee_share_p_t = imp_refugee_attraction_score }
+		divide_temp_variable = { refugee_share_p_t = global.total_ref_score }
+		set_temp_variable = { refugee_number_k_t = global.imp_monthly_refugees_global_k }
+		multiply_temp_variable = { refugee_number_k_t = refugee_share_p_t }
+		set_temp_variable = { refugee_number_t = refugee_number_k_t }
+		multiply_temp_variable = { refugee_number_t = 1000 }
+		round_temp_variable = refugee_number_t 
+
+		if = {
+			limit = { check_variable = { refugee_number_t > 0 } }
+			
+			random_core_state = {
+				limit = { state_population_k > 50 }
+
+				#add_manpower = refugee_number_t 
+				PREV = { add_to_variable = { imp_refugees_taken_k = refugee_number_k_t } }
+			}
+
+			if = { 
+				limit = { 
+					check_variable = { refugee_number_k_t  > 10 }
+					NOT = { has_country_flag = refugee_wave_cd }
+				}
+				set_country_flag = { flag = refugee_wave_cd days = 180 value = 1 }
+				country_event = imp_refugee_event.3
+			}
+		}
+	}
+}
+
+## Calculate Cost associated with Refugees
+imp_refugee_cost_calc = 
+{
+	 # Calculate montly refugee influx.
+	set_temp_variable = { monthly_refugees_k_t = imp_refugees_taken_k }
+	subtract_from_temp_variable = { monthly_refugees_k_t = imp_refugees_taken_k_old }
+
+	set_temp_variable = { monthly_refugees_k_p_t = monthly_refugees_k_t }
+	divide_temp_variable = { monthly_refugees_k_p_t = max_manpower_k }
+
+	if = { 
+		limit = { check_variable = { monthly_refugees_k_p_t > 0.01 } }
+
+		## Huge migrant influx.
+	}
+
+	if = { 
+		limit = { 
+			NOT = { has_country_flag = mass_deportation_campaigns }
+		}
+
+		## Reduce the costly refugees by 0.5%. Refugees integrate & start being more productive.
+		## Season 7 change: this is when you gain the pops!
+		set_temp_variable = { integrate_number = imp_costly_refugees_k }
+		multiply_temp_variable = { integrate_number = 0.01 }
+
+		set_temp_variable = { int_mod = 1 }
+		add_to_temp_variable = { int_mod = modifier@imp_refugee_integration_rate }
+		clamp_temp_variable = { var = int_mod min = 0 max = 2 }
+		multiply_temp_variable = { integrate_number = int_mod }
+
+		subtract_from_variable = { imp_costly_refugees_k = integrate_number }
+
+		multiply_temp_variable = { integrate_number = 1000 }
+		## Season 7 Changes
+		random_core_state = {
+			limit = { state_population_k > 50 }
+			add_manpower = integrate_number 
+		}
+	}
+	else = { 
+			# Deport 2.5% Of your refugees.
+
+			set_temp_variable = { deport_number = imp_costly_refugees_k }
+			multiply_temp_variable = { deport_number = 0.04 }
+			subtract_from_variable = { imp_costly_refugees_k = deport_number }
+			add_to_variable = { global.imp_monthly_refugees_global_k = deport_number }
+	}
+
+	## Add the new influx of refugees to the old number.
+	add_to_variable = { imp_costly_refugees_k = monthly_refugees_k_t }
+	set_variable = { imp_refugee_pressure = imp_costly_refugees_k }
+	multiply_variable = { imp_refugee_pressure = 5 }
+	divide_variable = { imp_refugee_pressure = max_manpower_k }
+	clamp_variable = { var = imp_refugee_pressure min = 0 max = 1 }
+
+	set_variable = { imp_refugee_pressure_stab = 0 }
+	subtract_from_variable = { imp_refugee_pressure_stab = imp_refugee_pressure }
+
+	set_variable = { imp_refugee_nat = 0.2 }
+	multiply_variable = { imp_refugee_nat = imp_refugee_pressure }
+	clamp_variable = { var = imp_refugee_nat min = 0 max = 1 }
+
+	## Double the cost - Season 7 to update the cost
+	multiply_variable = { imp_refugee_pressure = 2 }
+	
+	
+
+	## Add extra social costs.
+	if = {
+		limit = { 
+			check_variable = { imp_refugee_pressure = 0 } 
+		}
+		
+		if = {
+			limit = { has_dynamic_modifier = { modifier = imp_refugees_dynamic_modifier } }
+			remove_dynamic_modifier = { modifier = imp_refugees_dynamic_modifier }
+		}
+	}
+	else = {
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = imp_refugees_dynamic_modifier } } }
+			add_dynamic_modifier = { modifier = imp_refugees_dynamic_modifier }
+		}
+	}
+
+	## Store this month's value as last months value for next cycle.
+	set_variable = { imp_refugees_taken_k_old = imp_refugees_taken_k }
+}

@@ -1,0 +1,75 @@
+on_actions = {
+	on_daily_SER = {
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						134 = { is_owned_and_controlled_by = SER }
+						MNT = { is_subject_of = SER }
+					}
+				}
+				# Montenegro Independence Referendum Ended
+				if = {
+					limit = {
+						has_country_flag = SER_montenegro_independence
+						check_variable = { SER_Montenegro_separatism < 1 }
+						check_variable = { SER_Montenegro_combatants < 500 }
+						NOT = { has_country_flag = SER_montenegro_independence_dead }
+					}
+					country_event = Serbia.17
+				}
+				# Montenegro Independence Referendum Failed
+				else_if = {
+					limit = {
+						check_variable = { SER_Montenegro_separatism > 99 }
+					}
+					country_event = Serbia.15
+				}
+			}
+
+			if = {
+				limit = { has_completed_focus = SER_confederation_created }
+				set_temp_variable = { ser_has_fed_subject = 0 }
+				if = {
+					limit = { any_subject_country = { has_autonomy_state = autonomy_balkan_federation } }
+					set_temp_variable = { ser_has_fed_subject = 1 }
+				}
+				if = {
+					limit = {
+						NOT = { has_idea = SER_federation }
+						check_variable = { ser_has_fed_subject = 1 }
+					}
+					add_ideas = SER_federation
+				}
+				else_if = {
+					limit = {
+						has_idea = SER_federation
+						check_variable = { ser_has_fed_subject = 0 }
+					}
+					remove_ideas = SER_federation
+				}
+			}
+		}
+	}
+
+	on_daily_VOJ = {
+		effect = {
+			# Vojvodina start Rebellion
+			if = {
+				limit = {
+					check_variable = { voj_separ > 55 }
+					NOT = { has_country_flag = start_reb_voj }
+					OR = {
+						has_autonomy_state = autonomy_autonomous_province1
+						has_autonomy_state = autonomy_autonomous_province
+					}
+				}
+				set_country_flag = start_reb_voj
+				country_event = {
+					id = SerbiaFocus.99
+					days = 1
+				}
+			}
+		}
+	}
+}

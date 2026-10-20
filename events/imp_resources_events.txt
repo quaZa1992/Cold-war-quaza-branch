@@ -1,0 +1,267 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+add_namespace = RW_event
+
+# Request Resources
+country_event = {
+	id = RW_event.1
+	title = RW_event.1.t
+	desc = RW_event.1.d
+	picture = GFX_imp_resource_mining
+	is_triggered_only = yes
+	
+	option = {
+		name = RW_event.1.o1
+
+		trigger = 
+		{
+			NOT = 
+			{
+				any_country = {
+					NOT = { TAG = root }
+					has_resources_rights = 
+					{
+						state = from.imp_resource_target
+					}
+				}
+			}
+		}
+
+		give_resource_rights = 
+		{
+			receiver = FROM
+			state = from.imp_resource_target
+		}
+		FROM = { country_event = { id = RW_event.2 originator = root } }
+	}
+
+	option = {
+		name = RW_event.1.o2
+
+		trigger = 
+		{
+			NOT = 
+			{
+				any_country = {
+					NOT = { TAG = root }
+					has_resources_rights = 
+					{
+						state = from.imp_resource_target
+					}
+				}
+			}
+		}
+
+		FROM = { country_event = { id = RW_event.3 originator = root } }
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+		name = RW_event.1.o3
+
+		trigger = 
+		{
+			any_country = {
+				NOT = { TAG = root }
+				has_resources_rights = 
+				{
+					state = from.imp_resource_target
+				}
+			}
+		}
+
+		FROM = { country_event = { id = RW_event.4 originator = root } }
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# Request Accepted
+country_event = {
+	id = RW_event.2
+	title = RW_event.2.t
+	desc = RW_event.2.d
+	picture = GFX_imp_resource_mining
+	
+	is_triggered_only = yes
+
+	option = {
+		name = RW_event.2.o1
+	}
+}
+
+# Request Denied
+country_event = {
+	id = RW_event.3
+	title = RW_event.3.t
+	desc = RW_event.3.d
+	picture = GFX_imp_resource_mining
+	
+	is_triggered_only = yes
+
+	option = {
+		name = RW_event.3.o1
+	}
+}
+
+# Request Unable to Accept/Deny
+country_event = {
+	id = RW_event.4
+	title = RW_event.4.t
+	desc = RW_event.4.d
+	picture = GFX_imp_resource_mining
+	
+	is_triggered_only = yes
+
+	option = {
+		name = RW_event.3.o1
+	}
+}
+
+# Cancel Resource Rights. This is done from the country who OWNS the resource rights.
+country_event = {
+	id = RW_event.5
+	title = RW_event.5.t
+	desc = RW_event.5.d
+	picture = GFX_imp_resource_mining
+	is_triggered_only = yes
+	
+	option = {
+		name = RW_event.2.o1
+	}
+}
+
+# Take back Resource Rights. This is done from the country that owns the State.
+country_event = {
+	id = RW_event.6
+	title = RW_event.6.t
+	desc = RW_event.6.d
+	picture = GFX_imp_resource_mining
+	is_triggered_only = yes
+	
+	option = {
+		name = RW_event.6.o1
+
+		trigger = 
+		{
+			any_country = {
+				NOT = { TAG = root }
+				has_resources_rights = 
+				{
+					state = event_target:TB_target_province
+				}
+			}
+		}
+		
+		every_country = {
+			limit = {
+				NOT = { TAG = Root }
+				OR = {
+					has_resources_rights = {
+						state = event_target:TB_target_province
+						resources = { oil }
+					}
+					has_resources_rights = {
+						state = event_target:TB_target_province
+						resources = { rubber }
+					}
+					has_resources_rights = {
+						state = event_target:TB_target_province
+						resources = { aluminium }
+					}
+					has_resources_rights = {
+						state = event_target:TB_target_province
+						resources = { tungsten }
+					}
+					has_resources_rights = {
+						state = event_target:TB_target_province
+						resources = { steel }
+					}
+					has_resources_rights = {
+						state = event_target:TB_target_province
+						resources = { chromium }
+					}
+					has_resources_rights = { state = event_target:TB_target_province resources = { microchips } }
+					has_resources_rights = { state = event_target:TB_target_province resources = { composites } }
+				}
+			}
+
+			remove_resource_rights = event_target:TB_target_province
+			country_event = { id = RW_event.7 originator = root } 
+		}
+	}
+
+	option = {
+		name = RW_event.6.o2
+	}
+}
+
+# Confirmation for losing resources
+country_event = {
+	id = RW_event.7
+	title = RW_event.7.t
+	desc = RW_event.7.d
+	picture = GFX_imp_resource_mining
+	is_triggered_only = yes
+
+	option = {
+		name = RW_event.7.o1
+	}
+}
+
+
+# Talin's additions
+# Confirmation for requesting
+country_event = {
+	id = RW_event.10
+	title = RW_event.10.t
+	desc = RW_event.10.d
+	picture = GFX_imp_resource_mining
+	is_triggered_only = yes
+
+	option = {
+		name = RW_event.10.o1
+
+		var:imp_resource_target = {
+			CONTROLLER = { 
+				country_event = { id = RW_event.1 }
+			}
+		}
+	}
+
+	option = {
+		name = RW_event.10.o2
+	}
+}
+
+# Confirmation for giving up
+country_event = {
+	id = RW_event.11
+	title = RW_event.11.t
+	desc = RW_event.11.d
+	picture = GFX_imp_resource_mining
+	is_triggered_only = yes
+
+	option = {
+		name = RW_event.11.o1
+		
+		remove_resource_rights = imp_resource_target
+		
+		var:imp_resource_target = {
+			CONTROLLER = { 
+				country_event = { id = RW_event.5 }
+			}
+		}
+	}
+
+	option = {
+		name = RW_event.11.o2
+	}
+}

@@ -1,0 +1,454 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+imp_progress_covid_in_country = {
+    
+    # Set the progression
+    if = {
+        # COVID is getting less bad
+        limit = { 
+            OR = { 
+                has_country_flag = imp_has_covid_vaccine
+                has_country_flag = imp_covid_is_retreating
+            }
+        }
+
+        subtract_from_variable = { imp_covid_infection_level = 1 }
+        clamp_variable = { var = imp_covid_infection_level min = 0 }
+
+        if = {
+            limit = { check_variable = { imp_covid_infection_level = 0 } }
+
+            remove_dynamic_modifier = { modifier = imp_global_covid_modifier }
+            news_event = { id = impcovid.10 days = 3 }
+        }
+        else = { 
+            # Set the time until the next event 21 days if there is a vaccine, 50 if there is not.
+            if = {
+                limit = { 
+                    has_country_flag = imp_has_covid_vaccine
+                }
+                country_event = { id = impcovid.100 days = 20 }
+            }
+            else = {
+                country_event = { id = impcovid.100 days = 40 }
+            }
+        }
+    }
+    else = {
+        # COVID is getting worse
+
+        add_to_variable = { imp_covid_infection_level = 1 }
+
+        # Set the time until the next event
+        set_temp_variable = { imp_covid_timer_t = 21 }
+        add_to_temp_variable = { imp_covid_timer_t = imp_covid_resistance }
+
+        if = {
+            limit = { has_idea = health_02 }
+            add_to_temp_variable = { imp_covid_timer_t = 1 }
+        }
+        else_if = {
+            limit = { has_idea = health_03 }
+            add_to_temp_variable = { imp_covid_timer_t = 3 }
+        }
+        else_if = {
+            limit = { has_idea = health_04 }
+            add_to_temp_variable = { imp_covid_timer_t = 6 }
+        }
+        else_if = {
+            limit = { has_idea = health_05 }
+            add_to_temp_variable = { imp_covid_timer_t = 10 }
+        }
+        else_if = {
+            limit = { has_idea = health_06 }
+            add_to_temp_variable = { imp_covid_timer_t = 15 }
+        }
+
+        country_event = { id = impcovid.100 days = imp_covid_timer_t }
+
+        # Steps
+        if = {
+            # COVID is going to do negative events.
+            limit = { 
+                check_variable = { imp_covid_infection_level = 5 } 
+            }
+            news_event = impcovid.5
+        }
+        else_if = {
+            limit = { 
+                check_variable = {  imp_covid_infection_level = 10 }
+            }
+            news_event = impcovid.6
+        }
+
+        if = { 
+            limit = { 
+                AND = {
+                    check_variable = { imp_covid_infection_level > 8 }
+                    check_variable = { imp_covid_resistance > 24 }
+                    NOT = { has_country_flag = imp_covid_recent_policy_change }
+                }
+            }
+            set_country_flag = imp_covid_is_retreating
+            news_event = impcovid.7
+        }
+        else_if = {
+            limit = { 
+                AND = {
+                    check_variable = { imp_covid_infection_level > 12 }
+                    check_variable = { imp_covid_resistance > 12 }
+                    NOT = { has_country_flag = imp_covid_recent_policy_change }
+                }
+            }
+            set_country_flag = imp_covid_is_retreating
+            news_event = impcovid.7
+        }
+        else_if = {
+            limit = {
+                check_variable = { imp_covid_infection_level > 15 }
+            }
+            set_country_flag = imp_covid_is_retreating
+            news_event = impcovid.7
+        }
+
+        # Set highest level
+        set_variable = { imp_covid_highest_infection_level = imp_covid_infection_level }
+    }
+
+    # Extra Covid Event
+    if = { 
+        limit = {
+            check_variable = { imp_covid_infection_level > 4 }
+        }
+        if = {
+            limit = { 
+                check_variable = { imp_covid_resistance > 22 }
+            }
+            imp_covid_event_trigger_high = yes
+        }
+        else_if = {
+            limit = { 
+                check_variable = { imp_covid_resistance > 12 }
+            }
+            imp_covid_event_trigger_medium = yes
+        }
+        else = {
+            imp_covid_event_trigger_low = yes
+        }
+    }
+
+    # Set the base healthcare level
+    if = {
+        limit = { has_idea = health_02 }
+        set_temp_variable = { imp_covid_extra_t = 0.99 }
+    }
+    else_if = {
+        limit = { has_idea = health_03 }
+        set_temp_variable = { imp_covid_extra_t = 0.97 }
+    }
+    else_if = {
+        limit = { has_idea = health_04 }
+        set_temp_variable = { imp_covid_extra_t = 0.94 }
+    }
+    else_if = {
+        limit = { has_idea = health_05 }
+        set_temp_variable = { imp_covid_extra_t = 0.90 }
+    }
+    else_if = {
+        limit = { has_idea = health_06 }
+        set_temp_variable = { imp_covid_extra_t = 0.85 }
+    }
+    else = {
+        set_temp_variable = { imp_covid_extra_t = 1 }
+    }
+
+    # Calculate the dynamic modifier penalties
+    imp_calculate_covid_penalties = yes
+    imp_covid_remove_pops = yes
+}
+
+imp_calculate_covid_penalties = {
+
+    ### TAXES
+    set_variable = { imp_global_covid_taxes = -0.015 }
+    multiply_variable = { imp_global_covid_taxes = imp_covid_infection_level }
+    multiply_variable = { imp_global_covid_taxes = imp_covid_extra_t }
+    if = {
+        limit = { has_country_flag = imp_covid_socdic }
+        add_to_variable = { imp_global_covid_taxes = -0.025 }
+    }
+    ### ECONOMY
+    set_variable = { imp_global_covid_economy = 0.02 }
+    multiply_variable = { imp_global_covid_economy = imp_covid_infection_level }
+    multiply_variable = { imp_global_covid_economy = imp_covid_extra_t }
+
+    ### FACTORY OUTPUT
+    set_variable = { imp_global_covid_output = -0.05 }
+    multiply_variable = { imp_global_covid_output = imp_covid_infection_level }
+    multiply_variable = { imp_global_covid_output = imp_covid_extra_t }
+    if = { 
+        limit = { has_country_flag = imp_global_covid_travel_ban_full }
+        multiply_variable = { imp_global_covid_output = 1.5 }
+    }
+    else_if = {
+        limit = { has_country_flag = imp_global_covid_travel_ban_partial }
+        multiply_variable = { imp_global_covid_output = 1.25 }
+    }
+    if = {
+        limit = { has_country_flag = imp_covid_remote }
+        add_to_variable = { imp_global_covid_output = -0.1 }
+    }
+
+    ### POP GROWTH
+    set_variable = { imp_global_covid_popgrowth = -0.25 }
+    multiply_variable = { imp_global_covid_popgrowth = imp_covid_infection_level }
+    multiply_variable = { imp_global_covid_popgrowth = imp_covid_extra_t }
+    if = {
+        limit = { 
+            check_variable = { imp_covid_ic_unit_expansion > 0 } 
+        }
+        set_temp_variable = { imp_ic_factor_t = imp_covid_ic_unit_expansion }
+        divide_temp_variable = { imp_ic_factor_t = 5 }
+        set_temp_variable = { imp_ic_factor_tt = 1 }
+        subtract_from_temp_variable = { imp_ic_factor_tt = imp_ic_factor_t }
+        multiply_variable = { imp_global_covid_popgrowth = imp_ic_factor_tt }
+    }
+
+    ### HEALTH COSTS
+    set_variable = { imp_global_covid_health_cost = 0.05 }
+    multiply_variable = { imp_global_covid_health_cost = imp_covid_infection_level }
+    multiply_variable = { imp_global_covid_health_cost = imp_covid_extra_t }
+    add_to_variable = { imp_global_covid_health_cost = imp_covid_ic_unit_expansion }
+    
+    ### STABILITY
+    set_variable = { imp_global_covid_stability = -0.01 }
+    multiply_variable = { imp_global_covid_stability = imp_covid_infection_level }
+    multiply_variable = { imp_global_covid_stability = imp_covid_extra_t }
+    if = { 
+        limit = { has_country_flag = imp_global_covid_travel_ban_full }
+        add_to_variable = { imp_global_covid_stability = -0.1 }
+    }
+    else_if = {
+        limit = { has_country_flag = imp_global_covid_travel_ban_partial }
+        add_to_variable = { imp_global_covid_stability = -0.05 }
+    }
+    if = {
+        limit = { has_country_flag = imp_covid_mask_mandate }
+        add_to_variable = { imp_global_covid_stability = -0.01 }
+    }
+    if = {
+        limit = { has_country_flag = imp_covid_curfew }
+        add_to_variable = { imp_global_covid_stability = -0.1 }
+    }
+    else_if = {
+        limit = { has_country_flag = imp_covid_lockdown }
+        add_to_variable = { imp_global_covid_stability = -0.2 }
+    }
+    if = {
+        limit = { has_elections = no }
+        divide_variable = { imp_global_covid_stability = 2 }
+    }
+    
+
+    ### PRODUCTIVITY
+    set_variable = { imp_global_covid_productivity = -0.5 }
+    multiply_variable = { imp_global_covid_productivity = imp_covid_infection_level }
+    multiply_variable = { imp_global_covid_productivity = imp_covid_extra_t }
+    if = {
+        limit = { has_country_flag = imp_covid_remote }
+        add_to_variable = { imp_global_covid_productivity = -0.25 }
+    }
+}
+
+imp_covid_spreading = {
+    every_country = {
+        limit = { 
+            NOT = { 
+                has_dynamic_modifier = { modifier = imp_global_covid_modifier }
+                has_country_flag = imp_has_covid_vaccine 
+                has_country_flag = imp_covid_is_retreating
+            }
+        }
+
+        if = { 
+            limit = { 
+                has_country_flag = imp_global_covid_travel_ban_full
+            }
+
+            random = 
+            {
+                chance = 15
+                add_dynamic_modifier = { modifier = imp_global_covid_modifier }
+                news_event = impcovid.4
+            }
+        }
+        else_if = {
+            limit = { 
+                has_country_flag = imp_global_covid_travel_ban_partial
+            }
+
+            random = 
+            {
+                chance = 20
+                add_dynamic_modifier = { modifier = imp_global_covid_modifier }
+                news_event = impcovid.4
+            }
+        }
+        else = {
+            random = 
+            {
+                chance = 25
+                add_dynamic_modifier = { modifier = imp_global_covid_modifier }
+                news_event = impcovid.4
+            }
+        }
+    }
+
+    if = { 
+        limit = { 
+            any_country = { 
+                NOT = { 
+                    has_dynamic_modifier = { modifier = imp_global_covid_modifier }
+                    has_country_flag = imp_has_covid_vaccine 
+                    has_country_flag = imp_covid_is_retreating 
+                }
+            } 
+        }
+
+        country_event = { id = impcovid.99 days = 10 }
+    }
+    else = 
+    {
+        country_event = { id = impcovid.98 days = 10 }
+    }
+}
+
+imp_check_if_covid_is_done = {
+    if = { 
+        limit = { 
+            any_country = { 
+                has_dynamic_modifier = { modifier = imp_global_covid_modifier }
+            } 
+        }
+        country_event = { id = impcovid.98 days = 30 }
+    }
+    else = {
+        news_event = impcovid.11
+        set_global_flag = imp_covid_is_done
+    }
+}
+
+imp_covid_event_trigger_high = {
+    random_list = {
+        20 = {
+            country_event = impcovid.21
+        }
+        10 = {
+            country_event = impcovid.13
+        }
+        10 = {
+            country_event = impcovid.14
+        }
+        10 = {
+            country_event = impcovid.15
+        }
+        10 = {
+            country_event = impcovid.16
+        }
+        10 = {
+            country_event = impcovid.17
+        }
+        10 = {
+            country_event = impcovid.18
+        }
+        10 = {
+            country_event = impcovid.19
+        }
+        10 = {
+            country_event = impcovid.20
+        }
+        10 = {
+            country_event = impcovid.21
+        }
+    }
+}
+
+imp_covid_event_trigger_medium = {
+    random_list = {
+        30 = {
+            country_event = impcovid.21
+        }
+        10 = {
+            country_event = impcovid.13
+        }
+        10 = {
+            country_event = impcovid.14
+        }
+        10 = {
+            country_event = impcovid.15
+        }
+        10 = {
+            country_event = impcovid.16
+        }
+        10 = {
+            country_event = impcovid.17
+        }
+        10 = {
+            country_event = impcovid.18
+        }
+        10 = {
+            country_event = impcovid.19
+        }
+        10 = {
+            country_event = impcovid.20
+        }
+        10 = {
+            country_event = impcovid.21
+        }
+    }
+}
+
+imp_covid_event_trigger_low = {
+    random_list = {
+        40 = {
+            country_event = impcovid.21
+        }
+        10 = {
+            country_event = impcovid.13
+        }
+        10 = {
+            country_event = impcovid.14
+        }
+        10 = {
+            country_event = impcovid.15
+        }
+        10 = {
+            country_event = impcovid.16
+        }
+        10 = {
+            country_event = impcovid.17
+        }
+        10 = {
+            country_event = impcovid.18
+        }
+        10 = {
+            country_event = impcovid.19
+        }
+        10 = {
+            country_event = impcovid.20
+        }
+    }
+}
+
+imp_covid_remove_pops = 
+{
+    every_owned_state = 
+    {
+        set_temp_variable = { imp_pops_covid_t = state_population_k }
+        multiply_temp_variable = { imp_pops_covid_t = PREV.imp_global_covid_popgrowth }
+        round_temp_variable = imp_pops_covid_t
+        add_manpower = imp_pops_covid_t
+    }
+}

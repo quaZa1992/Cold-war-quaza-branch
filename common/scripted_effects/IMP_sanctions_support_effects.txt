@@ -1,0 +1,99 @@
+# Original Script by: Moveably
+# Imperia Season 10 reports; MD Cold War fixes and pagination.
+
+# Recipient is THIS; sanctioning country is PREV.
+IMP_sanctions_add_dip_from_prev = {
+	if = {
+		limit = { NOT = { is_in_array = { array = PREV.imp_dip_sanc_by_us value = THIS } } }
+		add_to_array = { array = PREV.imp_dip_sanc_by_us value = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { array = imp_dip_sanc_on_us value = PREV } } }
+		add_to_array = { array = imp_dip_sanc_on_us value = PREV }
+		add_opinion_modifier = { target = PREV modifier = opinion_dip_sanctioned_us }
+	}
+}
+
+IMP_sanctions_add_fin_from_prev = {
+	if = {
+		limit = { NOT = { is_in_array = { array = PREV.imp_fin_sanc_by_us value = THIS } } }
+		add_to_array = { array = PREV.imp_fin_sanc_by_us value = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { array = imp_fin_sanc_on_us value = PREV } } }
+		add_to_array = { array = imp_fin_sanc_on_us value = PREV }
+		add_opinion_modifier = { target = PREV modifier = opinion_fin_sanctioned_us }
+	}
+}
+
+IMP_sanctions_add_eco_from_prev = {
+	if = {
+		limit = { NOT = { is_in_array = { array = PREV.imp_eco_sanc_by_us value = THIS } } }
+		add_to_array = { array = PREV.imp_eco_sanc_by_us value = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { array = imp_eco_sanc_on_us value = PREV } } }
+		add_to_array = { array = imp_eco_sanc_on_us value = PREV }
+		add_opinion_modifier = { target = PREV modifier = opinion_eco_sanctioned_us }
+	}
+}
+
+IMP_sanctions_add_mil_from_prev = {
+	if = {
+		limit = { NOT = { is_in_array = { array = PREV.imp_mil_sanc_by_us value = THIS } } }
+		add_to_array = { array = PREV.imp_mil_sanc_by_us value = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { array = imp_mil_sanc_on_us value = PREV } } }
+		add_to_array = { array = imp_mil_sanc_on_us value = PREV }
+		add_opinion_modifier = { target = PREV modifier = opinion_mil_sanctioned_us }
+	}
+}
+
+# Country scope. Reset before summing on startup, reload and monthly refresh.
+IMP_sanctions_refresh_world = {
+	set_variable = { global.global_num_offices = 0 }
+	set_variable = { global.global_num_mils = 0 }
+	set_variable = { global.imp_gdp_total = 0 }
+	every_country = { imp_sanctions_extra_calculations = yes }
+	every_country = { imp_sanctions_strength_calculate = yes }
+	every_country = { imp_sanctions_calculate = yes }
+}
+
+IMP_sanctions_by_us_page = {
+	clamp_variable = { var = imp_sanc_by_us_offset min = 0 }
+	# Sanctions may be lifted while this report is open.
+	if = { limit = { NOT = { OR = { check_variable = { imp_dip_sanc_by_us^num > imp_sanc_by_us_offset } check_variable = { imp_fin_sanc_by_us^num > imp_sanc_by_us_offset } check_variable = { imp_eco_sanc_by_us^num > imp_sanc_by_us_offset } check_variable = { imp_mil_sanc_by_us^num > imp_sanc_by_us_offset } } } } set_variable = { imp_sanc_by_us_offset = 0 } }
+	set_variable = { imp_sanc_by_us_page_number = imp_sanc_by_us_offset }
+	divide_variable = { imp_sanc_by_us_page_number = 4 }
+	add_to_variable = { imp_sanc_by_us_page_number = 1 }
+	set_variable = { imp_sanc_by_us_index_0 = imp_sanc_by_us_offset }
+	add_to_variable = { imp_sanc_by_us_index_0 = 0 }
+	set_variable = { imp_sanc_by_us_index_1 = imp_sanc_by_us_offset }
+	add_to_variable = { imp_sanc_by_us_index_1 = 1 }
+	set_variable = { imp_sanc_by_us_index_2 = imp_sanc_by_us_offset }
+	add_to_variable = { imp_sanc_by_us_index_2 = 2 }
+	set_variable = { imp_sanc_by_us_index_3 = imp_sanc_by_us_offset }
+	add_to_variable = { imp_sanc_by_us_index_3 = 3 }
+	set_variable = { imp_sanc_by_us_next_offset = imp_sanc_by_us_offset }
+	add_to_variable = { imp_sanc_by_us_next_offset = 4 }
+}
+
+IMP_sanctions_on_us_page = {
+	clamp_variable = { var = imp_sanc_on_us_offset min = 0 }
+	# Sanctions may be lifted while this report is open.
+	if = { limit = { NOT = { OR = { check_variable = { imp_dip_sanc_on_us^num > imp_sanc_on_us_offset } check_variable = { imp_fin_sanc_on_us^num > imp_sanc_on_us_offset } check_variable = { imp_eco_sanc_on_us^num > imp_sanc_on_us_offset } check_variable = { imp_mil_sanc_on_us^num > imp_sanc_on_us_offset } } } } set_variable = { imp_sanc_on_us_offset = 0 } }
+	set_variable = { imp_sanc_on_us_page_number = imp_sanc_on_us_offset }
+	divide_variable = { imp_sanc_on_us_page_number = 4 }
+	add_to_variable = { imp_sanc_on_us_page_number = 1 }
+	set_variable = { imp_sanc_on_us_index_0 = imp_sanc_on_us_offset }
+	add_to_variable = { imp_sanc_on_us_index_0 = 0 }
+	set_variable = { imp_sanc_on_us_index_1 = imp_sanc_on_us_offset }
+	add_to_variable = { imp_sanc_on_us_index_1 = 1 }
+	set_variable = { imp_sanc_on_us_index_2 = imp_sanc_on_us_offset }
+	add_to_variable = { imp_sanc_on_us_index_2 = 2 }
+	set_variable = { imp_sanc_on_us_index_3 = imp_sanc_on_us_offset }
+	add_to_variable = { imp_sanc_on_us_index_3 = 3 }
+	set_variable = { imp_sanc_on_us_next_offset = imp_sanc_on_us_offset }
+	add_to_variable = { imp_sanc_on_us_next_offset = 4 }
+}

@@ -1,0 +1,460 @@
+ENG_clear_royal_family_selection = {
+	clr_country_flag = ENG_show_royal_elizabeth_decisions
+	clr_country_flag = ENG_show_royal_philip_decisions
+	clr_country_flag = ENG_show_royal_charles_decisions
+	clr_country_flag = ENG_show_royal_diana_decisions
+	clr_country_flag = ENG_show_royal_anne_decisions
+	clr_country_flag = ENG_show_royal_andrew_decisions
+	clr_country_flag = ENG_show_royal_edward_decisions
+	clr_country_flag = ENG_show_royal_margaret_decisions
+}
+
+ENG_setup_royal_family_mechanic = {
+	custom_effect_tooltip = ENG_setup_royal_family_mechanic_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ENG_royal_family_mechanic_active }
+				NOT = { has_country_flag = ENG_monarchy_abolished }
+			}
+			set_country_flag = ENG_royal_family_mechanic_active
+			set_country_flag = ENG_show_royal_elizabeth_decisions
+
+			set_variable = { ENG_royal_family_stability_score = 58 }
+			set_variable = { ENG_royal_family_public_appeal = 62 }
+			set_variable = { ENG_royal_family_press_pressure = 18 }
+			set_variable = { ENG_royal_family_commonwealth_reach = 52 }
+
+			set_variable = { ENG_royal_family_stability_effect = 0 }
+			set_variable = { ENG_royal_family_public_effect = 0 }
+			set_variable = { ENG_royal_family_consumer_goods_effect = 0 }
+			set_variable = { ENG_royal_family_commonwealth_effect = 0 }
+			set_variable = { ENG_royal_family_constitution_effect = 0 }
+			set_variable = { ENG_royal_family_globalism_effect = 0 }
+			set_variable = { ENG_royal_family_productivity_effect = 0 }
+			set_variable = { ENG_royal_family_migration_effect = 0 }
+			set_variable = { ENG_royal_family_monthly_population_effect = 0 }
+			set_variable = { ENG_royal_family_social_cost_effect = 0 }
+			set_variable = { ENG_royal_family_health_cost_effect = 0 }
+			set_variable = { ENG_royal_family_education_cost_effect = 0 }
+			set_variable = { ENG_royal_family_command_power_effect = 0 }
+			set_variable = { ENG_royal_family_army_xp_effect = 0 }
+			set_variable = { ENG_royal_family_navy_org_effect = 0 }
+			set_variable = { ENG_royal_family_war_support_effect = 0 }
+
+			add_ideas = ENG_queen_elizabeth_2
+			add_dynamic_modifier = { modifier = ENG_royal_family_stability_dynamic_modifier }
+			ENG_royal_family_register_deaths = yes
+			ENG_update_royal_family_modifier = yes
+		}
+	}
+}
+
+ENG_royal_family_modify_stability = {
+	custom_effect_tooltip = ENG_royal_family_modify_stability_tt
+	add_to_variable = { ENG_royal_family_stability_score = ENG_royal_family_stability_change }
+	clamp_variable = { var = ENG_royal_family_stability_score min = 0 max = 100 }
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_modify_public_appeal = {
+	custom_effect_tooltip = ENG_royal_family_modify_public_appeal_tt
+	add_to_variable = { ENG_royal_family_public_appeal = ENG_royal_family_public_change }
+	clamp_variable = { var = ENG_royal_family_public_appeal min = 0 max = 100 }
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_modify_press_pressure = {
+	custom_effect_tooltip = ENG_royal_family_modify_press_pressure_tt
+	add_to_variable = { ENG_royal_family_press_pressure = ENG_royal_family_press_change }
+	clamp_variable = { var = ENG_royal_family_press_pressure min = 0 max = 100 }
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_modify_commonwealth_reach = {
+	custom_effect_tooltip = ENG_royal_family_modify_commonwealth_reach_tt
+	add_to_variable = { ENG_royal_family_commonwealth_reach = ENG_royal_family_commonwealth_change }
+	clamp_variable = { var = ENG_royal_family_commonwealth_reach min = 0 max = 100 }
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_add_ruling_party_popularity = {
+	set_party_index_to_ruling_party = yes
+	set_temp_variable = { party_popularity_increase = ENG_royal_family_ruling_party_change }
+	change_relative_party_popularity = yes
+	clear_variable = ENG_royal_family_ruling_party_change
+}
+
+ENG_royal_family_apply_negative_press = {
+	custom_effect_tooltip = ENG_royal_family_negative_press_tt
+	set_country_flag = { flag = ENG_royal_negative_press_active days = 90 }
+	set_temp_variable = { ENG_royal_family_stability_change = -1 }
+	ENG_royal_family_modify_stability = yes
+	set_temp_variable = { ENG_royal_family_public_change = -2 }
+	ENG_royal_family_modify_public_appeal = yes
+	set_temp_variable = { ENG_royal_family_press_change = 6 }
+	ENG_royal_family_modify_press_pressure = yes
+	set_temp_variable = { ENG_royal_family_ruling_party_change = -0.003 }
+	ENG_royal_family_add_ruling_party_popularity = yes
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_apply_palace_cost_row = {
+	custom_effect_tooltip = ENG_royal_family_palace_cost_row_tt
+	set_country_flag = { flag = ENG_royal_palace_cost_row_active days = 90 }
+	set_temp_variable = { ENG_royal_family_public_change = -1 }
+	ENG_royal_family_modify_public_appeal = yes
+	set_temp_variable = { ENG_royal_family_press_change = 4 }
+	ENG_royal_family_modify_press_pressure = yes
+	add_stability = -0.002
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_apply_wales_marriage_strain = {
+	custom_effect_tooltip = ENG_royal_family_wales_marriage_strain_tt
+	set_country_flag = { flag = ENG_royal_wales_marriage_strain_active days = 120 }
+	set_temp_variable = { ENG_royal_family_stability_change = -2 }
+	ENG_royal_family_modify_stability = yes
+	set_temp_variable = { ENG_royal_family_public_change = -3 }
+	ENG_royal_family_modify_public_appeal = yes
+	set_temp_variable = { ENG_royal_family_press_change = 8 }
+	ENG_royal_family_modify_press_pressure = yes
+	set_temp_variable = { ENG_royal_family_ruling_party_change = -0.004 }
+	ENG_royal_family_add_ruling_party_popularity = yes
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_apply_andrew_scandal = {
+	custom_effect_tooltip = ENG_royal_family_andrew_scandal_tt
+	set_country_flag = { flag = ENG_royal_andrew_scandal_active days = 120 }
+	set_temp_variable = { ENG_royal_family_stability_change = -1 }
+	ENG_royal_family_modify_stability = yes
+	set_temp_variable = { ENG_royal_family_public_change = -3 }
+	ENG_royal_family_modify_public_appeal = yes
+	set_temp_variable = { ENG_royal_family_press_change = 7 }
+	ENG_royal_family_modify_press_pressure = yes
+	set_temp_variable = { ENG_royal_family_ruling_party_change = -0.003 }
+	ENG_royal_family_add_ruling_party_popularity = yes
+	ENG_update_royal_family_modifier = yes
+}
+
+ENG_royal_family_register_deaths = {
+	if = {
+		limit = { has_country_flag = ENG_elizabeth_dead_dead }
+		set_country_flag = ENG_royal_elizabeth_dead
+		clr_country_flag = ENG_show_royal_elizabeth_decisions
+	}
+	if = {
+		limit = {
+			has_country_flag = ENG_royal_charles_dead
+			has_country_flag = ENG_show_royal_charles_decisions
+		}
+		clr_country_flag = ENG_show_royal_charles_decisions
+	}
+	if = {
+		limit = {
+			has_country_flag = ENG_royal_philip_dead
+			has_country_flag = ENG_show_royal_philip_decisions
+		}
+		clr_country_flag = ENG_show_royal_philip_decisions
+	}
+	if = {
+		limit = {
+			has_country_flag = ENG_royal_diana_dead
+			has_country_flag = ENG_show_royal_diana_decisions
+		}
+		clr_country_flag = ENG_show_royal_diana_decisions
+	}
+	if = {
+		limit = {
+			has_country_flag = ENG_royal_anne_dead
+			has_country_flag = ENG_show_royal_anne_decisions
+		}
+		clr_country_flag = ENG_show_royal_anne_decisions
+	}
+	if = {
+		limit = {
+			has_country_flag = ENG_royal_andrew_dead
+			has_country_flag = ENG_show_royal_andrew_decisions
+		}
+		clr_country_flag = ENG_show_royal_andrew_decisions
+	}
+	if = {
+		limit = {
+			has_country_flag = ENG_royal_edward_dead
+			has_country_flag = ENG_show_royal_edward_decisions
+		}
+		clr_country_flag = ENG_show_royal_edward_decisions
+	}
+	if = {
+		limit = {
+			has_country_flag = ENG_royal_margaret_dead
+			has_country_flag = ENG_show_royal_margaret_decisions
+		}
+		clr_country_flag = ENG_show_royal_margaret_decisions
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ENG_show_royal_elizabeth_decisions }
+			NOT = { has_country_flag = ENG_show_royal_philip_decisions }
+			NOT = { has_country_flag = ENG_show_royal_charles_decisions }
+			NOT = { has_country_flag = ENG_show_royal_diana_decisions }
+			NOT = { has_country_flag = ENG_show_royal_anne_decisions }
+			NOT = { has_country_flag = ENG_show_royal_andrew_decisions }
+			NOT = { has_country_flag = ENG_show_royal_edward_decisions }
+			NOT = { has_country_flag = ENG_show_royal_margaret_decisions }
+		}
+		if = {
+			limit = { NOT = { has_country_flag = ENG_royal_elizabeth_dead } }
+			set_country_flag = ENG_show_royal_elizabeth_decisions
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ENG_royal_philip_dead } }
+			set_country_flag = ENG_show_royal_philip_decisions
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ENG_royal_charles_dead } }
+			set_country_flag = ENG_show_royal_charles_decisions
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ENG_royal_diana_dead } }
+			set_country_flag = ENG_show_royal_diana_decisions
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ENG_royal_anne_dead } }
+			set_country_flag = ENG_show_royal_anne_decisions
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ENG_royal_andrew_dead } }
+			set_country_flag = ENG_show_royal_andrew_decisions
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ENG_royal_edward_dead } }
+			set_country_flag = ENG_show_royal_edward_decisions
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ENG_royal_margaret_dead } }
+			set_country_flag = ENG_show_royal_margaret_decisions
+		}
+	}
+}
+
+ENG_update_royal_family_modifier = {
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ENG_monarchy_abolished }
+				NOT = { has_dynamic_modifier = { modifier = ENG_royal_family_stability_dynamic_modifier } }
+			}
+			add_dynamic_modifier = { modifier = ENG_royal_family_stability_dynamic_modifier }
+		}
+
+		set_variable = { ENG_royal_family_stability_effect = ENG_royal_family_stability_score }
+		add_to_variable = { ENG_royal_family_stability_effect = -50 }
+		multiply_variable = { ENG_royal_family_stability_effect = 0.001 }
+
+		set_variable = { ENG_royal_family_press_effect = ENG_royal_family_press_pressure }
+		multiply_variable = { ENG_royal_family_press_effect = -0.00045 }
+		add_to_variable = { ENG_royal_family_stability_effect = ENG_royal_family_press_effect }
+		clamp_variable = { var = ENG_royal_family_stability_effect min = -0.04 max = 0.06 }
+
+		set_variable = { ENG_royal_family_public_effect = ENG_royal_family_public_appeal }
+		add_to_variable = { ENG_royal_family_public_effect = -50 }
+		multiply_variable = { ENG_royal_family_public_effect = 0.0005 }
+		clamp_variable = { var = ENG_royal_family_public_effect min = -0.025 max = 0.04 }
+
+		set_variable = { ENG_royal_family_consumer_goods_effect = 0 }
+
+		set_variable = { ENG_royal_family_commonwealth_effect = ENG_royal_family_commonwealth_reach }
+		add_to_variable = { ENG_royal_family_commonwealth_effect = -45 }
+		multiply_variable = { ENG_royal_family_commonwealth_effect = 0.001 }
+		clamp_variable = { var = ENG_royal_family_commonwealth_effect min = -0.02 max = 0.07 }
+
+		set_variable = { ENG_royal_family_constitution_effect = ENG_royal_family_stability_score }
+		multiply_variable = { ENG_royal_family_constitution_effect = 0.00035 }
+		clamp_variable = { var = ENG_royal_family_constitution_effect min = 0 max = 0.04 }
+
+		set_variable = { ENG_royal_family_globalism_effect = ENG_royal_family_commonwealth_reach }
+		multiply_variable = { ENG_royal_family_globalism_effect = 0.025 }
+		clamp_variable = { var = ENG_royal_family_globalism_effect min = 0 max = 2.5 }
+
+		set_variable = { ENG_royal_family_productivity_effect = 0 }
+		set_variable = { ENG_royal_family_migration_effect = 0 }
+		set_variable = { ENG_royal_family_monthly_population_effect = 0 }
+		set_variable = { ENG_royal_family_social_cost_effect = 0 }
+		set_variable = { ENG_royal_family_health_cost_effect = 0 }
+		set_variable = { ENG_royal_family_education_cost_effect = 0 }
+		set_variable = { ENG_royal_family_command_power_effect = 0 }
+		set_variable = { ENG_royal_family_army_xp_effect = 0 }
+		set_variable = { ENG_royal_family_navy_org_effect = 0 }
+		set_variable = { ENG_royal_family_war_support_effect = 0 }
+
+		if = {
+			limit = { has_country_flag = ENG_royal_new_year_address_active }
+			add_to_variable = { ENG_royal_family_stability_effect = 0.01 }
+			add_to_variable = { ENG_royal_family_public_effect = 0.005 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_commonwealth_tour_active }
+			add_to_variable = { ENG_royal_family_commonwealth_effect = 0.03 }
+			add_to_variable = { ENG_royal_family_globalism_effect = 0.8 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_philip_award_active }
+			add_to_variable = { ENG_royal_family_command_power_effect = 0.05 }
+			add_to_variable = { ENG_royal_family_army_xp_effect = 0.01 }
+			add_to_variable = { ENG_royal_family_education_cost_effect = -0.01 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_philip_military_patronage_active }
+			add_to_variable = { ENG_royal_family_command_power_effect = 0.06 }
+			add_to_variable = { ENG_royal_family_army_xp_effect = 0.015 }
+			add_to_variable = { ENG_royal_family_navy_org_effect = 0.01 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_princes_trust_active }
+			add_to_variable = { ENG_royal_family_productivity_effect = 0.012 }
+			add_to_variable = { ENG_royal_family_social_cost_effect = -0.005 }
+			add_to_variable = { ENG_royal_family_education_cost_effect = -0.005 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_charles_environment_active }
+			add_to_variable = { ENG_royal_family_productivity_effect = 0.006 }
+			add_to_variable = { ENG_royal_family_globalism_effect = 0.5 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_diana_health_charity_active }
+			add_to_variable = { ENG_royal_family_stability_effect = 0.01 }
+			add_to_variable = { ENG_royal_family_health_cost_effect = -0.015 }
+			add_to_variable = { ENG_royal_family_social_cost_effect = -0.008 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_diana_humanitarian_active }
+			add_to_variable = { ENG_royal_family_migration_effect = 0.015 }
+			add_to_variable = { ENG_royal_family_monthly_population_effect = 0.03 }
+			add_to_variable = { ENG_royal_family_social_cost_effect = -0.005 }
+			add_to_variable = { ENG_royal_family_globalism_effect = 0.7 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_anne_save_children_active }
+			add_to_variable = { ENG_royal_family_migration_effect = 0.006 }
+			add_to_variable = { ENG_royal_family_social_cost_effect = -0.006 }
+			add_to_variable = { ENG_royal_family_commonwealth_effect = 0.01 }
+			add_to_variable = { ENG_royal_family_globalism_effect = 0.4 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_andrew_falklands_active }
+			add_to_variable = { ENG_royal_family_war_support_effect = 0.01 }
+			add_to_variable = { ENG_royal_family_navy_org_effect = 0.01 }
+			add_to_variable = { ENG_royal_family_command_power_effect = 0.02 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_andrew_trade_envoy_active }
+			add_to_variable = { ENG_royal_family_commonwealth_effect = 0.025 }
+			add_to_variable = { ENG_royal_family_public_effect = 0.005 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_edward_youth_active }
+			add_to_variable = { ENG_royal_family_productivity_effect = 0.006 }
+			add_to_variable = { ENG_royal_family_education_cost_effect = -0.005 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_margaret_arts_active }
+			add_to_variable = { ENG_royal_family_public_effect = 0.005 }
+			add_to_variable = { ENG_royal_family_productivity_effect = 0.003 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_negative_press_active }
+			add_to_variable = { ENG_royal_family_stability_effect = -0.005 }
+			add_to_variable = { ENG_royal_family_public_effect = -0.004 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_palace_cost_row_active }
+			add_to_variable = { ENG_royal_family_consumer_goods_effect = 0.006 }
+			add_to_variable = { ENG_royal_family_public_effect = -0.002 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_wales_marriage_strain_active }
+			add_to_variable = { ENG_royal_family_stability_effect = -0.008 }
+			add_to_variable = { ENG_royal_family_public_effect = -0.006 }
+			add_to_variable = { ENG_royal_family_consumer_goods_effect = 0.004 }
+		}
+		if = {
+			limit = { has_country_flag = ENG_royal_andrew_scandal_active }
+			add_to_variable = { ENG_royal_family_stability_effect = -0.004 }
+			add_to_variable = { ENG_royal_family_public_effect = -0.006 }
+			add_to_variable = { ENG_royal_family_consumer_goods_effect = 0.004 }
+			add_to_variable = { ENG_royal_family_commonwealth_effect = -0.005 }
+		}
+
+		clear_variable = ENG_royal_family_press_effect
+		force_update_dynamic_modifier = yes
+	}
+}
+
+ENG_update_royal_family_ideas = {
+	hidden_effect = {
+		# Compatibility hook for older saves; the Royal Family now uses one dynamic modifier.
+	}
+}
+
+ENG_royal_family_monthly_update = {
+	if = {
+		limit = { has_country_flag = ENG_monarchy_abolished }
+		ENG_royal_family_cleanup = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ENG_monarchy_abolished }
+			has_country_flag = ENG_royal_family_mechanic_active
+		}
+		ENG_royal_family_register_deaths = yes
+		add_to_variable = { ENG_royal_family_press_pressure = 0.2 }
+		if = {
+			limit = { check_variable = { ENG_royal_family_stability_score > 68 } }
+			add_to_variable = { ENG_royal_family_public_appeal = 0.1 }
+		}
+		if = {
+			limit = { check_variable = { ENG_royal_family_press_pressure > 72 } }
+			add_to_variable = { ENG_royal_family_stability_score = -0.4 }
+		}
+		if = {
+			limit = {
+				check_variable = { ENG_royal_family_press_pressure > 78 }
+				NOT = { has_country_flag = ENG_royal_recent_tabloid_storm }
+			}
+			set_country_flag = { flag = ENG_royal_recent_tabloid_storm days = 180 }
+			country_event = { id = eng_royal_family.1 days = 1 random_hours = 48 }
+		}
+		clamp_variable = { var = ENG_royal_family_stability_score min = 0 max = 100 }
+		clamp_variable = { var = ENG_royal_family_public_appeal min = 0 max = 100 }
+		clamp_variable = { var = ENG_royal_family_press_pressure min = 0 max = 100 }
+		clamp_variable = { var = ENG_royal_family_commonwealth_reach min = 0 max = 100 }
+		ENG_update_royal_family_modifier = yes
+	}
+}
+
+ENG_royal_family_cleanup = {
+	hidden_effect = {
+		clr_country_flag = ENG_royal_family_mechanic_active
+		ENG_clear_royal_family_selection = yes
+		clr_country_flag = ENG_royal_new_year_address_active
+		clr_country_flag = ENG_royal_commonwealth_tour_active
+		clr_country_flag = ENG_royal_philip_award_active
+		clr_country_flag = ENG_royal_philip_military_patronage_active
+		clr_country_flag = ENG_royal_princes_trust_active
+		clr_country_flag = ENG_royal_charles_environment_active
+		clr_country_flag = ENG_royal_diana_health_charity_active
+		clr_country_flag = ENG_royal_diana_humanitarian_active
+		clr_country_flag = ENG_royal_anne_save_children_active
+		clr_country_flag = ENG_royal_andrew_falklands_active
+		clr_country_flag = ENG_royal_andrew_trade_envoy_active
+		clr_country_flag = ENG_royal_edward_youth_active
+		clr_country_flag = ENG_royal_margaret_arts_active
+		clr_country_flag = ENG_royal_negative_press_active
+		clr_country_flag = ENG_royal_palace_cost_row_active
+		clr_country_flag = ENG_royal_wales_marriage_strain_active
+		clr_country_flag = ENG_royal_andrew_scandal_active
+		remove_dynamic_modifier = { modifier = ENG_royal_family_stability_dynamic_modifier }
+	}
+}

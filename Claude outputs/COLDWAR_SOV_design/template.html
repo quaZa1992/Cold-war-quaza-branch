@@ -1,0 +1,684 @@
+<title>Soviet Union 1970 Focus Tree</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=PT+Sans:ital,wght@0,400;0,700;1,400&family=PT+Mono&display=swap">
+<style>
+/* Layout: dossier header + tab strip; overview sheet OR a pannable focus-tree canvas beside a sticky detail panel (stacks on phones). */
+:root{
+  --bg:#e4e8eb; --surface:#f6f7f8; --sunk:#d9dfe3; --ink:#161a1e; --muted:#56626c; --line:#bfc8cf;
+  --red:#a8231b; --red-ink:#ffffff; --gold:#946d00; --focus:#d39a00; --blue:#2c5d93;
+  --display:"Russo One","Arial Narrow",Impact,sans-serif; --body:"PT Sans","Segoe UI",system-ui,-apple-system,sans-serif; --mono:"PT Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1214; --surface:#171b1e; --sunk:#0b0d0f; --ink:#e4e8eb; --muted:#8e99a2; --line:#2a3136;
+  --red:#e2584b; --red-ink:#1b0604; --gold:#d8ac3e; --focus:#f2c24a; --blue:#6aa3dc; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1214; --surface:#171b1e; --sunk:#0b0d0f; --ink:#e4e8eb; --muted:#8e99a2; --line:#2a3136;
+  --red:#e2584b; --red-ink:#1b0604; --gold:#d8ac3e; --focus:#f2c24a; --blue:#6aa3dc; color-scheme:dark}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 32px;max-width:1880px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 28px;border-bottom:3px solid var(--red);padding-bottom:12px}
+.eyebrow{font:12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin:0 0 4px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.4vw,40px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:.01em}
+.sub{color:var(--muted);margin:6px 0 0;max-width:78ch}
+.stats{display:flex;gap:20px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.stat b{display:block;font-family:var(--display);font-weight:400;font-size:24px;line-height:1}
+.stat span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.stat.ok b{color:var(--red)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.navs{display:flex;flex-direction:column;gap:8px;flex:1 1 520px;min-width:0}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs.subt:empty{display:none}
+.tab{font:700 13px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:3px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--red);border-color:var(--red);color:var(--red-ink)}
+.tabs.subt .tab{font-weight:400;font-size:12px;padding:3px 9px;background:var(--sunk);display:flex;gap:6px;align-items:center}
+.tabs.subt .tab i{width:9px;height:9px;border-radius:2px;display:inline-block}
+.tabs.subt .tab small{color:var(--muted);font-variant-numeric:tabular-nums}
+.tab:focus-visible,.card:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.search{position:relative;flex:0 1 300px;min-width:0}
+.search input{width:100%;box-sizing:border-box;font:14px var(--body);padding:7px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink)}
+.results{position:absolute;z-index:30;top:calc(100% + 4px);left:0;right:0;max-height:340px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:4px;box-shadow:0 10px 26px rgb(0 0 0 / .22)}
+.results button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--ink);padding:7px 10px;cursor:pointer;font:13px var(--body)}
+.results button:hover,.results button:focus-visible{background:var(--sunk)}
+.results small{color:var(--muted);display:block;font-family:var(--mono);font-size:11px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:12px;align-items:center}
+.legend i{display:inline-block;vertical-align:middle;margin-right:6px}
+.lg-solid{width:22px;border-top:2px solid var(--muted)}
+.lg-dash{width:22px;border-top:2px dashed var(--muted)}
+.lg-mx{width:22px;border-top:2px dotted var(--red)}
+.lg-h{width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:14px;align-items:start}
+.canvas-wrap{background:var(--sunk);border:1px solid var(--line);border-radius:4px;overflow:auto;height:calc(100vh - 210px);min-height:440px;position:relative}
+.canvas{position:relative}
+.canvas svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.box{position:absolute;border:1px solid var(--line);border-top:4px solid var(--sec);background:color-mix(in srgb,var(--surface) 55%,transparent);border-radius:3px}
+.boxlabel{position:absolute;left:12px;top:8px;right:12px;font:13px var(--display);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;gap:10px;align-items:baseline}
+.boxlabel button{font:inherit;border:0;background:none;color:var(--ink);padding:0;cursor:pointer;text-align:left}
+.boxlabel em{font:400 12px var(--body);font-style:normal;color:var(--muted)}
+.card{position:absolute;width:150px;height:76px;box-sizing:border-box;border:1px solid var(--line);border-top:4px solid var(--sec);background:var(--surface);border-radius:3px;padding:5px 7px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:var(--ink);font:inherit;transition:transform .12s, box-shadow .12s}
+.card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgb(0 0 0 / .18)}
+.card.sel{outline:2px solid var(--focus);outline-offset:1px;z-index:2}
+.card.rel{box-shadow:0 0 0 2px color-mix(in srgb,var(--focus) 55%,transparent)}
+.card.dim{opacity:.25}
+.card .nm{font-weight:700;font-size:12px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .meta{display:flex;gap:4px;align-items:center;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none}
+.chip{border:1px solid var(--line);border-radius:3px;padding:0 4px;line-height:15px}
+.chip.mx{color:var(--red);border-color:var(--red)}
+.chip.ext{color:var(--blue);border-color:var(--blue)}
+.chip.pl{color:var(--muted)}
+aside.panel{position:sticky;top:env(safe-area-inset-top,0px);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:16px;max-height:calc(100vh - 210px);overflow:auto;min-width:0;box-sizing:border-box}
+.panel h2{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.15;margin:0 0 6px;text-wrap:balance}
+.fid{font:12px var(--mono);color:var(--muted);word-break:break-all;display:flex;gap:6px;align-items:center}
+.fid button{font:11px var(--body);border:1px solid var(--line);background:none;color:var(--muted);border-radius:3px;cursor:pointer;padding:0 6px}
+.kv{display:grid;grid-template-columns:100px minmax(0,1fr);gap:5px 10px;margin:12px 0;font-size:13px}
+.kv dt{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding-top:2px}
+.kv dd{margin:0;min-width:0}
+.link{border:0;background:none;color:var(--blue);padding:0;cursor:pointer;font:inherit;text-align:left;text-decoration:underline;text-underline-offset:2px}
+.or{color:var(--muted)}
+.panel h3,.sheet h3{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:14px 0 6px;font-weight:700}
+.eff{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.eff li{padding:6px 8px;background:var(--sunk);border-radius:3px;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+code{font:12px var(--mono);background:color-mix(in srgb,var(--red) 10%,transparent);color:var(--ink);padding:0 3px;border-radius:2px}
+.note{border-left:3px solid var(--gold);padding:4px 10px;font-size:13px;margin-top:12px}
+.secdesc{color:var(--ink);font-size:14px;margin-top:6px}
+.hint{color:var(--muted);font-size:13px}
+/* overview sheet */
+.sheet{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:14px;align-items:start}
+.sheet section{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:6px 18px 18px;min-width:0}
+.sheet section.wide{grid-column:1 / -1}
+.sheet h2{font-family:var(--display);font-weight:400;font-size:19px;margin:12px 0 6px;letter-spacing:.01em}
+.sheet p,.sheet li{max-width:72ch}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:13px;width:100%}
+td,th{border-top:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.spirits{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px;margin-top:8px}
+.spirit{border:1px solid var(--line);border-left:4px solid var(--red);border-radius:3px;padding:8px 10px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.spirit b{font-family:var(--display);font-weight:400;font-size:15px}
+.spirit .mods{display:flex;flex-wrap:wrap;gap:4px}
+.mod{font-size:12px;border:1px solid var(--line);border-radius:3px;padding:0 5px;background:var(--surface)}
+.mod.pos{border-color:color-mix(in srgb,var(--blue) 60%,var(--line))}
+.mod.neg{border-color:color-mix(in srgb,var(--red) 60%,var(--line))}
+.spirit small{color:var(--muted);font-size:12px}
+.strip{position:relative;height:46px;margin:14px 0 6px}
+.strip .seg{position:absolute;top:10px;height:22px;border-right:1px solid var(--surface);box-sizing:border-box;font-size:10.5px;color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+.strip .mark{position:absolute;top:2px;width:2px;height:38px;background:var(--ink)}
+.strip .mark span{position:absolute;top:-2px;left:6px;font:11px var(--mono);white-space:nowrap;color:var(--ink)}
+.strip .ax{position:absolute;top:34px;font:10.5px var(--mono);color:var(--muted);transform:translateX(-50%)}
+.flow{display:grid;gap:8px;margin:8px 0}
+.flow div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;align-items:baseline}
+.flow b{font:12px var(--mono);color:var(--red);text-transform:uppercase;letter-spacing:.05em}
+.pill{display:inline-block;font-size:11px;border-radius:3px;padding:0 6px;color:#fff}
+/* politburo & republics page */
+:root{--gw-bg:#1b1916;--gw-panel:#24211c;--gw-line:#4a4134;--gw-gold:#c9a24a;--gw-ink:#ede5d1;--gw-mut:#a99f8a;--gw-yes:#6aa860;--gw-no:#c9493d;--gw-abs:#7a7366;--lean-r:#4f86c6;--lean-n:#9a9384;--lean-o:#c9493d}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:10px;margin:10px 0 4px}
+.rule{border:1px solid var(--line);border-top:3px solid var(--red);border-radius:3px;padding:8px 10px;background:var(--bg);font-size:13px}
+.rule b{display:block;font:12px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-bottom:4px}
+.persp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 12px}
+.persp > span{font-size:12px;color:var(--muted);margin-right:4px}
+.gw{background:var(--gw-bg);color:var(--gw-ink);border:1px solid var(--gw-gold);border-radius:4px;box-shadow:0 0 0 3px #2b261f,0 14px 34px rgb(0 0 0 / .3);overflow:hidden;font-size:13px;margin-bottom:6px}
+.gw-head{background:linear-gradient(180deg,#8b1d16,#5c130f);border-bottom:2px solid var(--gw-gold);padding:10px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 20px;align-items:baseline}
+.gw-title{font-family:var(--display);font-size:17px;letter-spacing:.07em;text-transform:uppercase;color:#f5e7c3}
+.gw-meta{font:12px var(--mono);color:#ecd3a1}
+.gw-body{padding:14px;display:grid;gap:14px}
+.gw-top{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:14px}
+.gw-box{background:var(--gw-panel);border:1px solid var(--gw-line);border-radius:3px;padding:10px;min-width:0}
+.gw-lab{font:11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--gw-gold);margin:0 0 8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.gw-lab em{font-style:normal;color:var(--gw-mut);text-transform:none;letter-spacing:0}
+.gensec{display:flex;gap:10px;align-items:center}
+.gensec b,.seat h4{font-weight:700;font-size:14px;margin:0;color:var(--gw-ink)}
+.gensec small,.seat small{display:block;color:var(--gw-mut);font-size:11.5px;line-height:1.35}
+.bloc{display:flex;flex-wrap:wrap;gap:6px}
+.mm{display:flex;align-items:center;gap:6px;border:1px solid var(--gw-line);border-radius:3px;padding:3px 4px 3px 7px;background:#1f1c18;font-size:12px}
+.mm i{width:8px;height:8px;border-radius:50%;flex:none}
+.v{font:10.5px var(--mono);padding:1px 5px;border-radius:2px;text-transform:uppercase;letter-spacing:.04em}
+.v.yes{background:var(--gw-yes);color:#0e1a0c}.v.no{background:var(--gw-no);color:#1d0705}.v.abs,.v.pend,.v.none{background:var(--gw-abs);color:#14120f}
+.seats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.seat{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--gw-panel);border:1px solid var(--gw-line);border-top:3px solid var(--gw-gold);border-radius:3px;padding:10px;min-width:0}
+.seat.vac{border-style:dashed;border-top:3px dashed var(--gw-gold);background:repeating-linear-gradient(135deg,#221f1a 0 8px,#1d1a16 8px 16px)}
+.seat .fl{display:flex;gap:8px;align-items:center;margin-bottom:4px;flex-wrap:wrap}
+.flag{border:1px solid #00000066;display:block;flex:none}
+.por{display:block;border:1px solid var(--gw-line);border-radius:2px;flex:none}
+.buffs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.buffs span{font-size:11px;border:1px solid #6a5a35;color:#e6cf93;border-radius:2px;padding:0 5px}
+.gw-bottom{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px}
+.ag{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ag button{width:100%;text-align:left;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;background:#1f1c18;border:1px solid var(--gw-line);border-radius:3px;padding:7px 9px;color:var(--gw-ink);cursor:pointer;font:inherit}
+.ag button[aria-pressed="true"]{border-color:var(--gw-gold);box-shadow:inset 3px 0 0 var(--gw-gold)}
+.ag .by{font-size:11.5px;color:var(--gw-mut)}
+.st{font:10.5px var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:2px;align-self:start;white-space:nowrap}
+.st.ok{background:var(--gw-yes);color:#0e1a0c}.st.bad{background:var(--gw-no);color:#1d0705}.st.run{background:var(--gw-gold);color:#1b1408}
+.tally{display:flex;gap:3px;flex-wrap:wrap;align-items:center;grid-column:1 / -1;font:11px var(--mono);color:var(--gw-mut)}
+.tally span{width:11px;height:11px;border-radius:2px;display:inline-block}
+.tally .y{background:var(--gw-yes)}.tally .n{background:var(--gw-no)}.tally .p{background:var(--gw-abs)}
+.tally b{font-weight:400;margin-left:8px}
+.acts{display:flex;flex-direction:column;gap:6px}
+.gbtn{background:linear-gradient(#3a3229,#29231d);border:1px solid var(--gw-gold);color:var(--gw-ink);border-radius:3px;padding:6px 10px;text-align:left;font:inherit;display:flex;flex-direction:column;gap:1px}
+.gbtn small{color:var(--gw-mut);font-size:11.5px}
+.gbtn.off{opacity:.5;border-color:var(--gw-line)}
+.gw-foot{border-top:1px solid var(--gw-line);padding:9px 14px;display:flex;flex-wrap:wrap;gap:6px 22px;font:12px var(--mono);color:var(--gw-mut)}
+.gw-foot b{color:var(--gw-ink);font-weight:400}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:8px}
+.calc .ctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+.calc label,.calc .lbl{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.calc select{font:14px var(--body);padding:5px 8px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink)}
+.calc input[type=range]{width:100%;accent-color:var(--red)}
+.calc output{font:13px var(--mono);color:var(--ink)}
+.segc{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.segc > span{font-size:12px;color:var(--ink);min-width:62px}
+.segc button{font:12px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:2px 8px;border-radius:3px;cursor:pointer}
+.segc button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chk{flex-direction:row!important;align-items:center;gap:8px!important;color:var(--ink)!important;font-size:13px!important}
+.dots{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 10px}
+.dots span{width:20px;height:20px;border-radius:3px;display:grid;place-items:center;font:10px var(--mono);color:#fff}
+.dots .y{background:#3f8a46}.dots .n{background:#b43b30}.dots .a{background:#8a8579}
+.res{border-left:4px solid var(--muted);padding:6px 10px;background:var(--bg);border-radius:0 3px 3px 0}
+.res.ok{border-color:#3f8a46}.res.bad{border-color:var(--red)}
+.res b{font-family:var(--display);font-weight:400;font-size:16px;display:block}
+.tl{min-width:760px}
+.tl .ax{fill:var(--muted);font:11px var(--mono)}
+.tl .grid{stroke:var(--line)}
+.tl .plan{fill:color-mix(in srgb,var(--blue) 22%,var(--surface));stroke:var(--blue)}
+.tl .plan-t{fill:var(--ink);font:12px var(--body)}
+.tl .cong{fill:var(--red)}
+.tl .cong-t{fill:var(--ink);font:12px var(--body)}
+.tl .sess{stroke:var(--gold);stroke-width:2}
+.tl .vac{fill:color-mix(in srgb,var(--red) 18%,transparent);stroke:var(--red);stroke-dasharray:3 3}
+.tl .lab{fill:var(--muted);font:11px var(--body)}
+.leanpill{display:inline-block;font-size:11px;border-radius:3px;padding:0 6px;color:#fff;white-space:nowrap}
+@media (max-width:860px){.gw-top,.gw-bottom,.calc{grid-template-columns:minmax(0,1fr)}.seats{grid-template-columns:minmax(0,1fr)}}
+.sheet .gw li{max-width:none}
+.persp .tab[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--red-ink)}
+@media (max-width:980px){.main{grid-template-columns:minmax(0,1fr)}.canvas-wrap{height:62vh}aside.panel{position:static;max-height:none}}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">MD Imperia Cold War · Szenario 1970 · Entwurf zur Freigabe</p>
+      <h1>Soviet Union 1970 Focus Tree</h1>
+      <p class="sub">Union der Sozialistischen Sowjetrepubliken, Januar 1970. Kollektive Führung, Politbüro-Balance, Zusammenhalt der Union, vier Outlooks, elf Generalsekretäre (Reformer, Hardliner und Marschälle) mit eigenen Bäumen, die sich nicht ausschließen, die KPdSU und 18 weitere Parteibäume, drei Politbüro-Sitze für die Republiken, Wirtschaft, Militär und Außenpolitik.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <div class="bar">
+    <div class="navs"><div class="tabs" role="tablist" id="tabs"></div><div class="tabs subt" id="subtabs"></div></div>
+    <div class="search"><input id="q" type="search" placeholder="Fokus suchen (Name oder ID)" aria-label="Fokus suchen" autocomplete="off"><div class="results" id="results" hidden></div></div>
+  </div>
+  <div class="legend" id="legend" hidden>
+    <span><i class="lg-solid"></i>Voraussetzung</span><span><i class="lg-dash"></i>eine von mehreren (ODER)</span><span><i class="lg-mx"></i>schließen sich aus</span><span><i class="lg-h"></i>historischer Pfad (KI)</span><span><span class="chip ext">↗</span> Voraussetzung in anderem Bereich</span><span><span class="chip pl">nur Spieler</span> KI nimmt das nie</span><span>Tage = Kosten × 7</span>
+  </div>
+  <div class="main" id="main" hidden>
+    <div class="canvas-wrap" id="cw"><div class="canvas" id="canvas"><svg id="svg"></svg></div></div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+  <div class="sheet" id="sheet"></div>
+  <div class="sheet" id="rep" hidden></div>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function(){
+const D = JSON.parse(document.getElementById('data').textContent);
+const C = D.concept, CW = D.card[0], CH = D.card[1];
+const byId = {}; D.foci.forEach(f => byId[f.id] = f);
+const secBy = {}; D.sections.forEach(s => secBy[s.key] = s);
+const kids = {}; D.foci.forEach(f => f.pre.forEach(g => g.forEach(p => (kids[p] = kids[p] || []).push(f.id))));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rich = s => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+const short = id => id.replace(/^COLDWAR_SOV_/, '');
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+
+// ---------- stats
+const leadersN = D.sections.filter(s => /^Generalsekretär/.test(s.title)).length;
+const parties = new Set(D.sections.filter(s => s.party !== null).map(s => s.party)).size;
+const stats = [[D.foci.length,'Fokusse'],[D.sections.length,'Bereiche'],[parties,'Parteien mit Baum'],[leadersN,'Generalsekretäre'],[C.offers.length,'Angebote (MP)'],[C.ideas,'Ideen'],['0','Prüffehler',1]];
+document.getElementById('stats').innerHTML = stats.map(s => `<div class="stat${s[2]?' ok':''}"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+
+// ---------- tabs
+const tabsEl = document.getElementById('tabs'), subEl = document.getElementById('subtabs');
+const TABS = ['Überblick', 'Politbüro & Republiken'].concat(D.groups);
+let curTab = null, sel = null;
+tabsEl.innerHTML = TABS.map((t,i) => `<button class="tab" role="tab" data-tab="${i}" aria-selected="false">${esc(t)}</button>`).join('');
+tabsEl.addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) showTab(+b.dataset.tab); });
+subEl.addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) focusSection(b.dataset.sec); });
+
+const cw = document.getElementById('cw'), canvas = document.getElementById('canvas'), svg = document.getElementById('svg');
+const panel = document.getElementById('panel'), sheet = document.getElementById('sheet');
+const main = document.getElementById('main'), legend = document.getElementById('legend');
+
+function showTab(i, keepSel){
+  curTab = i; store.set('sov70tab', String(i));
+  [...tabsEl.children].forEach((b,j) => b.setAttribute('aria-selected', j===i ? 'true' : 'false'));
+  rep.hidden = i !== 1;
+  if (i === 0){ main.hidden = true; legend.hidden = true; sheet.hidden = false; subEl.innerHTML = ''; renderSheet(); return; }
+  if (i === 1){ main.hidden = true; legend.hidden = true; sheet.hidden = true; subEl.innerHTML = ''; renderRep(); return; }
+  sheet.hidden = true; main.hidden = false; legend.hidden = false;
+  const g = TABS[i];
+  const secs = D.sections.filter(s => s.group === g);
+  subEl.innerHTML = secs.map(s => `<button class="tab" data-sec="${s.key}"><i style="background:${s.color}"></i>${esc(s.title.replace(/^Partei: |^Generalsekretär: |^Outlook: /,''))} <small>${s.n}</small></button>`).join('');
+  renderCanvas(g);
+  if (!keepSel){ sel = null; focusSection(secs[0].key, true); }
+}
+
+// ---------- canvas
+function drawn(p, f){
+  const a = byId[p]; if (!a || a.g !== f.g) return false; if (a.sec === f.sec) return true;
+  if (!(f.y > a.y + CH && secBy[f.sec].y > secBy[a.sec].y)) return false;
+  const x = a.x + CW/2, y0 = a.y + CH, y1 = secBy[f.sec].y - 22;
+  return !D.sections.some(s => s.group === f.g && s.key !== a.sec && s.key !== f.sec && x > s.x && x < s.x + s.w && s.y < y1 && s.y + s.h > y0);
+}
+function renderCanvas(g){
+  const secs = D.sections.filter(s => s.group === g);
+  const foci = D.foci.filter(f => f.g === g);
+  const W = Math.max(...secs.map(s => s.x + s.w)) + 30, H = Math.max(...secs.map(s => s.y + s.h)) + 30;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  [...canvas.querySelectorAll('.box,.card')].forEach(n => n.remove());
+  const frag = document.createDocumentFragment();
+  secs.forEach(s => {
+    const b = document.createElement('div'); b.className = 'box'; b.style.cssText = `left:${s.x}px;top:${s.y}px;width:${s.w}px;height:${s.h}px;--sec:${s.color}`;
+    b.innerHTML = `<div class="boxlabel"><button data-secinfo="${s.key}">${esc(s.title)}</button><em>${s.n} Fokusse</em></div>`;
+    frag.appendChild(b);
+  });
+  let paths = '';
+  foci.forEach(f => {
+    f.pre.forEach(grp => grp.forEach(p => {
+      if (!drawn(p, f)) return;
+      const a = byId[p];
+      const x1 = a.x + CW/2, y1 = a.y + CH, x2 = f.x + CW/2, y2 = f.y;
+      const ym = a.sec === f.sec ? y2 - 16 : secBy[f.sec].y - 22;
+      paths += `<path d="M${x1} ${y1} V${ym} H${x2} V${y2}" fill="none" stroke="var(--muted)" stroke-opacity=".75" stroke-width="1.6"${grp.length>1?' stroke-dasharray="5 4"':''}/>`;
+    }));
+    f.mx.forEach(m => {
+      const b = byId[m]; if (!b || b.g !== g || b.y !== f.y || b.x <= f.x) return;
+      const between = f.mx.some(o => { const c = byId[o]; return c && c.y === f.y && c.x > f.x && c.x < b.x; });
+      if (between) return;
+      const y = f.y + CH/2;
+      paths += `<path d="M${f.x+CW} ${y} H${b.x}" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="2 4"/>`;
+    });
+    const c = document.createElement('button'); c.className = 'card'; c.dataset.id = f.id;
+    c.style.cssText = `left:${f.x}px;top:${f.y}px;--sec:${secBy[f.sec].color}`;
+    const ext = f.pre.some(grp => grp.some(p => !drawn(p, f)));
+    c.innerHTML = `<span class="nm">${esc(f.name)}</span><span class="meta">${f.h?'<i class="dot" title="historisch"></i>':''}<span>${f.c} · ${f.c*7} T.</span>${f.mx.length?'<span class="chip mx">Wahl</span>':''}${ext?'<span class="chip ext">↗</span>':''}${f.ai==='0'?'<span class="chip pl">nur Spieler</span>':''}</span>`;
+    c.setAttribute('aria-label', f.name);
+    frag.appendChild(c);
+  });
+  svg.innerHTML = paths;
+  canvas.appendChild(frag);
+}
+canvas.addEventListener('click', e => {
+  const c = e.target.closest('.card'); if (c){ select(c.dataset.id); return; }
+  const s = e.target.closest('[data-secinfo]'); if (s){ sel = null; markSel(); panelSection(secBy[s.dataset.secinfo]); }
+});
+function focusSection(key, instant){
+  const s = secBy[key]; if (!s) return;
+  cw.scrollTo({left: Math.max(0, s.x - 20), top: Math.max(0, s.y - 10), behavior: instant ? 'auto' : 'smooth'});
+  sel = null; markSel(); panelSection(s);
+}
+function markSel(){
+  const rel = new Set();
+  if (sel){ const f = byId[sel]; f.pre.forEach(g => g.forEach(p => rel.add(p))); (kids[sel]||[]).forEach(k => rel.add(k)); f.mx.forEach(m => rel.add(m)); }
+  canvas.querySelectorAll('.card').forEach(c => { c.classList.toggle('sel', c.dataset.id === sel); c.classList.toggle('rel', rel.has(c.dataset.id)); });
+}
+function select(id, scroll){
+  const f = byId[id]; if (!f) return;
+  const ti = TABS.indexOf(f.g);
+  if (ti !== curTab) showTab(ti, true);
+  sel = id; markSel(); panelFocus(f);
+  if (scroll) cw.scrollTo({left: Math.max(0, f.x - cw.clientWidth/2 + CW/2), top: Math.max(0, f.y - cw.clientHeight/3), behavior: 'smooth'});
+}
+const flink = id => { const f = byId[id]; return f ? `<button class="link" data-go="${id}">${esc(f.name)}</button>${f.g!==byId[sel]?.g?' <span class="or">('+esc(secBy[f.sec].title)+')</span>':''}` : esc(short(id)); };
+function panelSection(s){
+  panel.innerHTML = `<h2>${esc(s.title)}</h2><p class="hint">${s.n} Fokusse · Gruppe ${esc(s.group)}</p><p class="secdesc">${rich(s.desc)}</p><p class="hint">Einen Fokus anklicken, um Voraussetzungen, Bedingungen und Effekte zu sehen.</p>`;
+}
+function panelFocus(f){
+  const s = secBy[f.sec];
+  const pre = f.pre.length ? f.pre.map(g => g.map(flink).join(' <span class="or">oder</span> ')).join('<br>') : '–';
+  const mx = f.mx.length ? f.mx.map(flink).join(', ') : '–';
+  const kd = (kids[f.id]||[]).map(flink).join(', ') || '–';
+  const ai = f.ai === '0' ? 'nie (nur Spieler)' : (f.h ? 'historischer Pfad: bevorzugt' : 'niedrige Gewichtung');
+  panel.innerHTML = `<h2>${esc(f.name)}</h2>
+  <div class="fid"><span>${esc(f.id)}</span><button type="button" data-copy="${f.id}">Kopieren</button></div>
+  <dl class="kv"><dt>Bereich</dt><dd><button class="link" data-sec="${s.key}">${esc(s.title)}</button></dd>
+  <dt>Kosten</dt><dd>${f.c} (${f.c*7} Tage)</dd>
+  <dt>Benötigt</dt><dd>${pre}</dd>
+  <dt>Schließt aus</dt><dd>${mx}</dd>
+  <dt>Verfügbar</dt><dd>${f.av ? rich(f.av) : '–'}</dd>
+  <dt>KI</dt><dd>${ai}</dd>
+  <dt>Öffnet</dt><dd>${kd}</dd></dl>
+  <h3>Effekte</h3><ul class="eff">${f.eff.map(e => `<li>${rich(e)}</li>`).join('')}</ul>
+  ${f.note ? `<div class="note">${rich(f.note)}</div>` : ''}`;
+}
+panel.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g){ select(g.dataset.go, true); return; }
+  const s = e.target.closest('[data-sec]'); if (s){ focusSection(s.dataset.sec); return; }
+  const c = e.target.closest('[data-copy]');
+  if (c){ const t = c.dataset.copy; const done = () => { c.textContent = 'Kopiert'; setTimeout(() => c.textContent = 'Kopieren', 1400); };
+    try { navigator.clipboard.writeText(t).then(done, () => selText(c.previousElementSibling)); } catch(err){ selText(c.previousElementSibling); } }
+});
+function selText(el){ const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+// ---------- search
+const q = document.getElementById('q'), res = document.getElementById('results');
+q.addEventListener('input', () => {
+  const v = q.value.trim().toLowerCase();
+  if (v.length < 2){ res.hidden = true; return; }
+  const hits = D.foci.filter(f => f.name.toLowerCase().includes(v) || f.id.toLowerCase().includes(v)).slice(0, 40);
+  res.innerHTML = hits.length ? hits.map(f => `<button data-hit="${f.id}">${esc(f.name)}<small>${esc(short(f.id))} · ${esc(secBy[f.sec].title)}</small></button>`).join('') : '<button disabled>Kein Treffer</button>';
+  res.hidden = false;
+});
+res.addEventListener('click', e => { const b = e.target.closest('[data-hit]'); if (b){ res.hidden = true; q.value = ''; select(b.dataset.hit, true); } });
+document.addEventListener('click', e => { if (!e.target.closest('.search')) res.hidden = true; });
+
+// ---------- overview sheet
+function modClass(t){ return /[+]/.test(t) ? 'pos' : 'neg'; }
+function strip(min, max, ranges, marker, markerLabel, colors, axis){
+  const span = max - min, pct = v => ((v - min) / span * 100);
+  let h = '<div class="strip">';
+  ranges.forEach((r,i) => { h += `<div class="seg" style="left:${pct(r[0])}%;width:${pct(r[1])-pct(r[0])}%;background:${colors[i]}" title="${esc(r[2])}">${esc(r[2])}</div>`; });
+  axis.forEach(a => { h += `<span class="ax" style="left:${pct(a)}%">${a}</span>`; });
+  h += `<div class="mark" style="left:${pct(marker)}%"><span>${esc(markerLabel)}</span></div></div>`;
+  return h;
+}
+function renderSheet(){
+  if (sheet.dataset.done) return; sheet.dataset.done = '1';
+  const bopR = [[-1,-.7,'Revisionist Crisis'],[-.7,-.4,'Reform Ascendancy'],[-.4,-.15,'Reform Current'],[-.15,.15,'Collective Leadership'],[.15,.4,'Orthodox Course'],[.4,.7,'Neo-Stalinist Tide'],[.7,1,'Reaction']];
+  const bopC = ['#1f4f86','#2e6aa8','#5b8cc0','#6b7680','#b8645a','#9c3328','#6e1810'];
+  const cohR = [[0,15,'Disintegration'],[15,35,'Crisis'],[35,55,'Strained'],[55,75,'Fraternal'],[75,100,'Unbreakable']];
+  const cohC = ['#6e1810','#9c3328','#b8862e','#6b7680','#2e6aa8'];
+  const pc = {'Western':'#2f5d9c','Emerging':'#b22222','Salafist':'#8a6d1f','Non-Aligned':'#3f8f5a','Nationalist':'#6b4f9a'};
+  const partySec = {}; D.sections.forEach(s => { if (s.party !== null && !(s.party in partySec)) partySec[s.party] = s; });
+  const leaders = D.sections.filter(s => /^Generalsekretär/.test(s.title));
+  sheet.innerHTML = `
+  <section class="wide"><h2>Ausgangslage: Januar 1970</h2>
+   <p>Breschnew führt eine Troika mit Kossygin (Ministerrat) und Podgorny (Präsidium). Parität mit den USA ist erreicht, der Fernostkonflikt mit China ist frisch, Prag 1968 lastet auf den Beziehungen zum Westen. Sieben Startgeister zeigen den Preis der Supermacht; jeder hat im Baum einen eigenen Ausweg.</p>
+   <div class="spirits">${C.spirits.map(s => `<div class="spirit"><b>${esc(s.name)}</b><span class="mods">${s.mods.map(m => `<span class="mod ${m[1]?'pos':'neg'}">${esc(m[0])}</span>`).join('')}</span><small>${esc(s.why)}</small><small><b style="font:700 12px var(--body)">Weg hinaus:</b> ${esc(s.how)}</small></div>`).join('')}</div>
+   <p class="hint">Blau umrandet: Vorteil, rot umrandet: Nachteil. Bestehende Geister bleiben: ${C.already.map(a => esc(a[1])).join('; ')}.</p></section>
+
+  <section><h2>Politbüro-Balance</h2>
+   <p>Balance of Power wie <code>SOV_west_east_bop</code> in MD-Russland. Reformer links, Orthodoxe rechts. Viele Fokusse schieben sie; die Mitte ist sicher, die Ränder sind stark und gefährlich.</p>
+   ${strip(-1,1,bopR,C.bop.initial,'Start 0,15',bopC,[-1,-.5,0,.5,1])}
+   <div class="tw"><table><thead><tr><th>Bereich</th><th>Stufe</th><th>Wirkung</th></tr></thead><tbody>${C.bop.ranges.map(r => `<tr><td class="num">${esc(r[0])}</td><td><b>${esc(r[1])}</b>${r[3]?'<br><span class="hint">'+esc(r[3])+'</span>':''}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>
+   <p class="hint">${esc(C.bop.drift)}</p><p class="hint">${esc(C.bop.decisions)}</p></section>
+
+  <section><h2>Zusammenhalt der Union</h2>
+   <p>Variable <code>${C.coh.var}</code> (${esc(C.coh.rng)}, Start ${C.coh.start}). Die 14 Unionsrepubliken sind eigene Subjekt-Länder; ihr Zusammenhalt entscheidet über Stabilität und Steuern und am Ende darüber, ob die Union hält.</p>
+   ${strip(0,100,cohR,C.coh.start,'Start 62',cohC,[0,25,50,75,100])}
+   <div class="tw"><table><thead><tr><th>Wert</th><th>Stufe</th><th>Wirkung</th></tr></thead><tbody>${C.coh.tiers.map(t => `<tr><td class="num">${esc(t[0])}</td><td><b>${esc(t[1])}</b></td><td>${esc(t[2])}</td></tr>`).join('')}</tbody></table></div>
+   <p class="hint">${esc(C.coh.monthly)} Werkzeuge: ${esc(C.coh.tools)}</p></section>
+
+  <section class="wide"><h2>Wie die Politik aufgebaut ist</h2>
+   <div class="flow">
+    <div><b>Stamm</b><span>„The Collective Leadership“ → Lenin-Jahrhundert, Kremlin Politics → XXIV. Parteitag (ab März 1971) → <i>Whither the Union?</i>: vier Richtungen. Eine Richtung öffnet den oberen Teil ihres Outlook-Blocks.</span></div>
+    <div><b>Outlook oben</b><span>Outlook stärken (3 Fokusse), dann „Power to …“: Machtübergabe an eine Partei dieses Outlooks bei ≥ 20 % Popularität und eigenen Bedingungen (Politbüro-Balance, Stabilität, Zusammenhalt). Kostet „Transition of Power“ (Stabilität −10 %, PP −15 %, 180 Tage); ein Bruch mit dem Parteistaat kostet zusätzlich Zusammenhalt.</span></div>
+    <div><b>Outlook unten</b><span>Ein Regierungs-Einstieg pro Outlook (<code>has_government</code>), egal ob die Partei per Fokus, Wahl, Putsch oder Event an die Macht kam.</span></div>
+    <div><b>Parteibäume</b><span>Neben der KPdSU haben 18 Parteien einen eigenen Baum mit Programm-Modifier (wächst mit jedem Fokus, entfällt bei Machtverlust), einer inneren Weiche, Wirtschaft, Außen/Sicherheit, zweiter Weiche und Abschluss. Zwei Linien führen in jeden Baum: „Power to …“ oder der Outlook-Einstieg.</span></div>
+    <div><b>KPdSU</b><span>Partei 4 hat einen gemeinsamen Parteibaum („The Party of Lenin“) und daneben „The Politburo“. Breschnew regiert zum Start, sein Baum ist sofort offen. Jeder andere Kandidat hat einen eigenen Politbüro-Fokus; keiner sperrt einen anderen. Er ist nehmbar, solange der Kandidat lebt, im Politbüro sitzt und seine Fraktionen hinter sich hat – auch wenn ein anderer Generalsekretär seinen Baum halb fertig hat.</span></div>
+    <div><b>Generalsekretäre</b><span>Ein Generalsekretär-Baum ist offen, solange dieser Mann regiert (Flag <code>COLDWAR_SOV_gensec_&lt;name&gt;</code>). Erledigte Fokusse bleiben, sein Programm-Modifier fällt beim Wechsel weg. Jeder Baum hat Team, erste Weiche, Politikzweige, zweite Weiche und Nachfolge: Der gewählte Erbe übernimmt beim Tod- oder Rücktritts-Event. Sechs Wege führen aus dem Parteistaat hinaus: Suslow → 6, Schelepin → 7, Kossygin → 13, Podgorny → 19, Gretschko → 22, Gorbatschow → 3.</span></div>
+    <div><b>Republiken</b><span>Drei Sitze im Politbüro für die 14 Unionsrepubliken: Moskau vergibt sie, Sitzinhaber stimmen bei Machtwechsel, Beschlüssen und Planpriorität mit und stellen Anträge. <button class="link" data-gotab="1">Politbüro &amp; Republiken öffnen</button></span></div>
+    <div><b>Multiplayer</b><span>Kein Fokus erzwingt Krieg, Bündnis, Basen oder Gebietswechsel bei einem anderen Land: ${C.offers.length} Angebote laufen als Event mit Annehmen/Ablehnen, ohne Vorab-Belohnung. Der Blockwechsel im Cold-War-System nutzt die vorhandenen Trigger und <code>mdcw_cw_change_alignment</code>.</span></div>
+   </div></section>
+
+  <section class="wide"><h2>Die 24 Parteien</h2>
+   <div class="tw"><table><thead><tr><th>#</th><th>Partei</th><th>Ideologie (MD)</th><th>Outlook</th><th>Führung 1970</th><th>Baum</th></tr></thead><tbody>
+   ${C.parties.map(p => { const s = p.i === 4 ? null : partySec[p.i]; return `<tr><td class="num">${p.i}</td><td><b>${esc(p.name)}</b></td><td>${esc(p.ideo)}<br><code>${esc(p.trig)}</code></td><td><span class="pill" style="background:${pc[p.outlook]}">${esc(p.outlook)}</span></td><td>${esc(p.leader)}</td><td>${p.i===4?`<button class="link" data-gosec="cpsu">KPdSU + ${leadersN} Generalsekretäre</button>`:(s?`<button class="link" data-gosec="${s.key}">${s.n} Fokusse</button>`:'<span class="hint">kein Baum</span>')}</td></tr>`; }).join('')}
+   </tbody></table></div><p class="hint">${esc(C.notree)}</p></section>
+
+  <section class="wide"><h2>Generalsekretäre</h2>
+   <p>Wann ein Kandidat übernehmen kann (Politbüro-Fokus), wann das Todes-Event ihn ablöst und wohin sein Baum führt.</p>
+   <div class="tw"><table><thead><tr><th>Generalsekretär</th><th>Typ</th><th>Politbüro-Fokus</th><th>Tod</th><th>Erben und Endpunkte</th><th>Fokusse</th></tr></thead><tbody>
+   ${C.leaders.map(l => { const s = secBy[l[1]]; return `<tr><td><button class="link" data-gosec="${l[1]}">${esc(l[0])}</button></td><td>${esc(l[4])}</td><td class="num">${esc(l[2])}</td><td class="num">${esc(l[3])}</td><td>${esc(l[5])}</td><td class="num">${s?s.n:''}</td></tr>`; }).join('')}
+   </tbody></table></div></section>
+
+  <section><h2>Länder-Modifier</h2>
+   <p>Wie Russlands <code>SOV_economy_modifier</code> und die US-Departments: Werte in Variablen, Fokusse ändern sie per <code>add_to_variable</code>. So sieht der Spieler an fünf Stellen, welchen Staat er gebaut hat.</p>
+   <div class="tw"><table><thead><tr><th>Modifier</th><th>Inhalt</th><th>Start</th></tr></thead><tbody>${C.dynmods.map(d => `<tr><td><b>${esc(d[1])}</b><br><code>COLDWAR_SOV_${esc(d[0])}_modifier</code></td><td>${esc(d[3])}</td><td>${esc(d[4])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>Fraktionen und Gesetze zum Start</h2>
+   <div class="tw"><table><thead><tr><th>Fraktion (MD)</th><th>Rolle</th><th>Meinung</th></tr></thead><tbody>${C.factions.map(f => `<tr><td><code>${f[0]}</code></td><td>${esc(f[1])}</td><td class="num">${f[2]}</td></tr>`).join('')}</tbody></table></div>
+   <h3>Gesetze</h3><p>${C.laws.map(l => `<code>${l[0]}</code> ${esc(l[1])}`).join(' · ')}</p>
+   <p class="hint">Patriarchat (<code>the_clergy</code>), Schattenwirtschaft (<code>oligarchs</code>) und Geistliche Verwaltungen (<code>the_ulema</code>) kommen erst über Fokusse dazu. Init-Effekt idempotent wie bei Ägypten.</p></section>
+
+  <section><h2>Entscheidungen</h2>
+   <div class="tw"><table><tbody>${C.decisions.map(d => `<tr><td><b>${esc(d[0])}</b></td><td>${esc(d[1])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>Events</h2>
+   <div class="tw"><table><tbody>${C.events.map(d => `<tr><td><b>${esc(d[0])}</b></td><td>${esc(d[1])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section class="wide"><h2>Angebote an andere Länder</h2>
+   <p class="hint">Jedes Angebot ist ein Dispatcher-Event: prüft den Partner (existiert, kein Krieg, nicht schon angeboten), setzt nur „offered“ und lässt den Empfänger entscheiden.</p>
+   <div class="tw"><table><thead><tr><th>Angebot</th><th>An</th><th>Inhalt bei Annahme</th></tr></thead><tbody>${C.offers.map(o => `<tr><td><code>${esc(short(o.key))}</code></td><td>${o.tags.map(esc).join(', ')}</td><td>${esc(o.text)}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>Porträts</h2>
+   <div class="tw"><table><tbody>${C.portraits.map(p => `<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>Dateien (Umsetzung)</h2>
+   <p>Alles trägt die Kennung <b>COLDWAR</b>: IDs <code>COLDWAR_SOV_*</code>, Events <code>COLDWAR_SOV.N</code>, Kommentare <code># COLDWAR |</code>. Lokalisierung nur Englisch.</p>
+   <div class="tw"><table><tbody>${C.files.map(f => `<tr><td><code>${esc(f[0])}</code></td><td>${esc(f[1])}</td></tr>`).join('')}</tbody></table></div>
+   <h3>Geprüft</h3><p>Statisch gegen die Mod (MD 2.0.2 + Imperia + MDCW): jeder Scripted Effect, Trigger, jede Fraktion, jedes Gesetz, jede Tech-Kategorie und jeder Modifier im Entwurf existiert; alle Voraussetzungen und Ausschlüsse sind gültig und symmetrisch; keine Zyklen. Ergebnis: 0 Fehler.</p></section>`;
+}
+sheet.addEventListener('click', e => { const t = e.target.closest('[data-gotab]'); if (t){ showTab(+t.dataset.gotab); return; } const b = e.target.closest('[data-gosec]'); if (!b) return; const s = secBy[b.dataset.gosec]; showTab(TABS.indexOf(s.group)); focusSection(s.key); });
+
+// ---------- politburo & republics page
+const rep = document.getElementById('rep');
+const P = C.politburo;
+function starPts(cx, cy, r){ const p = []; for (let i = 0; i < 10; i++){ const a = -Math.PI/2 + i*Math.PI/5, rr = i % 2 ? r*.45 : r; p.push((cx + rr*Math.cos(a)).toFixed(2) + ',' + (cy + rr*Math.sin(a)).toFixed(2)); } return p.join(' '); }
+function emblem(x){ return `<polygon points="${starPts(x+3.8, 2.6, 1.8)}" fill="#f2c24a"/><g fill="none" stroke="#f2c24a" stroke-width="1.1" stroke-linecap="round"><path d="M${x+1.3} 11.2 A3.9 3.9 0 1 0 ${x+6.6} 5.4"/><path d="M${x+1.6} 5.8 L${x+6.8} 11"/><path d="M${x+.4} 6.9 L${x+2.8} 4.5"/></g>`; }
+const FLAGS = {
+  UKR: '<rect width="60" height="20" fill="#c8102e"/><rect y="20" width="60" height="10" fill="#3d8fd8"/>' + emblem(3),
+  KAZ: '<rect width="60" height="30" fill="#c8102e"/><rect y="19" width="60" height="4" fill="#3d8fd8"/>' + emblem(3),
+  BLR: '<rect width="60" height="20" fill="#c8102e"/><rect y="20" width="60" height="10" fill="#2f8a3b"/><rect width="8" height="30" fill="#f3efe6"/>' + [1,7,13,19,25].map(y => `<path d="M4 ${y} l2.4 2.4 -2.4 2.4 -2.4 -2.4z" fill="#c8102e"/>`).join('') + emblem(11),
+  UZB: '<rect width="60" height="30" fill="#c8102e"/><rect y="11" width="60" height="8" fill="#f3efe6"/><rect y="12.5" width="60" height="5" fill="#3d8fd8"/>' + emblem(3),
+};
+const flagSvg = (k, label) => `<svg class="flag" viewBox="0 0 60 30" width="48" height="24" role="img" aria-label="${esc(label)}">${FLAGS[k]}</svg>`;
+const portrait = (ini, w) => `<svg class="por" viewBox="0 0 52 64" width="${w}" height="${Math.round(w*64/52)}" aria-hidden="true"><rect width="52" height="64" fill="#2f2a23"/><circle cx="26" cy="23" r="11" fill="#5d5447"/><path d="M5 64 C7 45 16 39 26 39 C36 39 45 45 47 64Z" fill="#5d5447"/><text x="26" y="60" text-anchor="middle" font-size="9" font-family="PT Mono,monospace" fill="#c9a24a">${ini}</text></svg>`;
+const LEANC = {'-1':'var(--lean-r)','0':'var(--lean-n)','1':'var(--lean-o)'};
+const LEANT = {'-1':'reformerisch','0':'neutral','1':'orthodox'};
+
+// mock-up data (in-game text is English, like the localisation)
+const BOP0 = 0.15;
+const BLOC = [['A. Kosygin',-1],['N. Podgorny',0],['M. Suslov',1],['A. Kirilenko',1],['D. Polyansky',1],['K. Mazurov',0],['A. Shelepin',1]];
+const MSEATS = [{k:'UKR', rep:'Ukrainian SSR', name:'Pyotr Shelest', ini:'PS', since:'First Secretary since 1963'},
+                {k:'KAZ', rep:'Kazakh SSR', name:'Dinmukhamed Kunaev', ini:'DK', since:'First Secretary since 1964'},
+                {vac:true}];
+const AGENDA = [
+  {t:'Ninth Five-Year Plan: priority Group A (heavy industry)', by:'Moscow · neutral', kind:'moscow', dir:0, gs:'yes', rv:['yes','yes'], st:['Mandate','ok'], note:'Plan in force · Political power +50'},
+  {t:'Union project: Ekibastuz power station', by:'Kazakh SSR · proposal', kind:'approved', st:['Approved by Moscow','ok'], note:'Built at Moscow\'s cost (0.5 % of GDP) · Union cohesion +1 · no vote needed'},
+  {t:'Plan relief for the Donbass mines', by:'Ukrainian SSR · proposal rejected by Moscow, brought before the Politburo', kind:'prop', dir:0, gs:'no', rv:['yes','pend'], st:['Voting · 6 days','run'], note:'Needs 6 of 10. Even with Kazakhstan it stops at 5: the vacant third seat is missing.'},
+  {t:'Resolution: Deepen the Kosygin Reform', by:'Moscow · reformist', kind:'moscow', dir:-1, gs:'yes', rv:['no','no'], st:['Overridden','bad'], note:'4 of 10. The focus stands, Moscow carries "Defying the Politburo" for 180 days and Union cohesion −2.'},
+];
+let agSel = 2, persp = 'moscow';
+const moscowYes = (bop, dir, prop) => prop ? 3 : Math.max(0, Math.min(7, Math.round(3.5 + 3.5*bop*dir)));
+function blocVotes(item){
+  if (item.kind === 'approved') return BLOC.map(() => 'none');
+  const n = moscowYes(BOP0, item.dir, item.kind === 'prop');
+  const order = BLOC.map((m,i) => [i, item.kind === 'prop' ? -m[1] : m[1]*item.dir]).sort((a,b) => b[1]-a[1] || a[0]-b[0]).map(x => x[0]);
+  const yes = new Set(order.slice(0, n));
+  return BLOC.map((m,i) => yes.has(i) ? 'yes' : 'no');
+}
+const VT = {yes:'Yes', no:'No', abs:'Abstain', pend:'Pending', none:'–'};
+function renderWindow(){
+  const it = AGENDA[agSel];
+  const bv = blocVotes(it);
+  const gs = it.kind === 'approved' ? 'none' : it.gs;
+  const rv = it.rv || ['none','none'];
+  const bloc = BLOC.map((m,i) => `<span class="mm"><i style="background:${LEANC[m[1]]}" title="${LEANT[m[1]]}"></i>${esc(m[0])}<span class="v ${bv[i]}">${VT[bv[i]]}</span></span>`).join('');
+  const seats = MSEATS.map((s,i) => s.vac ? `<div class="seat vac"><div style="width:52px;height:64px;border:1px dashed var(--gw-gold);border-radius:2px;display:grid;place-items:center;color:var(--gw-gold);font:20px var(--display)">?</div><div><div class="fl"><h4>Vacant seat</h4></div><small>Filled at the XXIV Party Congress (30 March 1971), or earlier by an Extraordinary Plenum.</small><small style="margin-top:4px">${persp==='moscow' ? 'Sealed bids: Byelorussian SSR 100 PP · Uzbek SSR 50 PP · Georgian SSR 25 PP' : '3 sealed applications'}</small></div></div>`
+    : `<div class="seat"><div>${portrait(s.ini, 52)}</div><div><div class="fl">${flagSvg(s.k, s.rep)}<span class="v ${rv[i]}">${VT[rv[i]]}</span></div><h4>${esc(s.name)}</h4><small>${esc(s.rep)} · ${esc(s.since)}</small><div class="buffs"><span>Political power +15 %</span><span>Stability +5 %</span><span>Construction +10 %</span></div></div></div>`).join('');
+  const ag = AGENDA.map((a,i) => {
+    let tally = '';
+    if (a.kind !== 'approved'){
+      const b = blocVotes(a), votes = [a.gs].concat(b, a.rv);
+      const y = votes.filter(v => v === 'yes').length, p = votes.filter(v => v === 'pend').length, n = votes.length - y - p;
+      tally = `<div class="tally">${votes.map(v => `<span class="${v==='yes'?'y':v==='pend'?'p':'n'}"></span>`).join('')}<b>Yes ${y} · No ${n}${p?' · pending '+p:''} · needs ${Math.floor(votes.length/2)+1} of ${votes.length}</b></div>`;
+    }
+    return `<li><button type="button" data-ag="${i}" aria-pressed="${i===agSel}"><span>${esc(a.t)}<span class="by" style="display:block">${esc(a.by)}</span></span><span class="st ${a.st[1]}">${esc(a.st[0])}</span>${tally}</button></li>`;
+  }).join('');
+  const ACT = {
+    moscow: [['Appoint a member','Party Congress only (from 30 Mar 1971), or Extraordinary Plenum: 100 PP, stability −3 %'],
+             ['Dismiss a member','Extraordinary Plenum: 100 PP, stability −3 %'],
+             ['Call a session','50 PP'],['Promote to Moscow','Offer to a seat holder: the seat becomes free'],
+             ['Investigate kompromat','1 report waiting · 25 PP'],['Answer proposals','1 open proposal']],
+    ukr: [['Vote','Plan relief: your vote Yes (cast)'],['Submit a proposal','1 per session (used this session)',1],
+          ['Union project of the plan','Free building for the Ninth Plan: choose'],['Submit kompromat','50 PP · against a seat holder'],
+          ['Report the plan','Once per plan · PP +50 · corruption +1'],['National movement','Moscow\'s eye: not while holding a seat',1]],
+    uzb: [['Apply for the seat','Sealed bid 25 / 50 / 100 PP · until 30 Mar 1971'],['Petition Moscow','1 per year'],
+          ['Become a client','A member carries your proposal'],['Submit kompromat','50 PP · against a seat holder'],
+          ['Report the plan','Once per plan · PP +50 · corruption +1'],['National movement','Needs cohesion below 55 or the year 1985',1]],
+  }[persp];
+  const who = {moscow:'Viewing as: Moscow', ukr:'Viewing as: Ukrainian SSR (seat)', uzb:'Viewing as: Uzbek SSR (no seat)'}[persp];
+  return `<div class="gw" role="group" aria-label="Mockup des Politbüro-Fensters">
+    <div class="gw-head"><span class="gw-title">Politburo of the CC CPSU</span><span class="gw-meta">Session of 1 January 1971 · Balance: Orthodox Course (+0.15) · ${who}</span></div>
+    <div class="gw-body">
+      <div class="gw-top">
+        <div class="gw-box"><p class="gw-lab">General Secretary</p><div class="gensec">${portrait('LB', 60)}<div><b>Leonid Brezhnev</b><small>1 vote</small><span class="v ${gs}" style="display:inline-block;margin-top:6px">${VT[gs]}</span></div></div></div>
+        <div class="gw-box"><p class="gw-lab">Moscow members <em>7 votes, follow the Politburo balance</em></p><div class="bloc">${bloc}</div></div>
+      </div>
+      <div><p class="gw-lab">Seats of the Republics <em>3 seats · 1 vote each</em></p><div class="seats">${seats}</div></div>
+      <div class="gw-bottom">
+        <div class="gw-box"><p class="gw-lab">Agenda</p><ul class="ag">${ag}</ul><p style="margin:8px 0 0;color:var(--gw-mut);font-size:12px">${esc(it.note)}</p></div>
+        <div class="gw-box"><p class="gw-lab">Actions</p><div class="acts">${ACT.map(a => `<div class="gbtn${a[2]?' off':''}"><span>${esc(a[0])}</span><small>${esc(a[1])}</small></div>`).join('')}</div></div>
+      </div>
+    </div>
+    <div class="gw-foot"><span>Next session: <b>1 July 1971</b></span><span>XXIV Party Congress: <b>30 March 1971</b> · seats open</span><span>Union cohesion: <b>62</b> (Fraternal Republics)</span></div>
+  </div>`;
+}
+
+function renderCalc(){
+  return `<div class="calc">
+    <div class="ctl">
+      <label>Gegenstand<select id="cItem"><option value="res">Politbüro-Beschluss (Fokus)</option><option value="plan">Planpriorität</option><option value="lead">Machtwechsel</option><option value="prop">Antrag einer Republik</option></select></label>
+      <label>Richtung<select id="cDir"><option value="-1">reformerisch</option><option value="0" selected>neutral</option><option value="1">orthodox</option></select></label>
+      <label>Politbüro-Balance <output id="cBopO">+0,15</output><input id="cBop" type="range" min="-1" max="1" step="0.05" value="0.15"></label>
+      <div class="lbl">Stimmen
+        <div class="segc" data-k="gs"><span>Generalsekretär</span><button data-v="yes" aria-pressed="true">Ja</button><button data-v="no" aria-pressed="false">Nein</button></div>
+        ${[1,2,3].map(i => `<div class="segc" data-k="r${i}"><span>Sitz ${i}</span><button data-v="yes" aria-pressed="${i<3}">Ja</button><button data-v="no" aria-pressed="false">Nein</button><button data-v="abs" aria-pressed="false">Enthaltung</button><button data-v="vac" aria-pressed="${i===3}">frei</button></div>`).join('')}
+      </div>
+      <label class="chk"><input id="cFed" type="checkbox"> Podgornys „A Federal Union“: Republikstimmen zählen doppelt (Unionsfragen)</label>
+    </div>
+    <div id="cOut" aria-live="polite"></div>
+  </div>`;
+}
+const calcState = {gs:'yes', r1:'yes', r2:'yes', r3:'vac'};
+function updateCalc(){
+  const item = document.getElementById('cItem').value, dirEl = document.getElementById('cDir');
+  if (item === 'plan'){ dirEl.value = '0'; }
+  dirEl.disabled = item === 'plan' || item === 'prop';
+  const dir = +dirEl.value, bop = +document.getElementById('cBop').value, fed = document.getElementById('cFed').checked;
+  document.getElementById('cBopO').textContent = (bop >= 0 ? '+' : '') + bop.toFixed(2).replace('.', ',');
+  const mY = moscowYes(bop, dir, item === 'prop');
+  const w = fed ? 2 : 1;
+  const dots = [];
+  dots.push(calcState.gs === 'yes' ? ['y','GS'] : ['n','GS']);
+  for (let i = 0; i < 7; i++) dots.push(i < mY ? ['y','M'] : ['n','M']);
+  let total = 8;
+  ['r1','r2','r3'].forEach((k,i) => { const v = calcState[k]; if (v === 'vac') return; total += w; for (let j = 0; j < w; j++) dots.push([v==='yes'?'y':v==='no'?'n':'a', 'R'+(i+1)]); });
+  const yes = dots.filter(d => d[0] === 'y').length, need = Math.floor(total/2) + 1, ok = yes >= need;
+  const OUT = {
+    res: ok ? ['Mandat','PP +25, Stabilität +2 %.'] : ['Keine Mehrheit','Der Fokus gilt trotzdem. Moskau trägt „Defying the Politburo“ (Stabilität −5 %, PP −10 %, 180 Tage) und Zusammenhalt −2.'],
+    plan: ok ? ['Mandat','Der Plan gilt, PP +50.'] : ['Keine Mehrheit','Der Plan gilt trotzdem, Moskau trägt „Defying the Politburo“.'],
+    lead: ok ? ['Gewählt','Neuer Generalsekretär, Plenum Shake-up, Fraktionen nach Kandidat.'] : ['Abgelehnt','Verbindlich: kein Wechsel, Stabilität −3 %, Balance 0,05 gegen den Kandidaten, 180 Tage Sperre.'],
+    prop: ok ? ['Angenommen','Moskau setzt um (zahlt) oder trägt „Defying the Politburo“.'] : ['Abgelehnt','Der Antrag fällt.'],
+  }[item];
+  document.getElementById('cOut').innerHTML = `<div class="dots">${dots.map(d => `<span class="${d[0]}" title="${d[1]}">${d[1]}</span>`).join('')}</div>
+    <p class="hint" style="margin:0 0 8px">GS = Generalsekretär · M = Moskauer Block (${mY} von 7 Ja${item==='prop'?', bei Anträgen fest 3':''}) · R = Republiksitz</p>
+    <div class="res ${ok?'ok':'bad'}"><b>${OUT[0]}: ${yes} von ${total}</b>Nötig: ${need}. ${OUT[1]}</div>`;
+}
+
+function timeline(){
+  const x = y => 40 + (y - 1970) * 44, W = x(1992);
+  const r = P.rhythm;
+  let s = `<svg class="tl" viewBox="0 0 ${W} 170" width="100%" role="img" aria-label="Zeitleiste 1970 bis 1991: Parteitage, Fünfjahrpläne und Sitzungen">`;
+  for (let y = 1970; y <= 1991; y++){ s += `<line class="grid" x1="${x(y)}" y1="18" x2="${x(y)}" y2="138"/>`; if (y % 2 === 0 || y === 1991) s += `<text class="ax" x="${x(y)}" y="156" text-anchor="middle">${y}</text>`; }
+  s += `<rect class="vac" x="${x(1970)}" y="24" width="${x(1971.24)-x(1970)}" height="24"/><text class="lab" x="${x(1970)+4}" y="40">3. Sitz frei</text>`;
+  r.congresses.forEach(c => { const cx = x(c[2]); s += `<path class="cong" d="M${cx} 52 l7 7 -7 7 -7 -7z"/><text class="cong-t" x="${cx+10}" y="64">${c[0]}</text>`; });
+  r.plans.forEach((p,i) => { s += `<rect class="plan" x="${x(p[1])+1}" y="${84}" width="${x(p[2])-x(p[1])-2}" height="22" rx="2"/><text class="plan-t" x="${x(p[1])+6}" y="99">${p[0]} Fünfjahrplan</text>`; });
+  for (let y = 1970.5; y < 1991.9; y += .5) s += `<line class="sess" x1="${x(y)}" y1="114" x2="${x(y)}" y2="126"/>`;
+  s += `<text class="lab" x="${x(1970.5)}" y="137">Sitzungen 1. Januar / 1. Juli</text>`;
+  s += `<line x1="${x(1990.2)}" y1="20" x2="${x(1990.2)}" y2="48" style="stroke:var(--red);stroke-width:2"/><text class="lab" x="${x(1990.2)-4}" y="16" text-anchor="end">Föderationsrat (Gorbatschow) beendet das Sitz-System</text>`;
+  return s + '</svg>';
+}
+
+function renderRep(){
+  if (rep.dataset.done) return; rep.dataset.done = '1';
+  const goF = id => byId['COLDWAR_SOV_' + id] ? `<button class="link" data-go="COLDWAR_SOV_${id}">${esc(byId['COLDWAR_SOV_' + id].name)}</button>` : esc(id);
+  rep.innerHTML = `
+  <section class="wide"><h2>Das Politbüro und die Republiken</h2>
+   <p>Drei Sitze im Politbüro für vierzehn Unionsrepubliken. Moskau vergibt sie, wer einen hat, bekommt Macht und Mittel, wer keinen hat, will einen. Verhandelt wird im Discord; das Spiel hält Sitze, Abstimmungen und Folgen fest und meldet jedes Ergebnis allen Spielern als News.</p>
+   <div class="rules">${P.core.map(c => `<div class="rule"><b>${esc(c[0])}</b>${esc(c[1])}</div>`).join('')}</div></section>
+
+  <section class="wide"><h2>Das Politbüro-Fenster (Mockup)</h2>
+   <p class="hint">Späterer Schritt als Scripted GUI. Im ersten Schritt laufen dieselben Funktionen über Entscheidungen und Events. Der Text im Fenster ist Englisch wie die Lokalisierung. Einen Tagesordnungspunkt anklicken zeigt, wer wie stimmt.</p>
+   <div class="persp" role="group" aria-label="Ansicht wählen"><span>Ansicht</span>
+     <button class="tab" data-persp="moscow" aria-pressed="true">Moskau</button><button class="tab" data-persp="ukr" aria-pressed="false">Ukrainische SSR (Sitz)</button><button class="tab" data-persp="uzb" aria-pressed="false">Usbekische SSR (ohne Sitz)</button></div>
+   <div class="tw" id="gwHost">${renderWindow()}</div></section>
+
+  <section><h2>Was ein Sitz bringt</h2>
+   <div class="spirit" style="margin-top:8px"><b>${esc(P.seat.name)}</b><span class="mods">${P.seat.mods.map(m => `<span class="mod pos">${esc(m[0])}</span>`).join('')}</span>
+    <ul style="margin:4px 0 0;padding-left:18px">${P.seat.rights.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>
+   <p class="note">${esc(P.seat.price)}</p>
+   <h3>Zusammenhalt ohne Loyalitätswerte</h3>
+   <p class="hint">Der Zusammenhalt bleibt Moskaus Variable. Republiken bewegen ihn nur mit festen, sichtbaren Schritten:</p>
+   <div class="tw"><table><tbody>${P.cohesion.map(c => `<tr><td>${esc(c[0])}</td><td class="num"><b>${esc(c[1])}</b></td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>Abstimmung</h2>
+   <dl class="kv" style="grid-template-columns:120px minmax(0,1fr)"><dt>Generalsekretär</dt><dd>${esc(P.vote.gensec)}</dd><dt>Moskauer Block</dt><dd>${esc(P.vote.moscow)}</dd><dt>Republiken</dt><dd>${esc(P.vote.rep)}</dd><dt>Mehrheit</dt><dd>${esc(P.vote.majority)}</dd></dl>
+   <p class="hint">Polarisierte Balance: Moskau braucht die Republiken nicht. Nahe der Mitte, wo die Partie meistens steht, entscheiden sie.</p>
+   ${renderCalc()}</section>
+
+  <section class="wide"><h2>Der Rhythmus 1970–1991</h2>
+   <p class="hint"><span style="color:var(--red)">◆</span> Parteitag: Sitze werden neu vergeben. ${esc(P.rhythm.window)} ${esc(P.rhythm.sessions)}</p>
+   <div class="tw">${timeline()}</div></section>
+
+  <section class="wide"><h2>Was abgestimmt wird</h2>
+   <div class="tw"><table><thead><tr><th>Gegenstand</th><th>Von</th><th>Richtung</th><th>Wann</th><th>Folgen</th></tr></thead><tbody>
+   ${P.agenda.map(a => `<tr><td><b>${esc(a[0])}</b></td><td>${esc(a[1])}</td><td>${esc(a[2])}</td><td>${esc(a[3])}</td><td>${esc(a[4])}</td></tr>`).join('')}</tbody></table></div>
+   <h3>Politbüro-Beschlüsse im Baum</h3>
+   <p>${D.foci.filter(f => f.eff.some(e => e.startsWith('Politbüro-Beschluss'))).map(f => { const m = f.eff.find(e => e.startsWith('Politbüro-Beschluss')).match(/\((\w+)\)/); const l = m ? m[1] : 'neutral'; const v = {reformerisch:'-1',neutral:'0',orthodox:'1'}[l]; return `<span style="display:inline-block;max-width:100%"><span class="leanpill" style="background:${LEANC[v]}">${l}</span> <button class="link" data-go="${f.id}">${esc(f.name)}</button></span>`; }).join(' · ')}</p></section>
+
+  <section><h2>Anträge der Mitglieder</h2>
+   <p class="hint">1 Antrag pro Sitzung. Erst entscheidet Moskau; lehnt Moskau ab, kann das Mitglied vor das Politbüro gehen.</p>
+   <div class="tw"><table><thead><tr><th>Antrag</th><th>Die Republik bekommt</th><th>Moskau</th></tr></thead><tbody>${P.proposals.map(p => `<tr><td><b>${esc(p[0])}</b></td><td>${esc(p[1])}</td><td>${rich(p[2])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>Ohne Sitz</h2>
+   <div class="tw"><table><tbody>${P.without.map(w => `<tr><td><b>${esc(w[0])}</b></td><td>${esc(w[1])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section class="wide"><h2>Intrige</h2>
+   <div class="tw"><table><thead><tr><th>Werkzeug</th><th>Wer</th><th>Wie</th><th>Folgen</th></tr></thead><tbody>${P.intrigue.map(i => `<tr><td><b>${esc(i[0])}</b></td><td>${esc(i[1])}</td><td>${rich(i[2])}</td><td>${esc(i[3])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>Die Generalsekretäre ändern die Regeln</h2>
+   <p class="hint">Die Zahl der Sitze bleibt 3. Die Bäume ändern, wie hart um sie gekämpft wird.</p>
+   <div class="tw"><table><thead><tr><th>Fokus</th><th>Weg</th><th>Regel</th></tr></thead><tbody>${P.interplay.map(i => `<tr><td>${goF(i[0])}</td><td>${esc(i[1])}</td><td>${esc(i[2])}</td></tr>`).join('')}</tbody></table></div></section>
+
+  <section><h2>KI und Umsetzung</h2>
+   <div class="tw"><table><tbody>${P.ai.map(a => `<tr><td><b>${esc(a[0])}</b></td><td>${esc(a[1])}</td></tr>`).join('')}</tbody></table></div>
+   <h3>Dateien</h3>
+   <div class="tw"><table><tbody>${P.impl.map(f => `<tr><td><code>${esc(f[0])}</code></td><td>${rich(f[1])}</td></tr>`).join('')}</tbody></table></div></section>`;
+  updateCalc();
+}
+rep.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g){ select(g.dataset.go, true); return; }
+  const a = e.target.closest('[data-ag]'); if (a){ agSel = +a.dataset.ag; document.getElementById('gwHost').innerHTML = renderWindow(); return; }
+  const p = e.target.closest('[data-persp]');
+  if (p){ persp = p.dataset.persp; rep.querySelectorAll('[data-persp]').forEach(b => b.setAttribute('aria-pressed', b === p ? 'true' : 'false')); document.getElementById('gwHost').innerHTML = renderWindow(); return; }
+  const sb = e.target.closest('.segc button');
+  if (sb){ const k = sb.parentElement.dataset.k; calcState[k] = sb.dataset.v; sb.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === sb ? 'true' : 'false')); updateCalc(); }
+});
+rep.addEventListener('input', e => { if (e.target.closest('.calc')) updateCalc(); });
+rep.addEventListener('change', e => { if (e.target.closest('.calc')) updateCalc(); });
+
+// ---------- start
+let start = 0;
+const h = (location.hash || '').slice(1);
+if (h === 'politbuero') showTab(1);
+else if (h && secBy[h]){ showTab(TABS.indexOf(secBy[h].group)); focusSection(h); }
+else { const t = parseInt(store.get('sov70tab') || '0', 10); showTab(t >= 0 && t < TABS.length ? t : 0); }
+})();
+</script>

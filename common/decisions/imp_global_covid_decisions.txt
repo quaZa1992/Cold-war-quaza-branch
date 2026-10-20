@@ -1,0 +1,468 @@
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+imp_global_covid_decisions = 
+{
+    d_imp_fund_vaccine_research = {
+        icon = GFX_decision_imp_list
+
+        visible = 
+		{
+            has_global_flag = imp_covid_has_begun
+            NOT = { 
+                has_idea = imp_COVID_vaccine_producer
+                has_country_flag = imp_has_covid_vaccine
+            }
+        }
+
+        days_remove = 22
+
+        custom_cost_trigger = {
+            check_variable = { treasury > 20 }
+        }
+        custom_cost_text = imp_cost_100
+
+        complete_effect = {
+            subtract_from_variable = { treasury = 20 }
+        }
+
+        remove_effect = 
+        {
+            random = {
+                chance = 60
+                add_to_variable = { imp_covid_vaccine_progress = 0.1 }
+                custom_effect_tooltip = d_imp_fund_vaccine_custom_tt
+
+                if = {
+                    limit = { check_variable = { imp_covid_vaccine_progress > 0.9 } }
+
+                    set_country_flag = imp_has_covid_vaccine
+
+                    if = { 
+                        limit = { 
+                            NOT = { 
+                                has_global_flag = first_vaccine_discovered
+                            }
+                        }
+                        news_event = impcovid.8
+                        set_global_flag = first_vaccine_discovered
+                    }
+
+                    country_event = impcovid.9
+                }
+            }
+        }
+    }
+
+    d_imp_close_borders_mini_on = {
+        icon = GFX_decision_imp_list
+
+        cost = 100
+        days_remove = 10
+
+        visible = 
+		{
+            has_global_flag = imp_covid_has_begun
+            NOT = { 
+                has_country_flag = imp_global_covid_travel_ban_partial 
+                has_country_flag = imp_global_covid_travel_ban_full
+            }
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 3 }
+            set_country_flag = imp_global_covid_travel_ban_partial
+            custom_effect_tooltip = impcovidptbtt
+        }
+    }
+
+    d_imp_close_borders_maxi_on = {
+        icon = GFX_decision_imp_list
+
+        cost = 100
+        days_remove = 10
+
+        visible = 
+		{
+            has_global_flag = imp_covid_has_begun
+            has_country_flag = imp_global_covid_travel_ban_partial
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 3 }
+            set_country_flag = imp_global_covid_travel_ban_full
+            clr_country_flag = imp_global_covid_travel_ban_partial
+            custom_effect_tooltip = impcovidftbtt
+        }
+    }
+
+    d_imp_close_borders_off = {
+        icon = GFX_decision_imp_list
+
+        cost = 25
+        days_remove = 10
+
+        visible = 
+		{
+            OR = {
+                has_country_flag = imp_global_covid_travel_ban_full
+                has_country_flag = imp_global_covid_travel_ban_partial
+            }
+		}
+
+        remove_effect = {
+            subtract_from_variable = { imp_covid_resistance = -6 }
+            clr_country_flag = imp_global_covid_travel_ban_full
+        }
+    }
+
+	d_imp_global_covid_masks_on = {
+        icon = GFX_decision_imp_list
+
+        custom_cost_text = d_imp_fund_vaccine_custom_cost
+
+        cost = 25
+        days_remove = 10
+
+        
+        visible = 
+		{
+            has_dynamic_modifier = {
+			    modifier = imp_global_covid_modifier
+		    }
+            NOT = { has_country_flag = imp_covid_mask_mandate }
+            OR = {
+                has_dynamic_modifier = {
+                    modifier = imp_eco_1_dynamic_modifier
+                }
+                has_dynamic_modifier = {
+                    modifier = imp_eco_2_dynamic_modifier
+                }
+            }
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 2 }
+            set_country_flag = imp_covid_mask_mandate
+            custom_effect_tooltip = impcovidmmtt
+        }
+    }
+
+    d_imp_global_covid_masks_off = {
+        icon = GFX_decision_imp_list
+
+        cost = 25
+        days_remove = 10
+
+        visible = 
+		{
+            has_country_flag = imp_covid_mask_mandate
+		}
+
+        remove_effect = {
+            subtract_from_variable = { imp_covid_resistance = 2 }
+            clr_country_flag = imp_covid_mask_mandate
+        }
+    }
+
+    d_imp_global_social_distancing_on = {
+        icon = GFX_decision_imp_list
+        cost = 25 
+        days_remove = 10
+
+        visible = 
+		{
+            has_dynamic_modifier = {
+			    modifier = imp_global_covid_modifier
+		    }
+            NOT = { has_country_flag = imp_covid_socdic }
+
+            OR = {
+                has_dynamic_modifier = {
+                    modifier = imp_eco_1_dynamic_modifier
+                }
+                has_dynamic_modifier = {
+                    modifier = imp_eco_2_dynamic_modifier
+                }
+            }
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 3 }
+            set_country_flag = imp_covid_socdic
+            custom_effect_tooltip = impcovidsdtt
+        }
+    }
+
+    d_imp_global_social_distancing_off = {
+        icon = GFX_decision_imp_list
+
+        cost = 25
+        days_remove = 10
+        
+        visible = 
+		{
+            has_country_flag = imp_covid_socdic
+		}
+
+        remove_effect = {
+            subtract_from_variable = { imp_covid_resistance = 3 }
+            clr_country_flag = imp_covid_socdic
+        }
+    }
+
+    d_imp_global_remote_work_on = {
+        icon = GFX_decision_imp_list
+        cost = 150
+        days_remove = 10
+
+        visible = 
+		{
+            has_dynamic_modifier = {
+                modifier = imp_eco_1_dynamic_modifier
+            }
+            has_dynamic_modifier = {
+			    modifier = imp_global_covid_modifier
+		    }
+            NOT = { has_country_flag = imp_covid_remote }
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 4 }
+            set_country_flag = imp_covid_remote
+            custom_effect_tooltip = impcovidrwtt
+        }
+    }
+
+    d_imp_global_remote_work_off = {
+        icon = GFX_decision_imp_list
+        cost = 25
+        days_remove = 10
+
+        visible = 
+		{
+            has_country_flag = imp_covid_remote
+		}
+
+        remove_effect = {
+            subtract_from_variable = { imp_covid_resistance = 4 }
+            clr_country_flag = imp_covid_remote
+        }
+    }
+
+    d_imp_global_curfews_on = {
+        icon = GFX_decision_imp_list
+        cost = 150
+        days_remove = 10
+
+        visible = 
+		{
+            has_dynamic_modifier = {
+			    modifier = imp_global_covid_modifier
+		    }
+            NOT = { has_country_flag = imp_covid_curfew }
+            NOT = { has_country_flag = imp_covid_lockdown }
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 5 }
+            set_country_flag = imp_covid_curfew
+
+            custom_effect_tooltip = impcovidcurtt
+
+            decrease_economic_growth = yes
+        }
+    }
+
+    d_imp_global_lockdown_on = {
+        icon = GFX_decision_imp_list
+        cost = 150
+        days_remove = 10
+
+        visible = 
+		{
+            has_country_flag = imp_covid_curfew
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 5 }
+            set_country_flag = imp_covid_lockdown
+            clr_country_flag = imp_covid_curfew
+
+            custom_effect_tooltip = impcovidldtt
+
+            decrease_economic_growth = yes
+        }
+    }
+
+    d_imp_global_curfews_off = {
+        icon = GFX_decision_imp_list
+        cost = 25
+        days_remove = 10
+
+        visible = 
+		{
+            OR = {
+                has_country_flag = imp_covid_curfew
+                has_country_flag = imp_covid_lockdown
+            }
+		}
+
+        remove_effect = {
+            subtract_from_variable = { imp_covid_resistance = 10 }
+            clr_country_flag = imp_covid_curfew
+            clr_country_flag = imp_covid_lockdown
+        }
+    }
+
+    d_imp_global_covid_testing_on = {
+        icon = GFX_decision_imp_list
+        cost = 25
+        days_remove = 10
+
+        visible = 
+		{
+            OR = {
+                has_idea = health_05
+                has_idea = health_06
+            }
+            has_dynamic_modifier = {
+			    modifier = imp_global_covid_modifier
+		    }
+
+            NOT = {
+                has_country_flag = imp_covid_testing
+            }
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 3 }
+            set_country_flag = imp_covid_testing
+            custom_effect_tooltip = impcovidtestingtt
+        }
+    }
+
+    d_imp_global_covid_testing_off = {
+        icon = GFX_decision_imp_list
+        cost = 25
+        days_remove = 10
+        
+        visible = 
+		{
+            has_country_flag = imp_covid_testing
+		}
+
+        remove_effect = {
+            add_to_variable = { imp_covid_resistance = 3 }
+            clr_country_flag = imp_covid_testing
+        }
+    }
+
+    d_imp_global_covid_scale_up_ic = {
+        icon = GFX_decision_imp_list
+        days_remove = 30
+        custom_cost_trigger = {
+            check_variable = { treasury > 10 }
+        }
+        custom_cost_text = imp_cost_10
+
+        visible = 
+		{
+            OR = {
+                has_idea = health_05
+                has_idea = health_06
+            }
+            
+            has_dynamic_modifier = {
+			    modifier = imp_global_covid_modifier
+		    }
+
+            check_variable = { imp_covid_ic_unit_expansion < 0.5 }
+		}
+
+        complete_effect = {
+            subtract_from_variable = { treasury = 10 }
+        }
+
+        remove_effect = 
+        {
+            add_to_variable = { imp_covid_ic_unit_expansion = 0.1 }
+            custom_effect_tooltip = impcovidbedstt
+        }
+    }
+
+    d_imp_global_covid_scale_down_ic = {
+        icon = GFX_decision_imp_list
+        cost = 10
+        days_remove = 30
+
+        visible = 
+		{
+            has_dynamic_modifier = {
+			    modifier = imp_global_covid_modifier
+		    }
+
+            check_variable = { imp_covid_ic_unit_expansion > 0 }
+		}
+
+        remove_effect = 
+        {
+            subtract_from_variable = { imp_covid_ic_unit_expansion = -0.1 }
+        }
+    }
+
+    d_imp_global_expand_vaccine_production = {
+        icon = GFX_decision_imp_list
+        days_remove = 30
+        custom_cost_trigger = {
+            check_variable = { treasury > 10 }
+        }
+        custom_cost_text = imp_cost_10
+
+        visible = 
+		{
+            has_idea = imp_COVID_vaccine_producer
+		}
+
+        complete_effect = {
+            subtract_from_variable = { treasury = 10 }
+        }
+
+        remove_effect = 
+        {
+            add_to_variable = { imp_vaccine_monthly = 1 }
+            custom_effect_tooltip = impcovidvaccineexpansiontt
+
+            if = { 
+                limit = { 
+                    check_variable = { imp_vaccine_monthly > 4 } 
+                }
+                every_country = {
+                    set_country_flag = imp_has_covid_vaccine
+                }
+            }
+        }
+    }
+
+    d_imp_global_covid_bleach = {
+        icon = GFX_decision_imp_list
+        cost = 10
+
+        visible = 
+		{
+            NOT = { 
+                has_idea = imp_COVID_vaccine_producer 
+                has_country_flag = imp_covid_big_dumb_dumb
+            }
+            TAG = USA
+            has_dynamic_modifier = { modifier = imp_global_covid_modifier }
+		}
+
+        remove_effect = 
+        {
+            set_country_flag = imp_covid_big_dumb_dumb
+            news_event = impcovid.12
+        }
+    }
+}

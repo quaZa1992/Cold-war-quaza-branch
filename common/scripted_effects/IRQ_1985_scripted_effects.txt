@@ -1,0 +1,734 @@
+IRQ_1985_setup_tree_variables = {
+	if = {
+		limit = {
+			original_tag = IRQ
+			NOT = { has_country_flag = IRQ_1985_tree_variables_set }
+		}
+
+		set_country_flag = IRQ_1985_tree_variables_set
+		set_country_flag = IRQ_1985_war_command_active
+		set_country_flag = IRQ_1985_war_economy_active
+		set_country_flag = IRQ_1985_gulf_credit_line_active
+		set_country_flag = IRQ_1985_sau_credit_active
+		set_country_flag = IRQ_1985_kuw_credit_active
+		set_country_flag = IRQ_1985_uae_credit_active
+		set_country_flag = IRQ_1985_qat_credit_active
+		set_country_flag = IRQ_1985_bhr_credit_active
+		set_country_flag = IRQ_1985_oma_credit_active
+
+		set_variable = { IRQ_1985_war_momentum_modifier = 0.015 }
+		set_variable = { IRQ_1985_front_integrity_modifier = -0.020 }
+		set_variable = { IRQ_1985_logistics_burden_modifier = 0.040 }
+		set_variable = { IRQ_1985_consumer_goods_modifier = 0.045 }
+		set_variable = { IRQ_1985_arms_speed_modifier = 0.000 }
+		set_variable = { IRQ_1985_tax_modifier = -0.040 }
+		set_variable = { IRQ_1985_interest_modifier = 0.180 }
+		set_variable = { IRQ_1985_gulf_credit_interest_modifier = -10.000 }
+		set_variable = { IRQ_1985_gulf_credit_withdrawal_pressure = 0.000 }
+		set_variable = { IRQ_saddam_pissboy = 0.120 }
+
+		init_influence = yes
+		set_variable = { domestic_influence_amount = 175 }
+		add_to_array = { influence_array = SOV.id }
+		add_to_array = { influence_array_val = 58 }
+		add_to_array = { influence_array = PER.id }
+		add_to_array = { influence_array_val = 18 }
+		add_to_array = { influence_array = SYR.id }
+		add_to_array = { influence_array_val = 7 }
+		add_to_array = { influence_array = TUR.id }
+		add_to_array = { influence_array_val = 15 }
+		add_to_array = { influence_array = SAU.id }
+		add_to_array = { influence_array_val = 34 }
+		startup_influence = yes
+
+		if = {
+			limit = { check_variable = { treasury < 1 } }
+			set_variable = { var = treasury value = 8 }
+		}
+		if = {
+			limit = { check_variable = { debt < 60 } }
+			set_variable = { var = debt value = 62 }
+		}
+
+		if = {
+			limit = { country_exists = SAU }
+			SAU = { set_variable = { given_bonds@IRQ = 14 } }
+		}
+		if = {
+			limit = { country_exists = KUW }
+			KUW = { set_variable = { given_bonds@IRQ = 8 } }
+		}
+		if = {
+			limit = { country_exists = UAE }
+			UAE = { set_variable = { given_bonds@IRQ = 5 } }
+		}
+		if = {
+			limit = { country_exists = QAT }
+			QAT = { set_variable = { given_bonds@IRQ = 2 } }
+		}
+		if = {
+			limit = { country_exists = BHR }
+			BHR = { set_variable = { given_bonds@IRQ = 1 } }
+		}
+		if = {
+			limit = { country_exists = OMA }
+			OMA = { set_variable = { given_bonds@IRQ = 1 } }
+		}
+		every_country = {
+			limit = {
+				OR = {
+					original_tag = SAU
+					original_tag = KUW
+					original_tag = UAE
+					original_tag = QAT
+					original_tag = BHR
+					original_tag = OMA
+				}
+			}
+			calculate_new_bonds_held = yes
+		}
+		calculate_new_bonds_owed = yes
+
+		add_dynamic_modifier = { modifier = IRQ_1985_war_command_dynamic_modifier }
+		add_dynamic_modifier = { modifier = IRQ_1985_war_economy_dynamic_modifier }
+		add_dynamic_modifier = { modifier = IRQ_1985_gulf_credit_line_dynamic_modifier }
+		add_dynamic_modifier = { modifier = IRQ_saddam_rage_idea }
+	}
+
+	IRQ_1985_clamp_tree_variables = yes
+	IRQ_1985_update_gulf_credit_line = yes
+}
+
+IRQ_1985_clamp_tree_variables = {
+	clamp_variable = { var = IRQ_1985_war_momentum_modifier min = -0.050 max = 0.090 }
+	clamp_variable = { var = IRQ_1985_front_integrity_modifier min = -0.080 max = 0.080 }
+	clamp_variable = { var = IRQ_1985_logistics_burden_modifier min = -0.080 max = 0.120 }
+	clamp_variable = { var = IRQ_1985_consumer_goods_modifier min = -0.020 max = 0.100 }
+	clamp_variable = { var = IRQ_1985_arms_speed_modifier min = -0.050 max = 0.120 }
+	clamp_variable = { var = IRQ_1985_tax_modifier min = -0.120 max = 0.060 }
+	clamp_variable = { var = IRQ_1985_interest_modifier min = -0.100 max = 0.320 }
+	clamp_variable = { var = IRQ_1985_gulf_credit_interest_modifier min = -10.000 max = 0.000 }
+	clamp_variable = { var = IRQ_1985_gulf_credit_withdrawal_pressure min = 0.000 max = 10.000 }
+	clamp_variable = { var = IRQ_saddam_pissboy min = 0.000 max = 0.500 }
+}
+
+IRQ_1985_update_gulf_credit_line = {
+	IRQ_1985_clamp_tree_variables = yes
+
+	if = {
+		limit = { check_variable = { IRQ_1985_gulf_credit_interest_modifier < -0.001 } }
+		set_country_flag = IRQ_1985_gulf_credit_line_active
+		if = {
+			limit = {
+				NOT = { has_dynamic_modifier = { modifier = IRQ_1985_gulf_credit_line_dynamic_modifier } }
+			}
+			add_dynamic_modifier = { modifier = IRQ_1985_gulf_credit_line_dynamic_modifier }
+		}
+	}
+	else = {
+		clr_country_flag = IRQ_1985_gulf_credit_line_active
+		if = {
+			limit = { has_dynamic_modifier = { modifier = IRQ_1985_gulf_credit_line_dynamic_modifier } }
+			remove_dynamic_modifier = { modifier = IRQ_1985_gulf_credit_line_dynamic_modifier }
+		}
+	}
+}
+
+IRQ_1985_end_gulf_credit_line = {
+	clr_country_flag = IRQ_1985_gulf_credit_line_active
+	clr_country_flag = IRQ_1985_sau_credit_active
+	clr_country_flag = IRQ_1985_kuw_credit_active
+	clr_country_flag = IRQ_1985_uae_credit_active
+	clr_country_flag = IRQ_1985_qat_credit_active
+	clr_country_flag = IRQ_1985_bhr_credit_active
+	clr_country_flag = IRQ_1985_oma_credit_active
+	set_variable = { IRQ_1985_gulf_credit_interest_modifier = 0.000 }
+	set_variable = { IRQ_1985_gulf_credit_withdrawal_pressure = 10.000 }
+	if = {
+		limit = { has_dynamic_modifier = { modifier = IRQ_1985_gulf_credit_line_dynamic_modifier } }
+		remove_dynamic_modifier = { modifier = IRQ_1985_gulf_credit_line_dynamic_modifier }
+	}
+}
+
+IRQ_1985_setup_kurdish_front = {
+	if = {
+		limit = {
+			date < 1990.1.1
+			original_tag = IRQ
+			NOT = { has_country_flag = IRQ_1985_kurdish_front_setup }
+		}
+		set_country_flag = IRQ_1985_kurdish_front_setup
+		set_country_flag = IRQ_1985_kurdish_war_active
+
+		if = {
+			limit = { country_exists = KUR }
+			KUR = {
+				set_country_flag = IRQ_1985_kdp_rebellion
+				if = {
+					limit = { NOT = { has_country_flag = IRQ_1985_kdp_starting_forces } }
+					set_country_flag = IRQ_1985_kdp_starting_forces
+					add_equipment_to_stockpile = { type = infantry_weapons_1 amount = 3400 producer = PER }
+					add_equipment_to_stockpile = { type = Anti_tank_1 amount = 120 producer = PER }
+					division_template = {
+						name = "KDP Peshmerga Column"
+						priority = 0
+						template_counter = 0
+						regiments = {
+							Militia_Bat = { x = 0 y = 0 }
+							Militia_Bat = { x = 0 y = 1 }
+							Militia_Bat = { x = 1 y = 0 }
+						}
+					}
+					164 = {
+						create_unit = {
+							division = "name = \"Barzani Peshmerga Column\" division_template = \"KDP Peshmerga Column\" start_experience_factor = 0.65 start_equipment_factor = 0.75"
+							owner = KUR
+							prioritize_location = 3916
+						}
+					}
+					164 = {
+						create_unit = {
+							division = "name = \"Erbil Local Defense Column\" division_template = \"KDP Peshmerga Column\" start_experience_factor = 0.55 start_equipment_factor = 0.70"
+							owner = KUR
+							prioritize_location = 5014
+						}
+					}
+					633 = {
+						create_unit = {
+							division = "name = \"Dohuk Mountain Column\" division_template = \"KDP Peshmerga Column\" start_experience_factor = 0.55 start_equipment_factor = 0.70"
+							owner = KUR
+							prioritize_location = 10811
+						}
+					}
+					633 = {
+						create_unit = {
+							division = "name = \"Zakho Border Column\" division_template = \"KDP Peshmerga Column\" start_experience_factor = 0.50 start_equipment_factor = 0.65"
+							owner = KUR
+							prioritize_location = 11093
+						}
+					}
+					641 = {
+						create_unit = {
+							division = "name = \"Sinjar Partisan Column\" division_template = \"KDP Peshmerga Column\" start_experience_factor = 0.45 start_equipment_factor = 0.60"
+							owner = KUR
+							prioritize_location = 10804
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_war_with = IRQ } }
+					declare_war_on = {
+						target = IRQ
+						type = annex_everything
+					}
+				}
+			}
+		}
+
+		if = {
+			limit = { country_exists = PUK }
+			PUK = {
+				set_country_flag = IRQ_1985_puk_rebellion
+				set_country_flag = IRQ_1985_puk_ceasefire_collapsing
+				if = {
+					limit = { NOT = { has_country_flag = IRQ_1985_puk_starting_forces } }
+					set_country_flag = IRQ_1985_puk_starting_forces
+					add_equipment_to_stockpile = { type = infantry_weapons_1 amount = 2200 producer = PER }
+					add_equipment_to_stockpile = { type = Anti_tank_1 amount = 70 producer = PER }
+					division_template = {
+						name = "PUK Peshmerga Column"
+						priority = 0
+						template_counter = 0
+						regiments = {
+							Militia_Bat = { x = 0 y = 0 }
+							Militia_Bat = { x = 0 y = 1 }
+							Militia_Bat = { x = 1 y = 0 }
+						}
+					}
+					630 = {
+						create_unit = {
+							division = "name = \"Sulaymaniyah Peshmerga Column\" division_template = \"PUK Peshmerga Column\" start_experience_factor = 0.65 start_equipment_factor = 0.70"
+							owner = PUK
+							prioritize_location = 3302
+						}
+					}
+					630 = {
+						create_unit = {
+							division = "name = \"Qandil Liaison Column\" division_template = \"PUK Peshmerga Column\" start_experience_factor = 0.55 start_equipment_factor = 0.65"
+							owner = PUK
+							prioritize_location = 11384
+						}
+					}
+					1078 = {
+						create_unit = {
+							division = "name = \"Halabja Border Column\" division_template = \"PUK Peshmerga Column\" start_experience_factor = 0.55 start_equipment_factor = 0.65"
+							owner = PUK
+							prioritize_location = 14392
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_war_with = IRQ } }
+					declare_war_on = {
+						target = IRQ
+						type = annex_everything
+					}
+				}
+			}
+		}
+	}
+}
+
+IRQ_1985_check_kurdish_war_outcome = {
+	if = {
+		limit = {
+			date < 1990.1.1
+			original_tag = IRQ
+			has_country_flag = IRQ_1985_kurdish_war_active
+			NOT = { has_country_flag = IRQ_1985_northern_security_minigame_active }
+			NOT = { has_war_with = KUR }
+			NOT = { has_war_with = PUK }
+		}
+		IRQ_1985_activate_kurdish_security_minigame = yes
+	}
+	if = {
+		limit = {
+			date < 1990.1.1
+			original_tag = IRQ
+			has_country_flag = IRQ_1985_northern_security_minigame_active
+		}
+		IRQ_1985_update_kurdish_security_minigame = yes
+	}
+}
+
+IRQ_1985_activate_kurdish_security_minigame = {
+	set_country_flag = IRQ_1985_northern_security_minigame_active
+	clr_country_flag = IRQ_1985_kurdish_war_active
+	set_variable = { IRQ_1985_kurdish_resistance_score = 38 }
+	set_variable = { IRQ_1985_kurdish_iranian_support = 30 }
+	set_variable = { IRQ_1985_kurdish_security_pressure = 26 }
+	set_variable = { IRQ_1985_kurdish_resistance_target = 0.22 }
+	set_variable = { IRQ_1985_kurdish_resistance_growth = 0.035 }
+	set_variable = { IRQ_1985_kurdish_garrison_damage = 0.040 }
+	set_variable = { IRQ_1985_kurdish_garrison_requirement = 0.120 }
+	set_variable = { IRQ_1985_kurdish_army_speed_penalty = -0.080 }
+	set_variable = { IRQ_1985_kurdish_org_regain_penalty = -0.050 }
+	IRQ_1985_apply_kurdish_state_modifiers = yes
+}
+
+IRQ_1985_apply_kurdish_state_modifiers = {
+	if = { limit = { 164 = { is_owned_and_controlled_by = IRQ NOT = { has_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } } } 164 = { add_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } }
+	if = { limit = { 630 = { is_owned_and_controlled_by = IRQ NOT = { has_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } } } 630 = { add_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } }
+	if = { limit = { 633 = { is_owned_and_controlled_by = IRQ NOT = { has_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } } } 633 = { add_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } }
+	if = { limit = { 641 = { is_owned_and_controlled_by = IRQ NOT = { has_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } } } 641 = { add_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } }
+	if = { limit = { 1078 = { is_owned_and_controlled_by = IRQ NOT = { has_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } } } 1078 = { add_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } } }
+}
+
+IRQ_1985_clear_kurdish_state_modifiers = {
+	164 = { remove_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } }
+	630 = { remove_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } }
+	633 = { remove_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } }
+	641 = { remove_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } }
+	1078 = { remove_dynamic_modifier = { modifier = IRQ_1985_kurdish_insurgency_state_modifier } }
+}
+
+IRQ_1985_update_kurdish_security_minigame = {
+	clamp_variable = { var = IRQ_1985_kurdish_resistance_score min = 0 max = 100 }
+	clamp_variable = { var = IRQ_1985_kurdish_iranian_support min = 0 max = 100 }
+	clamp_variable = { var = IRQ_1985_kurdish_security_pressure min = 0 max = 100 }
+
+	if = {
+		limit = { check_variable = { IRQ_1985_kurdish_resistance_score > 79 } }
+		set_variable = { IRQ_1985_kurdish_resistance_target = 0.48 }
+		set_variable = { IRQ_1985_kurdish_resistance_growth = 0.090 }
+		set_variable = { IRQ_1985_kurdish_garrison_damage = 0.130 }
+		set_variable = { IRQ_1985_kurdish_garrison_requirement = 0.380 }
+		set_variable = { IRQ_1985_kurdish_army_speed_penalty = -0.280 }
+		set_variable = { IRQ_1985_kurdish_org_regain_penalty = -0.180 }
+	}
+	else_if = {
+		limit = { check_variable = { IRQ_1985_kurdish_resistance_score > 59 } }
+		set_variable = { IRQ_1985_kurdish_resistance_target = 0.38 }
+		set_variable = { IRQ_1985_kurdish_resistance_growth = 0.070 }
+		set_variable = { IRQ_1985_kurdish_garrison_damage = 0.090 }
+		set_variable = { IRQ_1985_kurdish_garrison_requirement = 0.280 }
+		set_variable = { IRQ_1985_kurdish_army_speed_penalty = -0.200 }
+		set_variable = { IRQ_1985_kurdish_org_regain_penalty = -0.130 }
+	}
+	else_if = {
+		limit = { check_variable = { IRQ_1985_kurdish_resistance_score > 34 } }
+		set_variable = { IRQ_1985_kurdish_resistance_target = 0.26 }
+		set_variable = { IRQ_1985_kurdish_resistance_growth = 0.045 }
+		set_variable = { IRQ_1985_kurdish_garrison_damage = 0.055 }
+		set_variable = { IRQ_1985_kurdish_garrison_requirement = 0.180 }
+		set_variable = { IRQ_1985_kurdish_army_speed_penalty = -0.120 }
+		set_variable = { IRQ_1985_kurdish_org_regain_penalty = -0.080 }
+	}
+	else = {
+		set_variable = { IRQ_1985_kurdish_resistance_target = 0.14 }
+		set_variable = { IRQ_1985_kurdish_resistance_growth = 0.020 }
+		set_variable = { IRQ_1985_kurdish_garrison_damage = 0.025 }
+		set_variable = { IRQ_1985_kurdish_garrison_requirement = 0.090 }
+		set_variable = { IRQ_1985_kurdish_army_speed_penalty = -0.060 }
+		set_variable = { IRQ_1985_kurdish_org_regain_penalty = -0.040 }
+	}
+
+	IRQ_1985_apply_kurdish_state_modifiers = yes
+
+	if = {
+		limit = {
+			check_variable = { IRQ_1985_kurdish_resistance_score > 99 }
+			NOT = { has_country_flag = IRQ_1985_kurdish_uprising_triggered }
+		}
+		IRQ_1985_trigger_kurdish_uprising = yes
+	}
+}
+
+IRQ_1985_trigger_kurdish_uprising = {
+	custom_effect_tooltip = IRQ_1985_kurdish_uprising_tt
+	hidden_effect = {
+		set_country_flag = IRQ_1985_kurdish_uprising_triggered
+		clr_country_flag = IRQ_1985_northern_security_minigame_active
+		set_country_flag = IRQ_1985_kurdish_war_active
+		IRQ_1985_clear_kurdish_state_modifiers = yes
+
+		164 = { transfer_state_to = KUR set_state_controller_to = KUR }
+		633 = { transfer_state_to = KUR set_state_controller_to = KUR }
+		641 = { transfer_state_to = KUR set_state_controller_to = KUR }
+		630 = { transfer_state_to = PUK set_state_controller_to = PUK }
+		1078 = { transfer_state_to = PUK set_state_controller_to = PUK }
+
+		KUR = {
+			set_country_flag = IRQ_1985_kdp_rebellion
+			add_equipment_to_stockpile = { type = infantry_weapons_1 amount = 1100 producer = PER }
+			division_template = {
+				name = "Revived KDP Peshmerga Column"
+				priority = 0
+				template_counter = 0
+				regiments = {
+					Militia_Bat = { x = 0 y = 0 }
+					Militia_Bat = { x = 0 y = 1 }
+					Militia_Bat = { x = 1 y = 0 }
+				}
+			}
+			164 = {
+				create_unit = {
+					division = "name = \"Revived Barzani Peshmerga\" division_template = \"Revived KDP Peshmerga Column\" start_experience_factor = 0.70 start_equipment_factor = 0.70"
+					owner = KUR
+					prioritize_location = 3916
+				}
+			}
+			633 = {
+				create_unit = {
+					division = "name = \"Dohuk Rebel Column\" division_template = \"Revived KDP Peshmerga Column\" start_experience_factor = 0.60 start_equipment_factor = 0.65"
+					owner = KUR
+					prioritize_location = 10811
+				}
+			}
+			if = {
+				limit = { NOT = { has_war_with = IRQ } }
+				declare_war_on = {
+					target = IRQ
+					type = annex_everything
+				}
+			}
+		}
+
+		PUK = {
+			set_country_flag = IRQ_1985_puk_rebellion
+			add_equipment_to_stockpile = { type = infantry_weapons_1 amount = 900 producer = PER }
+			division_template = {
+				name = "Revived PUK Peshmerga Column"
+				priority = 0
+				template_counter = 0
+				regiments = {
+					Militia_Bat = { x = 0 y = 0 }
+					Militia_Bat = { x = 0 y = 1 }
+					Militia_Bat = { x = 1 y = 0 }
+				}
+			}
+			630 = {
+				create_unit = {
+					division = "name = \"Revived Sulaymaniyah Peshmerga\" division_template = \"Revived PUK Peshmerga Column\" start_experience_factor = 0.70 start_equipment_factor = 0.70"
+					owner = PUK
+					prioritize_location = 3302
+				}
+			}
+			1078 = {
+				create_unit = {
+					division = "name = \"Halabja Rebel Column\" division_template = \"Revived PUK Peshmerga Column\" start_experience_factor = 0.60 start_equipment_factor = 0.65"
+					owner = PUK
+					prioritize_location = 14392
+				}
+			}
+			if = {
+				limit = { NOT = { has_war_with = IRQ } }
+				declare_war_on = {
+					target = IRQ
+					type = annex_everything
+				}
+			}
+		}
+	}
+}
+
+IRQ_1985_apply_the_bill_comes_due_effects = {
+	if = {
+		limit = { NOT = { has_country_flag = IRQ_1985_the_bill_comes_due_effect_applied } }
+		set_country_flag = IRQ_1985_the_bill_comes_due_effect_applied
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						has_idea = IRQ_1985_postwar_debt_crash
+						has_idea = IRQ_1985_postwar_debt_crash_resource_sale_1
+						has_idea = IRQ_1985_postwar_debt_crash_resource_sale_2
+						has_idea = IRQ_1985_postwar_debt_crash_resource_sale_3
+						has_idea = IRQ_1985_postwar_debt_crash_resource_sale_4
+					}
+				}
+			}
+			add_ideas = IRQ_1985_postwar_debt_crash
+		}
+		add_political_power = -50
+		add_stability = -0.02
+	}
+}
+
+IRQ_1985_start_postwar_crisis = {
+	if = {
+		limit = {
+			date < 1992.1.1
+			original_tag = IRQ
+			OR = {
+				has_global_flag = IMP_1985_iran_iraq_war_started
+				has_country_flag = IRQ_1985_iran_iraq_war_context
+			}
+			NOT = { has_war_with = PER }
+			NOT = { has_country_flag = IRQ_1985_postwar_crisis_active }
+			NOT = { has_country_flag = IRQ_1985_kuwait_annexation_payoff }
+		}
+		set_country_flag = IRQ_1985_postwar_crisis_active
+		set_country_flag = IRQ_1985_iran_iraq_war_concluded
+		IRQ_1985_end_gulf_credit_line = yes
+		if = {
+			limit = { NOT = { has_completed_focus = IRQ_1985_the_bill_comes_due } }
+			complete_national_focus = IRQ_1985_the_bill_comes_due
+			mark_focus_tree_layout_dirty = yes
+		}
+		IRQ_1985_apply_the_bill_comes_due_effects = yes
+		country_event = { id = irq_1985_postwar.1 days = 1 }
+	}
+}
+
+IRQ_1985_apply_war_focus_cost_minor = {
+	custom_effect_tooltip = IRQ_1985_war_focus_minor_cost_tt
+	set_temp_variable = { treasury_change = -1.50 }
+	modify_treasury_effect = yes
+	set_temp_variable = { debt_change = 2.00 }
+	modify_debt_effect = yes
+	add_to_variable = { var = IRQ_1985_interest_modifier value = 0.002 }
+	IRQ_1985_clamp_tree_variables = yes
+}
+
+IRQ_1985_apply_war_focus_cost_standard = {
+	custom_effect_tooltip = IRQ_1985_war_focus_standard_cost_tt
+	set_temp_variable = { treasury_change = -3.50 }
+	modify_treasury_effect = yes
+	set_temp_variable = { debt_change = 4.50 }
+	modify_debt_effect = yes
+	add_to_variable = { var = IRQ_1985_interest_modifier value = 0.004 }
+	add_to_variable = { var = IRQ_1985_logistics_burden_modifier value = 0.003 }
+	IRQ_1985_clamp_tree_variables = yes
+}
+
+IRQ_1985_apply_war_focus_cost_major = {
+	custom_effect_tooltip = IRQ_1985_war_focus_major_cost_tt
+	set_temp_variable = { treasury_change = -6.00 }
+	modify_treasury_effect = yes
+	set_temp_variable = { debt_change = 8.00 }
+	modify_debt_effect = yes
+	add_to_variable = { var = IRQ_1985_interest_modifier value = 0.008 }
+	add_to_variable = { var = IRQ_1985_consumer_goods_modifier value = 0.003 }
+	add_to_variable = { var = IRQ_1985_logistics_burden_modifier value = 0.005 }
+	IRQ_1985_clamp_tree_variables = yes
+}
+
+IRQ_1985_send_gulf_bond_offer_events = {
+	set_country_flag = { flag = IRQ_1985_recent_gulf_bond_drive days = 180 value = 1 }
+	if = {
+		limit = { country_exists = SAU }
+		SAU = { country_event = { id = irq_1985_debt.1 days = 1 } }
+	}
+	if = {
+		limit = { country_exists = KUW }
+		KUW = { country_event = { id = irq_1985_debt.2 days = 1 } }
+	}
+	if = {
+		limit = { country_exists = UAE }
+		UAE = { country_event = { id = irq_1985_debt.3 days = 1 } }
+	}
+	if = {
+		limit = { country_exists = QAT }
+		QAT = { country_event = { id = irq_1985_debt.4 days = 1 } }
+	}
+	if = {
+		limit = { country_exists = BHR }
+		BHR = { country_event = { id = irq_1985_debt.5 days = 1 } }
+	}
+	if = {
+		limit = { country_exists = OMA }
+		OMA = { country_event = { id = irq_1985_debt.6 days = 1 } }
+	}
+}
+
+IRQ_1985_prepare_arab_debt_sharing = {
+	set_variable = { IRQ_1985_debt_sharing_base = debt }
+	set_variable = { IRQ_1985_arab_debt_assumed_share = 0.000 }
+	set_country_flag = { flag = IRQ_1985_arab_debt_sharing_sent days = 180 value = 1 }
+}
+
+IRQ_1985_check_arab_debt_sharing_success = {
+	if = {
+		limit = { check_variable = { IRQ_1985_arab_debt_assumed_share > 0.55 } }
+		IRQ_1985_remove_postwar_debt_crash = yes
+		set_country_flag = IRQ_1985_arab_debt_shift_success
+	}
+	else = {
+		IRQ_1985_reduce_postwar_debt_crash = yes
+	}
+}
+
+IRQ_1985_remove_postwar_debt_crash = {
+	clr_country_flag = IRQ_1985_postwar_crisis_active
+	set_country_flag = IRQ_1985_kuwait_annexation_payoff
+	remove_ideas = IRQ_1985_postwar_debt_crash
+	remove_ideas = IRQ_1985_postwar_debt_crash_resource_sale_1
+	remove_ideas = IRQ_1985_postwar_debt_crash_resource_sale_2
+	remove_ideas = IRQ_1985_postwar_debt_crash_resource_sale_3
+	remove_ideas = IRQ_1985_postwar_debt_crash_resource_sale_4
+}
+
+IRQ_1985_reduce_postwar_debt_crash = {
+	if = {
+		limit = { has_idea = IRQ_1985_postwar_debt_crash }
+		swap_ideas = {
+			remove_idea = IRQ_1985_postwar_debt_crash
+			add_idea = IRQ_1985_postwar_debt_crash_resource_sale_1
+		}
+		custom_effect_tooltip = IRQ_1985_debt_crash_reduced_tt
+	}
+	else_if = {
+		limit = { has_idea = IRQ_1985_postwar_debt_crash_resource_sale_1 }
+		swap_ideas = {
+			remove_idea = IRQ_1985_postwar_debt_crash_resource_sale_1
+			add_idea = IRQ_1985_postwar_debt_crash_resource_sale_2
+		}
+		custom_effect_tooltip = IRQ_1985_debt_crash_reduced_tt
+	}
+	else_if = {
+		limit = { has_idea = IRQ_1985_postwar_debt_crash_resource_sale_2 }
+		swap_ideas = {
+			remove_idea = IRQ_1985_postwar_debt_crash_resource_sale_2
+			add_idea = IRQ_1985_postwar_debt_crash_resource_sale_3
+		}
+		custom_effect_tooltip = IRQ_1985_debt_crash_reduced_tt
+	}
+	else_if = {
+		limit = { has_idea = IRQ_1985_postwar_debt_crash_resource_sale_3 }
+		swap_ideas = {
+			remove_idea = IRQ_1985_postwar_debt_crash_resource_sale_3
+			add_idea = IRQ_1985_postwar_debt_crash_resource_sale_4
+		}
+		custom_effect_tooltip = IRQ_1985_debt_crash_reduced_tt
+	}
+	else = {
+		custom_effect_tooltip = IRQ_1985_debt_crash_reduction_limit_tt
+	}
+}
+
+IRQ_1985_apply_resource_sale_political_cost = {
+	add_stability = -0.03
+	set_party_index_to_ruling_party = yes
+	set_temp_variable = { party_popularity_increase = -0.03 }
+	set_temp_variable = { temp_outlook_increase = -0.03 }
+	change_relative_party_popularity = yes
+	add_political_power = -20
+}
+
+IRQ_1985_complete_resource_sale_to_usa = {
+	set_country_flag = IRQ_1985_resource_sale_usa_accepted
+	IRQ_1985_reduce_postwar_debt_crash = yes
+	IRQ_1985_apply_resource_sale_political_cost = yes
+	if = {
+		limit = { 171 = { is_owned_by = IRQ } }
+		give_resource_rights = { receiver = USA state = 171 resources = { oil } }
+	}
+}
+
+IRQ_1985_complete_resource_sale_to_eng = {
+	set_country_flag = IRQ_1985_resource_sale_eng_accepted
+	IRQ_1985_reduce_postwar_debt_crash = yes
+	IRQ_1985_apply_resource_sale_political_cost = yes
+	if = {
+		limit = { 1124 = { is_owned_by = IRQ } }
+		give_resource_rights = { receiver = ENG state = 1124 resources = { oil } }
+	}
+}
+
+IRQ_1985_complete_resource_sale_to_fra = {
+	set_country_flag = IRQ_1985_resource_sale_fra_accepted
+	IRQ_1985_reduce_postwar_debt_crash = yes
+	IRQ_1985_apply_resource_sale_political_cost = yes
+	if = {
+		limit = { 165 = { is_owned_by = IRQ } }
+		give_resource_rights = { receiver = FRA state = 165 resources = { oil } }
+	}
+}
+
+IRQ_1985_complete_resource_sale_to_sov = {
+	set_country_flag = IRQ_1985_resource_sale_sov_accepted
+	IRQ_1985_reduce_postwar_debt_crash = yes
+	IRQ_1985_apply_resource_sale_political_cost = yes
+	if = {
+		limit = { 166 = { is_owned_by = IRQ } }
+		give_resource_rights = { receiver = SOV state = 166 resources = { oil } }
+	}
+}
+
+IRQ_1985_check_kuwait_annexation = {
+	if = {
+		limit = {
+			original_tag = IRQ
+			NOT = { has_country_flag = IRQ_1985_kuwait_decisions_unlocked }
+			OR = {
+				AND = {
+					country_exists = KUW
+					has_war_with = KUW
+				}
+				has_completed_focus = IRQ_1985_the_nineteenth_province
+				has_completed_focus = IRQ_1985_take_kuwait
+				172 = { is_controlled_by = IRQ }
+			}
+		}
+		set_country_flag = IRQ_1985_kuwait_decisions_unlocked
+	}
+	if = {
+		limit = {
+			original_tag = IRQ
+			has_country_flag = IRQ_1985_kuwait_decisions_unlocked
+			172 = { is_controlled_by = IRQ }
+			NOT = { has_country_flag = IRQ_1985_kuwait_control_confirmed }
+		}
+		set_country_flag = IRQ_1985_kuwait_control_confirmed
+	}
+	if = {
+		limit = {
+			original_tag = IRQ
+			has_country_flag = IRQ_1985_kuwait_decisions_unlocked
+			NOT = { has_country_flag = IRQ_1985_kuwait_annexed_confirmed }
+			172 = { is_owned_and_controlled_by = IRQ }
+		}
+		set_country_flag = IRQ_1985_kuwait_annexed_confirmed
+	}
+}
