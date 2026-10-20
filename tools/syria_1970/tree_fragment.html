@@ -1,0 +1,124 @@
+<div id="syr70-tree">
+  <section class="game-window" aria-label="Proposed Syria national focus tree">
+    <header class="game-header"><div><span>SYRIA · 1 JANUARY 1970</span><h2>National Focus</h2></div><span>CONCEPT · APPROVAL PENDING</span></header>
+    <div class="game-toolbar">
+      <label>Section <select id="syr70-section" aria-label="Focus tree section"></select></label>
+      <div class="game-actions"><button type="button" id="syr70-all">Entire tree</button><button type="button" id="syr70-home">Starting government</button><button type="button" id="syr70-minus" aria-label="Zoom out">−</button><span id="syr70-zoom">100%</span><button type="button" id="syr70-plus" aria-label="Zoom in">+</button></div>
+    </div>
+    <div id="syr70-caption" class="game-caption"></div>
+    <div id="syr70-viewport" class="game-viewport" aria-label="Focus tree, drag to pan, wheel to zoom">
+      <div id="syr70-world" class="game-world"><svg class="game-links" aria-label="Prerequisites and policy exclusions"></svg></div>
+      <div class="game-map-key">Drag to pan · wheel / + − to zoom · × exclusive policies</div>
+    </div>
+    <div class="game-subbar"><span id="syr70-count"></span><button type="button" id="syr70-spirits">Starting spirits</button><button type="button" id="syr70-contract">Government changes</button></div>
+    <div id="syr70-detail" class="game-detail" aria-live="polite"></div>
+    <details class="game-decisions"><summary>Decisions opened by this section</summary><div id="syr70-decisions"></div></details>
+    <details class="game-decisions"><summary>Events and operational consequences</summary><div id="syr70-events"></div></details>
+    <footer>Native MD art and HOI16 bitmap titles · 96 × 130 grid · January 1970 eligibility illustration, funding not simulated · approximate connectors · not an engine screenshot</footer>
+  </section>
+</div>
+<!-- DESIGN_DATA -->
+<style>
+#syr70-tree{--sy-bg:#25343a;--sy-panel:#344247;--sy-deep:#19282e;--sy-text:#e6e5d9;--sy-muted:#c0c9c7;--sy-gold:#dcc78a;--sy-line:#a9b8b8;--sy-choice:#dfaa7b;color:var(--sy-text);font:14px/1.5 Arial,sans-serif}
+#syr70-tree *{box-sizing:border-box}
+#syr70-tree .game-window{background:var(--sy-bg);border:1px solid #6d7d7e;overflow:hidden}
+#syr70-tree .game-header{display:flex;justify-content:space-between;gap:14px;padding:14px 18px;background:linear-gradient(#4a5659,#303e43);border-bottom:2px solid #958356;align-items:center}
+#syr70-tree .game-header span{font:11px/1.5 Arial,sans-serif;letter-spacing:1px;max-width:150px}
+#syr70-tree h2{margin:0;font:500 24px/1.2 Georgia,serif;color:var(--sy-text)}
+#syr70-tree .game-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;padding:12px;background:var(--sy-deep)}
+#syr70-tree .game-toolbar label{flex:1 1 270px;min-width:0;color:var(--sy-muted);font-size:12px}
+#syr70-tree select{display:block;width:100%;max-width:100%;margin-top:4px;background:#3c4a4d;color:var(--sy-text);font:14px/1.4 Arial,sans-serif;padding:8px;border:1px solid #9f9a81;border-radius:2px}
+#syr70-tree button{background:linear-gradient(#515b55,#35413b);border:1px solid #9b987e;color:var(--sy-text);padding:7px 9px;font:13px/1.4 Arial,sans-serif;border-radius:2px}
+#syr70-tree button:hover{border-color:var(--sy-gold)}
+#syr70-tree button[aria-pressed="true"]{outline:2px solid var(--sy-gold);outline-offset:2px}
+#syr70-tree .game-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#syr70-tree .game-actions span{min-width:36px;text-align:center;font-size:12px}
+#syr70-tree .game-caption{padding:9px 14px;color:var(--sy-muted);min-height:42px;font-size:12px}
+#syr70-tree .game-viewport{height:1180px;position:relative;overflow:hidden;touch-action:none;background:radial-gradient(ellipse,#354a51,#1d2d34 80%);isolation:isolate}
+#syr70-tree .game-world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+#syr70-tree .game-links{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+#syr70-tree .prerequisite{fill:none;stroke:var(--sy-line);stroke-width:2}
+#syr70-tree .prerequisite.related{stroke:var(--sy-gold);stroke-width:3}
+#syr70-tree .exclusion{fill:none;stroke:var(--sy-choice);stroke-width:2;stroke-dasharray:5 4}
+#syr70-tree .exclusion-label{fill:var(--sy-choice);font:20px Georgia,serif;text-anchor:middle}
+#syr70-tree .focus-node{position:absolute;width:165px;height:112px;background:transparent;border:0;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:start;border-radius:0;color:var(--sy-text);outline-offset:3px}
+#syr70-tree .focus-node img{width:88px;height:78px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 2px #0008)}
+#syr70-tree .focus-title{height:28px;width:155px;background-size:100% 100%;background-repeat:no-repeat;display:block;padding:3px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;font:16px/20px Arial,sans-serif;color:#eee8cf;pointer-events:none}
+#syr70-tree .focus-title{padding:0}
+#syr70-tree .focus-title canvas{width:155px;height:28px;display:block}
+#syr70-tree .focus-node[aria-pressed="true"] img{filter:drop-shadow(0 0 6px #f5d88a)}
+#syr70-tree .focus-node.unavailable{opacity:.62}
+#syr70-tree .section-name{position:absolute;white-space:nowrap;transform:translateX(-50%);font:500 19px/1.3 Georgia,serif;color:var(--sy-gold);pointer-events:none}
+#syr70-tree .game-world.overview .focus-title{visibility:hidden}
+#syr70-tree .game-world.overview .focus-node{opacity:1}
+#syr70-tree .continuous-reserve{position:absolute;width:770px;height:380px;border:1px solid #697876;background:var(--sy-deep);padding:20px;font:24px Georgia,serif;color:var(--sy-muted)}
+#syr70-tree .game-map-key{position:absolute;left:10px;right:10px;bottom:10px;pointer-events:none;font:11px/1.4 Arial,sans-serif;color:var(--sy-muted)}
+#syr70-tree .game-subbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:var(--sy-deep);font-size:12px}
+#syr70-tree .game-subbar>span{flex:1 1 220px}
+#syr70-tree .game-detail{padding:16px;background:var(--sy-panel);overflow-wrap:anywhere;border-top:1px solid #68797b}
+#syr70-tree .game-detail h3{margin:0 0 10px;color:var(--sy-gold);font:500 20px/1.3 Georgia,serif}
+#syr70-tree .game-detail h4{font-weight:500;margin:12px 0 4px}
+#syr70-tree .game-detail p{margin:7px 0}
+#syr70-tree .game-detail li{margin:4px 0}
+#syr70-tree .game-detail pre{background:var(--sy-deep);white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;font:12px/1.5 Consolas,monospace}
+#syr70-tree .game-detail article+article{margin-top:16px;padding-top:12px;border-top:1px solid #6f8080}
+#syr70-tree .game-decisions{padding:12px 16px;background:var(--sy-deep)}
+#syr70-tree .game-decisions details{padding:10px 0;border-bottom:1px solid #5c6d70}
+#syr70-tree .game-decisions p{margin:7px 0}
+#syr70-tree footer{padding:10px 14px;color:var(--sy-muted);font-size:11px;background:var(--sy-deep)}
+@media(max-width:520px){#syr70-tree .game-viewport{height:1000px}#syr70-tree select{font-size:16px}#syr70-tree .game-header{padding:12px}#syr70-tree .game-header span{max-width:130px}#syr70-tree .game-subbar{gap:8px}}
+</style>
+<script>
+(()=>{
+const root=document.getElementById('syr70-tree'),D=JSON.parse(document.getElementById('syr70-data').textContent),sel=root.querySelector('#syr70-section'),world=root.querySelector('#syr70-world'),view=root.querySelector('#syr70-viewport'),svg=world.querySelector('svg'),detail=root.querySelector('#syr70-detail'),caption=root.querySelector('#syr70-caption'),decs=root.querySelector('#syr70-decisions');
+const by=new Map(D.nodes.map(n=>[n.id,n])),gm=new Map(D.groups.map(g=>[g.id,g]));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pos=n=>({x:n.xy[0]*96+120,y:n.xy[1]*130+110}),W=Math.max(Math.max(...D.nodes.map(n=>pos(n).x))+280,D.layout.continuous_focus_position_pixels[0]+900),H=Math.max(...D.nodes.map(n=>pos(n).y))+200;
+world.style.width=W+'px';world.style.height=H+'px';svg.setAttribute('width',W);svg.setAttribute('height',H);
+let current=D.layout.preview_section||'opening',picked=D.layout.preview_focus||D.layout.initial_focus,mode='branch',cam={x:0,y:0,z:1},drag=null;
+const e=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));return el;};
+for(const g of D.groups){const o=document.createElement('option');o.value=g.id;o.textContent=g.label;sel.append(o);const label=document.createElement('div');label.className='section-name';label.textContent=g.label;label.style.left=(g.origin[0]*96+202)+'px';label.style.top=(g.origin[1]*130+65)+'px';world.append(label);}
+for(const n of D.nodes){const p=pos(n);
+ for(const block of n.prerequisites)for(const id of block){const q=pos(by.get(id)),x1=q.x+82.5,y1=q.y+112,x2=p.x+82.5,y2=p.y;const middle=(y1+y2)/2;const edge=e('path',{class:'prerequisite',d:`M${x1} ${y1} V${middle} H${x2} V${y2}`});edge.dataset.from=id;edge.dataset.to=n.id;svg.append(edge);}
+ for(const id of n.mutually_exclusive){if(n.id>id)continue;const q=pos(by.get(id));if(p.y!==q.y)continue;const lo=Math.min(p.x,q.x)+134,hi=Math.max(p.x,q.x)+31,yy=p.y+45;svg.append(e('path',{class:'exclusion',d:`M${lo} ${yy} H${hi}`}));const cross=e('text',{class:'exclusion-label',x:(lo+hi)/2,y:yy-5});cross.textContent='×';svg.append(cross);}
+ const b=document.createElement('button');b.type='button';b.className='focus-node cursor-interaction'+(n.start_eligible?'':' unavailable');b.dataset.id=n.id;b.style.left=p.x+'px';b.style.top=p.y+'px';b.setAttribute('aria-label',n.label);b.setAttribute('data-tooltip',n.label);b.setAttribute('aria-pressed','false');b.innerHTML=`<img src="${D.layout.icon_data[n.icon]}" alt=""><span class="focus-title"><canvas width="155" height="28" aria-hidden="true"></canvas></span>`;b.querySelector('span').style.backgroundImage=`url(${D.layout.titlebar})`;world.append(b);
+}
+const atlas=new Image();atlas.onload=()=>{for(const n of D.nodes){const cv=world.querySelector(`[data-id="${n.id}"] canvas`),ctx=cv.getContext('2d'),chars=[...n.card_label].map(ch=>D.layout.glyphs[ch.codePointAt(0)]||D.layout.glyphs[32]);let x=(155-chars.reduce((a,g)=>a+g[6],0))/2;for(const g of chars){ctx.drawImage(atlas,g[0],g[1],g[2],g[3],Math.round(x+g[4]),5+g[5],g[2],g[3]);x+=g[6];}}};atlas.src=D.layout.font_atlas;
+const continuous=document.createElement('div');continuous.className='continuous-reserve';continuous.textContent='Continuous focuses — reserved';continuous.style.left=D.layout.continuous_focus_position_pixels[0]+'px';continuous.style.top=D.layout.continuous_focus_position_pixels[1]+'px';world.append(continuous);
+function effectCode(n){const number=v=>Number(v.toPrecision(6)).toString();let a=[`log = "[GetDateText]: [Root.GetName]: Focus ${n.id}"`];if(n.treasury_cost_bn)a.push(`set_temp_variable = { treasury_change = -${number(n.treasury_cost_bn)} }`,'modify_treasury_effect = yes');for(const[k,v]of Object.entries(n.modifiers))a.push(`add_to_variable = { ${n.owner}_${k} = ${number(v)} }`);a.push(...n.one_time.map(o=>o.code));if(n.replaces_starting_spirit)a.push('# NEW order-independent starting-spirit recomputation: '+n.replaces_starting_spirit);for(const did of(n.decision_unlocks||[]))a.push('# NEW decision visible when has_completed_focus = '+n.id+': '+did);if(Object.keys(n.modifiers).length||n.replaces_starting_spirit)a.push('COLDWAR_SYR_refresh_programmes = yes','force_update_dynamic_modifier = yes');return a.join('\n');}
+function paint(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.z})`;world.classList.toggle('overview',cam.z<.24);root.querySelector('#syr70-zoom').textContent=Math.round(cam.z*100)+'%';}
+function fit(all=false){const ns=all?D.nodes:D.nodes.filter(n=>n.group===current),ps=ns.map(pos),left=Math.min(...ps.map(p=>p.x))-25,right=Math.max(...ps.map(p=>p.x))+190,top=Math.min(...ps.map(p=>p.y))-65,bottom=Math.max(...ps.map(p=>p.y))+145;cam.z=Math.min(1,(view.clientWidth-20)/(right-left),(view.clientHeight-30)/(bottom-top));cam.x=(view.clientWidth-(right-left)*cam.z)/2-left*cam.z;cam.y=15-top*cam.z;paint();}
+function zoom(factor,cx=view.clientWidth/2,cy=view.clientHeight/2){const z=Math.max(.025,Math.min(1.6,cam.z*factor));cam.x=cx-(cx-cam.x)*z/cam.z;cam.y=cy-(cy-cam.y)*z/cam.z;cam.z=z;paint();}
+function remember(){window.openai?.setWidgetState?.({modelContent:{branch:gm.get(current)?.label,focus:by.get(picked)?.label,mode},privateContent:{version:2,current,picked,mode,cam}}).catch(()=>{});}
+function show(n){picked=n.id;const pre=n.prerequisites.map(b=>b.map(id=>by.get(id).label).join(' OR ')).join(' AND ')||'Direct entry while eligible',excluded=n.mutually_exclusive.map(id=>by.get(id).label).join(' / ');detail.innerHTML=`<h3>${esc(n.label)}</h3><p>${n.days} days · x=${n.xy[0]}, y=${n.xy[1]} · ${esc(n.ownership)}</p><p>Card title: ${esc(n.card_label)}</p><p>Requires: ${esc(pre)}</p>${excluded?`<p>Exclusive with: ${esc(excluded)}</p>`:''}${n.note?`<p>${esc(n.note)}</p>`:''}<h4>Proposed rewards and costs</h4><ul>${n.reward_summary.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><details><summary>Government, leader and funding conditions</summary><pre>${esc(n.available)}</pre></details><details><summary>Exact proposed MD effect mapping</summary><pre>${esc(effectCode(n))}</pre><p>COLDWAR_SYR adapters and variables are new proposed script. Native modifier keys and APIs are source-checked; these focus effects are not installed.</p></details><details><summary>ID and relative placement</summary><pre>${esc(n.id)}\n${n.anchor?'relative_position_id = '+n.anchor:'absolute section root'}\nx = ${n.offset[0]}\ny = ${n.offset[1]}</pre></details>`;
+ const systems=(n.mechanic_links||[]).map(id=>D.mechanics.systems.find(s=>s.id===id)).filter(Boolean);if(systems.length){const m=document.createElement('details');m.innerHTML='<summary>Existing MD / Imperia systems</summary>'+systems.map(s=>`<h4>${esc(s.label)}</h4><p>${esc(s.behavior)}</p><p>${esc(s.refresh)}</p><p>Consumer: ${esc(s.consumer)}</p>`).join('');detail.append(m);}renderEvents(n.group);
+ for(const b of world.querySelectorAll('.focus-node'))b.setAttribute('aria-pressed',String(b.dataset.id===picked));for(const edge of svg.querySelectorAll('.prerequisite'))edge.classList.toggle('related',edge.dataset.to===picked||edge.dataset.from===picked);
+}
+function renderEvents(group){const relevant=(group==='limited_war'||group==='levant')?(D.events||[]).filter(e=>!['COLDWAR_SYR_WAR.13','COLDWAR_SYR_WAR.14'].includes(e.id)):group==='great_powers'?(D.events||[]).filter(e=>['COLDWAR_SYR_WAR.13','COLDWAR_SYR_WAR.14'].includes(e.id)):[];root.querySelector('#syr70-events').innerHTML=relevant.length?relevant.map(e=>`<details><summary>${esc(e.title)}</summary><p>${esc(e.trigger)}</p><ul>${e.options.map(o=>`<li>${esc(o.title)} — ${esc(o.effect)}${o.conditions?`<p>Requires: ${esc(o.conditions)}</p>`:''}</li>`).join('')}</ul></details>`).join(''):'<p>Specified war events appear in the Golan campaign and Levant sections; native aid requests appear under Great Powers.</p>';}
+function update(){
+ sel.value=current;const g=gm.get(current),ns=D.nodes.filter(n=>n.group===current);
+ caption.textContent=`${g.label} · ${ns.length} focuses${g.slot!==null?' · MD subparty '+g.slot:''}${g.leader?' · matching office-holder required':''}`;
+ const ds=D.decisions.filter(d=>ns.some(n=>(d.unlock_any||[d.unlock]).includes(n.id)));
+ decs.innerHTML=ds.length?ds.map(d=>{
+  const ideas=(d.temporary_idea_ids||[]).map(id=>D.temporary_ideas.find(t=>t.id===id)).filter(Boolean);
+  const costs=ideas.map(t=>`<p>${esc(t.label)} · ${t.duration_days} days</p><ul>${Object.entries(t.modifiers).map(([k,v])=>`<li>${esc(k)}: ${v>0?'+':''}${k==='interest_rate_multiplier_modifier'?v:+(v*100).toFixed(3)}${k==='interest_rate_multiplier_modifier'?' percentage points':'%'}</li>`).join('')}</ul>`).join('');
+  return `<details><summary>${esc(d.label)} · ${d.political_power_cost} PP</summary><p>${d.duration_days} days · ${d.repeatable?'Repeatable; '+d.cooldown_days+' day cooldown':'Once only'}</p><p>${esc(d.effects)}</p><p>${esc(d.note)}</p>${d.conditions?`<pre>${esc(d.conditions)}</pre>`:''}${d.cost_formula?`<p>Cost: ${esc(d.cost_formula)}</p>`:''}${d.payment_phase?`<p>Payment: ${esc(d.payment_phase)}</p>`:''}${costs}${d.cost_code?`<details><summary>Native cost mapping — at the stated payment phase</summary><pre>${esc(d.cost_code)}</pre></details>`:''}${d.completion_reward_code?`<details><summary>Proposed decision or offer handoff</summary><pre>${esc(d.completion_reward_code)}</pre></details>`:''}</details>`;
+ }).join(''):'<p>Internal policy forks are choices within the tree. Shared diplomatic, budget and crisis decisions appear in their national sections.</p>';
+ show(by.get(picked)?.group===current?by.get(picked):ns[0]);
+}
+function overview(){mode='overview';caption.textContent=`${D.nodes.length} focuses · ${D.groups.length} sections · exact positions across the whole proposed tree`;fit(true);detail.innerHTML='<h3>Entire proposed tree</h3><p>Political programmes occupy the left; shared development and armed forces occupy the right; citizenship and regional diplomacy continue below. Choose a section for normal-scale titles and rewards.</p>';}
+function spirits(){mode='spirits';detail.innerHTML=D.starting_spirits.map(s=>`<article><h3>${esc(s.label)}</h3><p>${Object.entries(s.modifiers).map(([k,v])=>`${esc(k)}: ${v>0?'+':''}${+(v*100).toFixed(3)}%`).join(' · ')}</p><p>${esc(s.treatment)}</p></article>`).join('');}
+function contract(){mode='contract';detail.innerHTML='<h3>Government and leader programmes</h3>'+['access','refresh','one_time','policy_memory','focus_presentation','leader_roster','relations','excluded'].map(k=>`<p>${esc(D.contract[k])}</p>`).join('');}
+root.querySelector('#syr70-count').textContent=`${D.nodes.length} focuses · ${D.decisions.length} decisions · ${(D.events||[]).length} new events · ${D.starting_spirits.length} starting spirits`;
+root.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;if(b.dataset.id){const n=by.get(b.dataset.id);current=n.group;mode='branch';update();show(n);}else if(b.id==='syr70-all')overview();else if(b.id==='syr70-home'){current='opening';mode='branch';update();fit();}else if(b.id==='syr70-minus')zoom(1/1.25);else if(b.id==='syr70-plus')zoom(1.25);else if(b.id==='syr70-spirits')spirits();else if(b.id==='syr70-contract')contract();remember();});
+sel.addEventListener('change',()=>{current=sel.value;picked='';mode='branch';update();fit();remember();});
+view.addEventListener('wheel',ev=>{ev.preventDefault();const r=view.getBoundingClientRect();zoom(ev.deltaY<0?1.1:1/1.1,ev.clientX-r.left,ev.clientY-r.top);remember();},{passive:false});
+view.addEventListener('pointerdown',ev=>{if(ev.target.closest('button')||ev.button!==0)return;drag={x:ev.clientX,y:ev.clientY,cx:cam.x,cy:cam.y};view.setPointerCapture(ev.pointerId);});
+view.addEventListener('pointermove',ev=>{if(drag){cam.x=drag.cx+ev.clientX-drag.x;cam.y=drag.cy+ev.clientY-drag.y;paint();}});view.addEventListener('pointerup',()=>{drag=null;remember();});view.addEventListener('pointercancel',()=>{drag=null;});
+world.addEventListener('focusin',ev=>{const n=by.get(ev.target.dataset.id);if(!n)return;const p=pos(n),x=p.x*cam.z+cam.x,y=p.y*cam.z+cam.y;if(x<0||x+165*cam.z>view.clientWidth||y<0||y+112*cam.z>view.clientHeight){cam.x=view.clientWidth/2-(p.x+82)*cam.z;cam.y=view.clientHeight/2-(p.y+56)*cam.z;paint();}});
+root.addEventListener('keydown',ev=>{if(/SELECT|INPUT|TEXTAREA/.test(ev.target.tagName))return;const step={ArrowLeft:[70,0],ArrowRight:[-70,0],ArrowUp:[0,70],ArrowDown:[0,-70]}[ev.key];if(step){ev.preventDefault();cam.x+=step[0];cam.y+=step[1];paint();}});
+let width=0;new ResizeObserver(()=>{if(Math.abs(view.clientWidth-width)>3){width=view.clientWidth;fit(mode==='overview');}}).observe(view);
+function restore(state){const s=state?.privateContent;if(s?.version===2&&gm.has(s.current)){current=s.current;picked=by.has(s.picked)?s.picked:'';mode=s.mode;update();if(mode==='overview')overview();if(mode==='spirits')spirits();if(mode==='contract')contract();if(s.cam&&[s.cam.x,s.cam.y,s.cam.z].every(Number.isFinite)){cam=s.cam;paint();}else fit();}else{update();fit();}}
+window.addEventListener('openai:set_globals',ev=>{if(ev.detail?.globals?.widgetState)restore(ev.detail.globals.widgetState);});restore(window.openai?.widgetState);
+})();
+</script>

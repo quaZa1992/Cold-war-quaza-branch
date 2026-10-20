@@ -90,4 +90,4 @@ replace_path = "common/doctrines/tracks"
 
 picture="thumbnail.png"
 replace_path="common/bookmarks"
-path="mod/mdcoldwar"
+path="mod/mdcoldwar-main"
