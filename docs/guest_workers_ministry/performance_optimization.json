@@ -1,0 +1,90 @@
+{
+  "project": "IMPERIA CW — Cold War",
+  "date": "2026-10-20",
+  "scope": "Implemented MP-oriented guest-worker optimizations; native engine and networking not benchmarked.",
+  "changes": [
+    "Seven-day country-local partner discovery register reused on tab switches; explicit refresh available once per game day",
+    "Validated two-variable last-origin lookup cache, safe after ledger clearing or rebuilding; no country/state matrix",
+    "One origin selection refresh instead of two when the selected origin is already valid",
+    "Inactive countries skip hidden Ministry display preparation; actual budget calculations remain unchanged"
+  ],
+  "preserved": [
+    "Live eligibility, payment and physical population revalidation on request/acceptance",
+    "All recruitment tiers, financial rates, programme costs, cooldowns and sender consent",
+    "Deterministic country-local flags and caches; no view-dependent simulation branches or added on-actions"
+  ],
+  "checks": {
+    "ministry_transaction_tests": 20,
+    "guest_worker_checks": 7745,
+    "diaspora_checks": 583,
+    "all_passed": true,
+    "byte_idempotent_generator": true,
+    "encoding_and_markers": true
+  },
+  "comparison": [
+    {
+      "workload": "origin_lookup",
+      "metric": "origin_array_entries_read",
+      "before": 40000,
+      "after": 1600,
+      "reduction_percent": 96.0
+    },
+    {
+      "workload": "community_refresh",
+      "metric": "selection_calls",
+      "before": 80,
+      "after": 40,
+      "reduction_percent": 50.0
+    },
+    {
+      "workload": "recruitment_tab_reopening",
+      "metric": "global_country_scans",
+      "before": 800,
+      "after": 40,
+      "reduction_percent": 95.0
+    },
+    {
+      "workload": "recruitment_tab_reopening",
+      "metric": "country_candidates_visited",
+      "before": 80000,
+      "after": 4000,
+      "reduction_percent": 95.0
+    },
+    {
+      "workload": "inactive_budget_refresh",
+      "metric": "ministry_display_preparations",
+      "before": 3000,
+      "after": 0,
+      "reduction_percent": 100.0
+    }
+  ],
+  "baseline": "performance_before.json",
+  "optimized": "performance_after.json",
+  "limits": [
+    "Counts come from a strict AST executor and synthetic workloads, not CPU timings or native multiplayer",
+    "No FPS, day-tick-speed or player-count guarantee can be derived from these counts",
+    "Partner discovery can be up to seven game days old unless manually refreshed; every transaction still checks the current game state"
+  ],
+  "source_sha256": {
+    "interface\\mdcw_diaspora.gui": "524f491fc7e460ff27449fa40ea2a3ed6d6403d10404e55231f574b2617fabff",
+    "interface\\mdcw_diaspora.gfx": "a6579eaa00a754e00616e3093b09e2c0c1d6ddb4beb302bcbc3058927abcf325",
+    "common\\scripted_guis\\mdcw_diaspora_gui.txt": "68988db257711dd1351b614de421eee980091b52b522096fc695b0a431bc6881",
+    "common\\scripted_effects\\mdcw_diaspora_dashboard_effects.txt": "27363c540d2eae68f3614f50285eaf58d8ff8eba7bfba479e4aee85d4766b565",
+    "common\\scripted_effects\\mdcw_diaspora_recruitment_effects.txt": "03b7e1746484c777bfd082840260b31f7b8fff7d7f867662dfe18d5308cf1e37",
+    "common\\scripted_triggers\\mdcw_diaspora_dashboard_triggers.txt": "72469efa4c5f6a4c82294cb045b3b4cfe0c4abd70a33ae1d50f0a7945af1c11a",
+    "common\\scripted_localisation\\mdcw_diaspora_dashboard_localisation.txt": "0dd698074c5856f5ac2c185facf9c38183c37bcb110c65fc141bb02500c66b79",
+    "localisation\\english\\mdcw_diaspora_ui_l_english.yml": "c316b0e72394d280d40616bda5048192880796a3f1180c45bad142d2c0759e50",
+    "gfx\\interface\\guest_workers\\country.dds": "a6b6b6f8b92c6736bf71198cf65a0873eea8a23536cb62d7ac7365f6a7f07fc9",
+    "gfx\\interface\\guest_workers\\coverage.dds": "0664ec58d7ea48e313fd0932ea82667edaf3330f94596e86b5caabe20f5d7909",
+    "gfx\\interface\\guest_workers\\danger.dds": "a1d32cb2f8dd29c5178ffde8072ec42efa9e70a93ea7456cad9845861ab6ae74",
+    "gfx\\interface\\guest_workers\\dashboard.dds": "4344bf1c38d5a3a0533467b4783086aa772344c21d46c68f50a04d7ee31d71d8",
+    "gfx\\interface\\guest_workers\\medium.dds": "c8adcd41840db8a9a1290f57d164636fd7bbd004356dc1c0bdf19dffe2205db6",
+    "gfx\\interface\\guest_workers\\page.dds": "5d591b8378b7a26835b6f8e2367e002259232b146fdbe5632aa18345c68c8fe8",
+    "gfx\\interface\\guest_workers\\progress.dds": "9b88c0f962eeba0db88f4600fd511384d0e1495ca6742c8549649932ea408211",
+    "gfx\\interface\\guest_workers\\selection.dds": "948577f878d43e74b79f64b857889569ec9564f5e7d40fdb1419fc9d1af769ad",
+    "gfx\\interface\\guest_workers\\small.dds": "ef3f212cc5aa6cb42c2c174e350c28e5050454f19c4743582c7bd95586b83041",
+    "gfx\\interface\\guest_workers\\tab.dds": "3153e1837ea184316b76c6627d92ca92a8f5f9b5ab5023df946cf185772ca823",
+    "gfx\\interface\\guest_workers\\tab_selection.dds": "c57160364f56dd4a5d7f9b648fcfba2f0c32a8a6f9ad8bbbee239a7926cacb41",
+    "gfx\\interface\\guest_workers\\wide.dds": "9b18d6e0889a32b907c9694607cc971910c68ba9679930e159c7c27319281781"
+  }
+}

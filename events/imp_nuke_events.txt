@@ -1,0 +1,206 @@
+# IMPERIA CW — Cold War: Imperia nuke events — game content.
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+add_namespace = imp_nukes
+
+news_event = {
+	id = imp_nukes.1
+	picture = GFX_imp_first_nuke
+
+	title = imp_nukes.1.t
+	desc = imp_nukes.1.d
+	is_triggered_only = yes
+
+	option = {
+		trigger = {  }
+		name = imp_nukes.1.o1
+	}
+}
+
+news_event = {
+	id = imp_nukes.2
+	picture = GFX_imp_second_nuke
+
+	title = imp_nukes.2.t
+	desc = imp_nukes.2.d
+	is_triggered_only = yes
+
+	option = {
+		trigger = {  }
+		name = imp_nukes.2.o1
+	}
+}
+
+news_event = {
+	id = imp_nukes.3
+	picture = GFX_imp_first_crash
+
+	title = imp_nukes.3.t
+	desc = imp_nukes.3.d
+	is_triggered_only = yes
+
+	option = {
+		trigger = {  }
+		name = imp_nukes.3.o1
+
+		add_ideas = recession
+		add_timed_idea = { idea = imp_nuke_financial_distress days = 365 }
+	}
+}
+
+news_event = {
+	id = imp_nukes.4
+	picture = GFX_imp_second_crash
+
+	title = imp_nukes.4.t
+	desc = imp_nukes.4.d
+	is_triggered_only = yes
+
+	option = {
+		trigger = {  }
+		name = imp_nukes.4.o1
+
+		add_ideas = depression
+		add_timed_idea = { idea = imp_nuke_financial_collapse days = 730 }
+
+		hidden_effect = {
+			remove_ideas = imp_nuke_financial_distress
+		}
+	}
+}
+
+# Radiation Spreading
+country_event = {
+	id = imp_nukes.10
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		event_target:imp_contam_spreader = {
+			every_neighbor_state = {
+				
+				limit = { 
+					OR = {
+						NOT = { has_dynamic_modifier = { modifier = nuclear_contamination } }
+						NOT = { has_dynamic_modifier = { modifier = nuclear_devastation } }
+					}
+				}
+
+				random = {
+					chance = 60
+
+					save_event_target_as = imp_contam_spreader
+					ROOT = { country_event = { id = imp_nukes.11 days = 5 } }
+					add_dynamic_modifier = {
+						modifier = nuclear_contamination
+						days = 365
+					}
+
+					CONTROLLER = { 
+						if = {
+							limit = { NOT = { has_country_flag = contimation_warning } }
+							country_event = { id = imp_nukes.13 }
+							set_country_flag = { flag = contimation_warning days = 1 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Radiation Spreading Second Cycle
+country_event = {
+	id = imp_nukes.11
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		event_target:imp_contam_spreader = {
+			every_neighbor_state = {
+
+				limit = { 
+					OR = {
+						NOT = { has_dynamic_modifier = { modifier = nuclear_contamination } }
+						NOT = { has_dynamic_modifier = { modifier = nuclear_devastation } }
+					}
+				}
+				random = {
+					chance = 30
+
+					save_event_target_as = imp_contam_spreader
+					ROOT = { country_event = { id = imp_nukes.12 days = 5 } }
+					add_dynamic_modifier = {
+						modifier = nuclear_contamination
+						days = 365
+					}
+
+					CONTROLLER = { 
+						if = {
+							limit = { NOT = { has_country_flag = contimation_warning } }
+							country_event = { id = imp_nukes.13 }
+							set_country_flag = { flag = contimation_warning days = 1 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Radiation Spreading Third Cycle
+country_event = {
+	id = imp_nukes.12
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	option = {
+		event_target:imp_contam_spreader = {
+			every_neighbor_state = {
+
+				limit = { 
+					OR = {
+						NOT = { has_dynamic_modifier = { modifier = nuclear_contamination } }
+						NOT = { has_dynamic_modifier = { modifier = nuclear_devastation } }
+					}
+				}
+				random = {
+					chance = 10	
+					
+					add_dynamic_modifier = {
+						modifier = nuclear_contamination
+						days = 365
+					}
+
+					CONTROLLER = { 
+						if = {
+							limit = { NOT = { has_country_flag = contimation_warning } }
+							country_event = { id = imp_nukes.13 }
+							set_country_flag = { flag = contimation_warning days = 1 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Radiation has spread into our nation!
+country_event = {
+	id = imp_nukes.13
+	picture = GFX_imp_radiation
+	is_triggered_only = yes
+	
+	title = imp_nukes.13.t
+	desc = imp_nukes.13.d
+
+	option = {
+		name = imp_nukes.13.o1
+		add_timed_idea = { idea = imp_downwind_fallout days = 720 }
+	}
+}

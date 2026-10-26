@@ -1,0 +1,13 @@
+# Project preferences
+
+- New player-facing game text and localisation must be written in English only. Do not generate German or other translations unless the user explicitly requests them.
+- Player-facing localisation must suit the Cold War multiplayer RP setting and native MD presentation: use political and institutional language in names and descriptions, with concise numeric costs, requirements and consequences in effect tooltips. Keep implementation terms, debug explanations and code workflow out of normal player-facing prose.
+- Conversation with the user may remain in German.
+- Research and record historical precedents when adding or substantially changing national policies and selectable spirits. Use those examples to justify the benefits, costs and institutional trade-offs.
+- Mark new custom code files and modified custom code blocks with a preceding comment such as `# IMPERIA CW — Cold War: <feature>`. In shared main-MD files, mark only the custom additions. Preserve the required script/localisation encoding.
+- In agreement events, show costs and rewards as concrete numeric option effects in native MD style. Keep the description to a short explanation rather than repeating the effects in prose.
+- Recurring monetary costs must use weekly MD units in runtime code and player-facing text. Convert source budgets before integration. Scripted budget literals must have at most five fractional digits; longer literals can be misread by the native fixed-point parser.
+- Uranium starts with zero raw production and no built uranium mines. Surveyed deposits unlock paid development; they must not grant automatic state-history production. Audit complete donor GUI blocks, including adjacent positions, slot limits and entry widths; keyword-matched diff hunks alone do not establish a complete feature port.
+- National-focus tooltips must hide internal scenario/date/country-routing checks and redundant predecessor receipts while retaining their real runtime guards. Show meaningful gameplay requirements, such as membership spirits, clearly.
+- Organisation-specific focuses, including their entry focus, require the actual membership spirit in both availability and reward guards. Keep any necessary founding/admission agreement reachable before that member-only branch.
+- Encoding: script files (`common/**/*.txt`, `events/*.txt`, `interface/*.gui|*.gfx`) must be saved as UTF-8 WITHOUT BOM. A BOM breaks the first statement of the file and, in `00_money_system.txt`, every inline math expression (the whole economy computes as 0). Only localisation `.yml` files use UTF-8 with BOM.

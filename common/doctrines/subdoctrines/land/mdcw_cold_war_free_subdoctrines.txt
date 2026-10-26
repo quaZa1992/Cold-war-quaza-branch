@@ -1,0 +1,295 @@
+# IMPERIA CW — Cold War: free subdoctrines — game content.
+# COLDWAR | Freely selectable Cold War land subdoctrines (MD pattern: available to everyone, only blocks itself).
+# ColdWar/Imperia hooks: MD money system (army personnel and equipment upkeep),
+# conscription laws (common/ideas/AA_law_military_ideas.txt), Cold War public support (Broadcast Jamming).
+
+#Operational Theory
+mdcw_maskirovka = {
+	track = operational_theory
+	name = SUBDOCTRINE_MDCW_MASKIROVKA
+	description = SUBDOCTRINE_MDCW_MASKIROVKA_DESC
+	icon = GFX_doctrine_mdcw_maskirovka
+
+	xp_cost = 75
+	xp_type = army
+
+	available = {
+		NOT = { has_doctrine = mdcw_maskirovka }
+	}
+
+	ai_will_do = {
+		base = 2
+		modifier = {
+			add = 5
+			has_government = communism
+		}
+		modifier = {
+			add = 10
+			has_doctrine = mdcw_deep_operation
+		}
+		modifier = {
+			add = 30
+			original_tag = SOV
+		}
+	}
+
+	# EFFECTS
+	army_intel_to_others = -25
+	decryption_factor = 0.1
+	naval_invasion_prep_speed = 0.15
+
+	# price: some confusion in our own ranks
+	initiative_factor = -0.05
+
+	rewards = {
+		camouflage_discipline = {
+			cas_damage_reduction = 0.15
+			enemy_army_bonus_air_superiority_factor = -0.15
+			army_defence_factor = 0.05
+		}
+		dummy_formations = {
+			army_intel_to_others = -10
+			army_defence_factor = 0.05
+			army_core_defence_factor = 0.05
+		}
+		radio_deception = {
+			encryption_factor = 0.15
+			initiative_factor = 0.05
+		}
+		concealed_concentration = {
+			breakthrough_factor = 0.15
+			land_night_attack = 0.1
+			army_attack_speed_factor = 0.1
+		}
+		amphibious_deception = {
+			naval_invasion_penalty = -0.25
+			naval_invasion_planning_bonus_speed = 0.2
+			amphibious_invasion = 0.15
+			breakthrough_factor = 0.05
+		}
+	}
+}
+
+#Training
+mdcw_cadre_reserve_system = {
+	track = training
+	name = SUBDOCTRINE_MDCW_CADRE_RESERVE_SYSTEM
+	description = SUBDOCTRINE_MDCW_CADRE_RESERVE_SYSTEM_DESC
+	icon = GFX_doctrine_mdcw_cadre_reserve_system
+
+	xp_cost = 75
+	xp_type = army
+
+	available = {
+		NOT = { has_doctrine = mdcw_cadre_reserve_system }
+	}
+
+	ai_will_do = {
+		base = 2
+		modifier = {
+			add = 5
+			has_government = communism
+		}
+		modifier = {
+			add = 5
+			OR = {
+				has_idea = partial_draft_army
+				has_idea = draft_army
+			}
+		}
+		modifier = {
+			add = 20
+			OR = {
+				original_tag = SOV
+				original_tag = ISR
+				original_tag = SWE
+				original_tag = SWI
+				original_tag = FIN
+			}
+		}
+	}
+
+	# EFFECTS
+	army_personnel_cost_multiplier_modifier = -0.1
+	recruitable_population_factor = 0.05
+	land_reinforce_rate = 0.05
+	experience_loss_factor = 0.05
+	army_org_factor = -0.03
+
+	rewards = {
+		skeleton_divisions = {
+			training_time_army_factor = -0.2
+			land_reinforce_rate = 0.05
+			army_strength_factor = 0.05
+		}
+		military_commissariats = {
+			recruitable_population_factor = 0.1
+			mobilization_speed = 0.15
+			army_core_defence_factor = 0.1
+		}
+		refresher_training = {
+			experience_loss_factor = -0.1
+			army_org_factor = 0.05
+			army_morale_factor = 0.05
+			army_org_regain = 0.05
+		}
+		mobilisation_depots = {
+			land_reinforce_rate = 0.1
+			army_strength_factor = 0.05
+			army_defence_factor = 0.05
+		}
+		mobilisation_exercises = {
+			mobilization_speed = 0.15
+			minimum_training_level = -0.15
+			army_core_attack_factor = 0.05
+			army_defence_factor = 0.03
+		}
+	}
+}
+
+mdcw_all_volunteer_force = {
+	track = training
+	name = SUBDOCTRINE_MDCW_ALL_VOLUNTEER_FORCE
+	description = SUBDOCTRINE_MDCW_ALL_VOLUNTEER_FORCE_DESC
+	icon = GFX_doctrine_mdcw_all_volunteer_force
+
+	xp_cost = 75
+	xp_type = army
+
+	# COLDWAR: no conscription while held - Partial Draft and Mandatory Service check this doctrine in their available block
+	available = {
+		NOT = { has_doctrine = mdcw_all_volunteer_force }
+		NOT = { has_idea = partial_draft_army }
+		NOT = { has_idea = draft_army }
+	}
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 5
+			has_government = democratic
+			has_idea = volunteer_army
+		}
+		modifier = {
+			add = 30
+			has_idea = volunteer_army
+			OR = {
+				original_tag = USA
+				original_tag = ENG
+			}
+		}
+		modifier = {
+			factor = 0
+			has_war = yes
+		}
+		modifier = {
+			factor = 0.25
+			threat > 0.5
+		}
+	}
+
+	# EFFECTS
+	experience_gain_army_unit_factor = 0.15
+	army_org_factor = 0.05
+	experience_loss_factor = -0.1
+	army_personnel_cost_multiplier_modifier = 0.1
+
+	rewards = {
+		career_ncos = {
+			army_morale_factor = 0.1
+			army_org_regain = 0.05
+		}
+		long_service_contracts = {
+			experience_loss_factor = -0.15
+			army_org_factor = 0.05
+			army_strength_factor = 0.05
+		}
+		combat_training_centres = {
+			experience_gain_army_unit_factor = 0.1
+			army_attack_factor = 0.05
+			coordination_bonus = 0.05
+		}
+		quality_over_quantity = {
+			army_attack_factor = 0.05
+			army_defence_factor = 0.05
+		}
+		rapid_deployment_forces = {
+			army_speed_factor = 0.05
+			org_loss_when_moving = -0.05
+			army_attack_speed_factor = 0.1
+			initiative_factor = 0.1
+			breakthrough_factor = 0.05
+		}
+	}
+}
+
+#Technology
+mdcw_radio_electronic_combat = {
+	track = technology
+	name = SUBDOCTRINE_MDCW_RADIO_ELECTRONIC_COMBAT
+	description = SUBDOCTRINE_MDCW_RADIO_ELECTRONIC_COMBAT_DESC
+	icon = GFX_doctrine_mdcw_radio_electronic_combat
+
+	xp_cost = 75
+	xp_type = army
+
+	available = {
+		NOT = { has_doctrine = mdcw_radio_electronic_combat }
+	}
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 5
+			num_of_military_factories > 20
+		}
+		modifier = {
+			add = 20
+			OR = {
+				original_tag = SOV
+				original_tag = ISR
+			}
+		}
+		modifier = {
+			factor = 0.5
+			is_non_power = yes
+		}
+	}
+
+	# EFFECTS
+	decryption_factor = 0.1
+	encryption_factor = 0.1
+	intel_from_combat_factor = 0.1
+	equipment_cost_multiplier_modifier = 0.05
+
+	rewards = {
+		direction_finding = {
+			recon_factor = 0.15
+			army_artillery_attack_factor = 0.1
+			coordination_bonus = 0.05
+		}
+		command_net_jamming = {
+			initiative_factor = 0.1
+			breakthrough_factor = 0.05
+			army_attack_factor = 0.05
+		}
+		secure_field_communications = {
+			encryption_factor = 0.05
+			coordination_bonus = 0.1
+			planning_speed = 0.1
+			army_defence_factor = 0.05
+		}
+		sigint_battalions = {
+			decryption_factor = 0.05
+			intel_from_combat_factor = 0.05
+			max_planning_factor = 0.15
+			planning_speed = 0.1
+			initiative_factor = 0.05
+		}
+		broadcast_jamming = {
+			mdcw_cw_ideological_defence = 0.1 # COLDWAR: weakens foreign Public Political Support campaigns against us
+			army_morale_factor = 0.1
+			army_org_factor = 0.03
+		}
+	}
+}

@@ -1,0 +1,79 @@
+# IMPERIA CW — Cold War: IMP 1970 fossil starting capacity — scripted effects.
+# Historical1970 installed capacity sizing. Native2000 initialization remains unchanged.
+# Called inside IMP_1970_apply_starting_gdp_profile after historical targets are set,
+# before its first update_state_variables and single final GDP offset.
+# Native STARTING_FUEL_RATIO=1 is retained. No fuel/stockpile/treasury grant occurs.
+IMP_1970_probe_starting_power_demand = {
+	# Refresh native building counts, state output, employment and GDP first.
+	update_state_variables = yes
+	set_variable = { imp_1970_power_saved_gdpc = gdp_per_capita }
+	if = {
+		limit = { has_variable = imp_1970_target_gdp check_variable = { population_total_m > 0 } }
+		set_variable = { gdp_per_capita = { value = imp_1970_target_gdp multiply = 3.4 divide = population_total_m clamp = { min = 0 max = 100000 } } } # COLDWAR internal 2000 prices
+	}
+	# Pure demand/generation math; no weekly stock transaction or treasury update.
+	energy_calc_consumption = yes
+	energy_calc_generation = yes
+	set_variable = { imp_1970_fossil_start_gap = { value = temp_total_energy_use subtract = energy_sum } }
+	set_variable = { gdp_per_capita = imp_1970_power_saved_gdpc }
+	clear_variable = imp_1970_power_saved_gdpc
+}
+
+IMP_1970_setup_demand_fossil_capacity = {
+	if = {
+		limit = { IMP_is_1970_scenario = yes NOT = { has_country_flag = imp_1970_fossil_capacity_initialized } }
+		set_variable = { imp_1970_fossil_start_iterations = 0 }
+		set_variable = { imp_1970_fossil_start_continue = 1 }
+		IMP_1970_probe_starting_power_demand = yes
+		while_loop_effect = {
+			limit = {
+				check_variable = { imp_1970_fossil_start_continue = 1 }
+				check_variable = { imp_1970_fossil_start_iterations < 25020 }
+				any_owned_state = { is_controlled_by = PREV free_building_slots = { building = fossil_powerplant size > 0 } }
+				OR = {
+					# Old helper guaranteed at least one eligible plant, even for tiny countries.
+					check_variable = { number_of_fossil_pps < 1 }
+					AND = {
+						check_variable = { imp_1970_fossil_start_gap > 0 }
+						check_variable = { fuel_k > 0 }
+						NOT = { has_country_flag = disable_fossil_fuel_power_plant_flag }
+					}
+				}
+			}
+			set_variable = { imp_1970_fossil_previous_count = number_of_fossil_pps }
+			set_variable = { imp_1970_fossil_previous_gap = imp_1970_fossil_start_gap }
+			random_owned_controlled_state = {
+				limit = { free_building_slots = { building = fossil_powerplant size > 0 } }
+				add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
+			}
+			add_to_variable = { imp_1970_fossil_start_iterations = 1 }
+			IMP_1970_probe_starting_power_demand = yes
+			if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { number_of_fossil_pps > imp_1970_fossil_previous_count } }
+						AND = {
+							check_variable = { imp_1970_fossil_start_gap > 0 }
+							NOT = { check_variable = { imp_1970_fossil_start_gap < imp_1970_fossil_previous_gap } }
+						}
+					}
+				}
+				set_variable = { imp_1970_fossil_start_continue = 0 }
+				set_country_flag = imp_1970_fossil_start_no_progress
+			}
+		}
+		if = {
+			limit = { check_variable = { imp_1970_fossil_start_gap > 0 } }
+			set_country_flag = imp_1970_fossil_start_demand_unmet
+			if = { limit = { check_variable = { fuel_k = 0 } } set_country_flag = imp_1970_fossil_start_no_fuel }
+			if = { limit = { NOT = { any_owned_state = { is_controlled_by = PREV free_building_slots = { building = fossil_powerplant size > 0 } } } } set_country_flag = imp_1970_fossil_start_no_free_capacity }
+			if = { limit = { has_country_flag = disable_fossil_fuel_power_plant_flag } set_country_flag = imp_1970_fossil_start_disabled }
+			if = { limit = { check_variable = { imp_1970_fossil_start_iterations = 25020 } } set_country_flag = imp_1970_fossil_start_iteration_guard }
+		}
+		clear_variable = imp_1970_fossil_previous_count
+		clear_variable = imp_1970_fossil_previous_gap
+		clear_variable = imp_1970_fossil_start_continue
+		# Preserve iteration count, projected final gap and reason flags for Engine1.19 QA.
+		set_country_flag = imp_1970_fossil_capacity_initialized
+	}
+}

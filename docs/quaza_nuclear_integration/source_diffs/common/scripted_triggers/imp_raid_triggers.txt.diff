@@ -1,0 +1,134 @@
+@@ -0,0 +1,132 @@
+
++# Imperia: PLAYERS may only launch raids while at war with the target
++# (or when MD's "promised retaliation" flag is set). Replaces MD's
++# raid_can_launch for the raid types Imperia restricted.
++# The AI keeps MD's original rule: it may also launch in peacetime
++# if it has more political power than the raid's threshold.
++imp_raid_can_launch_war_only = {
++	set_temp_variable = { raid_required_pp = { value = cost  multiply = { value = 1  add = modifier@raid_cost_factor } } }
++	OR = {
++		has_war_with = FROM
++		hidden_trigger = { has_country_flag = promised_retaliation_against@FROM }
++		AND = {
++			is_ai = yes
++			has_political_power > raid_required_pp
++		}
++	}
++}
++
++#########################################################################################
++# Imperia: missile / cruise missile strikes are possible in peacetime.
++# MD's raid_available_grey_zone / raid_target_eligible demand that the raider is at war
++# with SOMEONE (raid_war_or_doctrine_bypass). These versions drop that requirement; the
++# political-power cost (raid_can_launch), hostility (opinion < -50 via show_target) and
++# intervention-doctrine reach still apply.
++#########################################################################################
++imp_raid_missile_target_eligible = {
++	raid_ai_target_relevant = yes
++}
++
++imp_raid_missile_grey_zone = {
++	raid_ai_target_relevant = yes
++	raid_target_eligible_from = yes
++	set_temp_variable = { cost = 99 }
++	raid_can_launch = yes
++}
++
++#########################################################################################
++# Imperia: "statesman" AI for strikes without a war (raid scope: THIS/ROOT = raider,
++# FROM = target country). Used as factor modifiers in the ai_will_do of the missile raids.
++#########################################################################################
++
++# A real reason to use force: war, revenge, an enemy preparing war against us, or an
++# attack on our faction / subjects / guaranteed countries
++imp_ai_raid_casus_belli = {
++	OR = {
++		has_war_with = FROM
++		has_country_flag = promised_retaliation_against@FROM
++		has_wargoal_against = FROM
++		FROM = {
++			OR = {
++				has_wargoal_against = ROOT
++				is_justifying_wargoal_against = ROOT
++			}
++		}
++		FROM = {
++			has_war = yes
++			any_enemy_country = {
++				OR = {
++					is_in_faction_with = ROOT
++					is_subject_of = ROOT
++					ROOT = { has_guaranteed = PREV }
++				}
++			}
++		}
++	}
++}
++
++imp_ai_raid_peace_no_casus_belli = {
++	NOT = { has_war_with = FROM }
++	NOT = { imp_ai_raid_casus_belli = yes }
++}
++
++# Counter-proliferation (Osirak 1981 / Al Kibar 2007): a hostile rival without nuclear
++# weapons runs an enrichment programme
++imp_ai_raid_counter_proliferation = {
++	is_in_array = { array = potential_and_current_enemies value = FROM }
++	has_opinion = { target = FROM value < -75 }
++	NOT = { has_government = FROM }
++	NOT = { imp_ai_raid_target_nuclear_power = yes }
++}
++
++# Civilian economy (factories, fuel, power, infrastructure, canals) is only hit after an
++# attack on us or our partners, never pre-emptively
++imp_ai_raid_peace_civilian_target_blocked = {
++	NOT = { has_war_with = FROM }
++	NOT = { has_country_flag = promised_retaliation_against@FROM }
++	NOT = {
++		FROM = {
++			has_war = yes
++			any_enemy_country = {
++				OR = {
++					tag = ROOT
++					is_in_faction_with = ROOT
++					is_subject_of = ROOT
++				}
++			}
++		}
++	}
++}
++
++imp_ai_raid_target_nuclear_power = {
++	FROM = {
++		OR = {
++			has_equipment = { nuclear_missile_equipment > 0 }
++			has_equipment = { nuclear_ballistic_missile_equipment > 0 }
++		}
++	}
++}
++
++imp_ai_raid_peace_nuclear_deterrence = {
++	NOT = { has_war_with = FROM }
++	NOT = { has_country_flag = promised_retaliation_against@FROM }
++	imp_ai_raid_target_nuclear_power = yes
++}
++
++imp_ai_raid_peace_nuclear_retaliation = {
++	NOT = { has_war_with = FROM }
++	has_country_flag = promised_retaliation_against@FROM
++	imp_ai_raid_target_nuclear_power = yes
++}
++
++# No public backing, unstable, or busy losing another war
++imp_ai_raid_peace_domestic_block = {
++	NOT = { has_war_with = FROM }
++	OR = {
++		has_war_support < 0.25
++		has_stability < 0.30
++		AND = {
++			has_war = yes
++			surrender_progress > 0.15
++		}
++	}
++}

@@ -1,0 +1,2789 @@
+{
+ "meta": {
+  "source": "Millennium Dawn 2000 Russia tree, common/national_focus/05_russia.txt (806 foci), parsed 2026-10-16",
+  "money_scale": {
+   "md_flat_price_bn": {
+    "industrial_complex": 7.5,
+    "arms_factory": 7.5,
+    "dockyard": 7.5,
+    "infrastructure": 3.5,
+    "office(+powerplant)": 12,
+    "nuclear_reactor": 9,
+    "enrichment_facility": 15.5,
+    "microchip_plant": 10.5,
+    "energy_infrastructure": 6.5,
+    "industrial_infrastructure": 6.5,
+    "renewable_energy_infra": 8.5,
+    "synthetic_refinery": 6,
+    "composite_plant": 8.5,
+    "agriculture_district": 3.75,
+    "air_base": 2.5,
+    "radar_station": 1.75,
+    "anti_air": 3.25,
+    "internet_station": 3,
+    "fuel_silo": 3,
+    "rail_terminal": 2.5,
+    "fossil_powerplant": 3.25
+   },
+   "conversion": "1 factory equivalent (7.5 bn) = 0.008 GDP share (COLDWAR_SOV/EGY design scale). MD-relative price would be ~0.0035-0.005 of MD Russia 2000 GDP (estimate, not verified in game).",
+   "dsl_build_cost": {
+    "one_random_industrial_complex": 0.008,
+    "one_random_arms_factory": 0.008,
+    "one_random_dockyard": 0.008,
+    "one_random_infrastructure": 0.004,
+    "one_office_construction": 0.013,
+    "one_random_nuclear_reactor": 0.0095,
+    "one_random_microchip_plant": 0.011,
+    "one_random_energy_infrastructure": 0.007,
+    "one_random_industrial_infrastructure": 0.007,
+    "one_random_renewable_energy_infra": 0.009,
+    "one_random_agriculture_district": 0.004,
+    "one_air_base": 0.003,
+    "one_radar_station": 0.002,
+    "one_anti_air": 0.0035,
+    "one_random_network_infrastructure": 0.003,
+    "one_fuel_reserve": 0.003,
+    "two_*": "2x one_*",
+    "three_*": "3x one_*"
+   },
+   "md_markup_when_building_directly": "MD pays 1.0-1.15x the helper price when it places buildings itself (IC 8.5, infra 3.5, arms 7.5-10, dockyard 5-7.5 per level); arms factories with an equipment-cost bonus cost 10-20."
+  },
+  "reward_points": {
+   "note": "COLDWAR rule, calibrated so that one typical MD line = 1 point (MD cost-3 median focus = 3 lines ~ 3 points). MD itself barely scales reward with cost; we require points ~= cost. Reference implementation: score(lst) in the audit scratch script, formulas below.",
+   "pp": "v/50",
+   "stab": "v/0.02",
+   "ws": "v/0.03",
+   "dyn_or_prog_line": "good direction: |v| / md_typical[modifier] (default 0.03), max 3 per line; cost direction: -1; ideology drift lines: 0.5",
+   "md_typical_line_size": {
+    "agricolture_productivity_modifier": 0.03,
+    "agriculture_tax_modifier": 0.01,
+    "agriculture_workers_modifier": 0.02,
+    "amphibious_invasion": 0.05,
+    "army_core_defence_factor": 0.03,
+    "army_org_factor": 0.03,
+    "army_speed_factor": 0.03,
+    "bureaucracy_cost_multiplier_modifier": 0.07,
+    "communism_drift": 0.03,
+    "conscription_factor": 0.02,
+    "consumer_goods_factor": 0.02,
+    "corporate_tax_income_multiplier_modifier": 0.01,
+    "corruption_cost_factor": 0.035,
+    "democratic_drift": 0.02,
+    "drift_defence_factor": 0.05,
+    "economic_cycles_cost_factor": 0.01,
+    "education_cost_multiplier_modifier": 0.02,
+    "encryption_factor": 0.1,
+    "energy_gain_multiplier": 0.03,
+    "energy_use_multiplier": 0.03,
+    "fascism_drift": 0.02,
+    "foreign_influence_defense_modifier": 0.05,
+    "foreign_subversive_activites": 0.15,
+    "gdp_from_resource_sector_modifier": 0.01,
+    "health_cost_multiplier_modifier": 0.12,
+    "industrial_capacity_dockyard": 0.04,
+    "intelligence_agency_defense": 0.1,
+    "mobilization_speed": 0.05,
+    "monthly_population": 0.04,
+    "nationalist_drift": 0.01,
+    "naval_accidents_chance": 0.02,
+    "naval_mine_hit_chance": 0.02,
+    "naval_speed_factor": 0.04,
+    "navy_anti_air_attack_factor": 0.05,
+    "navy_max_range_factor": 0.04,
+    "neutrality_drift": 0.03,
+    "nuclear_energy_generation_modifier": 0.01,
+    "nuclear_fuel_consumption_modifier": 0.01,
+    "office_park_income_tax_modifier": 0.035,
+    "oil_export_multiplier_modifier": 0.02,
+    "personnel_cost_multiplier_modifier": 0.05,
+    "planning_speed": 0.05,
+    "police_cost_multiplier_modifier": 0.02,
+    "political_power_factor": 0.05,
+    "population_tax_income_multiplier_modifier": 0.05,
+    "positioning": 0.04,
+    "production_speed_air_base_factor": 0.07,
+    "production_speed_arms_factory_factor": 0.05,
+    "production_speed_buildings_factor": 0.03,
+    "production_speed_internet_station_factor": 0.02,
+    "production_speed_nuclear_reactor_factor": 0.05,
+    "repair_speed_nuclear_reactor_factor": 0.05,
+    "research_speed_factor": 0.02,
+    "return_on_investment_modifier": 0.02,
+    "rocket_attack_factor": 0.1,
+    "root_out_resistance_effectiveness_factor": 0.125,
+    "send_volunteer_divisions_required": 0.075,
+    "send_volunteer_factor": 0.075,
+    "special_forces_training_time_factor": 0.1,
+    "stability_factor": 0.02,
+    "tax_gain_multiplier_modifier": 0.045,
+    "war_support_factor": 0.02
+   },
+   "tech": "3*b*n (one add_tech_bonus; extra categories in the same bonus add nothing)",
+   "build_net_points_per_building": {
+    "industrial_complex/arms_factory/dockyard": 1,
+    "office": 1.5,
+    "microchip_plant": 1.4,
+    "nuclear_reactor": 1.2,
+    "renewable": 1.1,
+    "energy/industrial_infrastructure": 0.9,
+    "infrastructure/agriculture_district": 0.5,
+    "air_base/anti_air/fuel_silo/internet_station": 0.4,
+    "radar": 0.25,
+    "note": "price already netted out"
+   },
+   "fac": "v/10",
+   "party": "v/0.04",
+   "outlook": "v/0.06",
+   "xp": "v/25",
+   "infl": "v/3 per tag",
+   "coh": "v/2",
+   "gdp_gain": "v/0.005",
+   "gdp": "-v/0.005",
+   "decision_unlock": 1,
+   "idea_permanent_or_swap_step": 2,
+   "timed_idea": 1.5,
+   "corr": "decrease +1, increase -1",
+   "law_step": 0.5,
+   "sp": "v/0.1",
+   "mastery": "v/25",
+   "resource_custom": 1,
+   "offer": "1.5 (expected value; no advance reward)",
+   "zero": [
+    "bop",
+    "tension",
+    "rp",
+    "flag",
+    "event",
+    "op"
+   ],
+   "budget": {
+    "2": [
+     2,
+     3.5
+    ],
+    "3": [
+     3,
+     4
+    ],
+    "5": [
+     5,
+     6
+    ],
+    "7": [
+     7,
+     9
+    ],
+    "10": [
+     10,
+     13
+    ]
+   }
+  }
+ },
+ "md_stats": {
+  "foci": 806,
+  "costs": {
+   "1": 17,
+   "2": 76,
+   "3": 314,
+   "4": 8,
+   "5": 216,
+   "6": 6,
+   "7": 168,
+   "10": 1
+  },
+  "visible_lines_per_focus": {
+   "median": 3,
+   "p75": 4,
+   "share_1_kind": 0.37
+  },
+  "share_with_downside": 0.33,
+  "share_with_downside_excl_building_payment": 0.28,
+  "share_foci_with": {
+   "dyn_modifier_change": 0.28,
+   "event": 0.2,
+   "custom_tooltip": 0.21,
+   "treasury": 0.17,
+   "opinion_modifier": 0.08,
+   "decision_unlock": 0.08,
+   "idea_add": 0.11,
+   "pp": 0.09,
+   "party_pop": 0.08,
+   "influence": 0.07,
+   "faction": 0.066,
+   "stability": 0.073,
+   "swap_ideas": 0.058,
+   "bop": 0.065,
+   "buildings_real": 0.098,
+   "tech_bonus": 0.036,
+   "resource": 0.025,
+   "war_support": 0.025,
+   "xp": 0.009,
+   "equipment": 0.014
+  },
+  "buildings_paid_share": 0.96,
+  "tooltip_only_foci": 15,
+  "event_only_foci": 85,
+  "decision_only_foci": 24,
+  "empty_or_all_hidden": 8
+ },
+ "per_cost": {
+  "2": {
+   "role": "entry / hub / small step",
+   "effect_kinds": [
+    1,
+    2
+   ],
+   "lines": [
+    2,
+    3
+   ],
+   "points": [
+    2,
+    3.5
+   ],
+   "pp": [
+    50,
+    100
+   ],
+   "stab": [
+    0.01,
+    0.03
+   ],
+   "ws": [
+    0.02,
+    0.05
+   ],
+   "party_entry": {
+    "v": 0.1,
+    "o": 0.1
+   },
+   "party": [
+    0.02,
+    0.06
+   ],
+   "dyn_lines": [
+    1,
+    2
+   ],
+   "dyn_line_value": [
+    0.02,
+    0.05
+   ],
+   "fac": [
+    3,
+    5
+   ],
+   "buildings": 0,
+   "gdp_cost": [
+    0,
+    0.004
+   ],
+   "tech": null,
+   "downside_share": 0.1,
+   "md_observed": {
+    "pp_median": 100,
+    "stab_median": 0.025,
+    "lines_median": 2,
+    "downside_share": 0.08
+   }
+  },
+  "3": {
+   "role": "standard step",
+   "effect_kinds": [
+    2,
+    3
+   ],
+   "lines": [
+    3,
+    4
+   ],
+   "points": [
+    3,
+    4
+   ],
+   "pp": [
+    50,
+    75
+   ],
+   "stab": [
+    0.02,
+    0.03
+   ],
+   "ws": [
+    0.02,
+    0.05
+   ],
+   "party": [
+    0.02,
+    0.03
+   ],
+   "dyn_lines": [
+    2,
+    3
+   ],
+   "dyn_line_value": [
+    0.02,
+    0.05
+   ],
+   "fac": [
+    4,
+    5
+   ],
+   "fac_neg": [
+    -10,
+    -5
+   ],
+   "buildings": [
+    0,
+    1
+   ],
+   "gdp_cost": [
+    0.003,
+    0.006
+   ],
+   "tech": {
+    "b": 0.5,
+    "n": 1
+   },
+   "xp": [
+    15,
+    30
+   ],
+   "infl": [
+    2,
+    4
+   ],
+   "coh": [
+    1,
+    2
+   ],
+   "bop": [
+    0.03,
+    0.05
+   ],
+   "tension": [
+    -1,
+    1
+   ],
+   "timed_idea_days": [
+    180,
+    365
+   ],
+   "downside_share": 0.3,
+   "md_observed": {
+    "pp_median": 75,
+    "stab_median": 0.03,
+    "treasury_median_bn": -5,
+    "dyn_line_abs_median": 0.05,
+    "tech": "0.5 x1",
+    "xp_median": 27.5,
+    "downside_share": 0.29
+   }
+  },
+  "5": {
+   "role": "strong step",
+   "effect_kinds": [
+    3,
+    4
+   ],
+   "lines": [
+    4,
+    5
+   ],
+   "points": [
+    5,
+    6
+   ],
+   "pp": [
+    75,
+    100
+   ],
+   "stab": [
+    0.03,
+    0.05
+   ],
+   "ws": [
+    0.03,
+    0.05
+   ],
+   "party": [
+    0.02,
+    0.03
+   ],
+   "dyn_lines": [
+    2,
+    4
+   ],
+   "dyn_line_value": [
+    0.03,
+    0.07
+   ],
+   "fac": [
+    5,
+    10
+   ],
+   "fac_neg": [
+    -15,
+    -5
+   ],
+   "buildings": [
+    1,
+    2
+   ],
+   "gdp_cost": [
+    0.006,
+    0.012
+   ],
+   "tech": {
+    "b": [
+     0.5,
+     0.75
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "xp": [
+    25,
+    35
+   ],
+   "infl": [
+    3,
+    5
+   ],
+   "coh": [
+    2,
+    3
+   ],
+   "bop": [
+    0.05,
+    0.1
+   ],
+   "tension": [
+    -2,
+    2
+   ],
+   "timed_idea_days": [
+    365,
+    730
+   ],
+   "downside_share": 0.45,
+   "md_observed": {
+    "pp_median": 100,
+    "stab_median": 0.05,
+    "treasury_median_bn": -10,
+    "buildings_median": 2,
+    "tech": "0.5 x1-2",
+    "infl_median": 4,
+    "downside_share": 0.45
+   }
+  },
+  "7": {
+   "role": "major programme / branch payoff",
+   "effect_kinds": [
+    3,
+    5
+   ],
+   "lines": [
+    5,
+    7
+   ],
+   "points": [
+    7,
+    9
+   ],
+   "pp": [
+    100,
+    150
+   ],
+   "stab": [
+    0.04,
+    0.06
+   ],
+   "ws": [
+    0.04,
+    0.06
+   ],
+   "party": [
+    0.03,
+    0.05
+   ],
+   "dyn_lines": [
+    3,
+    4
+   ],
+   "dyn_line_value": [
+    0.03,
+    0.1
+   ],
+   "fac": [
+    8,
+    12
+   ],
+   "fac_neg": [
+    -15,
+    -10
+   ],
+   "buildings": [
+    2,
+    4
+   ],
+   "gdp_cost": [
+    0.01,
+    0.025
+   ],
+   "gdp_gain_with_political_cost": [
+    0.01,
+    0.03
+   ],
+   "tech": {
+    "b": [
+     0.5,
+     0.75
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "xp": [
+    40,
+    60
+   ],
+   "infl": [
+    4,
+    6
+   ],
+   "coh": [
+    3,
+    5
+   ],
+   "bop": [
+    0.1,
+    0.15
+   ],
+   "tension": [
+    -3,
+    3
+   ],
+   "timed_idea_days": [
+    730,
+    1095
+   ],
+   "downside_share": 0.45,
+   "md_observed": {
+    "pp_median": 100,
+    "stab_median": 0.05,
+    "treasury_median_bn": -10,
+    "treasury_p25_bn": -20,
+    "buildings_median": 2,
+    "buildings_max": 13,
+    "dyn_line_abs_median": 0.05,
+    "downside_share": 0.38
+   }
+  },
+  "10": {
+   "role": "capstone",
+   "effect_kinds": [
+    4,
+    6
+   ],
+   "lines": [
+    6,
+    9
+   ],
+   "points": [
+    10,
+    13
+   ],
+   "pp": [
+    150,
+    200
+   ],
+   "stab": [
+    0.05,
+    0.1
+   ],
+   "dyn_lines": [
+    3,
+    5
+   ],
+   "dyn_line_value": [
+    0.05,
+    0.12
+   ],
+   "buildings": [
+    3,
+    5
+   ],
+   "gdp_cost": [
+    0.02,
+    0.04
+   ],
+   "tech": {
+    "b": [
+     0.75,
+     1.0
+    ],
+    "n": [
+     2,
+     3
+    ]
+   },
+   "downside_share": 0.6,
+   "md_observed": {
+    "note": "single cost-10 focus (SOV_outer_space_marines): -100 bn and equipment bonus"
+   }
+  }
+ },
+ "value_ranges": {
+  "_format": "[min, typical, max] for one focus; typical may be a range; MD = observed in 05_russia.txt",
+  "pp": {
+   "dsl": [
+    25,
+    75,
+    150
+   ],
+   "md": [
+    25,
+    100,
+    250
+   ],
+   "md_quartiles": [
+    50,
+    100,
+    145
+   ]
+  },
+  "pp_negative": {
+   "dsl": [
+    -75,
+    -50,
+    -25
+   ],
+   "md": [
+    -100,
+    -62.5,
+    -25
+   ]
+  },
+  "stab": {
+   "dsl": [
+    0.01,
+    [
+     0.02,
+     0.05
+    ],
+    0.1
+   ],
+   "md": [
+    0.01,
+    0.05,
+    0.3
+   ],
+   "md_quartiles": [
+    0.02,
+    0.05,
+    0.05
+   ]
+  },
+  "stab_negative": {
+   "dsl": [
+    -0.08,
+    -0.03,
+    -0.01
+   ],
+   "md": [
+    -0.25,
+    -0.05,
+    -0.02
+   ]
+  },
+  "ws": {
+   "dsl": [
+    0.02,
+    0.03,
+    0.06
+   ],
+   "md": [
+    0.01,
+    0.03,
+    0.09
+   ]
+  },
+  "fac": {
+   "dsl": [
+    3,
+    [
+     5,
+     10
+    ],
+    15
+   ],
+   "md": [
+    1,
+    5,
+    15
+   ],
+   "md_mode": 5
+  },
+  "fac_negative": {
+   "dsl": [
+    -25,
+    -10,
+    -5
+   ],
+   "md": [
+    -40,
+    -10,
+    -5
+   ]
+  },
+  "party": {
+   "dsl": [
+    0.01,
+    0.02,
+    0.1
+   ],
+   "md": [
+    0.001,
+    0.025,
+    0.15
+   ],
+   "md_entry": "0.10 with outlook 0.10",
+   "md_ai_only": 0.75
+  },
+  "outlook": {
+   "dsl": [
+    0.02,
+    [
+     0.03,
+     0.05
+    ],
+    0.1
+   ],
+   "md_add_popularity": [
+    0.02,
+    0.1,
+    0.15
+   ]
+  },
+  "dyn_line": {
+   "dsl": [
+    0.01,
+    [
+     0.02,
+     0.05
+    ],
+    0.12
+   ],
+   "md": [
+    0.01,
+    0.03,
+    0.12
+   ],
+   "md_lines_per_focus": [
+    1,
+    2,
+    10
+   ],
+   "md_modifiers_per_focus": 1
+  },
+  "dyn_line_cost_side": {
+   "dsl": [
+    0.02,
+    [
+     0.03,
+     0.07
+    ],
+    0.21
+   ],
+   "md": "bureaucracy/police/education cost +0.03..+0.21, consumer goods -0.02"
+  },
+  "tech": {
+   "dsl_b": [
+    0.25,
+    0.5,
+    1.0
+   ],
+   "dsl_n": [
+    1,
+    1,
+    3
+   ],
+   "md_b": [
+    0.15,
+    0.5,
+    1.0
+   ],
+   "md_b_mode": 0.5,
+   "md_n_share": {
+    "1": 0.74,
+    "2": 0.23,
+    "3": 0.03
+   }
+  },
+  "xp": {
+   "dsl": [
+    15,
+    25,
+    50
+   ],
+   "md": [
+    10,
+    25,
+    50
+   ]
+  },
+  "infl": {
+   "dsl": [
+    2,
+    3,
+    6
+   ],
+   "md": [
+    1,
+    3.5,
+    8
+   ],
+   "md_mode": 3,
+   "md_outliers": [
+    20,
+    25
+   ]
+  },
+  "dom_infl": {
+   "md": [
+    1,
+    3.5,
+    15
+   ]
+  },
+  "bop": {
+   "dsl": [
+    0.03,
+    0.05,
+    0.15
+   ],
+   "md": [
+    0.2,
+    0.2,
+    0.2
+   ],
+   "note": "MD always moves 0.20 (52 foci on a -1..1 bar, ~5-10 foci to win); our 836-focus tree has ~3x more BoP foci, so 0.05 keeps the same pace"
+  },
+  "gdp_cost": {
+   "dsl": [
+    0.003,
+    [
+     0.005,
+     0.012
+    ],
+    0.025
+   ],
+   "md_bn": [
+    -155,
+    -7.5,
+    -0.9
+   ],
+   "md_quartiles_bn": [
+    -15,
+    -7.5,
+    -4
+   ]
+  },
+  "gdp_gain": {
+   "dsl": [
+    0.005,
+    0.015,
+    0.03
+   ],
+   "md_bn": [
+    10,
+    50.5,
+    110
+   ],
+   "note": "7 MD foci; all seizures/repatriations with a faction or corruption cost"
+  },
+  "debt": {
+   "md": "1 focus: debt -450 bn (Kasyanov's Government, cost 7)"
+  },
+  "building_count": {
+   "dsl": [
+    1,
+    2,
+    4
+   ],
+   "md": [
+    1,
+    2,
+    13
+   ],
+   "md_paid_share": 0.96
+  },
+  "resource": {
+   "md": [
+    1,
+    3,
+    12
+   ],
+   "md_mode": [
+    3,
+    8
+   ]
+  },
+  "timed_idea_days": {
+   "dsl": [
+    180,
+    365,
+    1095
+   ],
+   "md": [
+    21,
+    365,
+    2000
+   ],
+   "md_mode": [
+    365,
+    100,
+    1095
+   ]
+  },
+  "coh": {
+   "dsl": [
+    1,
+    [
+     2,
+     3
+    ],
+    5
+   ]
+  },
+  "tension": {
+   "dsl": [
+    -3,
+    [
+     -1,
+     2
+    ],
+    5
+   ],
+   "scale": "global tension 0-100 (start 45); a new inter-bloc war is +4, a war with a bloc leader +8"
+  },
+  "corr": {
+   "dsl": [
+    1,
+    1,
+    1
+   ],
+   "md": "decrease_corruption x1 in 14 foci, increase x1 in 3"
+  },
+  "sp": {
+   "dsl": [
+    0.1,
+    0.15,
+    0.25
+   ],
+   "md": "none in foci (special projects only completed in history)"
+  },
+  "mastery": {
+   "dsl": [
+    25,
+    50,
+    75
+   ],
+   "md": "none (MD uses add_doctrine_cost_reduction 0.5 x2 once)"
+  },
+  "manpower": {
+   "md": "only negative (-1000..-3000 for PMC recruiting)"
+  },
+  "equipment": {
+   "md": "11 foci: 8 MLRS, 100-1100 vehicles, 150-500 UAV, 6000 infantry weapons"
+  }
+ },
+ "themes": {
+  "industry": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "build",
+      "helper": "one_random_industrial_complex",
+      "cost": 0.008
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "production_speed_buildings_factor": 0.03,
+       "production_factory_max_efficiency_factor": 0.03
+      }
+     }
+    ],
+    "5": [
+     {
+      "k": "build",
+      "helper": "two_random_industrial_complex",
+      "cost": 0.016
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "production_speed_buildings_factor": 0.05,
+       "productivity_growth_modifier": 0.02
+      }
+     },
+     {
+      "k": "stab",
+      "v": 0.02
+     }
+    ],
+    "7": [
+     {
+      "k": "build",
+      "helper": "three_random_industrial_complex",
+      "cost": 0.024
+     },
+     {
+      "k": "build",
+      "helper": "two_random_infrastructure",
+      "cost": 0.008
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "production_speed_buildings_factor": 0.05,
+       "productivity_growth_modifier": 0.03
+      }
+     },
+     {
+      "k": "stab",
+      "v": 0.02
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "dyn",
+     "g": "gosplan",
+     "mods": {
+      "consumer_goods_factor": 0.02
+     }
+    },
+    {
+     "k": "fac",
+     "f": "labour_unions",
+     "v": -5
+    }
+   ],
+   "md_pattern": "paid buildings (helper with built-in price or add_building_construction + treasury_change ~= helper price) + economy-meter tick + 0-2 economy modifier lines; 47 % of industry foci have no other reward",
+   "md_examples": [
+    "SOV_economic_russian",
+    "SOV_economic_rjd_transsib",
+    "SOV_economic_cars_europe",
+    "SOV_may_decrees",
+    "SOV_revitalize_russian_industrial_sector"
+   ],
+   "md_share_of_foci": 59,
+   "md_kind_frequency": {
+    "treasury": 0.339,
+    "helper": 0.305,
+    "build": 0.271,
+    "abc": 0.254,
+    "dynvar": 0.186,
+    "slots": 0.169,
+    "idea": 0.153,
+    "infl": 0.136,
+    "dom_infl": 0.102,
+    "decision": 0.102
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.33,
+    "7": 7.67
+   }
+  },
+  "economy": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "tax_gain_multiplier_modifier": 0.045,
+       "productivity_growth_modifier": 0.03
+      }
+     },
+     {
+      "k": "pp",
+      "v": 50
+     }
+    ],
+    "5": [
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "tax_gain_multiplier_modifier": 0.05,
+       "productivity_growth_modifier": 0.04
+      }
+     },
+     {
+      "k": "pp",
+      "v": 75
+     },
+     {
+      "k": "stab",
+      "v": 0.03
+     }
+    ],
+    "7": [
+     {
+      "k": "idea",
+      "id": "COLDWAR_SOV_<reform_tier_n+1>",
+      "swap": "<Reform Tier n display name>"
+     },
+     {
+      "k": "gdp_gain",
+      "v": 0.02
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "productivity_growth_modifier": 0.05
+      }
+     },
+     {
+      "k": "fac",
+      "f": "communist_cadres",
+      "v": -10
+     },
+     {
+      "k": "pp",
+      "v": 50
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.005
+    },
+    {
+     "k": "fac",
+     "f": "industrial_conglomerates",
+     "v": -5
+    },
+    {
+     "k": "corr",
+     "helper": "increase_corruption",
+     "v": 1
+    },
+    {
+     "k": "dyn",
+     "g": "gosplan",
+     "mods": {
+      "consumer_goods_factor": 0.02
+     }
+    }
+   ],
+   "md_pattern": "economy-modifier lines (corporate tax/tax gain/ROI +0.01..+0.05), treasury +/- (crisis foci pay 10-40 bn), negative-spirit swap ladders (Ruble Collapse 3 tiers), tax-rate helpers (+5 corporate / -5 population), oligarch/banker faction shifts",
+   "md_examples": [
+    "SOV_stabilisation_fund",
+    "SOV_prevent_panic_on_currency_exchange",
+    "SOV_fnb_destroyed",
+    "SOV_progressive_taxation",
+    "SOV_move_oligarchic_entites_back_to_russia"
+   ],
+   "md_share_of_foci": 53,
+   "md_kind_frequency": {
+    "dynvar": 0.358,
+    "treasury": 0.226,
+    "idea": 0.208,
+    "fac": 0.17,
+    "law": 0.132,
+    "swap": 0.132,
+    "pp": 0.113,
+    "helper": 0.094,
+    "decision": 0.094,
+    "rmidea": 0.094
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.44,
+    "7": 7.67
+   }
+  },
+  "agriculture": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "agricolture_productivity_modifier": 0.04,
+       "agriculture_tax_modifier": 0.01
+      }
+     },
+     {
+      "k": "fac",
+      "f": "farmers",
+      "v": 5
+     },
+     {
+      "k": "pp",
+      "v": 25
+     }
+    ],
+    "5": [
+     {
+      "k": "build",
+      "helper": "two_random_agriculture_district",
+      "cost": 0.008
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "agricolture_productivity_modifier": 0.05,
+       "agriculture_tax_modifier": 0.01
+      }
+     },
+     {
+      "k": "fac",
+      "f": "farmers",
+      "v": 5
+     },
+     {
+      "k": "stab",
+      "v": 0.02
+     }
+    ],
+    "7": [
+     {
+      "k": "build",
+      "helper": "two_random_agriculture_district",
+      "cost": 0.008
+     },
+     {
+      "k": "build",
+      "helper": "one_random_agriculture_district",
+      "cost": 0.004
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "agricolture_productivity_modifier": 0.08,
+       "agriculture_tax_modifier": 0.02
+      }
+     },
+     {
+      "k": "stab",
+      "v": 0.03
+     },
+     {
+      "k": "fac",
+      "f": "farmers",
+      "v": 10
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "dyn",
+     "g": "gosplan",
+     "mods": {
+      "social_cost_multiplier_modifier": 0.03
+     }
+    },
+    {
+     "k": "stab",
+     "v": -0.03
+    },
+    {
+     "k": "dyn",
+     "g": "gosplan",
+     "mods": {
+      "bureaucracy_cost_multiplier_modifier": 0.07
+     }
+    }
+   ],
+   "md_pattern": "agriculture districts (4 for 16 bn) + agriculture tax/productivity lines (0.01-0.12) + economy meter; collectivisation-type foci pay with stability -0.05",
+   "md_examples": [
+    "SOV_economic_rusagro",
+    "SOV_recollectivization",
+    "SOV_land_socialisation"
+   ],
+   "md_share_of_foci": 9,
+   "md_kind_frequency": {
+    "dynvar": 0.556,
+    "treasury": 0.333,
+    "slots": 0.333,
+    "helper": 0.333,
+    "decision": 0.333,
+    "abc": 0.333,
+    "build": 0.222,
+    "dom_infl": 0.111,
+    "stab": 0.111,
+    "event": 0.111
+   },
+   "points": {
+    "3": 3.33,
+    "5": 5.17,
+    "7": 8.67
+   }
+  },
+  "energy": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "custom",
+      "t": "add_resource +3 oil/gas/steel in one owned state (random_owned_controlled_state)"
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "oil_export_multiplier_modifier": 0.02,
+       "energy_gain_multiplier": 0.03
+      }
+     }
+    ],
+    "5": [
+     {
+      "k": "custom",
+      "t": "add_resource +4..+6"
+     },
+     {
+      "k": "build",
+      "helper": "one_random_energy_infrastructure",
+      "cost": 0.007
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "energy_gain_multiplier": 0.03,
+       "resource_export_multiplier_modifier": 0.04
+      }
+     },
+     {
+      "k": "decision",
+      "key": "COLDWAR_SOV_<field_expansion>"
+     }
+    ],
+    "7": [
+     {
+      "k": "custom",
+      "t": "add_resource +8..+10"
+     },
+     {
+      "k": "build",
+      "helper": "one_random_nuclear_reactor",
+      "cost": 0.0095
+     },
+     {
+      "k": "dyn",
+      "g": "gosplan",
+      "mods": {
+       "energy_gain_multiplier": 0.05,
+       "oil_export_multiplier_modifier": 0.04
+      }
+     },
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_nuclear_reactors"
+      ],
+      "b": 0.5,
+      "n": 1
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.003
+    },
+    {
+     "k": "fac",
+     "f": "<energy lobby or farmers>",
+     "v": -5
+    },
+    {
+     "k": "dyn",
+     "g": "gosplan",
+     "mods": {
+      "energy_use_multiplier": 0.03
+     }
+    }
+   ],
+   "md_pattern": "add_resource +2..+8 per state (median 3) + small paid building (IC, fuel silo) + treasury -2..-15 + export-multiplier lines + company capitalisation + unlock 1 decision; 73 % of energy foci call a helper (economy meter/capitalisation)",
+   "md_examples": [
+    "SOV_economic_alrosa",
+    "SOV_economic_oil_khmao",
+    "SOV_economic_gazprom_norstream",
+    "SOV_found_rosatom",
+    "SOV_renewable_energy_investments"
+   ],
+   "md_share_of_foci": 49,
+   "md_kind_frequency": {
+    "helper": 0.735,
+    "treasury": 0.469,
+    "dynvar": 0.388,
+    "resource": 0.367,
+    "abc": 0.224,
+    "decision": 0.204,
+    "fac": 0.143,
+    "slots": 0.122,
+    "event": 0.102,
+    "tech": 0.061
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.23,
+    "7": 7.37
+   }
+  },
+  "research": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_computing"
+      ],
+      "b": 0.5,
+      "n": 1
+     },
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "research_speed_factor": 0.02
+      }
+     },
+     {
+      "k": "pp",
+      "v": 25
+     }
+    ],
+    "5": [
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_computing"
+      ],
+      "b": 0.5,
+      "n": 2
+     },
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "research_speed_factor": 0.02
+      }
+     },
+     {
+      "k": "sp",
+      "project": "sp_space_program",
+      "v": 0.1
+     }
+    ],
+    "7": [
+     {
+      "k": "build",
+      "helper": "one_random_microchip_plant",
+      "cost": 0.011
+     },
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_microchips"
+      ],
+      "b": 0.75,
+      "n": 1
+     },
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "research_speed_factor": 0.04
+      }
+     },
+     {
+      "k": "sp",
+      "project": "sp_space_program",
+      "v": 0.15
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.005
+    },
+    {
+     "k": "dyn",
+     "g": "gosplan",
+     "mods": {
+      "education_cost_multiplier_modifier": 0.03
+     }
+    }
+   ],
+   "md_pattern": "add_tech_bonus (internet 1.0 x2, satellites 0.5 x3, IT 0.3 x1) + economy research/internet-build lines 0.01-0.05 + paid office/internet buildings; space foci pay 10-20 bn",
+   "md_examples": [
+    "SOV_economic_rostelekom",
+    "SOV_automation_for_the_people",
+    "SOV_soviet_academy_of_sciences",
+    "SOV_outer_space_sateelites"
+   ],
+   "md_share_of_foci": 29,
+   "md_kind_frequency": {
+    "dynvar": 0.414,
+    "tech": 0.31,
+    "helper": 0.276,
+    "treasury": 0.207,
+    "party": 0.138,
+    "build": 0.138,
+    "decision": 0.103,
+    "law": 0.069,
+    "idea": 0.069,
+    "event": 0.069
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.0,
+    "7": 7.15
+   }
+  },
+  "army": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "planning_speed": 0.05,
+       "conscription_factor": 0.02
+      }
+     },
+     {
+      "k": "fac",
+      "f": "the_military",
+      "v": 5
+     },
+     {
+      "k": "xp",
+      "kind": "army",
+      "v": 25
+     }
+    ],
+    "5": [
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_main_battle_tanks"
+      ],
+      "b": 0.5,
+      "n": 2
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "army_org_factor": 0.03,
+       "training_time_factor": -0.05
+      }
+     },
+     {
+      "k": "xp",
+      "kind": "army",
+      "v": 25
+     },
+     {
+      "k": "gdp",
+      "v": 0.004
+     }
+    ],
+    "7": [
+     {
+      "k": "idea",
+      "id": "COLDWAR_SOV_<army_spirit_tier_n+1>",
+      "swap": "<Army Spirit Tier n display name>"
+     },
+     {
+      "k": "xp",
+      "kind": "army",
+      "v": 50
+     },
+     {
+      "k": "mastery",
+      "folder": "land",
+      "v": 50
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "army_morale_factor": 0.05,
+       "breakthrough_factor": 0.05
+      }
+     },
+     {
+      "k": "gdp",
+      "v": 0.008
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.004
+    },
+    {
+     "k": "dyn",
+     "g": "armed_forces",
+     "mods": {
+      "army_personnel_cost_multiplier_modifier": 0.05
+     }
+    },
+    {
+     "k": "fac",
+     "f": "communist_cadres",
+     "v": -5
+    }
+   ],
+   "md_pattern": "landforce modifier 2 lines of 0.02-0.05 (conscription, planning, special forces, supply) + party-22 popularity +0.02 + faction +3..+5 + treasury -3..-10; tech bonus 0.35-0.75 x1-2 for kit foci; XP 15-50 in reform foci; 'Outdated Army' 4-tier spirit ladder",
+   "md_examples": [
+    "SOV_2008_military_reforms",
+    "SOV_ratnik_program",
+    "SOV_rostech",
+    "SOV_form_yunarmiya",
+    "SOV_mechanized_infantry_renovations"
+   ],
+   "md_share_of_foci": 79,
+   "md_kind_frequency": {
+    "dynvar": 0.392,
+    "treasury": 0.266,
+    "party": 0.241,
+    "add_equipment_bonus": 0.127,
+    "tt": 0.127,
+    "decision": 0.101,
+    "slots": 0.101,
+    "abc": 0.101,
+    "law": 0.089,
+    "tech": 0.089
+   },
+   "points": {
+    "3": 3.5,
+    "5": 5.87,
+    "7": 7.73
+   }
+  },
+  "navy": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "naval_speed_factor": 0.04,
+       "positioning": 0.04
+      }
+     },
+     {
+      "k": "xp",
+      "kind": "navy",
+      "v": 25
+     }
+    ],
+    "5": [
+     {
+      "k": "build",
+      "helper": "two_random_dockyards",
+      "cost": 0.016
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "naval_speed_factor": 0.04,
+       "navy_max_range_factor": 0.04
+      }
+     },
+     {
+      "k": "sp",
+      "project": "sp_naval_vessel_project",
+      "v": 0.1
+     }
+    ],
+    "7": [
+     {
+      "k": "build",
+      "helper": "two_random_dockyards",
+      "cost": 0.016
+     },
+     {
+      "k": "xp",
+      "kind": "navy",
+      "v": 50
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "naval_speed_factor": 0.05,
+       "positioning": 0.05
+      }
+     },
+     {
+      "k": "sp",
+      "project": "sp_naval_vessel_project",
+      "v": 0.1
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.004
+    },
+    {
+     "k": "dyn",
+     "g": "armed_forces",
+     "mods": {
+      "equipment_cost_multiplier_modifier": 0.02
+     }
+    }
+   ],
+   "md_pattern": "navy modifier up to 8 lines of 0.01-0.08, dockyards level 2-3 placed directly and paid 15-25 bn, navy XP 50, PP 50, 'Plundered Navy' 3-tier swap ladder, doctrine cost reduction 0.5 x2, MIO unlock",
+   "md_examples": [
+    "SOV_The_high_seas_fleet",
+    "SOV_start_fleet_reforms",
+    "SOV_Updated_naval_doctrine",
+    "SOV_fleet"
+   ],
+   "md_share_of_foci": 9,
+   "md_kind_frequency": {
+    "treasury": 0.667,
+    "slots": 0.444,
+    "abc": 0.444,
+    "dynvar": 0.333,
+    "event": 0.222,
+    "swap": 0.222,
+    "decision": 0.111,
+    "add_threat_from_wargoal_effect": 0.111,
+    "create_wargoal": 0.111,
+    "xp": 0.111
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.0,
+    "7": 7.5
+   }
+  },
+  "air": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_medium_aircraft"
+      ],
+      "b": 0.5,
+      "n": 1
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "air_defence_factor": 0.05
+      }
+     },
+     {
+      "k": "xp",
+      "kind": "air",
+      "v": 25
+     },
+     {
+      "k": "gdp",
+      "v": 0.004
+     }
+    ],
+    "5": [
+     {
+      "k": "build",
+      "helper": "two_air_base",
+      "cost": 0.006
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "air_defence_factor": 0.05,
+       "air_accidents_factor": -0.05
+      }
+     },
+     {
+      "k": "xp",
+      "kind": "air",
+      "v": 25
+     }
+    ],
+    "7": [
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_medium_aircraft"
+      ],
+      "b": 0.75,
+      "n": 1
+     },
+     {
+      "k": "sp",
+      "project": "sp_aircraft_project",
+      "v": 0.2
+     },
+     {
+      "k": "xp",
+      "kind": "air",
+      "v": 50
+     },
+     {
+      "k": "mastery",
+      "folder": "air",
+      "v": 50
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "air_defence_factor": 0.03
+      }
+     },
+     {
+      "k": "gdp",
+      "v": 0.008
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.004
+    }
+   ],
+   "md_pattern": "tech bonus (5th-gen fighter 0.55 x1, aircraft 0.25 x1) + air modifier (air defence 0.10-0.15, XP gain 0.02-0.03) + air bases via helper + air XP 15-25 + treasury -3..-10 + party 22 +0.02",
+   "md_examples": [
+    "SOV_aero_improvements",
+    "SOV_pakfa",
+    "SOV_reorganize_airforce",
+    "SOV_air_rocket_defence"
+   ],
+   "md_share_of_foci": 14,
+   "md_kind_frequency": {
+    "dynvar": 0.571,
+    "treasury": 0.429,
+    "tech": 0.286,
+    "party": 0.286,
+    "build": 0.214,
+    "helper": 0.214,
+    "xp": 0.071,
+    "slots": 0.071,
+    "abc": 0.071
+   },
+   "points": {
+    "3": 3.37,
+    "5": 5.13,
+    "7": 7.65
+   }
+  },
+  "strategic": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "rocket_attack_factor": 0.1
+      }
+     },
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_missiles"
+      ],
+      "b": 0.75,
+      "n": 1
+     },
+     {
+      "k": "ws",
+      "v": 0.02
+     },
+     {
+      "k": "gdp",
+      "v": 0.004
+     }
+    ],
+    "5": [
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_intercontinental_ballistic_missiles"
+      ],
+      "b": 0.5,
+      "n": 2
+     },
+     {
+      "k": "sp",
+      "project": "<missile/nuclear project>",
+      "v": 0.15
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "rocket_attack_factor": 0.1
+      }
+     },
+     {
+      "k": "ws",
+      "v": 0.02
+     },
+     {
+      "k": "gdp",
+      "v": 0.006
+     },
+     {
+      "k": "tension",
+      "v": 1
+     }
+    ],
+    "7": [
+     {
+      "k": "tech",
+      "cats": [
+       "CAT_nuclear"
+      ],
+      "b": 0.75,
+      "n": 2
+     },
+     {
+      "k": "sp",
+      "project": "<missile/nuclear project>",
+      "v": 0.25
+     },
+     {
+      "k": "dyn",
+      "g": "armed_forces",
+      "mods": {
+       "rocket_attack_factor": 0.1
+      }
+     },
+     {
+      "k": "ws",
+      "v": 0.05
+     },
+     {
+      "k": "gdp",
+      "v": 0.012
+     },
+     {
+      "k": "tension",
+      "v": 2
+     },
+     {
+      "k": "bop",
+      "v": 0.05
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.004,
+     "note": "strategic foci are always paid"
+    },
+    {
+     "k": "tension",
+     "v": 1
+    }
+   ],
+   "md_pattern": "always paid (treasury -4..-20): rocket sites 3 for 6 bn, rocket attack 0.05-0.10, missile tech 0.75 x1, ICBM set_technology + 25 missiles; never free",
+   "md_examples": [
+    "SOV_missile_development",
+    "SOV_hypersonic_missiles",
+    "SOV_modernize_soviet_missile_stockpiles",
+    "SOV_rocketi"
+   ],
+   "md_share_of_foci": 13,
+   "md_kind_frequency": {
+    "treasury": 0.615,
+    "dynvar": 0.615,
+    "tech": 0.154,
+    "abc": 0.154,
+    "build": 0.077,
+    "rmidea": 0.077,
+    "event": 0.077,
+    "set_technology": 0.077,
+    "equip": 0.077,
+    "add_equipment_bonus": 0.077
+   },
+   "points": {
+    "3": 3.12,
+    "5": 4.97,
+    "7": 7.27
+   }
+  },
+  "intel": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "foreign_subversive_activites": 0.15,
+       "decryption_factor": 0.05,
+       "encryption_factor": 0.1,
+       "police_cost_multiplier_modifier": 0.02
+      }
+     },
+     {
+      "k": "fac",
+      "f": "intelligence_community",
+      "v": 5
+     }
+    ],
+    "5": [
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "intel_network_gain_factor": 0.05,
+       "foreign_subversive_activites": 0.15,
+       "encryption_factor": 0.1,
+       "intelligence_agency_defense": 0.1,
+       "police_cost_multiplier_modifier": 0.03
+      }
+     },
+     {
+      "k": "fac",
+      "f": "intelligence_community",
+      "v": 7
+     },
+     {
+      "k": "coh",
+      "v": 2
+     }
+    ],
+    "7": [
+     {
+      "k": "idea",
+      "id": "COLDWAR_SOV_<security_spirit>",
+      "days": 730
+     },
+     {
+      "k": "stab",
+      "v": 0.04
+     },
+     {
+      "k": "decision",
+      "key": "COLDWAR_SOV_<operation>"
+     },
+     {
+      "k": "fac",
+      "f": "intelligence_community",
+      "v": 10
+     },
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "decryption_factor": 0.05
+      }
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "dyn",
+     "g": "party_state",
+     "mods": {
+      "police_cost_multiplier_modifier": 0.03
+     }
+    },
+    {
+     "k": "fac",
+     "f": "communist_cadres",
+     "v": -5
+    },
+    {
+     "k": "gdp",
+     "v": 0.004
+    }
+   ],
+   "md_pattern": "intelligence modifier 2-5 lines (encryption 0.05-0.15, agency defence 0.10-0.20, influence defence 0.05-0.10) + intelligence community +4..+10 + separatism -1; costs: police cost +0.04, treasury -4; Rosgvardia template",
+   "md_examples": [
+    "SOV_gru",
+    "SOV_FSB_expansion",
+    "SOV_rosgvardia",
+    "SOV_jirik_fear"
+   ],
+   "md_share_of_foci": 38,
+   "md_kind_frequency": {
+    "dynvar": 0.789,
+    "fac": 0.316,
+    "tt": 0.237,
+    "treasury": 0.158,
+    "division_template": 0.105,
+    "stab": 0.079,
+    "law": 0.079,
+    "event": 0.053,
+    "ideo_pop": 0.053,
+    "timed_idea": 0.053
+   },
+   "points": {
+    "3": 3.17,
+    "5": 5.37,
+    "7": 7.17
+   }
+  },
+  "political": {
+   "by_cost": {
+    "2": [
+     {
+      "k": "rp",
+      "i": "<party index>",
+      "leader": "<leader name>"
+     },
+     {
+      "k": "party",
+      "i": "<idx>",
+      "v": 0.1,
+      "o": 0.1
+     },
+     {
+      "k": "prog",
+      "g": "<party/leader>",
+      "mods": {
+       "political_power_factor": 0.03,
+       "stability_factor": 0.01
+      }
+     }
+    ],
+    "3": [
+     {
+      "k": "prog",
+      "g": "<party/leader>",
+      "mods": {
+       "political_power_factor": 0.05,
+       "drift_defence_factor": 0.05
+      }
+     },
+     {
+      "k": "party",
+      "i": "<idx>",
+      "v": 0.02,
+      "o": 0.0
+     },
+     {
+      "k": "bop",
+      "v": 0.05
+     },
+     {
+      "k": "pp",
+      "v": 25
+     }
+    ],
+    "5": [
+     {
+      "k": "pp",
+      "v": 100
+     },
+     {
+      "k": "stab",
+      "v": 0.02
+     },
+     {
+      "k": "prog",
+      "g": "<party/leader>",
+      "mods": {
+       "political_power_factor": 0.05,
+       "stability_factor": 0.02
+      }
+     },
+     {
+      "k": "bop",
+      "v": 0.05
+     }
+    ],
+    "7": [
+     {
+      "k": "idea",
+      "id": "COLDWAR_SOV_<party_idea_tier_n+1>",
+      "swap": "<Tier n display name>"
+     },
+     {
+      "k": "pp",
+      "v": 100
+     },
+     {
+      "k": "party",
+      "i": "<idx>",
+      "v": 0.03,
+      "o": 0.0
+     },
+     {
+      "k": "prog",
+      "g": "<party/leader>",
+      "mods": {
+       "political_power_factor": 0.05,
+       "stability_factor": 0.02
+      }
+     },
+     {
+      "k": "stab",
+      "v": 0.02
+     },
+     {
+      "k": "bop",
+      "v": 0.1
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "prog",
+     "g": "<party/leader>",
+     "mods": {
+      "stability_factor": -0.03
+     }
+    },
+    {
+     "k": "fac",
+     "f": "<rival faction>",
+     "v": -10
+    },
+    {
+     "k": "party",
+     "i": "<rival idx>",
+     "v": -0.03,
+     "o": 0.0
+    }
+   ],
+   "md_pattern": "entry focus: ruling-party change + party +0.10 (outlook +0.10) + new leader + own dynamic modifier switched on with 2 starting lines (PP factor +0.03..+0.05, stability -0.04..+0.10); later foci: 1-3 lines on that modifier, BoP 0.20, PP 50-100, party +0.02, 3-5-tier idea ladders",
+   "md_examples": [
+    "SOV_putin",
+    "SOV_putinism",
+    "SOV_russian_liberalism",
+    "SOV_restalinization",
+    "SOV_jirik_partiya_chistki"
+   ],
+   "md_share_of_foci": 158,
+   "md_kind_frequency": {
+    "dynvar": 0.266,
+    "bop": 0.196,
+    "pp": 0.177,
+    "event": 0.171,
+    "idea": 0.165,
+    "ideo_pop": 0.127,
+    "swap": 0.127,
+    "stab": 0.12,
+    "party": 0.12,
+    "tt": 0.108
+   },
+   "points": {
+    "2": 3.6,
+    "3": 3.0,
+    "5": 5.0,
+    "7": 7.75
+   }
+  },
+  "factions": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "fac",
+      "f": "<winner>",
+      "v": 10
+     },
+     {
+      "k": "fac",
+      "f": "<loser>",
+      "v": -5
+     },
+     {
+      "k": "pp",
+      "v": 50
+     },
+     {
+      "k": "stab",
+      "v": 0.03
+     }
+    ],
+    "5": [
+     {
+      "k": "fac",
+      "f": "<winner>",
+      "v": 10
+     },
+     {
+      "k": "fac",
+      "f": "<loser>",
+      "v": -10
+     },
+     {
+      "k": "stab",
+      "v": 0.04
+     },
+     {
+      "k": "corr",
+      "helper": "decrease_corruption",
+      "v": -1
+     },
+     {
+      "k": "pp",
+      "v": 50
+     },
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "drift_defence_factor": 0.05
+      }
+     }
+    ],
+    "7": [
+     {
+      "k": "fac",
+      "f": "<winner>",
+      "v": 12
+     },
+     {
+      "k": "fac",
+      "f": "<loser>",
+      "v": -25
+     },
+     {
+      "k": "gdp_gain",
+      "v": 0.02
+     },
+     {
+      "k": "stab",
+      "v": 0.03
+     },
+     {
+      "k": "idea",
+      "id": "COLDWAR_SOV_<settlement>",
+      "days": 730
+     },
+     {
+      "k": "pp",
+      "v": 75
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "fac",
+     "f": "<loser>",
+     "v": -15
+    }
+   ],
+   "md_pattern": "faction opinion +5..+10 for the winner and -10..-40 for the loser, stability +0.05, corruption -1, asset seizure +50 bn treasury with oligarchs -25; 'which verdict' foci show both outcomes with effect_tooltip and resolve by event",
+   "md_examples": [
+    "SOV_the_grand_bargain",
+    "SOV_purge_disloyal_oligarchs",
+    "SOV_end_lawsuits_against_oligarchs",
+    "SOV_khodorkovsky_trial"
+   ],
+   "md_share_of_foci": 10,
+   "md_kind_frequency": {
+    "fac": 0.5,
+    "event": 0.5,
+    "swap": 0.3,
+    "tt": 0.3,
+    "stab": 0.2,
+    "corr": 0.2,
+    "dynvar": 0.1,
+    "treasury": 0.1,
+    "ws": 0.1,
+    "rmidea": 0.1
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.0,
+    "7": 7.2
+   }
+  },
+  "foreign": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "op",
+      "tag": "<TAG>",
+      "key": "COLDWAR_SOV_<partner>",
+      "v": 10
+     },
+     {
+      "k": "infl",
+      "tags": [
+       "<TAG>"
+      ],
+      "v": 3
+     },
+     {
+      "k": "dyn",
+      "g": "commonwealth",
+      "mods": {
+       "trade_opinion_factor": 0.05
+      }
+     },
+     {
+      "k": "pp",
+      "v": 25
+     }
+    ],
+    "5": [
+     {
+      "k": "offer",
+      "key": "COLDWAR_SOV_offer_<deal>"
+     },
+     {
+      "k": "infl",
+      "tags": [
+       "<TAG>"
+      ],
+      "v": 4
+     },
+     {
+      "k": "dyn",
+      "g": "commonwealth",
+      "mods": {
+       "trade_opinion_factor": 0.05
+      }
+     },
+     {
+      "k": "pp",
+      "v": 50
+     }
+    ],
+    "7": [
+     {
+      "k": "offer",
+      "key": "COLDWAR_SOV_offer_<treaty>"
+     },
+     {
+      "k": "infl",
+      "tags": [
+       "<TAG1>",
+       "<TAG2>"
+      ],
+      "v": 4
+     },
+     {
+      "k": "dyn",
+      "g": "commonwealth",
+      "mods": {
+       "mdcw_cw_support_effectiveness": 0.1
+      }
+     },
+     {
+      "k": "pp",
+      "v": 50
+     },
+     {
+      "k": "tension",
+      "v": -1
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "gdp",
+     "v": 0.005
+    },
+    {
+     "k": "tension",
+     "v": 2
+    },
+    {
+     "k": "op",
+     "tag": "<rival>",
+     "key": "COLDWAR_SOV_<rival_angered>",
+     "v": -10
+    }
+   ],
+   "md_pattern": "own opinion + their opinion (has_expressed_loyalty) + influence +3 (2-5) + trade agreement + international investment +1 (14 'Friendship with X' foci, all cost 7); 57 foci use the offer pattern (country_event to the partner + TT_IF_THEY_ACCEPT + effect_tooltip of both outcomes); 20 create wargoals",
+   "md_examples": [
+    "SOV_freind_kaz",
+    "SOV_befriend_india",
+    "SOV_volkswagen",
+    "SOV_us_russia_defence_pact",
+    "SOV_support_taiwan_military_buildup"
+   ],
+   "md_share_of_foci": 198,
+   "md_kind_frequency": {
+    "event": 0.348,
+    "tt": 0.258,
+    "opinion": 0.227,
+    "infl": 0.182,
+    "helper": 0.162,
+    "decision": 0.121,
+    "add_threat_from_wargoal_effect": 0.076,
+    "create_wargoal": 0.076,
+    "pp": 0.071,
+    "int_invest": 0.071
+   },
+   "points": {
+    "3": 3.17,
+    "5": 5.5,
+    "7": 8.17
+   }
+  },
+  "society": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "pp",
+      "v": 50
+     },
+     {
+      "k": "idea",
+      "id": "COLDWAR_SOV_<campaign>",
+      "days": 365
+     },
+     {
+      "k": "stab",
+      "v": 0.01
+     }
+    ],
+    "5": [
+     {
+      "k": "stab",
+      "v": 0.04
+     },
+     {
+      "k": "law",
+      "helper": "increase_social_spending"
+     },
+     {
+      "k": "dyn",
+      "g": "party_state",
+      "mods": {
+       "stability_factor": 0.02
+      }
+     },
+     {
+      "k": "outlook",
+      "o": "<outlook 0-4>",
+      "v": 0.05
+     },
+     {
+      "k": "pp",
+      "v": 50
+     }
+    ],
+    "7": [
+     {
+      "k": "stab",
+      "v": 0.05
+     },
+     {
+      "k": "prog",
+      "g": "<leader>",
+      "mods": {
+       "stability_factor": 0.02,
+       "political_power_factor": 0.05
+      }
+     },
+     {
+      "k": "coh",
+      "v": 2
+     },
+     {
+      "k": "pp",
+      "v": 50
+     },
+     {
+      "k": "outlook",
+      "o": "<outlook 0-4>",
+      "v": 0.05
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "dyn",
+     "g": "gosplan",
+     "mods": {
+      "social_cost_multiplier_modifier": 0.03
+     }
+    },
+    {
+     "k": "stab",
+     "v": -0.03
+    },
+    {
+     "k": "fac",
+     "f": "communist_cadres",
+     "v": -5
+    }
+   ],
+   "md_pattern": "stability +0.03..+0.05, PP 70-75, timed idea 365 d, ideology popularity +0.05..+0.10, budget-law helper +1 step (social/health/education), stability/war-support factor lines 0.01-0.02; costs: bureaucracy +0.07..+0.21, stability -0.05 for repressive choices",
+   "md_examples": [
+    "SOV_honor_gorbachevs_legacy",
+    "SOV_2011_healthcare_reforms",
+    "SOV_social_conservatism",
+    "SOV_real_welfare"
+   ],
+   "md_share_of_foci": 57,
+   "md_kind_frequency": {
+    "dynvar": 0.404,
+    "ideo_pop": 0.175,
+    "idea": 0.123,
+    "stab": 0.123,
+    "bop": 0.123,
+    "pp": 0.123,
+    "swap": 0.123,
+    "law": 0.105,
+    "europeanism": 0.105,
+    "timed_idea": 0.088
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.33,
+    "7": 7.33
+   }
+  },
+  "regions": {
+   "by_cost": {
+    "3": [
+     {
+      "k": "coh",
+      "v": 3
+     },
+     {
+      "k": "stab",
+      "v": 0.02
+     },
+     {
+      "k": "pp",
+      "v": 25
+     }
+    ],
+    "5": [
+     {
+      "k": "coh",
+      "v": 4
+     },
+     {
+      "k": "dyn",
+      "g": "union",
+      "mods": {
+       "stability_factor": 0.02,
+       "drift_defence_factor": 0.05
+      }
+     },
+     {
+      "k": "pp",
+      "v": 50
+     }
+    ],
+    "7": [
+     {
+      "k": "custom",
+      "t": "republic_offer: each republic decides (cw_manual.republic_offer)"
+     },
+     {
+      "k": "coh",
+      "v": 5
+     },
+     {
+      "k": "decision",
+      "key": "COLDWAR_SOV_<republic_programme>"
+     },
+     {
+      "k": "dyn",
+      "g": "union",
+      "mods": {
+       "stability_factor": 0.02
+      }
+     },
+     {
+      "k": "bop",
+      "v": -0.05
+     },
+     {
+      "k": "pp",
+      "v": 75
+     }
+    ]
+   },
+   "downside": [
+    {
+     "k": "coh",
+     "v": -3
+    },
+    {
+     "k": "stab",
+     "v": -0.03
+    },
+    {
+     "k": "dyn",
+     "g": "union",
+     "mods": {
+      "nationalist_drift": 0.01
+     }
+    }
+   ],
+   "md_pattern": "separatism -1/-2 per focus (SUB_separatism_minus_subject behind a custom tooltip) + stability +0.02; referendum foci fire one event to the subject (it decides); capital move = set_capital + decentralisation + PP 80",
+   "md_examples": [
+    "SOV_subjects",
+    "SOV_referendum_in_tatarstan",
+    "SOV_nazbols_ekb",
+    "SOV_usr"
+   ],
+   "md_share_of_foci": 31,
+   "md_kind_frequency": {
+    "tt": 0.645,
+    "event": 0.258,
+    "helper": 0.194,
+    "pp": 0.097,
+    "law": 0.097,
+    "decision": 0.097,
+    "stab": 0.065,
+    "set_capital": 0.065,
+    "europeanism": 0.065,
+    "bop": 0.065
+   },
+   "points": {
+    "3": 3.0,
+    "5": 5.0,
+    "7": 7.0
+   }
+  }
+ },
+ "never": [
+  "A focus whose only visible reward is a custom tooltip or design note (MD: 15 tooltip-only foci = 2 %; our design: 90 cost-3 'question' foci with only a note). A choice hub gives at least 25-50 PP, one dyn/prog line or a short timed idea.",
+  "Buildings without payment: every build helper runs with skip_payment and a GDP share; add_building_construction needs gdp() in the same focus (MD pays in 76 of 79 building foci, 1.0-1.15x the helper price).",
+  "Stand-alone combat buffs of +2-4 % (army attack/defence/breakthrough as the focus's only reward). MD uses combat stats in 15 % of its landforce lines (median 0.03), but always bundled with other lines. COLDWAR rule, stricter than MD: a combat line is >= 5 %, sits in a bundle and is paid for (gdp or a cost line); otherwise use XP, tech bonus, equipment, planning/org/supply lines, mastery or special projects.",
+  "Hidden downsides (MD SOV_usr hides stability -25 %, SOV_regional_control hides oligarchs -40). Every negative value is visible.",
+  "Anything executed in another country's scope: their opinion of us, guarantees/diplomatic_relation, add_to_faction, annex/puppet/transfer_state, set_autonomy, cores on their states, civil war, wargoal-driven transfers. Use offer(key) (event, partner decides, no advance reward) - multiplayer rule. MD breaks this in ~10 foci and imposes opinion in 48.",
+  "Only an event or decision with no own reward on a cost >= 5 focus (MD: 85 event-only + 24 decision-only foci). Pair it with a real bundle or make the focus cost 2-3.",
+  "Free money: gdp_gain without a political, faction, corruption or tension cost (all 7 MD treasury gains are seizures/repatriations with oligarchs -25 or similar).",
+  "More than 6 dyn/prog lines in one focus or more than two modifiers touched (MD median 2 lines, 1 modifier; max 10 lines once).",
+  "Player party-popularity swings above +-0.10 (MD uses +-0.75 only inside is_ai = yes).",
+  "Stability above +0.06 or PP above 150 in a normal focus (MD outliers 0.16 / 0.30 and 250 exist only on capstones).",
+  "Tech bonus above 1.0 or more than 3 uses; more than two tech categories per focus.",
+  "Cost 7 foci that give no more than a cost-3 focus (MD has many, e.g. 'Destroy Revanchist Thoughts' at cost 7: stability factor +1 % against three cost lines). Use the reward-point budget.",
+  "Opinion/BoP/tension-only foci: these are directional, not rewards; they ride along with a real bundle.",
+  "Swapping an idea without checking it is present (always compile through idea(swap=...) which falls back to add_ideas)."
+ ]
+}

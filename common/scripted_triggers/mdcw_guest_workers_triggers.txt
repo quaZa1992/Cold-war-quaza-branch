@@ -1,0 +1,256 @@
+# IMPERIA CW — Cold War: Guest-worker and diaspora mechanics.
+# Native guest-worker conditions: ROOT receives, FROM sends, except offer_pair_pending.
+# Literal no-argument tier helpers; actual state_population counts people.
+# The 100k tier requires two distinct owned/controlled origin states with >50k each.
+# Nested PREV.PREV refers to the first candidate state, excluding it from the second check.
+
+# IMPERIA CW — Cold War: One foreign negotiation across recruitment and diaspora agreements.
+mdcw_gw_negotiation_free = {
+ NOT = { has_country_flag = mdcw_gw_request_pending }
+ NOT = { has_country_flag = mdcw_gw_offer_pending }
+ NOT = { has_country_flag = mdcw_gw_offer_window_open }
+ NOT = { has_country_flag = gw_dp_request }
+ NOT = { has_country_flag = gw_dp_offer }
+ NOT = { has_country_flag = gw_dp_offer_window }
+}
+
+# IMPERIA CW — Cold War: AI may answer offers as a sender, but cannot recruit.
+mdcw_gw_is_receiving_country = { is_ai = no exists = yes has_idea = mdcw_ni_guest_worker_recruitment_programme NOT = { has_country_flag = gw_recruitment_suspended } NOT = { has_country_flag = gw_return_active } }
+
+mdcw_gw_is_sending_country = { exists = yes has_idea = mdcw_ni_overseas_employment_programme NOT = { has_country_flag = gw_return_active } }
+
+mdcw_gw_has_receiving_state = {
+	any_owned_state = { is_controlled_by = PREV }
+}
+
+mdcw_gw_has_sending_state_25000 = {
+	any_owned_state = { is_controlled_by = PREV state_population > 25000 }
+}
+
+mdcw_gw_has_sending_state_50000 = {
+	any_owned_state = { is_controlled_by = PREV state_population > 50000 }
+}
+
+mdcw_gw_has_sending_state_100000 = {
+	any_owned_state = {
+		is_controlled_by = PREV
+		state_population > 50000
+		PREV = {
+			any_owned_state = {
+				is_controlled_by = PREV
+				state_population > 50000
+				NOT = { state = PREV.PREV }
+			}
+		}
+	}
+}
+
+# ROOT receives, FROM sends. MD GDP/c is cached in thousands of dollars.
+# Transient arithmetic only: no persistent cache or population scan.
+mdcw_gw_income_advantage = {
+ set_temp_variable = { gw_required_receiver_gdpc = FROM.gdp_per_capita }
+ multiply_temp_variable = { gw_required_receiver_gdpc = 1.25 }
+ check_variable = { gdp_per_capita > 0 }
+ FROM = { check_variable = { gdp_per_capita > 0 } }
+ NOT = { check_variable = { gdp_per_capita < gw_required_receiver_gdpc } }
+}
+
+mdcw_gw_agreement_available_25000 = {
+	custom_trigger_tooltip = { tooltip = gw_pair_not_suspended_tt not_tooltip = gw_pair_not_suspended_tt_NOT mdcw_gw_pair_not_suspended = yes }
+	hidden_trigger = {
+		mdcw_gw_is_receiving_country = yes
+		FROM = {
+			mdcw_gw_is_sending_country = yes
+			NOT = { tag = ROOT }
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_income_gap_tt
+		not_tooltip = mdcw_gw_income_gap_tt_NOT
+		mdcw_gw_income_advantage = yes
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_treasury_tt
+		not_tooltip = mdcw_gw_treasury_tt_NOT
+		NOT = {
+			check_variable = { treasury < 10 }
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_receiver_cooldown_tt
+		not_tooltip = mdcw_gw_receiver_cooldown_tt_NOT
+		NOT = { has_country_flag = mdcw_gw_receiving_cooldown }
+	}
+	# Physical state safety is revalidated on acceptance, without a cached POP gate.
+	hidden_trigger = {
+		mdcw_gw_has_receiving_state = yes
+		FROM = { mdcw_gw_has_sending_state_25000 = yes }
+	}
+}
+
+mdcw_gw_agreement_available_50000 = {
+	custom_trigger_tooltip = { tooltip = gw_pair_not_suspended_tt not_tooltip = gw_pair_not_suspended_tt_NOT mdcw_gw_pair_not_suspended = yes }
+	hidden_trigger = {
+		mdcw_gw_is_receiving_country = yes
+		FROM = {
+			mdcw_gw_is_sending_country = yes
+			NOT = { tag = ROOT }
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_income_gap_tt
+		not_tooltip = mdcw_gw_income_gap_tt_NOT
+		mdcw_gw_income_advantage = yes
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_treasury_tt
+		not_tooltip = mdcw_gw_treasury_tt_NOT
+		NOT = {
+			check_variable = { treasury < 15 }
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_receiver_cooldown_tt
+		not_tooltip = mdcw_gw_receiver_cooldown_tt_NOT
+		NOT = { has_country_flag = mdcw_gw_receiving_cooldown }
+	}
+	# Physical state safety is revalidated on acceptance, without a cached POP gate.
+	hidden_trigger = {
+		mdcw_gw_has_receiving_state = yes
+		FROM = { mdcw_gw_has_sending_state_50000 = yes }
+	}
+}
+
+mdcw_gw_agreement_available_100000 = {
+	custom_trigger_tooltip = { tooltip = gw_pair_not_suspended_tt not_tooltip = gw_pair_not_suspended_tt_NOT mdcw_gw_pair_not_suspended = yes }
+	hidden_trigger = {
+		mdcw_gw_is_receiving_country = yes
+		FROM = {
+			mdcw_gw_is_sending_country = yes
+			NOT = { tag = ROOT }
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_income_gap_tt
+		not_tooltip = mdcw_gw_income_gap_tt_NOT
+		mdcw_gw_income_advantage = yes
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_treasury_tt
+		not_tooltip = mdcw_gw_treasury_tt_NOT
+		NOT = {
+			check_variable = { treasury < 25 }
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_receiver_cooldown_tt
+		not_tooltip = mdcw_gw_receiver_cooldown_tt_NOT
+		NOT = { has_country_flag = mdcw_gw_receiving_cooldown }
+	}
+	# Physical state safety is revalidated on acceptance, without a cached POP gate.
+	hidden_trigger = {
+		mdcw_gw_has_receiving_state = yes
+		FROM = { mdcw_gw_has_sending_state_100000 = yes }
+	}
+}
+
+mdcw_gw_request_available_25000 = {
+	# IMPERIA CW — Cold War: Recruitment shares the bilateral negotiation lock.
+	mdcw_gw_agreement_available_25000 = yes
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_no_pending_tt
+		not_tooltip = mdcw_gw_no_pending_tt_NOT
+		mdcw_gw_negotiation_free = yes
+		FROM = { mdcw_gw_negotiation_free = yes }
+		NOT = {
+			OR = {
+				has_country_flag = mdcw_gw_request_pending
+				has_country_flag = mdcw_gw_offer_pending
+				has_country_flag = mdcw_gw_offer_window_open
+			}
+		}
+		FROM = {
+			NOT = {
+				OR = {
+					has_country_flag = mdcw_gw_request_pending
+					has_country_flag = mdcw_gw_offer_pending
+					has_country_flag = mdcw_gw_offer_window_open
+				}
+			}
+		}
+	}
+}
+
+mdcw_gw_request_available_50000 = {
+	# IMPERIA CW — Cold War: Recruitment shares the bilateral negotiation lock.
+	mdcw_gw_agreement_available_50000 = yes
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_no_pending_tt
+		not_tooltip = mdcw_gw_no_pending_tt_NOT
+		mdcw_gw_negotiation_free = yes
+		FROM = { mdcw_gw_negotiation_free = yes }
+		NOT = {
+			OR = {
+				has_country_flag = mdcw_gw_request_pending
+				has_country_flag = mdcw_gw_offer_pending
+				has_country_flag = mdcw_gw_offer_window_open
+			}
+		}
+		FROM = {
+			NOT = {
+				OR = {
+					has_country_flag = mdcw_gw_request_pending
+					has_country_flag = mdcw_gw_offer_pending
+					has_country_flag = mdcw_gw_offer_window_open
+				}
+			}
+		}
+	}
+}
+
+mdcw_gw_request_available_100000 = {
+	# IMPERIA CW — Cold War: Recruitment shares the bilateral negotiation lock.
+	mdcw_gw_agreement_available_100000 = yes
+	custom_trigger_tooltip = {
+		tooltip = mdcw_gw_no_pending_tt
+		not_tooltip = mdcw_gw_no_pending_tt_NOT
+		mdcw_gw_negotiation_free = yes
+		FROM = { mdcw_gw_negotiation_free = yes }
+		NOT = {
+			OR = {
+				has_country_flag = mdcw_gw_request_pending
+				has_country_flag = mdcw_gw_offer_pending
+				has_country_flag = mdcw_gw_offer_window_open
+			}
+		}
+		FROM = {
+			NOT = {
+				OR = {
+					has_country_flag = mdcw_gw_request_pending
+					has_country_flag = mdcw_gw_offer_pending
+					has_country_flag = mdcw_gw_offer_window_open
+				}
+			}
+		}
+	}
+}
+
+mdcw_gw_pair_pending = {
+	has_country_flag = mdcw_gw_request_pending
+	FROM = { has_country_flag = mdcw_gw_offer_pending }
+	var:mdcw_gw_partner = { tag = FROM }
+	FROM = {
+		var:mdcw_gw_partner = { tag = ROOT }
+	}
+	check_variable = { mdcw_gw_pending_tier = FROM.mdcw_gw_pending_tier }
+}
+
+mdcw_gw_offer_pair_pending = {
+	has_country_flag = mdcw_gw_offer_pending
+	FROM = { has_country_flag = mdcw_gw_request_pending }
+	var:mdcw_gw_partner = { tag = FROM }
+	FROM = {
+		var:mdcw_gw_partner = { tag = ROOT }
+	}
+	check_variable = { mdcw_gw_pending_tier = FROM.mdcw_gw_pending_tier }
+}

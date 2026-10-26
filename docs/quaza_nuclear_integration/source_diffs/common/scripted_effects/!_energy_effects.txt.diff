@@ -1,0 +1,49 @@
+@@ -238,8 +238,16 @@
+
+ 			multiply = 0.75
+ 			multiply = display_multiplier
+ 		}
+ 	}
++	set_variable = { # Imperia: uranium mines (mining, milling and in-situ leaching plants)
++		energy_use_uranium_mine_total_display_var = {
++			value = uranium_mine_total
++			multiply = { value = 1 add = modifier@energy_use_modifier_uranium_mine }
++			multiply = 0.25
++			multiply = display_multiplier
++		}
++	}
+ 	set_variable = {
+ 		energy_use_civs_total_display_var = {
+ 			value = industrial_complex_total
+ 			multiply = { value = 1 add = modifier@energy_use_modifier_civs }
+
+@@ -289,8 +297,9 @@
+
+ 			add = energy_use_dockyards_total_display_var
+ 			add = energy_use_microchip_plant_total_display_var
+ 			add = energy_use_composite_plant_total_display_var
+ 			add = energy_use_synthetic_refinery_total_display_var
++			add = energy_use_uranium_mine_total_display_var # Imperia
+ 		}
+ 	}
+ 
+ 	# Total internal energy consumption: sum of every scaled source, clamped
+
+@@ -420,11 +430,16 @@
+
+ 				}
+ 				round = yes
+ 			}
+ 		}
++		# Imperia: enrichment needs natural uranium (resource). See imp_uranium_effects.txt
++		imp_uranium_enrichment_supply = yes
+ 	}
+ 	else = {
+ 		set_variable = { total_nuclear_reactor_fuel_production = 0 }
++		set_variable = { uranium_enrichment_need = 0 }
++		set_variable = { uranium_supply_ratio = 1 }
++		set_variable = { uranium_enrichment_output_factor = 1 }
+ 	}
+ 
+ 	if = {
+ 		limit = {

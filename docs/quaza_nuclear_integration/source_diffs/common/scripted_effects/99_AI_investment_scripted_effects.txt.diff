@@ -1,0 +1,56 @@
+@@ -221,8 +221,9 @@
+
+ 	set_temp_variable = { pending_infra = 0 }
+ 	set_temp_variable = { pending_renewable = 0 }
+ 	set_temp_variable = { pending_fossil = 0 }
+ 	set_temp_variable = { pending_nuclear = 0 }
++	set_temp_variable = { pending_uranium_mines = 0 }
+ 	set_temp_variable = { pending_shared_slot_building = 0 }
+ 	for_each_loop = {
+ 		array = project_type_in_state
+ 		value = v
+
+@@ -268,8 +269,11 @@
+
+ 			add_to_temp_variable = { pending_fossil = 1 }
+ 		}
+ 		else_if = { limit = { check_variable = { project_type_in_state^i = 13 } }
+ 			add_to_temp_variable = { pending_nuclear = 1 }
++		}
++		else_if = { limit = { check_variable = { project_type_in_state^i = 15 } }
++			add_to_temp_variable = { pending_uranium_mines = 1 }
+ 		}
+ 	}
+ }
+ 
+
+@@ -679,4 +683,28 @@
+
+ 			}
+ 		}
+ 	}
+ }
++
++# Building Type 15: Uranium mine. Only genuine deposits with free levels are candidates.
++AI_get_uranium_mine_score = {
++	if = { limit = { imp_uranium_investment_one_level_available = yes }
++		set_temp_variable = { AI_score = 75 }
++		set_temp_variable = { imp_uranium_score_part = imp_uranium_per_level }
++		multiply_temp_variable = { imp_uranium_score_part = 6 }
++		add_to_temp_variable = { AI_score = imp_uranium_score_part }
++		set_temp_variable = { imp_uranium_score_part = building_level@uranium_mine }
++		multiply_temp_variable = { imp_uranium_score_part = 35 }
++		subtract_from_temp_variable = { AI_score = imp_uranium_score_part }
++		set_temp_variable = { imp_uranium_score_part = pending_uranium_mines }
++		multiply_temp_variable = { imp_uranium_score_part = 50 }
++		subtract_from_temp_variable = { AI_score = imp_uranium_score_part }
++		if = { limit = { check_variable = { global.uranium_price > 0.25 } }
++			add_to_temp_variable = { AI_score = 40 }
++		}
++		if = { limit = { ROOT = { check_variable = { resource@uranium < 0 } } }
++			add_to_temp_variable = { AI_score = 30 }
++		}
++		set_temp_variable = { AI_score_type = 15 }
++		AI_record_score = yes
++	}
++}

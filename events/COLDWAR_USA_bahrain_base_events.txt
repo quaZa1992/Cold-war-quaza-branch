@@ -1,0 +1,119 @@
+# IMPERIA CW — Cold War: USA bahrain base events — game content.
+add_namespace = COLDWAR_USA_Bahrain
+
+# Bahrain receives the offer and retains the final decision.
+country_event = {
+	id = COLDWAR_USA_Bahrain.1
+	title = COLDWAR_USA_Bahrain.1.t
+	desc = COLDWAR_USA_Bahrain.1.d
+	picture = GFX_news_usa_nsa_bahrain
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = BHR
+		FROM = {
+			tag = USA
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_USA_bahrain_base_pending
+		}
+		has_country_flag = COLDWAR_USA_bahrain_base_pending
+	}
+
+	option = {
+		name = COLDWAR_USA_Bahrain.1.a
+		trigger = { COLDWAR_USA_bahrain_base_can_accept = yes }
+		ai_chance = {
+			base = 65
+			modifier = { factor = 1.5 has_opinion = { target = USA value > 25 } }
+			modifier = { factor = 0.25 has_opinion = { target = USA value < -25 } }
+			modifier = { factor = 2 is_in_faction_with = USA }
+		}
+		if = {
+			limit = {
+				FROM = { tag = USA }
+				COLDWAR_USA_bahrain_base_can_accept = yes
+			}
+			clr_country_flag = COLDWAR_USA_bahrain_base_pending
+			USA = {
+				clr_country_flag = COLDWAR_USA_bahrain_base_pending
+				set_country_flag = COLDWAR_USA_bahrain_base_accepted
+				transfer_state = 624
+				country_event = { id = COLDWAR_USA_Bahrain.2 }
+			}
+		}
+		else = {
+			clr_country_flag = COLDWAR_USA_bahrain_base_pending
+			USA = { COLDWAR_USA_cancel_bahrain_base_talks = yes }
+		}
+	}
+
+	option = {
+		name = COLDWAR_USA_Bahrain.1.b
+		trigger = { COLDWAR_USA_bahrain_base_can_accept = yes }
+		ai_chance = {
+			base = 35
+			modifier = { factor = 0.5 has_opinion = { target = USA value > 25 } }
+			modifier = { factor = 2 has_opinion = { target = USA value < -25 } }
+			modifier = { factor = 0.5 is_in_faction_with = USA }
+		}
+		if = {
+			limit = {
+				FROM = { tag = USA }
+				COLDWAR_USA_bahrain_base_can_accept = yes
+			}
+			clr_country_flag = COLDWAR_USA_bahrain_base_pending
+			USA = {
+				clr_country_flag = COLDWAR_USA_bahrain_base_pending
+				set_country_flag = COLDWAR_USA_bahrain_base_refused
+				add_opinion_modifier = {
+					target = BHR
+					modifier = COLDWAR_USA_bahrain_base_refused_opinion
+				}
+				country_event = { id = COLDWAR_USA_Bahrain.3 }
+			}
+		}
+		else = {
+			clr_country_flag = COLDWAR_USA_bahrain_base_pending
+			USA = { COLDWAR_USA_cancel_bahrain_base_talks = yes }
+		}
+	}
+
+	option = {
+		name = COLDWAR_USA_Bahrain.1.c
+		trigger = { NOT = { COLDWAR_USA_bahrain_base_can_accept = yes } }
+		ai_chance = { base = 1 }
+		clr_country_flag = COLDWAR_USA_bahrain_base_pending
+		USA = { COLDWAR_USA_cancel_bahrain_base_talks = yes }
+	}
+}
+
+country_event = {
+	id = COLDWAR_USA_Bahrain.2
+	title = COLDWAR_USA_Bahrain.2.t
+	desc = COLDWAR_USA_Bahrain.2.d
+	picture = GFX_news_usa_nsa_bahrain
+	is_triggered_only = yes
+	trigger = { tag = USA has_country_flag = COLDWAR_USA_bahrain_base_accepted }
+	option = { name = COLDWAR_USA_Bahrain.2.a }
+}
+
+country_event = {
+	id = COLDWAR_USA_Bahrain.3
+	title = COLDWAR_USA_Bahrain.3.t
+	desc = COLDWAR_USA_Bahrain.3.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+	trigger = { tag = USA has_country_flag = COLDWAR_USA_bahrain_base_refused }
+	option = { name = COLDWAR_USA_Bahrain.3.a }
+}
+
+country_event = {
+	id = COLDWAR_USA_Bahrain.4
+	title = COLDWAR_USA_Bahrain.4.t
+	desc = COLDWAR_USA_Bahrain.4.d
+	picture = GFX_political_deal
+	is_triggered_only = yes
+	trigger = { tag = USA has_country_flag = COLDWAR_USA_bahrain_base_cancelled }
+	option = { name = COLDWAR_USA_Bahrain.4.a }
+}

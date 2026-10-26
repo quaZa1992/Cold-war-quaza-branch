@@ -1,0 +1,443 @@
+@@ -16,13 +16,13 @@
+
+ 		}
+ 
+ 		# Can prepare
+ 		available = {
+-			raid_available_grey_zone = yes
++			imp_raid_missile_grey_zone = yes # Imperia: possible in peacetime as well
+ 		}
+ 		launchable = {
+ 			set_temp_variable = { cost = 99 }
+-			raid_can_launch = yes
++			raid_can_launch = yes # Imperia: missile strikes possible in peacetime (costs political power)
+ 		}
+ 
+ 
+ 		target_type = {
+
+@@ -452,8 +452,41 @@
+
+ 					FROM = { is_subject_of = ROOT }
+ 					is_subject_of = FROM
+ 				}
+ 			}
++			# Imperia: statesman logic - strikes without a war need a real reason
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_no_casus_belli = yes
++			}
++			# civilian economy is only hit after an attack on us or our partners
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_civilian_target_blocked = yes
++			}
++			# nuclear deterrence: never strike a nuclear power in peacetime, rarely even in retaliation
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_nuclear_deterrence = yes
++			}
++			modifier = {
++				factor = 0.3
++				imp_ai_raid_peace_nuclear_retaliation = yes
++			}
++			# home front: no public backing, unstable, or busy losing another war
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_domestic_block = yes
++			}
++			# they could hit back hard
++			modifier = {
++				factor = 0.5
++				NOT = { has_war_with = FROM }
++				strength_ratio = {
++					tag = FROM
++					ratio < 1.5
++				}
++			}
+ 		}
+ 	}
+ 	#Strike against resource mines
+ 	metal_production_raid_air = {
+
+@@ -472,13 +505,13 @@
+
+ 		}
+ 
+ 		# Can prepare
+ 		available = {
+-			raid_available_grey_zone = yes
++			imp_raid_missile_grey_zone = yes # Imperia: possible in peacetime as well
+ 		}
+ 		launchable = {
+ 			set_temp_variable = { cost = 99 }
+-			raid_can_launch = yes
++			raid_can_launch = yes # Imperia: missile strikes possible in peacetime (costs political power)
+ 		}
+ 
+ 		target_type = {
+ 			state = {
+
+@@ -865,8 +898,41 @@
+
+ 					FROM = { is_subject_of = ROOT }
+ 					is_subject_of = FROM
+ 				}
+ 			}
++			# Imperia: statesman logic - strikes without a war need a real reason
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_no_casus_belli = yes
++			}
++			# civilian economy is only hit after an attack on us or our partners
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_civilian_target_blocked = yes
++			}
++			# nuclear deterrence: never strike a nuclear power in peacetime, rarely even in retaliation
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_nuclear_deterrence = yes
++			}
++			modifier = {
++				factor = 0.3
++				imp_ai_raid_peace_nuclear_retaliation = yes
++			}
++			# home front: no public backing, unstable, or busy losing another war
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_domestic_block = yes
++			}
++			# they could hit back hard
++			modifier = {
++				factor = 0.5
++				NOT = { has_war_with = FROM }
++				strength_ratio = {
++					tag = FROM
++					ratio < 1.5
++				}
++			}
+ 		}
+ 
+ 	}
+ 	#Strike against all power production elements
+
+@@ -891,13 +957,13 @@
+
+ 		}
+ 
+ 		# Can prepare
+ 		available = {
+-			raid_available_grey_zone = yes
++			imp_raid_missile_grey_zone = yes # Imperia: possible in peacetime as well
+ 		}
+ 		launchable = {
+ 			set_temp_variable = { cost = 99 }
+-			raid_can_launch = yes
++			raid_can_launch = yes # Imperia: missile strikes possible in peacetime (costs political power)
+ 		}
+ 
+ 		target_type = {
+ 			building = {
+
+@@ -1452,8 +1518,41 @@
+
+ 					FROM = { is_subject_of = ROOT }
+ 					is_subject_of = FROM
+ 				}
+ 			}
++			# Imperia: statesman logic - strikes without a war need a real reason
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_no_casus_belli = yes
++			}
++			# civilian economy is only hit after an attack on us or our partners
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_civilian_target_blocked = yes
++			}
++			# nuclear deterrence: never strike a nuclear power in peacetime, rarely even in retaliation
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_nuclear_deterrence = yes
++			}
++			modifier = {
++				factor = 0.3
++				imp_ai_raid_peace_nuclear_retaliation = yes
++			}
++			# home front: no public backing, unstable, or busy losing another war
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_domestic_block = yes
++			}
++			# they could hit back hard
++			modifier = {
++				factor = 0.5
++				NOT = { has_war_with = FROM }
++				strength_ratio = {
++					tag = FROM
++					ratio < 1.5
++				}
++			}
+ 		}
+ 	}
+ 	#Strike against enrichment facilities to disable nuclear fuel/weapons production
+ 	enrichment_facility_strike = {
+
+@@ -1463,26 +1562,35 @@
+
+ 		category = infastructure_strikes
+ 
+ 		command_power = 20
+ 
++		# Imperia: pre-emptive strike against nuclear programmes (Osirak 1981 / Al Kibar 2007):
++		# every non-allied country with an enrichment facility is a target, no hostile opinion
++		# or intervention doctrine reach needed. Allies, subjects and the overlord stay excluded.
+ 		show_target = {
+ 			NOT = { is_in_faction_with = FROM }
+-			raid_show_target_opinion_hostile = yes
+-			FROM = { MD_special_countries = no }
++			NOT = { is_subject_of = FROM }
++			FROM = {
++				NOT = { is_subject_of = ROOT }
++				MD_special_countries = no
++			}
+ 		}
+ 
+ 		available = {
+-			raid_available_grey_zone = yes
++			imp_raid_missile_grey_zone = yes # Imperia: possible in peacetime as well (no NAP, ~100 PP outside of war)
+ 		}
+ 
+ 		launchable = {
+ 			set_temp_variable = { cost = 99 }
+ 			raid_can_launch = yes
+ 		}
+ 
++		# Imperia: the enrichment facility has show_on_map = 0, so it has no map position and a building target
++		# never finds anything (the raid never showed up). Target the state instead, like MD's production_strike;
++		# the success effects already hit the facility in var:target_state.
+ 		target_type = {
+-			building = {
+-				type = enrichment_facility
++			state = {
++				enrichment_facility > 0
+ 			}
+ 		}
+ 
+ 		launch_sound = raid_launch_air
+
+@@ -1813,8 +1921,43 @@
+
+ 					FROM = { is_subject_of = ROOT }
+ 					is_subject_of = FROM
+ 				}
+ 			}
++			# Imperia: statesman logic - strikes without a war need a real reason
++			# (counter-proliferation: a hostile rival enriching uranium counts as one)
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_no_casus_belli = yes
++				NOT = { imp_ai_raid_counter_proliferation = yes }
++			}
++			modifier = {
++				factor = 2
++				NOT = { has_war_with = FROM }
++				imp_ai_raid_counter_proliferation = yes
++			}
++			# nuclear deterrence: never strike a nuclear power in peacetime, rarely even in retaliation
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_nuclear_deterrence = yes
++			}
++			modifier = {
++				factor = 0.3
++				imp_ai_raid_peace_nuclear_retaliation = yes
++			}
++			# home front: no public backing, unstable, or busy losing another war
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_domestic_block = yes
++			}
++			# they could hit back hard
++			modifier = {
++				factor = 0.5
++				NOT = { has_war_with = FROM }
++				strength_ratio = {
++					tag = FROM
++					ratio < 1.5
++				}
++			}
+ 		}
+ 	}
+ 	#Cruise missile strikes against production
+ 	production_strike = {
+
+@@ -2265,8 +2408,41 @@
+
+ 					FROM = { is_subject_of = ROOT }
+ 					is_subject_of = FROM
+ 				}
+ 			}
++			# Imperia: statesman logic - strikes without a war need a real reason
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_no_casus_belli = yes
++			}
++			# civilian economy is only hit after an attack on us or our partners
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_civilian_target_blocked = yes
++			}
++			# nuclear deterrence: never strike a nuclear power in peacetime, rarely even in retaliation
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_nuclear_deterrence = yes
++			}
++			modifier = {
++				factor = 0.3
++				imp_ai_raid_peace_nuclear_retaliation = yes
++			}
++			# home front: no public backing, unstable, or busy losing another war
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_domestic_block = yes
++			}
++			# they could hit back hard
++			modifier = {
++				factor = 0.5
++				NOT = { has_war_with = FROM }
++				strength_ratio = {
++					tag = FROM
++					ratio < 1.5
++				}
++			}
+ 		}
+ 	}
+ 	#Strikes against both network and transportation infrastructure
+ 	infrastructure_strike = {
+
+@@ -2780,8 +2956,41 @@
+
+ 					FROM = { is_subject_of = ROOT }
+ 					is_subject_of = FROM
+ 				}
+ 			}
++			# Imperia: statesman logic - strikes without a war need a real reason
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_no_casus_belli = yes
++			}
++			# civilian economy is only hit after an attack on us or our partners
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_civilian_target_blocked = yes
++			}
++			# nuclear deterrence: never strike a nuclear power in peacetime, rarely even in retaliation
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_nuclear_deterrence = yes
++			}
++			modifier = {
++				factor = 0.3
++				imp_ai_raid_peace_nuclear_retaliation = yes
++			}
++			# home front: no public backing, unstable, or busy losing another war
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_domestic_block = yes
++			}
++			# they could hit back hard
++			modifier = {
++				factor = 0.5
++				NOT = { has_war_with = FROM }
++				strength_ratio = {
++					tag = FROM
++					ratio < 1.5
++				}
++			}
+ 		}
+ 	}
+ 
+ 	# Adjust facility strike to have less prep time
+
+@@ -2801,14 +3010,14 @@
+
+ 		}
+ 
+ 		# Can prepare
+ 		available = {
+-			raid_available_grey_zone = yes
++			imp_raid_missile_grey_zone = yes # Imperia: possible in peacetime as well
+ 		}
+ 
+ 		launchable = {
+ 			set_temp_variable = { cost = 99 }
+-			raid_can_launch = yes
++			raid_can_launch = yes # Imperia: missile strikes possible in peacetime (costs political power)
+ 		}
+ 
+ 		target_type = {
+ 			building = {
+
+@@ -3181,8 +3390,41 @@
+
+ 					FROM = { is_subject_of = ROOT }
+ 					is_subject_of = FROM
+ 				}
+ 			}
++			# Imperia: statesman logic - strikes without a war need a real reason
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_no_casus_belli = yes
++			}
++			# civilian economy is only hit after an attack on us or our partners
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_civilian_target_blocked = yes
++			}
++			# nuclear deterrence: never strike a nuclear power in peacetime, rarely even in retaliation
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_nuclear_deterrence = yes
++			}
++			modifier = {
++				factor = 0.3
++				imp_ai_raid_peace_nuclear_retaliation = yes
++			}
++			# home front: no public backing, unstable, or busy losing another war
++			modifier = {
++				factor = 0
++				imp_ai_raid_peace_domestic_block = yes
++			}
++			# they could hit back hard
++			modifier = {
++				factor = 0.5
++				NOT = { has_war_with = FROM }
++				strength_ratio = {
++					tag = FROM
++					ratio < 1.5
++				}
++			}
+ 		}
+ 	}
+ 
+ 	PER_raid_hezbollah = {
+
+@@ -3217,13 +3459,13 @@
+
+ 					has_non_aggression_pact_with = ROOT
+ 				}
+ 			}
+ 			set_temp_variable = { cost = 99 }
+-			raid_can_launch = yes
++			imp_raid_can_launch_war_only = yes # Imperia: no peacetime launch with political power
+ 		}
+ 		launchable = {
+ 			set_temp_variable = { cost = 99 }
+-			raid_can_launch = yes
++			imp_raid_can_launch_war_only = yes # Imperia: no peacetime launch with political power
+ 		}
+ 
+ 
+ 		target_type = {

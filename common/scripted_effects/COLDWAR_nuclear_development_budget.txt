@@ -1,0 +1,38 @@
+# IMPERIA CW — Cold War: funded nuclear weapons research within the native defence budget.
+# Weekly programme bases: $0.15384bn for the bomb and $0.09615bn
+# for warheads, scaled by GDP/c and inflation. This is a rate calculation;
+# native MD treasury accounting pays it, so refreshing the GUI cannot charge twice.
+# Scripted budget literals must use at most five fractional digits for native fixed-point parsing.
+COLDWAR_calculate_nuclear_development_budget = {
+	set_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0 }
+	if = {
+		limit = { is_special_project_being_researched = sp:sp_nuclear_bomb }
+		add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.15384 }
+	}
+	if = {
+		limit = { is_special_project_being_researched = sp:sp_nuclear_warhead_program }
+		add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.09615 }
+	}
+	# COLDWAR nuclear-rework 21.10.2026: civil nuclear projects and enrichment upkeep (weekly, same pricing)
+	if = { limit = { is_special_project_being_researched = sp:sp_nuclear_energy } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.05 } } # COLDWAR nuclear-rework 21.10.2026
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_gas_centrifuge_enrichment } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.06 } } # COLDWAR nuclear-rework 21.10.2026
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_fuel_reprocessing } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.07 } } # COLDWAR nuclear-rework 21.10.2026
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_fast_breeder } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.10 } } # COLDWAR nuclear-rework 21.10.2026
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_reactor_design } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.05 } } # COLDWAR nuclear-rework 21.10.2026
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_waste_repository } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.04 } } # COLDWAR nuclear-rework 21.10.2026
+	if = { limit = { is_special_project_being_researched = sp:sp_thorium_nuclear_fuel } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = 0.08 } } # COLDWAR nuclear-rework 21.10.2026
+	if = { limit = { check_variable = { total_enrichment_facilities > 0 } } set_temp_variable = { COLDWAR_t_enrichment_upkeep = total_enrichment_facilities } multiply_temp_variable = { COLDWAR_t_enrichment_upkeep = 0.02 } add_to_temp_variable = { COLDWAR_nuclear_development_weekly_base = COLDWAR_t_enrichment_upkeep } } # COLDWAR nuclear-rework 21.10.2026
+	COLDWAR_price_nuclear_development_budget = yes
+}
+
+# No state/country loops. Retained separately for deterministic native validation.
+COLDWAR_price_nuclear_development_budget = {
+	set_variable = {
+		COLDWAR_nuclear_development_weekly_cost = {
+			value = COLDWAR_nuclear_development_weekly_base
+			multiply = { value = gdp_per_capita divide = 36 clamp = { min = 0.4 max = 1.2 } }
+			multiply = inflation_multiplier
+			clamp = { min = 0 max = @math_expressions_max }
+		}
+	}
+}

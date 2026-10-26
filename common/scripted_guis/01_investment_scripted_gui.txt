@@ -1,0 +1,975 @@
+# Foreign Investment GUI
+scripted_gui = {
+	investments_show_Investment_window = {
+		context_type = selected_state_context
+		window_name = "investments_show_Investment_window"
+
+		parent_window_token = selected_state_view
+
+		dirty = global.refresh_investment_gui
+
+		triggers = {
+			investments_up_arrow_visible = {
+				OR = {
+					NOT = { is_owned_by = ROOT }
+					NOT = { is_controlled_by = ROOT }
+				}
+				ROOT = { has_country_flag = investments_hide_investment_window }
+			}
+			investments_down_arrow_visible = {
+				OR = {
+					NOT = { is_owned_by = ROOT }
+					NOT = { is_controlled_by = ROOT }
+				}
+				ROOT = { NOT = { has_country_flag = investments_hide_investment_window } }
+			}
+		}
+
+		effects = {
+			investments_up_arrow_click = {
+				ROOT = { if = {
+						# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+						limit = { OR = { NOT = { has_variable = imp_max_investment_out } NOT = { has_variable = imp_max_investment_in } } }
+						# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+						imp_set_investment_caps = yes
+					}
+					clr_country_flag = investments_hide_investment_window }
+				refresh_investment_gui = yes
+			}
+
+			investments_down_arrow_click = {
+				# ROOT is the investor nation
+				ROOT = { set_country_flag = investments_hide_investment_window }
+				refresh_investment_gui = yes
+			}
+		}
+	}
+
+	# Foreign Investment Menu
+	investments_allied_construction_window = {
+		context_type = selected_state_context
+		window_name = "MD_state_investment"
+		parent_window_token = selected_state_view
+
+		dirty = global.refresh_investment_gui
+
+		properties = {
+			investments_influence_icon = { image = "[investments_get_influence_icon]" }
+		}
+
+		visible = {
+			NOT = { has_state_category = state_inhospitable }
+			OR = {
+				NOT = { is_owned_by = ROOT }
+				NOT = { is_controlled_by = ROOT }
+			}
+			ROOT = { NOT = { has_country_flag = investments_hide_investment_window } }
+		}
+
+		triggers = {
+			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+			# Building type IDs: CIC=1, MIC=2, NIC=3, Infra=4, Offices=5, Antiair=6, Radar=7, Airbase=8, FuelSilo=9, Internet=10, Ref=11, PowerPlant=12, Reactor=13, Agriculture=14, UraniumMine=15
+			select_civ_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 1 }
+			}
+
+			select_mil_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 2 }
+			}
+
+			select_dockyard_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 3 }
+			}
+
+			select_infrastructure_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 4 }
+			}
+
+			select_office_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 5 }
+			}
+
+			select_antyair_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 6 }
+			}
+
+			select_radar_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 7 }
+			}
+
+			select_airbase_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 8 }
+			}
+
+			select_strategic_resource_reserve_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 9 }
+			}
+
+			select_internet_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 10 }
+			}
+
+			select_renewable_power_plant_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 11 }
+			}
+
+			select_fossil_fuel_power_plant_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 12 }
+			}
+
+			select_nuclear_power_plant_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 13 }
+			}
+
+			select_agriculture_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 14 }
+			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+			}
+			select_uranium_mine_overlay_glow_visible = {
+				check_variable = { ROOT.project_building_type^-1 = 15 }
+			}
+
+			# Build Button Click Enabled
+			invest_button_click_enabled = {
+				hidden_trigger = {
+					PREV = { CONTROLLER = { NOT = { tag = ROOT } } }
+				}
+				# #Cannot be at war
+				# NOT = { OWNER = { has_war_with = ROOT } }
+				# NOT = { ROOT = { controls_state = PREV.id } }
+				# #Cannot be being justified upon investment country
+				# ROOT = { NOT = { is_justifying_wargoal_against = PREV } }
+				if = { limit = { NOT = { is_in_array = { array = THIS.projects_in_state value = ROOT.id } } currently_is_considering_a_project = yes }
+					ROOT = {
+						check_variable = { active_projects < 15 }
+						check_variable = { project_building_type^-1 > 0 }
+						check_variable = { project_build_amount^-1 > 0 }
+						NOT = { has_war_with = PREV.CONTROLLER }
+						NOT = { is_justifying_wargoal_against = PREV.CONTROLLER }
+						# General things
+						has_available_treasury_investment = yes
+					}
+					selected_investment_building_available = yes
+				}
+				else = {
+					always = yes
+				}
+				custom_trigger_tooltip = {
+					tooltip = disabled_foreign_investment_flag_tt
+					ROOT = { NOT = { has_country_flag = disabled_foreign_investment } }
+				}
+				custom_trigger_tooltip = {
+					tooltip = int_auto_reject_investment_flag_tt
+					PREV = { CONTROLLER = { NOT = { has_country_flag = int_auto_reject_investment_flag } } }
+				}
+				custom_trigger_tooltip = {
+					tooltip = not_investment_target_tt
+					PREV = { CONTROLLER = { NOT = { has_country_flag = not_investment_target } } }
+				}
+				custom_trigger_tooltip = {
+					tooltip = not_recently_canceled_a_project_in_state_tt
+					ROOT = { NOT = { has_country_flag = recently_canceled_a_project_in_this_state_@PREV } }
+				}
+				if = {
+					limit = {
+						has_game_rule = {
+							rule = rule_enable_investment_collapse_lock
+							option = yes
+						}
+					}
+					ROOT = { NOT = { has_active_mission = bankruptcy_incoming_collapse } }
+				}
+				ROOT = { NOT = { has_active_mission = cheap_loan_from_the_imf_mission } }
+			}
+
+			select_civ_button_click_enabled = {
+				investments_building_cic_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_mil_button_click_enabled = {
+				investments_building_mic_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_dockyard_button_click_enabled = {
+				investments_building_nic_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_infrastructure_button_click_enabled = {
+				investments_building_infra_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_office_button_click_enabled = {
+				investments_building_offices_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_antyair_button_click_enabled = {
+				investments_building_antiair_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_radar_button_click_enabled = {
+				investments_building_radar_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_airbase_button_click_enabled = {
+				investments_building_airbase_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_strategic_resource_reserve_button_click_enabled = {
+				building_fuel_silos_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_internet_button_click_enabled = {
+				building_internet_station_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_renewable_power_plant_button_click_enabled = {
+				investments_building_ref_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_fossil_fuel_power_plant_button_click_enabled = {
+				investments_building_foss_fuel_powerplant_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_nuclear_power_plant_button_click_enabled = {
+				investments_building_reactor_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+			select_uranium_mine_button_click_enabled = {
+				imp_uranium_investment_one_level_available = yes
+				currently_is_considering_a_project = yes
+			}
+
+			select_agriculture_button_click_enabled = {
+				investments_building_agriculture_district_available = yes
+				currently_is_considering_a_project = yes
+			}
+		}
+
+		effects = {
+			# Hides Investment Window
+			close_click = {
+				# ROOT is the investor nation
+				ROOT = { set_country_flag = investments_hide_investment_window }
+				refresh_investment_gui = yes
+			}
+			# Begins project or cancels the project if you have one active in a given state
+			invest_button_click = {
+				hidden_effect = {
+					ROOT = {
+						update_gui = yes
+						refresh_investment_gui = yes
+					}
+				}
+				if = {
+					limit = {
+						NOT = { is_in_array = { array = THIS.projects_in_state value = ROOT.id } }
+						selected_investment_building_available = yes
+						ROOT = {
+							has_available_treasury_investment = yes
+							NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+							# Game rule check for bankruptcy collapse lock
+							# Either the rule is disabled, OR (if enabled) no collapse mission is active
+							OR = {
+								NOT = {
+									has_game_rule = {
+										rule = rule_enable_investment_collapse_lock
+										option = yes
+									}
+								}
+								NOT = { has_active_mission = bankruptcy_incoming_collapse }
+							}
+						}
+					}
+					# PREV is the state target
+					set_variable = { ROOT.investments_state_target = THIS.id }
+					# CONTROLLER is pretty obvious
+					CONTROLLER = {
+						set_variable = { ROOT.investments_nation_target = THIS.id }
+						ROOT = { set_country_flag = { flag = this_investment_offer_pending@PREV days = 90 value = 1 } }
+					}
+					ROOT = {
+						update_gui = yes
+						refresh_investment_gui = yes
+						country_event = investments_event.3
+					}
+				}
+				else_if = {
+					limit = { is_in_array = { array = THIS.projects_in_state value = ROOT.id } }
+					CONTROLLER = { set_temp_variable = { influence_target = THIS } }
+					ROOT = {
+						set_variable = { project = PREV.project_target_state_@ROOT }
+						end_project = yes
+						refresh_investment_gui = yes
+						set_temp_variable = {
+							percent_change = {
+								value = global.investment_percent_change_value
+								multiply = -1
+							}
+						}
+						set_temp_variable = { tag_index = THIS.id }
+						change_influence_percentage = yes
+						set_country_flag = { flag = recently_canceled_a_project_in_this_state_@PREV value = 1 days = 3 }
+					}
+				}
+			}
+
+			# Increase/Decrease the number of buildings
+			increase_amount_click = {
+				ROOT = {
+					add_to_variable = { project_build_amount^-1 = 1 }
+					set_temp_variable = { _max_idx = project_building_type^-1 }
+					clamp_variable = { var = project_build_amount^-1 min = 1 max = global.max_build_amount_array^_max_idx }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			decrease_amount_click = {
+				ROOT = {
+					subtract_from_variable = { project_build_amount^-1 = 1 }
+					set_temp_variable = { _max_idx = project_building_type^-1 }
+					clamp_variable = { var = project_build_amount^-1 min = 1 max = global.max_build_amount_array^_max_idx }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+
+			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+			# Building type IDs: CIC=1, MIC=2, NIC=3, Infra=4, Offices=5, Antiair=6, Radar=7, Airbase=8, FuelSilo=9, Internet=10, Ref=11, PowerPlant=12, Reactor=13, Agriculture=14, UraniumMine=15
+			select_civ_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 1 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+
+			select_mil_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 2 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_dockyard_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 3 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_infrastructure_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 4 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_office_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 5 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_antyair_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 6 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_radar_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 7 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_airbase_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 8 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_strategic_resource_reserve_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 9 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_internet_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 10 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_renewable_power_plant_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 11 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_fossil_fuel_power_plant_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 12 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+			select_nuclear_power_plant_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 13 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+			}
+			select_uranium_mine_button_click = {
+				if = { limit = { imp_uranium_investment_one_level_available = yes }
+					ROOT = {
+						set_variable = { project_build_amount^-1 = 1 }
+						set_variable = { project_building_type^-1 = 15 }
+						update_gui = yes
+					}
+					refresh_investment_gui = yes
+				}
+			}
+			select_agriculture_button_click = {
+				ROOT = {
+					set_variable = { project_build_amount^-1 = 1 }
+					set_variable = { project_building_type^-1 = 14 }
+					update_gui = yes
+				}
+				refresh_investment_gui = yes
+			}
+		}
+	}
+
+	# Owned State Investment Menu
+	show_owned_state_investment_menu = {
+		context_type = selected_state_context
+		window_name = "show_owned_state_investment_menu"
+
+		parent_window_token = selected_state_view
+
+		dirty = global.refresh_investment_gui
+
+		visible = {
+			OR = {
+				is_owned_by = ROOT
+				is_controlled_by = ROOT
+			}
+		}
+
+		triggers = {
+			show_owned_state_investment_button_visible = {
+				ROOT = { has_country_flag = investments_hide_owned_investment_window }
+			}
+
+			hide_owned_state_investment_button_visible = {
+				ROOT = { NOT = { has_country_flag = investments_hide_owned_investment_window } }
+			}
+		}
+
+		effects = {
+			show_owned_state_investment_button_click = {
+				ROOT = { clr_country_flag = investments_hide_owned_investment_window }
+				refresh_investment_gui = yes
+			}
+
+			hide_owned_state_investment_button_click = {
+				ROOT = { set_country_flag = investments_hide_owned_investment_window }
+				refresh_investment_gui = yes
+			}
+		}
+	}
+
+	owned_state_investment_menu = {
+		context_type = selected_state_context
+		window_name = "owned_state_investment_menu"
+		parent_window_token = selected_state_view
+
+		dirty = global.refresh_investment_gui
+
+		visible = {
+			NOT = { has_state_category = state_inhospitable }
+			OR = {
+				is_owned_by = ROOT
+				is_controlled_by = ROOT
+			}
+			ROOT = { NOT = { has_country_flag = investments_hide_owned_investment_window } }
+		}
+
+		triggers = {
+			encourage_investments_in_state_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = currently_encouraged_investments }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			encourage_investments_in_state_right_click_enabled = { always = yes }
+
+			encourage_productivity_in_state_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = encourage_productivity_in_state }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			encourage_productivity_in_state_right_click_enabled = { always = yes }
+
+			expand_local_building_capacity_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = expand_local_building_capacity }
+				NOT = { has_state_flag = block_future_expand_local_building_capacity }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			expand_local_building_capacity_right_click_enabled = {
+				OR = {
+					has_state_flag = auto_repeat_internal_expand_building_capacity_@ROOT
+					AND = {
+						check_for_investment_project_limits = yes
+						NOT = { has_state_flag = expand_local_building_capacity }
+						NOT = { has_state_flag = block_future_expand_local_building_capacity }
+					}
+				}
+			}
+
+			expand_local_renewable_capacity_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = expand_local_renewable_capacity }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			expand_local_renewable_capacity_right_click_enabled = { always = yes }
+
+			expand_local_infrastructure_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = expand_local_infrastructure }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			expand_local_infrastructure_right_click_enabled = { always = yes }
+
+			expand_local_military_infrastructure_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = expand_local_military_infrastructure }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			expand_local_military_infrastructure_right_click_enabled = { always = yes }
+
+			expand_local_energy_infrastructure_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = expand_local_energy_infrastructure }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			expand_local_energy_infrastructure_right_click_enabled = { always = yes }
+
+			build_forward_logistics_base_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = build_forward_logistics_base }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			build_forward_logistics_base_right_click_enabled = { always = yes }
+
+			improve_rebuilding_efforts_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = improve_rebuilding_efforts }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			improve_rebuilding_efforts_right_click_enabled = { always = yes }
+
+			hire_extra_primary_sector_workers_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = hire_extra_primary_sector_workers }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			hire_extra_primary_sector_workers_right_click_enabled = { always = yes }
+
+			expand_local_coastal_infrastructure_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = expand_local_coastal_infrastructure }
+				is_coastal = yes
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			expand_local_coastal_infrastructure_right_click_enabled = {
+				OR = {
+					has_state_flag = auto_repeat_internal_expand_coastal_infrastructure_@ROOT
+					AND = {
+						check_for_investment_project_limits = yes
+						NOT = { has_state_flag = expand_local_coastal_infrastructure }
+						is_coastal = yes
+					}
+				}
+			}
+
+			expand_local_fortification_efforts_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = expand_local_fortification_efforts }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			expand_local_fortification_efforts_right_click_enabled = { always = yes }
+
+			# Custom National Content
+			improve_local_conservation_efforts_visible = {
+				ROOT = { original_tag = BRA }
+			}
+
+			improve_local_conservation_efforts_click_enabled = {
+				check_for_investment_project_limits = yes
+				NOT = { has_state_flag = improve_local_conservation_efforts }
+				has_dynamic_modifier = { modifier = BRA_amazon_modifier }
+				ROOT = {
+					has_political_power > 75
+					NOT = { has_active_mission = bankruptcy_incoming_collapse }
+				}
+			}
+			improve_local_conservation_efforts_right_click_enabled = {
+				OR = {
+					has_state_flag = auto_repeat_internal_conservation_@ROOT
+					AND = {
+						check_for_investment_project_limits = yes
+						NOT = { has_state_flag = improve_local_conservation_efforts }
+						has_dynamic_modifier = { modifier = BRA_amazon_modifier }
+						ROOT = { original_tag = BRA }
+					}
+				}
+			}
+		}
+
+		effects = {
+			encourage_investments_in_state_click = {
+				custom_effect_tooltip = encourage_investments_in_state_click_tt
+				set_state_flag = { flag = currently_encouraged_investments value = 1 days = 360 }
+				set_temp_variable = { ii_cost = 0.006 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+			}
+
+			encourage_productivity_in_state_click = {
+				custom_effect_tooltip = encourage_productivity_in_state_click_tt
+				set_state_flag = { flag = encourage_productivity_in_state value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_encouraged_productivity days = 360 }
+				set_temp_variable = { ii_cost = 0.009 }
+				set_temp_variable = { var = temp_pop value = state_population_k }
+				multiply_temp_variable = { var = temp_pop value = 0.0001 }
+				multiply_temp_variable = { ii_cost = temp_pop }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+			}
+
+			expand_local_building_capacity_click = {
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				custom_effect_tooltip = mdcw_imperia_expand_local_building_capacity_click_tt
+				set_state_flag = { flag = expand_local_building_capacity value = 1 days = 360 }
+				add_extra_state_shared_building_slots = 1
+				set_temp_variable = { ii_cost = 0.007 }
+				set_temp_variable = { ii_cost_multiplier = expanded_building_slot_times }
+				add_to_temp_variable = { ii_cost_multiplier = 1 }
+				multiply_temp_variable = { ii_cost = ii_cost_multiplier }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+				
+			}
+
+			expand_local_renewable_capacity_click = {
+				custom_effect_tooltip = expand_local_renewable_capacity_click_tt
+				set_state_flag = { flag = expand_local_renewable_capacity value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_local_renewable_capacity_modifier days = 360 }
+				set_temp_variable = { ii_cost = 0.001 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+				ROOT = {
+					set_temp_variable = { temp_opinion = -3 }
+					change_fossil_fuel_industry_opinion = yes
+				}
+			}
+
+			expand_local_infrastructure_click = {
+				custom_effect_tooltip = expand_local_infrastructure_click_tt
+				set_state_flag = { flag = expand_local_infrastructure value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_local_infrastructure_modifier days = 360 }
+				set_temp_variable = { ii_cost = 0.002 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+			}
+
+			expand_local_military_infrastructure_click = {
+				custom_effect_tooltip = expand_local_military_infrastructure_click_tt
+				set_state_flag = { flag = expand_local_military_infrastructure value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_local_military_infrastructure_modifier days = 360 }
+				set_temp_variable = { ii_cost = 0.002 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+				ROOT = {
+					set_temp_variable = { temp_opinion = 5 }
+					change_the_military_opinion = yes
+					change_intelligence_community_opinion = yes
+				}
+			}
+
+			expand_local_energy_infrastructure_click = {
+				custom_effect_tooltip = expand_local_energy_infrastructure_click_tt
+				set_state_flag = { flag = expand_local_energy_infrastructure value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_local_energy_infrastructure_modifier days = 360 }
+				set_temp_variable = { ii_cost = 0.003 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+				ROOT = {
+					set_temp_variable = { temp_opinion = 5 }
+					change_fossil_fuel_industry_opinion = yes
+				}
+			}
+
+			build_forward_logistics_base_click = {
+				custom_effect_tooltip = build_forward_logistics_base_click_tt
+				set_state_flag = { flag = build_forward_logistics_base value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_build_forward_logistics_base_modifier days = 360 }
+				set_temp_variable = { ii_cost = 0.004 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+			}
+
+			improve_rebuilding_efforts_click = {
+				custom_effect_tooltip = improve_rebuilding_efforts_click_tt
+				set_state_flag = { flag = improve_rebuilding_efforts value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_improve_rebuilding_efforts_modifier days = 360 }
+				set_temp_variable = { ii_cost = 0.004 }
+				set_temp_variable = { var = temp_pop value = state_population_k }
+				multiply_temp_variable = { var = temp_pop value = 0.0001 }
+				multiply_temp_variable = { ii_cost = temp_pop }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+			}
+
+			hire_extra_primary_sector_workers_click = {
+				custom_effect_tooltip = hire_extra_primary_sector_workers_click_tt
+				set_state_flag = { flag = hire_extra_primary_sector_workers value = 1 days = 360 }
+				add_dynamic_modifier = { modifier = state_owned_hire_extra_primary_sector_workers_modifier days = 360 }
+				set_temp_variable = { ii_cost = 0.006 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+			}
+
+			expand_local_coastal_infrastructure_click = {
+				custom_effect_tooltip = expand_local_coastal_infrastructure_click_tt
+				set_state_flag = { flag = expand_local_coastal_infrastructure value = 1 days = 180 }
+				add_dynamic_modifier = { modifier = state_owned_local_naval_infrastructure_modifier days = 180 }
+				set_temp_variable = { ii_cost = 0.005 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				calculate_internal_investments_costs = yes
+				ROOT = {
+					set_temp_variable = { temp_opinion = 5 }
+					change_maritime_industry_opinion = yes
+					change_the_military_opinion = yes
+				}
+			}
+
+			expand_local_fortification_efforts_click = {
+				custom_effect_tooltip = expand_local_fortification_efforts_click_tt
+				set_state_flag = { flag = expand_local_fortification_efforts value = 1 days = 180 }
+				add_dynamic_modifier = { modifier = state_owned_local_fortification_efforts_modifier days = 180 }
+				set_temp_variable = { ii_cost = 0.005 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				calculate_internal_investments_costs = yes
+				ROOT = {
+					set_temp_variable = { temp_opinion = 5 }
+					change_the_military_opinion = yes
+				}
+			}
+
+			improve_local_conservation_efforts_click = {
+				custom_effect_tooltip = improve_local_conservation_efforts_click_tt
+				set_state_flag = { flag = improve_local_conservation_efforts value = 1 days = 360 }
+				set_temp_variable = { ii_cost = 0.002 }
+				set_temp_variable = { pp_cost_temp = 75 }
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				set_variable = { mdcw_own_soi_duration = 360 }
+				calculate_internal_investments_costs = yes
+				# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+				clear_variable = mdcw_own_soi_duration
+				hidden_effect = { ROOT = { BRA_calculate_amazon_system = yes } }
+			}
+
+			encourage_investments_in_state_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_encourage_investments_@ROOT } clr_state_flag = auto_repeat_internal_encourage_investments_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_encourage_investments_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			encourage_productivity_in_state_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_encourage_productivity_@ROOT } clr_state_flag = auto_repeat_internal_encourage_productivity_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_encourage_productivity_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			expand_local_building_capacity_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_expand_building_capacity_@ROOT } clr_state_flag = auto_repeat_internal_expand_building_capacity_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_expand_building_capacity_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			expand_local_renewable_capacity_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_expand_renewable_capacity_@ROOT } clr_state_flag = auto_repeat_internal_expand_renewable_capacity_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_expand_renewable_capacity_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			expand_local_infrastructure_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_expand_infrastructure_@ROOT } clr_state_flag = auto_repeat_internal_expand_infrastructure_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_expand_infrastructure_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			expand_local_military_infrastructure_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_expand_military_infrastructure_@ROOT } clr_state_flag = auto_repeat_internal_expand_military_infrastructure_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_expand_military_infrastructure_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			expand_local_energy_infrastructure_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_expand_energy_infrastructure_@ROOT } clr_state_flag = auto_repeat_internal_expand_energy_infrastructure_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_expand_energy_infrastructure_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			build_forward_logistics_base_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_build_logistics_base_@ROOT } clr_state_flag = auto_repeat_internal_build_logistics_base_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_build_logistics_base_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			improve_rebuilding_efforts_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_improve_rebuilding_@ROOT } clr_state_flag = auto_repeat_internal_improve_rebuilding_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_improve_rebuilding_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			hire_extra_primary_sector_workers_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_hire_primary_workers_@ROOT } clr_state_flag = auto_repeat_internal_hire_primary_workers_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_hire_primary_workers_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			expand_local_coastal_infrastructure_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_expand_coastal_infrastructure_@ROOT } clr_state_flag = auto_repeat_internal_expand_coastal_infrastructure_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_expand_coastal_infrastructure_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			expand_local_fortification_efforts_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_expand_fortifications_@ROOT } clr_state_flag = auto_repeat_internal_expand_fortifications_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_expand_fortifications_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+
+			improve_local_conservation_efforts_right_click = {
+				if = { limit = { has_state_flag = auto_repeat_internal_conservation_@ROOT } clr_state_flag = auto_repeat_internal_conservation_@ROOT }
+				else = { set_state_flag = auto_repeat_internal_conservation_@ROOT }
+				update_automated_internal_investment_state_queue = yes
+			}
+		}
+	}
+}

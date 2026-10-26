@@ -1,0 +1,102 @@
+# IMPERIA CW — Cold War: AI programme acquisition and financial-only offer replies.
+# Programme acquisition reads cached population (100,000-person units) and unemployment (fraction).
+# Historical starting programmes remain intact; this guard applies to new choices.
+mdcw_gw_ai_sender_eligible = {
+	OR = {
+		NOT = { check_variable = { population_total < 100 } }
+		AND = {
+			has_variable = total_unemployed_percentage_display
+			NOT = { check_variable = { total_unemployed_percentage_display < 0.10 } }
+		}
+	}
+}
+
+# Financial-only sender AI preferences. ROOT sends; FROM is the receiving applicant.
+# These helpers are used only in ai_chance and never restrict player options.
+# Read cached country variables without population, workforce or state scans.
+# GDP/c is the same hard eligibility rule as for players, not an AI preference.
+
+mdcw_gw_ai_offer_viable_25000 = {
+	set_temp_variable = { gw_required_receiver_gdpc = gdp_per_capita }
+	multiply_temp_variable = { gw_required_receiver_gdpc = 1.25 }
+	check_variable = { gdp_per_capita > 0 }
+	NOT = { has_country_flag = gw_return_active }
+	NOT = { is_in_array = { gw_suspended_hosts = FROM.id } }
+	exists = yes
+	has_idea = mdcw_ni_overseas_employment_programme
+
+	FROM = {
+		check_variable = { gdp_per_capita > 0 }
+		NOT = { check_variable = { gdp_per_capita < ROOT.gw_required_receiver_gdpc } }
+		exists = yes
+		has_idea = mdcw_ni_guest_worker_recruitment_programme
+		NOT = { has_country_flag = gw_recruitment_suspended }
+		NOT = { has_country_flag = gw_return_active }
+
+		NOT = { has_country_flag = mdcw_gw_receiving_cooldown }
+		NOT = {
+			check_variable = { treasury < 10 }
+		}
+	}
+}
+
+mdcw_gw_ai_offer_viable_50000 = {
+	set_temp_variable = { gw_required_receiver_gdpc = gdp_per_capita }
+	multiply_temp_variable = { gw_required_receiver_gdpc = 1.25 }
+	check_variable = { gdp_per_capita > 0 }
+	NOT = { has_country_flag = gw_return_active }
+	NOT = { is_in_array = { gw_suspended_hosts = FROM.id } }
+	exists = yes
+	has_idea = mdcw_ni_overseas_employment_programme
+
+	FROM = {
+		check_variable = { gdp_per_capita > 0 }
+		NOT = { check_variable = { gdp_per_capita < ROOT.gw_required_receiver_gdpc } }
+		exists = yes
+		has_idea = mdcw_ni_guest_worker_recruitment_programme
+		NOT = { has_country_flag = gw_recruitment_suspended }
+		NOT = { has_country_flag = gw_return_active }
+
+		NOT = { has_country_flag = mdcw_gw_receiving_cooldown }
+		NOT = {
+			check_variable = { treasury < 15 }
+		}
+	}
+}
+
+mdcw_gw_ai_offer_viable_100000 = {
+	set_temp_variable = { gw_required_receiver_gdpc = gdp_per_capita }
+	multiply_temp_variable = { gw_required_receiver_gdpc = 1.25 }
+	check_variable = { gdp_per_capita > 0 }
+	NOT = { has_country_flag = gw_return_active }
+	NOT = { is_in_array = { gw_suspended_hosts = FROM.id } }
+	exists = yes
+	has_idea = mdcw_ni_overseas_employment_programme
+
+	FROM = {
+		check_variable = { gdp_per_capita > 0 }
+		NOT = { check_variable = { gdp_per_capita < ROOT.gw_required_receiver_gdpc } }
+		exists = yes
+		has_idea = mdcw_ni_guest_worker_recruitment_programme
+		NOT = { has_country_flag = gw_recruitment_suspended }
+		NOT = { has_country_flag = gw_return_active }
+
+		NOT = { has_country_flag = mdcw_gw_receiving_cooldown }
+		NOT = {
+			check_variable = { treasury < 25 }
+		}
+	}
+}
+
+mdcw_gw_ai_financial_pressure = {
+	OR = {
+		AND = {
+			has_variable = budget_balance_ratio
+			check_variable = { budget_balance_ratio < -0.10 }
+		}
+		AND = {
+			has_variable = debt_ratio
+			check_variable = { debt_ratio > 1 }
+		}
+	}
+}

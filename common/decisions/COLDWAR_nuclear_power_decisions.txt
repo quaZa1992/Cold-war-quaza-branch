@@ -1,0 +1,223 @@
+# IMPERIA COLD WAR: Project-specific integration; preserve existing author credits.
+# COLDWAR | Kernenergie-Umbau – player decisions (AI never takes them)
+COLDWAR_nuclear_power_category = {
+	COLDWAR_nuc_regime_minimal = {
+		icon = GFX_decision_energy_buycancel_button
+		cost = 25
+
+		visible = {
+			has_country_flag = COLDWAR_nuc_initialized
+			NOT = { check_variable = { COLDWAR_nuc_regime = 0 } }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nuc_regime_cooldown_tt
+				NOT = { has_country_flag = COLDWAR_nuc_regime_cd }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_regime_minimal"
+			custom_effect_tooltip = COLDWAR_nuc_regime_minimal_tt
+			hidden_effect = {
+				set_variable = { COLDWAR_nuc_regime = 0 }
+				COLDWAR_nuc_apply_regime = yes
+				set_country_flag = { flag = COLDWAR_nuc_regime_cd days = 180 value = 1 }
+			}
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	COLDWAR_nuc_regime_standard = {
+		icon = GFX_decision_generic_nuclear
+		cost = 25
+
+		visible = {
+			has_country_flag = COLDWAR_nuc_initialized
+			NOT = { check_variable = { COLDWAR_nuc_regime = 1 } }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nuc_regime_cooldown_tt
+				NOT = { has_country_flag = COLDWAR_nuc_regime_cd }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_regime_standard"
+			custom_effect_tooltip = COLDWAR_nuc_regime_standard_tt
+			hidden_effect = {
+				set_variable = { COLDWAR_nuc_regime = 1 }
+				COLDWAR_nuc_apply_regime = yes
+				set_country_flag = { flag = COLDWAR_nuc_regime_cd days = 180 value = 1 }
+			}
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	COLDWAR_nuc_regime_rigorous = {
+		icon = GFX_decision_reactor_dec
+		cost = 25
+
+		visible = {
+			has_country_flag = COLDWAR_nuc_initialized
+			NOT = { check_variable = { COLDWAR_nuc_regime = 2 } }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nuc_regime_cooldown_tt
+				NOT = { has_country_flag = COLDWAR_nuc_regime_cd }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_regime_rigorous"
+			custom_effect_tooltip = COLDWAR_nuc_regime_rigorous_tt
+			hidden_effect = {
+				set_variable = { COLDWAR_nuc_regime = 2 }
+				COLDWAR_nuc_apply_regime = yes
+				set_country_flag = { flag = COLDWAR_nuc_regime_cd days = 180 value = 1 }
+			}
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	COLDWAR_nuc_life_extension = {
+		icon = GFX_decision_slovakia_atom
+		cost = 50
+		days_re_enable = 365
+
+		visible = {
+			has_country_flag = COLDWAR_nuc_initialized
+			check_variable = { COLDWAR_nuc_age > 20 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_life_extension"
+			set_temp_variable = { treasury_change = gdp_total }
+			multiply_temp_variable = { treasury_change = nuclear_reactors }
+			divide_temp_variable = { treasury_change = -2000 }
+			modify_treasury_effect = yes
+			custom_effect_tooltip = COLDWAR_nuc_life_extension_tt
+			hidden_effect = {
+				subtract_from_variable = { COLDWAR_nuc_age = 10 }
+				clamp_variable = { var = COLDWAR_nuc_age min = 0 max = 100 }
+			}
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	COLDWAR_nuc_request_fuel = {
+		icon = GFX_decision_energy_buyagree_button
+		cost = 25
+
+		target_root_trigger = {
+			check_variable = { nuclear_reactors > 0 }
+			NOT = { has_variable = COLDWAR_fuel_supplier }
+		}
+		target_trigger = {
+			FROM = {
+				NOT = { tag = ROOT }
+				exists = yes
+				has_country_flag = enabled_nuclear_reactor_fuel_production
+				check_variable = { total_enrichment_facilities > 0 }
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		visible = {
+			NOT = { has_variable = COLDWAR_fuel_supplier }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nuc_fuel_request_pending_tt
+				NOT = { has_country_flag = COLDWAR_fuel_request_pending }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_request_fuel target [From.GetName]"
+			set_country_flag = { flag = COLDWAR_fuel_request_pending days = 30 value = 1 }
+			FROM = { country_event = { id = COLDWAR_nuclear.10 days = 1 } }
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT
+			custom_effect_tooltip = COLDWAR_nuc_request_fuel_tt
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	COLDWAR_nuc_cancel_fuel = {
+		icon = GFX_decision_energy_buycancel_button
+		cost = 0
+
+		visible = {
+			has_variable = COLDWAR_fuel_supplier
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_cancel_fuel"
+			var:COLDWAR_fuel_supplier = { country_event = { id = COLDWAR_nuclear.14 days = 1 } }
+			clear_variable = COLDWAR_fuel_supplier
+			custom_effect_tooltip = COLDWAR_nuc_cancel_fuel_tt
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	COLDWAR_nuc_terminate_fuel = {
+		icon = GFX_decision_energy_buycancel_button
+		cost = 0
+
+		target_root_trigger = {
+			check_variable = { COLDWAR_fuel_customers^num > 0 }
+		}
+		target_trigger = {
+			FROM = {
+				is_in_array = { ROOT.COLDWAR_fuel_customers = THIS.id }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_terminate_fuel target [From.GetName]"
+			remove_from_array = { COLDWAR_fuel_customers = FROM.id }
+			FROM = { country_event = { id = COLDWAR_nuclear.13 days = 1 } }
+			custom_effect_tooltip = COLDWAR_nuc_terminate_fuel_tt
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	COLDWAR_nuc_offer_turnkey = {
+		icon = GFX_decision_sov_rosatom_button
+		cost = 50
+		days_re_enable = 180
+
+		target_root_trigger = {
+			has_country_flag = COLDWAR_reactor_design_flag
+		}
+		target_trigger = {
+			FROM = {
+				NOT = { tag = ROOT }
+				exists = yes
+				has_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier }
+				NOT = { has_war_with = ROOT }
+				NOT = { has_variable = COLDWAR_fuel_supplier }
+			}
+		}
+		visible = {
+			has_country_flag = COLDWAR_reactor_design_flag
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_nuc_offer_turnkey target [From.GetName]"
+			FROM = { country_event = { id = COLDWAR_nuclear.20 days = 1 } }
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT
+			custom_effect_tooltip = COLDWAR_nuc_offer_turnkey_tt
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+}

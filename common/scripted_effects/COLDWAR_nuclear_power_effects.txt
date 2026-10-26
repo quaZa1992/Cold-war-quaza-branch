@@ -1,0 +1,298 @@
+# IMPERIA COLD WAR: Project-specific integration; preserve existing author credits.
+# COLDWAR | Kernenergie-Umbau – scripted effects
+# Player programme (maintenance, safety, accidents): only is_ai = no countries with reactors.
+# Cheap Oil Power and First-Generation Reactor Economics: every country (passive modifiers, oil price only read).
+# Fuel contracts: player buyers; the supplier may be AI and runs its own side in its own monthly tick.
+
+COLDWAR_nuc_startup_country = {
+	if = {
+		limit = { has_tech = reactor1 }
+		set_technology = {
+			mdcw_experimental_power_reactors_1954 = 1
+			mdcw_reactor_fuel_fabrication_1953 = 1
+			popup = no
+		}
+	}
+	if = {
+		limit = { has_tech = reactor2 }
+		set_technology = {
+			mdcw_reactor_licensing_1957 = 1
+			popup = no
+		}
+	}
+	COLDWAR_nuc_ensure_modifiers = yes
+}
+
+COLDWAR_nuc_ensure_modifiers = {
+	if = {
+		limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_first_generation_reactors_modifier } } }
+		add_dynamic_modifier = { modifier = COLDWAR_first_generation_reactors_modifier }
+	}
+	if = {
+		limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_cheap_oil_power_modifier } } }
+		add_dynamic_modifier = { modifier = COLDWAR_cheap_oil_power_modifier }
+	}
+}
+
+COLDWAR_nuc_monthly = {
+	COLDWAR_nuc_ensure_modifiers = yes
+	COLDWAR_cop_update = yes
+	if = {
+		limit = { COLDWAR_nuc_player_programme = yes }
+		if = {
+			limit = { NOT = { has_country_flag = COLDWAR_nuc_initialized } }
+			COLDWAR_nuc_init = yes
+		}
+		COLDWAR_nuc_update_fleet = yes
+		COLDWAR_nuc_update_safety = yes
+		COLDWAR_nuc_update_risk = yes
+		COLDWAR_nuc_roll = yes
+	}
+	if = {
+		limit = { has_variable = COLDWAR_fuel_supplier }
+		COLDWAR_fuel_buyer_monthly = yes
+	}
+	if = {
+		limit = { check_variable = { COLDWAR_fuel_customers^num > 0 } }
+		COLDWAR_fuel_supplier_monthly = yes
+	}
+	force_update_dynamic_modifier = yes
+}
+
+### Cheap Oil Power ###
+# f = (75 - effective oil price) / 75, -1..1. Cheap: fossil build speed +25 %*f, upkeep -20 %*f. Expensive: speed down to -15 %, upkeep up to +30 %.
+COLDWAR_cop_update = {
+	if = {
+		limit = { has_variable = global.imp_global_oil_price }
+		set_temp_variable = { imp_oil_factor_t = global.imp_global_oil_price }
+		mdcw_cw_oil_effective_price = yes
+		set_variable = { COLDWAR_cop_price_display = imp_oil_factor_t }
+		set_temp_variable = { COLDWAR_t_cop_f = 75 }
+		subtract_from_temp_variable = { COLDWAR_t_cop_f = imp_oil_factor_t }
+		divide_temp_variable = { COLDWAR_t_cop_f = 75 }
+		clamp_temp_variable = { var = COLDWAR_t_cop_f min = -1 max = 1 }
+		set_variable = { COLDWAR_cop_speed = COLDWAR_t_cop_f }
+		set_variable = { COLDWAR_cop_cost = COLDWAR_t_cop_f }
+		if = {
+			limit = { check_variable = { COLDWAR_t_cop_f > 0 } }
+			multiply_variable = { COLDWAR_cop_speed = 0.25 }
+			multiply_variable = { COLDWAR_cop_cost = -0.20 }
+		}
+		else = {
+			multiply_variable = { COLDWAR_cop_speed = 0.15 }
+			multiply_variable = { COLDWAR_cop_cost = -0.30 }
+		}
+	}
+}
+
+### Player programme ###
+COLDWAR_nuc_init = {
+	set_country_flag = COLDWAR_nuc_initialized
+	set_variable = { COLDWAR_nuc_safety = 50 }
+	set_variable = { COLDWAR_nuc_age = 0 }
+	if = {
+		limit = { date < 1970.3.1 }
+		set_variable = { COLDWAR_nuc_age = 6 }
+	}
+	set_variable = { COLDWAR_nuc_last_count = nuclear_reactors }
+	set_variable = { COLDWAR_nuc_regime = 1 }
+	COLDWAR_nuc_apply_regime = yes
+	if = {
+		limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_nuclear_programme_modifier } } }
+		add_dynamic_modifier = { modifier = COLDWAR_nuclear_programme_modifier }
+	}
+}
+
+# regime 0 = minimal, 1 = standard, 2 = rigorous
+COLDWAR_nuc_apply_regime = {
+	if = {
+		limit = { check_variable = { COLDWAR_nuc_regime = 0 } }
+		set_variable = { COLDWAR_nuc_regime_upkeep = -0.30 }
+		set_variable = { COLDWAR_nuc_regime_output = 0.03 }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_nuc_regime = 2 } }
+		set_variable = { COLDWAR_nuc_regime_upkeep = 0.40 }
+		set_variable = { COLDWAR_nuc_regime_output = -0.03 }
+	}
+	else = {
+		set_variable = { COLDWAR_nuc_regime_upkeep = 0 }
+		set_variable = { COLDWAR_nuc_regime_output = 0 }
+	}
+	force_update_dynamic_modifier = yes
+}
+
+# New reactors lower the average fleet age; the fleet ages one month per tick.
+COLDWAR_nuc_update_fleet = {
+	if = {
+		limit = { check_variable = { nuclear_reactors > COLDWAR_nuc_last_count } }
+		multiply_variable = { COLDWAR_nuc_age = COLDWAR_nuc_last_count }
+		divide_variable = { COLDWAR_nuc_age = nuclear_reactors }
+	}
+	add_to_variable = { COLDWAR_nuc_age = 0.0833 }
+	set_variable = { COLDWAR_nuc_last_count = nuclear_reactors }
+}
+
+# Target = 40 + techs/projects/ideas (mdcw_nuclear_safety_target) + regime; the value moves 2 points a month.
+COLDWAR_nuc_update_safety = {
+	set_variable = { COLDWAR_nuc_safety_target = 40 }
+	add_to_variable = { COLDWAR_nuc_safety_target = modifier@mdcw_nuclear_safety_target }
+	if = {
+		limit = { check_variable = { COLDWAR_nuc_regime = 0 } }
+		subtract_from_variable = { COLDWAR_nuc_safety_target = 20 }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_nuc_regime = 2 } }
+		add_to_variable = { COLDWAR_nuc_safety_target = 15 }
+	}
+	clamp_variable = { var = COLDWAR_nuc_safety_target min = 0 max = 100 }
+	set_temp_variable = { COLDWAR_t_nuc_step = COLDWAR_nuc_safety_target }
+	subtract_from_temp_variable = { COLDWAR_t_nuc_step = COLDWAR_nuc_safety }
+	clamp_temp_variable = { var = COLDWAR_t_nuc_step min = -2 max = 2 }
+	add_to_variable = { COLDWAR_nuc_safety = COLDWAR_t_nuc_step }
+	clamp_variable = { var = COLDWAR_nuc_safety min = 0 max = 100 }
+}
+
+# Monthly risk in per mille: 4.2 x (1.5 - safety/100) x age factor x breeder 1.2 x war 2 x reactors (max 900).
+COLDWAR_nuc_update_risk = {
+	set_variable = { COLDWAR_nuc_k = COLDWAR_nuc_safety }
+	divide_variable = { COLDWAR_nuc_k = -100 }
+	add_to_variable = { COLDWAR_nuc_k = 1.5 }
+	set_temp_variable = { COLDWAR_t_nuc_agef = COLDWAR_nuc_age }
+	subtract_from_temp_variable = { COLDWAR_t_nuc_agef = 15 }
+	clamp_temp_variable = { var = COLDWAR_t_nuc_agef min = 0 max = 40 }
+	divide_temp_variable = { COLDWAR_t_nuc_agef = 20 }
+	add_to_temp_variable = { COLDWAR_t_nuc_agef = 1 }
+	set_variable = { COLDWAR_nuc_risk_pm = 4.2 }
+	multiply_variable = { COLDWAR_nuc_risk_pm = COLDWAR_nuc_k }
+	multiply_variable = { COLDWAR_nuc_risk_pm = COLDWAR_t_nuc_agef }
+	if = {
+		limit = { has_idea = COLDWAR_breeder_fleet_idea }
+		multiply_variable = { COLDWAR_nuc_risk_pm = 1.2 }
+	}
+	if = {
+		limit = { has_war = yes }
+		multiply_variable = { COLDWAR_nuc_risk_pm = 2 }
+	}
+	multiply_variable = { COLDWAR_nuc_risk_pm = nuclear_reactors }
+	clamp_variable = { var = COLDWAR_nuc_risk_pm min = 0 max = 900 }
+	set_variable = { COLDWAR_nuc_risk_year = COLDWAR_nuc_risk_pm }
+	multiply_variable = { COLDWAR_nuc_risk_year = 1.2 }
+}
+
+# Severity weights: incident 100, serious accident 12k, catastrophe 3k^2 (k = 1.5 - safety/100).
+COLDWAR_nuc_roll = {
+	set_temp_variable_to_random = { var = COLDWAR_t_nuc_r min = 0 max = 1000 }
+	if = {
+		limit = { check_variable = { COLDWAR_t_nuc_r < COLDWAR_nuc_risk_pm } }
+		set_temp_variable = { COLDWAR_t_nuc_ws = COLDWAR_nuc_k }
+		multiply_temp_variable = { COLDWAR_t_nuc_ws = 12 }
+		set_temp_variable = { COLDWAR_t_nuc_wc = COLDWAR_nuc_k }
+		multiply_temp_variable = { COLDWAR_t_nuc_wc = COLDWAR_nuc_k }
+		multiply_temp_variable = { COLDWAR_t_nuc_wc = 3 }
+		set_temp_variable = { COLDWAR_t_nuc_wt = 100 }
+		add_to_temp_variable = { COLDWAR_t_nuc_wt = COLDWAR_t_nuc_ws }
+		add_to_temp_variable = { COLDWAR_t_nuc_wt = COLDWAR_t_nuc_wc }
+		set_temp_variable_to_random = { var = COLDWAR_t_nuc_r2 min = 0 max = 1000 }
+		multiply_temp_variable = { COLDWAR_t_nuc_r2 = COLDWAR_t_nuc_wt }
+		divide_temp_variable = { COLDWAR_t_nuc_r2 = 1000 }
+		set_temp_variable = { COLDWAR_t_nuc_serious_cap = COLDWAR_t_nuc_wc }
+		add_to_temp_variable = { COLDWAR_t_nuc_serious_cap = COLDWAR_t_nuc_ws }
+		if = {
+			limit = { check_variable = { COLDWAR_t_nuc_r2 < COLDWAR_t_nuc_wc } }
+			country_event = { id = COLDWAR_nuclear.3 days = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { COLDWAR_t_nuc_r2 < COLDWAR_t_nuc_serious_cap } }
+			country_event = { id = COLDWAR_nuclear.2 days = 1 }
+		}
+		else = {
+			country_event = { id = COLDWAR_nuclear.1 days = 1 }
+		}
+	}
+}
+
+# Anti-nuclear movement: the stronger form replaces the weaker one; a weaker one never replaces the stronger.
+COLDWAR_nuc_add_anti_nuclear_weak = {
+	if = {
+		limit = {
+			NOT = { has_idea = COLDWAR_anti_nuclear_movement_strong }
+			NOT = { has_idea = COLDWAR_anti_nuclear_movement }
+		}
+		add_timed_idea = { idea = COLDWAR_anti_nuclear_movement days = 1095 }
+	}
+}
+COLDWAR_nuc_add_anti_nuclear_strong = {
+	if = {
+		limit = { has_idea = COLDWAR_anti_nuclear_movement }
+		remove_ideas = COLDWAR_anti_nuclear_movement
+	}
+	if = {
+		limit = { NOT = { has_idea = COLDWAR_anti_nuclear_movement_strong } }
+		add_timed_idea = { idea = COLDWAR_anti_nuclear_movement_strong days = 1825 }
+	}
+}
+
+### Fuel supply contracts ###
+# Buyer: receives its monthly need (4.33 weeks) and pays 0.02 bn per reactor and month x inflation.
+COLDWAR_fuel_buyer_monthly = {
+	if = {
+		limit = {
+			var:COLDWAR_fuel_supplier = {
+				exists = yes
+				NOT = { has_war_with = ROOT }
+				check_variable = { var_reactor_material_stockpile > 0 }
+			}
+		}
+		set_temp_variable = { COLDWAR_t_fuel_need = nuclear_fuel_consumption }
+		multiply_temp_variable = { COLDWAR_t_fuel_need = 4.33 }
+		add_to_variable = { var_reactor_material_stockpile = COLDWAR_t_fuel_need }
+		set_temp_variable = { COLDWAR_t_fuel_price = modifier@inflation_cost_multiplier_modifier }
+		add_to_temp_variable = { COLDWAR_t_fuel_price = 1 }
+		multiply_temp_variable = { COLDWAR_t_fuel_price = -0.02 }
+		set_temp_variable = { treasury_change = nuclear_reactors }
+		multiply_temp_variable = { treasury_change = COLDWAR_t_fuel_price }
+		modify_treasury_effect = yes
+	}
+	else_if = {
+		limit = {
+			var:COLDWAR_fuel_supplier = {
+				exists = yes
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		# supplier has no fuel this month: nothing delivered, nothing paid
+	}
+	else = {
+		clear_variable = COLDWAR_fuel_supplier
+		country_event = { id = COLDWAR_nuclear.15 days = 1 }
+	}
+}
+
+# Supplier: earns 75 % of each customer's payment and ships the fuel from its own stockpile.
+COLDWAR_fuel_supplier_monthly = {
+	for_each_scope_loop = {
+		array = COLDWAR_fuel_customers
+		if = {
+			limit = {
+				exists = yes
+				NOT = { has_war_with = ROOT }
+				has_variable = COLDWAR_fuel_supplier
+				check_variable = { COLDWAR_fuel_supplier = ROOT.id }
+			}
+			set_temp_variable = { COLDWAR_t_fuel_income = nuclear_reactors }
+			set_temp_variable = { COLDWAR_t_fuel_ship = nuclear_fuel_consumption }
+			ROOT = {
+				set_temp_variable = { COLDWAR_t_fuel_rate = modifier@inflation_cost_multiplier_modifier }
+				add_to_temp_variable = { COLDWAR_t_fuel_rate = 1 }
+				multiply_temp_variable = { COLDWAR_t_fuel_rate = 0.015 }
+				multiply_temp_variable = { COLDWAR_t_fuel_income = COLDWAR_t_fuel_rate }
+				set_temp_variable = { treasury_change = COLDWAR_t_fuel_income }
+				modify_treasury_effect = yes
+				multiply_temp_variable = { COLDWAR_t_fuel_ship = 4.33 }
+				subtract_from_variable = { var_reactor_material_stockpile = COLDWAR_t_fuel_ship }
+				clamp_variable = { var = var_reactor_material_stockpile min = 0 max = 999999999 }
+			}
+		}
+	}
+}

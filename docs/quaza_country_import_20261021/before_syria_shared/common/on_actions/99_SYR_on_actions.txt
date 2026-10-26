@@ -1,0 +1,283 @@
+on_actions = {
+	on_monthly_FSA = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				#FSA deals with Al-Nusra
+				if = {
+					limit = {
+						country_exists = NUS
+						NOT = { country_exists = SYR }
+						NOT = { has_war_with = NUS }
+					}
+					country_event = { id = Syria.2 hours = 6 }
+				}
+				#Annex Al-Nusra if they are losing and we are not
+				if = {
+					limit = {
+						country_exists = NUS
+						country_exists = SYR
+						NOT = { country_exists = ISI }
+						NOT = { SYR = { surrender_progress > 0.4 } }
+						NUS = { is_ai = yes }
+						surrender_progress < 0.4
+						NUS = {
+							surrender_progress > 0.6
+						}
+					}
+					country_event = { id = Syria.15 hours = 6 }
+				}
+			}
+		}
+	}
+
+	on_monthly_NUS = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				#Annex FSA if they are losing and we are not
+				if = {
+					limit = {
+						country_exists = FSA
+						country_exists = SYR
+						NOT = { country_exists = ISI }
+						NOT = { SYR = { surrender_progress > 0.4 } }
+						FSA = { is_ai = yes }
+						surrender_progress < 0.6
+						FSA = {
+							surrender_progress > 0.45
+						}
+					}
+					country_event = { id = Syria.16 hours = 6 }
+				}
+			}
+		}
+	}
+
+	on_monthly_HEZ = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				#Hezbollah discovers Syrian infiltrators
+				if = {
+					limit = {
+						has_country_flag = HEZ_Infiltrated_by_SYR
+						NOT = { is_subject_of = SYR }
+						NOT = { is_subject_of = FSA }
+						NOT = { is_subject_of = NUS }
+					}
+					random_list = {
+						30 = {
+							modifier = {
+								factor = 0.67
+								OR = {
+									SYR = { has_idea = intelligence_community }
+									NUS = { has_idea = intelligence_community }
+									FSA = { has_idea = intelligence_community }
+								}
+							}
+							country_event = { id = SyriaDecisions.9 hours = 6 }
+						}
+						70 = {
+							modifier = {
+								factor = 1.14
+								OR = {
+									SYR = { has_idea = intelligence_community }
+									NUS = { has_idea = intelligence_community }
+									FSA = { has_idea = intelligence_community }
+								}
+							}
+						}
+					}
+				}
+				#Discord between Hezbollah and Iran
+				if = {
+					limit = {
+						has_country_flag = Discord_Between_HEZ_PER
+						NOT = { is_subject_of = SYR }
+						NOT = { is_subject_of = FSA }
+						NOT = { is_subject_of = NUS }
+					}
+					random_list = {
+						20 = {
+							modifier = {
+								factor = 1.5
+								OR = {
+									SYR = { has_idea = intelligence_community }
+									NUS = { has_idea = intelligence_community }
+									FSA = { has_idea = intelligence_community }
+								}
+							}
+							country_event = { id = SyriaDecisions.14 hours = 6 }
+						}
+						80 = {
+							modifier = {
+								factor = 0.875
+								OR = {
+									SYR = { has_idea = intelligence_community }
+									NUS = { has_idea = intelligence_community }
+									FSA = { has_idea = intelligence_community }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	on_monthly_SYR = {
+		# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+		# COLDWAR: removed MD 2000s random_events pulse (on_monthly_SYR)
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				if = {
+					limit = {
+						any_controlled_state = {
+							is_core_of = ALA
+						}
+						OR = {
+							has_war_with = ROJ
+							has_war_with = DRU
+						}
+					}
+					country_event = { id = SyriaFocus.26 days = 30 }
+				}
+				if = {
+					limit = {
+						OR = {
+							has_idea = syria_japanese_anime
+							has_idea = syria_chinese_anime
+							has_idea = syria_domestic_anime
+						}
+						has_idea = syrian_digital_investment4
+					}
+					country_event = { id = SyriaFocus.108 days = 30 }
+				}
+				# ISIS Spawns - Syrian Historical ISIS Spawn
+				if = {
+					limit = {
+						NOT = { has_global_flag = ISIL_declared }
+						has_global_flag = GLOBAL_operation_iraqi_freedom_succeeded
+						OR = {
+							check_variable = { global.month = 2 }
+							check_variable = { global.month = 4 }
+							check_variable = { global.month = 6 }
+							check_variable = { global.month = 8 }
+							check_variable = { global.month = 10 }
+							check_variable = { global.month = 12 }
+						}
+						OR = {
+							has_war_with = FSA
+							has_war_with = NUS
+						}
+						IRQ = { is_subject = no }
+					}
+
+					random_list = {
+						30 = {
+							modifier = {
+								factor = 1.25
+								date > 2011.1.1
+							}
+							modifier = {
+								factor = 1.5
+								date > 2012.1.1
+							}
+							modifier = {
+								factor = 1.75
+								date > 2013.1.1
+							}
+							modifier = {
+								factor = 2
+								date > 2014.1.1
+							}
+							modifier = {
+								factor = 2
+								SYR = { surrender_progress > 0.5 }
+							}
+							modifier = {
+								factor = 10
+								SYR_ai_historical_path = yes
+							}
+							news_event = arab_spring.15
+						}
+						70 = {
+							modifier = { factor = 0 date > 2015.1.1 }
+						}
+					}
+				}
+				# Direct trigger so a high-unrest player Syria never waits on the global lottery for its revolt chain
+				if = {
+					limit = {
+						is_ai = no
+						date > 2011.1.1
+						check_variable = { arab_spring > 249 }
+						NOT = { check_variable = { ruling_party = 12 } }
+						NOT = { has_country_flag = arab_spring_active }
+						NOT = {
+							any_of_scopes = {
+								array = global.arabic_countries
+								has_country_flag = arab_spring_active
+							}
+						}
+						NOT = { has_country_flag = AS_arab_spring_completed }
+						NOT = { has_global_flag = global_arab_spring_started }
+						has_war = no
+					}
+					set_country_flag = arab_spring_active
+					country_event = { id = arab_spring.0 days = 1 }
+				}
+			}
+		}
+	}
+
+	on_weekly_SYR = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				SYR_alawite_political_activity_modifier = yes
+				SYR_kurdish_political_activity_modifier = yes
+				SYR_druze_political_activity_modifier = yes
+				if = {
+					limit = {
+						check_variable = { alawite_status > 50 }
+						check_variable = { kurdish_status > 50 }
+						check_variable = { druze_status > 50 }
+					}
+					if = {
+						limit = {
+							NOT = { has_idea = syria_federal_government }
+							is_power_balance_in_range = {
+								id = Syria_centralization_balance_of_power_category
+								range = SYR_federal_state_formation_bop_left_side
+							}
+						}
+						country_event = { id = SyriaFocus.103 days = 1 }
+					}
+					if = {
+						limit = {
+							NOT = { has_idea = syria_bureaucratic_government }
+							is_power_balance_in_range = {
+								id = Syria_centralization_balance_of_power_category
+								range = SYR_new_republic_formation_bop_right_side
+							}
+						}
+						country_event = { id = SyriaFocus.104 days = 1 }
+					}
+				}
+			}
+		}
+	}
+}

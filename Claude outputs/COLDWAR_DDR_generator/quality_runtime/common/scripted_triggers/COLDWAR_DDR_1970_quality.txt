@@ -1,0 +1,38 @@
+COLDWAR_DDR_Q_can_sell_tanks = {
+    tag = SOV
+    NOT = { has_country_flag = MD_skip_treasury_cost }
+    country_exists = DDR
+    has_equipment = { medium_tank_chassis > 89 }
+    NOT = { has_war_with = DDR }
+    DDR = {
+        has_country_flag = COLDWAR_DDR_Q_trade_pending
+        has_country_flag = COLDWAR_DDR_Q_import_open
+        NOT = { has_country_flag = COLDWAR_DDR_Q_import_done }
+        NOT = { has_country_flag = MD_skip_treasury_cost }
+        check_variable = { COLDWAR_DDR_Q_import_price > 0 }
+        check_variable = { var = treasury value = COLDWAR_DDR_Q_import_price compare = greater_than_or_equals }
+    }
+}
+COLDWAR_DDR_Q_can_offer_licence = {
+    tag = SOV
+    NOT = { has_country_flag = MD_skip_treasury_cost }
+    country_exists = DDR
+    NOT = { has_war_with = DDR }
+    DDR = {
+        has_country_flag = COLDWAR_DDR_Q_trade_pending
+        has_country_flag = COLDWAR_DDR_Q_licence_open
+        NOT = { has_country_flag = COLDWAR_DDR_Q_licence_done }
+        NOT = { has_country_flag = MD_skip_treasury_cost }
+        check_variable = { COLDWAR_DDR_Q_licence_price > 0 }
+        check_variable = { var = treasury value = COLDWAR_DDR_Q_licence_price compare = greater_than_or_equals }
+        any_owned_state = {
+            is_controlled_by = DDR
+            free_building_slots = { building = arms_factory size > 1 include_locked = no }
+        }
+    }
+    OR = {
+        DDR = { has_license = { from = SOV archetype = medium_tank_chassis } }
+        AND = { has_dlc = "No Step Back" OR = { has_tech = mbt_tech has_tech = mdcw_postwar_medium_tank_1955_nsb AND = { date > 1974.12.31 has_tech = mbt_tech_1 } } }
+        AND = { NOT = { has_dlc = "No Step Back" } OR = { has_tech = MBT_1 AND = { date > 1974.12.31 has_tech = MBT_2 } } }
+    }
+}

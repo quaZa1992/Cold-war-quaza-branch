@@ -1,0 +1,73 @@
+# COLDWAR_IRQ CONCEPT ONLY. New daily/on-war/peace observer; not a native MD helper.
+# Called in IRQ scope on actual war transitions, daily and on load; never inferred from focus completion.
+# A missing current-war flag is initialized conservatively on a legacy save; elapsed days are not invented.
+COLDWAR_IRQ_update_iran_campaign = {
+ # Observe actual ownership/control from first acquisition, independently of party or completed focuses.
+ # Also call on_state_control_changed and authoritative peace/transfer pipelines to catch brief losses.
+ if = {
+  limit = { 399 = { is_owned_and_controlled_by = IRQ } }
+  if = {
+   limit = { NOT = { has_country_flag = COLDWAR_IRQ_khuzestan_hold_since } }
+   set_country_flag = COLDWAR_IRQ_khuzestan_hold_since
+  }
+ }
+ else = { clr_country_flag = COLDWAR_IRQ_khuzestan_hold_since }
+ if = {
+  limit = { has_war_with = PER }
+  if = {
+   limit = { NOT = { has_country_flag = COLDWAR_IRQ_iran_current_war_start } }
+   set_country_flag = COLDWAR_IRQ_iran_current_war_start
+   set_country_flag = COLDWAR_IRQ_iran_programme_refresh_needed
+  }
+  if = {
+   limit = { NOT = { has_country_flag = COLDWAR_IRQ_iran_first_war_seen } }
+   set_country_flag = COLDWAR_IRQ_iran_first_war_seen
+   set_country_flag = COLDWAR_IRQ_iran_campaign_window_open
+  }
+  if = {
+   limit = { has_country_flag = { flag = COLDWAR_IRQ_iran_first_war_seen days > 29 } }
+   clr_country_flag = COLDWAR_IRQ_iran_campaign_window_open
+  }
+  if = {
+   limit = {
+    has_country_flag = { flag = COLDWAR_IRQ_iran_current_war_start days > 179 }
+    NOT = { has_idea = COLDWAR_IRQ_iran_attrition_bill }
+   }
+   add_ideas = COLDWAR_IRQ_iran_attrition_bill
+  }
+ }
+ else = {
+  if = {
+   limit = { has_country_flag = COLDWAR_IRQ_iran_current_war_start }
+   clr_country_flag = COLDWAR_IRQ_iran_current_war_start
+   set_country_flag = COLDWAR_IRQ_iran_programme_refresh_needed
+  }
+  clr_country_flag = COLDWAR_IRQ_iran_campaign_window_open
+  if = { limit = { has_idea = COLDWAR_IRQ_iran_opening_offensive } remove_ideas = COLDWAR_IRQ_iran_opening_offensive }
+  if = { limit = { has_idea = COLDWAR_IRQ_iran_sustained_offensive } remove_ideas = COLDWAR_IRQ_iran_sustained_offensive }
+  if = { limit = { has_idea = COLDWAR_IRQ_iran_followup_offensive } remove_ideas = COLDWAR_IRQ_iran_followup_offensive }
+  if = { limit = { has_idea = COLDWAR_IRQ_iran_attrition_bill } remove_ideas = COLDWAR_IRQ_iran_attrition_bill }
+ }
+ # After any earned territorial package, re-evaluate current control, ownership and infrastructure daily.
+ # These flags are actual package-earned flags emitted by effect_body, not completion assumptions.
+ if = {
+  limit = { OR = {
+   has_country_flag = COLDWAR_IRQ_iran_secure_khuzestan_package_earned
+   has_country_flag = COLDWAR_IRQ_iran_oil_rehabilitation_package_earned
+   has_country_flag = COLDWAR_IRQ_iran_civil_administration_package_earned
+   has_country_flag = COLDWAR_IRQ_iran_regional_power_package_earned
+   has_country_flag = COLDWAR_IRQ_iran_provincial_settlement_package_earned
+   has_country_flag = COLDWAR_IRQ_iran_equal_citizenship_package_earned
+   has_country_flag = COLDWAR_IRQ_iran_central_administration_package_earned
+  } }
+  set_country_flag = COLDWAR_IRQ_iran_programme_refresh_needed
+ }
+ if = {
+  limit = { has_country_flag = COLDWAR_IRQ_iran_programme_refresh_needed }
+  COLDWAR_IRQ_reconcile_programmes = yes # NEW existing-concept reconciler; never replay once-only delivery.
+  clr_country_flag = COLDWAR_IRQ_iran_programme_refresh_needed
+ }
+ # NEVER clear first_war_seen, opening_used, disarray_used, focus delivery or invoice flags.
+ # NEVER remove mobilization_bill or followup_bill here: their original expiry survives peace.
+ # War transitions and the territorial guard request one cache refresh per observer call.
+}

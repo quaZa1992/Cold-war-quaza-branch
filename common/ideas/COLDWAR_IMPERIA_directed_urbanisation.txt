@@ -1,0 +1,49 @@
+# IMPERIA CW — Cold War: Directed urbanisation releases rural labour through the native MD economy.
+ideas = {
+	imp_national_ideas_2 = {
+		law = yes
+		use_list_view = yes
+
+		COLDWAR_ni_directed_urbanisation = {
+			# IMPERIA CW — Cold War: Generated badge matching this selector category.
+			picture = COLDWAR_selector_ni_directed_urbanisation
+			cost = 300
+			removal_cost = 200
+			allowed_civil_war = { always = yes }
+			visible = { IMP_is_1970_scenario = yes }
+			available = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_directed_urbanisation_rural_workforce_tt
+					check_variable = { agriculture_workers > 0 }
+				}
+			}
+			allowed_to_remove = {
+				custom_trigger_tooltip = {
+					tooltip = flag_ni_tt
+					NOT = { has_country_flag = COLDWAR_directed_urbanisation_commitment }
+				}
+			}
+			on_add = {
+				set_country_flag = { flag = COLDWAR_directed_urbanisation_commitment days = 1440 value = 1 }
+				hidden_effect = { ingame_update_setup = yes }
+			}
+			on_remove = {
+				hidden_effect = { ingame_update_setup = yes }
+			}
+			# IMPERIA CW — Cold War: Disrupted farming and rapid urban growth impose sustained public-service costs.
+			modifier = {
+				agriculture_workers_modifier = -0.30
+				production_speed_industrial_complex_factor = 0.15
+				agricolture_productivity_modifier = -0.25
+				stability_factor = -0.15
+				social_cost_multiplier_modifier = 0.40
+				bureaucracy_cost_multiplier_modifier = 0.35
+				health_cost_multiplier_modifier = 0.20
+				consumer_goods_factor = 0.10
+			}
+			ai_will_do = { factor = 0 }
+			# Falling rural employment must not cancel the policy or bypass its commitment.
+			cancel_if_invalid = no
+		}
+	}
+}

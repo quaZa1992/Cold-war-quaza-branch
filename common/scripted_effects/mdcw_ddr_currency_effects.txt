@@ -1,0 +1,19 @@
+# IMPERIA CW — Cold War: ddr currency effects — scripted effects.
+# One-time initialization for new campaigns, newly created DDR countries and
+# existing saves. Later player currency changes are preserved by the flag.
+mdcw_initialize_ddr_currency = {
+	if = {
+		limit = {
+			tag = DDR
+			NOT = { date < 1968.1.1 }
+			date < 1990.7.1
+			NOT = { has_country_flag = mdcw_ddr_mark_initialized }
+		}
+		add_ideas = ddr_mark
+		# History ideas do not run on_add; initialize the domestic-reserve variables
+		# explicitly as well, without creating an international reserve issuer.
+		set_variable = { no_foreign_reserve = 1 }
+		calculate_reserve_roi_bonus = yes
+		set_country_flag = mdcw_ddr_mark_initialized
+	}
+}

@@ -1,0 +1,261 @@
+capital = 752
+
+# IMPERIA CW — Cold War: 1970 scenario country history.
+# Authored Cold War 1970 snapshot; native later history retained.
+1970.1.1 = {
+	# IMPERIA CW — Cold War: 1970 scenario country history.
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY BEGIN
+	if = {
+		limit = { IMP_is_1970_scenario = yes }
+		set_country_flag = IMP_1970_historical_politics
+	}
+	set_cosmetic_tag = BRU_AUTH
+	set_popularities = { democratic = 12 communism = 4 fascism = 2 neutrality = 22 nationalist = 60 }
+	set_politics = { ruling_party = nationalist elections_allowed = no }
+	clear_array = party_pop_array
+	clear_array = party_pop_elect_array
+	clear_array = pos_array
+	clear_variable = ruling_party
+	clear_array = gov_coalition_array
+	resize_array = { array = party_pop_array size = 24 }
+	resize_array = { array = party_pop_elect_array size = 24 value = -1 }
+	resize_array = { array = pos_array size = 24 }
+	resize_array = { array = party_banned_array size = 24 value = 0 }
+	set_variable = { party_pop_array^0 = 0.05 }
+	set_variable = { party_pop_array^1 = 0.07 }
+	set_variable = { party_pop_array^4 = 0.02 }
+	set_variable = { party_pop_array^7 = 0.02 }
+	set_variable = { party_pop_array^10 = 0.02 }
+	set_variable = { party_pop_array^13 = 0.11 }
+	set_variable = { party_pop_array^14 = 0.07 }
+	set_variable = { party_pop_array^18 = 0.04 }
+	set_variable = { party_pop_array^22 = 0.06 }
+	set_variable = { party_pop_array^23 = 0.54 }
+	set_variable = { ruling_party = 23 }
+	create_country_leader = {
+		name = "Hassanal Bolkiah"
+		picture = "gfx/Leaders/BRU/BRU_Coldwar_Hassanal_Bolkiah.dds"
+		expire = "2000.1.1"
+		ideology = Monarchist
+	}
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY END
+
+	if = {
+		limit = { date < 1985.1.1 }
+		mdcw_apply_1970_infantry_research = yes
+		load_focus_tree = mdcw_1970_generic_focus
+		set_variable = { gdp_per_capita = 1.325 }
+		set_variable = { overall_productivity = 648.600 }
+		if = {
+			limit = { exists = yes }
+			set_oob = "mdcw_1970_empty_land"
+		}
+
+
+
+	}
+
+		# Temporary user decision: starting armies, fleets, air wings and equipment deferred.
+		set_oob = "mdcw_1970_empty_land"
+		set_naval_oob = "mdcw_1970_empty_naval"
+		set_air_oob = "mdcw_1970_empty_air"
+	}
+
+2000.1.1 = {
+	set_variable = { currency_strength = 0.9 }
+	set_cosmetic_tag = BRU_AUTH
+	set_variable = { dynamic_flag_variant = 2 }
+	set_country_flag = dynamic_flag
+	set_country_flag = dynamic_rebel_flag
+	set_variable = { gdp_per_capita = 68.866 }
+
+	# Starting tech
+	set_technology = {
+		railway_system_01 = 1
+		infantry_mass_assault = 1
+		infantry_weapons_1 = 1
+		combat_eng_equipment = 1
+		cnc_equipment_1 = 1
+		support_weapons = 1
+		special_forces_tech_1 = 1
+		util_vehicle_1 = 1
+		Anti_tank_1 = 1
+		Heavy_Anti_tank_1 = 1
+		body_armor_1 = 1
+		basic_computing = 1
+		integrated_circuit = 1
+		computing_1 = 1
+		radar = 1
+		internet_1 = 1
+		internet_2 = 1
+		gprs = 1
+		fuel_silos = 1
+	}
+
+	if = {
+		limit = { NOT = { has_dlc = "La Resistance" } }
+		set_technology = {
+			decryption_1 = 1
+			encryption_1 = 1
+		}
+	}
+	complete_special_project = sp:sp_armoured_vehicle_project
+	if = { limit = { has_dlc = "No Step Back" }
+		set_oob = "BRU_2000_nsb"
+		set_technology = {
+			mbt_tech_ops = 1
+			mbt_tech = 1
+			nsb_artillery_1 = 1
+			nsb_Anti_Air_0 = 1
+		}
+
+		else = {
+			set_oob = "BRU_2000_nonnsb"
+			set_technology = {
+				Early_APC = 1
+				APC_1 = 1
+				tech_arty_0 = 1
+				Rec_tank_0 = 1
+				Anti_Air_0 = 1
+			}
+		}
+	}
+
+	add_ideas = {
+		wto_member
+		partially_privatized_healthcare
+		balanced_protections
+		standard_maintenance
+		us_dollar
+		light_regulations
+
+		ASEAN_Member
+		corruption_level_05
+		sunni
+		stagnation
+		defence_03
+		edu_02
+		health_03
+		bureau_04
+		police_05
+		consumption_economy
+		volunteer_army
+		volunteer_women
+		fossil_fuel_industry
+		international_bankers
+		the_ulema
+		officer_advanced_training
+		no_currency_backing
+	}
+	add_dynamic_modifier = { modifier = Commonwealth_member_modifier }
+	add_to_array = { global.commonwealth_member = THIS }
+	add_timed_idea = { idea = asian_crisis days = 730 }
+
+	# Cartel System
+	set_variable = { cartel_political_influence = 25 }
+	set_variable = { strength_of_cartels = 35 }
+
+	#Influence system
+	init_influence = yes
+	set_variable = { domestic_influence_amount = 55 }
+	add_to_array = { influence_array = CHI.id }
+	add_to_array = { influence_array_val = 10 }
+	add_to_array = { influence_array = USA.id }
+	add_to_array = { influence_array_val = 3 }
+	add_to_array = { influence_array = IND.id }
+	add_to_array = { influence_array_val = 15 }
+	add_to_array = { influence_array = ENG.id }
+	add_to_array = { influence_array_val = 20 }
+	add_to_array = { influence_array = SIN.id }
+	add_to_array = { influence_array_val = 50 }
+	add_to_array = { influence_array = JAP.id }
+	add_to_array = { influence_array_val = 51 }
+	sort_influence = yes
+
+	add_opinion_modifier = { target = IND modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = IND modifier = asean_relations }
+	add_opinion_modifier = { target = LAO modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = LAO modifier = asean_relations }
+	add_opinion_modifier = { target = MAY modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = MAY modifier = asean_relations }
+	add_opinion_modifier = { target = BRM modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = BRM modifier = asean_relations }
+	add_opinion_modifier = { target = PHI modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = PHI modifier = asean_relations }
+	add_opinion_modifier = { target = SIN modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = SIN modifier = asean_relations }
+	add_opinion_modifier = { target = SIA modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = SIA modifier = asean_relations }
+	add_opinion_modifier = { target = VIE modifier = asean_relations }
+	reverse_add_opinion_modifier = { target = VIE modifier = asean_relations }
+
+	set_variable = { var = debt value = 1 }
+	set_variable = { var = int_investments value = 3.2 }
+	set_variable = { var = treasury value = 1 }
+	set_variable = { inflation_rate_var = -0.00416 }
+	set_variable = { cb_policy_rate = 3 }
+	set_variable = { var = corporate_tax_rate value = 6 }
+	set_variable = { var = population_tax_rate value = 6 }
+	set_variable = { overall_productivity = 1848 }
+
+	###BRU###
+	set_popularities = {
+		democratic = 0.0
+		communism = 0.0
+		fascism = 0.0
+		neutrality = 100.0
+		nationalist = 0.0
+	}
+	set_politics = {
+		ruling_party = neutrality
+		last_election = "1936.1.1"
+		election_frequency = 48
+		elections_allowed = no
+	}
+
+	start_politics_input = yes
+
+	set_variable = { party_pop_array^12 = 1.0 } #Neutral_Muslim_Brotherhood
+	set_variable = { ruling_party = 12 }
+	startup_politics = yes
+
+	### Banned Parties & Balance
+	set_partyall_banned = yes
+	add_political_power = 300
+
+	create_country_leader = {
+		name = "Hassanal Bolkiah"
+		picture = "BRU_Hassanal_Bolkiah.dds"
+		ideology = Neutral_Muslim_Brotherhood
+		traits = {
+			neutrality_Neutral_Muslim_Brotherhood
+		}
+	}
+
+	recruit_character = BRU_haji_muhammad_roszaimi_bin_bolhassan
+	recruit_character = BRU_spry_bin_haji_serudi
+	recruit_character = BRU_mohammad_sharif_bin_dato_paduka_haji_ibrahim
+	recruit_character = BRU_shari_bin_ahmad
+	recruit_character = BRU_halbi_bin_mohammad_yussof
+	recruit_character = BRU_mohammad_tawih_bin_abdullah
+	recruit_character = BRU_aminan_bin_pengiran_haji_mahmud
+	recruit_character = BRU_haji_hamzah_bin_haji_sahat
+	recruit_character = BRU_azmali_bin_pengiran_haji_mohd_salleh
+
+	# Relation Starting Configuration (moved from on_startup)
+	add_opinion_modifier = { target = CUB modifier = sanctions }
+	add_relation_modifier = { target = USA modifier = USA_World_Economical_Relations }
+	add_relation_modifier = { target = SOV modifier = SOV_World_Economical_Relations }
+	add_relation_modifier = { target = CHI modifier = CHI_World_Economical_Relations }
+	add_relation_modifier = { target = FRA modifier = FRA_World_Economical_Relations }
+	add_relation_modifier = { target = GER modifier = GER_World_Economical_Relations }
+	add_relation_modifier = { target = ENG modifier = ENG_World_Economical_Relations }
+	add_relation_modifier = { target = SPR modifier = SPR_World_Economical_Relations }
+	add_relation_modifier = { target = ITA modifier = ITA_World_Economical_Relations }
+	add_relation_modifier = { target = UKR modifier = UKR_world_economical_relations }
+	add_relation_modifier = { target = ISR modifier = ISR_World_Economical_Relations }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists_Trade }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists_Trade }
+}

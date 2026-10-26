@@ -1,0 +1,82 @@
+# IMPERIA CW — Cold War: Imperia sanctions decisions — decisions.
+# Original Script by: Moveably
+# Imperia Season 10 reports; MD Cold War fixes and pagination.
+
+imp_sanctions_decisions = {
+	d_imp_check_sanctions_on = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = { is_ai = no }
+		available = { always = yes }
+		complete_effect = {
+			custom_effect_tooltip = IMP_sanctions_open_outgoing_tt
+			hidden_effect = {
+				set_variable = { imp_sanc_by_us_offset = 0 }
+				country_event = { id = Imp_sanctions.1 }
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+
+	d_imp_check_sanctions_by = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = { is_ai = no }
+		available = { always = yes }
+		complete_effect = {
+			custom_effect_tooltip = IMP_sanctions_open_incoming_tt
+			hidden_effect = {
+				set_variable = { imp_sanc_on_us_offset = 0 }
+				country_event = { id = Imp_sanctions.2 }
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	d_imp_consolidate_power =
+	{
+		# Strengths are fractions clamped to 0..1; 0.10 represents ten percent.
+		icon = GFX_decision_imp_corruption
+		days_remove = 90
+
+		visible = 
+		{
+			is_ai = no
+			OR = 
+			{
+				check_variable = { imp_dip_sanctions_p > 0.10 }
+				check_variable = { imp_mil_sanctions_p > 0.10 }
+				check_variable = { imp_eco_sanctions_p > 0.10 }
+				check_variable = { imp_fin_sanctions_p > 0.10 }
+			}
+		}
+
+		available = {
+			NOT = { has_idea = corruption_level_10 }
+		}
+
+		remove_effect = {
+			increase_corruption = yes
+			add_political_power = 300
+
+			if = {
+				limit = { has_government = fascism }
+				add_popularity = { ideology = fascism popularity = 0.05}
+			}
+
+			if = {
+				limit = { has_government = communism }
+				add_popularity = { ideology = communism popularity = 0.05}
+			}
+
+			if = {
+				limit = { has_government = nationalist }
+				add_popularity = { ideology = nationalist popularity = 0.05}
+			}
+
+			if = {
+				limit = { has_government = neutrality }
+				add_popularity = { ideology = neutrality popularity = 0.05}
+			}
+		}
+	}
+}

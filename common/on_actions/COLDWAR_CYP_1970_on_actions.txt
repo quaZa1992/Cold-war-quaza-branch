@@ -1,0 +1,62 @@
+# IMPERIA CW — Cold War: CYP 1970 on actions — event hooks.
+## COLDWAR | Cyprus scenario observers; no forced foreign actions.
+on_actions = {
+	on_startup = {
+		effect = {
+			CYP = {
+				if = {
+					limit = {
+						exists = yes
+						IMP_is_1970_scenario = yes
+					}
+					COLDWAR_CYP_1970_initialize = yes
+				}
+			}
+		}
+	}
+	on_daily = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = CYP
+					exists = yes
+					IMP_is_1970_scenario = yes
+				}
+				COLDWAR_CYP_1970_daily_tick = yes
+			}
+		}
+	}
+	on_war_relation_added = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = { original_tag = TUR }
+					FROM = { original_tag = CYP IMP_is_1970_scenario = yes }
+				}
+				FROM = {
+					COLDWAR_CYP_1970_observe_turkish_war = yes
+					COLDWAR_CYP_1970_sync_milestones = yes
+				}
+			}
+		}
+	}
+	on_coup_succeeded = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = CYP
+					IMP_is_1970_scenario = yes
+				}
+				COLDWAR_CYP_1970_record_coup_attempt = yes
+				if = {
+					limit = {
+						OR = { check_variable = { ruling_party = 20 } check_variable = { ruling_party = 21 } check_variable = { ruling_party = 22 } }
+					}
+					set_country_flag = COLDWAR_CYP_1970_coup_regime_active
+					set_country_flag = { flag = COLDWAR_CYP_1970_coup_recent days = 8 value = 1 }
+				}
+				COLDWAR_CYP_1970_sync_milestones = yes
+			}
+		}
+	}
+}

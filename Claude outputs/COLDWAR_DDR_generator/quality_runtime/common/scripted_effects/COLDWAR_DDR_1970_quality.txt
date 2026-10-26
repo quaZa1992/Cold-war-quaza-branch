@@ -1,0 +1,185 @@
+# Approved focus quality pass: native transactions, no daily/weekly callbacks.
+COLDWAR_DDR_Q_prepare_repayment = {
+    set_variable = { COLDWAR_DDR_Q_repayment_cost = { value = gdp_total multiply = 0.03 min = debt max = 0 } }
+}
+COLDWAR_DDR_Q_finish_repayment = {
+    if = {
+        limit = {
+            has_country_flag = COLDWAR_DDR_Q_repayment_open
+            NOT = { has_country_flag = COLDWAR_DDR_Q_repayment_done }
+            NOT = { has_country_flag = MD_skip_treasury_cost }
+            check_variable = { COLDWAR_DDR_Q_repayment_cost > 0 }
+            check_variable = { var = debt value = COLDWAR_DDR_Q_repayment_cost compare = greater_than_or_equals }
+            check_variable = { var = treasury value = COLDWAR_DDR_Q_repayment_cost compare = greater_than_or_equals }
+        }
+        set_temp_variable = { treasury_change = { value = COLDWAR_DDR_Q_repayment_cost multiply = -1 } }
+        modify_treasury_effect = yes
+        set_temp_variable = { debt_change = { value = COLDWAR_DDR_Q_repayment_cost multiply = -1 } }
+        modify_debt_effect = yes
+        add_timed_idea = { idea = COLDWAR_DDR_Q_creditworthiness days = 730 }
+        add_to_variable = { COLDWAR_DDR_planned_economy_imp_sanction_resistance = 0.08 tooltip = COLDWAR_imp_sanction_resistance_tt }
+        set_temp_variable = { COLDWAR_DDR_trust_delta = 5 }
+        COLDWAR_DDR_change_trust = yes
+        set_temp_variable = { temp_opinion = 5 }
+        change_communist_cadres_opinion = yes
+        add_power_balance_value = { id = COLDWAR_DDR_german_course_bop value = -0.05 tooltip_side = COLDWAR_DDR_german_course_bop_left_side }
+        add_to_variable = { COLDWAR_DDR_course = -0.05 }
+        clamp_variable = { var = COLDWAR_DDR_course min = -1 max = 1 }
+        set_country_flag = COLDWAR_DDR_Q_repayment_done
+        clr_country_flag = COLDWAR_DDR_Q_repayment_open
+        clr_country_flag = COLDWAR_DDR_Q_repayment_dialog
+        force_update_dynamic_modifier = yes
+    }
+}
+COLDWAR_DDR_Q_open_repayment = {
+    custom_effect_tooltip = COLDWAR_DDR_Q_repayment_terms_tt
+    effect_tooltip = { add_timed_idea = { idea = COLDWAR_DDR_Q_creditworthiness days = 730 } }
+    hidden_effect = {
+        if = {
+            limit = { NOT = { has_country_flag = COLDWAR_DDR_Q_repayment_done } }
+            set_country_flag = COLDWAR_DDR_Q_repayment_open
+            COLDWAR_DDR_Q_prepare_repayment = yes
+            COLDWAR_DDR_Q_finish_repayment = yes
+        }
+    }
+}
+COLDWAR_DDR_Q_start_import = {
+    custom_effect_tooltip = COLDWAR_DDR_Q_import_terms_tt
+    effect_tooltip = { army_experience = 25 }
+    hidden_effect = {
+        if = {
+            limit = { NOT = { has_country_flag = COLDWAR_DDR_Q_import_started } }
+            army_experience = 25
+            set_country_flag = COLDWAR_DDR_Q_import_started
+            set_country_flag = COLDWAR_DDR_Q_import_open
+            COLDWAR_DDR_Q_request_import = yes
+        }
+    }
+}
+COLDWAR_DDR_Q_start_licence = {
+    custom_effect_tooltip = COLDWAR_DDR_Q_licence_terms_tt
+    effect_tooltip = {
+        add_to_variable = { COLDWAR_DDR_planned_economy_military_factories_productivity = 0.03 tooltip = military_factories_productivity_tt }
+    }
+    hidden_effect = {
+        if = {
+            limit = { NOT = { has_country_flag = COLDWAR_DDR_Q_licence_started } }
+            set_country_flag = COLDWAR_DDR_Q_licence_started
+            set_country_flag = COLDWAR_DDR_Q_licence_open
+            COLDWAR_DDR_Q_request_licence = yes
+        }
+    }
+}
+COLDWAR_DDR_Q_request_import = {
+    if = {
+        limit = {
+            tag = DDR
+            has_country_flag = COLDWAR_DDR_Q_import_open
+            NOT = { has_country_flag = COLDWAR_DDR_Q_import_done }
+            NOT = { has_country_flag = COLDWAR_DDR_Q_trade_pending }
+            NOT = { has_country_flag = COLDWAR_DDR_Q_trade_retry }
+            country_exists = SOV
+            NOT = { has_war_with = SOV }
+        }
+        set_variable = { COLDWAR_DDR_Q_import_price = { value = gdp_total multiply = 0.01 max = 0 } }
+        set_country_flag = { flag = COLDWAR_DDR_Q_trade_pending days = 14 value = 1 }
+        set_country_flag = { flag = COLDWAR_DDR_Q_trade_retry days = 30 value = 1 }
+        SOV = { country_event = { id = COLDWAR_DDR_Q.1 days = 1 } }
+    }
+}
+COLDWAR_DDR_Q_request_licence = {
+    if = {
+        limit = {
+            tag = DDR
+            has_country_flag = COLDWAR_DDR_Q_licence_open
+            NOT = { has_country_flag = COLDWAR_DDR_Q_licence_done }
+            NOT = { has_country_flag = COLDWAR_DDR_Q_trade_pending }
+            NOT = { has_country_flag = COLDWAR_DDR_Q_trade_retry }
+            country_exists = SOV
+            NOT = { has_war_with = SOV }
+        }
+        set_variable = { COLDWAR_DDR_Q_licence_price = { value = gdp_total multiply = 0.016 max = 0 } }
+        set_country_flag = { flag = COLDWAR_DDR_Q_trade_pending days = 14 value = 1 }
+        set_country_flag = { flag = COLDWAR_DDR_Q_trade_retry days = 30 value = 1 }
+        SOV = { country_event = { id = COLDWAR_DDR_Q.2 days = 1 } }
+    }
+}
+COLDWAR_DDR_Q_accept_import = {
+    if = {
+        limit = { COLDWAR_DDR_Q_can_sell_tanks = yes }
+        send_equipment = { type = medium_tank_chassis amount = 90 target = DDR }
+        set_temp_variable = { treasury_change = DDR.COLDWAR_DDR_Q_import_price }
+        modify_treasury_effect = yes
+        DDR = {
+            set_temp_variable = { treasury_change = { value = COLDWAR_DDR_Q_import_price multiply = -1 } }
+            modify_treasury_effect = yes
+            set_country_flag = COLDWAR_DDR_Q_import_done
+            clr_country_flag = COLDWAR_DDR_Q_import_open
+            clr_country_flag = COLDWAR_DDR_Q_trade_pending
+            set_temp_variable = { COLDWAR_DDR_trust_delta = 3 }
+            COLDWAR_DDR_change_trust = yes
+            set_temp_variable = { temp_opinion = -5 }
+            change_industrial_conglomerates_opinion = yes
+            set_temp_variable = { temp_opinion = 10 }
+            change_the_military_opinion = yes
+            country_event = { id = COLDWAR_DDR_Q.3 hours = 1 }
+        }
+    }
+}
+
+COLDWAR_DDR_Q_accept_licence = {
+    if = {
+        limit = { COLDWAR_DDR_Q_can_offer_licence = yes }
+        if = {
+            limit = { has_dlc = "No Step Back" date > 1974.12.31 has_tech = mbt_tech_1 DDR = { NOT = { has_license = { from = SOV archetype = medium_tank_chassis } } } }
+            create_production_license = { target = DDR cost_factor = 1 equipment = { type = medium_tank_chassis_1 } }
+        }
+        if = {
+            limit = { has_dlc = "No Step Back" has_tech = mbt_tech DDR = { NOT = { has_license = { from = SOV archetype = medium_tank_chassis } } } }
+            create_production_license = { target = DDR cost_factor = 1 equipment = { type = medium_tank_chassis_0 } }
+        }
+        if = {
+            limit = { has_dlc = "No Step Back" has_tech = mdcw_postwar_medium_tank_1955_nsb DDR = { NOT = { has_license = { from = SOV archetype = medium_tank_chassis } } } }
+            create_production_license = { target = DDR cost_factor = 1 equipment = { type = medium_tank_chassis_mdcw_1955 } }
+        }
+        if = {
+            limit = { NOT = { has_dlc = "No Step Back" } date > 1974.12.31 has_tech = MBT_2 DDR = { NOT = { has_license = { from = SOV archetype = medium_tank_chassis } } } }
+            create_production_license = { target = DDR cost_factor = 1 equipment = { type = MBT_2 } }
+        }
+        if = {
+            limit = { NOT = { has_dlc = "No Step Back" } has_tech = MBT_1 DDR = { NOT = { has_license = { from = SOV archetype = medium_tank_chassis } } } }
+            create_production_license = { target = DDR cost_factor = 1 equipment = { type = MBT_1 } }
+        }
+
+        if = {
+            limit = { DDR = { has_license = { from = SOV archetype = medium_tank_chassis } } }
+            set_temp_variable = { treasury_change = DDR.COLDWAR_DDR_Q_licence_price }
+            modify_treasury_effect = yes
+            DDR = {
+                set_temp_variable = { treasury_change = { value = COLDWAR_DDR_Q_licence_price multiply = -1 } }
+                modify_treasury_effect = yes
+                random_owned_controlled_state = {
+                    limit = { free_building_slots = { building = arms_factory size > 1 include_locked = no } }
+                    add_extra_state_shared_building_slots = 2
+                    add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+                }
+                add_to_variable = { COLDWAR_DDR_planned_economy_military_factories_productivity = 0.03 tooltip = military_factories_productivity_tt }
+                force_update_dynamic_modifier = yes
+                set_temp_variable = { temp_opinion = 10 }
+                change_industrial_conglomerates_opinion = yes
+                set_temp_variable = { COLDWAR_DDR_trust_delta = -3 }
+                COLDWAR_DDR_change_trust = yes
+                set_country_flag = COLDWAR_DDR_Q_licence_done
+                clr_country_flag = COLDWAR_DDR_Q_licence_open
+                clr_country_flag = COLDWAR_DDR_Q_trade_pending
+                country_event = { id = COLDWAR_DDR_Q.4 hours = 1 }
+            }
+        }
+        else = {
+            DDR = {
+                clr_country_flag = COLDWAR_DDR_Q_trade_pending
+                country_event = { id = COLDWAR_DDR_Q.5 hours = 1 }
+            }
+        }
+    }
+}

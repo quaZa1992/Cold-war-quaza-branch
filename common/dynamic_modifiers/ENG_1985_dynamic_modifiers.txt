@@ -1,0 +1,307 @@
+# IMPERIA CW — Cold War: Integrated ENG 1985 dynamic modifiers — dynamic modifiers.
+# =============================================================================
+# ENG 1985 - The Troubles state modifiers (Imperia RP Cold War start)
+# =============================================================================
+# Pattern lifted 1:1 from kurdish_resistance_dynamic_modifier + pkk_static_modifier
+# in 02_turkish_dynamic_modifiers.txt:
+#
+# ENG_ira_troubles_state_modifier -> dynamic, scales with the country-scope
+# IRA sliders. Drives resistance target, garrison requirement, garrison damage,
+# garrison penetration chance, and economy debuffs that climb with militancy.
+# ENG_ira_static_modifier -> always-on "state spirit" with fixed severe debuffs
+# that simulate a permanent low-intensity insurgency regardless of slider values.
+#
+# Both are added to state 17 (Northern Ireland) by
+# ENG_1985_ira_apply_state_modifier in scripted_effects, only in the 1985 start
+# (has_start_date < 1990.1.1). Together they reproduce the PKK feel: Northern
+# Ireland is permanently degraded as a province, AND that degradation gets
+# worse the higher the IRA militancy rises.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# DYNAMIC scaling modifier - reads from ENG country variables
+# -----------------------------------------------------------------------------
+# IMPERIA CW — Cold War: old IRA simulation replaced by the shared regional case.
+
+
+# -----------------------------------------------------------------------------
+# STATIC "state spirit" - permanent severe Troubles debuff
+# -----------------------------------------------------------------------------
+# Even with IRA militancy at zero this fires - it's the baseline cost of
+# garrisoning Northern Ireland in 1985. Removed only when state 17 leaves ENG
+# control (e.g. via the radical "Troops Out" focus path).
+# IMPERIA CW — Cold War: old IRA simulation replaced by the shared regional case.
+
+
+ENG_national_development_programme_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_economic_road_idea
+	custom_modifier_tooltip = ENG_national_development_programme_modifier_tt
+
+	production_speed_infrastructure_factor = ENG.ENG_development_infra_speed
+	production_speed_buildings_factor = ENG.ENG_development_construction_speed
+	production_speed_industrial_complex_factor = ENG.ENG_development_industry_speed
+	production_speed_offices_factor = ENG.ENG_development_office_speed
+	production_speed_internet_station_factor = ENG.ENG_development_network_speed
+	research_speed_factor = ENG.ENG_development_research
+	productivity_growth_modifier = ENG.ENG_development_productivity_growth
+	office_park_income_tax_modifier = ENG.ENG_development_office_tax
+	corporate_tax_income_multiplier_modifier = ENG.ENG_development_corporate_tax
+	return_on_investment_modifier = ENG.ENG_development_investment_return
+	energy_gain_multiplier = ENG.ENG_development_energy_gain
+	energy_use_multiplier = ENG.ENG_development_energy_use
+	globalism_equilibrium = ENG.ENG_development_globalism
+}
+
+ENG_conservative_statecraft_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_corruption_7
+	custom_modifier_tooltip = ENG_conservative_statecraft_modifier_tt
+
+	political_power_factor = ENG.ENG_conservative_pp_factor
+	consumer_goods_factor = ENG.ENG_conservative_consumer_goods
+	stability_factor = ENG.ENG_conservative_stability
+	war_support_factor = ENG.ENG_conservative_war_support
+	personnel_cost_multiplier_modifier = ENG.ENG_conservative_personnel_cost
+	navy_personnel_cost_multiplier_modifier = ENG.ENG_conservative_navy_cost
+	airforce_personnel_cost_multiplier_modifier = ENG.ENG_conservative_air_cost
+	production_speed_offices_factor = ENG.ENG_conservative_offices_speed
+	office_park_income_tax_modifier = ENG.ENG_conservative_office_tax
+	corporate_tax_income_multiplier_modifier = ENG.ENG_conservative_corporate_tax
+	social_cost_multiplier_modifier = ENG.ENG_conservative_social_cost
+	health_cost_multiplier_modifier = ENG.ENG_conservative_health_cost
+	expected_healthcare_modifier = ENG.ENG_conservative_expected_healthcare
+	expected_welfare_modifier = ENG.ENG_conservative_expected_welfare
+	bureaucracy_cost_multiplier_modifier = ENG.ENG_conservative_bureaucracy_cost
+	productivity_growth_modifier = ENG.ENG_conservative_productivity_growth
+	civ_facs_worker_requirement_modifier = ENG.ENG_conservative_civ_factory_workforce
+	mil_facs_worker_requirement_modifier = ENG.ENG_conservative_mil_factory_workforce
+	offices_worker_requirement_modifier = ENG.ENG_conservative_office_workforce
+	energy_gain_multiplier = ENG.ENG_conservative_energy_gain
+	energy_use_multiplier = ENG.ENG_conservative_energy_use
+	fossil_pp_energy_generation_modifier = ENG.ENG_conservative_fossil_energy
+	nuclear_energy_generation_modifier = ENG.ENG_conservative_nuclear_energy
+	renewable_energy_gain_multiplier = ENG.ENG_conservative_renewable_energy
+}
+
+ENG_thatcher_london_financial_growth_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_economic_boom
+	custom_modifier_tooltip = ENG_thatcher_london_financial_growth_modifier_tt
+
+	state_production_speed_offices_factor = 0.18
+	state_productivity_growth_modifier = 0.10
+	local_building_slots_factor = 0.05
+}
+
+ENG_thatcher_southern_growth_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_economic_increase
+	custom_modifier_tooltip = ENG_thatcher_southern_growth_modifier_tt
+
+	state_production_speed_offices_factor = 0.10
+	state_productivity_growth_modifier = 0.05
+	local_building_slots_factor = 0.03
+}
+
+ENG_1985_post_industrial_strain_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_factory_strikes
+	custom_modifier_tooltip = ENG_1985_post_industrial_strain_modifier_tt
+
+	state_production_speed_industrial_complex_factor = -0.12
+	state_productivity_growth_modifier = -0.14
+	local_building_slots_factor = -0.08
+	required_garrison_factor = 0.055
+	resistance_growth = 0.06
+}
+
+ENG_thatcher_northern_industrial_strain_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_factory_strikes
+	custom_modifier_tooltip = ENG_thatcher_northern_industrial_strain_modifier_tt
+
+	state_production_speed_industrial_complex_factor = -0.18
+	state_productivity_growth_modifier = -0.22
+	local_building_slots_factor = -0.14
+	required_garrison_factor = 0.06
+	resistance_growth = 0.10
+}
+
+ENG_thatcher_regional_enterprise_zone_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_economic_road_idea
+	custom_modifier_tooltip = ENG_thatcher_regional_enterprise_zone_modifier_tt
+
+	state_production_speed_industrial_complex_factor = -0.08
+	state_productivity_growth_modifier = -0.07
+	local_building_slots_factor = -0.05
+	required_garrison_factor = 0.025
+	resistance_growth = 0.035
+}
+
+ENG_thatcher_community_charge_trial_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_corruption_8
+	custom_modifier_tooltip = ENG_thatcher_community_charge_trial_modifier_tt
+
+	state_productivity_growth_modifier = -0.10
+	local_building_slots_factor = -0.06
+	required_garrison_factor = 0.06
+	resistance_growth = 0.14
+}
+
+ENG_thatcher_poll_tax_unrest_modifier = {
+	enable = { always = yes }
+	icon = GFX_riots_austerity
+	custom_modifier_tooltip = ENG_thatcher_poll_tax_unrest_modifier_tt
+
+	state_productivity_growth_modifier = -0.16
+	local_building_slots_factor = -0.10
+	required_garrison_factor = 0.16
+	resistance_growth = 0.22
+}
+
+ENG_thatcher_south_east_housing_boom_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_economic_increase
+	custom_modifier_tooltip = ENG_thatcher_south_east_housing_boom_modifier_tt
+
+	state_production_speed_offices_factor = 0.08
+	state_productivity_growth_modifier = 0.05
+	local_building_slots_factor = -0.02
+}
+
+ENG_thatcher_water_rates_backlash_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_corruption_8
+	custom_modifier_tooltip = ENG_thatcher_water_rates_backlash_modifier_tt
+
+	state_productivity_growth_modifier = -0.08
+	local_building_slots_factor = -0.05
+	required_garrison_factor = 0.04
+	resistance_growth = 0.09
+}
+
+ENG_labour_northern_recovery_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_economic_road_idea
+	custom_modifier_tooltip = ENG_labour_northern_recovery_modifier_tt
+
+	state_production_speed_industrial_complex_factor = -0.015
+	state_productivity_growth_modifier = -0.012
+	local_building_slots_factor = -0.01
+	required_garrison_factor = 0.03
+	resistance_growth = 0.02
+}
+
+ENG_national_regeneration_board_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_economic_road_idea
+	custom_modifier_tooltip = ENG_national_regeneration_board_modifier_tt
+
+	state_production_speed_industrial_complex_factor = -0.03
+	state_productivity_growth_modifier = -0.022
+	local_building_slots_factor = -0.02
+	required_garrison_factor = 0.02
+	resistance_growth = 0.02
+}
+
+ENG_labour_reconstruction_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_factory_strikes
+	custom_modifier_tooltip = ENG_labour_reconstruction_modifier_tt
+
+	stability_factor = ENG.ENG_labour_stability
+	production_speed_industrial_complex_factor = ENG.ENG_labour_industry
+	consumer_goods_factor = ENG.ENG_labour_consumer_goods
+	political_power_factor = ENG.ENG_labour_pp_factor
+	research_speed_factor = ENG.ENG_labour_research
+	trade_opinion_factor = ENG.ENG_labour_trade
+	corporate_tax_income_multiplier_modifier = ENG.ENG_labour_corporate_tax
+	social_cost_multiplier_modifier = ENG.ENG_labour_social_cost
+	health_cost_multiplier_modifier = ENG.ENG_labour_health_cost
+	expected_healthcare_modifier = ENG.ENG_labour_expected_healthcare
+	expected_welfare_modifier = ENG.ENG_labour_expected_welfare
+	education_cost_multiplier_modifier = ENG.ENG_labour_education_cost
+	bureaucracy_cost_multiplier_modifier = ENG.ENG_labour_bureaucracy_cost
+	productivity_growth_modifier = ENG.ENG_labour_productivity
+	drift_defence_factor = ENG.ENG_labour_defence_drift
+	office_park_income_tax_modifier = ENG.ENG_labour_office_tax
+	migration_rate_value_factor = ENG.ENG_labour_migration_pull
+	monthly_population = ENG.ENG_labour_monthly_population
+	globalism_equilibrium = ENG.ENG_labour_globalism
+	personnel_cost_multiplier_modifier = ENG.ENG_labour_personnel_cost
+	army_personnel_cost_multiplier_modifier = ENG.ENG_labour_army_cost
+	navy_personnel_cost_multiplier_modifier = ENG.ENG_labour_navy_cost
+	airforce_personnel_cost_multiplier_modifier = ENG.ENG_labour_air_cost
+	energy_gain_multiplier = ENG.ENG_labour_energy_gain
+	energy_use_multiplier = ENG.ENG_labour_energy_use
+	fossil_pp_energy_generation_modifier = ENG.ENG_labour_fossil_energy
+	nuclear_energy_generation_modifier = ENG.ENG_labour_nuclear_energy
+	renewable_energy_gain_multiplier = ENG.ENG_labour_renewable_energy
+}
+
+ENG_alliance_reform_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_intelligence_community
+	custom_modifier_tooltip = ENG_alliance_reform_modifier_tt
+
+	political_power_factor = ENG.ENG_alliance_pp_factor
+	stability_factor = ENG.ENG_alliance_stability
+	research_speed_factor = ENG.ENG_alliance_research
+	consumer_goods_factor = ENG.ENG_alliance_consumer_goods
+	trade_opinion_factor = ENG.ENG_alliance_trade
+	globalism_equilibrium = ENG.ENG_alliance_globalism
+	bureaucracy_cost_multiplier_modifier = ENG.ENG_alliance_bureaucracy_cost
+	office_park_income_tax_modifier = ENG.ENG_alliance_office_tax
+	drift_defence_factor = ENG.ENG_alliance_defence_drift
+}
+
+ENG_hard_left_mobilisation_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_factory_strikes
+	custom_modifier_tooltip = ENG_hard_left_mobilisation_modifier_tt
+
+	stability_factor = ENG.ENG_hard_left_stability
+	production_speed_industrial_complex_factor = ENG.ENG_hard_left_industry
+	consumer_goods_factor = ENG.ENG_hard_left_consumer_goods
+	political_power_factor = ENG.ENG_hard_left_pp_factor
+	trade_opinion_factor = ENG.ENG_hard_left_trade
+}
+
+ENG_nationalist_pressure_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_sectarian_troubles_kurdistan
+	custom_modifier_tooltip = ENG_nationalist_pressure_modifier_tt
+
+	political_power_factor = ENG.ENG_nationalist_pp_factor
+	stability_factor = ENG.ENG_nationalist_stability
+	war_support_factor = ENG.ENG_nationalist_war_support
+	trade_opinion_factor = ENG.ENG_nationalist_trade
+	nationalist_drift = ENG.ENG_nationalist_drift
+}
+
+ENG_green_transition_modifier = {
+	enable = { always = yes }
+	icon = GFX_idea_energy_preferred_renewable_idea
+	custom_modifier_tooltip = ENG_green_transition_modifier_tt
+
+	stability_factor = ENG.ENG_green_stability
+	political_power_factor = ENG.ENG_green_pp_factor
+	consumer_goods_factor = ENG.ENG_green_consumer_goods
+	research_speed_factor = ENG.ENG_green_research
+	productivity_growth_modifier = ENG.ENG_green_productivity
+	energy_gain_multiplier = ENG.ENG_green_energy_gain
+	energy_use_multiplier = ENG.ENG_green_energy_use
+	renewable_energy_gain_multiplier = ENG.ENG_green_renewable_energy
+	fossil_pp_energy_generation_modifier = ENG.ENG_green_fossil_energy
+	nuclear_energy_generation_modifier = ENG.ENG_green_nuclear_energy
+	globalism_equilibrium = ENG.ENG_green_globalism
+	trade_opinion_factor = ENG.ENG_green_trade
+	migration_rate_value_factor = ENG.ENG_green_migration_pull
+	imp_refugee_pull_modifier = ENG.ENG_green_refugee_pull
+	social_cost_multiplier_modifier = ENG.ENG_green_social_cost
+	bureaucracy_cost_multiplier_modifier = ENG.ENG_green_bureaucracy_cost
+	drift_defence_factor = ENG.ENG_green_defence_drift
+}

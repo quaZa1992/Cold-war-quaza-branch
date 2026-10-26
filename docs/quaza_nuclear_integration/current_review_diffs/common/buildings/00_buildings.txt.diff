@@ -1,0 +1,190 @@
+--- 
+
++++ 
+
+@@ -19,6 +19,7 @@
+
+ # Fossil Fuel Powerplant (fossil_powerplant) - $3.25
+ # Microchip Plant (microchip_plant) - $10.50
+ # Composite Plant (composite_plant) - $8.50
++# Uranium Mine (uranium_mine) - $6.00 (Imperia)
+ # Synthetic Refinery (synthetic_refinery) - $6.00
+ # Reinforced Electrical Grid (energy_infrastructure) - $6.50
+ # High Capacity Electrical Grid (industrial_infrastructure) - $6.50
+@@ -99,7 +100,7 @@
+
+ 		value = 1
+ 		infrastructure_construction_effect = yes
+ 		level_cap = {
+-			state_max = 11
++			state_max = 6
+ 		}
+ 		state_modifiers = {
+ 			state_productivity_growth_modifier = 0.05
+@@ -177,8 +178,8 @@
+
+ 		tags = { nuclear }
+ 		country_modifiers = {
+ 			modifiers = {
+-				nuclear_energy_gain = 4 #in gigawatts
+-				nuclear_fuel_consumption = 40 #weekly consumption
++				nuclear_energy_gain = 2 #in gigawatts
++				nuclear_fuel_consumption = 20 #weekly consumption
+ 			}
+ 		}
+ 		level_cap = {
+@@ -332,8 +333,9 @@
+
+ 	}
+ 	# 16 Railways
+ 	rail_way = {
+-		base_cost = 1000
+-		per_level_extra_cost = 3750
++		# 5x vanilla (170/130) at every level; upgrades were 16-24x.
++		base_cost = 850
++		per_level_extra_cost = 650
+ 		disabled_in_dmz = yes
+ 		icon_frame = 16
+ 		allied_build = yes
+@@ -353,7 +355,7 @@
+
+ 		country_modifiers = {
+ 			modifiers = {
+ 				fossil_energy_gain = 2 #in gigawatts //this remains in place till I remove it please
+-				fossil_fuel_consumption = 20
++				fossil_fuel_consumption = 40
+ 			}
+ 		}
+ 		damage_factor = 1
+@@ -529,10 +531,10 @@
+
+ 		base_cost = 45000
+ 		per_level_extra_cost = 4000
+ 		icon_frame = 36
+-		local_resources_microchips = 20
+-		level_cap = {
+-			shares_slots = yes
+-			state_max = 5
++		local_resources_microchips = 6
++		level_cap = {
++			shares_slots = yes
++			state_max = 2
+ 		}
+ 		country_modifiers = {
+ 			modifiers = {
+@@ -565,6 +567,41 @@
+
+ 		damage_factor = 1
+ 		value = 1
+ 		infrastructure_construction_effect = yes
++	}
++
++	# Imperia: state building. Non-buildable reserved slots in the same group enforce
++	# the deposit requirement and its 1-3 level cap in the normal construction menu.
++	uranium_mine = {
++		show_on_map = 0
++		base_cost = 32000
++		per_level_extra_cost = 4000
++		icon_frame = 39
++		disabled_in_dmz = yes
++		level_cap = {
++			shares_slots = no
++			state_max = 3
++			group_by = imp_uranium_mining
++		}
++		damage_factor = 1
++		value = 1
++		infrastructure_construction_effect = yes
++	}
++
++	# Reserves 3 slots without a deposit, or 3 minus the deposit's allowed levels.
++	# No factory slots, production, upkeep or map model; maintained by uranium effects.
++	imp_uranium_reserved_slots = {
++		show_on_map = 0
++		base_cost = 1
++		icon_frame = 39
++		is_buildable = no
++		only_display_if_exists = yes
++		damage_factor = 0
++		value = 0
++		level_cap = {
++			shares_slots = no
++			state_max = 3
++			group_by = imp_uranium_mining
++		}
+ 	}
+ 
+ 	dam_mountain = {
+@@ -722,6 +759,7 @@
+
+ 			state_renewable_energy_generation_modifier = 0.10
+ 			state_fossil_fuel_energy_generation_modifier = 0.10
+ 			state_nuclear_energy_generation_modifier = 0.10
++			local_building_slots_factor = 0.05
+ 		}
+ 	}
+ 
+@@ -777,42 +815,31 @@
+
+ 		country_modifiers = {
+ 			modifiers = {
+ 				nuclear_reactor_fuel_production = 350
+-				# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
++				# Imperia: feed of natural uranium (25 units = 2,500 t U per year, ~primary share of a
++				# 35 GWe fuel supply; the rest comes from secondary sources - see imp_uranium_effects.txt)
+ 				country_resource_cost_uranium = 25
+ 			}
+ 		}
+ 	}
+-
+-	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-	uranium_mine = {
+-		show_on_map = 0
+-		base_cost = 32000
+-		per_level_extra_cost = 4000
+-		icon_frame = 40
+-		disabled_in_dmz = yes
+-		level_cap = {
+-			shares_slots = no
+-			state_max = 3
+-			group_by = imp_uranium_mining
+-		}
+-		damage_factor = 1
+-		value = 1
+-		infrastructure_construction_effect = yes
+-	}
+-
+-	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-	imp_uranium_reserved_slots = {
+-		show_on_map = 0
+-		base_cost = 1
+-		icon_frame = 40
+-		is_buildable = no
+-		only_display_if_exists = yes
++	civilian_shelter = {
++		base_cost = 15000
++		per_level_extra_cost = 15000
++		icon_frame = 21
++		infrastructure = yes
+ 		damage_factor = 0
+-		value = 0
+-		level_cap = {
+-			shares_slots = no
+-			state_max = 3
+-			group_by = imp_uranium_mining
++		value = 1
++		infrastructure_construction_effect = yes
++		level_cap = {
++			state_max = 10
++		}
++		show_modifier = yes
++		state_modifiers = {
++			local_supplies_for_controller = 0.02
++		}
++		country_modifiers = {
++			modifiers = {
++				
++			}
+ 		}
+ 	}
+ }

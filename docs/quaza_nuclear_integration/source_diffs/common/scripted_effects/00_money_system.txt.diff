@@ -1,0 +1,411 @@
+@@ -3229,8 +3259,173 @@
+
+ 			divide = 10000
+ 		}
+ 	}
+ 
++	### Nuclear forces (Imperia) ###
++	# Upkeep of the nuclear arsenal, paid weekly as part of defence spending (independent of the defence law).
++	# Newer generations of missiles / bombers cost more to keep operational (generation weights below).
++	# Model ($B per year):
++	#   3.0 fixed programme cost (labs, security, command & control)
++	#   + 0.0022 x generation weight per ICBM/SLBM   (gen 1 = 1.0 ... +0.25 per generation, gen 12 = 3.75)
++	#   + 0.0015 x generation weight per nuclear IRBM (gen 1 = 1.0 ... +0.25 per generation; Burevestnik 3.5)
++	#   + 0.015  x generation weight per strategic bomber (gen 0/1 = 1.0, +0.5 per generation) - only with a
++	#     completed nuclear weapons project (HOI4 cannot count planes by the "Nuclear Consent" module)
++	#   x GDP/c factor (GDP/c / 36k, 0.25 - 1.2, like MD's GDP/c cost scaling) x inflation x equipment cost modifiers
++	# Result in 2000 (per year): USA ~36, Russia ~10, UK ~3, France ~3 (real: ~27 / 4-6 / 3 / 3 billion USD).
++	# Developing nuclear weapons (sp_nuclear_bomb / sp_nuclear_warhead_program without an arsenal) is expensive too.
++	set_temp_variable = { nuc_icbm_count = {
++		value = 0
++		add = num_equipment@nuclear_missile_equipment_1
++		add = num_equipment@nuclear_missile_equipment_2
++		add = num_equipment@nuclear_missile_equipment_3
++		add = num_equipment@nuclear_missile_equipment_4
++		add = num_equipment@nuclear_missile_equipment_5
++		add = num_equipment@nuclear_missile_equipment_6
++		add = num_equipment@nuclear_missile_equipment_7
++		add = num_equipment@nuclear_missile_equipment_8
++		add = num_equipment@nuclear_missile_equipment_9
++		add = num_equipment@nuclear_missile_equipment_10
++		add = num_equipment@nuclear_missile_equipment_11
++		add = num_equipment@nuclear_missile_equipment_12
++	} }
++	set_temp_variable = { nuc_icbm_weighted = {
++		value = 0
++		add = { value = num_equipment@nuclear_missile_equipment_1 multiply = 1.0 }
++		add = { value = num_equipment@nuclear_missile_equipment_2 multiply = 1.25 }
++		add = { value = num_equipment@nuclear_missile_equipment_3 multiply = 1.5 }
++		add = { value = num_equipment@nuclear_missile_equipment_4 multiply = 1.75 }
++		add = { value = num_equipment@nuclear_missile_equipment_5 multiply = 2.0 }
++		add = { value = num_equipment@nuclear_missile_equipment_6 multiply = 2.25 }
++		add = { value = num_equipment@nuclear_missile_equipment_7 multiply = 2.5 }
++		add = { value = num_equipment@nuclear_missile_equipment_8 multiply = 2.75 }
++		add = { value = num_equipment@nuclear_missile_equipment_9 multiply = 3.0 }
++		add = { value = num_equipment@nuclear_missile_equipment_10 multiply = 3.25 }
++		add = { value = num_equipment@nuclear_missile_equipment_11 multiply = 3.5 }
++		add = { value = num_equipment@nuclear_missile_equipment_12 multiply = 3.75 }
++	} }
++	# designs/variants not matched above count with weight 1
++	set_temp_variable = { nuc_icbm_rest = { value = num_equipment@nuclear_missile_equipment subtract = nuc_icbm_count clamp = { min = 0 max = @math_expressions_max } } }
++	add_to_temp_variable = { nuc_icbm_weighted = nuc_icbm_rest }
++	set_temp_variable = { nuc_irbm_count = {
++		value = 0
++		add = num_equipment@nuclear_ballistic_missile_equipment_1
++		add = num_equipment@nuclear_ballistic_missile_equipment_2
++		add = num_equipment@nuclear_ballistic_missile_equipment_3
++		add = num_equipment@nuclear_ballistic_missile_equipment_4
++		add = num_equipment@nuclear_ballistic_missile_equipment_5
++		add = num_equipment@nuclear_ballistic_missile_equipment_6
++		add = num_equipment@nuclear_ballistic_missile_equipment_7
++		add = num_equipment@nuclear_ballistic_missile_equipment_8
++		add = num_equipment@nuclear_ballistic_missile_equipment_9
++		add = num_equipment@nuclear_ballistic_missile_equipment_10
++		add = num_equipment@nuclear_ballistic_missile_equipment_11
++	} }
++	set_temp_variable = { nuc_irbm_weighted = {
++		value = 0
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_1 multiply = 1.0 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_2 multiply = 1.25 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_3 multiply = 1.5 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_4 multiply = 1.75 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_5 multiply = 2.0 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_6 multiply = 2.25 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_7 multiply = 2.5 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_8 multiply = 2.75 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_9 multiply = 3.0 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_10 multiply = 3.25 }
++		add = { value = num_equipment@nuclear_ballistic_missile_equipment_11 multiply = 3.5 }
++	} }
++	set_temp_variable = { nuc_irbm_count = { value = nuc_irbm_count add = num_equipment@imp_sov_burestnevik_NIRBM } }
++	set_temp_variable = { nuc_irbm_weighted = { value = nuc_irbm_weighted add = { value = num_equipment@imp_sov_burestnevik_NIRBM multiply = 3.5 } } }
++	set_temp_variable = { nuc_irbm_rest = { value = num_equipment@nuclear_ballistic_missile_equipment subtract = nuc_irbm_count clamp = { min = 0 max = @math_expressions_max } } }
++	add_to_temp_variable = { nuc_irbm_weighted = nuc_irbm_rest }
++	set_variable = { imp_nuclear_warheads = { value = num_equipment@nuclear_missile_equipment add = num_equipment@nuclear_ballistic_missile_equipment } }
++
++	set_variable = { imp_nuclear_bombers = 0 }
++	set_temp_variable = { nuc_bomber_weighted = 0 }
++	if = {
++		limit = {
++			OR = {
++				is_special_project_completed = sp:sp_nuclear_bomb
++				is_special_project_completed = sp:sp_nuclear_warhead_program
++			}
++		}
++		set_variable = { imp_nuclear_bombers = { value = num_equipment@large_plane_airframe add = num_deployed_planes_with_type@large_plane_airframe } }
++		set_temp_variable = { nuc_bomber_gen_count = {
++			value = 0
++			add = num_equipment@large_plane_airframe_0
++			add = num_equipment@large_plane_airframe_1
++			add = num_equipment@large_plane_airframe_2
++			add = num_equipment@large_plane_airframe_3
++			add = num_equipment@large_plane_airframe_4
++			add = num_equipment@large_plane_airframe_5
++			add = num_equipment@large_plane_airframe_6
++		} }
++		set_temp_variable = { nuc_bomber_gen_weighted = {
++			value = 0
++			add = { value = num_equipment@large_plane_airframe_0 multiply = 1.0 }
++			add = { value = num_equipment@large_plane_airframe_1 multiply = 1.5 }
++			add = { value = num_equipment@large_plane_airframe_2 multiply = 2.0 }
++			add = { value = num_equipment@large_plane_airframe_3 multiply = 2.5 }
++			add = { value = num_equipment@large_plane_airframe_4 multiply = 3.0 }
++			add = { value = num_equipment@large_plane_airframe_5 multiply = 3.5 }
++			add = { value = num_equipment@large_plane_airframe_6 multiply = 4.0 }
++		} }
++		# deployed bombers and unmatched designs count with weight 1
++		set_temp_variable = { nuc_bomber_rest = { value = imp_nuclear_bombers subtract = nuc_bomber_gen_count clamp = { min = 0 max = @math_expressions_max } } }
++		set_temp_variable = { nuc_bomber_weighted = { value = nuc_bomber_gen_weighted add = nuc_bomber_rest } }
++	}
++
++	set_temp_variable = { nuclear_gdp_factor = { value = gdp_per_capita divide = 36 clamp = { min = 0.25 max = 1.2 } } }
++	set_variable = { nuclear_forces_cost = 0 }
++	if = {
++		limit = {
++			OR = {
++				check_variable = { imp_nuclear_warheads > 0 }
++				check_variable = { imp_nuclear_bombers > 0 }
++			}
++		}
++		set_variable = {
++			nuclear_forces_cost = {
++				value = 3
++				add = { value = nuc_icbm_weighted multiply = 0.0022 }
++				add = { value = nuc_irbm_weighted multiply = 0.0015 }
++				add = { value = nuc_bomber_weighted multiply = 0.015 }
++				multiply = nuclear_gdp_factor
++				multiply = inflation_multiplier
++				multiply = equipment_cost_multiplier
++				divide = 52
++				clamp = { min = 0 max = @math_expressions_max }
++			}
++		}
++	}
++
++	# Nuclear weapons development programme: a country without an arsenal pays heavily while it researches
++	# the bomb (enrichment / reprocessing plants, test site, weapon labs) - like Pakistan, India or North Korea.
++	set_variable = { nuclear_development_cost = 0 }
++	if = {
++		limit = {
++			check_variable = { imp_nuclear_warheads < 1 }
++			OR = {
++				is_special_project_being_researched = sp:sp_nuclear_bomb
++				is_special_project_being_researched = sp:sp_nuclear_warhead_program
++			}
++		}
++		set_temp_variable = { nuclear_dev_base = 0 }
++		if = { limit = { is_special_project_being_researched = sp:sp_nuclear_bomb } add_to_temp_variable = { nuclear_dev_base = 8 } }
++		if = { limit = { is_special_project_being_researched = sp:sp_nuclear_warhead_program } add_to_temp_variable = { nuclear_dev_base = 5 } }
++		set_variable = {
++			nuclear_development_cost = {
++				value = nuclear_dev_base
++				multiply = { value = nuclear_gdp_factor clamp = { min = 0.4 max = 1.2 } }
++				multiply = inflation_multiplier
++				divide = 52
++				clamp = { min = 0 max = @math_expressions_max }
++			}
++		}
++		add_to_variable = { nuclear_forces_cost = nuclear_development_cost }
++	}
++	set_variable = { defence_breakdown_nuclear = nuclear_forces_cost }
++
+ 	#Add military industry and personnel costs together for the total
+ 	for_each_loop = {
+ 		array = array_defence_spend
+ 		index = i
+
+@@ -3556,15 +3752,32 @@
+
+ 			multiply = infra_size_scaling
+ 		}
+ 	}
+ 
++	# Imperia: uranium mines (mine + mill, tailings management, radiation protection)
++	# between internet stations (0.018) and renewable infrastructure (0.03) per level
++	set_variable = {
++		uranium_mine_infra_expense = {
++			value = uranium_mine_total
++			multiply = 0.022
++			multiply = {
++				value = 1
++				add = modifier@infrastructure_cost_multiplier_modifier
++				multiply = common_money_modifier
++				clamp = { min = 0 max = 100000000 }
++			}
++			multiply = infra_size_scaling
++		}
++	}
++
+ 	set_variable = {
+ 		infra_gain = {
+ 			value = nuclear_infra_expense
+ 			add = fossil_infra_expense
+ 			add = renewable_infra_expense
+ 			add = internet_infra_expense
+ 			add = rail_infra_expense
++			add = uranium_mine_infra_expense # Imperia
+ 			clamp = { min = 0 max = 100000000 }
+ 		}
+ 	}
+ }
+
+@@ -4460,8 +4678,9 @@
+
+ 	set_temp_variable = { chromium_export_multiplier = { value = resource_export_multiplier add = modifier@chromium_export_multiplier_modifier } }
+ 	set_temp_variable = { rubber_export_multiplier = { value = resource_export_multiplier add = modifier@rubber_export_multiplier_modifier } }
+ 	set_temp_variable = { microchip_export_multiplier = { value = resource_export_multiplier add = modifier@microchip_export_multiplier_modifier } }
+ 	set_temp_variable = { composite_export_multiplier = { value = resource_export_multiplier add = modifier@composite_export_multiplier_modifier } }
++	set_temp_variable = { uranium_export_multiplier = { value = resource_export_multiplier add = modifier@uranium_export_multiplier_modifier } } # Imperia: uranium
+ 
+ 	#Revenue = exported amount * market price * export multiplier * yearly-to-weekly constant
+ 	set_variable = { oil_exports = { value = resource_exported@oil multiply = global.oil_price multiply = oil_export_multiplier multiply = @resource_sale_rate_constant } }
+ 	set_variable = { steel_exports = { value = resource_exported@steel multiply = global.steel_price multiply = steel_export_multiplier multiply = @resource_sale_rate_constant } }
+
+@@ -4470,8 +4689,9 @@
+
+ 	set_variable = { chromium_exports = { value = resource_exported@chromium multiply = global.chromium_price multiply = chromium_export_multiplier multiply = @resource_sale_rate_constant } }
+ 	set_variable = { rubber_exports = { value = resource_exported@rubber multiply = global.rubber_price multiply = rubber_export_multiplier multiply = @resource_sale_rate_constant } }
+ 	set_variable = { microchip_exports = { value = resource_exported@microchips multiply = global.microchip_price multiply = microchip_export_multiplier multiply = @resource_sale_rate_constant } }
+ 	set_variable = { composite_exports = { value = resource_exported@composites multiply = global.composite_price multiply = composite_export_multiplier multiply = @resource_sale_rate_constant } }
++	set_variable = { uranium_exports = { value = resource_exported@uranium multiply = global.uranium_price multiply = uranium_export_multiplier multiply = @resource_sale_rate_constant } } # Imperia
+ 
+ 	# Clamp Export Values at 0 so Luigi's massive negatives don't break my shit
+ 	clamp_variable = { var = oil_exports min = 0 }
+ 	clamp_variable = { var = steel_exports min = 0 }
+
+@@ -4480,8 +4700,9 @@
+
+ 	clamp_variable = { var = chromium_exports min = 0 }
+ 	clamp_variable = { var = rubber_exports min = 0 }
+ 	clamp_variable = { var = microchip_exports min = 0 }
+ 	clamp_variable = { var = composite_exports min = 0 }
++	clamp_variable = { var = uranium_exports min = 0 }
+ 
+ 	#Add total cost
+ 	set_variable = { resource_sale_rate = {
+ 		value = oil_exports
+
+@@ -4491,8 +4712,9 @@
+
+ 		add = chromium_exports
+ 		add = rubber_exports
+ 		add = microchip_exports
+ 		add = composite_exports
++		add = uranium_exports
+ 		clamp = { min = 0 max = @math_expressions_max }
+ 	} }
+ }
+ 
+
+@@ -4813,8 +5037,17 @@
+
+ 				value = 0
+ 				every_collection = {
+ 					named_collection = controlled_states_collection
+ 					add = building_level@composite_plant
++				}
++			}
++		}
++		set_variable = { # Imperia
++			uranium_mine_total = {
++				value = 0
++				every_collection = {
++					named_collection = controlled_states_collection
++					add = building_level@uranium_mine
+ 				}
+ 			}
+ 		}
+ 		set_variable = {
+
+@@ -5014,8 +5247,9 @@
+
+ 			add = resource_produced@aluminium
+ 			add = resource_produced@tungsten
+ 			add = resource_produced@microchips
+ 			add = resource_produced@composites
++			add = resource_produced@uranium # Imperia
+ 		}
+ 	}
+ 
+ 	# If no controlled states (capitulated/exiled), preserve last known productivity so the economy isn't permanently destroyed on liberation
+
+@@ -6660,8 +7032,9 @@
+
+ 	set_variable = { global.chromium_price = 0.18 }	#Based on gold price
+ 	set_variable = { global.rubber_price = 0.09 }	#Based on rubber price
+ 	set_variable = { global.microchip_price = 2.5 }
+ 	set_variable = { global.composite_price = 2.1 }
++	set_variable = { global.uranium_price = 0.20 } # Imperia: strategic metal, between precious metals and light metals (MD balancing)
+ 
+ 	set_variable = { global.starting_oil_price = 7.2 } #Divided 50/50 based on oil/natural gas price #Limited to 5, was 28
+ 	set_variable = { global.starting_steel_price = 0.04 } #Based on steel price
+ 	set_variable = { global.starting_aluminium_price = 0.26 }	#Based on aluminium price
+
+@@ -6669,8 +7042,9 @@
+
+ 	set_variable = { global.starting_chromium_price = 0.18 }	#Based on gold price
+ 	set_variable = { global.starting_rubber_price = 0.09 }	#Based on rubber price
+ 	set_variable = { global.starting_microchips_price = 2.5 }
+ 	set_variable = { global.starting_composites_price = 2.1 }
++	set_variable = { global.starting_uranium_price = 0.20 } # Imperia
+ }
+ 
+ # Effect: recalculate_resources_price
+ # Purpose: Adjusts resource prices based on global supply and demand shifts
+
+@@ -6683,8 +7057,10 @@
+
+ 	set_temp_variable = { sum_tungsten = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_exported@tungsten } } }
+ 	set_temp_variable = { sum_chromium = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_exported@chromium } } }
+ 	set_temp_variable = { sum_microchips = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_exported@microchips } } }
+ 	set_temp_variable = { sum_composites = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_exported@composites } } }
++	set_temp_variable = { sum_uranium = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_exported@uranium } } }
++	clamp_temp_variable = { var = sum_uranium min = 1 }
+ 
+ 	set_temp_variable = { sum_import_steel = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@steel } } }
+ 	set_temp_variable = { sum_import_rubber = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@rubber } } }
+ 	set_temp_variable = { sum_import_oil = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@oil } } }
+
+@@ -6692,8 +7068,9 @@
+
+ 	set_temp_variable = { sum_import_tungsten = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@tungsten } } }
+ 	set_temp_variable = { sum_import_chromium = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@chromium } } }
+ 	set_temp_variable = { sum_import_microchips = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@microchips } } }
+ 	set_temp_variable = { sum_import_composites = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@composites } } }
++	set_temp_variable = { sum_import_uranium = { value = 0 every_collection = { named_collection = all_countries_collection add = resource_imported@uranium } } }
+ 
+ 	#Set the % of supply used by doing demand / supply
+ 	#If using > 50% of supply, price should go up
+ 	#If using < 50% of supply, price should go down
+
+@@ -6705,8 +7082,9 @@
+
+ 	divide_temp_variable = { sum_import_tungsten = sum_tungsten }
+ 	divide_temp_variable = { sum_import_chromium = sum_chromium }
+ 	divide_temp_variable = { sum_import_microchips = sum_microchips }
+ 	divide_temp_variable = { sum_import_composites = sum_composites }
++	divide_temp_variable = { sum_import_uranium = sum_uranium }
+ 
+ 	multiply_temp_variable = { sum_import_steel = 2 }
+ 	multiply_temp_variable = { sum_import_rubber = 2 }
+ 	multiply_temp_variable = { sum_import_oil = 2 }
+
+@@ -6714,8 +7092,9 @@
+
+ 	multiply_temp_variable = { sum_import_tungsten = 2 }
+ 	multiply_temp_variable = { sum_import_chromium = 2 }
+ 	multiply_temp_variable = { sum_import_microchips = 2 }
+ 	multiply_temp_variable = { sum_import_composites = 2 }
++	multiply_temp_variable = { sum_import_uranium = 2 }
+ 
+ 	set_temp_variable = { oil_price_adjuster = global.starting_oil_price }
+ 	set_temp_variable = { steel_price_adjuster = global.starting_steel_price }
+ 	set_temp_variable = { rubber_price_adjuster = global.starting_rubber_price }
+
+@@ -6723,8 +7102,9 @@
+
+ 	set_temp_variable = { tungsten_price_adjuster = global.starting_tungsten_price }
+ 	set_temp_variable = { chromium_price_adjuster = global.starting_chromium_price }
+ 	set_temp_variable = { microchips_price_adjuster = global.starting_microchips_price }
+ 	set_temp_variable = { composites_price_adjuster = global.starting_composites_price }
++	set_temp_variable = { uranium_price_adjuster = global.starting_uranium_price }
+ 
+ 	multiply_temp_variable = { oil_price_adjuster = sum_import_oil }
+ 	multiply_temp_variable = { steel_price_adjuster = sum_import_steel }
+ 	multiply_temp_variable = { rubber_price_adjuster = sum_import_rubber }
+
+@@ -6732,8 +7112,9 @@
+
+ 	multiply_temp_variable = { tungsten_price_adjuster = sum_import_tungsten }
+ 	multiply_temp_variable = { chromium_price_adjuster = sum_import_chromium }
+ 	multiply_temp_variable = { microchips_price_adjuster = sum_import_microchips }
+ 	multiply_temp_variable = { composites_price_adjuster = sum_import_composites }
++	multiply_temp_variable = { uranium_price_adjuster = sum_import_uranium }
+ 
+ 	#Clamp the prices at their min / max after adjusting them for supply & demand
+ 	clamp_temp_variable = { var = steel_price_adjuster min = 0.005 max = 0.120 }
+ 	clamp_temp_variable = { var = oil_price_adjuster min = 1.36 max = 38 }
+
+@@ -6742,8 +7123,9 @@
+
+ 	clamp_temp_variable = { var = tungsten_price_adjuster min = 0.056 max = 1.4 }
+ 	clamp_temp_variable = { var = chromium_price_adjuster min = 0.036 max = 0.9 }
+ 	clamp_temp_variable = { var = microchips_price_adjuster min = 1.58 max = 40.0 }
+ 	clamp_temp_variable = { var = composites_price_adjuster min = 1.42 max = 35.0 }
++	clamp_temp_variable = { var = uranium_price_adjuster min = 0.04 max = 1.0 } # Imperia: MD standard 0.2x .. 5x of the base price
+ 
+ 	set_variable = { global.oil_price = oil_price_adjuster } #Divided 50/50 based on oil/natural gas price #Limited to 5, was 28
+ 	set_variable = { global.steel_price = steel_price_adjuster } #Based on steel price
+ 	set_variable = { global.aluminium_price = alum_price_adjuster }	#Based on aluminium price
+
+@@ -6751,8 +7133,9 @@
+
+ 	set_variable = { global.chromium_price = chromium_price_adjuster }	#Based on gold price
+ 	set_variable = { global.rubber_price = rubber_price_adjuster }	#Based on rubber price
+ 	set_variable = { global.microchip_price = microchips_price_adjuster }
+ 	set_variable = { global.composite_price = composites_price_adjuster }
++	set_variable = { global.uranium_price = uranium_price_adjuster }
+ 
+ 	if = {
+ 		limit = { is_debug = yes }
+ 		log = "Current resource prices: steel = [?global.steel_price] rubber = [?global.rubber_price] oil = [?global.oil_price] alum = [?global.aluminium_price] tungsten = [?global.tungsten_price] chromium = [?global.chromium_price] Resource coeff = [?global.resource_gdp_coeff]"

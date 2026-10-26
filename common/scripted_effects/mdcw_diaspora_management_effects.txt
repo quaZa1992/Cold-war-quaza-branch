@@ -1,0 +1,325 @@
+# IMPERIA CW — Cold War: Guest Worker Administration
+# Inputs selected in the dashboard are revalidated in the confirmation events.
+# No population/cash effects run merely from opening or paging the UI.
+
+mdcw_gw_confirm_project = {
+	# Validate in the effect too: a stale native timeout must not spend resources,
+	# even if the engine selects a formerly valid option without its UI trigger.
+	if = {
+		limit = { has_country_flag = gw_dialog_valid }
+		set_variable = { gw_selected_origin = gw_dialog_origin }
+		mdcw_gw_start_project = yes
+	}
+	clr_country_flag = gw_dialog_window
+	clr_country_flag = gw_dialog_valid
+}
+
+mdcw_gw_confirm_return = {
+	if = {
+		limit = { has_country_flag = gw_dialog_valid }
+		set_variable = { gw_selected_origin = gw_dialog_origin }
+		mdcw_gw_start_return = yes
+	}
+	clr_country_flag = gw_dialog_window
+	clr_country_flag = gw_dialog_valid
+}
+
+mdcw_gw_select_origin = {
+	set_temp_variable = { gw_lookup_origin = gw_selected_origin }
+	mdcw_gw_find_origin = yes
+	set_variable = { gw_selected_stock_k = 0 }
+	set_variable = { gw_selected_registered_k = 0 }
+	set_variable = { gw_selected_housed_k = 0 }
+	set_variable = { gw_selected_protected_k = 0 }
+	# IMPERIA CW — Cold War: Cached annual-return information for the selected community.
+	set_variable = { gw_ui_return_rate = 0 }
+	set_variable = { gw_ui_return_last = 0 }
+	set_variable = { gw_ui_return_expected = 0 }
+	if = {
+		limit = { check_variable = { gw_index > -1 } }
+		set_variable = { gw_selected_stock_k = gw_stock^gw_index }
+		set_variable = { gw_selected_registered_k = gw_registered^gw_index }
+		set_variable = { gw_selected_housed_k = gw_housed^gw_index }
+		set_variable = { gw_selected_protected_k = gw_protected^gw_index }
+		set_temp_variable = { gw_mi = gw_index }
+		set_temp_variable = { gw_mo = gw_selected_origin }
+		mdcw_dp_return_rate = yes
+		set_variable = { gw_ui_return_rate = gw_rate }
+		set_variable = { gw_ui_return_last = gw_return_last^gw_index }
+		set_variable = { gw_ui_return_expected = gw_return_basis^gw_index }
+		multiply_variable = { gw_ui_return_expected = gw_ui_return_rate }
+		divide_variable = { gw_ui_return_expected = 100 }
+	}
+	# IMPERIA CW — Cold War: Ministry selection display
+	if = { limit = { NOT = { has_country_flag = gw_ui_show_abroad } } mdcw_gw_ministry_selection = yes }
+	add_to_variable = { gw_ui_dirty = 1 }
+}
+
+# A fresh GUI-created popup prepares its own country-scoped data. A console or
+# stale popup without the owning window never grants a valid paid operation.
+mdcw_gw_open_project_dialog = {
+ if = {
+  limit = { has_country_flag = gw_dialog_window }
+  set_variable = { gw_selected_origin = gw_dialog_origin }
+  mdcw_gw_prepare_project = yes
+  # Remains valid longer than the old seven days, but expires before the
+  # fourteen-day native auto-selection can silently start a paid programme.
+  set_country_flag = { flag = gw_dialog_valid value = 1 days = 13 }
+  log = "[GetDateText]: mdcw_gw_project_dialog host=[ROOT.GetName] origin_id=[?gw_dialog_origin] type=[?gw_project_choice] untreated_k=[?gw_project_preview_k] pp_required=[?gw_project_pp_cost] pp_available=[?political_power] weekly=[?gw_project_preview_weekly] consumer=[?gw_project_preview_consumer]"
+ }
+}
+
+# Input gw_project_choice: 1 registration, 2 housing, 3 labour protection.
+mdcw_gw_prepare_project = {
+	set_variable = { gw_project_pp_cost = 100 }
+	if = { limit = { check_variable = { gw_project_choice = 1 } } set_variable = { gw_project_pp_cost = 75 } }
+	mdcw_gw_select_origin = yes
+	set_variable = { gw_project_preview_k = gw_selected_stock_k }
+	if = { limit = { check_variable = { gw_project_choice = 1 } } subtract_from_variable = { gw_project_preview_k = gw_selected_registered_k } }
+	if = { limit = { check_variable = { gw_project_choice = 2 } } subtract_from_variable = { gw_project_preview_k = gw_selected_housed_k } }
+	if = { limit = { check_variable = { gw_project_choice = 3 } } subtract_from_variable = { gw_project_preview_k = gw_selected_protected_k } }
+	clamp_variable = { var = gw_project_preview_k min = 0 }
+	set_variable = { gw_project_preview_weekly = gw_project_preview_k }
+	divide_variable = { gw_project_preview_weekly = 100 }
+	if = { limit = { check_variable = { gw_project_choice = 1 } } multiply_variable = { gw_project_preview_weekly = 0.030 } }
+	if = { limit = { check_variable = { gw_project_choice = 2 } } multiply_variable = { gw_project_preview_weekly = 0.050 } }
+	if = { limit = { check_variable = { gw_project_choice = 3 } } multiply_variable = { gw_project_preview_weekly = 0.040 } }
+	set_variable = { gw_project_preview_consumer = gw_project_preview_k }
+	divide_variable = { gw_project_preview_consumer = 100 }
+	set_temp_variable = { gw_preview_cg_unit = 0.01 }
+	if = { limit = { check_variable = { gw_project_choice = 2 } } set_temp_variable = { gw_preview_cg_unit = 0.02 } }
+	multiply_variable = { gw_project_preview_consumer = gw_preview_cg_unit }
+	clamp_variable = { var = gw_project_preview_consumer min = 0 max = 0.15 }
+	if = {
+		limit = { check_variable = { gw_project_choice = 2 } }
+		set_variable = { gw_project_preview_consumer = gw_project_preview_k }
+		divide_variable = { gw_project_preview_consumer = 100 }
+		multiply_variable = { gw_project_preview_consumer = 0.02 }
+		clamp_variable = { var = gw_project_preview_consumer min = 0 max = 0.25 }
+	}
+}
+
+mdcw_gw_start_project = {
+	mdcw_gw_prepare_project = yes
+	if = {
+		limit = { mdcw_gw_can_plan_integration = yes check_variable = { gw_project_preview_k > 0 } NOT = { check_variable = { political_power < gw_project_pp_cost } } }
+		set_temp_variable = { gw_project_pp_payment = gw_project_pp_cost }
+		multiply_temp_variable = { gw_project_pp_payment = -1 }
+		add_political_power = gw_project_pp_payment
+		set_variable = { gw_project_origin = gw_selected_origin }
+		set_variable = { gw_project_type = gw_project_choice }
+		set_variable = { gw_project_covered_k = gw_project_preview_k }
+		set_variable = { gw_project_unit_cost = 0.030 }
+		set_variable = { gw_project_consumer_rate = 0.01 }
+		if = { limit = { check_variable = { gw_project_type = 2 } } set_variable = { gw_project_unit_cost = 0.050 } set_variable = { gw_project_consumer_rate = 0.02 } }
+		if = { limit = { check_variable = { gw_project_type = 3 } } set_variable = { gw_project_unit_cost = 0.040 } }
+		set_country_flag = gw_project_active
+		set_country_flag = { flag = gw_project_year days = 365 }
+		country_event = { id = mdcw_diaspora.20 days = 365 }
+		ingame_update_setup = yes
+	}
+}
+
+mdcw_gw_finish_project = {
+	if = {
+		limit = { has_country_flag = gw_project_active }
+		set_temp_variable = { gw_lookup_origin = gw_project_origin }
+		mdcw_gw_find_origin = yes
+		if = {
+			limit = { check_variable = { gw_index > -1 } }
+			if = { limit = { check_variable = { gw_project_type = 1 } } add_to_variable = { gw_registered^gw_index = gw_project_covered_k } clamp_variable = { var = gw_registered^gw_index min = 0 max = gw_stock^gw_index } }
+			if = { limit = { check_variable = { gw_project_type = 2 } } add_to_variable = { gw_housed^gw_index = gw_project_covered_k } clamp_variable = { var = gw_housed^gw_index min = 0 max = gw_stock^gw_index } }
+			if = { limit = { check_variable = { gw_project_type = 3 } } add_to_variable = { gw_protected^gw_index = gw_project_covered_k } clamp_variable = { var = gw_protected^gw_index min = 0 max = gw_stock^gw_index } }
+		}
+		clr_country_flag = gw_project_active
+		clr_country_flag = gw_project_year
+		set_variable = { gw_completed_origin = gw_project_origin }
+		set_variable = { gw_completed_kind = gw_project_type }
+		set_variable = { gw_completed_coverage_k = gw_project_covered_k }
+		set_variable = { gw_project_type = 0 }
+		mdcw_gw_recount_ledger = yes
+		ingame_update_setup = yes
+		country_event = { id = mdcw_diaspora.21 }
+	}
+}
+
+# Input gw_return_choice_k. Country-level origin, transaction-local state IDs.
+mdcw_gw_prepare_return = {
+	mdcw_gw_select_origin = yes
+	set_variable = { gw_return_preview_k = gw_return_choice_k }
+	clamp_variable = { var = gw_return_preview_k min = 0 max = 100 }
+	clamp_variable = { var = gw_return_preview_k min = 0 max = gw_selected_stock_k }
+	set_variable = { gw_return_preview_cash = gw_return_preview_k }
+	divide_variable = { gw_return_preview_cash = 100 }
+	multiply_variable = { gw_return_preview_cash = 5 }
+	set_variable = { gw_return_preview_pp = gw_return_preview_k }
+	# IMPERIA CW — Cold War: persistent native option-preview payment
+	set_variable = { gw_return_pp_payment = gw_return_preview_pp }
+	multiply_variable = { gw_return_pp_payment = -1 }
+	# One PP per thousand people; no reward/refund-generating recruitment effects.
+}
+
+mdcw_gw_start_return = {
+	mdcw_gw_prepare_return = yes
+	if = {
+		limit = {
+			mdcw_gw_can_plan_return = yes
+			check_variable = { gw_return_preview_k > 0 }
+			NOT = { check_variable = { treasury < gw_return_preview_cash } }
+			NOT = { check_variable = { political_power < gw_return_preview_pp } }
+		}
+		set_variable = { gw_return_origin = gw_selected_origin }
+		set_variable = { gw_return_k = gw_return_preview_k }
+		set_variable = { gw_return_cash = gw_return_preview_cash }
+		set_variable = { gw_return_pp = gw_return_preview_pp }
+		subtract_from_variable = { treasury = gw_return_cash }
+		set_temp_variable = { gw_return_pp_payment = gw_return_pp }
+		multiply_temp_variable = { gw_return_pp_payment = -1 }
+		add_political_power = gw_return_pp_payment
+		set_country_flag = gw_return_active
+		set_country_flag = { flag = gw_return_preparation days = 90 }
+		country_event = { id = mdcw_diaspora.40 days = 90 }
+		mdcw_gw_refresh_dashboard = yes
+		ingame_update_setup = yes
+	}
+}
+
+# Both source states and the destination are chosen at execution, after 90 days.
+# Every condition is checked before the first population, ledger or remittance mutation.
+mdcw_gw_execute_return = {
+	if = {
+		limit = { has_country_flag = gw_return_active }
+		set_temp_variable = { gw_lookup_origin = gw_return_origin }
+		mdcw_gw_find_origin = yes
+		set_variable = { gw_return_valid = 0 }
+		set_variable = { gw_return_source_count = 0 }
+		set_variable = { gw_return_half_k = gw_return_k }
+		multiply_variable = { gw_return_half_k = 1000 }
+		divide_variable = { gw_return_half_k = 2 }
+		round_variable = gw_return_half_k
+		divide_variable = { gw_return_half_k = 1000 }
+		# Population is integral. For an odd final headcount, source 2 supplies the remainder.
+		set_variable = { gw_return_second_k = gw_return_k }
+		subtract_from_variable = { gw_return_second_k = gw_return_half_k }
+		if = {
+			limit = {
+				check_variable = { gw_index > -1 }
+				NOT = { check_variable = { gw_stock^gw_index < gw_return_k } }
+				has_war = no
+				var:gw_return_origin = { exists = yes has_war = no any_owned_state = { is_controlled_by = PREV } }
+			}
+			if = {
+				limit = { any_owned_state = { is_controlled_by = PREV NOT = { check_variable = { state_population_k < PREV.gw_return_k } } } }
+				random_owned_state = {
+					limit = { is_controlled_by = PREV NOT = { check_variable = { state_population_k < PREV.gw_return_k } } }
+					save_event_target_as = gw_return_state_1
+				}
+				set_variable = { gw_return_source_count = 1 }
+			}
+			else = {
+				random_owned_state = {
+					limit = {
+						is_controlled_by = PREV
+						NOT = { check_variable = { state_population_k < PREV.gw_return_half_k } }
+						PREV = { any_owned_state = { is_controlled_by = PREV NOT = { state = PREV.PREV } NOT = { check_variable = { state_population_k < PREV.gw_return_second_k } } } }
+					}
+					save_event_target_as = gw_return_state_1
+				}
+				if = {
+					limit = { event_target:gw_return_state_1 = { is_owned_by = ROOT is_controlled_by = ROOT NOT = { check_variable = { state_population_k < ROOT.gw_return_half_k } } } }
+					random_owned_state = {
+						limit = { is_controlled_by = PREV NOT = { state = event_target:gw_return_state_1 } NOT = { check_variable = { state_population_k < PREV.gw_return_second_k } } }
+						save_event_target_as = gw_return_state_2
+					}
+					if = { limit = { event_target:gw_return_state_2 = { is_owned_by = ROOT is_controlled_by = ROOT NOT = { check_variable = { state_population_k < ROOT.gw_return_second_k } } } } set_variable = { gw_return_source_count = 2 } }
+				}
+			}
+			if = {
+				limit = { check_variable = { gw_return_source_count > 0 } }
+				var:gw_return_origin = {
+					random_owned_state = { limit = { is_controlled_by = PREV } save_event_target_as = gw_return_home_state }
+				}
+				set_variable = { gw_return_valid = 1 }
+			}
+		}
+		if = {
+			limit = { check_variable = { gw_return_valid = 1 } }
+			set_variable = { gw_return_reserve_before = manpower }
+			set_variable = { gw_return_take = gw_return_k }
+			if = { limit = { check_variable = { gw_return_source_count = 2 } } set_variable = { gw_return_take = gw_return_half_k } }
+			multiply_variable = { gw_return_take = -1000 }
+			set_variable = { gw_return_source1_people = gw_return_take }
+			set_variable = { gw_return_source2_people = 0 }
+			event_target:gw_return_state_1 = { add_manpower = ROOT.gw_return_take }
+			if = {
+				limit = { check_variable = { gw_return_source_count = 2 } }
+				set_variable = { gw_return_take = gw_return_second_k }
+				multiply_variable = { gw_return_take = -1000 }
+				set_variable = { gw_return_source2_people = gw_return_take }
+				event_target:gw_return_state_2 = { add_manpower = ROOT.gw_return_take }
+			}
+			# Apply the same bounded reserve-gain protection as the original population export.
+			set_temp_variable = { gw_return_reserve_gain = manpower }
+			subtract_from_temp_variable = { gw_return_reserve_gain = gw_return_reserve_before }
+			clamp_temp_variable = { var = gw_return_reserve_gain min = 0 }
+			if = {
+				limit = { check_variable = { gw_return_reserve_gain > 0 } }
+				multiply_temp_variable = { gw_return_reserve_gain = -1 }
+				add_manpower = gw_return_reserve_gain
+			}
+			set_variable = { gw_return_add = gw_return_k }
+			multiply_variable = { gw_return_add = 1000 }
+			event_target:gw_return_home_state = { add_manpower = ROOT.gw_return_add }
+			set_temp_variable = { gw_retained_share = gw_stock^gw_index }
+			subtract_from_temp_variable = { gw_retained_share = gw_return_k }
+			divide_temp_variable = { gw_retained_share = gw_stock^gw_index }
+			# IMPERIA CW — Cold War: Forced departures shrink eligibility without earning a skill reward.
+			set_variable = { gw_move_index = gw_index }
+			set_variable = { gw_move_origin = gw_return_origin }
+			set_variable = { gw_move_k = gw_return_k }
+			set_variable = { gw_move_mode = 2 }
+			mdcw_dp_note_departure = yes
+			subtract_from_variable = { gw_stock^gw_index = gw_return_k }
+			multiply_variable = { gw_registered^gw_index = gw_retained_share }
+			multiply_variable = { gw_housed^gw_index = gw_retained_share }
+			multiply_variable = { gw_protected^gw_index = gw_retained_share }
+			add_to_variable = { mdcw_gw_net_emigration_k = gw_return_k }
+			var:gw_return_origin = {
+				set_temp_variable = { gw_abroad_before = gw_abroad_k }
+				subtract_from_variable = { gw_abroad_k = ROOT.gw_return_k }
+				clamp_variable = { var = gw_abroad_k min = 0 }
+				if = {
+					limit = { check_variable = { gw_abroad_before > 0 } }
+					set_temp_variable = { gw_income_retained_share = gw_abroad_k }
+					divide_temp_variable = { gw_income_retained_share = gw_abroad_before }
+					multiply_variable = { mdcw_gw_remittance_pool_m = gw_income_retained_share }
+				}
+				subtract_from_variable = { mdcw_gw_net_emigration_k = ROOT.gw_return_k }
+				add_opinion_modifier = { target = ROOT modifier = mdcw_gw_forced_return }
+				ingame_update_setup = yes
+			}
+			add_stability = -0.01
+			# Frozen receipt data must survive an immediately prepared next return.
+			set_variable = { gw_return_receipt_k = gw_return_k }
+			set_variable = { gw_return_receipt_half_k = gw_return_half_k }
+			set_variable = { gw_return_receipt_second_k = gw_return_second_k }
+			set_variable = { gw_return_receipt_source_count = gw_return_source_count }
+			clr_country_flag = gw_return_active
+			clr_country_flag = gw_return_preparation
+			mdcw_gw_recount_ledger = yes
+			ingame_update_setup = yes
+			country_event = { id = mdcw_diaspora.41 }
+			var:gw_return_origin = { country_event = { id = mdcw_diaspora.42 } }
+		}
+		else = {
+			set_variable = { gw_return_refunded_cash = gw_return_cash }
+			set_variable = { gw_return_refunded_pp = gw_return_pp }
+			add_to_variable = { treasury = gw_return_cash }
+			add_political_power = gw_return_pp
+			clr_country_flag = gw_return_active
+			clr_country_flag = gw_return_preparation
+			mdcw_gw_refresh_dashboard = yes
+			country_event = { id = mdcw_diaspora.43 }
+		}
+	}
+}

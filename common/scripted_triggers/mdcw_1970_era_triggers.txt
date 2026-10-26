@@ -1,0 +1,68 @@
+# IMPERIA CW — Cold War: 1970 era triggers — scripted triggers.
+# COLDWAR | 1970 era national ideas: government and regime triggers (country scope).
+# MD ruling_party indices: 0 Western Autocracy, 1 Conservatism, 2 Liberalism, 3 Socialism, 4 Communist State,
+# 5 Anarchist Communism, 6 Conservative (Emerging), 7 Autocracy (Emerging), 10 Islamic Kingdom, 13 Neutral Autocracy,
+# 14 Neutral Conservatism, 15 Oligarchism, 16 Neutral Libertarianism, 18 Neutral Social, 19 Neutral Communism,
+# 20 Nationalist Populism, 21 Nationalist Fascism, 22 Nationalist Autocracy, 23 Monarchism.
+
+# Ruled by a Marxist-Leninist party.
+COLDWAR_era_is_communist = {
+	OR = {
+		check_variable = { ruling_party = 4 }
+		check_variable = { ruling_party = 5 }
+		check_variable = { ruling_party = 7 }
+		check_variable = { ruling_party = 19 }
+	}
+}
+
+# Ruled by a parliamentary democratic party.
+COLDWAR_era_is_democratic = {
+	has_elections = yes
+	OR = {
+		check_variable = { ruling_party = 1 }
+		check_variable = { ruling_party = 2 }
+		check_variable = { ruling_party = 3 }
+		check_variable = { ruling_party = 14 }
+		check_variable = { ruling_party = 16 }
+	}
+}
+
+# Ruled by a right-wing authoritarian or fascist regime (juntas, Estado Novo, Francoism).
+COLDWAR_era_is_far_right = {
+	OR = {
+		check_variable = { ruling_party = 0 }
+		check_variable = { ruling_party = 20 }
+		check_variable = { ruling_party = 21 }
+		check_variable = { ruling_party = 22 }
+	}
+}
+
+# A monarch actually governs (1970 ruling monarchies, or a royalist government anywhere).
+COLDWAR_era_is_ruling_monarchy = {
+	OR = {
+		check_variable = { ruling_party = 10 }
+		check_variable = { ruling_party = 23 }
+		AND = {
+			OR = {
+				original_tag = SAU original_tag = JOR original_tag = MOR original_tag = PER original_tag = AFG
+				original_tag = ETH original_tag = NEP original_tag = BHU original_tag = KUW original_tag = QAT
+				original_tag = BHR original_tag = OMA original_tag = UAE original_tag = SWA original_tag = TON
+				original_tag = BRU original_tag = LAO original_tag = CBD original_tag = LES original_tag = YEM
+			}
+			NOT = { COLDWAR_era_is_communist = yes }
+			has_elections = no
+		}
+	}
+}
+
+# A crowned head of state above an elected government.
+COLDWAR_era_is_constitutional_monarchy = {
+	NOT = { COLDWAR_era_is_ruling_monarchy = yes }
+	OR = {
+		original_tag = ENG original_tag = HOL original_tag = BEL original_tag = SWE original_tag = NRY
+		original_tag = DEN original_tag = LUX original_tag = LIC original_tag = MNC original_tag = JAP
+		original_tag = SIA original_tag = MAY original_tag = AST original_tag = CAN original_tag = NZL
+		original_tag = JAM original_tag = BAR original_tag = MLT
+	}
+	NOT = { COLDWAR_era_is_communist = yes }
+}

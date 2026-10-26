@@ -1,0 +1,114 @@
+@@ -48,10 +48,17 @@
+
+ 		sp_civilian_generic_reward_resource_scarcity
+ 		sp_civilian_generic_reward_critical_failure
+ 	}
+ 
++
++	# Imperia: research reactor fuel
++	resource_cost = {
++		resources = { uranium = 2 }
++	}
+ 	ai_will_do = {
+ 		base = 25
++		# Imperia: needed for enrichment facilities and the bomb
++		modifier = { factor = 4 ROOT = { has_country_flag = imp_ai_wants_nukes } }
+ 	}
+ }
+ sp_thorium_nuclear_fuel = {
+ 	allowed = { always = yes }
+
+@@ -79,9 +86,9 @@
+
+ 		sp_nuclear_energy
+ 	}
+ 
+ 	resource_cost = {
+-		resources = { tungsten = 3 chromium = 2 }
++		resources = { tungsten = 3 chromium = 2 uranium = 1 }
+ 	}
+ 
+ 	project_output = {
+ 		country_effects = {
+
+@@ -205,8 +212,22 @@
+
+ 	prototype_time = sp_time.prototype.long
+ 
+ 	complexity = sp_complexity.large
+ 
++	available = {
++		FROM = {
++			# Imperia: 3 undamaged enrichment facilities to start. Once running, losing them does not stop the
++			# project but gives a huge research malus (imp_nuclear_programme_disrupted, zzzzzz_imp_nuclear_programme_on_actions.txt)
++			custom_trigger_tooltip = {
++				tooltip = imp_sp_needs_3_enrichment_facilities_tt
++				OR = {
++					check_variable = { undamaged_enrichment_facilities > 2 }
++					is_special_project_being_researched = sp:sp_nuclear_bomb
++				}
++			}
++		}
++	}
++
+ 	special_project_parent = {
+ 		sp_nuclear_energy
+ 	}
+ 
+
+@@ -233,8 +254,13 @@
+
+ 		sp_civilian_generic_reward_resource_scarcity
+ 		sp_civilian_generic_reward_critical_failure
+ 	}
+ 
++
++	# Imperia: fissile material for the first nuclear device
++	resource_cost = {
++		resources = { uranium = 4 }
++	}
+ 	ai_will_do = {
+ 		base = 0.25
+ 		modifier = {
+ 			factor = 6
+
+@@ -272,8 +307,17 @@
+
+ 	available = {
+ 		FROM = {
+ 			has_tech = ballistic_missile
+ 			if = { limit = { original_tag = GER } NOT = { has_country_flag = GER_no_nuclear } }
++			# Imperia: 3 undamaged enrichment facilities to start. Once running, losing them does not stop the
++			# project but gives a huge research malus (imp_nuclear_programme_disrupted, zzzzzz_imp_nuclear_programme_on_actions.txt)
++			custom_trigger_tooltip = {
++				tooltip = imp_sp_needs_3_enrichment_facilities_tt
++				OR = {
++					check_variable = { undamaged_enrichment_facilities > 2 }
++					is_special_project_being_researched = sp:sp_nuclear_warhead_program
++				}
++			}
+ 		}
+ 	}
+ 
+ 	special_project_parent = { sp_nuclear_bomb }
+
+@@ -366,6 +410,18 @@
+
+ 		modifier = {
+ 			factor = 0
+ 			NOT = { has_game_rule = { rule = rule_nuclear_weapons option = allowed } }
+ 		}
++		# Imperia: only when the AI deems nuclear weapons necessary (imp_ai_nuclear_need_update)
++		modifier = {
++			factor = 0
++			ROOT = { NOT = { has_country_flag = imp_ai_wants_nukes } }
++		}
++		modifier = {
++			factor = 20
++			ROOT = { has_country_flag = imp_ai_wants_nukes }
++		}
++	}
++	resource_cost = {
++		resources = { tungsten = 80 chromium = 80 uranium = 4 }
+ 	}
+ }

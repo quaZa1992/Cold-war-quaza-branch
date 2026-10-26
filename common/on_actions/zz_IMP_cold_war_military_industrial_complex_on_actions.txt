@@ -1,0 +1,46 @@
+# IMPERIA CW — Cold War: zz IMP military industrial complex on actions — event hooks.
+on_actions = {
+	on_startup = {
+		effect = {
+			if = {
+				limit = {
+					USA = {
+						OR = {
+							IMP_is_1970_scenario = yes
+							IMP_is_1985_scenario = yes
+						}
+					}
+				}
+				IMP_cold_war_initialize_military_industrial_complex = yes
+			}
+		}
+	}
+
+	on_monthly = {
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						IMP_is_1970_scenario = yes
+						IMP_is_1985_scenario = yes
+					}
+				}
+
+				# on_monthly pulses in country scope; this guard makes the global count run once.
+				if = {
+					limit = {
+						NOT = { has_global_flag = IMP_military_industrial_complex_monthly_recalculated }
+					}
+					set_global_flag = {
+						flag = IMP_military_industrial_complex_monthly_recalculated
+						days = 27
+						value = 1
+					}
+					IMP_cold_war_recalculate_military_industrial_complex = yes
+				}
+
+				IMP_cold_war_update_military_industrial_complex_country = yes
+			}
+		}
+	}
+}

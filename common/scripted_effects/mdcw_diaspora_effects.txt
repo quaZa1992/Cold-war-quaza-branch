@@ -1,0 +1,326 @@
+# IMPERIA CW — Cold War: Guest Worker Administration
+# Country-level guest-worker ledger. No permanent state-by-origin matrix.
+# Population/coverage in thousands, money in MD billions per week.
+# gw_origins and its parallel arrays retain stable indices; the UI lists active rows only.
+# Helpers use THIS/PREV except the explicitly documented agreement callback.
+
+mdcw_gw_ledger_initialize = {
+	if = {
+		limit = { NOT = { has_country_flag = mdcw_gw_ledger_ready } }
+		mdcw_gw_initialize_resident_stock = yes
+		set_variable = { gw_unrecorded_k = mdcw_gw_guest_workers_k }
+		if = {
+			limit = { NOT = { has_variable = gw_abroad_k } }
+			# Net emigration is not a gross diaspora count. Only new agreements
+			# and explicit legacy registrations populate this country ledger.
+			set_variable = { gw_abroad_k = 0 }
+		}
+		set_country_flag = mdcw_gw_ledger_ready
+		mdcw_gw_refresh_dashboard = yes
+	}
+}
+
+# Input: country-local gw_lookup_origin. Output: country-local gw_index (-1 if absent).
+mdcw_gw_find_origin = {
+	set_temp_variable = { gw_index = -1 }
+	# IMPERIA CW — Cold War: reuse one verified country-local lookup; no new matrix.
+	if = {
+		limit = {
+			has_variable = gw_lookup_cache_index
+			check_variable = { gw_lookup_cache_origin = gw_lookup_origin }
+			NOT = { check_variable = { gw_lookup_cache_index < 0 } }
+			check_variable = { gw_lookup_cache_index < gw_origins^num }
+		}
+		# Check the entry itself too: clearing/rebuilding a ledger can reuse an index.
+		if = {
+			limit = { check_variable = { gw_origins^gw_lookup_cache_index = gw_lookup_origin } }
+			set_temp_variable = { gw_index = gw_lookup_cache_index }
+		}
+	}
+	if = {
+		limit = { NOT = { check_variable = { gw_index > -1 } } }
+		for_each_loop = {
+			array = gw_origins index = gw_find_i value = gw_find_v
+			if = {
+				limit = { check_variable = { gw_find_v = gw_lookup_origin } }
+				set_temp_variable = { gw_index = gw_find_i }
+			}
+		}
+		if = {
+			limit = { check_variable = { gw_index > -1 } }
+			set_variable = { gw_lookup_cache_origin = gw_lookup_origin }
+			set_variable = { gw_lookup_cache_index = gw_index }
+		}
+	}
+}
+
+mdcw_gw_ensure_origin = {
+	# IMPERIA CW — Cold War: Extend older saves before appending aligned migration fields.
+	mdcw_dp_ensure_arrays = yes
+	mdcw_gw_find_origin = yes
+	if = {
+		limit = { check_variable = { gw_index < 0 } }
+		set_temp_variable = { gw_index = gw_origins^num }
+		add_to_array = { gw_origins = gw_lookup_origin }
+		add_to_array = { gw_stock = 0 }
+		add_to_array = { gw_registered = 0 }
+		add_to_array = { gw_housed = 0 }
+		add_to_array = { gw_protected = 0 }
+		add_to_array = { gw_outreach = 0 }
+		add_to_array = { gw_return_basis = 0 }
+		add_to_array = { gw_return_sum = 0 }
+		add_to_array = { gw_return_credit = 0 }
+		add_to_array = { gw_return_rate = 0 }
+		add_to_array = { gw_return_last = 0 }
+	}
+}
+
+mdcw_gw_recount_ledger = {
+	# IMPERIA CW — Cold War: One-time migration-array upgrade; normal recount stays local.
+	mdcw_dp_ensure_arrays = yes
+	set_variable = { gw_known_k = 0 }
+	set_variable = { gw_registered_k = 0 }
+	set_variable = { gw_housed_k = 0 }
+	set_variable = { gw_protected_k = 0 }
+	clear_array = gw_ui_indices
+	clear_array = gw_active_origins
+	for_each_loop = {
+		array = gw_origins index = gw_sum_i value = gw_sum_v
+		clamp_variable = { var = gw_stock^gw_sum_i min = 0 }
+		clamp_variable = { var = gw_registered^gw_sum_i min = 0 max = gw_stock^gw_sum_i }
+		clamp_variable = { var = gw_housed^gw_sum_i min = 0 max = gw_stock^gw_sum_i }
+		clamp_variable = { var = gw_protected^gw_sum_i min = 0 max = gw_stock^gw_sum_i }
+		add_to_variable = { gw_known_k = gw_stock^gw_sum_i }
+		add_to_variable = { gw_registered_k = gw_registered^gw_sum_i }
+		add_to_variable = { gw_housed_k = gw_housed^gw_sum_i }
+		add_to_variable = { gw_protected_k = gw_protected^gw_sum_i }
+		if = {
+			limit = { check_variable = { gw_stock^gw_sum_i > 0 } }
+			add_to_array = { gw_ui_indices = gw_sum_i }
+			add_to_array = { gw_active_origins = gw_sum_v }
+		}
+	}
+	set_variable = { mdcw_gw_guest_workers_k = gw_known_k }
+	add_to_variable = { mdcw_gw_guest_workers_k = gw_unrecorded_k }
+	mdcw_gw_refresh_dashboard = yes
+	# IMPERIA CW — Cold War: Seed the first migration year only once, then use cached cohorts.
+	mdcw_dp_start_reviews = yes
+}
+
+# Called only after the existing validated state transfer. ROOT receives, FROM sends.
+mdcw_gw_record_agreement = {
+	mdcw_gw_ledger_initialize = yes
+	set_temp_variable = { gw_lookup_origin = FROM.id }
+	mdcw_gw_ensure_origin = yes
+	add_to_variable = { gw_stock^gw_index = mdcw_gw_last_arrival_k }
+	FROM = {
+		add_to_variable = { gw_abroad_k = ROOT.mdcw_gw_last_arrival_k }
+		if = { limit = { NOT = { is_in_array = { gw_hosts = ROOT.id } } } add_to_array = { gw_hosts = ROOT.id } }
+	}
+	mdcw_gw_recount_ledger = yes
+	if = {
+		limit = { NOT = { has_country_flag = gw_backlash_year } }
+		set_variable = { gw_stability_loss_year = 0 }
+		set_country_flag = { flag = gw_backlash_year days = 365 }
+	}
+	set_temp_variable = { gw_stability_loss = mdcw_gw_last_arrival_k }
+	divide_temp_variable = { gw_stability_loss = 10000 }
+	set_temp_variable = { gw_stability_remaining = 0.03 }
+	subtract_from_temp_variable = { gw_stability_remaining = gw_stability_loss_year }
+	clamp_temp_variable = { var = gw_stability_loss min = 0 max = gw_stability_remaining }
+	add_to_variable = { gw_stability_loss_year = gw_stability_loss }
+	multiply_temp_variable = { gw_stability_loss = -1 }
+	set_variable = { gw_last_stability_loss = gw_stability_loss }
+	add_stability = gw_stability_loss
+	remove_ideas = mdcw_gw_immigration_backlash
+	add_timed_idea = { idea = mdcw_gw_immigration_backlash days = 180 }
+	if = {
+		limit = { NOT = { has_country_flag = gw_quarterly_scheduled } }
+		set_country_flag = gw_quarterly_scheduled
+		country_event = { id = mdcw_diaspora.60 days = 91 }
+	}
+}
+
+# Pure cached arithmetic in the existing budget refresh. No ledger/state/country scans.
+mdcw_gw_calculate_diaspora_costs = {
+	set_temp_variable = { gw_old_health = mdcw_gw_health_cost }
+	set_temp_variable = { gw_old_bureau = mdcw_gw_bureaucracy_cost }
+	set_temp_variable = { gw_old_consumer = gw_project_consumer }
+	set_temp_variable = { gw_modifier_changed = 0 }
+	set_variable = { mdcw_gw_health_cost = 0 }
+	set_variable = { mdcw_gw_social_cost = 0 }
+	set_variable = { mdcw_gw_bureaucracy_cost = 0 }
+	set_variable = { gw_welfare_weekly = 0 }
+	set_variable = { gw_project_weekly = 0 }
+	set_variable = { gw_project_consumer = 0 }
+	set_variable = { gw_population_share = 0 }
+	set_variable = { gw_protection_share = 0 }
+	# IMPERIA CW — Cold War: Cached national settlement costs; no additional ledger scan.
+	set_variable = { gw_dp_retention_weekly = 0 }
+	if = { limit = { has_country_flag = gw_dp_retention }
+		set_variable = { gw_dp_retention_weekly = mdcw_gw_guest_workers_k }
+		divide_variable = { gw_dp_retention_weekly = 4000 }
+	}
+	set_variable = { gw_progress_frame = 1 }
+	if = {
+		limit = { check_variable = { population_total > 0 } check_variable = { mdcw_gw_guest_workers_k > 0 } }
+		set_temp_variable = { gw_pop_k = population_total }
+		multiply_temp_variable = { gw_pop_k = 100 }
+		set_variable = { gw_population_share = mdcw_gw_guest_workers_k }
+		divide_variable = { gw_population_share = gw_pop_k }
+		set_variable = { gw_protection_share = gw_protected_k }
+		divide_variable = { gw_protection_share = mdcw_gw_guest_workers_k }
+		set_variable = { mdcw_gw_health_cost = mdcw_gw_guest_workers_k }
+		set_temp_variable = { gw_housing_relief = gw_housed_k }
+		multiply_temp_variable = { gw_housing_relief = 0.20 }
+		subtract_from_variable = { mdcw_gw_health_cost = gw_housing_relief }
+		divide_variable = { mdcw_gw_health_cost = population_total }
+		multiply_variable = { mdcw_gw_health_cost = 0.10 }
+		set_variable = { mdcw_gw_bureaucracy_cost = mdcw_gw_guest_workers_k }
+		set_temp_variable = { gw_registration_relief = gw_registered_k }
+		multiply_temp_variable = { gw_registration_relief = 0.30 }
+		subtract_from_variable = { mdcw_gw_bureaucracy_cost = gw_registration_relief }
+		divide_variable = { mdcw_gw_bureaucracy_cost = population_total }
+		multiply_variable = { mdcw_gw_bureaucracy_cost = 0.20 }
+		set_temp_variable = { gw_welfare_equivalent_k = mdcw_gw_guest_workers_k }
+		subtract_from_temp_variable = { gw_welfare_equivalent_k = gw_housing_relief }
+		set_temp_variable = { gw_labour_relief = gw_protected_k }
+		multiply_temp_variable = { gw_labour_relief = 0.20 }
+		subtract_from_temp_variable = { gw_welfare_equivalent_k = gw_labour_relief }
+		# Divide GDP first to stay within the native fixed-point range.
+		set_variable = { gw_welfare_weekly = gdp_total }
+		divide_variable = { gw_welfare_weekly = 52 }
+		# Preserve small population shares without an early division to ~0.000.
+		# Scaled share = stock_k *10 / population_in_100k; divide2000 restores
+		# the per-person ratio and the 0.50 GDP-equivalent surcharge coefficient.
+		multiply_temp_variable = { gw_welfare_equivalent_k = 10 }
+		divide_temp_variable = { gw_welfare_equivalent_k = population_total }
+		multiply_variable = { gw_welfare_weekly = gw_welfare_equivalent_k }
+		divide_variable = { gw_welfare_weekly = 2000 }
+	}
+	if = {
+		limit = { has_country_flag = gw_project_active }
+		set_variable = { gw_project_weekly = gw_project_covered_k }
+		divide_variable = { gw_project_weekly = 100 }
+		multiply_variable = { gw_project_weekly = gw_project_unit_cost }
+		# Consumer Goods scale with the locked programme cohort, like cash.
+		set_variable = { gw_project_consumer = gw_project_covered_k }
+		divide_variable = { gw_project_consumer = 100 }
+		multiply_variable = { gw_project_consumer = gw_project_consumer_rate }
+		clamp_variable = { var = gw_project_consumer min = 0 max = 0.15 }
+		if = {
+			limit = { check_variable = { gw_project_type = 2 } }
+			set_variable = { gw_project_consumer = gw_project_covered_k }
+			divide_variable = { gw_project_consumer = 100 }
+			multiply_variable = { gw_project_consumer = gw_project_consumer_rate }
+			clamp_variable = { var = gw_project_consumer min = 0 max = 0.25 }
+		}
+		if = { limit = { has_country_flag = { flag = gw_project_active days > 90 } } set_variable = { gw_progress_frame = 2 } }
+		if = { limit = { has_country_flag = { flag = gw_project_active days > 180 } } set_variable = { gw_progress_frame = 3 } }
+		if = { limit = { has_country_flag = { flag = gw_project_active days > 270 } } set_variable = { gw_progress_frame = 4 } }
+	}
+	if = {
+		limit = { has_country_flag = gw_return_active }
+		if = { limit = { has_country_flag = { flag = gw_return_active days > 22 } } set_variable = { gw_progress_frame = 2 } }
+		if = { limit = { has_country_flag = { flag = gw_return_active days > 45 } } set_variable = { gw_progress_frame = 3 } }
+		if = { limit = { has_country_flag = { flag = gw_return_active days > 67 } } set_variable = { gw_progress_frame = 4 } }
+	}
+	if = {
+		limit = { check_variable = { mdcw_gw_guest_workers_k > 0 } }
+		if = { limit = { NOT = { has_dynamic_modifier = { modifier = mdcw_gw_resident_costs } } } add_dynamic_modifier = { modifier = mdcw_gw_resident_costs } set_temp_variable = { gw_modifier_changed = 1 } }
+		if = { limit = { NOT = { has_idea = mdcw_ni_guest_worker_recruitment_programme } } add_ideas = mdcw_ni_guest_worker_recruitment_programme }
+	}
+	else = {
+		if = { limit = { has_dynamic_modifier = { modifier = mdcw_gw_resident_costs } } remove_dynamic_modifier = { modifier = mdcw_gw_resident_costs } set_temp_variable = { gw_modifier_changed = 1 } }
+	}
+	if = {
+		limit = { OR = { check_variable = { gw_modifier_changed = 1 } NOT = { check_variable = { gw_old_health = mdcw_gw_health_cost } } NOT = { check_variable = { gw_old_bureau = mdcw_gw_bureaucracy_cost } } NOT = { check_variable = { gw_old_consumer = gw_project_consumer } } } }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+# Called after native spending categories are calculated. Measures only the marginal
+# resident surcharge, preserving other modifiers and law choices in the base.
+mdcw_gw_update_cost_receipt = {
+	set_variable = { gw_health_weekly = 0 }
+	set_variable = { gw_bureaucracy_weekly = 0 }
+	set_variable = { gw_programme_weekly = 0 }
+	set_temp_variable = { gw_health_denominator = modifier@health_cost_multiplier_modifier }
+	add_to_temp_variable = { gw_health_denominator = 1 }
+	if = {
+		limit = { check_variable = { gw_health_denominator > 0 } }
+		set_variable = { gw_health_weekly = health_gain }
+		divide_variable = { gw_health_weekly = gw_health_denominator }
+		multiply_variable = { gw_health_weekly = mdcw_gw_health_cost }
+	}
+	set_temp_variable = { gw_bureau_denominator = modifier@bureaucracy_cost_multiplier_modifier }
+	add_to_temp_variable = { gw_bureau_denominator = 1 }
+	if = {
+		limit = { check_variable = { gw_bureau_denominator > 0 } }
+		set_variable = { gw_bureaucracy_weekly = bureaucracy_gain }
+		divide_variable = { gw_bureaucracy_weekly = gw_bureau_denominator }
+		multiply_variable = { gw_bureaucracy_weekly = mdcw_gw_bureaucracy_cost }
+		if = {
+			limit = { has_idea = mdcw_ni_guest_worker_recruitment_programme }
+			set_variable = { gw_programme_weekly = bureaucracy_gain }
+			divide_variable = { gw_programme_weekly = gw_bureau_denominator }
+			multiply_variable = { gw_programme_weekly = 0.05 }
+		}
+	}
+	set_variable = { gw_total_weekly = gw_health_weekly }
+	add_to_variable = { gw_total_weekly = gw_bureaucracy_weekly }
+	add_to_variable = { gw_total_weekly = gw_welfare_weekly }
+	add_to_variable = { gw_total_weekly = gw_project_weekly }
+	add_to_variable = { gw_total_weekly = gw_programme_weekly }
+	# IMPERIA CW — Cold War: Include settlement funding in the displayed public bill.
+	add_to_variable = { gw_total_weekly = gw_dp_retention_weekly }
+	set_variable = { gw_health_m = gw_health_weekly }
+	multiply_variable = { gw_health_m = 1000 }
+	set_variable = { gw_welfare_m = gw_welfare_weekly }
+	multiply_variable = { gw_welfare_m = 1000 }
+	set_variable = { gw_administration_m = gw_bureaucracy_weekly }
+	add_to_variable = { gw_administration_m = gw_programme_weekly }
+	multiply_variable = { gw_administration_m = 1000 }
+	set_variable = { gw_total_m = gw_total_weekly }
+	multiply_variable = { gw_total_m = 1000 }
+	# IMPERIA CW — Cold War: inactive countries need the real budget calculation,
+	# but no hidden Ministry display preparation or GUI invalidation.
+	if = {
+		limit = {
+			OR = {
+				has_idea = mdcw_ni_guest_worker_recruitment_programme
+				has_idea = mdcw_ni_overseas_employment_programme
+				check_variable = { mdcw_gw_guest_workers_k > 0 }
+				check_variable = { mdcw_gw_remittance_pool_m > 0 }
+				check_variable = { gw_abroad_k > 0 }
+			}
+		}
+		mdcw_gw_ministry_counters = yes
+		add_to_variable = { gw_ui_dirty = 1 }
+	}
+}
+
+# Outreach is evaluated only during an existing MD influence action in the host.
+mdcw_gw_apply_diaspora_influence = {
+	set_temp_variable = { gw_lookup_origin = tag_index }
+	mdcw_gw_find_origin = yes
+	if = {
+		limit = {
+			check_variable = { gw_index > -1 }
+			check_variable = { gw_outreach^gw_index > 0 }
+			check_variable = { gw_stock^gw_index > 24.999 }
+			check_variable = { population_total > 0 }
+		}
+		set_temp_variable = { gw_influence_share = gw_stock^gw_index }
+		divide_temp_variable = { gw_influence_share = population_total }
+		if = {
+			limit = { check_variable = { gw_influence_share > 0.249 } }
+			set_temp_variable = { gw_integration_fraction = gw_protected^gw_index }
+			divide_temp_variable = { gw_integration_fraction = gw_stock^gw_index }
+			multiply_temp_variable = { gw_integration_fraction = -0.5 }
+			add_to_temp_variable = { gw_integration_fraction = 1 }
+			multiply_temp_variable = { gw_integration_fraction = 0.10 }
+			add_to_temp_variable = { influence_change = gw_integration_fraction }
+		}
+	}
+}

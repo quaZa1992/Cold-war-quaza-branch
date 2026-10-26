@@ -1,0 +1,381 @@
+<!-- IMPERIA CW — Cold War: expanded orbital and planetary programme design. -->
+<div id="cw-space-map" aria-label="Expanded Cold War space programme design">
+  <style>%%BASE_STYLES%%</style>
+  <style>
+    #cw-space-map .sp-head{padding-top:18px;padding-bottom:18px}
+    #cw-space-map .sp-headtools{display:flex;align-items:center;gap:16px;margin-right:65px}
+    #cw-space-map .sp-headtools label{font-size:11px;color:var(--sp-muted)}
+    #cw-space-map .sp-headtools select{margin:4px 0 0;width:150px;font-size:12px;padding:5px}
+    #cw-space-map .sp-customcountry{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 22px;border-bottom:1px solid var(--sp-line);background:#1a2931;font-size:11px;color:var(--sp-muted)}
+    #cw-space-map .sp-customcountry input{background:#0e1a22;color:var(--sp-text);border:1px solid #4b626e;padding:7px 9px;max-width:190px;min-width:0}
+    #cw-space-map .sp-customcountry label{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    #cw-space-map .sp-profilelists{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0}
+    #cw-space-map .sp-profilelists h3{font-size:13px;color:var(--sp-gold);font-weight:500;margin:0 0 9px}
+    #cw-space-map .sp-profilelists ul{margin:0;padding-left:17px;color:var(--sp-muted);font-size:12px;line-height:1.7}
+    #cw-space-map .sp-capabilities{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 20px}
+    #cw-space-map .sp-capabilities span{font-size:11px;color:#c4d8dd;background:#22373f;padding:5px 8px}
+    @media(max-width:520px){#cw-space-map .sp-profilelists{grid-template-columns:1fr}#cw-space-map .sp-customcountry{padding:11px 13px}}
+    #cw-space-map .sp-date{margin-right:0}
+    #cw-space-map .sp-body{grid-template-columns:minmax(0,1fr) 305px}
+    #cw-space-map .sp-brief{display:block!important;padding:19px}
+    #cw-space-map .sp-scopebar{display:flex;gap:0;flex-wrap:wrap;padding:0 12px;background:#14212a;border-bottom:1px solid var(--sp-line)}
+    #cw-space-map .sp-scopebar button{background:transparent;border:0;border-bottom:2px solid transparent;padding:10px 13px;color:var(--sp-muted);font-size:11px;letter-spacing:.5px}
+    #cw-space-map .sp-scopebar button[aria-pressed=true]{color:var(--sp-cyan);border-bottom-color:var(--sp-cyan)}
+    #cw-space-map .sp-regionnode{position:absolute;border:0;border-left:2px solid #7899a4;background:#08151ee8;color:#d4e2e5;padding:5px 8px;text-align:left;font-size:11px;line-height:1.3;max-width:150px}
+    #cw-space-map .sp-regionnode.selected{border-left-color:var(--sp-gold);color:var(--sp-gold);background:#17262ef5}
+    #cw-space-map .sp-regionnode small{display:block;color:var(--sp-muted);font-size:11px;margin-top:2px}
+    #cw-space-map .sp-stage[data-system=deep]{background:radial-gradient(ellipse at 17% 55%,#3e332315,#07121c 35%,#02070c)}
+    #cw-space-map .sp-stage[data-system=deep] .sp-art{opacity:0}
+    #cw-space-map .sp-stage[data-system=earth] .sp-art{filter:brightness(.70)}
+    #cw-space-map .sp-stage[data-system=cislunar] .sp-art{filter:brightness(.80)}
+    #cw-space-map .sp-gridline{stroke:#5b78802e;stroke-width:1;fill:none}
+    #cw-space-map .sp-solarbody{fill:#9caaad;stroke:#d9d8bf66;stroke-width:1}
+    #cw-space-map .sp-systemlabel{fill:#bdcccf;font-size:14px;letter-spacing:2px}
+    #cw-space-map .sp-systemlabel.small{font-size:12px;letter-spacing:1px}
+    #cw-space-map .sp-selectionband{padding:16px 20px 15px;background:#18262e;border-top:1px solid var(--sp-line)}
+    #cw-space-map .sp-selectionband b{font:18px Georgia,serif;font-weight:400}
+    #cw-space-map .sp-selectionband p{font-size:12px;color:var(--sp-muted);margin:7px 0 0;line-height:1.6}
+    #cw-space-map .sp-regionpicker{display:flex;align-items:center;gap:12px;margin-top:11px;color:var(--sp-muted);font-size:11px}
+    #cw-space-map .sp-regionpicker select{margin:0;padding:6px;width:auto;max-width:75%;flex:1}
+    #cw-space-map .sp-regionprogrammes{padding:16px 20px 20px;background:#121e26}
+    #cw-space-map .sp-entry{padding:12px 0;border-bottom:1px solid #34454c;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+    #cw-space-map .sp-entry:last-child{border-bottom:0}
+    #cw-space-map .sp-entry b{font-size:13px;font-weight:500;display:block}
+    #cw-space-map .sp-entry p{font-size:11px;color:var(--sp-muted);margin:5px 0 0}
+    #cw-space-map .sp-entry.selected b{color:var(--sp-gold)}
+    #cw-space-map .sp-entry .sp-smallbutton{font-size:11px}
+    #cw-space-map .sp-heritage{font-size:11px;color:var(--sp-gold);margin:8px 0 10px;line-height:1.6}
+    #cw-space-map .sp-timing{margin:13px 0 0}
+    #cw-space-map .sp-timingline{display:flex;justify-content:space-between;color:var(--sp-muted);font-size:11px;margin:5px 0;gap:10px}
+    #cw-space-map .sp-timingline b{font-weight:400;color:var(--sp-text);font-variant-numeric:tabular-nums}
+    #cw-space-map .sp-stagephase{font-size:11px;color:var(--sp-cyan);margin:7px 0 0}
+    #cw-space-map .sp-phasefoot{font-size:11px;color:var(--sp-muted);margin:5px 0 12px;line-height:1.5}
+    #cw-space-map .sp-controls{margin-top:10px}
+    #cw-space-map .sp-controls .sp-smallbutton{margin-top:8px;width:100%}
+    #cw-space-map .sp-gates{font-size:11px;line-height:1.6;color:var(--sp-muted);padding-left:15px;margin:12px 0}
+    #cw-space-map .sp-gates li{margin:4px 0}
+    #cw-space-map details{border-top:1px solid var(--sp-line);padding:10px 0;font-size:11px;color:var(--sp-muted)}
+    #cw-space-map summary{color:var(--sp-text);line-height:1.5}
+    #cw-space-map details p{line-height:1.6;margin:8px 0}
+    #cw-space-map details b{color:var(--sp-gold);font-weight:400}
+    #cw-space-map details a{color:var(--sp-cyan);overflow-wrap:anywhere}
+    #cw-space-map .sp-filterline{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:18px}
+    #cw-space-map .sp-filterline label{color:var(--sp-muted);font-size:11px}
+    #cw-space-map .sp-activebudget{font-size:12px;color:var(--sp-muted);line-height:1.65;padding:13px 0}
+    #cw-space-map .sp-running{border-top:1px solid var(--sp-line);padding:15px 20px;background:#14222a}
+    #cw-space-map .sp-running .sp-entry{padding-top:9px;padding-bottom:9px}
+    #cw-space-map .sp-running p{margin:0;color:var(--sp-muted);font-size:11px}
+    #cw-space-map .sp-empty{font-size:12px;color:var(--sp-muted);padding:14px 0;line-height:1.65}
+    #cw-space-map .sp-legend{font-size:11px;bottom:10px;left:17px;right:17px}
+    #cw-space-map .sp-notice{font-size:11px}
+    #cw-space-map .sp-kind{font-size:11px;color:var(--sp-gold)}
+    #cw-space-map .sp-longlist .sp-entry{align-items:start}
+    #cw-space-map .sp-financegrid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;font-size:12px;color:var(--sp-muted);padding:13px 0;border-top:1px solid var(--sp-line)}
+    #cw-space-map .sp-financegrid strong{font-weight:400;color:var(--sp-gold);display:block;margin-top:4px}
+    /* IMPERIA CW — Cold War: mission assurance, crew losses and illustrated news bulletins. */
+    #cw-space-map .sp-risk-table{width:100%;border-collapse:collapse;font-size:11px;margin:9px 0}
+    #cw-space-map .sp-risk-table th{font-weight:400;color:var(--sp-muted);text-align:right;padding:5px 0 5px 7px}
+    #cw-space-map .sp-risk-table th:first-child{text-align:left;padding-left:0}
+    #cw-space-map .sp-risk-table td{vertical-align:top;padding:7px 0 7px 7px;border-top:1px solid var(--sp-line);text-align:right;font-variant-numeric:tabular-nums;color:var(--sp-text)}
+    #cw-space-map .sp-risk-table td:first-child{text-align:left;padding-left:0}
+    #cw-space-map .sp-risk-table small{display:block;color:var(--sp-muted);font-size:11px;line-height:1.45;margin-top:4px}
+    #cw-space-map .sp-crew-line{font-size:11px;line-height:1.6;color:var(--sp-gold);margin:9px 0}
+    #cw-space-map .sp-reward-plan{font-size:11px;color:var(--sp-muted);line-height:1.7;margin:10px 0}
+    #cw-space-map .sp-news-picker{display:block;color:var(--sp-muted);font-size:11px;margin:12px 0}
+    #cw-space-map .sp-news-picker select{margin-top:7px;width:100%}
+    #cw-space-map .sp-newsarticle{background:#ddd8c7;color:#242a2a;padding:19px;margin:16px 0 22px;min-width:0;border:1px solid #8c8b78}
+    #cw-space-map .sp-news-masthead{font-size:11px;letter-spacing:2px;text-align:center;border-bottom:3px double #777b71;padding-bottom:9px;color:#4c5756}
+    #cw-space-map .sp-news-status{font-size:11px;letter-spacing:.6px;color:#6d5a3c;padding:11px 0 4px}
+    #cw-space-map .sp-newsarticle h3{font:400 29px/1.16 Georgia,serif;color:#202b2e;margin:12px 0 10px;overflow-wrap:anywhere}
+    #cw-space-map .sp-news-meta{font-size:11px;color:#52605f;margin-bottom:14px}
+    #cw-space-map .sp-newsarticle figure{margin:0 0 15px;width:100%;aspect-ratio:16/9;overflow:hidden}
+    #cw-space-map .sp-newsarticle img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 48%}
+    #cw-space-map .sp-newsarticle a{color:#275f6c;text-decoration:underline}
+    #cw-space-map .sp-newsarticle p{font:400 14px/1.65 Georgia,serif;color:#303a39}
+    #cw-space-map .sp-news-effects{display:flex;gap:8px 15px;flex-wrap:wrap;border-top:1px solid #a2a693;padding-top:12px;font-size:12px;color:#3e514b}
+    #cw-space-map .sp-news-effects b{font-weight:500;color:#1c3839}
+    #cw-space-map .sp-newsarticle .sp-action{margin-top:17px}
+    #cw-space-map .sp-news-records{font-size:12px;line-height:1.7;color:var(--sp-muted);padding-left:17px}
+    /* IMPERIA CW — Cold War: permanent menu ranking and transferable leadership benefits. */
+    #cw-space-map .sp-prestige-menu{padding:13px 22px;background:#14232b;border-top:1px solid var(--sp-line);border-bottom:1px solid var(--sp-line)}
+    #cw-space-map .sp-prestige-heading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--sp-muted);letter-spacing:1px}
+    #cw-space-map .sp-prestige-heading b{font-weight:500;color:var(--sp-gold)}
+    #cw-space-map .sp-prestige-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;list-style:none;margin:11px 0 8px;padding:0}
+    #cw-space-map .sp-prestige-top li{display:flex;gap:9px;align-items:center;min-width:0;font-size:12px;color:var(--sp-text)}
+    #cw-space-map .sp-prestige-rank{font:400 23px Georgia,serif;color:var(--sp-muted);min-width:23px}
+    #cw-space-map .sp-prestige-top .sp-leading .sp-prestige-rank{color:var(--sp-gold)}
+    #cw-space-map .sp-prestige-country{min-width:0;overflow-wrap:anywhere;flex:1}
+    #cw-space-map .sp-prestige-country small{display:block;margin-top:3px;font-size:11px;color:var(--sp-muted)}
+    #cw-space-map .sp-prestige-points{font-variant-numeric:tabular-nums;color:var(--sp-gold)}
+    #cw-space-map .sp-leader-benefits{font-size:11px;line-height:1.6;color:var(--sp-muted);margin:0}
+    @media(max-width:520px){#cw-space-map .sp-prestige-menu{padding:12px 13px}#cw-space-map .sp-prestige-top{grid-template-columns:1fr;gap:10px}}
+    @media(max-width:520px){#cw-space-map .sp-newsarticle{padding:13px}#cw-space-map .sp-newsarticle h3{font-size:24px}}
+    #cw-space-map .sp-footer .sp-footactions{flex-wrap:wrap}
+    @media(min-width:1250px){#cw-space-map .sp-body{grid-template-columns:minmax(0,1fr) 330px}}
+    @media(max-width:800px){#cw-space-map .sp-body{grid-template-columns:minmax(0,1fr)}#cw-space-map .sp-brief{border-left:0}#cw-space-map .sp-headtools{margin-right:55px}#cw-space-map .sp-headtools .sp-date{display:none}#cw-space-map .sp-brief .sp-description{min-height:0}}
+    @media(max-width:520px){#cw-space-map .sp-head{flex-wrap:wrap;gap:12px}#cw-space-map .sp-headtools{margin:0;width:100%}#cw-space-map .sp-headtools label{display:flex;align-items:center;gap:10px}#cw-space-map .sp-headtools select{width:150px;margin:0}#cw-space-map .sp-regionnode{padding:4px;font-size:11px;max-width:105px}#cw-space-map .sp-regionnode small{display:none}#cw-space-map .sp-stage{aspect-ratio:1.4}#cw-space-map .sp-art{object-fit:fill}#cw-space-map .sp-maphead b{font-size:13px}#cw-space-map .sp-regionpicker{flex-wrap:wrap}#cw-space-map .sp-regionpicker select{max-width:100%}#cw-space-map .sp-selectionband,#cw-space-map .sp-regionprogrammes,#cw-space-map .sp-running{padding-left:13px;padding-right:13px}#cw-space-map .sp-regionnode:nth-child(even){transform:translateX(-10%)}#cw-space-map .sp-filterline{grid-template-columns:1fr}#cw-space-map .sp-entry{gap:8px}#cw-space-map .sp-legend span:last-child{display:none}#cw-space-map .sp-financegrid{grid-template-columns:1fr 1fr}#cw-space-map .sp-scopebar{padding:0 3px}#cw-space-map .sp-scopebar button{padding:9px 8px;font-size:11px}#cw-space-map .sp-entry b{font-size:12px}}
+  </style>
+  <style>%%COMMAND_STYLE%%</style>
+  <header class="sp-head">
+    <div class="sp-identity"><div class="sp-seal" aria-hidden="true"><i data-lucide="orbit"></i></div><div><div class="sp-kicker" data-agency>State Space Commission · Soviet Union</div><div class="sp-title">SPACE RACE</div></div></div>
+    <div class="sp-headtools"><div class="sp-date"><strong data-date>JANUARY 1970</strong>25-Year Campaign · Player Countries</div><label for="sp-profile">Player country<select id="sp-profile" class="cursor-interaction"><option value="SOV">Soviet Union</option><option value="USA">United States</option></select></label></div>
+  </header>
+  <div class="sp-ledger sp-telemetry" aria-label="National space programme resources"><span>Programme reserve<b data-reserve></b></span><span>Development / year<b data-development-budget></b></span><span>Operations / year<b data-total-upkeep></b></span><span>Space prestige<b data-prestige></b></span><span>Research data<b data-research></b></span><span>Political capital<b data-political></b></span><span>Crew fatalities<b data-fatalities></b></span></div>
+  <section class="sp-prestige-menu" aria-label="Player space prestige standings">
+    <div class="sp-prestige-heading"><b>SPACE PRESTIGE · TOP 3</b><span data-prestige-status>Campaign achievements · Player countries</span></div>
+    <ol class="sp-prestige-top" data-prestige-top></ol><p class="sp-leader-benefits" data-leader-benefits></p>
+  </section>
+  <div class="sp-customcountry" data-player-only-notice hidden>Space programme management is available to player countries only. Programme operations are suspended under AI control.</div>
+  <div class="sp-customcountry" data-custom-country hidden><label for="sp-custom-name">Country name<input id="sp-custom-name" type="text" maxlength="60" value="New Player Country" /></label><label for="sp-custom-tag">Country tag<input id="sp-custom-tag" type="text" maxlength="3" value="NEW" style="width:65px;text-transform:uppercase" /></label><span>Begin without inherited space capabilities.</span></div>
+  <nav class="sp-nav" role="tablist" aria-label="Programme management">
+    <button type="button" role="tab" id="sp2-map-tab" aria-controls="sp2-map" aria-selected="true" data-view="map" class="cursor-interaction"><i data-lucide="orbit" aria-hidden="true"></i>Operations</button>
+    <button type="button" role="tab" id="sp2-briefing-tab" aria-controls="sp2-briefing" aria-selected="false" data-view="briefing" class="cursor-interaction"><i data-lucide="landmark" aria-hidden="true"></i>National Brief</button>
+    <button type="button" role="tab" id="sp2-catalogue-tab" aria-controls="sp2-catalogue" aria-selected="false" data-view="catalogue" class="cursor-interaction"><i data-lucide="network" aria-hidden="true"></i>Programmes</button>
+    <button type="button" role="tab" id="sp2-portfolio-tab" aria-controls="sp2-portfolio" aria-selected="false" data-view="portfolio" class="cursor-interaction"><i data-lucide="sliders-horizontal" aria-hidden="true"></i>Funding</button>
+    <button type="button" role="tab" id="sp2-missions-tab" aria-controls="sp2-missions" aria-selected="false" data-view="missions" class="cursor-interaction"><i data-lucide="rocket" aria-hidden="true"></i>Missions</button>
+    <button type="button" role="tab" id="sp2-record-tab" aria-controls="sp2-record" aria-selected="false" data-view="record" class="cursor-interaction"><i data-lucide="scroll-text" aria-hidden="true"></i>Records</button>
+    <button type="button" role="tab" id="sp2-news-tab" aria-controls="sp2-news" aria-selected="false" data-view="news" class="cursor-interaction"><i data-lucide="radio" aria-hidden="true"></i>News</button>
+  </nav>
+  <div class="sp-body">
+    <main class="sp-workspace">
+      <section id="sp2-briefing" class="sp-view" role="tabpanel" aria-labelledby="sp2-briefing-tab" hidden>
+        <h2 data-profile-title>National Starting Position</h2><p class="sp-view-intro" data-starting-situation></p>
+        <div class="sp-sectionline"><span>Established national capabilities</span><span>January 1970 baseline</span></div><div class="sp-capabilities" data-profile-capabilities></div>
+        <div class="sp-profilelists"><div><h3>Inherited infrastructure & experience</h3><ul data-inherited-infrastructure></ul></div><div><h3>Strategic opportunities</h3><ul data-strategic-focus></ul></div></div>
+        <div class="sp-sectionline"><span>National programmes & entry options</span><span data-national-count></span></div><div data-national-programmes></div>
+        <details><summary class="cursor-interaction">Starting-position sources</summary><div data-profile-sources></div></details>
+        <p class="sp-empty">Available to human-controlled countries. If control passes to AI, programme operations, spending and mission progression are suspended.</p>
+      </section>
+      <section id="sp2-map" role="tabpanel" aria-labelledby="sp2-map-tab">
+        <div class="sp-scopebar" aria-label="Operational map scale"><button type="button" data-system="earth" aria-pressed="true" class="cursor-interaction">Earth Orbital Space</button><button type="button" data-system="cislunar" aria-pressed="false" class="cursor-interaction">Cislunar Space</button><button type="button" data-system="deep" aria-pressed="false" class="cursor-interaction">Solar System</button></div>
+        <div class="sp-stage" data-mapstage data-system="earth" aria-label="Select an orbital region or planetary destination">
+          <img class="sp-art" src="%%SPACE_MAP_DATA%%" alt="Earth and Moon against a dark stellar background." />
+          <div class="sp-shade"></div>
+          <div class="sp-maphead"><b data-map-title>Earth Orbital Space</b><small data-map-subtitle>Science · Communications · Navigation · Stations</small></div>
+          <svg class="sp-plots" viewBox="0 0 1000 572" role="img" aria-label="Schematic orbital regions and mission transfer routes">
+            <g data-orbits-earth><circle class="sp-orbit" cx="389" cy="282" r="244"/><ellipse class="sp-orbit" cx="389" cy="282" rx="310" ry="257"/><ellipse class="sp-orbit" cx="389" cy="282" rx="115" ry="264"/><ellipse class="sp-orbit" cx="435" cy="282" rx="398" ry="190"/><path class="sp-path active" d="M 182 150 C 98 258 187 505 410 526"/></g>
+            <g data-orbits-cislunar hidden><ellipse class="sp-orbit" cx="807" cy="199" rx="88" ry="73"/><path class="sp-path active" d="M 597 145 C 674 52 833 68 874 173 C 908 267 777 296 739 214"/><path class="sp-orbit" d="M 632 199 H 977"/><ellipse class="sp-orbit" cx="684" cy="199" rx="24" ry="56"/><ellipse class="sp-orbit" cx="934" cy="199" rx="23" ry="57"/></g>
+            <g data-orbits-deep hidden><path class="sp-gridline" d="M 0 143 H 1000 M 0 286 H 1000 M 0 429 H 1000 M 200 0 V 572 M 400 0 V 572 M 600 0 V 572 M 800 0 V 572"/><ellipse class="sp-orbit" cx="170" cy="335" rx="140" ry="98"/><ellipse class="sp-orbit" cx="170" cy="335" rx="270" ry="180"/><ellipse class="sp-orbit" cx="170" cy="335" rx="430" ry="260"/><ellipse class="sp-orbit" cx="170" cy="335" rx="655" ry="330"/><circle cx="170" cy="335" r="29" fill="#cbb979"/><text x="138" y="395" class="sp-systemlabel">SUN</text><circle cx="310" cy="300" r="10" fill="#c7a880"/><circle cx="433" cy="310" r="11" fill="#7cbbcb"/><circle cx="570" cy="206" r="10" fill="#b37d62"/><circle cx="785" cy="352" r="20" fill="#c0ab8c"/><circle cx="911" cy="147" r="16" fill="#b6ad94"/><path class="sp-path active" d="M 435 307 C 465 121 666 70 785 351 C 816 419 898 291 911 147"/><text x="408" y="351" class="sp-systemlabel small">EARTH</text><text x="546" y="180" class="sp-systemlabel small">MARS</text><text x="748" y="394" class="sp-systemlabel small">JUPITER</text></g>
+          </svg>
+          <div data-map-nodes></div>
+          <div class="sp-legend"><span>■ Select a region to inspect programmes</span><span>Schematic navigation · Distances compressed</span></div>
+        </div>
+        <div class="sp-selectionband"><b data-region-name>Low Earth Orbit</b><p data-region-description></p><label class="sp-regionpicker" for="sp-region-select">Operational region<select id="sp-region-select" class="cursor-interaction"></select></label></div>
+        <div class="sp-regionprogrammes"><div class="sp-sectionline"><span>Programmes in this region</span><span data-region-count></span></div><div data-region-programmes></div></div>
+        <div class="sp-running"><div class="sp-sectionline"><span>Active development & flights</span><span data-active-count>0 / 3 teams</span></div><div data-map-running></div></div>
+      </section>
+      <section id="sp2-catalogue" class="sp-view" role="tabpanel" aria-labelledby="sp2-catalogue-tab" hidden>
+        <h2>Programme Catalogue</h2><p class="sp-view-intro">Historical programmes, abandoned proposals and plausible long-term extensions. Shared technical capabilities open several independent paths.</p>
+        <div class="sp-filterline"><label for="sp-catalogue-region">Region<select id="sp-catalogue-region" class="cursor-interaction"></select></label><label for="sp-kind">Historical status<select id="sp-kind" class="cursor-interaction"><option value="all">All programme types</option><option value="historical">Historical programmes</option><option value="cancelled">Studied or cancelled</option><option value="plausible">Plausible extension</option></select></label></div>
+        <div class="sp-longlist" data-catalogue-list></div>
+      </section>
+      <section id="sp2-portfolio" class="sp-view" role="tabpanel" aria-labelledby="sp2-portfolio-tab" hidden>
+        <h2>Development & National Allocation</h2><p class="sp-view-intro">Funding supports parallel engineering teams. Qualification, manufacturing and integration retain their minimum calendar requirements.</p>
+        <label class="sp-budgetlabel" for="sp2-budget">Annual development ceiling <span data-budget-label></span></label><input id="sp2-budget" type="range" min="0" max="100" step="1" value="43" class="cursor-interaction" />
+        <div class="sp-financegrid"><div>Annual treasury transfer<strong data-annual-transfer></strong></div><div>Operational annual upkeep<strong data-portfolio-upkeep></strong></div><div>Programme reserve<strong data-portfolio-reserve></strong></div><div>Engineering allocations<strong data-portfolio-teams></strong></div></div>
+        <div class="sp-activebudget" data-budget-description></div><div data-portfolio-list></div>
+      </section>
+      <section id="sp2-missions" class="sp-view" role="tabpanel" aria-labelledby="sp2-missions-tab" hidden>
+        <h2>Flight Manifest</h2><p class="sp-view-intro">Development authorises mission hardware. Launch and mission acceptance remain separate commitments. Return expeditions are evaluated after recovery on Earth.</p>
+        <div data-flight-list></div>
+      </section>
+      <section id="sp2-record" class="sp-view" role="tabpanel" aria-labelledby="sp2-record-tab" hidden>
+        <h2>History & Programme Record</h2><p class="sp-view-intro">A 1970 start inherits earlier achievements and work already in progress. Speculative continuations remain distinct from flown historical programmes.</p>
+        <div class="sp-list"><div class="sp-listrow"><div><b>First Crewed Spaceflight</b><p>Soviet Union · 1961</p></div><span class="sp-kind">Historical</span></div><div class="sp-listrow"><div><b>First Crewed Lunar Landing</b><p>United States · 1969</p></div><span class="sp-kind">Historical</span></div></div>
+        <div class="sp-log" data-history-log></div>
+        <details><summary class="cursor-interaction">Historical reference library</summary><div data-source-library></div></details>
+      </section>
+      <section id="sp2-news" class="sp-view" role="tabpanel" aria-labelledby="sp2-news-tab" hidden>
+        <h2>Mission News & World Firsts</h2>
+        <label class="sp-news-picker" for="sp-news-select">Mission bulletin<select id="sp-news-select" class="cursor-interaction"></select></label>
+        <div data-news-bulletin aria-live="polite"></div>
+        <div class="sp-sectionline"><span>National mission record</span><span data-news-count></span></div><div data-news-list></div>
+        <details><summary class="cursor-interaction">Worldwide achievement register</summary><ul class="sp-news-records" data-world-firsts></ul></details>
+      </section>
+    </main>
+    <aside class="sp-brief" aria-label="Selected programme and decisions">
+      <div class="sp-tag" data-programme-kind></div><h2 class="sp-missiontitle" data-programme-title></h2><div class="sp-subtitle" data-programme-region></div>
+      <p class="sp-description" data-programme-description></p><p class="sp-heritage" data-heritage></p>
+      <dl class="sp-facts"><div><dt>New-design development</dt><dd data-duration></dd></div><div><dt>Development remaining</dt><dd data-remaining></dd></div><div><dt>Unfunded development</dt><dd data-unfunded></dd></div><div><dt>Mission hardware & flight</dt><dd data-missioncost></dd></div><div><dt>Mission / acceptance time</dt><dd data-flighttime></dd></div><div><dt>Annual operating cost</dt><dd data-programme-upkeep></dd></div></dl>
+      <div class="sp-timing"><div class="sp-timingline"><span>Engineering & qualification</span><b data-calendar-progress></b></div><div class="sp-track"><span data-engineering-bar></span></div><div class="sp-timingline"><span>Development funded</span><b data-funded-progress></b></div><div class="sp-track"><span data-funding-bar></span></div><div class="sp-stagephase" data-phase></div><p class="sp-phasefoot" data-status-detail></p></div>
+      <div class="sp-chance"><span>Estimated full mission success</span><strong data-full-chance></strong></div><div class="sp-riskdetail" data-chance-detail></div>
+      <div class="sp-crew-line" data-crew-risk></div>
+      <div class="sp-reward-plan" data-reward-plan></div>
+      <label class="sp-policy" for="sp2-policy">Programme policy<select id="sp2-policy" class="cursor-interaction"><option value="standard">Standard development</option><option value="assurance">Extended qualification</option><option value="accelerated">Accelerated national priority</option><option value="reduced">Constrained resources</option></select></label><p class="sp-policy-note" data-policy-detail></p>
+      <details class="sp-requirements"><summary class="cursor-interaction" data-gate-summary>Programme requirements</summary><ul class="sp-gates" data-gates></ul></details>
+      <div class="sp-controls"><button type="button" class="sp-action cursor-interaction" data-primary>Authorise Development</button><button type="button" class="sp-smallbutton cursor-interaction" data-cancel hidden>Cancel programme</button></div>
+      <details><summary class="cursor-interaction">Mission assurance factors</summary><div data-risk-factors></div></details>
+      <details><summary class="cursor-interaction">Historical context & alternative scopes</summary><div data-context></div></details>
+    </aside>
+  </div>
+  <footer class="sp-footer"><span class="sp-clocklabel">Programme calendar</span><div class="sp-footactions"><button type="button" class="sp-smallbutton cursor-interaction" data-advance="1">Advance 1 month</button><button type="button" class="sp-smallbutton cursor-interaction" data-advance="3">Advance 3 months</button><button type="button" class="sp-smallbutton cursor-interaction" data-advance="12">Advance 1 year</button><button type="button" class="sp-smallbutton cursor-interaction" data-reset>Reset programme</button></div></footer>
+  <div class="sp-notice" aria-live="polite"><span>DESIGN PREVIEW · PROPOSED GAME COSTS & DURATIONS</span><span data-message></span></div>
+  <script>%%CATALOGUE_SCRIPT%%</script>
+  <script>%%ENGINE_SCRIPT%%</script>
+  <script>%%NEWS_MEDIA_SCRIPT%%</script>
+  <script>
+  (()=>{
+    const root=document.getElementById('cw-space-map'),$=s=>root.querySelector(s),$$=s=>[...root.querySelectorAll(s)];
+    const catalogue=globalThis.SpaceRaceCatalogue,models=catalogue.programmes,regions=catalogue.regions;
+    const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const cash=n=>{const value=Number(n||0);return'$'+value.toFixed(value!==0&&Math.abs(value)<10?2:1)+'b';},pct=n=>(Number(n||0)>=100-1e-6?'100':Math.min(99.9,Number(n||0)).toFixed(1))+'%';
+    function years(raw){if(raw===null)return'Funding required';const m=Math.round(Number(raw||0)*100)/100;return m===0?'Complete':m<1?Math.max(1,Math.ceil(m*30))+' days':m>=12?(m/12).toFixed(m%12?1:0)+(m===12?' year':' years'):Math.ceil(m)+(Math.ceil(m)===1?' month':' months');}
+    const profileList=(Array.isArray(catalogue.profiles)?catalogue.profiles:Object.values(catalogue.profiles)).filter(p=>p.isAI!==true&&p.playerControlled!==false);
+    let ui={profile:'SOV',view:'map',system:'earth',region:'',catalogueRegion:'all',kind:'all',customName:'New Player Country',customTag:'NEW',newsId:'example-french-moon',message:'Select a region and authorise a long-term programme.'},engine,renderSelection='';
+    const worldContext={schema:1,firsts:{},news:[]};
+    const saved=window.openai?.widgetState?.privateContent?.spaceRaceV2;
+    const design={density:'comfortable',newsStyle:'md',...(saved?.ui?.design||{})};
+    const kindLabel=k=>({historical:'Historical programme / architecture',cancelled:'Studied / cancelled proposal',plausible:'Plausible alternative development'}[k]||k);
+    const statusLabel=s=>({planned:'Not authorised',available:'Not authorised',active:'In development',paused:'Development paused',ready:'Flight article ready',inflight:'Mission in flight',operational:'Operational',investigating:'Technical investigation',cancelled:'Programme cancelled',locked:'Requirements outstanding'}[s]||s);
+    const getRegion=id=>regions.find(r=>r.id===id);
+    const model=id=>models.find(p=>p.id===id);
+    function profile(){const p=profileList.find(p=>p.id===ui.profile)||profileList[0];return p.id==='CUSTOM'?{...p,name:ui.customName||p.name,countryTag:ui.customTag||'NEW'}:p;}
+    function makeEngine(snapshot){try{engine=globalThis.SpaceRaceEngine.create(catalogue,profile(),snapshot,worldContext);}catch(error){if(!snapshot)throw error;engine=globalThis.SpaceRaceEngine.create(catalogue,profile(),null,worldContext);ui.message='Catalogue updated. A fresh 1970 national planning record has been opened.';}}
+    function preferred(rows){const national=rows.filter(p=>(p.owners||[]).includes(ui.profile));return national.sort((a,b)=>Number(b.initialProgress?.[ui.profile]||0)-Number(a.initialProgress?.[ui.profile]||0))[0]||rows[0];}
+    function selectRegion(id){const r=getRegion(id);if(!r)return;ui.region=id;ui.system=r.system;const candidate=preferred(engine.state().programmes.filter(p=>p.region===id));if(candidate)engine.select(candidate.id);}
+    function selectProgramme(id,openDossier=false){const p=model(id);if(!p)return;engine.select(id);const r=getRegion(p.region);if(r){ui.system=r.system;ui.region=r.id;}if(openDossier)ui.view='map';}
+    function chooseNationalEntry(){if(ui.profile==='CUSTOM'&&model('space-commission')){selectProgramme('space-commission');return;}const rows=engine.state().programmes;const owned=rows.filter(p=>(p.owners||[]).includes(ui.profile)&&Number(p.initialProgress?.[ui.profile]||0)>0);const next=preferred(owned);if(next)selectProgramme(next.id);else selectRegion(regions.find(r=>r.system==='earth').id);}
+    if(saved?.profile&&profileList.some(p=>p.id===saved.profile)){ui={...ui,...saved.ui,profile:saved.profile};makeEngine(saved.snapshot);}else{makeEngine();if(model('mars-crewed-landing'))selectProgramme('mars-crewed-landing');else chooseNationalEntry();}
+    const policyCopy={standard:'Standard cost and engineering pace. All qualification gates remain in force.',assurance:'Future work: +18% time and cost. Sustained qualification improves mission assurance.',accelerated:'Future work: up to 15% less time; +25% cost. Reduced margins increase mission risk.',reduced:'Future work: +35% time; reduced spending rate. Previously completed work is retained.'};
+    function snapshot(){const s=engine.state();return{profile:ui.profile,ui:{...ui,design:{...design}},snapshot:engine.exportState?engine.exportState():s.snapshot||null};}
+    // IMPERIA CW — Cold War: retain the full simulation while bounding the conversational summary.
+    function save(){if(window.openai?.setWidgetState){const s=engine.state(),ongoing=s.programmes.filter(p=>['active','paused','ready','inflight','operational','investigating'].includes(p.status));const payload={modelContent:{profile:ui.profile,selectedProgramme:s.selectedId,region:ui.region,year:s.year,reserveInternalB:s.reserveB,activeProgrammeCount:ongoing.length,activeProgrammes:ongoing.slice(0,8).map(p=>({id:p.id,status:p.status,progress:p.progress}))},privateContent:{spaceRaceV2:snapshot()}};if(JSON.stringify(payload).length<16000)window.openai.setWidgetState(payload).catch(()=>{});}}
+    function rowHTML(p){return`<div class="sp-entry ${p.id===renderSelection?'selected':''}"><div><b>${esc(p.name)}</b><p>${esc(kindLabel(p.kind))} · ${years(p.durationMonths)} new design · ${cash(p.totalCostB)} development</p><p>${esc(statusLabel(p.status))}${Number(p.progress)>0?' · '+pct(p.progress)+' secured':''}${p.owners?.length?' · '+esc(p.owners.join(' / '))+' heritage':''}</p></div><button type="button" class="sp-smallbutton cursor-interaction" data-select="${esc(p.id)}">Review</button></div>`;}
+    function activeRows(s){return s.programmes.filter(p=>['active','paused','ready','inflight','operational','investigating'].includes(p.status));}
+    function updateMap(s){
+      const scopeRegions=regions.filter(r=>r.system===ui.system),r=getRegion(ui.region)||scopeRegions[0];
+      $('[data-mapstage]').dataset.system=ui.system;
+      const title={earth:'Earth Orbital Space',cislunar:'Cislunar Space',deep:'Solar System'}[ui.system];$('[data-map-title]').textContent=title;
+      $('[data-map-subtitle]').textContent={earth:'Polar · HEO · MEO · GEO · Transfer stages',cislunar:'Transfer · Lunar orbit · Earth–Moon L1 / L2',deep:'Solar observatories · Inner planets · Outer planets'}[ui.system];
+      ['earth','cislunar','deep'].forEach(k=>{const group=$('[data-orbits-'+k+']');group.toggleAttribute('hidden',k!==ui.system);group.setAttribute('style',k===ui.system?'':'display:none');});
+      $$('[data-system]').filter(b=>b.tagName==='BUTTON').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.system===ui.system)));
+      const mapPoints={ground:[40,72],leo:[58,54],polar:[46,20],heo:[9,30],meo:[13,67],geo:[76,55],transfer:[57,68],moon:[74,50],'em-lagrange':[76,15],'se-l1':[31,39],'se-l2':[47,67],venus:[25,65],mercury:[12,35],mars:[62,26],outer:[78,68]};
+      $('[data-map-nodes]').innerHTML=scopeRegions.map((x,i)=>{const pt=mapPoints[x.id]||[Number(x.x)||12+i%3*29,Number(x.y)||24+Math.floor(i/3)*23];return`<button type="button" class="sp-regionnode ${x.id===r.id?'selected':''} cursor-interaction" data-region="${esc(x.id)}" style="left:${Math.min(83,pt[0])}%;top:${Math.min(82,pt[1])}%;${pt[0]>=70?'transform:translateX(-45%)':''}" aria-pressed="${x.id===r.id}">${esc(x.shortLabel||x.name)}<small>${s.programmes.filter(p=>p.region===x.id).length} programmes</small></button>`;}).join('');
+      $('[data-region-name]').textContent=r.name;$('[data-region-description]').textContent=r.description;
+      $('#sp-region-select').innerHTML=scopeRegions.map(x=>`<option value="${esc(x.id)}" ${x.id===r.id?'selected':''}>${esc(x.name)}</option>`).join('');
+      const list=s.programmes.filter(p=>p.region===r.id);$('[data-region-count]').textContent=list.length+' options';$('[data-region-programmes]').innerHTML=list.map(rowHTML).join('')||'<p class="sp-empty">No programme is assigned to this region.</p>';
+      $('[data-active-count]').textContent=s.activeCount+' / '+s.maxActive+' development teams';
+      const running=activeRows(s).filter(p=>p.status!=='operational');$('[data-map-running]').innerHTML=running.length?running.slice(0,4).map(p=>`<div class="sp-entry"><div><b>${esc(p.name)}</b><p>${esc(statusLabel(p.status))} · ${p.flightRemainingMonths?years(p.flightRemainingMonths)+' flight remaining':years(p.remainingMonths)+' development remaining'}</p></div><button type="button" class="sp-smallbutton cursor-interaction" data-select="${esc(p.id)}">Review</button></div>`).join(''):'<p>No programme is currently drawing an engineering allocation.</p>';
+    }
+    // IMPERIA CW — Cold War: example bulletins are visibly separate from earned mission events.
+    function bulletinExamples(){
+      const first=(catalogue.milestones||[]).find(m=>m.id==='first-sustained-mars-science')||{},lander=model('mars-lander'),crew=model('crewed-capsule')?.crewSize||3;
+      const marsCrew=model('mars-crewed-landing'),moonCrew=model('n1-l3-recovery'),genericMoon=model('lunar-sortie')||models.find(p=>(p.grants||[]).includes('lunar-landing')),marsFirst=(catalogue.milestones||[]).find(m=>m.id==='first-crewed-mars-return')||{};
+      const nationalReward=p=>({prestige:p?.prestige||0,researchPoints:p?.rewardEffects?.researchPoints||0,politicalCapital:p?.rewardEffects?.politicalCapital||0});
+      return[
+        {id:'example-us-mars',example:true,type:'full_success',programmeId:'mars-crewed-landing',country:'USA',date:'Campaign example',scope:'world',title:'American Mars Expedition Returns to Earth',description:'The crew has completed a Mars surface expedition and returned safely to Earth. The accepted mission establishes a new achievement in human exploration after years of development, uncrewed qualification and a long expedition.',imageKey:'us-mars-landing',crewFatalities:0,rewardEffects:{prestige:(marsCrew?.prestige||0)+(marsFirst.prestige||0),researchPoints:(marsCrew?.rewardEffects?.researchPoints||0)+(marsFirst.researchPoints||0),politicalCapital:(marsCrew?.rewardEffects?.politicalCapital||0)+(marsFirst.politicalCapital||0)}},
+        {id:'example-soviet-moon',example:true,type:'full_success',programmeId:moonCrew?.id,country:'SOV',date:'Campaign example',scope:'world',majorNationalAchievement:true,title:'Soviet Union Completes Its First Crewed Lunar Landing',description:'The Soviet Union has completed a crewed lunar landing and returned its cosmonauts safely. The expedition opens a new stage of Soviet lunar exploration and intensifies competition with the United States.',imageKey:'soviet-lunar-landing',crewFatalities:0,rewardEffects:nationalReward(moonCrew)},
+        {id:'example-soviet-mars',example:true,type:'full_success',programmeId:'mars-crewed-landing',country:'SOV',date:'Campaign example',scope:'world',majorNationalAchievement:true,title:'Soviet Union Completes a Crewed Mars Expedition',description:'The Soviet Union has completed its first crewed expedition to the Martian surface and recovered its cosmonauts on Earth. Years of preparation, heavy launch operations and expedition support have culminated in a major advance for Soviet space exploration.',imageKey:'soviet-mars-landing',crewFatalities:0,rewardEffects:nationalReward(marsCrew)},
+        {id:'example-french-moon',example:true,type:'full_success',programmeId:genericMoon?.id,country:'FRA',date:'Campaign example',scope:'world',majorNationalAchievement:true,title:'France Completes Its First Crewed Lunar Expedition',description:'France has completed a crewed lunar landing and returned its astronauts safely. The expedition establishes France as a crewed lunar power and strengthens its position among the world’s spacefaring nations.',imageKey:'french-lunar-landing',crewFatalities:0,rewardEffects:nationalReward(genericMoon)},
+        {id:'example-mars-first',example:true,country:ui.profile,date:'Campaign example',scope:'world',title:profile().name+' Achieves Sustained Mars Surface Science',description:'A controlled landing has been confirmed and the surface laboratory has completed its accepted science campaign. Observatories and governments worldwide recognise a new milestone in planetary exploration.',imageKey:'mars',crewFatalities:0,rewardEffects:{prestige:(lander?.prestige||0)+(first.prestige||0),researchPoints:(lander?.rewardEffects?.researchPoints||0)+(first.researchPoints||0),politicalCapital:(lander?.rewardEffects?.politicalCapital||0)+(first.politicalCapital||0)}},
+        {id:'example-crew-loss',example:true,country:ui.profile,date:'Campaign example',scope:'world',title:'Crew Lost in Spaceflight Accident',description:'A catastrophic mission failure has prevented crew recovery. The national space authority suspends further flights of the affected architecture while an independent technical investigation and corrective programme are completed.',imageKey:'mission-control',crewFatalities:crew,rewardEffects:{prestige:-6,politicalCapital:-crew*4},investigationMonths:12},
+        {id:'example-partial',example:true,country:ui.profile,date:'Campaign example',scope:'national',title:'Mars Landing Returns Only Brief Telemetry',description:lander?.outcomeDetails?.partial_success||'The lander establishes brief contact, but its accepted surface campaign remains incomplete.',imageKey:'mars',crewFatalities:0,rewardEffects:{prestige:(lander?.prestige||0)*0.1},investigationMonths:3},
+        {id:'example-station',example:true,country:ui.profile,date:'Campaign example',scope:'world',title:'First Orbital Station Begins Scientific Operations',description:'The initial expedition has completed its accepted objectives, establishing a new platform for orbital science and long-duration operations. Future crews and replacement hardware remain recurring national commitments.',imageKey:'station',crewFatalities:0,rewardEffects:{prestige:55,politicalCapital:12,researchPoints:7}}
+      ];
+    }
+    function bulletinMediaKey(event){
+      if(event.type==='full_success'){
+        const grants=model(event.programmeId)?.grants||[];
+        if(event.country==='USA'&&grants.includes('crewed-mars-return'))return'us-mars-landing';
+        if(event.country==='SOV'&&grants.includes('crewed-mars-return'))return'soviet-mars-landing';
+        if(grants.includes('lunar-landing')){
+          if(event.country==='SOV')return'soviet-lunar-landing';
+          if(event.country==='FRA')return'french-lunar-landing';
+        }
+      }
+      return event.imageKey;
+    }
+    function renderNews(s){
+      const events=s.events||[],examples=bulletinExamples(),bulletins=[...events,...examples];
+      if(ui.newsId==='example-soviet-moon-warm')ui.newsId='example-soviet-mars';
+      const nationName=e=>e.countryName||(e.country==='CUSTOM'?ui.customName:profileList.find(p=>p.id===e.country)?.name)||e.country;
+      const newsHeadline=e=>e.title.includes(nationName(e))?e.title:nationName(e)+': '+e.title;
+      if(!bulletins.some(e=>e.id===ui.newsId))ui.newsId=bulletins[0]?.id;
+      const event=bulletins.find(e=>e.id===ui.newsId)||examples[0],mediaLibrary=globalThis.SpaceRaceNewsMedia||{},imageKey=bulletinMediaKey(event);
+      const conceptMedia={src:$('.sp-art').getAttribute('src')};
+      const media=mediaLibrary[imageKey]||(['lunar','earth'].includes(imageKey)?conceptMedia:mediaLibrary['mission-control']);
+      $('#sp-news-select').innerHTML=bulletins.map(e=>'<option value="'+esc(e.id)+'">'+esc((e.example?'Example · ':e.date+' · ')+newsHeadline(e))+'</option>').join('');$('#sp-news-select').value=event.id;
+      const rewards=event.rewardEffects||{},signed=n=>(n>0?'+':'')+Number(n||0).toFixed(Number.isInteger(Number(n||0))?0:1),effects=[];
+      if(rewards.prestige)effects.push('<span>Prestige <b>'+signed(rewards.prestige)+'</b></span>');
+      if(rewards.researchPoints)effects.push('<span>Research data <b>'+signed(rewards.researchPoints)+'</b></span>');
+      if(rewards.politicalCapital)effects.push('<span>Political capital <b>'+signed(rewards.politicalCapital)+'</b></span>');
+      if(event.crewFatalities)effects.push('<span>Crew fatalities <b>'+esc(event.crewFatalities)+'</b></span>');
+      if(event.investigationMonths)effects.push('<span>Technical investigation <b>'+esc(event.investigationMonths)+' months</b></span>');
+      const country=nationName(event),headline=newsHeadline(event);
+      const bulletinLabel=event.scope==='world'?'WORLD NEWS · '+(event.firstMilestone?'WORLD FIRST CONFIRMED':event.majorNationalAchievement?'NATIONAL MILESTONE CONFIRMED':'MAJOR SPACEFLIGHT EVENT'):'NATIONAL SPACE AUTHORITY · '+(event.kind==='programme'?'PROGRAMME BULLETIN':'MISSION REPORT');
+      $('[data-news-bulletin]').innerHTML='<article class="sp-newsarticle"><div class="sp-news-masthead">INTERNATIONAL NEWS SERVICE</div><div class="sp-news-status">'+(event.example?'ILLUSTRATIVE BULLETIN · NO CAMPAIGN EFFECT':bulletinLabel)+'</div><h3>'+esc(headline)+'</h3><div class="sp-news-meta">'+esc(event.date)+' · '+esc(country)+' · '+(event.scope==='world'?'International bulletin':'National bulletin')+'</div>'+(media?'<figure><img src="'+media.src+'" alt="'+esc(headline)+'" /></figure>':'')+'<p>'+esc(event.description)+'</p><div class="sp-news-effects">'+(effects.join('')||'<span>'+(event.kind==='programme'?'Programme':'Mission')+' record updated</span>')+'</div><button type="button" class="sp-action cursor-interaction" data-news-ack>'+(event.crewFatalities?'Honour the Crew':'Acknowledge the Report')+'</button></article>';
+      $('[data-news-count]').textContent=events.length+' bulletins';$('[data-news-list]').innerHTML=events.map(e=>'<div class="sp-entry"><div><b>'+esc(newsHeadline(e))+'</b><p>'+esc(e.date)+' · '+esc(nationName(e))+' · '+(e.scope==='world'?'World news':'National report')+'</p></div><button type="button" class="sp-smallbutton cursor-interaction" data-news="'+esc(e.id)+'">Read</button></div>').join('')||'<p class="sp-empty">Programme decisions, qualification milestones, launches and mission results appear here.</p>';
+      $('[data-world-firsts]').innerHTML=(catalogue.milestones||[]).map(m=>{const receipt=s.worldFirsts?.[m.id];return'<li>'+esc(m.title)+' — '+(receipt?esc(nationName(receipt))+' · '+esc(receipt.date):'Open competition')+'</li>';}).join('');
+    }
+    function render(){
+      const s=engine.state(),p=s.programmes.find(x=>x.id===s.selectedId)||s.programmes[0],r=getRegion(p.region),source=model(p.id);renderSelection=s.selectedId;
+      root.dataset.view=ui.view;root.dataset.density=design.density;root.dataset.newsStyle=design.newsStyle;
+      const top=s.topThree||[],leader=s.leadership?.leader;
+      $('[data-prestige-top]').innerHTML=Array.from({length:3},(_,i)=>{const entry=top[i];return'<li class="'+(entry&&entry.country===leader?.country?'sp-leading':'')+'"><span class="sp-prestige-rank">'+(entry?entry.rank:i+1)+'</span><span class="sp-prestige-country">'+esc(entry?.countryName||'Unclaimed')+'<small>'+(entry?'Player country':'Earn campaign prestige')+'</small></span><span class="sp-prestige-points">'+(entry?Number(entry.prestige).toFixed(Number.isInteger(entry.prestige)?0:1):'—')+'</span></li>';}).join('');
+      $('[data-prestige-status]').textContent=leader?'Leading Space Power: '+leader.countryName:s.leadership?.tied?'Joint leaders · No sole-leader bonus':'No campaign leader yet';
+      $('[data-leader-benefits]').textContent=(leader?leader.countryName+' holds the leadership benefits. ':'')+'Sole leader: +2 pp mission objective success · −5% programme operating costs.'+(s.leadership?.tied?' Benefits suspended while the highest prestige score is tied.':'');
+      const suspended=s.playerControlled===false||s.suspended===true;$('[data-player-only-notice]').hidden=!suspended;$('.sp-body').hidden=suspended;$('.sp-nav').hidden=suspended;$$('[data-advance]').forEach(b=>b.disabled=suspended);$('[data-reset]').disabled=suspended;$('#sp-custom-name').disabled=suspended;$('#sp-custom-tag').disabled=suspended;
+      $$('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===ui.view)));['map','briefing','catalogue','portfolio','missions','record','news'].forEach(v=>$('#sp2-'+v).hidden=v!==ui.view);
+      $('#sp-profile').innerHTML=profileList.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id==='CUSTOM'?'Other player country…':x.name)+'</option>').join('');
+      $('#sp-profile').value=ui.profile;$('[data-custom-country]').hidden=ui.profile!=='CUSTOM';$('#sp-custom-name').value=ui.customName;$('#sp-custom-tag').value=ui.customTag;
+      $('[data-agency]').textContent=(profile().agency||(ui.profile==='SOV'?'State Space Commission':ui.profile==='USA'?'National Aeronautics and Space Administration':'National Space Programme'))+' · '+profile().name;
+      $('[data-date]').textContent=s.dateLabel||String(s.year);$('[data-message]').textContent=ui.message;
+      updateMap(s);
+      const capLabels={'space-administration':'National space administration','sounding-rockets':'Sounding-rocket experience','satellite-engineering':'Satellite and payload engineering','contracted-orbital-access':'Orbital access through launch partners','launch-basic':'Launch-vehicle engineering','orbital-flight':'Orbital mission experience','polar-orbit':'Polar-orbit operations','high-energy-upper-stage':'High-energy transfer stages','rendezvous-docking':'Rendezvous and docking','crewed-flight':'Crewed spaceflight','deep-space-communications':'Deep-space tracking','planetary-probes':'Planetary spacecraft engineering','earth-observation':'Earth observation','long-duration-life-support':'Extended life support','heavy-lift':'Heavy-lift launch capability','geostationary-insertion':'Geostationary insertion','lunar-landing':'Crewed lunar landing','lunar-return':'Lunar return','autonomous-docking':'Automatic docking'};
+      const asList=x=>Array.isArray(x)?x:x?[x]:[];
+      $('[data-profile-title]').textContent=profile().name+' · January 1970';$('[data-starting-situation]').textContent=profile().startingSituation||'A national space programme can be established with sustained institutional and technical investment.';
+      $('[data-profile-capabilities]').innerHTML=profile().capabilities.length?profile().capabilities.map(c=>'<span>'+esc(capLabels[c]||c.replace(/-/g,' '))+'</span>').join(''):'<span>No inherited space capabilities</span>';
+      $('[data-inherited-infrastructure]').innerHTML=asList(profile().inheritedInfrastructure).map(x=>'<li>'+esc(x)+'</li>').join('')||'<li>National institutions and technical infrastructure must be established.</li>';
+      $('[data-strategic-focus]').innerHTML=asList(profile().strategicFocus).map(x=>'<li>'+esc(x)+'</li>').join('')||'<li>Establish an authority, train technical staff and choose between partner launches and a national launcher.</li>';
+      const national=s.programmes.filter(x=>(x.owners||[]).includes(ui.profile)||Number(x.initialProgress?.[ui.profile]||0)>0||(ui.profile==='CUSTOM'&&(x.entryProgramme===true||x.id==='space-commission')));
+      $('[data-national-count]').textContent=national.length+' options';$('[data-national-programmes]').innerHTML=national.map(rowHTML).join('')||'<p class="sp-empty">Select an institutional entry programme from the catalogue.</p>';
+      $('[data-profile-sources]').innerHTML=asList(profile().sourceUrls).map((url,i)=>'<p><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">National history source '+(i+1)+'</a></p>').join('')||'<p>Newcomer starting assumptions are proposed game balance.</p>';
+      $('[data-programme-kind]').textContent=kindLabel(p.kind);$('[data-programme-title]').textContent=p.name;$('[data-programme-region]').textContent=r?.name||p.region;$('[data-programme-description]').textContent=p.description;
+      const inherited=Number(source.initialProgress?.[ui.profile]||0);$('[data-heritage]').textContent=inherited?`1970 inherited work: ${inherited}%. Remaining qualification and successful commissioning are still required.`:`New national programme · Earliest development start: ${p.minYear}.`;
+      $('[data-duration]').textContent=years(p.durationMonths);$('[data-remaining]').textContent=years(p.remainingMonths);$('[data-unfunded]').textContent=cash(p.remainingCostB);$('[data-missioncost]').textContent=cash(p.missionCostB);$('[data-flighttime]').textContent=p.commissioningOnly?'Ground acceptance':years(p.flightMonths);$('[data-programme-upkeep]').textContent=cash(p.plannedUpkeepB??source.upkeepB)+' / year';
+      $('[data-calendar-progress]').textContent=pct(p.calendarProgress);$('[data-engineering-bar]').style.width=Math.max(0,Math.min(100,p.calendarProgress||0))+'%';
+      const funded=p.totalCostB?Math.min(100,p.spentB/p.totalCostB*100):100;$('[data-funded-progress]').textContent=pct(funded);$('[data-funding-bar]').style.width=funded+'%';
+      const phase=p.calendarProgress<12?'Feasibility & systems definition':p.calendarProgress<40?'Detailed design & supplier development':p.calendarProgress<70?'Prototype manufacture & ground trials':p.calendarProgress<94?'Integration & qualification':'Acceptance & flight preparation';
+      $('[data-phase]').textContent=p.completed?'Development accepted':phase;$('[data-status-detail]').textContent=statusLabel(p.status)+(p.flightRemainingMonths?' · '+years(p.flightRemainingMonths)+' until mission acceptance':p.investigationRemainingMonths?' · '+years(p.investigationRemainingMonths)+' review remaining':p.launchWindowWaitMonths?' · '+years(p.launchWindowWaitMonths)+' until launch opportunity':'');
+      $('[data-full-chance]').textContent=((p.pFull??p.pLaunch*p.pObjective)*100).toFixed(1)+'%';$('[data-chance-detail]').textContent='Launch '+(p.pLaunch*100).toFixed(0)+'% · Objective after insertion '+(p.pObjective*100).toFixed(0)+'%'+(!p.completed?' · Planning estimate':'');
+      const pp=n=>(n>0?'+':'')+(Number(n||0)*100).toFixed(1)+' pp';
+      $('[data-crew-risk]').textContent=source.crewSize?'Assigned crew: '+source.crewSize+(source.nationalCrewSize&&source.nationalCrewSize!==source.crewSize?' · '+source.nationalCrewSize+' national':'')+' · Pre-flight risk of crew loss: '+(Number(p.pCrewLoss||0)*100).toFixed(1)+'%'+(source.crewAtLaunch===false?' · Carrier launch uncrewed':''):'Uncrewed mission · No assigned crew at risk';
+      $('[data-risk-factors]').innerHTML='<table class="sp-risk-table"><thead><tr><th>Factor</th><th>Launch</th><th>Objective</th></tr></thead><tbody><tr><td>Architecture baseline</td><td>'+((source.pLaunch||0)*100).toFixed(0)+'%</td><td>'+((source.pObjective||0)*100).toFixed(0)+'%</td></tr>'+(p.probabilityFactors||[]).map(f=>'<tr><td>'+esc(f.label)+'<small>'+esc(f.reason)+'</small></td><td>'+pp(f.launchDelta)+'</td><td>'+pp(f.objectiveDelta)+'</td></tr>').join('')+'</tbody></table><p>Quality assurance and support must be funded and successfully qualified. Raising a budget ceiling alone changes no probability.</p>'+(p.status==='inflight'?'<p>Pre-flight estimates are fixed for this mission at launch.</p>':'')+'<p>Supporting programmes: '+(source.supportingProgrammes||[]).map(id=>{const support=s.programmes.find(x=>x.id===id);return esc(support?.name||id)+' ('+(support?.deployed?'operational':'qualification pending')+')';}).join('; ')+'</p>';
+      const firsts=(catalogue.milestones||[]).filter(m=>(source.grants||[]).includes(m.capability)&&!s.worldFirsts?.[m.id]);
+      $('[data-reward-plan]').innerHTML=(p.firstAwardGranted?'National first-delivery rewards already received.':'First national success: +'+Math.max(0,Number(source.prestige||0)-Number(p.partialAwardGranted||0))+' prestige · +'+Number(source.rewardEffects?.researchPoints||0)+' research data · +'+Number(source.rewardEffects?.politicalCapital||0)+' political capital.')+firsts.map(m=>'<br>World first bonus: +'+m.prestige+' prestige · +'+m.researchPoints+' research data · +'+m.politicalCapital+' political capital.').join('');
+      $('#sp2-policy').value=p.policy||'standard';$('#sp2-policy').disabled=p.completed||['inflight','operational'].includes(p.status);$('[data-policy-detail]').textContent=policyCopy[p.policy||'standard'];
+      const gates=(p.gates||[]).map(g=>typeof g==='string'?g:g.message||g.label||JSON.stringify(g));$('[data-gates]').innerHTML=gates.map(g=>'<li>'+esc(g)+'</li>').join('');
+      $('[data-gate-summary]').textContent=gates.length?'Programme requirements · '+gates.length+' outstanding':'Programme requirements satisfied';
+      let action='start',label='Authorise Development',disabled=gates.length>0;
+      if(p.status==='active'){action='pause';label='Pause Development';disabled=false;}else if(p.status==='paused'){action='resume';label='Resume Development';disabled=gates.length>0||s.activeCount>=s.maxActive;}else if(p.status==='inflight'){label='Mission in Flight';disabled=true;}else if(p.status==='investigating'){label='Investigation Under Way';disabled=true;}else if(p.completed||p.deployable){action='launch';label=p.commissioningOnly?'Commission Facility':p.deployed?'Authorise Follow-up Mission':'Authorise First Mission';disabled=!p.deployable;}else if(s.activeCount>=s.maxActive){label='Engineering Capacity Committed';disabled=true;}
+      $('[data-primary]').dataset.action=action;$('[data-primary]').textContent=label;$('[data-primary]').disabled=disabled;$('[data-cancel]').hidden=!['active','paused'].includes(p.status);
+      const outcomeLabels={full_success:'Full mission success',partial_success:'Partial result',objective_failure:'Mission failure',catastrophic_failure:'Catastrophic failure'};
+      $('[data-context]').innerHTML='<p>'+esc(p.historicalNote||'A proposed alternative development path; the values shown are game design assumptions.')+'</p>'+(p.options||[]).map(o=>'<p><b>'+esc(o.label)+'</b><br>'+esc(o.detail)+'</p>').join('')+(source.outcomeDetails?'<h3>Mission acceptance outcomes</h3>'+Object.entries(source.outcomeDetails).map(([type,detail])=>'<p><b>'+esc(outcomeLabels[type]||type)+'</b><br>'+esc(detail)+'</p>').join(''):'')+(p.sourceUrls||[]).map((url,i)=>'<p><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Historical source '+(i+1)+'</a></p>').join('');
+      const regionOptions='<option value="all">All regions</option>'+regions.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');$('#sp-catalogue-region').innerHTML=regionOptions;$('#sp-catalogue-region').value=ui.catalogueRegion;$('#sp-kind').value=ui.kind;
+      const filtered=s.programmes.filter(x=>(ui.catalogueRegion==='all'||x.region===ui.catalogueRegion)&&(ui.kind==='all'||x.kind===ui.kind));$('[data-catalogue-list]').innerHTML=filtered.length?(ui.catalogueRegion==='all'?regions.map(region=>{const group=filtered.filter(x=>x.region===region.id);return group.length?'<details '+(region.id===ui.region?'open':'')+'><summary class="cursor-interaction">'+esc(region.name)+' · '+group.length+' programmes</summary>'+group.map(rowHTML).join('')+'</details>':'';}).join(''):filtered.map(rowHTML).join('')):'<p class="sp-empty">No programmes match this selection.</p>';
+      $('#sp2-budget').max=String(Math.max(2,Math.ceil(Math.max(s.annualGrantB*2.5,s.annualBudgetB))));$('#sp2-budget').step='0.1';$('#sp2-budget').value=s.annualBudgetB;$('[data-budget-label]').textContent=cash(s.annualBudgetB)+' / year';$('[data-annual-transfer]').textContent=cash(s.annualGrantB)+' / year';$('[data-portfolio-upkeep]').textContent=cash(s.annualOperatingCostB)+' / year';$('[data-portfolio-reserve]').textContent=cash(s.reserveB);$('[data-portfolio-teams]').textContent=s.activeCount+' / '+s.maxActive;
+      $('[data-budget-description]').textContent='Development spending is shared among active engineering teams. Funds cannot bypass minimum qualification time. Paused work retains its completed engineering and sunk expenditure.';
+      const active=activeRows(s);$('[data-portfolio-list]').innerHTML=active.length?active.map(rowHTML).join(''):'<p class="sp-empty">Authorise a programme from the catalogue to allocate an engineering team.</p>';
+      const flights=s.programmes.filter(x=>x.flightRemainingMonths>0||x.completed||x.status==='investigating'||x.deployed);$('[data-flight-list]').innerHTML=flights.length?flights.map(rowHTML).join(''):'<p class="sp-empty">No flight-qualified hardware or active flight is in the manifest.</p>';
+      const logs=s.log||[];$('[data-history-log]').innerHTML=logs.length?logs.slice(0,30).map(x=>'<p>'+esc(typeof x==='string'?x:(x.date?x.date+' · ':'')+(x.message||x.text||x.title||JSON.stringify(x)))+'</p>').join(''):'No programme decisions recorded.';
+      const sources=catalogue.sources||[];$('[data-source-library]').innerHTML=Array.isArray(sources)?sources.map(x=>'<p><a href="'+esc(typeof x==='string'?x:x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.title||x.name||x.url||x)+'</a></p>').join(''):Object.entries(sources).map(([k,v])=>'<p><a href="'+esc(typeof v==='string'?v:v.url)+'" target="_blank" rel="noopener noreferrer">'+esc(v.title||k)+'</a></p>').join('');
+      $('[data-reserve]').textContent=cash(s.reserveB);$('[data-development-budget]').textContent=cash(s.annualBudgetB)+'/yr';$('[data-total-upkeep]').textContent=cash(s.annualOperatingCostB)+'/yr';$('[data-prestige]').textContent=String(Number(s.prestige||0).toFixed(0));
+      $('[data-research]').textContent=String(Number(s.researchPoints||0).toFixed(0));$('[data-political]').textContent=String(Number(s.politicalCapital||0).toFixed(0));$('[data-fatalities]').textContent=String(s.totalCrewFatalities||0);renderNews(s);
+    }
+    function commit(){render();save();}
+    function act(method,...args){const prior=new Set((engine.state().events||[]).map(e=>e.id)),receipt=engine[method](...args);ui.message=receipt?.message||'Programme decision recorded.';const fresh=(engine.state().events||[]).find(e=>!prior.has(e.id));if(fresh){ui.newsId=fresh.id;ui.view='news';}commit();return receipt;}
+    root.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.view){ui.view=b.dataset.view;commit();}else if(b.dataset.news){ui.newsId=b.dataset.news;ui.view='news';commit();}else if(b.hasAttribute('data-news-ack')){ui.view='map';commit();}else if(b.dataset.system){ui.system=b.dataset.system;selectRegion(regions.find(r=>r.system===ui.system).id);commit();}else if(b.dataset.region){selectRegion(b.dataset.region);commit();}else if(b.dataset.select){selectProgramme(b.dataset.select,true);commit();}else if(b.hasAttribute('data-primary'))act(b.dataset.action,engine.state().selectedId);else if(b.hasAttribute('data-cancel'))act('cancel',engine.state().selectedId);else if(b.dataset.advance)act('advance',Number(b.dataset.advance));else if(b.hasAttribute('data-reset')){worldContext.firsts={};worldContext.news=[];worldContext.standings={};makeEngine();ui.message='National programme restored to its 1970 starting position.';chooseNationalEntry();commit();}});
+    $('#sp-region-select').addEventListener('change',e=>{selectRegion(e.target.value);commit();});$('#sp-catalogue-region').addEventListener('change',e=>{ui.catalogueRegion=e.target.value;commit();});$('#sp-kind').addEventListener('change',e=>{ui.kind=e.target.value;commit();});
+    // A profile picker compares separate starting scenarios; a real multiplayer host supplies one shared clock and ledger.
+    $('#sp-profile').addEventListener('change',e=>{ui.profile=e.target.value;worldContext.firsts={};worldContext.news=[];worldContext.standings={};makeEngine();chooseNationalEntry();ui.view='briefing';ui.message='Loaded the '+profile().name+' 1970 capability and funding profile.';commit();});
+    $('#sp-news-select').addEventListener('change',e=>{ui.newsId=e.target.value;commit();});
+    $('#sp-custom-name').addEventListener('change',e=>{if(!engine.state().playerControlled){render();return;}const record=engine.exportState();ui.customName=e.target.value.trim().slice(0,60)||'New Player Country';makeEngine(record);commit();});
+    $('#sp-custom-tag').addEventListener('change',e=>{if(!engine.state().playerControlled){render();return;}const record=engine.exportState();ui.customTag=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,3)||'NEW';makeEngine(record);commit();});
+    $('#sp2-budget').addEventListener('input',e=>act('setBudget',Number(e.target.value)));$('#sp2-policy').addEventListener('change',e=>act('setPolicy',engine.state().selectedId,e.target.value));
+    window.addEventListener('openai:set_globals',e=>{const value=e.detail?.globals?.widgetState?.privateContent?.spaceRaceV2;if(value?.snapshot&&profileList.some(p=>p.id===value.profile)){ui={...ui,...value.ui,profile:value.profile};Object.assign(design,value.ui?.design||{});makeEngine(value.snapshot);render();}});
+    root.spacePreviewV2={engine:()=>engine,ui:()=>JSON.parse(JSON.stringify(ui)),selectProgramme,act,render,bulletinMediaKey,reset:()=>{makeEngine();render();}};
+    render();
+    if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:()=>{render();save();}});tweak.addSelect(design,'density',{label:'Console density',options:[{label:'Comfortable',value:'comfortable'},{label:'Compact',value:'compact'}]});tweak.addSelect(design,'newsStyle',{label:'News presentation',options:[{label:'MD event panel',value:'md'},{label:'Press bulletin',value:'paper'}]});}
+  })();
+  </script>
+</div>

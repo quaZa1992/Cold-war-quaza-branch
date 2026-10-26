@@ -1,0 +1,317 @@
+<!-- IMPERIA CW — Cold War: interactive Space Race design preview. -->
+<div id="cw-space-map" aria-label="Cold War space programme design preview">
+  <style>
+    #cw-space-map{--sp-bg:#10171b;--sp-panel:#192329;--sp-line:#34444b;--sp-text:#e5e5d9;--sp-muted:#a8b3b6;--sp-gold:#d5bd81;--sp-cyan:#8bc6d3;--sp-red:#d08b7b;--sp-green:#a7c6a5;color:var(--sp-text);background:var(--sp-bg);font:14px/1.45 'Segoe UI',Arial,sans-serif;border:1px solid #536067;box-shadow:0 12px 35px #0005;overflow:hidden;color-scheme:dark}
+    #cw-space-map *{box-sizing:border-box}
+    #cw-space-map button,#cw-space-map select,#cw-space-map input{font:inherit}
+    #cw-space-map button{color:inherit}
+    #cw-space-map button:focus-visible,#cw-space-map select:focus-visible,#cw-space-map input:focus-visible{outline:2px solid var(--sp-cyan);outline-offset:3px}
+    #cw-space-map .sp-head{padding:22px 28px 16px;background:linear-gradient(120deg,#253239,#131b20 65%);border-bottom:1px solid var(--sp-line);display:flex;justify-content:space-between;gap:18px;align-items:center}
+    #cw-space-map .sp-kicker{color:var(--sp-gold);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+    #cw-space-map .sp-title{font:30px/1.2 Georgia,serif;letter-spacing:5px;margin:5px 0 0}
+    #cw-space-map .sp-date{color:var(--sp-muted);font-size:12px;text-align:right;white-space:nowrap;margin-right:65px}
+    #cw-space-map .sp-date strong{display:block;font-weight:500;color:var(--sp-text);font-size:14px;margin-bottom:3px}
+    #cw-space-map .sp-nav{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--sp-line);background:#121b20;padding:0 18px}
+    #cw-space-map .sp-nav button{border:0;border-bottom:2px solid transparent;background:none;padding:13px 16px;color:var(--sp-muted);font-size:12px;letter-spacing:.25px;display:flex;gap:8px;align-items:center}
+    #cw-space-map .sp-nav button[aria-selected=true]{border-bottom-color:var(--sp-gold);color:var(--sp-gold);background:#d5bd8109}
+    #cw-space-map .sp-nav i,#cw-space-map .sp-icon{width:15px;height:15px;flex:none}
+    #cw-space-map .sp-body{display:grid;grid-template-columns:minmax(0,1fr) 288px;align-items:start}
+    #cw-space-map .sp-workspace{min-width:0;background:#080f14}
+    #cw-space-map .sp-stage{position:relative;aspect-ratio:1659/948;isolation:isolate;background:#02070c;overflow:hidden}
+    #cw-space-map .sp-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-2;filter:brightness(.88)}
+    #cw-space-map .sp-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(#02070c65,transparent 23%,transparent 75%,#02070cbb)}
+    #cw-space-map .sp-maphead{position:absolute;left:22px;top:19px;pointer-events:none}
+    #cw-space-map .sp-maphead b{font:18px Georgia,serif;letter-spacing:.8px;font-weight:400}
+    #cw-space-map .sp-maphead small{display:block;color:var(--sp-muted);font-size:11px;letter-spacing:1.5px;margin-top:6px;text-transform:uppercase}
+    #cw-space-map .sp-plots{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:.72}
+    #cw-space-map .sp-orbit{fill:none;stroke:#7c969d;stroke-width:1;stroke-dasharray:2 7}
+    #cw-space-map .sp-path{fill:none;stroke:var(--sp-gold);stroke-width:1.5;stroke-dasharray:7 6;opacity:.48}
+    #cw-space-map .sp-path.active{stroke:var(--sp-cyan);stroke-width:2;stroke-dasharray:none;opacity:1}
+    #cw-space-map .sp-orbitname{fill:#c5d3d6;font-size:12px;letter-spacing:2px}
+    #cw-space-map .sp-node{position:absolute;display:flex;align-items:center;gap:7px;border:0;padding:5px 7px 5px 4px;background:#071016e8;text-align:left;line-height:1.25;max-width:155px;box-shadow:0 0 12px #0004}
+    #cw-space-map .sp-node .sp-dot{width:12px;height:12px;flex:none;border:1px solid var(--sp-cyan);background:#182e35;box-shadow:0 0 0 4px #72b7c31a}
+    #cw-space-map .sp-node.selected .sp-dot{background:var(--sp-cyan);box-shadow:0 0 0 5px #8bc6d32c}
+    #cw-space-map .sp-node span:last-child{font-size:11px;color:#dce7e9}
+    #cw-space-map .sp-node small{display:block;color:var(--sp-muted);font-size:10px;letter-spacing:.4px;margin-top:3px}
+    #cw-space-map .sp-node.station{left:56%;top:51%}
+    #cw-space-map .sp-node.crewed{left:21%;top:20%}
+    #cw-space-map .sp-node.lunar{left:76%;top:20%}
+    #cw-space-map .sp-node.heavy{left:8%;top:76%}
+    #cw-space-map .sp-rival{position:absolute;left:59%;top:17%;font-size:11px;color:#e3beb4;line-height:1.4;background:#150d0ce8;padding:6px 8px;border-left:2px solid var(--sp-red)}
+    #cw-space-map .sp-rival small{font-size:10px;color:#bdaba4;display:block}
+    #cw-space-map .sp-earthlabel{position:absolute;left:37%;top:88%;font-size:11px;letter-spacing:3px;color:#d3e2e4}
+    #cw-space-map .sp-moonlabel{position:absolute;left:78%;top:48%;font-size:11px;letter-spacing:3px;color:#d8d8cf}
+    #cw-space-map .sp-legend{position:absolute;bottom:13px;left:18px;right:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--sp-muted);font-size:10px;letter-spacing:.5px}
+    #cw-space-map .sp-legend em{font-style:normal;color:var(--sp-cyan)}
+    #cw-space-map .sp-queue{padding:16px 20px 18px;border-top:1px solid var(--sp-line);background:#151f25}
+    #cw-space-map .sp-sectionline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:var(--sp-muted)}
+    #cw-space-map .sp-sectionline span:last-child{font-size:10px;letter-spacing:.5px;color:var(--sp-gold)}
+    #cw-space-map .sp-programs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+    #cw-space-map .sp-program{border:0;background:none;text-align:left;padding:0;min-width:0}
+    #cw-space-map .sp-program b{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:400}
+    #cw-space-map .sp-program b span{color:var(--sp-gold);font-variant-numeric:tabular-nums}
+    #cw-space-map .sp-track{height:4px;background:#34434a;margin:9px 0 7px}
+    #cw-space-map .sp-track>span{display:block;height:100%;background:var(--sp-gold)}
+    #cw-space-map .sp-program small{font-size:10px;color:var(--sp-muted)}
+    #cw-space-map .sp-brief{border-left:1px solid var(--sp-line);background:var(--sp-panel);padding:19px 19px 18px;min-width:0;align-self:stretch}
+    #cw-space-map .sp-tag{display:inline-block;color:var(--sp-gold);font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+    #cw-space-map .sp-missiontitle{font:23px/1.14 Georgia,serif;margin:9px 0 6px;font-weight:400}
+    #cw-space-map .sp-subtitle{color:var(--sp-muted);font-size:11px;letter-spacing:.5px}
+    #cw-space-map .sp-description{font-size:12px;color:#c5cdd0;margin:16px 0;min-height:53px}
+    #cw-space-map .sp-facts{margin:0;padding:12px 0;border-top:1px solid var(--sp-line);border-bottom:1px solid var(--sp-line)}
+    #cw-space-map .sp-facts>div{display:flex;justify-content:space-between;gap:10px;margin:5px 0;font-size:12px}
+    #cw-space-map .sp-facts dt{color:var(--sp-muted)}
+    #cw-space-map .sp-facts dd{margin:0;font-variant-numeric:tabular-nums;text-align:right;color:var(--sp-text)}
+    #cw-space-map .sp-chance{display:flex;justify-content:space-between;align-items:end;margin:17px 0 8px;gap:10px}
+    #cw-space-map .sp-chance span{font-size:11px;color:var(--sp-muted);max-width:100px}
+    #cw-space-map .sp-chance strong{font:31px/1 Georgia,serif;font-weight:400;color:var(--sp-cyan);white-space:nowrap;font-variant-numeric:tabular-nums}
+    #cw-space-map .sp-riskbar{height:5px;display:flex;background:#304248}
+    #cw-space-map .sp-riskbar span{height:100%}
+    #cw-space-map .sp-riskbar .full{background:var(--sp-cyan)}
+    #cw-space-map .sp-riskbar .partial{background:var(--sp-gold)}
+    #cw-space-map .sp-riskbar .abort{background:#8b969a}
+    #cw-space-map .sp-riskbar .loss{background:var(--sp-red)}
+    #cw-space-map .sp-riskdetail{font-size:10px;color:var(--sp-muted);margin:7px 0 15px;line-height:1.6}
+    #cw-space-map .sp-outcomes{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;font-size:11px;color:var(--sp-muted);margin-top:8px}
+    #cw-space-map .sp-outcomes>span{display:flex;justify-content:space-between;gap:5px}
+    #cw-space-map .sp-outcomes b{font-weight:400;color:var(--sp-text);font-variant-numeric:tabular-nums}
+    #cw-space-map .sp-policy{display:block;font-size:11px;color:var(--sp-muted);margin-top:14px}
+    #cw-space-map select{width:100%;display:block;color:var(--sp-text);background:#101a20;border:1px solid #46575e;border-radius:0;padding:8px;margin-top:6px;font-size:12px}
+    #cw-space-map .sp-policy-note{font-size:10px;line-height:1.5;color:var(--sp-muted);min-height:30px;margin:7px 0 0}
+    #cw-space-map .sp-prereqs{padding:0;margin:14px 0;list-style:none;font-size:11px;line-height:1.5}
+    #cw-space-map .sp-prereqs li{display:flex;gap:7px;margin:5px 0;color:var(--sp-muted)}
+    #cw-space-map .sp-prereqs li.met::before{content:'✓';color:var(--sp-green)}
+    #cw-space-map .sp-prereqs li.unmet::before{content:'○';color:var(--sp-gold)}
+    #cw-space-map .sp-action{width:100%;background:linear-gradient(#bca36c,#9a8152);border:1px solid #e4cd96;border-radius:0;color:#151914;padding:10px 12px;font-size:12px;font-weight:500;letter-spacing:.5px}
+    #cw-space-map .sp-action:disabled{background:#2d3a3e;color:#a4adb0;border-color:#526066}
+    #cw-space-map .sp-action:not(:disabled):hover{filter:brightness(1.12)}
+    #cw-space-map .sp-action.secondary{background:#24323a;border-color:#52636c;color:var(--sp-text)}
+    #cw-space-map .sp-status{font-size:10px;color:var(--sp-gold);margin-top:9px;min-height:15px}
+    #cw-space-map .sp-footer{border-top:1px solid var(--sp-line);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:12px 20px;background:#111a20}
+    #cw-space-map .sp-ledger{display:flex;gap:23px;flex-wrap:wrap;font-size:11px;color:var(--sp-muted)}
+    #cw-space-map .sp-ledger b{font-weight:500;color:var(--sp-gold);margin-left:6px;font-variant-numeric:tabular-nums}
+    #cw-space-map .sp-footactions{display:flex;gap:8px}
+    #cw-space-map .sp-smallbutton{border:1px solid #4b5a61;background:#202d34;color:var(--sp-text);padding:6px 9px;font-size:11px}
+    #cw-space-map .sp-notice{padding:8px 20px;color:#8f9b9f;background:#10171c;font-size:10px;letter-spacing:.6px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid #26343b}
+    #cw-space-map .sp-view{padding:25px;min-height:450px;background:radial-gradient(ellipse at 70% 10%,#24343e,#101a21 65%)}
+    #cw-space-map [hidden]{display:none!important}
+    #cw-space-map .sp-view h2{font:24px Georgia,serif;font-weight:400;margin:0 0 8px}
+    #cw-space-map .sp-view-intro{font-size:12px;color:var(--sp-muted);margin:0 0 25px;max-width:550px}
+    #cw-space-map .sp-list{display:grid;gap:10px}
+    #cw-space-map .sp-listrow{border:1px solid var(--sp-line);padding:14px;display:flex;align-items:center;justify-content:space-between;gap:15px;background:#18252cf0;min-width:0}
+    #cw-space-map .sp-listrow>div{min-width:0}
+    #cw-space-map .sp-listrow b{font-size:13px;font-weight:500;display:block}
+    #cw-space-map .sp-listrow p{font-size:11px;color:var(--sp-muted);margin:5px 0 0}
+    #cw-space-map .sp-listrow .sp-smallbutton{white-space:nowrap;flex:none}
+    #cw-space-map .sp-budgetlabel{display:flex;justify-content:space-between;margin-bottom:10px;gap:12px;color:var(--sp-gold);font-size:12px}
+    #cw-space-map input[type=range]{width:100%;accent-color:var(--sp-gold);margin:0 0 22px}
+    #cw-space-map .sp-log{margin-top:19px;border-top:1px solid var(--sp-line);padding-top:14px;font-size:11px;color:var(--sp-muted);line-height:1.65}
+    #cw-space-map .sp-log b{color:var(--sp-text);font-weight:500}
+    #cw-space-map .sp-result{margin-top:12px;border-left:2px solid var(--sp-gold);background:#111c22;padding:11px;font-size:11px;line-height:1.55}
+    #cw-space-map .sp-result b{font-weight:500;display:block;color:var(--sp-gold);margin-bottom:5px}
+    #cw-space-map .sp-sronly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(min-width:1250px){#cw-space-map .sp-body{grid-template-columns:minmax(0,1fr) 320px}#cw-space-map .sp-brief{padding:22px 25px}#cw-space-map .sp-description{min-height:35px}}
+    @media(max-width:800px){#cw-space-map .sp-body{grid-template-columns:minmax(0,1fr)}#cw-space-map .sp-brief{border-left:0;border-top:1px solid var(--sp-line);display:grid;grid-template-columns:1fr 1fr;gap:0 22px}#cw-space-map .sp-brief .sp-mission-heading,#cw-space-map .sp-description{grid-column:1/-1}#cw-space-map .sp-description{min-height:0;margin:12px 0}#cw-space-map .sp-brief .sp-controls{grid-column:2;grid-row:3/6}#cw-space-map .sp-facts{grid-column:1}#cw-space-map .sp-chanceblock{grid-column:1}#cw-space-map .sp-prereqs{grid-column:1}#cw-space-map .sp-result{grid-column:1/-1}#cw-space-map .sp-view{min-height:360px}#cw-space-map .sp-nav button{padding:12px}#cw-space-map .sp-title{font-size:26px}#cw-space-map .sp-date{margin-right:60px}}
+    @media(max-width:520px){#cw-space-map .sp-head{padding:18px 14px;align-items:start}#cw-space-map .sp-title{font-size:24px;letter-spacing:3px}#cw-space-map .sp-kicker{font-size:10px;letter-spacing:1px;max-width:180px}#cw-space-map .sp-date{display:none}#cw-space-map .sp-nav{padding:0 4px}#cw-space-map .sp-nav button{padding:11px 8px;font-size:11px}#cw-space-map .sp-nav i{display:none}#cw-space-map .sp-maphead{left:12px;top:11px}#cw-space-map .sp-maphead b{font-size:14px}#cw-space-map .sp-maphead small{display:none}#cw-space-map .sp-node{padding:5px;max-width:40px}#cw-space-map .sp-node span:last-child{display:none}#cw-space-map .sp-dot{width:13px;height:13px}#cw-space-map .sp-rival{font-size:9px;left:61%;top:14%;padding:3px 5px}#cw-space-map .sp-rival small{display:none}#cw-space-map .sp-earthlabel,#cw-space-map .sp-moonlabel{font-size:9px;letter-spacing:2px}#cw-space-map .sp-legend{left:12px;bottom:7px;font-size:9px}#cw-space-map .sp-legend span:last-child{display:none}#cw-space-map .sp-queue{padding:13px}#cw-space-map .sp-programs{gap:12px;grid-template-columns:1fr}#cw-space-map .sp-program b{font-size:12px}#cw-space-map .sp-program small{display:none}#cw-space-map .sp-track{margin:6px 0 0}#cw-space-map .sp-brief{display:block;padding:18px}#cw-space-map .sp-missiontitle{font-size:24px}#cw-space-map .sp-policy-note{min-height:0}#cw-space-map .sp-footer{padding:12px;gap:12px}#cw-space-map .sp-ledger{gap:12px}#cw-space-map .sp-view{padding:18px 13px;min-height:0}#cw-space-map .sp-listrow{align-items:start;flex-direction:column;gap:10px}#cw-space-map .sp-smallbutton{min-height:35px}#cw-space-map .sp-notice{padding:9px 12px}#cw-space-map .sp-sectionline span:last-child{display:none}}
+    @media(prefers-reduced-motion:no-preference){#cw-space-map .sp-track>span{transition:width .3s ease}#cw-space-map .sp-path{transition:opacity .2s ease}}
+  </style>
+  <header class="sp-head">
+    <div><div class="sp-kicker">State Space Commission · Soviet Union</div><div class="sp-title">SPACE RACE</div></div>
+    <div class="sp-date"><strong data-date>11 JANUARY 1970</strong>National Space Programme</div>
+  </header>
+  <nav class="sp-nav" role="tablist" aria-label="Space programme views">
+    <button type="button" class="cursor-interaction" role="tab" id="sp-tab-map" aria-controls="sp-view-map" aria-selected="true" data-view="map"><i data-lucide="orbit" aria-hidden="true"></i>Operations Map</button>
+    <button type="button" class="cursor-interaction" role="tab" id="sp-tab-programmes" aria-controls="sp-view-programmes" aria-selected="false" data-view="programmes"><i data-lucide="rocket" aria-hidden="true"></i>Programmes</button>
+    <button type="button" class="cursor-interaction" role="tab" id="sp-tab-infrastructure" aria-controls="sp-view-infrastructure" aria-selected="false" data-view="infrastructure"><i data-lucide="radio-tower" aria-hidden="true"></i>Infrastructure</button>
+    <button type="button" class="cursor-interaction" role="tab" id="sp-tab-international" aria-controls="sp-view-international" aria-selected="false" data-view="international"><i data-lucide="handshake" aria-hidden="true"></i>International</button>
+    <button type="button" class="cursor-interaction" role="tab" id="sp-tab-achievements" aria-controls="sp-view-achievements" aria-selected="false" data-view="achievements"><i data-lucide="award" aria-hidden="true"></i>Achievements</button>
+  </nav>
+  <div class="sp-body">
+    <main class="sp-workspace">
+      <section id="sp-view-map" role="tabpanel" aria-labelledby="sp-tab-map">
+        <div class="sp-stage" aria-label="Earth and Moon operational map with selectable missions">
+          <img class="sp-art" src="%%SPACE_MAP_DATA%%" alt="Realistic Earth showing Africa, Europe and Atlantic cloud systems, with the Moon to the upper right." />
+          <div class="sp-shade"></div>
+          <div class="sp-maphead"><b>Earth–Moon System</b><small>Mission Control · Strategic Overview</small></div>
+          <svg class="sp-plots" viewBox="0 0 1000 572" role="img" aria-label="Schematic orbital paths and a planned lunar transfer">
+            <circle class="sp-orbit" cx="389" cy="282" r="246" />
+            <ellipse class="sp-orbit" cx="389" cy="282" rx="314" ry="256" />
+            <ellipse class="sp-orbit" cx="807" cy="199" rx="87" ry="73" />
+            <path class="sp-path" data-path="lunar" d="M 589 138 C 652 19 834 54 868 169 C 897 268 763 290 735 209" />
+            <path class="sp-path" data-path="station" d="M 253 88 A 246 246 0 0 1 633 315" />
+            <path class="sp-path active" data-path="crewed" d="M 212 111 A 246 246 0 0 0 164 384" />
+            <path class="sp-path" data-path="heavy" d="M 116 440 C 42 373 59 236 117 170" />
+            <text class="sp-orbitname" x="76" y="285" transform="rotate(-90 76 285)">EARTH ORBIT</text>
+          </svg>
+          <button type="button" class="sp-node crewed selected cursor-interaction" data-mission="crewed" aria-label="Select Crewed Orbital Qualification"><span class="sp-dot"></span><span>SOYUZ PROGRAMME<small>Flight qualification · Ready</small></span></button>
+          <button type="button" class="sp-node station cursor-interaction" data-mission="station" aria-label="Select Orbital Station Core"><span class="sp-dot"></span><span>ORBITAL LABORATORY<small>Station core · In development</small></span></button>
+          <button type="button" class="sp-node lunar cursor-interaction" data-mission="lunar" aria-label="Select Robotic Lunar Sample Return"><span class="sp-dot"></span><span>LUNA PROGRAMME<small>Robotic sample return</small></span></button>
+          <button type="button" class="sp-node heavy cursor-interaction" data-mission="heavy" aria-label="Select Experimental Heavy Launcher Test"><span class="sp-dot"></span><span>HEAVY LAUNCH VEHICLE<small>Instrumented test flight</small></span></button>
+          <div class="sp-rival">USA · APOLLO<small>Established lunar capability</small></div>
+          <div class="sp-earthlabel">EARTH</div><div class="sp-moonlabel">MOON</div>
+          <div class="sp-legend"><span><em>■</em> National mission &nbsp; · &nbsp; <span style="color:var(--sp-red)">USA</span> Rival programme</span><span>Distances & orbits schematic</span></div>
+        </div>
+        <div class="sp-queue">
+          <div class="sp-sectionline"><span>Long-term Development</span><span>Three engineering allocations</span></div>
+          <div class="sp-programs">
+            <button type="button" class="sp-program cursor-interaction" data-mission="station"><b>Orbital Laboratory <span data-progress="station">62%</span></b><div class="sp-track"><span data-progressbar="station" style="width:62%"></span></div><small>Integration & thermal qualification</small></button>
+            <button type="button" class="sp-program cursor-interaction" data-mission="heavy"><b>Heavy Launcher <span data-progress="heavy">41%</span></b><div class="sp-track"><span data-progressbar="heavy" style="width:41%"></span></div><small>Engine campaign & certification</small></button>
+            <button type="button" class="sp-program cursor-interaction" data-mission="lunar"><b>Lunar Research <span data-progress="lunar">76%</span></b><div class="sp-track"><span data-progressbar="lunar" style="width:76%"></span></div><small>Next-generation automated systems</small></button>
+          </div>
+        </div>
+      </section>
+      <section id="sp-view-programmes" class="sp-view" role="tabpanel" aria-labelledby="sp-tab-programmes" hidden>
+        <h2>National Programmes</h2><p class="sp-view-intro">Sustained funding supports three development teams. Hardware and mission authorisations are paid separately.</p>
+        <label class="sp-budgetlabel" for="sp-budget">Annual development allocation <span data-budget>$12.0b / year</span></label>
+        <input id="sp-budget" class="cursor-interaction" type="range" min="4" max="24" step="1" value="12" aria-label="Annual development budget in billions of game dollars" />
+        <div class="sp-list" data-programme-list></div>
+        <div class="sp-log" data-budget-note></div>
+      </section>
+      <section id="sp-view-infrastructure" class="sp-view" role="tabpanel" aria-labelledby="sp-tab-infrastructure" hidden>
+        <h2>Ground Infrastructure</h2><p class="sp-view-intro">Test capacity and tracking coverage support every mission. Each expansion brings additional annual maintenance.</p>
+        <div class="sp-list" data-infrastructure-list></div>
+      </section>
+      <section id="sp-view-international" class="sp-view" role="tabpanel" aria-labelledby="sp-tab-international" hidden>
+        <h2>International Affairs</h2><p class="sp-view-intro">Cooperation spreads costs and scientific opportunities. Programme leadership remains a competitive national objective.</p>
+        <div class="sp-list"><div class="sp-listrow"><div><b>Interkosmos Scientific Package</b><p>Shared instruments and ground support · $2.0b contribution · +$0.2b annual upkeep</p></div><button type="button" class="sp-smallbutton cursor-interaction" data-joint>Fund cooperation</button></div><div class="sp-listrow"><div><b>Outer Space Treaty</b><p>Peaceful use of celestial bodies · No weapons of mass destruction in orbit</p></div><span class="sp-tag">Party to treaty</span></div><div class="sp-listrow"><div><b>International Leadership</b><p>United States: established lunar operations · Soviet Union: orbital and robotic programmes</p></div><span class="sp-tag">Open competition</span></div></div>
+        <div class="sp-log" data-joint-note>Joint scientific support adds 3 percentage points to post-insertion mission reliability. Prestige from supported missions is shared 85% nationally / 15% with partners.</div>
+      </section>
+      <section id="sp-view-achievements" class="sp-view" role="tabpanel" aria-labelledby="sp-tab-achievements" hidden>
+        <h2>Achievements & Mission Record</h2><p class="sp-view-intro">Historic achievements remain in the register. New awards recognise demonstrated capabilities and successful missions.</p>
+        <div class="sp-list"><div class="sp-listrow"><div><b>First Crewed Spaceflight</b><p>Soviet Union · 1961</p></div><span class="sp-tag">Historical record</span></div><div class="sp-listrow"><div><b>First Crewed Lunar Landing</b><p>United States · 1969</p></div><span class="sp-tag">Historical record</span></div></div>
+        <div class="sp-log" data-mission-log>No new missions completed.</div>
+      </section>
+    </main>
+    <aside class="sp-brief" aria-label="Selected mission">
+      <div class="sp-mission-heading"><div class="sp-tag" data-mission-tag>SOYUZ PROGRAMME</div><h2 class="sp-missiontitle" data-mission-title>Crewed Orbital Qualification</h2><div class="sp-subtitle" data-mission-subtitle>Low Earth Orbit · Crewed mission</div></div>
+      <p class="sp-description" data-description>Complete an orbital flight, qualify rendezvous procedures and return the crew safely.</p>
+      <dl class="sp-facts"><div><dt>Mission authorisation</dt><dd data-cost>$2.4b</dd></div><div><dt>Preparation remaining</dt><dd data-preparation>Ready</dd></div><div><dt>Prestige on success</dt><dd data-award>+25</dd></div></dl>
+      <div class="sp-chanceblock"><div class="sp-chance"><span>Estimated full success</span><strong data-chance>87.4%</strong></div><div class="sp-riskbar" role="img" aria-label="Estimated mission outcome distribution"><span class="full" data-prob="full"></span><span class="partial" data-prob="partial"></span><span class="abort" data-prob="abort"></span><span class="loss" data-prob="loss"></span></div><div class="sp-outcomes" data-outcomes></div><div class="sp-riskdetail" data-riskdetail>Launch 94% · Objective after insertion 93%</div></div>
+      <ul class="sp-prereqs" data-prerequisites></ul>
+      <div class="sp-controls"><label class="sp-policy" for="sp-policy">Mission preparation<select id="sp-policy" class="cursor-interaction"><option value="standard">Standard qualification</option><option value="tests">Extended ground testing</option><option value="rush">Accelerated preparation</option></select></label><p class="sp-policy-note" data-policy-note>Approved test and recovery procedures.</p><button type="button" class="sp-action cursor-interaction" data-launch>Authorise Mission</button><div class="sp-status" aria-live="polite" data-status>Flight-qualified · Ready for authorisation</div></div>
+      <div class="sp-result" data-result role="status" hidden></div>
+    </aside>
+  </div>
+  <footer class="sp-footer"><div class="sp-ledger"><span>Programme reserve <b data-reserve>$60.0b</b></span><span>Annual upkeep <b data-upkeep>$1.8b</b></span><span>New prestige <b data-prestige>0</b></span></div><div class="sp-footactions"><button type="button" class="sp-smallbutton cursor-interaction" data-advance>Advance 90 days</button><button type="button" class="sp-smallbutton cursor-interaction" data-reset>Reset preview</button></div></footer>
+  <div class="sp-notice"><span>DESIGN PREVIEW · ILLUSTRATIVE GAME VALUES</span><span data-message>Programme development, mission risks and budgets are interactive.</span></div>
+  <script>
+  (()=>{
+    const root=document.getElementById('cw-space-map');
+    const $=s=>root.querySelector(s), $$=s=>[...root.querySelectorAll(s)];
+    const missions={
+      crewed:{title:'Crewed Orbital Qualification',programme:'Soyuz Programme',destination:'Low Earth Orbit · Crewed mission',description:'Complete an orbital flight, qualify rendezvous procedures and return the crew safely.',cost:2.4,prep:0,launch:.94,objective:.93,award:25,crewed:true,requirements:['Flight-qualified orbital launcher','Spacecraft acceptance complete','Trained flight and reserve crews','Recovery forces deployed']},
+      station:{title:'Orbital Station Core',programme:'Salyut Programme',destination:'Low Earth Orbit · Uncrewed platform',description:'Insert the station core, deploy power systems and commission the orbital laboratory. Crew occupancy requires a later mission.',cost:6.8,prep:120,launch:.92,objective:.88,award:100,requirements:['Heavy orbital launcher available','Station integration complete','Power and thermal qualification','Station control centre operational']},
+      lunar:{title:'Robotic Lunar Sample Return',programme:'Luna Programme',destination:'Moon · Robotic mission',description:'Land an automated spacecraft, collect lunar material and recover a sealed sample capsule on Earth.',cost:2.2,prep:18,launch:.90,objective:.70,award:75,requirements:['Lunar-capable launcher available','Lander and ascent stage accepted','Deep-space tracking secured','Launch preparation complete']},
+      heavy:{title:'Experimental Heavy Launcher Test',programme:'Heavy Launch Vehicle Programme',destination:'Earth Orbit · Uncrewed test',description:'Demonstrate the experimental launcher and collect a complete instrumented flight record for its next qualification.',cost:4.8,prep:150,launch:.58,objective:.96,award:40,requirements:['Experimental launcher assembled','Engine acceptance campaign complete','Launch complex recertified','Instrumented test payload available']}
+    };
+    const upgrades=[{id:'test',title:'Integrated Engine Test Stands',text:'Launch reliability +2 percentage points · +$0.4b annual upkeep',cost:4.5,upkeep:.4},{id:'tracking',title:'Deep-Space Tracking Expansion',text:'Post-insertion reliability +2 percentage points · +$0.3b annual upkeep',cost:3,upkeep:.3},{id:'recovery',title:'Crew Recovery & Escape Training',text:'Reduces crew loss risk during launch emergencies · +$0.2b annual upkeep',cost:1.2,upkeep:.2}];
+    const fresh=()=>({selected:'crewed',view:'map',reserve:60,annualBudget:12,prestige:0,days:0,progress:{station:62,heavy:41,lunar:76},prep:{crewed:0,station:120,lunar:18,heavy:150},extraTests:{crewed:90,station:90,lunar:90,heavy:90},policy:{crewed:'standard',station:'standard',lunar:'standard',heavy:'standard'},completed:{},upgrades:[],joint:false,log:[],message:'Programme development, mission risks and budgets are interactive.'});
+    let state=fresh();
+    const money=n=>'$'+n.toFixed(1)+'b';
+    const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+    const safeText=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function stats(id){
+      const m=missions[id],policy=state.policy[id];
+      const launch=clamp(m.launch+(state.upgrades.includes('test')?.02:0)+(policy==='tests'?.04:policy==='rush'?-.08:0),.1,.99);
+      const objective=clamp(m.objective+(state.upgrades.includes('tracking')?.02:0)+(state.joint?.03:0),.1,.99);
+      const full=launch*objective,partial=launch*(1-objective)*.6,abort=launch*(1-objective)*.4,loss=1-launch;
+      const cost=m.cost*(policy==='rush'?1.25:1)+(policy==='tests'?.8:0);
+      const development=(id==='station'||id==='heavy')&&state.progress[id]<100;
+      const remaining=policy==='rush'?Math.ceil(state.prep[id]/1.25):state.prep[id]+(policy==='tests'?state.extraTests[id]:0);
+      return{launch,objective,full,partial,abort,loss,cost,development,remaining,ready:!development&&remaining<=0&&!state.completed[id]&&state.reserve>=cost};
+    }
+    function upkeep(){return 1.8+upgrades.filter(x=>state.upgrades.includes(x.id)).reduce((a,x)=>a+x.upkeep,0)+(state.joint?.2:0)+(state.completed.station?.type==='full'?1.4:0);}
+    function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{selectedMission:missions[state.selected].title,preparation:state.policy[state.selected],reserveInternalB:state.reserve,programmeProgress:state.progress,newPrestige:state.prestige,missionResults:state.log},privateContent:{spaceRaceV1:state}}).catch(()=>{});}
+    function render(){
+      const id=state.selected,m=missions[id],s=stats(id),done=state.completed[id],policy=state.policy[id];
+      $('[data-date]').textContent=new Date(Date.UTC(1970,0,11+state.days)).toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'}).toUpperCase();
+      $$('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===state.view)));
+      ['map','programmes','infrastructure','international','achievements'].forEach(v=>$('#sp-view-'+v).hidden=v!==state.view);
+      $$('[data-mission]').forEach(b=>{b.classList.toggle('selected',b.dataset.mission===id);b.setAttribute('aria-pressed',String(b.dataset.mission===id));});
+      $$('[data-path]').forEach(p=>p.classList.toggle('active',p.dataset.path===id));
+      $('[data-mission-tag]').textContent=m.programme;
+      $('[data-mission-title]').textContent=m.title;
+      $('[data-mission-subtitle]').textContent=m.destination;
+      $('[data-description]').textContent=m.description;
+      $('[data-cost]').textContent=money(s.cost);
+      $('[data-preparation]').textContent=s.remaining>0?s.remaining+' days':'Ready';
+      $('[data-award]').textContent='+'+Math.round(m.award*(state.joint?.85:1));
+      $('[data-chance]').textContent=(s.full*100).toFixed(1)+'%';
+      ['full','partial','abort','loss'].forEach(k=>$('[data-prob='+k+']').style.width=(s[k]*100)+'%');
+      $('[data-outcomes]').innerHTML=[['full','Full success'],['partial','Partial success'],['abort','Mission abort'],['loss','Launch failure']].map(([key,label])=>'<span>'+label+' <b>'+(s[key]*100).toFixed(1)+'%</b></span>').join('');
+      $('.sp-riskbar').setAttribute('aria-label',`Full success ${(s.full*100).toFixed(1)}%, partial success ${(s.partial*100).toFixed(1)}%, mission abort ${(s.abort*100).toFixed(1)}%, launch failure ${(s.loss*100).toFixed(1)}%.`);
+      $('[data-riskdetail]').textContent=`Launch ${(s.launch*100).toFixed(0)}% · Objective after insertion ${(s.objective*100).toFixed(0)}%`+(s.development?' · Planning estimate':'');
+      const met=m.requirements.map((_,i)=>id==='station'&&[1,2].includes(i)?state.progress.station>=100:id==='heavy'&&[1,2].includes(i)?state.progress.heavy>=100:id==='lunar'&&i===3?s.remaining<=0:true);
+      $('[data-prerequisites]').innerHTML=m.requirements.map((r,i)=>`<li class="${met[i]?'met':'unmet'}">${safeText(r)}</li>`).join('');
+      $('#sp-policy').value=policy;$('#sp-policy').disabled=!!done;
+      $('[data-policy-note]').textContent=policy==='tests'?'+$0.8b · +90 days · Launch reliability +4 percentage points.':policy==='rush'?'+25% mission cost · −20% remaining preparation · Launch reliability −8 percentage points.':'Approved test and recovery procedures.';
+      $('[data-launch]').disabled=!s.ready;
+      $('[data-launch]').textContent=done?'Mission Concluded':s.development?'Development Required':s.remaining>0?'Preparation Under Way':state.reserve<s.cost?'Insufficient Reserve':'Authorise Mission';
+      $('[data-status]').textContent=done?done.title:s.development?'Engineering qualification remains outstanding.':s.remaining>0?'Preparation continues with programme funding.':state.reserve<s.cost?'Additional funding is required.':'Flight-qualified · Ready for authorisation';
+      $('[data-result]').hidden=!done;
+      if(done)$('[data-result]').innerHTML='<b>'+safeText(done.title)+'</b>'+safeText(done.text);
+      $$('[data-progress]').forEach(x=>x.textContent=Math.round(state.progress[x.dataset.progress])+'%');
+      $$('[data-progressbar]').forEach(x=>x.style.width=state.progress[x.dataset.progressbar]+'%');
+      $('[data-reserve]').textContent=money(state.reserve);$('[data-upkeep]').textContent=money(upkeep());$('[data-prestige]').textContent=String(state.prestige);$('[data-message]').textContent=state.message;
+      $('[data-budget]').textContent=money(state.annualBudget)+' / year';$('#sp-budget').value=state.annualBudget;
+      $('[data-budget-note]').textContent='Next 90-day allocation: '+money(state.annualBudget/4)+' development + '+money(upkeep()/4)+' upkeep. Three teams share the development allocation. Existing design progress is retained.';
+      $('[data-programme-list]').innerHTML=Object.entries(missions).map(([key,x])=>`<div class="sp-listrow"><div><b>${safeText(x.programme)}</b><p>${key==='crewed'?'Operational qualification':key==='lunar'?Math.round(state.progress[key])+'% next-generation research; current spacecraft accepted':Math.round(state.progress[key])+'% development'} · ${state.completed[key]?'Mission concluded':stats(key).remaining+' preparation days remaining'}</p></div><button type="button" class="sp-smallbutton cursor-interaction" data-openmission="${key}">Review mission</button></div>`).join('');
+      $('[data-infrastructure-list]').innerHTML=upgrades.map(x=>`<div class="sp-listrow"><div><b>${safeText(x.title)}</b><p>${safeText(x.text)}</p></div><button type="button" class="sp-smallbutton cursor-interaction" data-upgrade="${x.id}" ${state.upgrades.includes(x.id)?'disabled':''}>${state.upgrades.includes(x.id)?'Operational':money(x.cost)+' · Fund'}</button></div>`).join('');
+      $('[data-joint]').disabled=state.joint;$('[data-joint]').textContent=state.joint?'Cooperation Funded':'Fund cooperation';
+      $('[data-mission-log]').innerHTML=state.log.length?state.log.map(x=>'<div><b>'+safeText(x.title)+'</b> · '+safeText(x.text)+'</div>').join(''):'No new missions completed.';
+    }
+    function commit(){render();save();}
+    function advance(){
+      const due=state.annualBudget/4+upkeep()/4;
+      if(state.reserve<due){state.message='Quarterly allocation exceeds programme reserve. Reduce the development budget.';commit();return;}
+      state.reserve-=due;state.days+=90;
+      const gain=state.annualBudget/4/3*7;
+      const advancePreparation=k=>{const rate=state.policy[k]==='rush'?1.25:1;const required=state.prep[k]/rate;state.prep[k]=Math.max(0,state.prep[k]-90*rate);if(state.policy[k]==='tests')state.extraTests[k]=Math.max(0,state.extraTests[k]-Math.max(0,90-required));};
+      ['station','heavy','lunar'].forEach(k=>{const before=state.progress[k];state.progress[k]=Math.min(100,before+gain);if(k==='lunar'||before>=100)advancePreparation(k);});
+      advancePreparation('crewed');
+      state.message='90 days elapsed · '+money(due)+' allocated · Development and mission preparation updated.';commit();
+    }
+    function launch(){
+      const id=state.selected,m=missions[id],s=stats(id);if(!s.ready)return;
+      state.reserve-=s.cost;
+      let result;
+      if(Math.random()>=s.launch){
+        const rescued=m.crewed&&Math.random()<(state.upgrades.includes('recovery')?.98:.9);
+        result={type:'loss',title:'Launch Failure',text:m.crewed?(rescued?'Launcher lost. Escape and recovery procedures returned the crew safely.':'Launcher lost. Crew fatalities trigger a flight suspension and formal investigation.'):'Launcher and payload lost. A technical investigation is required before a replacement flight.'};
+      }else{
+        const outcome=Math.random();
+        if(outcome<s.objective){result={type:'full',title:'Mission Success',text:id==='crewed'?'Crew returned safely. Orbital qualification completed.':id==='station'?'Station core commissioned. An uncrewed laboratory is operational; crew occupancy needs a separate mission.':id==='lunar'?'Return capsule recovered with lunar samples. Scientific objectives achieved.':'Instrumented flight completed. The test record supports the next launcher qualification.'};state.prestige+=Math.round(m.award*(state.joint?.85:1));}
+        else if(outcome<s.objective+(1-s.objective)*.6){result={type:'partial',title:'Partial Success',text:id==='crewed'?'Crew returned early. Only part of the qualification programme was accepted.':id==='lunar'?'Scientific measurements received, but no lunar samples recovered.':'Orbit reached, but incomplete commissioning or test data requires further work.'};state.prestige+=Math.round(m.award*.25*(state.joint?.85:1));}
+        else result={type:'abort',title:'Mission Objective Not Achieved',text:m.crewed?'Qualification terminated. The crew returned safely; corrective work is required.':'Launch succeeded, but the principal mission objective was not achieved. Technical investigation required.'};
+      }
+      state.completed[id]=result;state.log.unshift({title:m.title+' — '+result.title,text:result.text});state.message=money(s.cost)+' committed · Mission entered in the national record.';commit();
+    }
+    root.addEventListener('click',e=>{
+      const b=e.target.closest('button');if(!b)return;
+      if(b.dataset.view){state.view=b.dataset.view;commit();}
+      else if(b.dataset.mission){state.selected=b.dataset.mission;commit();}
+      else if(b.dataset.openmission){state.selected=b.dataset.openmission;state.view='map';commit();}
+      else if(b.hasAttribute('data-advance'))advance();
+      else if(b.hasAttribute('data-launch'))launch();
+      else if(b.hasAttribute('data-reset')){state=fresh();commit();}
+      else if(b.dataset.upgrade){const u=upgrades.find(x=>x.id===b.dataset.upgrade);if(state.upgrades.includes(u.id))return;if(state.reserve<u.cost){state.message='Insufficient programme reserve.';commit();return;}state.reserve-=u.cost;state.upgrades.push(u.id);state.message=u.title+' funded. Annual upkeep increased.';commit();}
+      else if(b.hasAttribute('data-joint')){if(state.joint)return;if(state.reserve<2){state.message='Insufficient programme reserve.';commit();return;}state.reserve-=2;state.joint=true;state.message='Joint scientific package funded. National prestige share: 85%.';commit();}
+    });
+    $('#sp-budget').addEventListener('input',e=>{state.annualBudget=Number(e.target.value);commit();});
+    $('#sp-policy').addEventListener('change',e=>{
+      const id=state.selected;if(state.completed[id])return;
+      state.policy[id]=e.target.value;
+      state.message='Mission preparation updated. Costs, readiness and outcome estimates recalculated.';commit();
+    });
+    const restored=window.openai?.widgetState?.privateContent?.spaceRaceV1;
+    if(restored?.selected&&missions[restored.selected])state={...fresh(),...restored};
+    window.addEventListener('openai:set_globals',e=>{const saved=e.detail?.globals?.widgetState?.privateContent?.spaceRaceV1;if(saved?.selected&&missions[saved.selected]){state={...fresh(),...saved};render();}});
+    render();
+    const design={mapBrightness:.88,trajectoryOpacity:.72};
+    function styleMap(){ $('.sp-art').style.filter='brightness('+design.mapBrightness+')';$('.sp-plots').style.opacity=design.trajectoryOpacity; }
+    if(globalThis.Tweak){const tweak=new Tweak({container:$('.sp-stage'),onChange:styleMap});tweak.addSlider(design,'mapBrightness',{label:'Map brightness',min:.6,max:1.1,step:.02});tweak.addSlider(design,'trajectoryOpacity',{label:'Trajectory visibility',min:.3,max:1,step:.05});}
+    root.spacePreview={stats,getState:()=>JSON.parse(JSON.stringify(state)),reset:()=>{state=fresh();render();},render};
+    if(globalThis.lucide)lucide.createIcons();
+  })();
+  </script>
+</div>

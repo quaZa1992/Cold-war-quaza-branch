@@ -1,0 +1,464 @@
+@@ -0,0 +1,462 @@
+
++#########################################################################################
++# Imperia: Uranium as a resource
++#
++# Supply chain (real world, 2000):
++#   uranium mines (state resource "uranium" from history = mines operating in 2000,
++#   plus the "Uranium Mine" building on known deposits; 1 unit = 100 t U/year)
++#   -> world market / trade
++#   -> enrichment facilities (MD building, consume 25 units each via country_resource_cost_uranium)
++#   -> reactor-grade fuel (MD energy system: total_nuclear_reactor_fuel_production)
++#   -> nuclear reactors (MD energy system)
++# Deposits: OECD-NEA/IAEA Red Book "Uranium 2020", identified resources < USD 260/kgU
++# (USA: EIA estimate, the Red Book only lists part of the US resources).
++# Mine output follows MD building balancing (microchip plant: 6 per level), scaled by deposit size:
++#   deposit >= 400k t: 12 per level | >= 150k t: 9 | >= 50k t: 6 | >= 15k t: 4 | smaller: 3
++#   allowed levels:    >= 50k t: 3 | >= 10k t: 2 | smaller: 1
++# What was already mined in 2000 is in the state history; mines add to it.
++# Uranium is also needed for nuclear warheads (nuclear missiles), naval reactors and
++# nuclear torpedoes (equipment/module resource costs) and for nuclear special projects.
++#
++# In 2000 only ~55 % of the reactor demand came from mines; the rest came from
++# "secondary supply" (down-blended weapons HEU, inventories, re-enriched tails).
++# Therefore an enrichment facility without any uranium still works at 45 %.
++#########################################################################################
++
++@imp_uranium_per_enrichment_facility = 25
++
++# Country scope, called from energy_calc_generation after the enrichment output was calculated
++imp_uranium_enrichment_supply = {
++	set_variable = {
++		uranium_enrichment_need = {
++			value = total_enrichment_facilities
++			multiply = @imp_uranium_per_enrichment_facility
++		}
++	}
++	# resource@uranium is the net balance after the facilities took their share:
++	# a negative value is the missing uranium
++	set_variable = {
++		uranium_supply_ratio = {
++			value = uranium_enrichment_need
++			add = resource@uranium
++			divide = { value = uranium_enrichment_need clamp = { min = 0.01 max = 999999 } }
++			clamp = { min = 0 max = 1 }
++		}
++	}
++	set_variable = {
++		uranium_enrichment_output_factor = {
++			value = uranium_supply_ratio
++			multiply = 0.55
++			add = 0.45
++		}
++	}
++	multiply_variable = { total_nuclear_reactor_fuel_production = uranium_enrichment_output_factor }
++	round_variable = total_nuclear_reactor_fuel_production
++}
++
++# Global, once at game start (on_startup): known uranium deposits.
++#   imp_uranium_deposit_kt   identified resources in this state (thousand t U, for the tooltip)
++#   imp_uranium_mine_slots   how many state uranium mine levels may be built (1-3)
++#   imp_uranium_per_level    uranium each mine level produces (MD balancing, see above)
++imp_uranium_setup_deposits = {
++	# Australia - 2,049,400 t U
++	745 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 1332.1 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 12 } }	# South Australia: Olympic Dam, Beverley, Honeymoon, Four Mile
++	746 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 307.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 9 } }	# Western Australia: Yeelirrie, Kintyre, Mulga Rock, Wiluna
++	747 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 245.9 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 9 } }	# Northern Territory: Ranger, Jabiluka, Angela
++	741 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 164 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 9 } }	# Queensland: Valhalla, Westmoreland, Ben Lomond
++	# Kazakhstan - 969,200 t U
++	717 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 726.9 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 12 } }	# Kazakh Desert: Chu-Sarysu and Syrdarya ISL basins (Inkai, Budenovskoye, Moinkum)
++	716 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 96.9 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Kazakh Central Highlands: Stepnogorsk / Semizbay
++	714 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 96.9 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# North Kazakhstan: Kokshetau district
++	718 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 48.5 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Caspian Basin: Mangyshlak phosphorite
++	# Canada - 873,000 t U
++	756 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 742 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 12 } }	# Saskatchewan: Athabasca Basin (McArthur River, Cigar Lake)
++	758 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 69.8 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Nunavut: Kiggavik
++	1159 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 34.9 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Western Quebec: Matoush
++	759 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 26.2 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Newfoundland: Labrador Central Mineral Belt
++	# Russia - 661,900 t U
++	688 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 330.9 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 9 } }	# Yakutia: Elkon
++	1070 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 165.5 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 9 } }	# Transbaikal: Streltsovsk / Krasnokamensk
++	686 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 79.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Buryatia: Khiagda
++	1071 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 53 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Kurgan: Dalur
++	1107 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 33.1 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Kalmykia: Stepnoye
++	# Namibia - 504,200 t U
++	283 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 453.8 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 12 } }	# Namibian Plateau: Erongo: Rossing, Husab, Langer Heinrich, Trekkopje
++	282 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 50.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Namib-Kalahari: Namib calcretes
++	# South Africa - 447,700 t U
++	276 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 156.7 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 9 } }	# Northwest South Africa: Klerksdorp goldfields
++	277 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 111.9 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Free State: Free State goldfields
++	275 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 67.2 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Gauteng: West Rand / Far West Rand
++	278 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 67.2 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Northern Cape: Karoo
++	281 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 22.4 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Western Cape: Karoo (Beaufort West)
++	273 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 22.4 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Limpopo: Phalaborwa
++	# Niger - 439,400 t U
++	329 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 439.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 12 } }	# Zinder: Arlit, Akouta, Imouraren, Dasa
++	# Brazil - 276,800 t U
++	889 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 138.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Ceara: Itataia / Santa Quiteria
++	887 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 96.9 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Bahia: Lagoa Real / Caetite
++	892 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 27.7 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Amazonas: Pitinga
++	884 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 13.8 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 3 } }	# Minas Gerais: Pocos de Caldas
++	# China - 269,700 t U
++	562 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 67.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Jiangxi: Xiangshan, Taoshan
++	592 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 67.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Xinjiang: Yili basin ISL
++	556 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 67.4 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Nei Mongol: Erdos / Erlian basins
++	534 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 27 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Guangdong: Zhuguang
++	572 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 27 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Hunan: Lantian
++	559 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 13.5 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 3 } }	# Shaanxi: Lantian
++	# India - 195,900 t U
++	460 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 88.2 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# South Andhra Pradesh: Tummalapalle
++	451 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 39.2 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Jharkhand: Jaduguda, Singhbhum
++	458 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 19.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Telangana: Lambapur-Peddagattu
++	980 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 19.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Meghalya: Domiasiat
++	984 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 19.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# West-Rajasthan: Rohil
++	988 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 9.8 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# North Karnataka: Gogi
++	# Ukraine - 186,900 t U
++	1090 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 149.5 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Kirovohrad: Novokostiantynivka, Michurinske
++	1087 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 18.7 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Dnipropetrovsk: Zhovti Vody
++	1086 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 18.7 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Mykolaiv: Mykolaiv ore field
++	# Mongolia - 143,500 t U
++	596 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 143.5 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Eastern Mongolia: Dornod, Gurvanbulag, Kharaat, Ulziit
++	# Uzbekistan - 132,300 t U
++	726 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 132.3 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Transoxiana: Kyzylkum ISL fields (Navoi)
++	# Czech Republic - 119,200 t U
++	117 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 71.5 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Bohemia: Straz pod Ralskem
++	118 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 47.7 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Morovia: Rozna
++	# Greenland - 114,000 t U
++	1161 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 114 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Kitaa: Kvanefjeld, Ilimaussaq
++	# United States - 472,000 t U
++	789 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 141.6 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Wyoming: Powder River, Great Divide basins
++	803 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 118 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# New Mexico: Grants mineral belt
++	805 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 47.2 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Utah: White Mesa / Henry Mountains
++	806 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 47.2 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Arizona: Breccia pipes
++	800 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 47.2 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Texas: South Texas ISL
++	804 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 23.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Colorado: Uravan belt
++	785 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 23.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Nebraska: Crow Butte
++	773 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 23.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Virginia: Coles Hill
++	# Poland - 100,000 t U
++	1014 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 60 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Podlasie: Rajsk
++	626 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 40 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Lower Silesia: Sudetes (Kowary)
++	# Botswana - 87,200 t U
++	287 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 87.2 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Botswana Central District: Letlhakane
++	# Tanzania - 58,200 t U
++	1048 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 46.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# East Ruvuma: Mkuju River (Namtumbo)
++	255 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 11.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 3 } }	# Central Tanzania: Bahi, Manyoni
++	# Jordan - 52,500 t U
++	212 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 52.5 } set_variable = { imp_uranium_mine_slots = 3 } set_variable = { imp_uranium_per_level = 6 } }	# Southern Jordan: Central Jordan uranium district
++	# Argentina - 39,800 t U
++	454 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 19.9 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Patagonia: Cerro Solo (Chubut)
++	443 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 19.9 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Cuyo: Sierra Pintada (Mendoza)
++	# Peru - 33,400 t U
++	902 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 33.4 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Peruvian Andes: Macusani plateau (Puno)
++	# Central African Republic - 32,000 t U
++	325 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 32 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Bangassou: Bakouma
++	# Zambia - 31,000 t U
++	295 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 18.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Western Zambia: Lumwana
++	292 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 12.4 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 3 } }	# Lusaka: Mutanga, Siavonga
++	# Spain - 28,500 t U
++	90 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 25.6 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Castilla: Salamanca (Retortillo, Saelices)
++	970 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 2.9 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Castilla-La Manca: Ciudad Real
++	# Mauritania - 24,500 t U
++	371 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 24.5 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Mauritanian Sahara: Tiris
++	# Algeria - 19,500 t U
++	381 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 19.5 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Tamanrasset: Hoggar (Timgaouine, Abankor)
++	# Slovakia - 15,500 t U
++	120 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 15.5 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 4 } }	# Eastern Slovakia: Kuriskova (Kosice)
++	# Malawi - 14,300 t U
++	259 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 14.3 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 3 } }	# Northern Malawi: Kayelekera
++	# Turkey - 13,600 t U
++	159 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 8.2 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Ankara: Yozgat-Sorgun
++	156 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 5.4 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Izmir: Manisa-Koprubasi
++	# Hungary - 13,500 t U
++	123 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 13.5 } set_variable = { imp_uranium_mine_slots = 2 } set_variable = { imp_uranium_per_level = 3 } }	# Transdanubia: Mecsek
++	# Sweden - 9,600 t U
++	33 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 5.8 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Norrland: Haggan, Jamtland
++	35 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 3.8 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Gotaland: Billingen alum shale
++	# Slovenia - 9,200 t U
++	124 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 9.2 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Carniola: Zirovski vrh
++	# Mali - 8,900 t U
++	1166 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 8.9 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Kayes: Falea
++	# Indonesia - 8,400 t U
++	640 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 8.4 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Kalimantan: Kalan
++	# Somalia - 7,600 t U
++	975 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 7.6 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Galmudug: Mudug calcretes
++	# Iran - 7,500 t U
++	1147 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 7.5 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Yazd: Saghand
++	# Germany - 7,000 t U
++	44 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 7 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Sachsen: Wismut / Erzgebirge
++	# Greece - 7,000 t U
++	136 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 7 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Eastern Macedonia: Paranesti
++	# Portugal - 7,000 t U
++	1055 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 3.5 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Northern Portugal: Urgeirica (Viseu/Guarda)
++	1056 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 3.5 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Alentejo: Nisa
++	# Japan - 6,600 t U
++	611 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 6.6 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Chugoku: Ningyo-toge
++	# Romania - 6,600 t U
++	152 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 4 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Moldavia: Crucea
++	909 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 2.6 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Northern Transylvania: Bihor (Baita)
++	# Italy - 6,100 t U
++	80 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 6.1 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Lombardia: Novazza, Val Vedello
++	# Gabon - 5,800 t U
++	1004 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 5.8 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Gabon Highlands: Mounana, Bagombe
++	# Mexico - 5,000 t U
++	830 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 5 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Chihuahua: Pena Blanca
++	# Vietnam - 3,900 t U
++	521 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 3.9 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Central Vietnam: Pa Lua - Pa Rong (Quang Nam)
++	# Paraguay - 3,600 t U
++	895 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 3.6 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Paraguay: Yuty
++	# DR Congo - 2,700 t U
++	306 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 2.7 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Katanga: Shinkolobwe
++	# Chad - 2,400 t U
++	326 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 2.4 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Logone: Mayo-Kebbi
++	# Egypt - 1,900 t U
++	1198 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 1.9 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Eastern Desert: El Missikat, Gattar
++	# Chile - 1,400 t U
++	472 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 1.4 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Atacama: Atacama
++	# Zimbabwe - 1,400 t U
++	290 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 1.4 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Mashonaland: Kanyemba
++	# Finland - 1,200 t U
++	103 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 1.2 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Savo-Karjala: Talvivaara, Eno
++	# Senegal - 1,100 t U
++	1001 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 1.1 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Tambacounda: Saraya
++	# Pakistan (est.) - 3,000 t U
++	573 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 3 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Southern Punjab: Dera Ghazi Khan (Baghalchur, Qabul Khel)
++	# North Korea (est.) - 5,000 t U
++	603 = { imp_uranium_add_deposit = yes set_variable = { imp_uranium_deposit_kt = 5 } set_variable = { imp_uranium_mine_slots = 1 } set_variable = { imp_uranium_per_level = 3 } }	# Hwanghae: Pyongsan
++}
++
++# State scope: mark this state as a uranium deposit
++imp_uranium_add_deposit = {
++	if = { limit = { NOT = { has_variable = imp_uranium_levels_applied } } set_variable = { imp_uranium_levels_applied = 0 } }
++	if = { limit = { NOT = { has_variable = imp_uranium_mine_output } } set_variable = { imp_uranium_mine_output = 0 } }
++	if = { limit = { NOT = { has_variable = imp_uranium_mine_levels } } set_variable = { imp_uranium_mine_levels = 0 } }
++	if = {
++		limit = { NOT = { has_dynamic_modifier = { modifier = imp_uranium_deposit } } }
++		add_dynamic_modifier = { modifier = imp_uranium_deposit }
++	}
++}
++
++# State scope: use the engine's state building count for output and the map tooltip.
++imp_uranium_count_mine_levels = {
++	set_variable = { imp_uranium_mine_levels = building_level@uranium_mine }
++}
++
++# State scope: reserve unavailable levels in the mine's construction group.
++# Both buildings have state_max = 3, so the native menu sees 3 - reserved levels.
++# Terrain caps do not restrict state buildings. Only the actual modifier unlocks slots.
++# Fixed set levels also make the operation idempotent on load and daily updates.
++imp_uranium_sync_mine_slots = {
++	if = {
++		limit = { NOT = { has_dynamic_modifier = { modifier = imp_uranium_deposit } } }
++		if = { limit = { uranium_mine > 0 } remove_building = { type = uranium_mine level = 3 } }
++		if = { limit = { imp_uranium_reserved_slots < 3 } set_building_level = { type = imp_uranium_reserved_slots level = 3 instant_build = yes } }
++	}
++	else_if = {
++		limit = { check_variable = { imp_uranium_mine_slots > 2 } }
++		if = { limit = { imp_uranium_reserved_slots > 0 } remove_building = { type = imp_uranium_reserved_slots level = 3 } }
++	}
++	else_if = {
++		limit = { check_variable = { imp_uranium_mine_slots > 1 } }
++		if = { limit = { uranium_mine > 2 } set_building_level = { type = uranium_mine level = 2 instant_build = yes } }
++		if = { limit = { NOT = { check_variable = { building_level@imp_uranium_reserved_slots = 1 } } } set_building_level = { type = imp_uranium_reserved_slots level = 1 instant_build = yes } }
++	}
++	else_if = {
++		limit = { check_variable = { imp_uranium_mine_slots > 0 } }
++		if = { limit = { uranium_mine > 1 } set_building_level = { type = uranium_mine level = 1 instant_build = yes } }
++		if = { limit = { NOT = { check_variable = { building_level@imp_uranium_reserved_slots = 2 } } } set_building_level = { type = imp_uranium_reserved_slots level = 2 instant_build = yes } }
++	}
++	else = {
++		if = { limit = { uranium_mine > 0 } remove_building = { type = uranium_mine level = 3 } }
++		if = { limit = { imp_uranium_reserved_slots < 3 } set_building_level = { type = imp_uranium_reserved_slots level = 3 instant_build = yes } }
++	}
++}
++
++# Country scope, weekly: output of the uranium mines.
++# The mines add real state resources (add_resource), so Resource Gain Efficiency, excavation techs,
++# infrastructure, damage etc. apply to uranium exactly like to every other resource.
++# output = min(mine levels, allowed levels of the deposit) x output per level
++imp_uranium_update_mines = {
++	every_owned_state = {
++		limit = { has_variable = imp_uranium_per_level }
++		imp_uranium_sync_mine_slots = yes
++		imp_uranium_count_mine_levels = yes
++		imp_uranium_sync_mine_output = yes
++	}
++	# Safety net: a mine in a state without a deposit produces nothing and is removed again
++	every_owned_state = {
++		limit = {
++			NOT = { has_variable = imp_uranium_per_level }
++			uranium_mine > 0
++		}
++		remove_building = { type = uranium_mine level = 3 }
++	}
++	set_variable = {
++		uranium_mine_output_total = {
++			value = 0
++			every_collection = {
++				named_collection = controlled_states_collection
++				add = imp_uranium_mine_output
++			}
++		}
++	}
++	if = {
++		limit = { is_ai = yes }
++		imp_uranium_ai_build_mines = yes
++	}
++}
++
++# State scope: bring the uranium state resource in line with the built mine levels
++imp_uranium_sync_mine_output = {
++	set_variable = { imp_uranium_levels_eff = imp_uranium_mine_levels }
++	if = { limit = { NOT = { has_dynamic_modifier = { modifier = imp_uranium_deposit } } } set_variable = { imp_uranium_levels_eff = 0 } }
++	if = {
++		limit = { check_variable = { imp_uranium_levels_eff > imp_uranium_mine_slots } }
++		set_variable = { imp_uranium_levels_eff = imp_uranium_mine_slots }
++	}
++	# output per level was changed (rebalance): take the old amounts out first
++	if = {
++		limit = {
++			check_variable = { imp_uranium_levels_applied > 0 }
++			NOT = { check_variable = { imp_uranium_per_level_applied = imp_uranium_per_level } }
++		}
++		set_temp_variable = { imp_u_amt = imp_uranium_per_level_applied }
++		if = { limit = { check_variable = { imp_uranium_levels_applied > 0 } } imp_uranium_remove_amount = yes }
++		if = { limit = { check_variable = { imp_uranium_levels_applied > 1 } } imp_uranium_remove_amount = yes }
++		if = { limit = { check_variable = { imp_uranium_levels_applied > 2 } } imp_uranium_remove_amount = yes }
++		set_variable = { imp_uranium_levels_applied = 0 }
++	}
++	set_variable = { imp_uranium_per_level_applied = imp_uranium_per_level }
++	set_temp_variable = { imp_u_amt = imp_uranium_per_level }
++	imp_uranium_sync_one_level = yes
++	imp_uranium_sync_one_level = yes
++	imp_uranium_sync_one_level = yes
++	set_variable = { imp_uranium_mine_output = imp_uranium_levels_applied }
++	multiply_variable = { imp_uranium_mine_output = imp_uranium_per_level }
++}
++
++imp_uranium_sync_one_level = {
++	if = {
++		limit = { check_variable = { imp_uranium_levels_eff > imp_uranium_levels_applied } }
++		imp_uranium_add_amount = yes
++		add_to_variable = { imp_uranium_levels_applied = 1 }
++	}
++	else_if = {
++		limit = { check_variable = { imp_uranium_levels_eff < imp_uranium_levels_applied } }
++		imp_uranium_remove_amount = yes
++		subtract_from_variable = { imp_uranium_levels_applied = 1 }
++	}
++}
++
++# State scope: add / remove temp variable imp_u_amt uranium (1-15) to the state resources
++imp_uranium_add_amount = {
++	if = { limit = { check_variable = { imp_u_amt > 14.5 } } add_resource = { type = uranium amount = 15 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 13.5 } } add_resource = { type = uranium amount = 14 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 12.5 } } add_resource = { type = uranium amount = 13 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 11.5 } } add_resource = { type = uranium amount = 12 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 10.5 } } add_resource = { type = uranium amount = 11 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 9.5 } } add_resource = { type = uranium amount = 10 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 8.5 } } add_resource = { type = uranium amount = 9 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 7.5 } } add_resource = { type = uranium amount = 8 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 6.5 } } add_resource = { type = uranium amount = 7 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 5.5 } } add_resource = { type = uranium amount = 6 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 4.5 } } add_resource = { type = uranium amount = 5 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 3.5 } } add_resource = { type = uranium amount = 4 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 2.5 } } add_resource = { type = uranium amount = 3 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 1.5 } } add_resource = { type = uranium amount = 2 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 0.5 } } add_resource = { type = uranium amount = 1 show_state_in_tooltip = no } }
++}
++
++imp_uranium_remove_amount = {
++	if = { limit = { check_variable = { imp_u_amt > 14.5 } } add_resource = { type = uranium amount = -15 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 13.5 } } add_resource = { type = uranium amount = -14 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 12.5 } } add_resource = { type = uranium amount = -13 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 11.5 } } add_resource = { type = uranium amount = -12 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 10.5 } } add_resource = { type = uranium amount = -11 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 9.5 } } add_resource = { type = uranium amount = -10 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 8.5 } } add_resource = { type = uranium amount = -9 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 7.5 } } add_resource = { type = uranium amount = -8 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 6.5 } } add_resource = { type = uranium amount = -7 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 5.5 } } add_resource = { type = uranium amount = -6 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 4.5 } } add_resource = { type = uranium amount = -5 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 3.5 } } add_resource = { type = uranium amount = -4 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 2.5 } } add_resource = { type = uranium amount = -3 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 1.5 } } add_resource = { type = uranium amount = -2 show_state_in_tooltip = no } }
++	else_if = { limit = { check_variable = { imp_u_amt > 0.5 } } add_resource = { type = uranium amount = -1 show_state_in_tooltip = no } }
++}
++
++# Country scope (AI): the AI plans uranium mines like a real government would - when it needs
++# uranium for its own nuclear programme, when the market price is high, or when it owns a rich
++# deposit worth exporting. Construction goes into the normal construction queue.
++imp_uranium_ai_build_mines = {
++	if = {
++		limit = {
++			NOT = { has_country_flag = imp_ai_uranium_mine_cooldown }
++			num_of_available_civilian_factories > 4
++			ai_has_major_economic_problems = no
++			OR = {
++				check_variable = { resource@uranium < 0 }
++				check_variable = { global.uranium_price > 0.25 }
++				AND = {
++					check_variable = { total_enrichment_facilities > 0 }
++					check_variable = { uranium_supply_ratio < 1 }
++				}
++				AND = {
++					check_variable = { global.uranium_price > 0.15 }
++					num_of_available_civilian_factories > 9
++					any_owned_state = {
++						has_dynamic_modifier = { modifier = imp_uranium_deposit }
++						check_variable = { imp_uranium_per_level > 4 }
++						check_variable = { imp_uranium_mine_slots > building_level@uranium_mine }
++						can_construct_building = uranium_mine
++					}
++				}
++			}
++			NOT = {
++				AND = {
++					check_variable = { global.uranium_price < 0.08 }
++					check_variable = { resource@uranium > 0 }
++				}
++			}
++			any_owned_state = {
++				is_controlled_by = ROOT
++				has_dynamic_modifier = { modifier = imp_uranium_deposit }
++				has_variable = imp_uranium_per_level
++				check_variable = { imp_uranium_mine_slots > building_level@uranium_mine }
++				can_construct_building = uranium_mine
++				NOT = { has_state_flag = imp_uranium_mine_queued }
++			}
++		}
++		set_country_flag = { flag = imp_ai_uranium_mine_cooldown value = 1 days = 90 }
++		# the richest free deposit first
++		set_temp_variable = { imp_best_per_level = 0 }
++		every_owned_state = {
++			limit = {
++				is_controlled_by = ROOT
++				has_dynamic_modifier = { modifier = imp_uranium_deposit }
++				has_variable = imp_uranium_per_level
++				check_variable = { imp_uranium_mine_slots > building_level@uranium_mine }
++				can_construct_building = uranium_mine
++				NOT = { has_state_flag = imp_uranium_mine_queued }
++				check_variable = { imp_uranium_per_level > imp_best_per_level }
++			}
++			set_temp_variable = { imp_best_per_level = imp_uranium_per_level }
++			set_temp_variable = { imp_best_state = THIS }
++		}
++		var:imp_best_state = {
++			imp_uranium_queue_mine = yes
++		}
++	}
++}
++
++# State scope: queue one state mine level, after checking the deposit and native cap.
++imp_uranium_queue_mine = {
++	imp_uranium_sync_mine_slots = yes
++	if = {
++		limit = {
++			has_dynamic_modifier = { modifier = imp_uranium_deposit }
++			has_variable = imp_uranium_per_level
++			check_variable = { imp_uranium_mine_slots > building_level@uranium_mine }
++			can_construct_building = uranium_mine
++		}
++		set_state_flag = { flag = imp_uranium_mine_queued value = 1 days = 365 }
++		add_building_construction = { type = uranium_mine level = 1 instant_build = no }
++	}
++}

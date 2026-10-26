@@ -1,0 +1,683 @@
+# IMPERIA CW — Cold War: Spain 1970 succession and constitutional government.
+COLDWAR_SPR_initialize = {
+if = { limit = { COLDWAR_SPR_campaign = yes }
+ COLDWAR_SPR_initialize_core = yes
+ COLDWAR_SPR_initialize_agreements = yes
+ if = { limit = { NOT = { has_country_flag = COLDWAR_SPR_v2_politics_initialized } }
+  set_country_flag = COLDWAR_SPR_v2_politics_initialized
+  set_variable = { COLDWAR_SPR_capacity = 75 }
+  set_variable = { COLDWAR_SPR_preparedness = 20 }
+  set_variable = { COLDWAR_SPR_observed_ruling_party = ruling_party }
+  set_variable = { COLDWAR_SPR_government_generation = 0 }
+  set_variable = { COLDWAR_SPR_health_month = 0 }
+  if = { limit = { check_variable = { ruling_party = 21 } } set_country_flag = COLDWAR_SPR_franco_incumbency }
+ }
+ COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_clamp_health = {
+clamp_variable = { var = COLDWAR_SPR_capacity min = 0 max = 100 }
+clamp_variable = { var = COLDWAR_SPR_preparedness min = 0 max = 100 }
+}
+
+COLDWAR_SPR_sync_health = {
+COLDWAR_SPR_clamp_health = yes
+remove_ideas = COLDWAR_SPR_caudillo_last_years
+remove_ideas = COLDWAR_SPR_capacity_early remove_ideas = COLDWAR_SPR_capacity_late remove_ideas = COLDWAR_SPR_capacity_critical remove_ideas = COLDWAR_SPR_capacity_late_delegated remove_ideas = COLDWAR_SPR_capacity_critical_delegated
+if = { limit = { COLDWAR_SPR_franco_in_office = yes }
+ if = { limit = { check_variable = { COLDWAR_SPR_capacity < 25 } }
+  if = { limit = { OR = { has_country_flag = COLDWAR_SPR_delegation_active has_country_flag = COLDWAR_SPR_cabinet_delegated } } add_ideas = COLDWAR_SPR_capacity_critical_delegated }
+  else = { add_ideas = COLDWAR_SPR_capacity_critical }
+ }
+ else_if = { limit = { check_variable = { COLDWAR_SPR_capacity < 50 } }
+  if = { limit = { OR = { has_country_flag = COLDWAR_SPR_delegation_active has_country_flag = COLDWAR_SPR_cabinet_delegated } } add_ideas = COLDWAR_SPR_capacity_late_delegated }
+  else = { add_ideas = COLDWAR_SPR_capacity_late }
+ }
+ else = { add_ideas = COLDWAR_SPR_capacity_early }
+}
+else = { remove_ideas = COLDWAR_SPR_personal_command_spirit }
+}
+
+COLDWAR_SPR_health_monthly = {
+if = { limit = { COLDWAR_SPR_franco_in_office = yes }
+ if = { limit = { has_country_flag = COLDWAR_SPR_serious_illness } subtract_from_variable = { COLDWAR_SPR_capacity = 1.5 } }
+ else = { subtract_from_variable = { COLDWAR_SPR_capacity = 0.5 } }
+ COLDWAR_SPR_sync_health = yes
+}
+}
+
+COLDWAR_SPR_health_daily = {
+if = { limit = { date > 1973.12.19 NOT = { has_country_flag = COLDWAR_SPR_carrero_crisis_resolved } }
+ set_country_flag = COLDWAR_SPR_carrero_crisis_resolved
+ set_country_flag = COLDWAR_SPR_carrero_dead
+ country_event = { id = COLDWAR_SPR_v2_politics.1 }
+}
+if = { limit = { COLDWAR_SPR_franco_in_office = yes date > 1974.7.8 NOT = { has_country_flag = COLDWAR_SPR_serious_illness } }
+ set_country_flag = COLDWAR_SPR_serious_illness
+ subtract_from_variable = { COLDWAR_SPR_capacity = 25 }
+ country_event = { id = COLDWAR_SPR_v2_politics.2 }
+}
+if = { limit = { COLDWAR_SPR_franco_in_office = yes date > 1974.7.29 has_country_flag = COLDWAR_SPR_serious_illness NOT = { has_country_flag = COLDWAR_SPR_partial_recovery } }
+ set_country_flag = COLDWAR_SPR_partial_recovery
+ add_to_variable = { COLDWAR_SPR_capacity = 10 }
+}
+if = { limit = { date > 1975.10.14 NOT = { has_country_flag = COLDWAR_SPR_franco_departed } }
+ if = { limit = { NOT = { has_country_flag = COLDWAR_SPR_terminal_crisis } }
+  set_country_flag = COLDWAR_SPR_terminal_crisis
+  set_variable = { COLDWAR_SPR_capacity = 10 }
+  country_event = { id = COLDWAR_SPR_v2_politics.3 }
+ }
+ if = { limit = { date > 1975.11.19 } set_country_flag = COLDWAR_SPR_franco_dead COLDWAR_SPR_franco_departure = yes }
+ else_if = { limit = { date > 1975.10.29 } random = { chance = 5 set_country_flag = COLDWAR_SPR_franco_dead COLDWAR_SPR_franco_departure = yes } }
+}
+COLDWAR_SPR_sync_health = yes
+}
+
+COLDWAR_SPR_franco_departure = {
+if = { limit = { NOT = { has_country_flag = COLDWAR_SPR_franco_departed } }
+ set_country_flag = COLDWAR_SPR_franco_departed
+ clr_country_flag = COLDWAR_SPR_delegation_active
+ if = { limit = { check_variable = { COLDWAR_SPR_preparedness >= 80 } } add_stability = -0.05 }
+ else_if = { limit = { check_variable = { COLDWAR_SPR_preparedness >= 50 } } add_stability = -0.10 }
+ else = { add_stability = -0.20 add_timed_idea = { idea = COLDWAR_SPR_succession_disruption days = 180 } }
+ COLDWAR_SPR_sync_health = yes
+ if = { limit = { check_variable = { ruling_party = 21 } has_elections = no }
+  set_temp_variable = { rul_party_temp = 23 }
+  set_temp_variable = { disable_elections = 1 }
+  change_ruling_party_effect = yes
+ }
+ COLDWAR_SPR_refresh_politics = yes
+ if = { limit = { has_country_flag = COLDWAR_SPR_franco_dead } country_event = { id = COLDWAR_SPR_v2_politics.4 } }
+ else = { country_event = { id = COLDWAR_SPR_v2_politics.5 } }
+}
+}
+
+COLDWAR_SPR_remove_legal_packages = {
+remove_ideas = COLDWAR_SPR_legal_fundamental
+remove_ideas = COLDWAR_SPR_legal_royal
+remove_ideas = COLDWAR_SPR_legal_parliamentary
+clr_country_flag = COLDWAR_SPR_legal_authoritarian
+clr_country_flag = COLDWAR_SPR_legal_royal
+clr_country_flag = COLDWAR_SPR_legal_representative
+}
+
+COLDWAR_SPR_enact_legal_fundamental = {
+COLDWAR_SPR_remove_legal_packages = yes
+set_country_flag = COLDWAR_SPR_legal_authoritarian
+add_ideas = COLDWAR_SPR_legal_fundamental
+set_country_flag = COLDWAR_SPR_settlement_recorded
+set_variable = { COLDWAR_SPR_settlement_generation = COLDWAR_SPR_government_generation }
+set_temp_variable = { rul_party_temp = 22 }
+set_temp_variable = { disable_elections = 1 }
+change_ruling_party_effect = yes
+set_variable = { COLDWAR_SPR_settlement_generation = COLDWAR_SPR_government_generation }
+clr_country_flag = COLDWAR_SPR_revision_in_progress
+COLDWAR_SPR_refresh_politics = yes
+}
+
+COLDWAR_SPR_enact_legal_royal = {
+COLDWAR_SPR_remove_legal_packages = yes
+set_country_flag = COLDWAR_SPR_legal_royal
+add_ideas = COLDWAR_SPR_legal_royal
+set_country_flag = COLDWAR_SPR_settlement_recorded
+set_variable = { COLDWAR_SPR_settlement_generation = COLDWAR_SPR_government_generation }
+set_temp_variable = { rul_party_temp = 23 }
+set_temp_variable = { disable_elections = 1 }
+change_ruling_party_effect = yes
+set_variable = { COLDWAR_SPR_settlement_generation = COLDWAR_SPR_government_generation }
+clr_country_flag = COLDWAR_SPR_revision_in_progress
+COLDWAR_SPR_refresh_politics = yes
+}
+
+COLDWAR_SPR_enact_legal_parliamentary = {
+COLDWAR_SPR_remove_legal_packages = yes
+set_country_flag = COLDWAR_SPR_legal_representative
+add_ideas = COLDWAR_SPR_legal_parliamentary
+set_country_flag = COLDWAR_SPR_settlement_recorded
+set_variable = { COLDWAR_SPR_settlement_generation = COLDWAR_SPR_government_generation }
+set_politics = { elections_allowed = yes }
+clr_country_flag = COLDWAR_SPR_revision_in_progress
+COLDWAR_SPR_refresh_politics = yes
+}
+
+COLDWAR_SPR_legalise_parties = {
+clr_country_flag = partyall_banned
+clr_country_flag = generic_election_killswitch
+resize_array = { array = party_banned_array size = 24 value = 0 }
+for_loop_effect = { start = 0 end = 24 value = COLDWAR_SPR_party_index set_variable = { party_banned_array^COLDWAR_SPR_party_index = 0 } }
+set_country_flag = COLDWAR_SPR_parties_legal
+update_dirty_politicsview_expanded = yes
+}
+
+COLDWAR_SPR_begin_legal_reform = {
+if = { limit = { NOT = { has_country_flag = COLDWAR_SPR_reform_in_progress } }
+ set_country_flag = COLDWAR_SPR_reform_in_progress
+ set_variable = { COLDWAR_SPR_reform_generation = COLDWAR_SPR_government_generation }
+ country_event = { id = COLDWAR_SPR_v2_politics.10 }
+}
+}
+
+COLDWAR_SPR_call_constituent_election = {
+if = { limit = { NOT = { has_country_flag = elections_in_progress } }
+ COLDWAR_SPR_legalise_parties = yes
+ set_politics = { elections_allowed = yes }
+ set_elections_48_months = yes
+ set_country_flag = COLDWAR_SPR_constituent_campaign_pending
+ country_event = { id = MD4_election_campaign.0 days = 1 }
+}
+}
+
+COLDWAR_SPR_succession_preparations_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes NOT = { has_country_flag = COLDWAR_SPR_succession_preparations_delivered } }
+set_country_flag = COLDWAR_SPR_succession_preparations_unlocked
+set_country_flag = COLDWAR_SPR_succession_preparations_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_delegated_cabinet_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_delegated_cabinet_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 10 }
+set_country_flag = COLDWAR_SPR_cabinet_delegated
+set_country_flag = COLDWAR_SPR_delegated_cabinet_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_personal_command_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_personal_command_delivered } }
+subtract_from_variable = { COLDWAR_SPR_preparedness = 15 }
+add_ideas = COLDWAR_SPR_personal_command_spirit
+set_country_flag = COLDWAR_SPR_personal_command_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_cabinet_files_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_cabinet_files_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 5 }
+set_country_flag = COLDWAR_SPR_cabinet_files_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_continuity_protocol_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_continuity_protocol_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 5 }
+set_country_flag = COLDWAR_SPR_continuity_protocol
+set_country_flag = COLDWAR_SPR_continuity_protocol_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_command_protocol_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_command_protocol_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 5 }
+set_country_flag = COLDWAR_SPR_command_protocol
+set_country_flag = COLDWAR_SPR_command_protocol_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_interregnum_plan_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_interregnum_plan_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 10 }
+set_country_flag = COLDWAR_SPR_regency_preparation_unlocked
+set_country_flag = COLDWAR_SPR_interregnum_plan_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_royal_briefing_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_royal_briefing_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 5 }
+set_country_flag = COLDWAR_SPR_royal_briefed
+set_country_flag = COLDWAR_SPR_royal_briefing_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_regency_protocol_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_regency_protocol_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 5 }
+set_country_flag = COLDWAR_SPR_regency_protocol
+set_country_flag = COLDWAR_SPR_regency_protocol_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_prepared_succession_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_in_office = yes NOT = { has_country_flag = COLDWAR_SPR_prepared_succession_delivered } }
+add_to_variable = { COLDWAR_SPR_preparedness = 10 }
+set_country_flag = COLDWAR_SPR_prepared_succession_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_settlement_talks_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_franco_has_left_office = yes NOT = { has_country_flag = COLDWAR_SPR_settlement_talks_delivered } }
+set_country_flag = COLDWAR_SPR_settlement_talks_open
+set_country_flag = COLDWAR_SPR_settlement_talks_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_continuity_settlement_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes NOT = { has_country_flag = COLDWAR_SPR_continuity_settlement_delivered } }
+COLDWAR_SPR_enact_legal_fundamental = yes
+set_country_flag = COLDWAR_SPR_continuity_settlement_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_royal_settlement_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes NOT = { has_country_flag = COLDWAR_SPR_royal_settlement_delivered } }
+COLDWAR_SPR_enact_legal_royal = yes
+set_country_flag = COLDWAR_SPR_royal_settlement_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_political_reform_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes NOT = { has_country_flag = COLDWAR_SPR_political_reform_delivered } }
+COLDWAR_SPR_begin_legal_reform = yes
+set_country_flag = COLDWAR_SPR_political_reform_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_review_settlement_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes NOT = { has_country_flag = COLDWAR_SPR_review_settlement_delivered } }
+set_country_flag = COLDWAR_SPR_revision_unlocked
+set_country_flag = COLDWAR_SPR_review_settlement_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_parliamentary_crown_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_representative_settlement = yes NOT = { has_country_flag = COLDWAR_SPR_parliamentary_crown_delivered } }
+set_country_flag = COLDWAR_SPR_parliamentary_monarchy
+clr_country_flag = COLDWAR_SPR_parliamentary_republic
+COLDWAR_SPR_enact_legal_parliamentary = yes
+set_country_flag = COLDWAR_SPR_parliamentary_crown_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_republic_constituent_vote_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes COLDWAR_SPR_representative_settlement = yes NOT = { has_country_flag = COLDWAR_SPR_republic_constituent_vote_delivered } }
+set_country_flag = COLDWAR_SPR_republic_vote_pending
+set_variable = { COLDWAR_SPR_republic_generation = COLDWAR_SPR_government_generation }
+add_timed_idea = { idea = COLDWAR_SPR_republic_constituent_period days = 180 }
+country_event = { id = COLDWAR_SPR_v2_politics.16 days = 180 }
+set_country_flag = COLDWAR_SPR_republic_constituent_vote_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_legal_succession_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes NOT = { has_country_flag = COLDWAR_SPR_legal_succession_delivered } }
+set_country_flag = COLDWAR_SPR_legal_succession
+set_country_flag = COLDWAR_SPR_legal_succession_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_carlist_bargain_effect = {
+if = { limit = { COLDWAR_SPR_campaign = yes NOT = { has_country_flag = COLDWAR_SPR_carlist_bargain_delivered } }
+set_country_flag = COLDWAR_SPR_carlist_bargain_unlocked
+COLDWAR_SPR_request_carlist_agreement = yes
+set_country_flag = COLDWAR_SPR_carlist_bargain_delivered
+COLDWAR_SPR_clamp_health = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_invalidate_old_mandate = {
+clr_country_flag = COLDWAR_SPR_carlist_traditionalist_agreement
+clr_country_flag = COLDWAR_SPR_carlist_social_federalist_agreement
+clr_country_flag = COLDWAR_SPR_mandate_pending
+clr_country_flag = COLDWAR_SPR_carlist_negotiation_pending
+clr_country_flag = COLDWAR_SPR_revision_in_progress
+clr_country_flag = COLDWAR_SPR_republic_vote_pending
+remove_ideas = COLDWAR_SPR_republic_constituent_period
+if = { limit = { NOT = { has_country_flag = COLDWAR_SPR_constituent_campaign_pending } }
+ clr_country_flag = COLDWAR_SPR_reform_in_progress
+ clr_country_flag = COLDWAR_SPR_reform_referendum_pending
+}
+else = {
+ set_variable = { COLDWAR_SPR_reform_generation = COLDWAR_SPR_government_generation }
+ if = { limit = { has_country_flag = COLDWAR_SPR_constituent_ratification_pending }
+  set_variable = { COLDWAR_SPR_constituent_generation = COLDWAR_SPR_government_generation }
+  country_event = { id = COLDWAR_SPR_v2_politics.12 hours = 1 }
+ }
+}
+}
+
+COLDWAR_SPR_observe_government = {
+if = { limit = { NOT = { check_variable = { COLDWAR_SPR_observed_ruling_party = ruling_party } } }
+ add_to_variable = { COLDWAR_SPR_government_generation = 1 }
+ set_variable = { COLDWAR_SPR_observed_ruling_party = ruling_party }
+ COLDWAR_SPR_invalidate_old_mandate = yes
+ if = { limit = { check_variable = { ruling_party = 1 } } COLDWAR_SPR_request_mandate = yes }
+}
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { OR = { has_country_flag = COLDWAR_SPR_mandate_ucd has_country_flag = COLDWAR_SPR_mandate_ap_pp } } } COLDWAR_SPR_request_mandate = yes }
+}
+
+COLDWAR_SPR_request_mandate = {
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = elections_in_progress } NOT = { has_country_flag = coalition_forming } NOT = { has_country_flag = COLDWAR_SPR_native_campaign_seen } NOT = { has_country_flag = COLDWAR_SPR_mandate_pending } }
+ set_country_flag = COLDWAR_SPR_mandate_pending
+ set_variable = { COLDWAR_SPR_mandate_generation = COLDWAR_SPR_government_generation }
+ country_event = { id = COLDWAR_SPR_v2_politics.20 }
+}
+}
+
+COLDWAR_SPR_request_carlist_agreement = {
+if = { limit = { COLDWAR_SPR_franco_has_left_office = yes NOT = { has_country_flag = COLDWAR_SPR_carlist_negotiation_pending } }
+ set_country_flag = COLDWAR_SPR_carlist_negotiation_pending
+ set_variable = { COLDWAR_SPR_carlist_negotiation_generation = COLDWAR_SPR_government_generation }
+ country_event = { id = COLDWAR_SPR_v2_politics.30 }
+}
+}
+
+COLDWAR_SPR_refresh_politics = {
+if = { limit = { COLDWAR_SPR_campaign = yes }
+ COLDWAR_SPR_observe_government = yes
+ COLDWAR_SPR_sync_health = yes
+ COLDWAR_SPR_sync_programmes = yes
+ COLDWAR_SPR_refresh_agreements = yes
+ COLDWAR_SPR_refresh_colour = yes
+}
+}
+
+COLDWAR_SPR_remember_incumbent = {
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } has_country_leader = { name = "Adolfo Suarez" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ucd < 1 } } set_variable = { COLDWAR_SPR_roster_ucd = 1 } }
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } has_country_leader = { name = "Leopoldo Calvo-Sotelo" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ucd < 2 } } set_variable = { COLDWAR_SPR_roster_ucd = 2 } }
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } has_country_leader = { name = "Union of the Centre Executive" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ucd < 3 } } set_variable = { COLDWAR_SPR_roster_ucd = 3 } }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "Manuel Fraga" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ap_pp < 1 } } set_variable = { COLDWAR_SPR_roster_ap_pp = 1 } }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "José María Aznar" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ap_pp < 2 } } set_variable = { COLDWAR_SPR_roster_ap_pp = 2 } }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "Mariano Rajoy" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ap_pp < 3 } } set_variable = { COLDWAR_SPR_roster_ap_pp = 3 } }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "Pablo Casado" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ap_pp < 4 } } set_variable = { COLDWAR_SPR_roster_ap_pp = 4 } }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "Alberto Núñez Feijóo" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_ap_pp < 5 } } set_variable = { COLDWAR_SPR_roster_ap_pp = 5 } }
+if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Joaquin Garrigues Walker" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_cds < 1 } } set_variable = { COLDWAR_SPR_roster_cds = 1 } }
+if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Joaquín Satrústegui" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_cds < 2 } } set_variable = { COLDWAR_SPR_roster_cds = 2 } }
+if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Adolfo Suarez" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_cds < 3 } } set_variable = { COLDWAR_SPR_roster_cds = 3 } }
+if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Rafael Calvo Ortega" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_cds < 4 } } set_variable = { COLDWAR_SPR_roster_cds = 4 } }
+if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Liberal Executive Committee" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_cds < 5 } } set_variable = { COLDWAR_SPR_roster_cds = 5 } }
+if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Rodolfo Llopis" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_psoe < 1 } } set_variable = { COLDWAR_SPR_roster_psoe = 1 } }
+if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Felipe Gonzalez" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_psoe < 2 } } set_variable = { COLDWAR_SPR_roster_psoe = 2 } }
+if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Joaquín Almunia" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_psoe < 3 } } set_variable = { COLDWAR_SPR_roster_psoe = 3 } }
+if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "José Luis Rodríguez Zapatero" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_psoe < 4 } } set_variable = { COLDWAR_SPR_roster_psoe = 4 } }
+if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Alfredo Pérez Rubalcaba" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_psoe < 5 } } set_variable = { COLDWAR_SPR_roster_psoe = 5 } }
+if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Pedro Sánchez" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_psoe < 6 } } set_variable = { COLDWAR_SPR_roster_psoe = 6 } }
+if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Santiago Carrillo" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_pce_iu < 1 } } set_variable = { COLDWAR_SPR_roster_pce_iu = 1 } }
+if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Gerardo Iglesias" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_pce_iu < 2 } } set_variable = { COLDWAR_SPR_roster_pce_iu = 2 } }
+if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Julio Anguita" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_pce_iu < 3 } } set_variable = { COLDWAR_SPR_roster_pce_iu = 3 } }
+if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Francisco Frutos" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_pce_iu < 4 } } set_variable = { COLDWAR_SPR_roster_pce_iu = 4 } }
+if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Gaspar Llamazares" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_pce_iu < 5 } } set_variable = { COLDWAR_SPR_roster_pce_iu = 5 } }
+if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Cayo Lara" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_pce_iu < 6 } } set_variable = { COLDWAR_SPR_roster_pce_iu = 6 } }
+if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Alberto Garzón" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_pce_iu < 7 } } set_variable = { COLDWAR_SPR_roster_pce_iu = 7 } }
+if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes has_country_leader = { name = "Jose Antonio Giron de Velasco" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_falange < 1 } } set_variable = { COLDWAR_SPR_roster_falange = 1 } }
+if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes has_country_leader = { name = "Jose Utrera Molina" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_falange < 2 } } set_variable = { COLDWAR_SPR_roster_falange = 2 } }
+if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes has_country_leader = { name = "National Council of the Movement" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_falange < 3 } } set_variable = { COLDWAR_SPR_roster_falange = 3 } }
+if = { limit = { check_variable = { ruling_party = 22 } has_country_leader = { name = "Luis Carrero Blanco" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_continuity < 1 } } set_variable = { COLDWAR_SPR_roster_continuity = 1 } }
+if = { limit = { check_variable = { ruling_party = 22 } has_country_leader = { name = "Carlos Arias Navarro" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_continuity < 2 } } set_variable = { COLDWAR_SPR_roster_continuity = 2 } }
+if = { limit = { check_variable = { ruling_party = 22 } has_country_leader = { name = "Rodolfo Martín Villa" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_continuity < 3 } } set_variable = { COLDWAR_SPR_roster_continuity = 3 } }
+if = { limit = { check_variable = { ruling_party = 23 } has_country_leader = { name = "Juan Carlos I" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_crown < 1 } } set_variable = { COLDWAR_SPR_roster_crown = 1 } }
+if = { limit = { check_variable = { ruling_party = 23 } has_country_leader = { name = "Felipe VI" ruling_only = yes } check_variable = { COLDWAR_SPR_roster_crown < 2 } } set_variable = { COLDWAR_SPR_roster_crown = 2 } }
+}
+
+COLDWAR_SPR_advance_native_retirement = {
+if = { limit = { check_variable = { MDCW_HP_native_retirement = 1 } NOT = { has_country_flag = do_not_retire } }
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } has_country_leader = { name = "Adolfo Suarez" ruling_only = yes } date < 2008.5.3 } set_variable = { COLDWAR_SPR_roster_ucd = 2 } }
+else_if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } has_country_leader = { name = "Leopoldo Calvo-Sotelo" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_ucd = 3 } }
+else_if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "Manuel Fraga" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_ap_pp = 2 } }
+else_if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "José María Aznar" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_ap_pp = 3 } }
+else_if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "Mariano Rajoy" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_ap_pp = 4 } }
+else_if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp has_country_leader = { name = "Pablo Casado" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_ap_pp = 5 } }
+else_if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Joaquin Garrigues Walker" ruling_only = yes } date < 1992.3.11 } set_variable = { COLDWAR_SPR_roster_cds = 2 } }
+else_if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Joaquín Satrústegui" ruling_only = yes } date < 2014.3.23 } set_variable = { COLDWAR_SPR_roster_cds = 3 } }
+else_if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Adolfo Suarez" ruling_only = yes } date < 2025.10.28 } set_variable = { COLDWAR_SPR_roster_cds = 4 } }
+else_if = { limit = { check_variable = { ruling_party = 2 } has_country_leader = { name = "Rafael Calvo Ortega" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_cds = 5 } }
+else_if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Rodolfo Llopis" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_psoe = 2 } }
+else_if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Felipe Gonzalez" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_psoe = 3 } }
+else_if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Joaquín Almunia" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_psoe = 4 } }
+else_if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "José Luis Rodríguez Zapatero" ruling_only = yes } date < 2019.5.10 } set_variable = { COLDWAR_SPR_roster_psoe = 5 } }
+else_if = { limit = { check_variable = { ruling_party = 3 } has_country_leader = { name = "Alfredo Pérez Rubalcaba" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_psoe = 6 } }
+else_if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Santiago Carrillo" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_pce_iu = 2 } }
+else_if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Gerardo Iglesias" ruling_only = yes } date < 2020.5.16 } set_variable = { COLDWAR_SPR_roster_pce_iu = 3 } }
+else_if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Julio Anguita" ruling_only = yes } date < 2020.7.26 } set_variable = { COLDWAR_SPR_roster_pce_iu = 4 } }
+else_if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Francisco Frutos" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_pce_iu = 5 } }
+else_if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Gaspar Llamazares" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_pce_iu = 6 } }
+else_if = { limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Cayo Lara" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_pce_iu = 7 } }
+else_if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes has_country_leader = { name = "Jose Antonio Giron de Velasco" ruling_only = yes } date < 2017.4.22 } set_variable = { COLDWAR_SPR_roster_falange = 2 } }
+else_if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes has_country_leader = { name = "Jose Utrera Molina" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_falange = 3 } }
+else_if = { limit = { check_variable = { ruling_party = 22 } has_country_leader = { name = "Luis Carrero Blanco" ruling_only = yes } date < 1989.11.27 } set_variable = { COLDWAR_SPR_roster_continuity = 2 } }
+else_if = { limit = { check_variable = { ruling_party = 22 } has_country_leader = { name = "Carlos Arias Navarro" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_continuity = 3 } }
+else_if = { limit = { check_variable = { ruling_party = 23 } has_country_leader = { name = "Juan Carlos I" ruling_only = yes } date < 2100.1.1 } set_variable = { COLDWAR_SPR_roster_crown = 2 } }
+}
+}
+
+COLDWAR_SPR_set_scenario_leader = {
+if = { limit = { COLDWAR_SPR_franco_in_office = yes check_variable = { ruling_party = 21 } }
+ create_country_leader = { name = "Francisco Franco" picture = "gfx/Leaders/SPR/SPR_Coldwar_FRANCO.dds" expire = "1975.11.20" ideology = Nat_Fascism }
+}
+else = {
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } }
+if = { limit = { OR = { date > 2008.5.2 check_variable = { COLDWAR_SPR_roster_ucd >= 3 } } check_variable = { COLDWAR_SPR_roster_ucd <= 3 } date < 2100.1.1 }
+create_country_leader = { name = "Union of the Centre Executive" ideology = conservatism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_ucd = 3 }
+}
+else_if = { limit = { OR = { date > 1981.2.24 check_variable = { COLDWAR_SPR_roster_ucd >= 2 } } check_variable = { COLDWAR_SPR_roster_ucd <= 2 } date < 2008.5.3 }
+create_country_leader = { name = "Leopoldo Calvo-Sotelo" picture = "gfx/leaders/mdcw_historical_pool/SPR_leopoldo_calvo_sotelo.dds" ideology = conservatism expire = "2008.5.3" }
+set_variable = { COLDWAR_SPR_roster_ucd = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_ucd >= 1 } } check_variable = { COLDWAR_SPR_roster_ucd <= 1 } date < 2014.3.23 }
+create_country_leader = { name = "Adolfo Suarez" picture = "gfx/leaders/mdcw_historical_pool/SPR_adolfo_suarez.dds" ideology = conservatism expire = "2014.3.23" }
+set_variable = { COLDWAR_SPR_roster_ucd = 1 }
+}
+}
+else_if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp }
+if = { limit = { OR = { date > 2022.4.1 check_variable = { COLDWAR_SPR_roster_ap_pp >= 5 } } check_variable = { COLDWAR_SPR_roster_ap_pp <= 5 } date < 2100.1.1 }
+create_country_leader = { name = "Alberto Núñez Feijóo" ideology = conservatism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_ap_pp = 5 }
+}
+else_if = { limit = { OR = { date > 2018.7.20 check_variable = { COLDWAR_SPR_roster_ap_pp >= 4 } } check_variable = { COLDWAR_SPR_roster_ap_pp <= 4 } date < 2100.1.1 }
+create_country_leader = { name = "Pablo Casado" picture = "gfx/leaders/SPR/pablo_casado.dds" ideology = conservatism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_ap_pp = 4 }
+}
+else_if = { limit = { OR = { date > 2004.10.1 check_variable = { COLDWAR_SPR_roster_ap_pp >= 3 } } check_variable = { COLDWAR_SPR_roster_ap_pp <= 3 } date < 2100.1.1 }
+create_country_leader = { name = "Mariano Rajoy" picture = "gfx/leaders/SPR/mariano_rajoy.dds" ideology = conservatism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_ap_pp = 3 }
+}
+else_if = { limit = { OR = { date > 1990.3.31 check_variable = { COLDWAR_SPR_roster_ap_pp >= 2 } } check_variable = { COLDWAR_SPR_roster_ap_pp <= 2 } date < 2100.1.1 }
+create_country_leader = { name = "José María Aznar" picture = "gfx/leaders/SPR/jose_maria_aznar.dds" ideology = conservatism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_ap_pp = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_ap_pp >= 1 } } check_variable = { COLDWAR_SPR_roster_ap_pp <= 1 } date < 2012.1.15 }
+create_country_leader = { name = "Manuel Fraga" picture = "gfx/leaders/mdcw_historical_pool/SPR_manuel_fraga.dds" ideology = conservatism expire = "2012.1.15" }
+set_variable = { COLDWAR_SPR_roster_ap_pp = 1 }
+}
+}
+else_if = { limit = { check_variable = { ruling_party = 2 } }
+if = { limit = { OR = { date > 2025.10.27 check_variable = { COLDWAR_SPR_roster_cds >= 5 } } check_variable = { COLDWAR_SPR_roster_cds <= 5 } date < 2100.1.1 }
+create_country_leader = { name = "Liberal Executive Committee" ideology = liberalism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_cds = 5 }
+}
+else_if = { limit = { OR = { date > 1991.9.28 check_variable = { COLDWAR_SPR_roster_cds >= 4 } } check_variable = { COLDWAR_SPR_roster_cds <= 4 } date < 2025.10.28 }
+create_country_leader = { name = "Rafael Calvo Ortega" ideology = liberalism expire = "2025.10.28" }
+set_variable = { COLDWAR_SPR_roster_cds = 4 }
+}
+else_if = { limit = { OR = { date > 1982.7.28 check_variable = { COLDWAR_SPR_roster_cds >= 3 } } check_variable = { COLDWAR_SPR_roster_cds <= 3 } date < 2014.3.23 }
+create_country_leader = { name = "Adolfo Suarez" picture = "gfx/leaders/mdcw_historical_pool/SPR_adolfo_suarez.dds" ideology = liberalism expire = "2014.3.23" }
+set_variable = { COLDWAR_SPR_roster_cds = 3 }
+}
+else_if = { limit = { OR = { date > 1980.7.27 check_variable = { COLDWAR_SPR_roster_cds >= 2 } } check_variable = { COLDWAR_SPR_roster_cds <= 2 } date < 1992.3.11 }
+create_country_leader = { name = "Joaquín Satrústegui" ideology = liberalism expire = "1992.3.11" }
+set_variable = { COLDWAR_SPR_roster_cds = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_cds >= 1 } } check_variable = { COLDWAR_SPR_roster_cds <= 1 } date < 1980.7.28 }
+create_country_leader = { name = "Joaquin Garrigues Walker" picture = "gfx/leaders/mdcw_historical_pool/SPR_joaquin_garrigues_walker.dds" ideology = liberalism expire = "1980.7.28" }
+set_variable = { COLDWAR_SPR_roster_cds = 1 }
+}
+}
+else_if = { limit = { check_variable = { ruling_party = 3 } }
+if = { limit = { OR = { date > 2014.7.25 check_variable = { COLDWAR_SPR_roster_psoe >= 6 } } check_variable = { COLDWAR_SPR_roster_psoe <= 6 } date < 2100.1.1 }
+create_country_leader = { name = "Pedro Sánchez" ideology = socialism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_psoe = 6 }
+}
+else_if = { limit = { OR = { date > 2012.2.3 check_variable = { COLDWAR_SPR_roster_psoe >= 5 } } check_variable = { COLDWAR_SPR_roster_psoe <= 5 } date < 2019.5.10 }
+create_country_leader = { name = "Alfredo Pérez Rubalcaba" ideology = socialism expire = "2019.5.10" }
+set_variable = { COLDWAR_SPR_roster_psoe = 5 }
+}
+else_if = { limit = { OR = { date > 2000.7.21 check_variable = { COLDWAR_SPR_roster_psoe >= 4 } } check_variable = { COLDWAR_SPR_roster_psoe <= 4 } date < 2100.1.1 }
+create_country_leader = { name = "José Luis Rodríguez Zapatero" ideology = socialism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_psoe = 4 }
+}
+else_if = { limit = { OR = { date > 1997.6.21 check_variable = { COLDWAR_SPR_roster_psoe >= 3 } } check_variable = { COLDWAR_SPR_roster_psoe <= 3 } date < 2100.1.1 }
+create_country_leader = { name = "Joaquín Almunia" ideology = socialism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_psoe = 3 }
+}
+else_if = { limit = { OR = { date > 1974.10.12 check_variable = { COLDWAR_SPR_roster_psoe >= 2 } } check_variable = { COLDWAR_SPR_roster_psoe <= 2 } date < 2100.1.1 }
+create_country_leader = { name = "Felipe Gonzalez" picture = "gfx/leaders/SPR/gonzales.dds" ideology = socialism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_psoe = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_psoe >= 1 } } check_variable = { COLDWAR_SPR_roster_psoe <= 1 } date < 1983.7.22 }
+create_country_leader = { name = "Rodolfo Llopis" ideology = socialism expire = "1983.7.22" }
+set_variable = { COLDWAR_SPR_roster_psoe = 1 }
+}
+}
+else_if = { limit = { check_variable = { ruling_party = 4 } }
+if = { limit = { OR = { date > 2016.6.4 check_variable = { COLDWAR_SPR_roster_pce_iu >= 7 } } check_variable = { COLDWAR_SPR_roster_pce_iu <= 7 } date < 2100.1.1 }
+create_country_leader = { name = "Alberto Garzón" ideology = communist_state expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_pce_iu = 7 }
+}
+else_if = { limit = { OR = { date > 2008.12.13 check_variable = { COLDWAR_SPR_roster_pce_iu >= 6 } } check_variable = { COLDWAR_SPR_roster_pce_iu <= 6 } date < 2100.1.1 }
+create_country_leader = { name = "Cayo Lara" ideology = communist_state expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_pce_iu = 6 }
+}
+else_if = { limit = { OR = { date > 2000.10.28 check_variable = { COLDWAR_SPR_roster_pce_iu >= 5 } } check_variable = { COLDWAR_SPR_roster_pce_iu <= 5 } date < 2100.1.1 }
+create_country_leader = { name = "Gaspar Llamazares" ideology = communist_state expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_pce_iu = 5 }
+}
+else_if = { limit = { OR = { date > 1998.12.6 check_variable = { COLDWAR_SPR_roster_pce_iu >= 4 } } check_variable = { COLDWAR_SPR_roster_pce_iu <= 4 } date < 2020.7.26 }
+create_country_leader = { name = "Francisco Frutos" ideology = communist_state expire = "2020.7.26" }
+set_variable = { COLDWAR_SPR_roster_pce_iu = 4 }
+}
+else_if = { limit = { OR = { date > 1988.2.20 check_variable = { COLDWAR_SPR_roster_pce_iu >= 3 } } check_variable = { COLDWAR_SPR_roster_pce_iu <= 3 } date < 2020.5.16 }
+create_country_leader = { name = "Julio Anguita" ideology = communist_state expire = "2020.5.16" }
+set_variable = { COLDWAR_SPR_roster_pce_iu = 3 }
+}
+else_if = { limit = { OR = { date > 1982.11.6 check_variable = { COLDWAR_SPR_roster_pce_iu >= 2 } } check_variable = { COLDWAR_SPR_roster_pce_iu <= 2 } date < 2100.1.1 }
+create_country_leader = { name = "Gerardo Iglesias" ideology = communist_state expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_pce_iu = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_pce_iu >= 1 } } check_variable = { COLDWAR_SPR_roster_pce_iu <= 1 } date < 2012.9.18 }
+create_country_leader = { name = "Santiago Carrillo" picture = "gfx/leaders/mdcw_historical_pool/SPR_santiago_carrillo.dds" ideology = communist_state expire = "2012.9.18" }
+set_variable = { COLDWAR_SPR_roster_pce_iu = 1 }
+}
+}
+else_if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes }
+if = { limit = { OR = { date > 2017.4.21 check_variable = { COLDWAR_SPR_roster_falange >= 3 } } check_variable = { COLDWAR_SPR_roster_falange <= 3 } date < 2100.1.1 }
+create_country_leader = { name = "National Council of the Movement" ideology = Nat_Fascism expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_falange = 3 }
+}
+else_if = { limit = { OR = { date > 1995.8.21 check_variable = { COLDWAR_SPR_roster_falange >= 2 } } check_variable = { COLDWAR_SPR_roster_falange <= 2 } date < 2017.4.22 }
+create_country_leader = { name = "Jose Utrera Molina" ideology = Nat_Fascism expire = "2017.4.22" }
+set_variable = { COLDWAR_SPR_roster_falange = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_falange >= 1 } } check_variable = { COLDWAR_SPR_roster_falange <= 1 } date < 1995.8.22 }
+create_country_leader = { name = "Jose Antonio Giron de Velasco" picture = "gfx/leaders/mdcw_historical_pool/SPR_jose_antonio_giron_de_velasco.dds" ideology = Nat_Fascism expire = "1995.8.22" }
+set_variable = { COLDWAR_SPR_roster_falange = 1 }
+}
+}
+else_if = { limit = { check_variable = { ruling_party = 22 } }
+if = { limit = { OR = { date > 1989.11.26 check_variable = { COLDWAR_SPR_roster_continuity >= 3 } } check_variable = { COLDWAR_SPR_roster_continuity <= 3 } date < 2100.1.1 }
+create_country_leader = { name = "Rodolfo Martín Villa" ideology = Nat_Autocracy expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_continuity = 3 }
+}
+else_if = { limit = { OR = { date > 1973.12.19 check_variable = { COLDWAR_SPR_roster_continuity >= 2 } } check_variable = { COLDWAR_SPR_roster_continuity <= 2 } date < 1989.11.27 }
+create_country_leader = { name = "Carlos Arias Navarro" picture = "gfx/leaders/mdcw_historical_pool/SPR_carlos_arias_navarro.dds" ideology = Nat_Autocracy expire = "1989.11.27" }
+set_variable = { COLDWAR_SPR_roster_continuity = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_continuity >= 1 } } check_variable = { COLDWAR_SPR_roster_continuity <= 1 } date < 1973.12.20 }
+create_country_leader = { name = "Luis Carrero Blanco" picture = "gfx/leaders/mdcw_historical_pool/SPR_luis_carrero_blanco.dds" ideology = Nat_Autocracy expire = "1973.12.20" }
+set_variable = { COLDWAR_SPR_roster_continuity = 1 }
+}
+}
+else_if = { limit = { check_variable = { ruling_party = 23 } }
+if = { limit = { OR = { date > 2014.6.18 check_variable = { COLDWAR_SPR_roster_crown >= 2 } } check_variable = { COLDWAR_SPR_roster_crown <= 2 } date < 2100.1.1 }
+create_country_leader = { name = "Felipe VI" picture = "gfx/leaders/SPR/felipe_vi.dds" ideology = Monarchist expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_crown = 2 }
+}
+else_if = { limit = { OR = { date > 1969.12.31 check_variable = { COLDWAR_SPR_roster_crown >= 1 } } check_variable = { COLDWAR_SPR_roster_crown <= 1 } date < 2100.1.1 }
+create_country_leader = { name = "Juan Carlos I" picture = "gfx/leaders/SPR/juan_carlos_i.dds" ideology = Monarchist expire = "2100.1.1" }
+set_variable = { COLDWAR_SPR_roster_crown = 1 }
+}
+}
+}
+update_party_name = yes
+COLDWAR_SPR_refresh_politics = yes
+}
+
+COLDWAR_SPR_dispatch_leader = {
+if = { limit = { COLDWAR_SPR_campaign = yes }
+ COLDWAR_SPR_remember_incumbent = yes
+ COLDWAR_SPR_advance_native_retirement = yes
+ if = { limit = { has_country_flag = COLDWAR_SPR_franco_incumbency NOT = { has_country_flag = COLDWAR_SPR_franco_departed } OR = { NOT = { check_variable = { ruling_party = 21 } } AND = { check_variable = { MDCW_HP_native_retirement = 1 } NOT = { has_country_flag = do_not_retire } } } } COLDWAR_SPR_franco_departure = yes }
+ if = { limit = { date > 1975.11.19 NOT = { has_country_flag = COLDWAR_SPR_franco_departed } } set_country_flag = COLDWAR_SPR_franco_dead COLDWAR_SPR_franco_departure = yes }
+ COLDWAR_SPR_observe_government = yes
+ if = { limit = { OR = { COLDWAR_SPR_keep_current_incumbent = yes AND = { COLDWAR_SPR_franco_in_office = yes NOT = { check_variable = { MDCW_HP_native_retirement = 1 } } } } } update_set_politics = yes }
+ else = { kill_country_leader = yes update_set_politics = yes COLDWAR_SPR_set_scenario_leader = yes set_correct_ideology_trait = yes }
+ COLDWAR_SPR_refresh_politics = yes
+}
+}
+
+COLDWAR_SPR_historical_succession = {
+COLDWAR_SPR_remember_incumbent = yes
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } date > 2008.5.2 check_variable = { COLDWAR_SPR_roster_ucd < 3 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 1 } NOT = { has_country_flag = COLDWAR_SPR_mandate_ap_pp } date > 1981.2.24 check_variable = { COLDWAR_SPR_roster_ucd < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp date > 2022.4.1 check_variable = { COLDWAR_SPR_roster_ap_pp < 5 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp date > 2018.7.20 check_variable = { COLDWAR_SPR_roster_ap_pp < 4 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp date > 2004.10.1 check_variable = { COLDWAR_SPR_roster_ap_pp < 3 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 1 } has_country_flag = COLDWAR_SPR_mandate_ap_pp date > 1990.3.31 check_variable = { COLDWAR_SPR_roster_ap_pp < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 2 } date > 2025.10.27 check_variable = { COLDWAR_SPR_roster_cds < 5 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 2 } date > 1991.9.28 check_variable = { COLDWAR_SPR_roster_cds < 4 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 2 } date > 1982.7.28 check_variable = { COLDWAR_SPR_roster_cds < 3 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 2 } date > 1980.7.27 check_variable = { COLDWAR_SPR_roster_cds < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 3 } date > 2014.7.25 check_variable = { COLDWAR_SPR_roster_psoe < 6 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 3 } date > 2012.2.3 check_variable = { COLDWAR_SPR_roster_psoe < 5 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 3 } date > 2000.7.21 check_variable = { COLDWAR_SPR_roster_psoe < 4 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 3 } date > 1997.6.21 check_variable = { COLDWAR_SPR_roster_psoe < 3 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 3 } date > 1974.10.12 check_variable = { COLDWAR_SPR_roster_psoe < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 4 } date > 2016.6.4 check_variable = { COLDWAR_SPR_roster_pce_iu < 7 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 4 } date > 2008.12.13 check_variable = { COLDWAR_SPR_roster_pce_iu < 6 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 4 } date > 2000.10.28 check_variable = { COLDWAR_SPR_roster_pce_iu < 5 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 4 } date > 1998.12.6 check_variable = { COLDWAR_SPR_roster_pce_iu < 4 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 4 } date > 1988.2.20 check_variable = { COLDWAR_SPR_roster_pce_iu < 3 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 4 } date > 1982.11.6 check_variable = { COLDWAR_SPR_roster_pce_iu < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes date > 2017.4.21 check_variable = { COLDWAR_SPR_roster_falange < 3 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 21 } COLDWAR_SPR_franco_has_left_office = yes date > 1995.8.21 check_variable = { COLDWAR_SPR_roster_falange < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 22 } date > 1989.11.26 check_variable = { COLDWAR_SPR_roster_continuity < 3 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 22 } date > 1973.12.19 check_variable = { COLDWAR_SPR_roster_continuity < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+if = { limit = { check_variable = { ruling_party = 23 } date > 2014.6.18 check_variable = { COLDWAR_SPR_roster_crown < 2 } NOT = { COLDWAR_SPR_keep_current_incumbent = yes } } COLDWAR_SPR_dispatch_leader = yes }
+}

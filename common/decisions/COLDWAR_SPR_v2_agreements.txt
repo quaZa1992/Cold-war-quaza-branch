@@ -1,0 +1,252 @@
+# IMPERIA CW — Cold War: Spain V2 development and negotiated agreements.
+COLDWAR_SPR_agreements_category = {
+COLDWAR_SPR_nuclear_investment = {
+icon = obtain_foreign_investment
+cost = 0
+state_target = yes
+on_map_mode = map_and_decisions_view
+targets = { 86 87 88 89 90 91 92 93 94 95 96 97 98 944 968 1040 1041 1042 }
+visible = { has_country_flag = COLDWAR_SPR_unlock_nuclear_investment }
+target_trigger = { FROM = { COLDWAR_SPR_nuclear_investment_site_valid = yes } }
+available = { has_country_flag = COLDWAR_SPR_applied_nuclear_programme has_tech = reactor1 country_can_build_nuclear_reactors = yes
+NOT = { has_active_mission = bankruptcy_incoming_collapse }
+NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+NOT = { has_country_flag = COLDWAR_SPR_project_confirmation_pending } }
+complete_effect = { hidden_effect = { set_country_flag = { flag = COLDWAR_SPR_project_confirmation_pending days = 1 } set_variable = { project_building_type^-1 = 13 }
+set_variable = { project_build_amount^-1 = 1 }
+set_variable = { investments_state_target = FROM.id }
+set_variable = { investments_nation_target = SPR.id }
+FROM = { SPR = { update_gui = yes } }
+set_variable = { COLDWAR_SPR_v2_project_quote = project_monetary_cost^-1 }
+set_variable = { COLDWAR_SPR_v2_project_quoted_days = project_total_construction_duration_display^-1 }
+country_event = { id = COLDWAR_SPR_v2_agreements.1 } } custom_effect_tooltip = COLDWAR_SPR_native_project_terms }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_conventional_investment = {
+icon = obtain_foreign_investment
+cost = 0
+state_target = yes
+on_map_mode = map_and_decisions_view
+targets = { 86 87 88 89 90 91 92 93 94 95 96 97 98 944 968 1040 1041 1042 }
+visible = { has_country_flag = COLDWAR_SPR_unlock_conventional_investment }
+target_trigger = { FROM = { COLDWAR_SPR_conventional_investment_site_valid = yes } }
+available = { has_country_flag = COLDWAR_SPR_applied_conventional_power
+NOT = { has_active_mission = bankruptcy_incoming_collapse }
+NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+NOT = { has_country_flag = COLDWAR_SPR_project_confirmation_pending } }
+complete_effect = { hidden_effect = { set_country_flag = { flag = COLDWAR_SPR_project_confirmation_pending days = 1 } set_variable = { project_building_type^-1 = 12 }
+set_variable = { project_build_amount^-1 = 1 }
+set_variable = { investments_state_target = FROM.id }
+set_variable = { investments_nation_target = SPR.id }
+FROM = { SPR = { update_gui = yes } }
+set_variable = { COLDWAR_SPR_v2_project_quote = project_monetary_cost^-1 }
+set_variable = { COLDWAR_SPR_v2_project_quoted_days = project_total_construction_duration_display^-1 }
+country_event = { id = COLDWAR_SPR_v2_agreements.2 } } custom_effect_tooltip = COLDWAR_SPR_native_project_terms }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_uranium_investment = {
+icon = obtain_foreign_investment
+cost = 0
+state_target = yes
+on_map_mode = map_and_decisions_view
+targets = { 90 }
+visible = { has_country_flag = COLDWAR_SPR_unlock_uranium_investment }
+target_trigger = { FROM = { COLDWAR_SPR_uranium_investment_site_valid = yes } }
+available = { has_country_flag = COLDWAR_SPR_applied_uranium_surveys
+NOT = { has_active_mission = bankruptcy_incoming_collapse }
+NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+NOT = { has_country_flag = COLDWAR_SPR_project_confirmation_pending } }
+complete_effect = { hidden_effect = { set_country_flag = { flag = COLDWAR_SPR_project_confirmation_pending days = 1 } set_variable = { project_building_type^-1 = 15 }
+set_variable = { project_build_amount^-1 = 1 }
+set_variable = { investments_state_target = FROM.id }
+set_variable = { investments_nation_target = SPR.id }
+FROM = { SPR = { update_gui = yes } }
+set_variable = { COLDWAR_SPR_v2_project_quote = project_monetary_cost^-1 }
+set_variable = { COLDWAR_SPR_v2_project_quoted_days = project_total_construction_duration_display^-1 }
+country_event = { id = COLDWAR_SPR_v2_agreements.3 } } custom_effect_tooltip = COLDWAR_SPR_native_project_terms }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_energy_accounts = {
+icon = obtain_foreign_investment
+cost = 0
+visible = { has_country_flag = COLDWAR_SPR_unlock_energy_accounts }
+available = { has_country_flag = COLDWAR_SPR_applied_energy_balance }
+complete_effect = { country_event = { id = COLDWAR_SPR_v2_agreements.10 } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_reserve_law = {
+icon = obtain_foreign_investment
+cost = 0
+visible = { has_country_flag = COLDWAR_SPR_unlock_reserve_law NOT = { has_country_flag = COLDWAR_SPR_v2_reserve_law_used } }
+available = { COLDWAR_SPR_reserve_law_available = yes }
+custom_cost_trigger = { has_political_power > 149 } custom_cost_text = COLDWAR_SPR_law_cost
+complete_effect = { if = { limit = { COLDWAR_SPR_reserve_law_available = yes has_political_power > 149 } add_political_power = -150 increase_conscription_effect = yes set_country_flag = COLDWAR_SPR_v2_reserve_law_used } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_us_bases_offer = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { USA }
+visible = { has_country_flag = COLDWAR_SPR_unlock_us_bases_offer }
+target_trigger = { FROM = { exists = yes OR = { tag = USA } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_us_bases_offer_accepted@FROM } }
+available = { COLDWAR_SPR_v2_us_bases_offer_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_us_bases_offer_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_us_bases_offer_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_limited_access = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { USA }
+visible = { has_country_flag = COLDWAR_SPR_unlock_limited_access }
+target_trigger = { FROM = { exists = yes OR = { tag = USA } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_limited_access_accepted@FROM } }
+available = { COLDWAR_SPR_v2_limited_access_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_limited_access_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_limited_access_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_bilateral_training = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { USA ENG FRA }
+visible = { has_country_flag = COLDWAR_SPR_unlock_bilateral_training }
+target_trigger = { FROM = { exists = yes OR = { tag = USA tag = ENG tag = FRA } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_bilateral_training_accepted@FROM } }
+available = { COLDWAR_SPR_v2_bilateral_training_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_bilateral_training_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_bilateral_training_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_mediterranean_offer = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { ITA FRA POR }
+visible = { has_country_flag = COLDWAR_SPR_unlock_mediterranean_offer }
+target_trigger = { FROM = { exists = yes OR = { tag = ITA tag = FRA tag = POR } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_mediterranean_offer_accepted@FROM } }
+available = { COLDWAR_SPR_v2_mediterranean_offer_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_mediterranean_offer_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_mediterranean_offer_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_european_trade_offer = {
+icon = obtain_foreign_investment
+cost = 0
+target_array = global.EU_member
+visible = { has_country_flag = COLDWAR_SPR_unlock_european_trade_offer }
+target_trigger = { FROM = { exists = yes has_idea = EU_member NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_european_trade_offer_accepted@FROM } }
+available = { COLDWAR_SPR_v2_european_trade_offer_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_european_trade_offer_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_european_trade_offer_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_eec_application = {
+icon = obtain_foreign_investment
+cost = 0
+target_array = global.EU_member
+visible = { has_country_flag = COLDWAR_SPR_unlock_eec_application }
+target_trigger = { FROM = { exists = yes has_idea = EU_member NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_eec_application_accepted@FROM } }
+available = { COLDWAR_SPR_v2_eec_application_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_eec_application_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_eec_application_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_sahara_conference = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { MOR MAU ALG SHA }
+visible = { has_country_flag = COLDWAR_SPR_unlock_sahara_conference }
+target_trigger = { FROM = { exists = yes OR = { tag = MOR tag = MAU tag = ALG tag = SHA } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@FROM } }
+available = { COLDWAR_SPR_v2_sahara_conference_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_conference_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_sahara_conference_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_sahara_transition_offer = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { MOR MAU ALG SHA }
+visible = { has_country_flag = COLDWAR_SPR_unlock_sahara_transition_offer }
+target_trigger = { FROM = { exists = yes OR = { tag = MOR tag = MAU tag = ALG tag = SHA } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_accepted@FROM } }
+available = { COLDWAR_SPR_v2_sahara_transition_offer_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_sahara_transition_offer_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_sahara_presence_offer = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { MOR MAU ALG SHA }
+visible = { has_country_flag = COLDWAR_SPR_unlock_sahara_presence_offer }
+target_trigger = { FROM = { exists = yes OR = { tag = MOR tag = MAU tag = ALG tag = SHA } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_accepted@FROM } }
+available = { COLDWAR_SPR_v2_sahara_presence_offer_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_sahara_presence_offer_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_maghreb_commerce = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { MOR ALG TUN MAU }
+visible = { has_country_flag = COLDWAR_SPR_unlock_maghreb_commerce }
+target_trigger = { FROM = { exists = yes OR = { tag = MOR tag = ALG tag = TUN tag = MAU } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_maghreb_commerce_accepted@FROM } }
+available = { COLDWAR_SPR_v2_maghreb_commerce_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_maghreb_commerce_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_maghreb_commerce_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_iberoamerican_credit = {
+icon = obtain_foreign_investment
+cost = 0
+targets = { ARG BRA CHL BOL COL ECU PAR PRU URG VEN MEX CUB DOM GUA HON NIC COS PAN ELS }
+visible = { has_country_flag = COLDWAR_SPR_unlock_iberoamerican_credit }
+target_trigger = { FROM = { exists = yes OR = { tag = ARG tag = BRA tag = CHL tag = BOL tag = COL tag = ECU tag = PAR tag = PRU tag = URG tag = VEN tag = MEX tag = CUB tag = DOM tag = GUA tag = HON tag = NIC tag = COS tag = PAN tag = ELS } NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_accepted@FROM } }
+available = { COLDWAR_SPR_v2_iberoamerican_credit_sender_live = yes NOT = { has_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_pending@FROM } }
+complete_effect = { custom_effect_tooltip = COLDWAR_SPR_proposal_sent hidden_effect = { COLDWAR_SPR_v2_iberoamerican_credit_send = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_v2_ec_legal_adjustment = {
+icon = obtain_foreign_investment
+cost = 0
+visible = { has_country_flag = COLDWAR_SPR_unlock_eec_application NOT = { has_country_flag = COLDWAR_SPR_v2_ec_legal_ready } }
+available = { has_government = democratic has_elections = yes has_country_flag = COLDWAR_SPR_applied_european_application }
+days_remove = 70 cancel_trigger = { OR = { NOT = { has_government = democratic } NOT = { has_elections = yes } } }
+remove_effect = { if = { limit = { has_government = democratic has_elections = yes } set_country_flag = COLDWAR_SPR_v2_ec_legal_ready COLDWAR_SPR_v2_ec_update_candidate = yes } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_nato_application = {
+icon = obtain_foreign_investment
+cost = 0
+visible = { has_country_flag = COLDWAR_SPR_unlock_nato_application NOT = { has_idea = NATO_member } }
+available = { has_country_flag = COLDWAR_SPR_applied_atlantic_application has_government = democratic has_elections = yes can_join_NATO = yes
+any_other_country = { has_idea = NATO_member is_faction_leader = yes } NOT = { has_country_flag = COLDWAR_SPR_v2_nato_retry } }
+complete_effect = { if = { limit = { has_government = democratic has_elections = yes can_join_NATO = yes } clr_country_flag = COLDWAR_SPR_v2_nato_leader_approved clear_variable = COLDWAR_SPR_v2_nato_sponsor set_country_flag = { flag = COLDWAR_SPR_v2_nato_pending days = 90 } NATO_join_via_event = yes set_country_flag = { flag = COLDWAR_SPR_v2_nato_retry days = 90 } } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_v2_sahara_settlement = {
+icon = obtain_foreign_investment
+cost = 0
+visible = { has_country_flag = COLDWAR_SPR_unlock_sahara_transition_offer NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_settled } }
+available = { COLDWAR_SPR_v2_sahara_transition_offer_all_consented = yes }
+complete_effect = { if = { limit = { COLDWAR_SPR_v2_sahara_transition_offer_all_consented = yes } if = { limit = { MOR = { exists = yes } } diplomatic_relation = { country = MOR relation = non_aggression_pact active = yes } }
+if = { limit = { MAU = { exists = yes } } diplomatic_relation = { country = MAU relation = non_aggression_pact active = yes } }
+if = { limit = { ALG = { exists = yes } } diplomatic_relation = { country = ALG relation = non_aggression_pact active = yes } }
+if = { limit = { SHA = { exists = yes } } diplomatic_relation = { country = SHA relation = non_aggression_pact active = yes } } set_country_flag = COLDWAR_SPR_v2_sahara_settled } }
+ai_will_do = { factor = 1 }
+}
+
+COLDWAR_SPR_v2_review_sahara_administration = {
+icon = obtain_foreign_investment
+cost = 0
+visible = { has_country_flag = COLDWAR_SPR_v2_sahara_interim_started NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_interim_live } }
+complete_effect = { clr_country_flag = COLDWAR_SPR_v2_sahara_interim_started
+every_other_country = { SPR = { clr_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_accepted@PREV } } }
+ai_will_do = { factor = 1 }
+}
+}

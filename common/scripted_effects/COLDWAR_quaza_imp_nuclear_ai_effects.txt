@@ -1,0 +1,111 @@
+# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+# Adapted from quaZa Feature Test, workshop 3818306694.
+#########################################################################################
+# Imperia: AI nuclear weapons decision
+# Monthly (zzzzzz_imp_nuclear_programme_on_actions.txt) the AI decides whether it needs
+# nuclear weapons (country flag imp_ai_wants_nukes). If so it builds enrichment
+# facilities until it has 3 (required by sp_nuclear_bomb / sp_nuclear_warhead_program)
+# and the projects' ai_will_do pick the programme up. Without the flag the AI does not
+# start nuclear weapons projects and does not build enrichment facilities.
+#
+# Reasons to want the bomb (any one):
+#   - status: super power or great power while world tension is above 50%
+#   - a hostile potential enemy (opinion < -25) has nuclear weapons or is building them
+#   - at war with a nuclear power
+# Not when protected by a nuclear-armed faction partner, unless it is a great/super power
+# itself or already at war with a nuclear power.
+#########################################################################################
+
+imp_ai_nuclear_need_update = {
+	clr_country_flag = imp_ai_wants_nukes
+
+	if = {
+		limit = { imp_ai_nuclear_need_possible = yes }
+
+		# Status: a great/super power in a tense world (not in calm 2000: no German or Japanese bomb by default)
+		if = {
+			limit = {
+				OR = {
+					has_idea = super_power
+					has_idea = great_power
+				}
+				threat > 0.5
+			}
+			set_country_flag = imp_ai_wants_nukes
+		}
+
+		# Hostile rival with (or working on) nuclear weapons
+		for_each_scope_loop = {
+			array = potential_and_current_enemies
+			if = {
+				limit = {
+					NOT = { tag = ROOT }
+					OR = {
+						imp_is_nuclear_power = yes
+						is_special_project_completed = sp:sp_nuclear_bomb
+						is_special_project_being_researched = sp:sp_nuclear_bomb
+					}
+					ROOT = { has_opinion = { target = PREV value < -25 } }
+				}
+				ROOT = { set_country_flag = imp_ai_wants_nukes }
+			}
+		}
+
+		# At war with a nuclear power
+		if = {
+			limit = {
+				has_war = yes
+				any_enemy_country = { imp_is_nuclear_power = yes }
+			}
+			set_country_flag = imp_ai_wants_nukes
+		}
+
+		# Nuclear umbrella of a faction partner
+		if = {
+			limit = {
+				has_country_flag = imp_ai_wants_nukes
+				NOT = { has_idea = super_power }
+				NOT = { has_idea = great_power }
+				any_allied_country = { imp_is_nuclear_power = yes }
+				NOT = { any_enemy_country = { imp_is_nuclear_power = yes } }
+			}
+			clr_country_flag = imp_ai_wants_nukes
+		}
+	}
+}
+
+# Queues one enrichment facility at a time until 3 exist (built or queued).
+imp_ai_enrichment_build = {
+	if = {
+		limit = {
+			has_country_flag = imp_ai_wants_nukes
+			has_tech = nuclear_technology
+			NOT = { has_country_flag = imp_ai_enrichment_build_cd }
+		}
+		# Built facilities (damaged ones are repaired, not replaced) + queued ones
+		set_variable = { imp_ai_enrichment_planned = total_enrichment_facilities }
+		every_owned_state = {
+			limit = {
+				has_state_flag = imp_ai_enrichment_queued
+				enrichment_facility < 1
+			}
+			ROOT = { add_to_variable = { imp_ai_enrichment_planned = 1 } }
+		}
+		if = {
+			limit = { check_variable = { imp_ai_enrichment_planned < 3 } }
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					is_fully_controlled_by = ROOT
+					enrichment_facility < 1
+					NOT = { has_state_flag = imp_ai_enrichment_queued }
+					free_building_slots = { building = enrichment_facility size > 0 }
+				}
+				add_building_construction = { type = enrichment_facility level = 1 instant_build = no }
+				set_state_flag = { flag = imp_ai_enrichment_queued days = 730 value = 1 }
+				ROOT = { set_country_flag = { flag = imp_ai_enrichment_build_cd days = 60 value = 1 } }
+			}
+		}
+		clear_variable = imp_ai_enrichment_planned
+	}
+}

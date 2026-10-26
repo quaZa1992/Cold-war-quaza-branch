@@ -1,0 +1,76 @@
+@@ -60,9 +60,9 @@
+
+ 			ROOT = { NOT = { has_country_flag = investments_hide_investment_window } }
+ 		}
+ 
+ 		triggers = {
+-			# Building type IDs: CIC=1, MIC=2, NIC=3, Infra=4, Offices=5, Antiair=6, Radar=7, Airbase=8, FuelSilo=9, Internet=10, Ref=11, PowerPlant=12, Reactor=13, Agriculture=14
++			# Building type IDs: CIC=1, MIC=2, NIC=3, Infra=4, Offices=5, Antiair=6, Radar=7, Airbase=8, FuelSilo=9, Internet=10, Ref=11, PowerPlant=12, Reactor=13, Agriculture=14, UraniumMine=15
+ 			select_civ_overlay_glow_visible = {
+ 				check_variable = { ROOT.project_building_type^-1 = 1 }
+ 			}
+ 
+
+@@ -115,8 +115,11 @@
+
+ 			}
+ 
+ 			select_agriculture_overlay_glow_visible = {
+ 				check_variable = { ROOT.project_building_type^-1 = 14 }
++			}
++			select_uranium_mine_overlay_glow_visible = {
++				check_variable = { ROOT.project_building_type^-1 = 15 }
+ 			}
+ 
+ 			# Build Button Click Enabled
+ 			invest_button_click_enabled = {
+
+@@ -232,8 +235,13 @@
+
+ 			}
+ 
+ 			select_nuclear_power_plant_button_click_enabled = {
+ 				investments_building_reactor_available = yes
++				currently_is_considering_a_project = yes
++			}
++
++			select_uranium_mine_button_click_enabled = {
++				imp_uranium_investment_one_level_available = yes
+ 				currently_is_considering_a_project = yes
+ 			}
+ 
+ 			select_agriculture_button_click_enabled = {
+
+@@ -329,9 +337,9 @@
+
+ 				}
+ 				refresh_investment_gui = yes
+ 			}
+ 
+-			# Building type IDs: CIC=1, MIC=2, NIC=3, Infra=4, Offices=5, Antiair=6, Radar=7, Airbase=8, FuelSilo=9, Internet=10, Ref=11, PowerPlant=12, Reactor=13, Agriculture=14
++			# Building type IDs: CIC=1, MIC=2, NIC=3, Infra=4, Offices=5, Antiair=6, Radar=7, Airbase=8, FuelSilo=9, Internet=10, Ref=11, PowerPlant=12, Reactor=13, Agriculture=14, UraniumMine=15
+ 			select_civ_button_click = {
+ 				ROOT = {
+ 					set_variable = { project_build_amount^-1 = 1 }
+ 					set_variable = { project_building_type^-1 = 1 }
+
+@@ -434,8 +442,18 @@
+
+ 					set_variable = { project_building_type^-1 = 13 }
+ 					update_gui = yes
+ 				}
+ 				refresh_investment_gui = yes
++			}
++			select_uranium_mine_button_click = {
++				if = { limit = { imp_uranium_investment_one_level_available = yes }
++					ROOT = {
++						set_variable = { project_build_amount^-1 = 1 }
++						set_variable = { project_building_type^-1 = 15 }
++						update_gui = yes
++					}
++					refresh_investment_gui = yes
++				}
+ 			}
+ 			select_agriculture_button_click = {
+ 				ROOT = {
+ 					set_variable = { project_build_amount^-1 = 1 }

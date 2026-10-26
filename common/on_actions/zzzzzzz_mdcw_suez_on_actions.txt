@@ -1,0 +1,34 @@
+# IMPERIA CW — Cold War: zzzzzzz suez on actions — event hooks.
+on_actions = {
+	on_startup = {
+		effect = {
+			# The native canal updater expects a country scope. Enter one existing
+			# country, then reconcile the world once after the flag is resolved.
+			every_country = {
+				limit = { NOT = { has_global_flag = mdcw_suez_startup_reconciled } }
+				set_global_flag = mdcw_suez_startup_reconciled
+				update_canal_blockage_flags = yes
+			}
+			mdcw_suez_update_world = yes
+		}
+	}
+	on_weekly = {
+		effect = {
+			# MD_on_actions refreshes the physical flag in its global weekly pass.
+			# Also bootstraps old saves and updates current Globalism/geography.
+			mdcw_suez_update_country = yes
+		}
+	}
+	on_release_as_free = {
+		effect = { mdcw_suez_update_country = yes }
+	}
+	on_release_as_puppet = {
+		effect = { mdcw_suez_update_country = yes }
+	}
+	on_civil_war_started = {
+		effect = {
+			mdcw_suez_update_country = yes
+			FROM = { mdcw_suez_update_country = yes }
+		}
+	}
+}

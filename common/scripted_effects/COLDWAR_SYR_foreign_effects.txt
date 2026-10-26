@@ -1,0 +1,182 @@
+# IMPERIA CW — Cold War: Syria 1970 content imported from quaZa.
+# COLDWAR | Generated foreign contracts and localized decision helpers.
+COLDWAR_SYR_create_limited_wargoal = {
+	if = {
+		limit = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_SYR_requirement_9e4a41d920d0452d
+				COLDWAR_SYR_golan_objective_unresolved = yes
+			}
+			NOT = { has_war_with = ISR }
+			NOT = { has_wargoal_against = ISR }
+		}
+		set_temp_variable = { wargoal_on = ISR }
+		set_temp_variable = { wargoal_by = THIS.id }
+		if = {
+			limit = {
+				ISR = { owns_state = 587 }
+			}
+			set_temp_variable = { wargoal_type = 0 }
+			add_threat_from_wargoal_effect = yes
+			create_wargoal = {
+				type = take_state_focus
+				target = ISR
+				generator = { 587 }
+				expire = 365
+			}
+		}
+		else = {
+			set_temp_variable = { wargoal_type = 2 }
+			add_threat_from_wargoal_effect = yes
+			create_wargoal = { type = annex_everything target = ISR expire = 365 }
+		}
+		set_country_flag = COLDWAR_SYR_goal_granted
+		custom_effect_tooltip = COLDWAR_SYR_goal_scope_tt
+	}
+}
+COLDWAR_SYR_update_operation_costs = {
+	set_variable = { COLDWAR_SYR_cost_quarter_percent_gdp = gdp_total }
+	multiply_variable = { COLDWAR_SYR_cost_quarter_percent_gdp = 0.0025 }
+	set_variable = { COLDWAR_SYR_cost_half_percent_gdp = gdp_total }
+	multiply_variable = { COLDWAR_SYR_cost_half_percent_gdp = 0.005 }
+	set_variable = { COLDWAR_SYR_cost_three_quarter_percent_gdp = gdp_total }
+	multiply_variable = { COLDWAR_SYR_cost_three_quarter_percent_gdp = 0.0075 }
+}
+COLDWAR_SYR_clear_campaign_effects = {
+	remove_ideas = COLDWAR_SYR_war_reserve_readiness
+	remove_ideas = COLDWAR_SYR_war_supply_preparation
+	remove_ideas = COLDWAR_SYR_war_joint_planning
+	remove_ideas = COLDWAR_SYR_war_medical_service
+	remove_ideas = COLDWAR_SYR_war_short_window
+	remove_ideas = COLDWAR_SYR_war_sustained_window
+	clr_country_flag = COLDWAR_SYR_operational_mandate
+	clr_country_flag = COLDWAR_SYR_operations_funded
+	update_money_dirty_variable = yes
+}
+COLDWAR_SYR_foreign_init = {
+	COLDWAR_SYR_update_operation_costs = yes
+}
+COLDWAR_SYR_foreign_weekly = {
+	COLDWAR_SYR_update_operation_costs = yes
+	if = {
+		limit = {
+			OR = {
+				has_country_flag = COLDWAR_SYR_operational_mandate
+				has_idea = COLDWAR_SYR_war_reserve_readiness
+				has_idea = COLDWAR_SYR_war_supply_preparation
+				has_idea = COLDWAR_SYR_war_joint_planning
+				has_idea = COLDWAR_SYR_war_medical_service
+				has_idea = COLDWAR_SYR_war_short_window
+				has_idea = COLDWAR_SYR_war_sustained_window
+			}
+			OR = {
+				NOT = { has_country_flag = COLDWAR_SYR_operational_mandate }
+				NOT = { COLDWAR_SYR_campaign_is_valid = yes }
+			}
+		}
+		COLDWAR_SYR_clear_campaign_effects = yes
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_lebanon_mission
+			OR = {
+				NOT = { country_exists = LEB }
+				has_war_with = LEB
+				NOT = {
+					LEB = { has_country_flag = COLDWAR_SYR_lebanon_invitation }
+				}
+			}
+		}
+		clr_country_flag = COLDWAR_SYR_lebanon_mission
+		remove_ideas = COLDWAR_SYR_lebanon_deployment
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_pipeline_operating
+			OR = {
+				NOT = { country_exists = IRQ }
+				has_war_with = IRQ
+				NOT = {
+					IRQ = { has_country_flag = COLDWAR_SYR_pipeline_operating }
+				}
+			}
+		}
+		clr_country_flag = COLDWAR_SYR_pipeline_operating
+		remove_ideas = COLDWAR_SYR_pipeline_administration
+		IRQ = { clr_country_flag = COLDWAR_SYR_pipeline_operating remove_ideas = COLDWAR_SYR_pipeline_access }
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_pipeline_operating
+			NOT = {
+				OR = {
+					has_country_flag = COLDWAR_SYR_pipeline_payment_week
+					has_country_flag = COLDWAR_SYR_pipeline_payment_month
+				}
+			}
+		}
+		set_country_flag = { flag = COLDWAR_SYR_pipeline_payment_week days = 7 }
+		if = {
+			limit = {
+				IRQ = {
+					exists = yes
+					NOT = { has_war_with = SYR }
+					check_variable = { var = treasury value = 0.00093 compare = greater_than_or_equals }
+				}
+			}
+			IRQ = {
+				set_temp_variable = { treasury_change = -0.00093 }
+				modify_treasury_effect = yes
+			}
+			set_temp_variable = { treasury_change = 0.00093 }
+			modify_treasury_effect = yes
+		}
+		else = {
+			clr_country_flag = COLDWAR_SYR_pipeline_operating
+			remove_ideas = COLDWAR_SYR_pipeline_administration
+			IRQ = { clr_country_flag = COLDWAR_SYR_pipeline_operating remove_ideas = COLDWAR_SYR_pipeline_access }
+		}
+	}
+	PER = {
+		if = {
+			limit = {
+				date > 1979.2.11
+				OR = {
+					check_variable = { ruling_party = 8 }
+					check_variable = { ruling_party = 9 }
+				}
+			}
+			set_country_flag = COLDWAR_SYR_iranian_supply_counterparty
+		}
+		else = { clr_country_flag = COLDWAR_SYR_iranian_supply_counterparty }
+	}
+	if = {
+		limit = {
+			date > 1980.1.1
+			check_variable = { treasury < 0.05 }
+			check_variable = { debt > gdp_total }
+			NOT = { has_country_flag = COLDWAR_SYR_currency_crisis_cooldown }
+			NOT = { has_country_flag = COLDWAR_SYR_currency_package_active }
+			NOT = { has_country_flag = COLDWAR_SYR_credit_pending }
+		}
+		set_country_flag = COLDWAR_SYR_hard_currency_crisis
+		set_country_flag = { flag = COLDWAR_SYR_currency_crisis_cooldown days = 365 }
+	}
+}
+COLDWAR_SYR_request_sanctions_review = {
+	if = {
+		limit = {
+			country_exists = USA
+			NOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_SYR_requirement_ccc13ba364fff8ca
+					has_country_flag = COLDWAR_SYR_security_scrutiny_requested
+				}
+			}
+		}
+		set_country_flag = COLDWAR_SYR_security_scrutiny_requested
+		USA = {
+			country_event = { id = COLDWAR_SYR_FOREIGN.40 days = 1 }
+		}
+	}
+}

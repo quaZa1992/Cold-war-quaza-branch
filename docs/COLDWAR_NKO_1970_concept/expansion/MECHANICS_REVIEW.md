@@ -1,0 +1,38 @@
+# North Korea 1970 expansion mechanics review
+
+**Review target:** final emitted build with 360 focus nodes and 15 agreements, checked against `tools/north_korea_1970/current_design.json`, its four expansion modules, emitted NKO focus/effect/trigger/event files, and installed MD Workshop source `2777392649` (MD 2.0.2 reference in this checkout).
+
+## Findings
+
+No confirmed mechanics defects found in the reviewed expansion. Static tracing supports the agreements' consent/cost flow, suspension and resumption logic, party/leader programme ownership, and bounded nuclear research continuations. The HOI4 runtime was not launched for this audit; parser loading, rendered tooltip precision, saves, and actual campaign behavior remain unverified.
+
+## Agreements and recurring charges
+
+- The six added contract focuses (`china_industrial_exchange`, `china_farm_supply`, `china_staff_training`, `soviet_energy_projects`, `soviet_fuel_contract`, `soviet_staff_training`) have zero GDP-share proposal prices in the structured expansion pass (`tools/north_korea_1970/expansion.py`, final `for n in d['nodes'][before:]` pass). Their emitted focus completion calls an offer helper; it does not debit a treasury. The offer saves both GDP-based setup quotes and opens a 90-day pending proposal. The corresponding accept helpers require the pending state, both quotes, no earlier receipt, and valid bilateral conditions before charging both endpoints. Examples: `common/scripted_effects/COLDWAR_NKO_1970_foreign.txt:2745,2827,3002,3153,3312,3489,3646`.
+- Paired signed-active triggers require accepted receipts on both tags and a clear bilateral relationship. The clear trigger checks war and all four IMP sanctions classes in both directions; the actual agreement trigger additionally requires the NKO-side agreement spirit. Examples: `common/scripted_triggers/COLDWAR_NKO_1970_foreign.txt:778,848,918,988,1058,1128` and `common/scripted_triggers/COLDWAR_NKO_1970_focus_triggers.txt:3,10,66,84`.
+- NKO's agreement refresh removes both endpoint spirits when the pair is no longer active and reapplies them when it is active. The weekly-expense helper separately requires a clear pair plus accepted receipts on both tags, then computes current GDP × annual commitment ÷ 52. The weekly expense helper is connected to IMP's weekly expense calculation; relationship changes and sanction recalculation call refresh. `common/scripted_effects/COLDWAR_NKO_1970_foreign.txt:3723,5493`; `common/scripted_effects/IMP_sanctions_effects.txt:117,263`; `common/on_actions/COLDWAR_NKO_1970_on_actions.txt:21,53,66`.
+- The industrial exchange's one-time factory/slot grant is conditional on an eligible NKO-owned and controlled site and guarded by a shared initial-grant receipt, so acceptance or refresh cannot grant it twice. `tools/north_korea_1970/agreements.py:336-348,427-446,606-617`; emitted acceptance path begins at `common/scripted_effects/COLDWAR_NKO_1970_foreign.txt:2827`.
+
+## Modifier/API tracing
+
+Compared with the v2 design's 50-key set, the expansion introduces six new modifier keys. All 45 distinct keys used by added nodes have exact supported matches in installed MD or base HOI4 modifier sources; I found no invented/unsupported field. The final emitted programme definitions contain `navy_screen_attack_factor` and no `naval_strike_air` (`common/dynamic_modifiers/COLDWAR_NKO_1970_programmes.txt:2965-3021`).
+
+| New key | Native/source evidence and traced use |
+|---|---|
+| `air_accidents_factor` | Native MD leader/idea definitions; emitted as a negative factor in the air warning and dispersed-airfield programmes, reducing the aircraft accident modifier. `common/dynamic_modifiers/COLDWAR_NKO_1970_programmes.txt:2965,2973`; Workshop `common/ideas/zzz_air_spirits.txt:100`. |
+| `air_superiority_efficiency` | Native HOI4 and MD leader/idea modifier; used as air-superiority efficiency. Emitted at `common/dynamic_modifiers/COLDWAR_NKO_1970_programmes.txt:2966,2979`; base HOI4 `common/country_leader/00_traits.txt:911`. |
+| `fossil_pp_energy_generation_modifier` | MD energy calculation adds this to the fossil-plant generation multiplier. Workshop `common/scripted_effects/!_energy_effects.txt:366`; emitted examples in `common/dynamic_modifiers/COLDWAR_NKO_1970_programmes.txt:1827,1855,3258,3280`. |
+| `non_electric_fuel_consumption_modifier` | MD energy calculation adds this to the non-electric fuel consumption multiplier. Workshop `common/scripted_effects/!_energy_effects.txt:614`; emitted examples at `common/dynamic_modifiers/COLDWAR_NKO_1970_programmes.txt:1874-1895,3326`. |
+| `resource_export_multiplier_modifier` | Registered in MD `common/modifier_definitions/money_modifier_definitions.txt:114`; the money system adds it to the export multiplier before calculating export revenue at Workshop `common/scripted_effects/00_money_system.txt:4454`. Emitted examples at `common/dynamic_modifiers/COLDWAR_NKO_1970_programmes.txt:1760,2939,3075-3089,3303`. |
+| `navy_screen_attack_factor` | Supported by native MD fleet/naval ideas and base HOI4 naval traits. Emitted in four coastal-watch/refit/exercise/readiness programmes at `common/dynamic_modifiers/COLDWAR_NKO_1970_programmes.txt:2993-3021`; Workshop `common/ideas/MD_fleet_training_command_ideas.txt:17`; base HOI4 `common/country_leader/00_traits.txt:16707`. |
+
+Units checked against the active MD readers/localisation: `productivity_growth_modifier` is a numeric monthly growth increment, so values such as `0.04` are shown as raw `+0.04`, not relabelled `+4%`; MD's productivity/economy effects consume it. `experience_gain_army` is a flat daily Army XP amount, not a percentage multiplier; agreement tooltips name it “Daily Army Experience Gain” and preserve the raw amount. The `investment_turnover` value `interest_rate_multiplier_modifier = 0.4` is read by MD as an additive rate adjustment before its clamp (Workshop `common/scripted_effects/00_money_system.txt:2513-2522`), matching the design's percentage-point label. No new expansion module uses a direct `army_experience` reward.
+
+## Ownership, replay guards, and nuclear continuation
+
+- Newly completed normal and party/leader focuses set persistent `*_earned` receipts. Programme refresh toggles the corresponding modifiers and does not reissue the focus's treasury debit, construction, or research bonus. The newly added Jong-il nodes inherit a Kim Jong-il ruling-leader requirement from the shared `add()` helper; their emitted eligibility and reward paths retain it. `tools/north_korea_1970/expansion.py:19-28`; representative emitted refresh logic: `common/scripted_effects/COLDWAR_NKO_1970_focus_effects.txt:8770-8785,9131-9146`.
+- The four civilian nuclear continuations keep both `COLDWAR_NKO_safeguards_valid` and the active `civil_atomic` agreement in availability and programme refresh. They award single-use bonuses only in MD's real `CAT_nuclear_reactors` technology category. The strategic branch uses the real `CAT_nuclear_weapons` category and single-use bonuses. Installed MD defines technologies in both categories (`common/technologies/industry.txt` and `ballistic_missiles.txt`). No expansion nuclear focus adds uranium, raw resource production, a reactor building, or a completed weapon. `common/scripted_triggers/COLDWAR_NKO_1970_focus_triggers.txt:2747-2811`; `common/scripted_effects/COLDWAR_NKO_1970_focus_effects.txt:11310-11379`; `common/national_focus/COLDWAR_NKO_1970_focus.txt:8735-8923`.
+
+## Runtime boundary
+
+This is a static source audit, not a HOI4 load or gameplay certification. In-game confirmation is still needed for focus/event tooltip formatting (especially small daily Army XP amounts), sanction/war transitions, both-player acceptance, and save/reload behavior.

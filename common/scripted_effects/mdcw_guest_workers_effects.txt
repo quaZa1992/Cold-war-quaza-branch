@@ -1,0 +1,648 @@
+# IMPERIA CW — Cold War: Guest-worker and diaspora mechanics.
+# Native guest-worker helpers: ROOT receives, FROM sends during requests and completion.
+# Treasury values are MD billions; resident stock/net migration are thousands of people.
+# Resident stock is gross retained arrivals, separately from the anti-loop net-emigration ledger.
+# Legacy missing stock is seeded once from max(-old net emigration,0) before any transfer.
+# Fresh population_total uses units100,000. Healthcare and bureaucracy read
+# cached integration coverage; Welfare support enters the native weekly spending array.
+# Origin cohorts are country-level aggregates, without a residence-state matrix.
+# Recruitment uses physical state population; the net-export ledger prevents remittance loops.
+# Explicit return operations reduce cohorts, coverage and origin remittances together.
+# Selected states are saved in the request and revalidated on acceptance; completion never rerolls.
+# All pending/UI-window locks, refunds, cooldowns and remittance rules remain independent of stock.
+
+# Successful arrival receipts read actual destination state_population_k before and after
+# STATE add_manpower; last_arrival_k is the observed delta, never just the requested tier.
+# One success log records the receipt; remittances decay by 0.01% per native weekly tick.
+
+# Population mutations use exact-filtered random_owned_state blocks, matching refugee STATE scope.
+# 100k uses two distinct saved origin states at -50k each, with all state checks before mutation.
+# Native state withdrawals can increase the sender's free military reserve (observed in game).
+# Remove only that immediate positive difference; never refund a genuine reserve reduction.
+
+mdcw_gw_initialize_resident_stock = {
+	if = {
+		limit = {
+			NOT = { has_variable = mdcw_gw_guest_workers_k }
+		}
+		set_variable = { mdcw_gw_guest_workers_k = 0 }
+		subtract_from_variable = { mdcw_gw_guest_workers_k = mdcw_gw_net_emigration_k }
+		clamp_variable = { var = mdcw_gw_guest_workers_k min = 0 }
+	}
+}
+
+mdcw_gw_update_resident_costs = {
+ clamp_variable = { var = mdcw_gw_guest_workers_k min = 0 }
+ mdcw_gw_ledger_initialize = yes
+ # Country-level cohorts remain until explicit repatriation.
+ clear_variable = mdcw_gw_pending_export_pop
+ mdcw_gw_calculate_diaspora_costs = yes
+ # IMPERIA CW — Cold War: Upgrade an existing active save once; ordinary budget passes stay cached.
+ if = { limit = { check_variable = { gw_known_k > 0 } NOT = { has_country_flag = gw_migration_ready } }
+  mdcw_dp_ensure_arrays = yes mdcw_dp_start_reviews = yes
+ }
+}
+
+mdcw_gw_apply_immigration_25000 = {
+	mdcw_gw_initialize_resident_stock = yes
+	add_to_variable = { mdcw_gw_guest_workers_k = 25 }
+	set_temp_variable = { mdcw_gw_previous_positive_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_previous_positive_k min = 0 }
+	subtract_from_variable = { mdcw_gw_net_emigration_k = 25 }
+	if = {
+		limit = {
+			check_variable = { mdcw_gw_previous_positive_k > 0 }
+		}
+		set_temp_variable = { mdcw_gw_remaining_share = mdcw_gw_net_emigration_k }
+		clamp_temp_variable = { var = mdcw_gw_remaining_share min = 0 }
+		divide_temp_variable = { mdcw_gw_remaining_share = mdcw_gw_previous_positive_k }
+		multiply_variable = { mdcw_gw_remittance_pool_m = mdcw_gw_remaining_share }
+	}
+	else = {
+		set_variable = { mdcw_gw_remittance_pool_m = 0 }
+	}
+	clamp_variable = { var = mdcw_gw_remittance_pool_m min = 0 max = 3000 }
+}
+
+mdcw_gw_apply_immigration_50000 = {
+	mdcw_gw_initialize_resident_stock = yes
+	add_to_variable = { mdcw_gw_guest_workers_k = 50 }
+	set_temp_variable = { mdcw_gw_previous_positive_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_previous_positive_k min = 0 }
+	subtract_from_variable = { mdcw_gw_net_emigration_k = 50 }
+	if = {
+		limit = {
+			check_variable = { mdcw_gw_previous_positive_k > 0 }
+		}
+		set_temp_variable = { mdcw_gw_remaining_share = mdcw_gw_net_emigration_k }
+		clamp_temp_variable = { var = mdcw_gw_remaining_share min = 0 }
+		divide_temp_variable = { mdcw_gw_remaining_share = mdcw_gw_previous_positive_k }
+		multiply_variable = { mdcw_gw_remittance_pool_m = mdcw_gw_remaining_share }
+	}
+	else = {
+		set_variable = { mdcw_gw_remittance_pool_m = 0 }
+	}
+	clamp_variable = { var = mdcw_gw_remittance_pool_m min = 0 max = 3000 }
+}
+
+mdcw_gw_apply_immigration_100000 = {
+	mdcw_gw_initialize_resident_stock = yes
+	add_to_variable = { mdcw_gw_guest_workers_k = 100 }
+	set_temp_variable = { mdcw_gw_previous_positive_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_previous_positive_k min = 0 }
+	subtract_from_variable = { mdcw_gw_net_emigration_k = 100 }
+	if = {
+		limit = {
+			check_variable = { mdcw_gw_previous_positive_k > 0 }
+		}
+		set_temp_variable = { mdcw_gw_remaining_share = mdcw_gw_net_emigration_k }
+		clamp_temp_variable = { var = mdcw_gw_remaining_share min = 0 }
+		divide_temp_variable = { mdcw_gw_remaining_share = mdcw_gw_previous_positive_k }
+		multiply_variable = { mdcw_gw_remittance_pool_m = mdcw_gw_remaining_share }
+	}
+	else = {
+		set_variable = { mdcw_gw_remittance_pool_m = 0 }
+	}
+	clamp_variable = { var = mdcw_gw_remittance_pool_m min = 0 max = 3000 }
+}
+
+mdcw_gw_add_emigration_25000 = {
+	mdcw_gw_initialize_resident_stock = yes
+	set_variable = { mdcw_gw_pending_export_pop = 0.25 }
+	clamp_variable = { var = mdcw_gw_guest_workers_k min = 0 }
+	set_temp_variable = { mdcw_gw_previous_positive_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_previous_positive_k min = 0 }
+	add_to_variable = { mdcw_gw_net_emigration_k = 25 }
+	set_temp_variable = { mdcw_gw_eligible_export_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_eligible_export_k min = 0 }
+	subtract_from_temp_variable = { mdcw_gw_eligible_export_k = mdcw_gw_previous_positive_k }
+	divide_temp_variable = { mdcw_gw_eligible_export_k = 25 }
+	set_temp_variable = { mdcw_gw_new_remittances_m = 150 }
+	multiply_temp_variable = { mdcw_gw_new_remittances_m = mdcw_gw_eligible_export_k }
+	add_to_variable = { mdcw_gw_remittance_pool_m = mdcw_gw_new_remittances_m }
+	clamp_variable = { var = mdcw_gw_remittance_pool_m min = 0 max = 3000 }
+}
+
+mdcw_gw_add_emigration_50000 = {
+	mdcw_gw_initialize_resident_stock = yes
+	set_variable = { mdcw_gw_pending_export_pop = 0.5 }
+	clamp_variable = { var = mdcw_gw_guest_workers_k min = 0 }
+	set_temp_variable = { mdcw_gw_previous_positive_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_previous_positive_k min = 0 }
+	add_to_variable = { mdcw_gw_net_emigration_k = 50 }
+	set_temp_variable = { mdcw_gw_eligible_export_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_eligible_export_k min = 0 }
+	subtract_from_temp_variable = { mdcw_gw_eligible_export_k = mdcw_gw_previous_positive_k }
+	divide_temp_variable = { mdcw_gw_eligible_export_k = 50 }
+	set_temp_variable = { mdcw_gw_new_remittances_m = 250 }
+	multiply_temp_variable = { mdcw_gw_new_remittances_m = mdcw_gw_eligible_export_k }
+	add_to_variable = { mdcw_gw_remittance_pool_m = mdcw_gw_new_remittances_m }
+	clamp_variable = { var = mdcw_gw_remittance_pool_m min = 0 max = 3000 }
+}
+
+mdcw_gw_add_emigration_100000 = {
+	mdcw_gw_initialize_resident_stock = yes
+	set_variable = { mdcw_gw_pending_export_pop = 1 }
+	clamp_variable = { var = mdcw_gw_guest_workers_k min = 0 }
+	set_temp_variable = { mdcw_gw_previous_positive_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_previous_positive_k min = 0 }
+	add_to_variable = { mdcw_gw_net_emigration_k = 100 }
+	set_temp_variable = { mdcw_gw_eligible_export_k = mdcw_gw_net_emigration_k }
+	clamp_temp_variable = { var = mdcw_gw_eligible_export_k min = 0 }
+	subtract_from_temp_variable = { mdcw_gw_eligible_export_k = mdcw_gw_previous_positive_k }
+	divide_temp_variable = { mdcw_gw_eligible_export_k = 100 }
+	set_temp_variable = { mdcw_gw_new_remittances_m = 400 }
+	multiply_temp_variable = { mdcw_gw_new_remittances_m = mdcw_gw_eligible_export_k }
+	add_to_variable = { mdcw_gw_remittance_pool_m = mdcw_gw_new_remittances_m }
+	clamp_variable = { var = mdcw_gw_remittance_pool_m min = 0 max = 3000 }
+}
+
+# IMPERIA CW — Cold War: A late reply also refreshes the sender's expired-offer UI lock.
+mdcw_gw_close_offer_window = {
+	if = {
+		limit = { has_country_flag = mdcw_gw_offer_window_open }
+		clr_country_flag = mdcw_gw_offer_window_open
+		add_to_variable = { gw_ui_dirty = 1 }
+	}
+}
+
+# IMPERIA CW — Cold War: Refresh both parties' Ministry controls when negotiations end.
+mdcw_gw_clear_pending = {
+	clr_country_flag = mdcw_gw_request_pending
+	clr_country_flag = mdcw_gw_offer_pending
+	clear_variable = mdcw_gw_partner
+	clear_variable = mdcw_gw_pending_tier
+	clear_variable = mdcw_gw_pending_pp
+	add_to_variable = { gw_ui_dirty = 1 }
+}
+
+mdcw_gw_refund_request = {
+	if = {
+		limit = { has_country_flag = mdcw_gw_request_pending }
+		save_event_target_as = mdcw_gw_receiver
+		add_political_power = mdcw_gw_pending_pp
+		var:mdcw_gw_partner = {
+			save_event_target_as = mdcw_gw_sender
+			if = {
+				limit = {
+					has_country_flag = mdcw_gw_offer_pending
+					var:mdcw_gw_partner = { tag = ROOT }
+				}
+				mdcw_gw_clear_pending = yes
+			}
+		}
+		mdcw_gw_clear_pending = yes
+	}
+}
+
+# IMPERIA CW — Cold War: Invalidate the recipient and sender UI at request creation.
+mdcw_gw_request_agreement_25000 = {
+	if = {
+		limit = { mdcw_gw_request_available_25000 = yes }
+		save_event_target_as = mdcw_gw_receiver
+		random_owned_state = {
+			limit = { is_controlled_by = PREV }
+			save_event_target_as = mdcw_gw_destination_state
+		}
+		FROM = {
+			random_owned_state = {
+				limit = { is_controlled_by = PREV state_population > 25000 }
+				save_event_target_as = mdcw_gw_origin_state
+			}
+		}
+		set_country_flag = mdcw_gw_request_pending
+		set_variable = { mdcw_gw_partner = FROM.id }
+		set_variable = { mdcw_gw_pending_tier = 1 }
+		set_variable = { mdcw_gw_pending_pp = 75 }
+		add_to_variable = { gw_ui_dirty = 1 }
+		country_event = { id = mdcw_guest_workers.90 days = 17 }
+		FROM = {
+			save_event_target_as = mdcw_gw_sender
+			set_country_flag = mdcw_gw_offer_pending
+			set_country_flag = { flag = mdcw_gw_offer_window_open days = 19 }
+			set_variable = { mdcw_gw_partner = ROOT.id }
+			set_variable = { mdcw_gw_pending_tier = 1 }
+			add_to_variable = { gw_ui_dirty = 1 }
+			if = {
+				limit = {
+					check_variable = { mdcw_gw_pending_tier = 1 }
+				}
+				country_event = { id = mdcw_guest_workers.1 days = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { mdcw_gw_pending_tier = 2 }
+				}
+				country_event = { id = mdcw_guest_workers.2 days = 1 }
+			}
+			else = {
+				country_event = { id = mdcw_guest_workers.3 days = 1 }
+			}
+			country_event = { id = mdcw_guest_workers.91 days = 17 }
+		}
+	}
+	else = { add_political_power = 75 }
+}
+
+# IMPERIA CW — Cold War: The pending lock covers every agreement size and partner.
+mdcw_gw_request_agreement_50000 = {
+	if = {
+		limit = { mdcw_gw_request_available_50000 = yes }
+		save_event_target_as = mdcw_gw_receiver
+		random_owned_state = {
+			limit = { is_controlled_by = PREV }
+			save_event_target_as = mdcw_gw_destination_state
+		}
+		FROM = {
+			random_owned_state = {
+				limit = { is_controlled_by = PREV state_population > 50000 }
+				save_event_target_as = mdcw_gw_origin_state
+			}
+		}
+		set_country_flag = mdcw_gw_request_pending
+		set_variable = { mdcw_gw_partner = FROM.id }
+		set_variable = { mdcw_gw_pending_tier = 2 }
+		set_variable = { mdcw_gw_pending_pp = 125 }
+		add_to_variable = { gw_ui_dirty = 1 }
+		country_event = { id = mdcw_guest_workers.90 days = 17 }
+		FROM = {
+			save_event_target_as = mdcw_gw_sender
+			set_country_flag = mdcw_gw_offer_pending
+			set_country_flag = { flag = mdcw_gw_offer_window_open days = 19 }
+			set_variable = { mdcw_gw_partner = ROOT.id }
+			set_variable = { mdcw_gw_pending_tier = 2 }
+			add_to_variable = { gw_ui_dirty = 1 }
+			if = {
+				limit = {
+					check_variable = { mdcw_gw_pending_tier = 1 }
+				}
+				country_event = { id = mdcw_guest_workers.1 days = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { mdcw_gw_pending_tier = 2 }
+				}
+				country_event = { id = mdcw_guest_workers.2 days = 1 }
+			}
+			else = {
+				country_event = { id = mdcw_guest_workers.3 days = 1 }
+			}
+			country_event = { id = mdcw_guest_workers.91 days = 17 }
+		}
+	}
+	else = { add_political_power = 125 }
+}
+
+# IMPERIA CW — Cold War: The pending lock covers every agreement size and partner.
+mdcw_gw_request_agreement_100000 = {
+	if = {
+		limit = { mdcw_gw_request_available_100000 = yes }
+		save_event_target_as = mdcw_gw_receiver
+		random_owned_state = {
+			limit = { is_controlled_by = PREV }
+			save_event_target_as = mdcw_gw_destination_state
+		}
+		FROM = {
+			random_owned_state = {
+				limit = { is_controlled_by = PREV state_population > 50000 }
+				save_event_target_as = mdcw_gw_origin_state
+			}
+			random_owned_state = {
+				limit = {
+					is_controlled_by = PREV
+					state_population > 50000
+					NOT = { state = event_target:mdcw_gw_origin_state }
+				}
+				save_event_target_as = mdcw_gw_origin_state_2
+			}
+		}
+		set_country_flag = mdcw_gw_request_pending
+		set_variable = { mdcw_gw_partner = FROM.id }
+		set_variable = { mdcw_gw_pending_tier = 3 }
+		set_variable = { mdcw_gw_pending_pp = 200 }
+		add_to_variable = { gw_ui_dirty = 1 }
+		country_event = { id = mdcw_guest_workers.90 days = 17 }
+		FROM = {
+			save_event_target_as = mdcw_gw_sender
+			set_country_flag = mdcw_gw_offer_pending
+			set_country_flag = { flag = mdcw_gw_offer_window_open days = 19 }
+			set_variable = { mdcw_gw_partner = ROOT.id }
+			set_variable = { mdcw_gw_pending_tier = 3 }
+			add_to_variable = { gw_ui_dirty = 1 }
+			if = {
+				limit = {
+					check_variable = { mdcw_gw_pending_tier = 1 }
+				}
+				country_event = { id = mdcw_guest_workers.1 days = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { mdcw_gw_pending_tier = 2 }
+				}
+				country_event = { id = mdcw_guest_workers.2 days = 1 }
+			}
+			else = {
+				country_event = { id = mdcw_guest_workers.3 days = 1 }
+			}
+			country_event = { id = mdcw_guest_workers.91 days = 17 }
+		}
+	}
+	else = { add_political_power = 200 }
+}
+
+# ROOT receives, FROM sends. Called once after all validated source-state withdrawals.
+# Compare raw people rather than rounded manpower_k; the country effect only removes
+# an observed reserve gain and cannot alter the already transferred state population.
+mdcw_gw_remove_export_reserve_gain = {
+	set_variable = { mdcw_gw_source_reserve_removed = FROM.manpower }
+	subtract_from_variable = { mdcw_gw_source_reserve_removed = mdcw_gw_source_reserve_before }
+	clamp_variable = { var = mdcw_gw_source_reserve_removed min = 0 }
+	if = {
+		limit = { check_variable = { mdcw_gw_source_reserve_removed > 0 } }
+		FROM = {
+			set_temp_variable = { mdcw_gw_source_reserve_delta = ROOT.mdcw_gw_source_reserve_removed }
+			multiply_temp_variable = { mdcw_gw_source_reserve_delta = -1 }
+			add_manpower = mdcw_gw_source_reserve_delta
+		}
+	}
+}
+
+mdcw_gw_complete_agreement_25000 = {
+	if = {
+		limit = {
+			mdcw_gw_pair_pending = yes
+			check_variable = { mdcw_gw_pending_tier = 1 }
+		}
+		if = {
+			limit = {
+				mdcw_gw_agreement_available_25000 = yes
+				event_target:mdcw_gw_destination_state = { is_owned_by = ROOT is_controlled_by = ROOT }
+				event_target:mdcw_gw_origin_state = { is_owned_by = FROM is_controlled_by = FROM state_population > 25000 }
+			}
+			save_event_target_as = mdcw_gw_receiver
+			FROM = { save_event_target_as = mdcw_gw_sender }
+			mdcw_gw_ledger_initialize = yes
+			FROM = { mdcw_gw_initialize_resident_stock = yes }
+			set_variable = { mdcw_gw_last_source_count = 1 }
+			set_variable = { mdcw_gw_departure_2_before_k = 0 }
+			set_variable = { mdcw_gw_departure_2_after_k = 0 }
+			set_variable = { mdcw_gw_source_manpower_before_k = FROM.manpower_k }
+			set_variable = { mdcw_gw_source_reserve_before = FROM.manpower }
+			FROM = {
+				random_owned_state = {
+					limit = { state = event_target:mdcw_gw_origin_state }
+					ROOT = {
+						set_variable = { mdcw_gw_departure_before_k = PREV.state_population_k }
+					}
+					add_manpower = -25000
+					ROOT = {
+						set_variable = { mdcw_gw_departure_after_k = PREV.state_population_k }
+					}
+				}
+			}
+			mdcw_gw_remove_export_reserve_gain = yes
+			set_variable = { mdcw_gw_source_manpower_after_k = FROM.manpower_k }
+			set_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_before_k }
+			subtract_from_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_after_k }
+			random_owned_state = {
+				limit = { state = event_target:mdcw_gw_destination_state }
+				ROOT = {
+					set_variable = { mdcw_gw_arrival_before_k = PREV.state_population_k }
+				}
+				add_manpower = 25000
+				ROOT = {
+					set_variable = { mdcw_gw_arrival_after_k = PREV.state_population_k }
+					set_variable = { mdcw_gw_last_arrival_k = mdcw_gw_arrival_after_k }
+					subtract_from_variable = { mdcw_gw_last_arrival_k = mdcw_gw_arrival_before_k }
+				}
+			}
+			subtract_from_variable = { treasury = 10 }
+			mdcw_gw_apply_immigration_25000 = yes
+			mdcw_gw_record_agreement = yes
+			FROM = {
+				add_to_variable = { treasury = 10 }
+				add_political_power = 25
+				mdcw_gw_add_emigration_25000 = yes
+				ingame_update_setup = yes
+				update_money_dirty_variable = yes
+			}
+			ROOT = { set_country_flag = { flag = mdcw_gw_receiving_cooldown value = 1 days = 60 } }
+			ingame_update_setup = yes
+			update_money_dirty_variable = yes
+			FROM = { mdcw_gw_clear_pending = yes }
+			mdcw_gw_clear_pending = yes
+			log = "[GetDateText]: mdcw_gw_arrival recipient=[ROOT.GetName] sender=[FROM.GetName] origin=[mdcw_gw_origin_state.GetName] destination=[mdcw_gw_destination_state.GetName] requested_k=25 source_count=1 departed_k=[?ROOT.mdcw_gw_last_departure_k] origin_before_k=[?ROOT.mdcw_gw_departure_before_k] origin_after_k=[?ROOT.mdcw_gw_departure_after_k] origin2_before_k=[?ROOT.mdcw_gw_departure_2_before_k] origin2_after_k=[?ROOT.mdcw_gw_departure_2_after_k] sender_reserve_before_k=[?ROOT.mdcw_gw_source_manpower_before_k] sender_reserve_after_k=[?ROOT.mdcw_gw_source_manpower_after_k] sender_reserve_removed=[?ROOT.mdcw_gw_source_reserve_removed] arrived_k=[?ROOT.mdcw_gw_last_arrival_k] destination_before_k=[?ROOT.mdcw_gw_arrival_before_k] destination_after_k=[?ROOT.mdcw_gw_arrival_after_k] stock_k=[?ROOT.mdcw_gw_guest_workers_k] health_cost=[?ROOT.mdcw_gw_health_cost] social_cost=[?ROOT.mdcw_gw_social_cost] bureaucracy_cost=[?ROOT.mdcw_gw_bureaucracy_cost]"
+			country_event = { id = mdcw_guest_workers.30 hours = 1 }
+		}
+		else = {
+			mdcw_gw_refund_request = yes
+			country_event = { id = mdcw_guest_workers.32 }
+		}
+	}
+}
+
+mdcw_gw_complete_agreement_50000 = {
+	if = {
+		limit = {
+			mdcw_gw_pair_pending = yes
+			check_variable = { mdcw_gw_pending_tier = 2 }
+		}
+		if = {
+			limit = {
+				mdcw_gw_agreement_available_50000 = yes
+				event_target:mdcw_gw_destination_state = { is_owned_by = ROOT is_controlled_by = ROOT }
+				event_target:mdcw_gw_origin_state = { is_owned_by = FROM is_controlled_by = FROM state_population > 50000 }
+			}
+			save_event_target_as = mdcw_gw_receiver
+			FROM = { save_event_target_as = mdcw_gw_sender }
+			mdcw_gw_ledger_initialize = yes
+			FROM = { mdcw_gw_initialize_resident_stock = yes }
+			set_variable = { mdcw_gw_last_source_count = 1 }
+			set_variable = { mdcw_gw_departure_2_before_k = 0 }
+			set_variable = { mdcw_gw_departure_2_after_k = 0 }
+			set_variable = { mdcw_gw_source_manpower_before_k = FROM.manpower_k }
+			set_variable = { mdcw_gw_source_reserve_before = FROM.manpower }
+			FROM = {
+				random_owned_state = {
+					limit = { state = event_target:mdcw_gw_origin_state }
+					ROOT = {
+						set_variable = { mdcw_gw_departure_before_k = PREV.state_population_k }
+					}
+					add_manpower = -50000
+					ROOT = {
+						set_variable = { mdcw_gw_departure_after_k = PREV.state_population_k }
+					}
+				}
+			}
+			mdcw_gw_remove_export_reserve_gain = yes
+			set_variable = { mdcw_gw_source_manpower_after_k = FROM.manpower_k }
+			set_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_before_k }
+			subtract_from_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_after_k }
+			random_owned_state = {
+				limit = { state = event_target:mdcw_gw_destination_state }
+				ROOT = {
+					set_variable = { mdcw_gw_arrival_before_k = PREV.state_population_k }
+				}
+				add_manpower = 50000
+				ROOT = {
+					set_variable = { mdcw_gw_arrival_after_k = PREV.state_population_k }
+					set_variable = { mdcw_gw_last_arrival_k = mdcw_gw_arrival_after_k }
+					subtract_from_variable = { mdcw_gw_last_arrival_k = mdcw_gw_arrival_before_k }
+				}
+			}
+			subtract_from_variable = { treasury = 15 }
+			mdcw_gw_apply_immigration_50000 = yes
+			mdcw_gw_record_agreement = yes
+			FROM = {
+				add_to_variable = { treasury = 15 }
+				add_political_power = 50
+				mdcw_gw_add_emigration_50000 = yes
+				ingame_update_setup = yes
+				update_money_dirty_variable = yes
+			}
+			ROOT = { set_country_flag = { flag = mdcw_gw_receiving_cooldown value = 1 days = 60 } }
+			ingame_update_setup = yes
+			update_money_dirty_variable = yes
+			FROM = { mdcw_gw_clear_pending = yes }
+			mdcw_gw_clear_pending = yes
+			log = "[GetDateText]: mdcw_gw_arrival recipient=[ROOT.GetName] sender=[FROM.GetName] origin=[mdcw_gw_origin_state.GetName] destination=[mdcw_gw_destination_state.GetName] requested_k=50 source_count=1 departed_k=[?ROOT.mdcw_gw_last_departure_k] origin_before_k=[?ROOT.mdcw_gw_departure_before_k] origin_after_k=[?ROOT.mdcw_gw_departure_after_k] origin2_before_k=[?ROOT.mdcw_gw_departure_2_before_k] origin2_after_k=[?ROOT.mdcw_gw_departure_2_after_k] sender_reserve_before_k=[?ROOT.mdcw_gw_source_manpower_before_k] sender_reserve_after_k=[?ROOT.mdcw_gw_source_manpower_after_k] sender_reserve_removed=[?ROOT.mdcw_gw_source_reserve_removed] arrived_k=[?ROOT.mdcw_gw_last_arrival_k] destination_before_k=[?ROOT.mdcw_gw_arrival_before_k] destination_after_k=[?ROOT.mdcw_gw_arrival_after_k] stock_k=[?ROOT.mdcw_gw_guest_workers_k] health_cost=[?ROOT.mdcw_gw_health_cost] social_cost=[?ROOT.mdcw_gw_social_cost] bureaucracy_cost=[?ROOT.mdcw_gw_bureaucracy_cost]"
+			country_event = { id = mdcw_guest_workers.30 hours = 1 }
+		}
+		else = {
+			mdcw_gw_refund_request = yes
+			country_event = { id = mdcw_guest_workers.32 }
+		}
+	}
+}
+
+mdcw_gw_complete_agreement_100000 = {
+	if = {
+		limit = {
+			mdcw_gw_pair_pending = yes
+			check_variable = { mdcw_gw_pending_tier = 3 }
+		}
+		if = {
+			limit = {
+				mdcw_gw_agreement_available_100000 = yes
+				event_target:mdcw_gw_destination_state = { is_owned_by = ROOT is_controlled_by = ROOT }
+				event_target:mdcw_gw_origin_state = { is_owned_by = FROM is_controlled_by = FROM state_population > 50000 }
+				event_target:mdcw_gw_origin_state_2 = {
+					is_owned_by = FROM
+					is_controlled_by = FROM
+					state_population > 50000
+					NOT = { state = event_target:mdcw_gw_origin_state }
+				}
+			}
+			save_event_target_as = mdcw_gw_receiver
+			FROM = { save_event_target_as = mdcw_gw_sender }
+			mdcw_gw_ledger_initialize = yes
+			FROM = { mdcw_gw_initialize_resident_stock = yes }
+			set_variable = { mdcw_gw_last_source_count = 2 }
+			set_variable = { mdcw_gw_departure_2_before_k = 0 }
+			set_variable = { mdcw_gw_departure_2_after_k = 0 }
+			set_variable = { mdcw_gw_source_manpower_before_k = FROM.manpower_k }
+			set_variable = { mdcw_gw_source_reserve_before = FROM.manpower }
+			FROM = {
+				random_owned_state = {
+					limit = { state = event_target:mdcw_gw_origin_state }
+					ROOT = {
+						set_variable = { mdcw_gw_departure_before_k = PREV.state_population_k }
+					}
+					add_manpower = -50000
+					ROOT = {
+						set_variable = { mdcw_gw_departure_after_k = PREV.state_population_k }
+					}
+				}
+				random_owned_state = {
+					limit = { state = event_target:mdcw_gw_origin_state_2 }
+					ROOT = {
+						set_variable = { mdcw_gw_departure_2_before_k = PREV.state_population_k }
+					}
+					add_manpower = -50000
+					ROOT = {
+						set_variable = { mdcw_gw_departure_2_after_k = PREV.state_population_k }
+					}
+				}
+			}
+			mdcw_gw_remove_export_reserve_gain = yes
+			set_variable = { mdcw_gw_source_manpower_after_k = FROM.manpower_k }
+			set_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_before_k }
+			subtract_from_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_after_k }
+			add_to_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_2_before_k }
+			subtract_from_variable = { mdcw_gw_last_departure_k = mdcw_gw_departure_2_after_k }
+			random_owned_state = {
+				limit = { state = event_target:mdcw_gw_destination_state }
+				ROOT = {
+					set_variable = { mdcw_gw_arrival_before_k = PREV.state_population_k }
+				}
+				add_manpower = 100000
+				ROOT = {
+					set_variable = { mdcw_gw_arrival_after_k = PREV.state_population_k }
+					set_variable = { mdcw_gw_last_arrival_k = mdcw_gw_arrival_after_k }
+					subtract_from_variable = { mdcw_gw_last_arrival_k = mdcw_gw_arrival_before_k }
+				}
+			}
+			subtract_from_variable = { treasury = 25 }
+			mdcw_gw_apply_immigration_100000 = yes
+			mdcw_gw_record_agreement = yes
+			FROM = {
+				add_to_variable = { treasury = 25 }
+				add_political_power = 100
+				mdcw_gw_add_emigration_100000 = yes
+				ingame_update_setup = yes
+				update_money_dirty_variable = yes
+			}
+			ROOT = { set_country_flag = { flag = mdcw_gw_receiving_cooldown value = 1 days = 60 } }
+			ingame_update_setup = yes
+			update_money_dirty_variable = yes
+			FROM = { mdcw_gw_clear_pending = yes }
+			mdcw_gw_clear_pending = yes
+			log = "[GetDateText]: mdcw_gw_arrival recipient=[ROOT.GetName] sender=[FROM.GetName] origin=[mdcw_gw_origin_state.GetName] origin2=[mdcw_gw_origin_state_2.GetName] destination=[mdcw_gw_destination_state.GetName] requested_k=100 source_count=2 departed_k=[?ROOT.mdcw_gw_last_departure_k] origin_before_k=[?ROOT.mdcw_gw_departure_before_k] origin_after_k=[?ROOT.mdcw_gw_departure_after_k] origin2_before_k=[?ROOT.mdcw_gw_departure_2_before_k] origin2_after_k=[?ROOT.mdcw_gw_departure_2_after_k] sender_reserve_before_k=[?ROOT.mdcw_gw_source_manpower_before_k] sender_reserve_after_k=[?ROOT.mdcw_gw_source_manpower_after_k] sender_reserve_removed=[?ROOT.mdcw_gw_source_reserve_removed] arrived_k=[?ROOT.mdcw_gw_last_arrival_k] destination_before_k=[?ROOT.mdcw_gw_arrival_before_k] destination_after_k=[?ROOT.mdcw_gw_arrival_after_k] stock_k=[?ROOT.mdcw_gw_guest_workers_k] health_cost=[?ROOT.mdcw_gw_health_cost] social_cost=[?ROOT.mdcw_gw_social_cost] bureaucracy_cost=[?ROOT.mdcw_gw_bureaucracy_cost]"
+			country_event = { id = mdcw_guest_workers.30 hours = 1 }
+		}
+		else = {
+			mdcw_gw_refund_request = yes
+			country_event = { id = mdcw_guest_workers.32 }
+		}
+	}
+}
+
+mdcw_gw_weekly_update = {
+	if = {
+		limit = {
+			check_variable = { mdcw_gw_remittance_pool_m > 0 }
+		}
+		# Compute a 0.01% loss by division: avoid a four-decimal multiplier
+		# rounding to 1 in native fixed-point arithmetic.
+		set_temp_variable = { mdcw_gw_remittance_decay_m = mdcw_gw_remittance_pool_m }
+		divide_temp_variable = { mdcw_gw_remittance_decay_m = 10000 }
+		subtract_from_variable = { mdcw_gw_remittance_pool_m = mdcw_gw_remittance_decay_m }
+		clamp_variable = { var = mdcw_gw_remittance_pool_m min = 0 max = 3000 }
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						check_variable = { mdcw_gw_net_emigration_k > 0 }
+					}
+					check_variable = { mdcw_gw_remittance_pool_m < 0.001 }
+				}
+			}
+			set_variable = { mdcw_gw_remittance_pool_m = 0 }
+		}
+	}
+}
+
+mdcw_gw_add_remittance_income = {
+	set_variable = { mdcw_gw_weekly_income = 0 }
+	# IMPERIA CW — Cold War: Campaigns share the same $3bn total weekly ceiling.
+	mdcw_dp_income_preview = yes
+	if = {
+		limit = {
+			check_variable = { gw_dp_total_income_m > 0 }
+			check_variable = { mdcw_gw_net_emigration_k > 0 }
+		}
+		set_variable = { mdcw_gw_weekly_income = gw_dp_total_income_m }
+		divide_variable = { mdcw_gw_weekly_income = 1000 }
+		add_to_variable = { additional_income_rate = mdcw_gw_weekly_income }
+	}
+}

@@ -1,0 +1,86 @@
+# IMPERIA CW — Cold War: Guest Worker Administration
+mdcw_gw_management_unlocked = {
+	is_ai = no
+	# IMPERIA CW — Cold War: Funding windows share the negotiation guard.
+	mdcw_gw_negotiation_free = yes
+	has_idea = mdcw_ni_guest_worker_recruitment_programme
+	NOT = { has_country_flag = gw_project_active }
+	NOT = { has_country_flag = gw_return_active }
+	NOT = { has_country_flag = mdcw_gw_request_pending }
+	NOT = { has_country_flag = mdcw_gw_offer_pending }
+	NOT = { has_country_flag = mdcw_gw_offer_window_open }
+}
+
+mdcw_gw_selected_origin_exists = {
+	check_variable = { gw_selected_origin > -1 }
+	check_variable = { gw_selected_stock_k > 0 }
+	var:gw_selected_origin = { exists = yes }
+}
+
+mdcw_gw_can_plan_integration = {
+	mdcw_gw_management_unlocked = yes
+	check_variable = { gw_selected_stock_k > 0 }
+}
+
+mdcw_gw_can_plan_return = {
+	mdcw_gw_management_unlocked = yes
+	mdcw_gw_selected_origin_exists = yes
+	has_war = no
+	var:gw_selected_origin = {
+		has_war = no
+		any_owned_state = { is_controlled_by = PREV }
+	}
+}
+
+# ROOT = applicant/host, FROM = exporter, matching the original agreements.
+mdcw_gw_pair_not_suspended = {
+	FROM = { NOT = { is_in_array = { gw_suspended_hosts = ROOT.id } } }
+}
+
+mdcw_gw_can_close_programme = {
+	is_ai = no
+	# IMPERIA CW — Cold War: An unanswered diaspora offer also blocks programme closure.
+	mdcw_gw_negotiation_free = yes
+	NOT = { has_country_flag = gw_dialog_window }
+	has_idea = mdcw_ni_guest_worker_recruitment_programme
+	NOT = { check_variable = { mdcw_gw_guest_workers_k > 0 } }
+	NOT = { check_variable = { political_power < 150 } }
+	NOT = { has_country_flag = gw_project_active }
+	NOT = { has_country_flag = gw_return_active }
+	NOT = { has_country_flag = mdcw_gw_request_pending }
+	NOT = { has_country_flag = mdcw_gw_offer_pending }
+	NOT = { has_country_flag = mdcw_gw_offer_window_open }
+}
+
+# Runs in the target/host country inside a native sender-targeted decision.
+mdcw_gw_outreach_target_valid = {
+	ROOT = { is_ai = no }
+	exists = yes
+	check_variable = { population_total > 0 }
+	any_of = {
+		array = gw_origins index = gw_outreach_i value = gw_outreach_origin
+		check_variable = { gw_outreach_origin = ROOT.id }
+		check_variable = { gw_stock^gw_outreach_i > 24.999 }
+		NOT = { check_variable = { gw_outreach^gw_outreach_i > 0 } }
+		set_temp_variable = { gw_outreach_share = gw_stock^gw_outreach_i }
+		divide_temp_variable = { gw_outreach_share = population_total }
+		check_variable = { gw_outreach_share > 0.249 }
+	}
+}
+
+mdcw_gw_origin_present_here = {
+	exists = yes
+	any_of = {
+		array = gw_origins index = gw_presence_i value = gw_presence_origin
+		check_variable = { gw_presence_origin = ROOT.id }
+		check_variable = { gw_stock^gw_presence_i > 0 }
+	}
+}
+
+# A single prerequisite set shared by the confirmation option and diagnostics.
+mdcw_gw_project_payment_ready = {
+ has_country_flag = gw_dialog_valid
+ mdcw_gw_can_plan_integration = yes
+ check_variable = { gw_project_preview_k > 0 }
+ NOT = { check_variable = { political_power < gw_project_pp_cost } }
+}

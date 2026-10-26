@@ -1,0 +1,513 @@
+{
+  "audit_date": "2026-10-20",
+  "mode": "read-only; no game files changed; no generators or builders executed",
+  "scope": {
+    "focus_files": [
+      "common/national_focus/COLDWAR_SOV_1970_focus.txt",
+      "common/national_focus/COLDWAR_DDR_1970_focus.txt",
+      "common/national_focus/COLDWAR_EGY_1970_focus.txt",
+      "common/national_focus/COLDWAR_UNI_1970_union_joint.txt"
+    ],
+    "comparison_root": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649",
+    "coverage": "All focus costs/descriptions and research-category targets indexed. Representative complete economic, political and military subpaths read alongside dynamic modifier definitions, initializer/succession effects and actual MD consumers. All 17 Union joint focuses inspected; selected linked decisions/year-settlement/capstone readers traced. This is representative static review, not individual certification of every reward or a HOI4 runtime test."
+  },
+  "inventory": {
+    "SOV": {
+      "focus_count": 836,
+      "cost_distribution": {
+        "1": 2,
+        "3": 156,
+        "5": 579,
+        "7": 84,
+        "2": 10,
+        "10": 5
+      },
+      "focus_point_days": 7
+    },
+    "DDR": {
+      "focus_count": 821,
+      "cost_distribution": {
+        "1": 2,
+        "2": 114,
+        "3": 390,
+        "5": 250,
+        "7": 63,
+        "10": 2
+      },
+      "focus_point_days": 7
+    },
+    "EGY": {
+      "focus_count": 812,
+      "cost_distribution": {
+        "1": 1,
+        "5": 667,
+        "3": 64,
+        "7": 54,
+        "10": 26
+      },
+      "focus_point_days": 7
+    },
+    "UNI": {
+      "focus_count": 17,
+      "cost_distribution": {
+        "2": 1,
+        "3": 8,
+        "5": 4,
+        "7": 4
+      },
+      "focus_point_days": 7
+    }
+  },
+  "findings": [
+    {
+      "id": "SDE-01",
+      "priority": "P2",
+      "type": "confirmed presentation/calculation mismatch",
+      "title": "Soviet interest-rate rewards use percentage formatting for a flat rate-point reader",
+      "focus_ids": [
+        "COLDWAR_SOV_rd_the_directors_banks",
+        "COLDWAR_SOV_open_the_gates"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_SOV_1970_focus.txt",
+          "line": 20931
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_SOV_1970_focus.txt",
+          "line": 29993
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\localisation\\english\\COLDWAR_SOV_1970_l_english.yml",
+          "line": 1183
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\00_money_system.txt",
+          "line": 2560
+        }
+      ],
+      "actual_values": {
+        "directors_banks": -0.05,
+        "open_the_gates": -0.06,
+        "tooltip": "Interest Rates: $RIGHT|-=%1$",
+        "reader": "pre_clamp_interest_rate adds modifier@interest_rate_multiplier_modifier; final interest_rate clamp min0.8 max50"
+      },
+      "consequence": "The formatter advertises -5%/-6%, while the formula subtracts only 0.05/0.06 percentage points from the rate before its floor. The reward is also completely absorbed at the 0.8 rate floor. It is not a 5%/6% relative reduction.",
+      "recommendation": "Display the same flat rate-point unit as the live native MD tooltip. Separately recalibrate the intended financial benefit after choosing an explicit magnitude; do not multiply the implementation blindly."
+    },
+    {
+      "id": "SDE-02",
+      "priority": "P2",
+      "type": "confirmed conditional no-op in historical setup",
+      "title": "DDR military-industry opinion rewards and drawbacks target an absent internal faction",
+      "focus_ids": [
+        "COLDWAR_DDR_nva_buy_from_the_brothers",
+        "COLDWAR_DDR_nva_the_t72_licence",
+        "COLDWAR_DDR_hof_the_garrison_state",
+        "COLDWAR_DDR_hof_the_military_industrial_republic"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\COLDWAR_DDR_1970_scripted_effects.txt",
+          "line": 13
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 26828
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 26866
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 18519
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 18920
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\00_internal_faction_effects.txt",
+          "line": 1102
+        }
+      ],
+      "actual_values": {
+        "import_branch_input_opinion": -5,
+        "licence_branch_input_opinion": 10,
+        "count_of_DDR_focus_calls": 15,
+        "reader_guard": "has_idea = defense_industry"
+      },
+      "consequence": "DDR 1970 history/initializer do not install defense_industry, and the tree does not install it. The native helper skips both the advertised positive rewards and negative tradeoffs while that faction is absent. Bonuses to industrial_conglomerates and the_military elsewhere are a different faction and do not make this helper work.",
+      "limit": "The calls become functional if the player separately obtains defense_industry through another system. This is not a claim they never work in any possible save.",
+      "recommendation": "Use a relevant initialized faction or introduce the military-industrial faction through a deliberate, visible country programme before using it as a reward/cost."
+    },
+    {
+      "id": "SDE-03",
+      "priority": "P2",
+      "type": "design/balance finding; source-confirmed amounts",
+      "title": "Repay at Any Price offers no debt repayment and a very small interest benefit against persistent costs",
+      "focus_ids": [
+        "COLDWAR_DDR_plan_repay_at_any_price",
+        "COLDWAR_DDR_plan_the_billion_mark_credit"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 23519
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 23543
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 23480
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\00_money_system.txt",
+          "line": 2560
+        }
+      ],
+      "actual_values": {
+        "both_cost_days": 35,
+        "repayment_route": {
+          "debt_reduction": 0,
+          "interest_rate_points": -0.08,
+          "sanction_resistance": 0.08,
+          "consumer_goods_factor": 0.03,
+          "stability": -0.02,
+          "moscow_trust": 5,
+          "cadres_opinion_input": 5
+        },
+        "credit_route": {
+          "treasury_share_GDP": 0.02,
+          "debt_share_GDP": 0.02,
+          "factory_payment_share_GDP": 0.008,
+          "civilian_factories": 1,
+          "interest_rate_points": -0.05,
+          "moscow_trust": -5,
+          "inner_german_course": 0.1
+        }
+      },
+      "consequence": "The nominal repayment route never changes principal. Its rate improvement over taking credit is only 0.03 percentage points and may disappear at the native floor, while +3% consumer-goods factor and -2 stability persist. Sanction resistance/trust can matter, but the financial sacrifice is poorly aligned with the name and sharply less tangible than a factory and cash.",
+      "recommendation": "Give the austerity fork an actual, priced principal reduction or meaningful recurring fiscal relief. Preserve a reason to take the external-credit fork and its real trust/debt tradeoff."
+    },
+    {
+      "id": "SDE-04",
+      "priority": "P3",
+      "type": "design pacing finding, not parser/runtime defect",
+      "title": "Egypt repeatedly inserts PP-only accounting/choice gates into otherwise substantive programmes",
+      "focus_ids": [
+        "COLDWAR_EGY_tp_mohieddins_path",
+        "COLDWAR_EGY_tp_the_late_question",
+        "COLDWAR_EGY_fc_contractors_or_importers",
+        "COLDWAR_EGY_fc_the_reckoning"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 5423
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 5640
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 8616
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 9201
+        }
+      ],
+      "actual_values": {
+        "total_EGY_focuses_with_only_log_and_PP_in_completion": 52,
+        "cost_days_each": 21,
+        "usual_PP": 25,
+        "exceptions_PP": [
+          15,
+          50
+        ]
+      },
+      "consequence": "These nodes only add 15/25/50 PP; they do not enact the debate or set any programme/office variable. They are genuine branch connectors, so their downstream unlock is acknowledged. The pattern is repeated twice in numerous party programmes, making the player spend 42 days on ceremonial gates rather than on decisions that change the programme.",
+      "recommendation": "Merge redundant debate nodes into the actual fork or make them a meaningful country-specific political institution/event. Do not globally lengthen 21-day focuses: main MD itself uses them extensively."
+    },
+    {
+      "id": "SDE-05",
+      "priority": "P3",
+      "type": "editorial quality finding",
+      "title": "Several major DDR political entries are slogans rather than explanations of the programme",
+      "focus_ids": [
+        "COLDWAR_DDR_power_gl",
+        "COLDWAR_DDR_power_spk",
+        "COLDWAR_DDR_cc_sto",
+        "COLDWAR_DDR_nt_our_own_road"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\localisation\\english\\COLDWAR_DDR_1970_l_english.yml",
+          "line": 92
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\localisation\\english\\COLDWAR_DDR_1970_l_english.yml",
+          "line": 84
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\localisation\\english\\COLDWAR_DDR_1970_l_english.yml",
+          "line": 154
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\localisation\\english\\COLDWAR_DDR_1970_l_english.yml",
+          "line": 126
+        }
+      ],
+      "examples": [
+        "Bitterfeld's smog has become political.",
+        "Schürer's planners govern without the Politburo's slogans.",
+        "The head of government claims the party.",
+        "Neither Moscow's oil nor Bonn's credits: self-reliance."
+      ],
+      "consequence": "The tone can work as flavour, but these important political/sovereignty entries do not identify the organisation, governing method or meaningful tension the player is choosing. This falls below the project expectation for finished country-specific programme descriptions. Many other DDR descriptions, e.g. Honecker and Academy of Sciences, are specific and informative.",
+      "recommendation": "Expand selected important entries with institution, political aim and tradeoff. Keep minor descriptions short when they already explain the object; word count is not a universal minimum."
+    },
+    {
+      "id": "SDE-06",
+      "priority": "P3",
+      "type": "design/presentation mismatch; not a claim the API is invalid",
+      "title": "DDR imported-tank versus local-licence fork does not actually deliver imports or a licence",
+      "focus_ids": [
+        "COLDWAR_DDR_nva_buy_from_the_brothers",
+        "COLDWAR_DDR_nva_the_t72_licence"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 26798
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 26837
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\localisation\\english\\COLDWAR_DDR_1970_l_english.yml",
+          "line": 1354
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\localisation\\english\\COLDWAR_DDR_1970_l_english.yml",
+          "line": 1356
+        }
+      ],
+      "actual_values": {
+        "buy": "+5% licensed production speed, 1x50% MBT research bonus,25 army XP,+3 Moscow trust; no equipment added",
+        "licence": "2 military factories at1.6%GDP,1x50% MBT research bonus,+3% military-factory productivity,-3 trust; no create_production_license"
+      },
+      "consequence": "There is a real industry-versus-diplomacy distinction, but the arms-purchase path gives research and licensed-production speed rather than Soviet tanks, and the named licence path never grants an actual production licence. The narrative promise is stronger than the concrete outcome.",
+      "recommendation": "Either grant a guarded real import/licence through an agreement using MD native APIs or name/describe the rewards as procurement cooperation and domestic tank-industrial investment. Main MD EGY_heluan_tank_factory contains an actual guarded create_production_license example."
+    }
+  ],
+  "positive_examples": [
+    {
+      "focus_ids": [
+        "COLDWAR_SOV_the_tank_question",
+        "COLDWAR_SOV_t64_morozovs_masterpiece",
+        "COLDWAR_SOV_t72_the_mass_tank",
+        "COLDWAR_SOV_t80_gas_turbine"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_SOV_1970_focus.txt",
+          "line": 28222
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_SOV_1970_focus.txt",
+          "line": 28249
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_SOV_1970_focus.txt",
+          "line": 28286
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_SOV_1970_focus.txt",
+          "line": 28323
+        }
+      ],
+      "assessment": "The 21-day tank-question entry gives50% gun research1use,+5 defence-industry opinion and25PP. The35-day exclusive T64/T72 fork has distinct substantive outcomes: T64 2x50%MBT research,+5%breakthrough,+3%equipment spending and1x50%armour research; T72 1x50%MBT research,-4%equipment spending,+5%market income and1mil factory at1%GDP. Both rejoin T80 with2x50%MBT/engine research,+5%army speed,+2%supply use,25XP. No incompatible sides were summed. This is a useful model for attractive forks."
+    },
+    {
+      "focus_ids": [
+        "COLDWAR_DDR_ind_steel_from_eisenhuettenstadt",
+        "COLDWAR_DDR_ind_the_hot_rolling_mill"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 23909
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_DDR_1970_focus.txt",
+          "line": 23956
+        }
+      ],
+      "assessment": "Current rewards are substantive: each35-day focus combines paid civilian factory/industrial infrastructure with sector improvement; newly added guarded Brandenburg steel grants are4 and6. The first also has1x50%construction research and+3%factory output; the second+5%civilian construction. This is comparable in reward grammar to main MD Severstal/Grunten rather than PP filler."
+    },
+    {
+      "focus_ids": [
+        "COLDWAR_EGY_rebuild_the_armed_forces",
+        "COLDWAR_EGY_end_the_amer_clique",
+        "COLDWAR_EGY_the_educated_conscript",
+        "COLDWAR_EGY_infantry_against_armour"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 28549
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 28571
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 28598
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 28626
+        }
+      ],
+      "assessment": "Four compatible35-day steps give an intelligible rebuilding progression:50armyXP+20CP; officer-training-law improvement and+3%org; -5%trainingtime,+10%army experience gain and graduates spirit;2x50%AT research,+3%army defence. Dynamic modifier is ensured before changes. Not a perfect balance certification, but mechanically meaningful and legible."
+    },
+    {
+      "focus_ids": [
+        "COLDWAR_UNI_capstone_9",
+        "COLDWAR_UNI_capstone_10",
+        "COLDWAR_UNI_capstone_11",
+        "COLDWAR_UNI_capstone_12"
+      ],
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_UNI_1970_union_joint.txt",
+          "line": 398
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\ideas\\COLDWAR_UNI_1970_ideas.txt",
+          "line": 340
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\COLDWAR_UNI_1970_scripted_effects.txt",
+          "line": 536
+        }
+      ],
+      "assessment": "The49-day capstones require3successful years of their plan and grant730-day rewards (e.g.9th:+5%stability,-2%CG;11th:+5%research,+3%stability). Annual settlement actually increments matching good_years counters. Timed plan-cycle rewards are meaningful and do not need to become permanent to be useful."
+    }
+  ],
+  "activation_cleanup_checks": [
+    {
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\dynamic_modifiers\\COLDWAR_SOV_1970_dynamic_modifiers.txt",
+          "line": 211
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\COLDWAR_SOV_1970_scripted_effects.txt",
+          "line": 381
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\COLDWAR_SOV_1970_scripted_effects.txt",
+          "line": 414
+        }
+      ],
+      "result": "Sampled Soviet leader programmes require both exact gensec flag and communist-state governing party. Installation clears all old gensec flags, sets new one, then refreshes. Retained former programme variables do not by themselves create simultaneous leader bonuses; permanent sector bonuses are separate owners."
+    },
+    {
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\dynamic_modifiers\\COLDWAR_DDR_1970_dynamic_modifiers.txt",
+          "line": 388
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\dynamic_modifiers\\COLDWAR_DDR_1970_dynamic_modifiers.txt",
+          "line": 411
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\COLDWAR_DDR_1970_scripted_effects.txt",
+          "line": 517
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_effects\\COLDWAR_DDR_1970_scripted_effects.txt",
+          "line": 544
+        }
+      ],
+      "result": "DDR Ulbricht/Honecker programmes similarly enable only exact First Secretary flag+party. First Secretary installer clears previous flags and refreshes. Do not add every leader programme together when judging balance."
+    },
+    {
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\dynamic_modifiers\\COLDWAR_EGY_1970_dynamic_modifiers.txt",
+          "line": 85
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\national_focus\\COLDWAR_EGY_1970_focus.txt",
+          "line": 227
+        }
+      ],
+      "result": "Egypt party programmes use 1970-scenario+actual-party enable. State/economy/armed-forces sectors are persistent, ensured by root and relevant rewards. Numerous party-policy rewards deliberately enter persistent sectors, so broad all-party totals would be misleading; institutional persistence should be reviewed per policy."
+    },
+    {
+      "evidence": [
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_triggers\\COLDWAR_UNI_1970_scripted_triggers.txt",
+          "line": 11
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_triggers\\COLDWAR_UNI_1970_scripted_triggers.txt",
+          "line": 18
+        },
+        {
+          "file": "C:\\Users\\Enes\\Documents\\Paradox Interactive\\Hearts of Iron IV\\mod\\mdcoldwar\\common\\scripted_triggers\\COLDWAR_SOV_1970_scripted_triggers.txt",
+          "line": 6
+        }
+      ],
+      "result": "Union membership is subject-to-SOV+14republic whitelist, excluding sovereignty spirit and left_union; Moscow requires initialized flag. There is no positive Union membership spirit to test. Joint focuses use joint_trigger, not shared_focus semantics. No proven unauthorized-nonmember reward found."
+    }
+  ],
+  "reference_examples": [
+    {
+      "file": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_russia.txt",
+      "line": 33515,
+      "focus_id": "SOV_economic_severstal",
+      "cost_days": 35,
+      "bundle": "4steel state1128;2steel+1civilian factory+slot state643;decision unlock;economic support1;-14treasury"
+    },
+    {
+      "file": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_germany.txt",
+      "line": 1864,
+      "focus_id": "GER_grunten_mine",
+      "cost_days": 55.3,
+      "bundle": "8steel state43+state mines modifier;possible5fossil industry opinion;-8.5treasury;owned/controlled state gate"
+    },
+    {
+      "file": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_egypt.txt",
+      "line": 11093,
+      "focus_id": "EGY_heluan_tank_factory",
+      "cost_days": 56,
+      "bundle": "1military factory;DLC-guarded US production licence toEGY for medium_tank_chassis_1;1x30%tank research"
+    },
+    {
+      "file": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/localisation/english/MD_focus_SOV_l_english.yml",
+      "line": 3805,
+      "focus_id": "SOV_economic_severstal",
+      "description": "Severstal is Russia's largest steelmaker, headquartered in Cherepovets and controlled by billionaire Alexey Mordashov.",
+      "lesson": "Main MD can use short factual descriptions: precision and relevance matter more than imposing a fixed minimum word count."
+    }
+  ],
+  "research_target_check": "All CAT_* categories referenced by add_tech_bonus in these3national focus files were found inside actual current mod technology categories blocks. This excludes doctrine-cost API and exact date/ownership eligibility of individual technologies.",
+  "runtime_unknowns": [
+    "No HOI4 launch, hover inspection, save/reload, government-change playthrough or multiplayer test was performed.",
+    "Union availability/joint_trigger checks have no explicit final membership check in reward bodies. A membership change while a joint focus is in progress needs native-engine validation; not asserted as a confirmed reward exploit.",
+    "Research bonuses, additive native engine combat modifiers and dynamic-variable refresh were source-reviewed; actual cap interaction with each possible campaign setup was not simulated.",
+    "Main MD focus-reference values demonstrate reward grammar, not a rule to transplant superpower or2000-era asset budgets into1970."
+  ]
+}

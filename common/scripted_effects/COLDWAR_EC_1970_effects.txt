@@ -1,0 +1,200 @@
+# IMPERIA CW — Cold War: EC 1970 effects — scripted effects.
+###########################################################################################
+### COLDWAR: European Communities 1970 (EC mode of the native Millennium Dawn EU system)
+###
+### The 1970 start runs the native MD EU system (membership idea, member array, agenda
+### pipeline, AI voting table, parliament, offices, budget) with 1970 data.
+### Entry point: the COLDWAR hook at the top of the startup block in
+### on_startup_euu_action (99_eu_scripted_effects.txt).
+### Global flag COLDWAR_EC_1970_mode marks the EC era; later EC agendas end it.
+###########################################################################################
+
+# COLDWAR: country scope. Native MD founding-member setup for one of the Six.
+COLDWAR_EC_make_founding_member = {
+	if = {
+		limit = { NOT = { has_idea = EU_member } }
+		add_ideas = EU_member
+	}
+	if = {
+		limit = { NOT = { is_in_array = { global.EU_member = THIS } } }
+		add_to_array = { global.EU_member = THIS }
+	}
+}
+
+# COLDWAR: called once from on_startup_euu_action when IMP_is_1970_scenario = yes.
+# Mirrors the native MD startup block, with the 1970 member list and values.
+COLDWAR_EC_1970_initialize = {
+	log = "[GetDateText]: COLDWAR_EC_1970_initialize (European Communities of the Six)"
+	set_global_flag = EU_initialized
+	set_global_flag = COLDWAR_EC_1970_mode
+
+	EUU = {
+		# Agenda catalogue: the 1970 EC agendas are added by the COLDWAR EC agenda package.
+		# The modern MD agendas (101-112, 201-208, 301-308, 401-408, 601+) are not on the
+		# 1970 list; they return with the Treaty on European Union.
+
+		# base voting array for pp calculations (native MD)
+		add_to_array = { array = global.starting_mep_support_parliament value = -100 }
+		add_to_array = { array = global.starting_mep_support_parliament value = -50 }
+		add_to_array = { array = global.starting_mep_support_parliament value = 0 }
+		add_to_array = { array = global.starting_mep_support_parliament value = 50 }
+		add_to_array = { array = global.starting_mep_support_parliament value = 100 }
+
+		# The Six: Belgium, West Germany, France, Italy, Luxembourg, the Netherlands
+		BEL = { COLDWAR_EC_make_founding_member = yes }
+		FRA = { COLDWAR_EC_make_founding_member = yes }
+		GER = { COLDWAR_EC_make_founding_member = yes }
+		HOL = { COLDWAR_EC_make_founding_member = yes }
+		ITA = { COLDWAR_EC_make_founding_member = yes }
+		LUX = { COLDWAR_EC_make_founding_member = yes }
+
+		# Potential members (native MD collections)
+		every_collection_element = {
+			input = { input = collection:eu_members_collection }
+			add_to_array = { global.EU_potential = THIS }
+		}
+		every_collection_element = {
+			input = { input = collection:eu_potential_countries_collection }
+			add_to_array = { global.EU_potential = THIS }
+		}
+
+		# Monitor and the first allocation of the appointed delegations (native EUelection.2).
+		# No direct election is scheduled: the Assembly is appointed by the national parliaments
+		# until the Direct Elections Act arms EUelection.1.
+		random_scope_in_array = {
+			array = global.EU_potential
+			limit = { is_ai = yes }
+			add_ideas = EUU_monitor
+			country_event = EUelection.2
+		}
+
+		set_global_flag = { flag = EU_president_commission_ai value = 1 days = 10 }
+
+		# Starting europeanism, set before EU_update_vars (native order)
+		for_each_scope_loop = {
+			array = global.EU_potential
+			set_variable = { europeanism = 0.3 }
+		}
+		# The Six
+		set_variable = { BEL.europeanism = 0.85 }
+		set_variable = { FRA.europeanism = 0.65 }
+		set_variable = { GER.europeanism = 0.8 }
+		set_variable = { HOL.europeanism = 0.85 }
+		set_variable = { ITA.europeanism = 0.85 }
+		set_variable = { LUX.europeanism = 0.85 }
+		# Applicants of 1967, negotiations reopened by the Hague Summit
+		set_variable = { ENG.europeanism = 0.55 }
+		set_variable = { IRE.europeanism = 0.7 }
+		set_variable = { DEN.europeanism = 0.65 }
+		set_variable = { NRY.europeanism = 0.45 }
+		# EFTA neutrals and Iceland
+		set_variable = { AUS.europeanism = 0.35 }
+		set_variable = { SWE.europeanism = 0.35 }
+		set_variable = { SWI.europeanism = 0.3 }
+		set_variable = { FIN.europeanism = 0.3 }
+		set_variable = { ICE.europeanism = 0.3 }
+		# Southern Europe and the associates
+		set_variable = { POR.europeanism = 0.4 }
+		set_variable = { SPR.europeanism = 0.4 }
+		set_variable = { GRE.europeanism = 0.4 }
+		set_variable = { TUR.europeanism = 0.5 }
+		set_variable = { MLT.europeanism = 0.45 }
+		set_variable = { CYP.europeanism = 0.4 }
+		# Eastern bloc
+		set_variable = { SOV.europeanism = 0.05 }
+
+		EU_update_vars = yes
+		EU_init_focus_vote_weights = yes
+		if = {
+			limit = { has_game_rule = { rule = rule_european_union_expansion_focus option = yes } }
+			EU_apply_expansion_focus_weights = yes
+		}
+
+		# Budget (native cycle). 1970: contributions of about 0.7% of GDP,
+		# expenditure dominated by the Common Agricultural Policy.
+		for_each_scope_loop = {
+			array = global.EU_member
+			tooltip = TT_ALL_EU_MEMBER_NATIONS_GAIN
+			activate_mission = EU_budget_draft_preparations
+			activate_mission = EU_mff_draft_preparations
+			set_variable = { THIS.EU_budget_call_rate = 0.7 }
+		}
+		set_global_flag = EU_budget_EP_block
+		set_variable = { global.EU_budget_min_call_rate = 0.7 }
+		set_EU_gdp = yes
+		EU_global_click_cost = yes
+		update_EU_budget_call_rate = yes
+		update_EU_average_eco_lvl = yes
+		set_EU_expenditure = yes
+		set_variable = { global.EU_growth_exp_ratio = 0.08 }
+		set_variable = { global.EU_natural_exp_ratio = 0.8 }
+		set_variable = { global.EU_global_exp_ratio = 0.06 }
+		set_variable = { global.EU_admin_exp_ratio = 0.06 }
+		update_EU_expenditure = yes
+		distribute_EU_budget = yes
+	}
+
+	# Office pointers (native MD: vacant = EUU)
+	set_variable = { global.eucouncil = EUU.id }
+	set_variable = { global.eu_commission = EUU.id }
+	set_variable = { global.eucentralbank = EUU.id }
+	set_variable = { global.euforeignaffairs = EUU.id }
+	set_variable = { global.euparliamentpresident = EUU.id }
+	set_variable = { global.eufinance = EUU.id }
+	set_variable = { global.eufrontex = EUU.id }
+	set_variable = { global.euarmy = EUU.id }
+	set_variable = { global.eunavy = EUU.id }
+	set_variable = { global.euambassador = EUU.id }
+	set_variable = { global.eupresfederation = EUU.id }
+
+	# The Rey Commission (Belgium) serves until 30 June 1970; then the office is open.
+	BEL = {
+		add_timed_idea = { idea = EU_commission_president days = 181 }
+	}
+	set_global_flag = EU_commission_taken_flag
+
+	clear_array = global.MEP_PG_party_array
+	resize_array = { global.MEP_PG_party_array = 24 }
+	clear_array = global.MEP_Ratio_PG_array
+	resize_array = { global.MEP_Ratio_PG_array = 24 }
+	clear_array = global.PG_party_support_array
+	resize_array = { global.PG_party_support_array = 24 }
+	clear_array = global.EU_draft_party_array
+	resize_array = { global.EU_draft_party_array = 24 }
+}
+
+# COLDWAR: called from election_EU_Parliament while the EC era lasts (before Lisbon).
+# Replaces the native treaty seat tiers with the historical Assembly sizes.
+# Appointed Assembly: 142 seats for the Six, 198 for the Nine (about 18.7 per extra member).
+# Directly elected Parliament (after the Direct Elections Act): 410 for the Nine, about 36 per extra member.
+COLDWAR_EC_1970_set_parliament_size = {
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_EC_direct_elections } }
+		set_variable = {
+			var = global.EU_Parliament_max_MEP
+			value = {
+				value = global.EU_member^num
+				multiply = 18.667
+				add = 30
+				round = yes
+			}
+		}
+		clamp_variable = { var = global.EU_Parliament_max_MEP min = 142 }
+		set_variable = { global.min_clamp_eu_mep = 6 }
+		set_variable = { global.max_clamp_eu_mep = 36 }
+	}
+	else = {
+		set_variable = {
+			var = global.EU_Parliament_max_MEP
+			value = {
+				value = global.EU_member^num
+				multiply = 36
+				add = 86
+				round = yes
+			}
+		}
+		clamp_variable = { var = global.EU_Parliament_max_MEP min = 410 }
+		set_variable = { global.min_clamp_eu_mep = 6 }
+		set_variable = { global.max_clamp_eu_mep = 81 }
+	}
+}

@@ -1,0 +1,65 @@
+# IMPERIA CW — Cold War: suez canal effects — scripted effects.
+# Reconcile the two pre-existing 1970 reopening receipts without replaying
+# their different costs or rewards. The global receipt survives annexation.
+mdcw_suez_sync_reopening_receipts = {
+	if = {
+		limit = {
+			IMP_is_1970_scenario = yes
+			OR = {
+				has_global_flag = ISR70_policy_canal_open
+				EGY = { has_country_flag = COLDWAR_EGY_canal_reopened }
+			}
+		}
+		set_global_flag = ISR70_policy_canal_open
+		if = {
+			limit = { country_exists = EGY }
+			EGY = {
+				set_country_flag = COLDWAR_EGY_canal_reopened
+				remove_ideas = COLDWAR_EGY_the_closed_canal
+			}
+		}
+	}
+}
+
+# Country scope. Callers retain their own control/ceasefire requirements.
+# Clearing the historical cause never removes a legacy blockage or damage.
+mdcw_suez_reopen_historical_canal = {
+	if = {
+		limit = { IMP_is_1970_scenario = yes }
+		set_global_flag = ISR70_policy_canal_open
+		mdcw_suez_sync_reopening_receipts = yes
+		mdcw_suez_refresh_canal_blockage = yes
+	}
+}
+
+# Country scope, Egypt. If the focus completes during the decision project,
+# return exactly that project's original reservation and invalidate its callback.
+mdcw_suez_refund_reopening_project = {
+	if = {
+		limit = { has_country_flag = ISR70_policy_egypt_canal_project }
+		set_temp_variable = { treasury_change = ISR70_policy_egypt_canal_paid }
+		modify_treasury_effect = yes
+		clear_variable = ISR70_policy_egypt_canal_paid
+		clr_country_flag = ISR70_policy_egypt_canal_project
+	}
+}
+
+# Compute the physical flag first, then update every country's crisis spirit.
+# The world update must never call this effect back. Normal unchanged weekly
+# checks need no global broadcast; the country pulse handles new countries.
+mdcw_suez_refresh_canal_blockage = {
+	mdcw_suez_sync_reopening_receipts = yes
+	if = {
+		limit = { mdcw_suez_canal_is_closed = yes }
+		if = {
+			limit = { NOT = { has_global_flag = SUEZ_CANAL_BLOCKED } }
+			set_global_flag = SUEZ_CANAL_BLOCKED
+			mdcw_suez_update_world = yes
+		}
+	}
+	else_if = {
+		limit = { has_global_flag = SUEZ_CANAL_BLOCKED }
+		clr_global_flag = SUEZ_CANAL_BLOCKED
+		mdcw_suez_update_world = yes
+	}
+}

@@ -1,0 +1,43 @@
+# IMPERIA CW — Cold War: Imperia money transfer scripted effects — scripted effects.
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+calculate_subsidies_in = {
+    set_variable = { total_subsidies_in = 0 }
+    every_other_country = { 
+        add_to_variable = { PREV.total_subsidies_in = active_subsidies@PREV }
+    }
+}
+
+calculate_subsidies_out = {
+    set_variable = { total_subsidies_out = 0 }
+    every_other_country = { 
+        add_to_variable = { PREV.total_subsidies_out = PREV.active_subsidies@THIS }
+    }
+}
+
+calculate_bond_size = {
+    set_variable = { ROOT.bond_total = ROOT.bond_size }
+    
+    set_temp_variable = { bond_interest_t = ROOT.bond_interest }
+    divide_temp_variable = { bond_interest_t = 100 }
+    add_to_temp_variable = { bond_interest_t = 1 }
+
+    multiply_variable = { ROOT.bond_total = bond_interest_t }
+    round_variable = ROOT.bond_total
+}
+
+calculate_new_bonds_held = {
+    set_variable = { imp_total_bonds_held = 0 }
+    every_country = {
+        add_to_variable = { PREV.imp_total_bonds_held = PREV.given_bonds@THIS }
+    }
+}
+
+calculate_new_bonds_owed = {
+    set_variable = { imp_total_bonds_owed = 0 }
+    every_country = {
+        add_to_variable = { PREV.imp_total_bonds_owed = given_bonds@PREV }
+    }
+}

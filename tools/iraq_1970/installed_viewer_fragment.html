@@ -1,0 +1,88 @@
+<div id="cw-installed-viewer">
+  <div class="cw-head"><span>Millennium Dawn | Cold War</span><strong>Implemented | gameplay untested</strong></div>
+  <div class="cw-tools">
+    <label>Country<select id="cw-country"><option value="IRQ">Iraq | 410 active focuses</option><option value="USA">USA | 228 active focuses</option></select></label>
+    <label>Branch<select id="cw-branch"></select></label>
+    <div class="cw-camera"><button type="button" id="cw-fit">Fit branch</button><button type="button" id="cw-all">Entire tree</button><button type="button" id="cw-native">100%</button><span id="cw-zoom">100%</span></div>
+  </div>
+  <div id="cw-map" role="region" aria-label="Draggable national focus tree">
+    <div id="cw-world"><svg id="cw-links" aria-hidden="true"></svg></div>
+    <canvas id="cw-mini" width="160" height="86" aria-label="Minimap: select a location"></canvas>
+    <div class="cw-key">Drag with any mouse button | Wheel pan | Shift sideways | Ctrl zoom</div>
+  </div>
+  <div class="cw-meta" id="cw-meta"></div>
+  <section id="cw-detail" aria-live="polite"><h3>Loading installed tree</h3></section>
+</div>
+<!-- INSTALLED_DATA -->
+<style>
+#cw-installed-viewer{--cw-bg:#22343c;--cw-panel:#263d46;--cw-deep:#17272f;--cw-fg:#e6e6dc;--cw-muted:#c5cfcd;--cw-line:#a4b5b6;--cw-gold:#ddcc8b;--cw-red:#d7a38c;color:var(--cw-fg);font:14px/1.45 Arial,sans-serif;width:100%;color-scheme:dark}
+#cw-installed-viewer *{box-sizing:border-box}
+#cw-installed-viewer .cw-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--cw-deep);padding:14px 16px;padding-right:100px}
+#cw-installed-viewer .cw-head strong{font-weight:400;color:var(--cw-gold)}
+#cw-installed-viewer .cw-tools{display:flex;gap:12px;flex-wrap:wrap;padding:12px 16px;background:var(--cw-panel)}
+#cw-installed-viewer label{flex:1 1 220px;min-width:0;color:var(--cw-muted)}
+#cw-installed-viewer select{display:block;width:100%;margin-top:5px;padding:8px;color:var(--cw-fg);background:var(--cw-deep);border:1px solid #788983;font:inherit}
+#cw-installed-viewer .cw-camera{display:flex;gap:7px;align-items:center;flex-wrap:wrap;flex-basis:100%}
+#cw-installed-viewer button{font:inherit;color:var(--cw-fg)}
+#cw-installed-viewer .cw-camera button{background:#3f514c;border:1px solid #89947f;padding:8px 10px;border-radius:2px}
+#cw-installed-viewer #cw-map{position:relative;height:620px;overflow:hidden;background:var(--cw-bg);touch-action:none;user-select:none;cursor:grab;isolation:isolate}
+#cw-installed-viewer #cw-map.dragging{cursor:grabbing}
+#cw-installed-viewer #cw-world{position:absolute;left:0;top:0;transform-origin:0 0}
+#cw-installed-viewer #cw-links{position:absolute;inset:0;pointer-events:none;overflow:visible}
+#cw-installed-viewer #cw-links path{fill:none;stroke:var(--cw-line);stroke-width:2}
+#cw-installed-viewer #cw-links .cw-exclusive{stroke:var(--cw-red);stroke-dasharray:5 4}
+#cw-installed-viewer .cw-node{position:absolute;width:165px;height:128px;padding:0;border:0;background:transparent;cursor:inherit}
+#cw-installed-viewer .cw-node img,#cw-installed-viewer .cw-node canvas{pointer-events:none;position:absolute}
+#cw-installed-viewer .cw-icon{left:87.5px;top:20px;transform:translate(-50%,-50%)}
+#cw-installed-viewer .cw-bar{left:5px;top:40px;width:164px;height:50px}
+#cw-installed-viewer .cw-node canvas{left:15px;top:58px;width:147px;height:20px}
+#cw-installed-viewer .cw-node[aria-pressed="true"] .cw-icon{filter:drop-shadow(0 0 5px var(--cw-gold))}
+#cw-installed-viewer #cw-mini{position:absolute;right:10px;bottom:36px;width:160px;height:86px;background:var(--cw-deep);border:1px solid #7f918c;cursor:crosshair;touch-action:none}
+#cw-installed-viewer .cw-key{position:absolute;left:10px;right:10px;bottom:8px;color:var(--cw-muted);font-size:12px;background:#17272fe8;pointer-events:none;width:fit-content;max-width:calc(100% - 20px)}
+#cw-installed-viewer .cw-meta{padding:10px 16px;background:var(--cw-deep);color:var(--cw-muted)}
+#cw-installed-viewer #cw-detail{padding:16px;background:var(--cw-panel);overflow-wrap:anywhere}
+#cw-installed-viewer h3{color:var(--cw-gold);font-weight:400;margin:0 0 10px}
+#cw-installed-viewer h4{font-weight:400;color:var(--cw-gold);margin-bottom:5px}
+#cw-installed-viewer p{margin:7px 0}
+#cw-installed-viewer details{margin-top:10px}
+#cw-installed-viewer pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;background:var(--cw-deep);font:12px/1.5 Consolas,monospace;color:var(--cw-fg)}
+#cw-installed-viewer .cw-choice{display:flex;gap:7px;flex-wrap:wrap}
+#cw-installed-viewer .cw-choice button{background:var(--cw-deep);border:1px solid #80918a;padding:7px 9px;overflow-wrap:anywhere;max-width:100%}
+@media(max-width:500px){#cw-installed-viewer #cw-map{height:510px}#cw-installed-viewer .cw-head{padding-right:80px}#cw-installed-viewer select{font-size:16px}#cw-installed-viewer .cw-camera button{min-height:44px}#cw-installed-viewer #cw-mini{width:130px;height:70px}#cw-installed-viewer #cw-detail{padding:12px}}
+</style>
+<script>
+(async()=>{
+const root=document.getElementById('cw-installed-viewer');
+const payload=document.getElementById('cw-installed-data').textContent.trim();
+const bytes=Uint8Array.from(atob(payload),c=>c.charCodeAt(0));
+const data=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).json();
+const map=root.querySelector('#cw-map'),world=root.querySelector('#cw-world'),svg=root.querySelector('#cw-links'),mini=root.querySelector('#cw-mini'),country=root.querySelector('#cw-country'),branch=root.querySelector('#cw-branch'),detail=root.querySelector('#cw-detail');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tag='IRQ',group='iran_war',picked='COLDWAR_IRQ_iran_arabistan_claim',nodes=new Map(),camera={x:0,y:0,z:1},drag=null,mode='native',blockedUntil=0,wheelTimer,lastWidth=0,ready=false;
+const atlas=new Image();await new Promise((resolve,reject)=>{atlas.onload=resolve;atlas.onerror=reject;atlas.src=data.font;});
+function textCanvas(text){const canvas=document.createElement('canvas');canvas.width=147;canvas.height=20;canvas.setAttribute('aria-hidden','true');const ctx=canvas.getContext('2d'),chars=[...text],g=data.glyphs,kern=data.kern;let total=0,previous=null;for(const c of chars){const cp=c.codePointAt(0),glyph=g[cp]||g[63];total+=glyph[6]+(kern[previous+','+cp]||0);previous=cp;}let x=Math.floor((147-total)/2);previous=null;for(const c of chars){const cp=c.codePointAt(0),a=g[cp]||g[63];x+=kern[previous+','+cp]||0;ctx.drawImage(atlas,a[0],a[1],a[2],a[3],x+a[4],2+a[5],a[2],a[3]);x+=a[6];previous=cp;}return canvas;}
+const pos=n=>({x:n.xy[0]*96,y:n.xy[1]*130});
+function bounds(all=false){const list=[...nodes.values()].filter(n=>all||n.g===group),ps=list.map(pos);return{left:Math.min(...ps.map(p=>p.x))-35,top:Math.min(...ps.map(p=>p.y))-105,right:Math.max(...ps.map(p=>p.x))+205,bottom:Math.max(...ps.map(p=>p.y))+140};}
+function minimap(){if(!nodes.size)return;const ctx=mini.getContext('2d'),b=bounds(true),w=b.right-b.left,h=b.bottom-b.top,s=Math.min(160/w,86/h),ox=(160-w*s)/2,oy=(86-h*s)/2;ctx.clearRect(0,0,160,86);ctx.fillStyle=getComputedStyle(root).getPropertyValue('--cw-muted');for(const n of nodes.values()){const p=pos(n);ctx.fillRect(ox+(p.x-b.left)*s,oy+(p.y-b.top)*s,Math.max(1,165*s),Math.max(1,80*s));}ctx.strokeStyle=getComputedStyle(root).getPropertyValue('--cw-gold');ctx.lineWidth=1;ctx.strokeRect(ox+(-camera.x/camera.z-b.left)*s,oy+(-camera.y/camera.z-b.top)*s,map.clientWidth/camera.z*s,map.clientHeight/camera.z*s);mini._map={b,s,ox,oy};}
+function transform(){world.style.transform=`translate(${camera.x}px,${camera.y}px) scale(${camera.z})`;root.querySelector('#cw-zoom').textContent=Math.round(camera.z*100)+'%';minimap();}
+function fit(all=false,native=false){mode=all?'all':native?'native':'branch';const b=bounds(all),w=map.clientWidth,h=map.clientHeight-40;camera.z=native?1:Math.min(1,(w-30)/(b.right-b.left),(h-30)/(b.bottom-b.top));camera.x=(w-(b.right-b.left)*camera.z)/2-b.left*camera.z;camera.y=native?25-b.top:(h-(b.bottom-b.top)*camera.z)/2-b.top*camera.z;transform();}
+function zoom(f,x,y){mode='manual';const z=Math.max(.035,Math.min(1.8,camera.z*f));camera.x=x-(x-camera.x)*z/camera.z;camera.y=y-(y-camera.y)*z/camera.z;camera.z=z;transform();}
+function remember(){const value={modelContent:{phase:'Implemented; gameplay untested',country:tag,branch:group,focus:nodes.get(picked)?.t},privateContent:{version:1,tag,group,picked,camera:{...camera},mode}};const p=window.openai?.setWidgetState?.(value);p?.catch?.(()=>{});}
+function showCode(key){const body=data.code[key],provider=data.providers[key];if(!body)return'';return`<details><summary>${esc(key)}</summary><p>${esc(provider)}</p><pre>${esc(body)}</pre></details>`;}
+function pick(key){const n=nodes.get(key);if(!n)return;picked=key;for(const el of world.querySelectorAll('.cw-node'))el.setAttribute('aria-pressed',String(el.dataset.node===key));const prereq=n.p.map(row=>row.map(id=>nodes.get(id)?.t||id).join(' OR ')).join(' AND ')||'Independent entry';detail.innerHTML=`<h3>${esc(n.t)}</h3><p>${n.days} days | x=${n.xy[0]}, y=${n.xy[1]} | Implemented</p><p>${esc(n.d)}</p><p>Prerequisites: ${esc(prereq)}</p>${n.e.length?`<p>Exclusive with: ${esc(n.e.map(id=>nodes.get(id)?.t||id).join(' / '))}</p>`:''}${Object.keys(n.m).length?`<h4>Earned programme contributions</h4><pre>${esc(Object.entries(n.m).map(([k,v])=>`${k} = ${v}`).join('\n'))}</pre><p>Current government, selected policy and live programme conditions determine activation. Positive policy stability is capped at 15 points across programmes.</p>`:''}<details open><summary>Installed completion effects</summary><pre>${esc(n.r)}</pre></details><details><summary>Installed availability</summary><pre>${esc(n.a||'No additional availability condition')}</pre></details>${n.refs.length?'<h4>Referenced installed providers</h4>'+n.refs.map(showCode).join(''):''}<p>Live campaign, combat, save/reload and multiplayer behavior remain untested.</p>`;root.querySelector('#cw-meta').textContent=`${tag==='IRQ'?'Iraq':'USA'} | ${nodes.size} installed focuses | ${data.trees[tag].groups[n.g]||n.g} | ${n.id}`;}
+function draw(){const t=data.trees[tag];nodes=new Map(t.nodes.map(n=>[n.id,n]));world.querySelectorAll('.cw-node').forEach(e=>e.remove());svg.replaceChildren();branch.replaceChildren();for(const [id,label]of Object.entries(t.groups)){const o=document.createElement('option');o.value=id;o.textContent=label;branch.append(o);}if(!t.groups[group])group=tag==='IRQ'?'iran_war':'gulf';branch.value=group;const b=bounds(true);world.style.width=(b.right+300)+'px';world.style.height=(b.bottom+200)+'px';svg.setAttribute('width',Math.max(1,b.right+300));svg.setAttribute('height',Math.max(1,b.bottom+200));for(const n of t.nodes){const p=pos(n);for(const row of n.p)for(const id of row){const q=pos(nodes.get(id)),mid=(q.y+64+p.y)/2;const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',`M${q.x+80},${q.y+64} V${mid} H${p.x+80} V${p.y}`);svg.append(path);}for(const id of n.e){if(id<n.id)continue;const q=pos(nodes.get(id)),path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','cw-exclusive');path.setAttribute('d',`M${Math.min(p.x,q.x)+172},${p.y+24} H${Math.max(p.x,q.x)+12}`);svg.append(path);}const el=document.createElement('button');el.type='button';el.className='cw-node cursor-interaction';el.dataset.node=n.id;el.setAttribute('aria-label',n.t);el.setAttribute('data-tooltip',n.t);el.setAttribute('aria-pressed','false');el.style.left=p.x+'px';el.style.top=p.y+'px';el.innerHTML=`<img class="cw-icon" src="${data.images[data.icons[n.i]]}" alt=""><img class="cw-bar" src="${data.bar}" alt="">`;el.append(textCanvas(n.t));world.append(el);}country.value=tag;if(!nodes.has(picked))picked=t.nodes.find(n=>n.g===group).id;pick(picked);}
+map.addEventListener('contextmenu',e=>e.preventDefault());map.addEventListener('pointerdown',e=>{if(e.target===mini)return;if(e.button>2)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,cx:camera.x,cy:camera.y,moved:false,node:e.target.closest('.cw-node')?.dataset.node,button:e.button};map.setPointerCapture(e.pointerId);map.classList.add('dragging');e.preventDefault();});
+map.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)drag.moved=true;if(drag.moved){mode='manual';camera.x=drag.cx+dx;camera.y=drag.cy+dy;transform();}});
+map.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const last=drag;drag=null;map.classList.remove('dragging');if(map.hasPointerCapture(e.pointerId))map.releasePointerCapture(e.pointerId);if(last.moved){blockedUntil=performance.now()+160;remember();}else if(last.node&&last.button===0){pick(last.node);blockedUntil=performance.now()+160;remember();}});
+map.addEventListener('pointercancel',()=>{drag=null;map.classList.remove('dragging');});
+world.addEventListener('click',e=>{if(performance.now()<blockedUntil)return;const el=e.target.closest('.cw-node');if(el){pick(el.dataset.node);remember();}});
+map.addEventListener('wheel',e=>{e.preventDefault();const rect=map.getBoundingClientRect(),unit=e.deltaMode===1?16:e.deltaMode===2?map.clientHeight:1,dx=e.deltaX*unit,dy=e.deltaY*unit;if(e.ctrlKey||e.metaKey)zoom(Math.exp(-dy*.0015),e.clientX-rect.left,e.clientY-rect.top);else{mode='manual';camera.x-=e.shiftKey?dx+dy:dx;camera.y-=e.shiftKey?0:dy;transform();}clearTimeout(wheelTimer);wheelTimer=setTimeout(remember,160);},{passive:false});
+function jump(e){const r=mini.getBoundingClientRect(),m=mini._map;if(!m)return;const x=(e.clientX-r.left)*160/r.width,y=(e.clientY-r.top)*86/r.height,wx=m.b.left+(x-m.ox)/m.s,wy=m.b.top+(y-m.oy)/m.s;mode='manual';camera.x=map.clientWidth/2-wx*camera.z;camera.y=map.clientHeight/2-wy*camera.z;transform();}
+mini.addEventListener('pointerdown',e=>{e.stopPropagation();mini.setPointerCapture(e.pointerId);jump(e);e.preventDefault();});mini.addEventListener('pointermove',e=>{if(mini.hasPointerCapture(e.pointerId))jump(e);});mini.addEventListener('pointerup',e=>{if(mini.hasPointerCapture(e.pointerId))mini.releasePointerCapture(e.pointerId);remember();});
+country.addEventListener('change',()=>{tag=country.value;group=tag==='IRQ'?'iran_war':'gulf';picked=data.trees[tag].nodes.find(n=>n.g===group).id;draw();fit(false,true);remember();});branch.addEventListener('change',()=>{group=branch.value;picked=[...nodes.values()].find(n=>n.g===group).id;pick(picked);fit(false,true);remember();});root.querySelector('#cw-fit').onclick=()=>{fit(false);remember();};root.querySelector('#cw-all').onclick=()=>{fit(true);remember();};root.querySelector('#cw-native').onclick=()=>{const p=pos(nodes.get(picked));mode='manual';camera={x:map.clientWidth/2-p.x-82,y:map.clientHeight/2-p.y-45,z:1};transform();remember();};
+function restore(value){const p=value?.privateContent;if(p?.version!==1||!data.trees[p.tag])return false;tag=p.tag;group=p.group;picked=p.picked;draw();if(p.camera&&[p.camera.x,p.camera.y,p.camera.z].every(Number.isFinite)){camera={...p.camera};mode=p.mode||'manual';transform();}else fit(false,true);return true;}
+window.addEventListener('openai:set_globals',e=>{if(e.detail?.globals?.widgetState)restore(e.detail.globals.widgetState);});
+if(!restore(window.openai?.widgetState)){draw();fit(false,true);}ready=true;lastWidth=map.clientWidth;new ResizeObserver(()=>{if(!ready)return;const w=map.clientWidth;if(mode==='manual'){camera.x+=(w-lastWidth)/2;transform();}else fit(mode==='all',mode==='native');lastWidth=w;}).observe(map);
+root.dataset.ready='true';root._viewer={data,pick,camera:()=>({...camera}),current:()=>({tag,group,picked}),fit};
+})().catch(error=>{const root=document.getElementById('cw-installed-viewer');root.querySelector('#cw-detail').innerHTML='<p role="alert">Installed tree could not load.</p>';console.error(error);});
+</script>

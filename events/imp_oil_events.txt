@@ -1,0 +1,711 @@
+# IMPERIA CW — Cold War: Imperia oil events — game content.
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+add_namespace = imp_oil
+
+# Civil War
+news_event = {
+	id = imp_oil.1
+	title = imp_oil.1.t
+	desc = imp_oil.1.d
+	picture = GFX_news_imp_oil_civil_war
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.1.o1
+
+		trigger = { 
+			NOT = {
+				tag = USA
+				tag = FROM
+			}
+		}
+
+		custom_effect_tooltip = {
+    		localization_key = oil_price_up_tt
+		}
+	}
+
+	option = {
+		name = imp_oil.1.o2
+
+		trigger = {
+			tag = USA
+		}
+
+		custom_effect_tooltip = {
+    		localization_key = oil_price_up_tt
+		}
+	}
+
+	option = {
+		name = imp_oil.1.o3
+
+		trigger = {
+			tag = FROM
+		}
+
+		custom_effect_tooltip = {
+    		localization_key = oil_price_up_tt
+		}
+	}
+}
+
+# War between two nations
+news_event = {
+	id = imp_oil.2
+	title = imp_oil.2.t
+	desc = imp_oil.2.d
+	picture = GFX_news_imp_oil_war
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.2.o1
+
+		trigger = { 
+			NOT = {
+				tag = USA
+			}
+		}
+
+		custom_effect_tooltip = {
+    		localization_key = oil_price_up_tt
+		}
+	}
+
+	option = {
+		name = imp_oil.1.o2
+
+		trigger = {
+			tag = USA
+		}
+
+		custom_effect_tooltip = {
+    		localization_key = oil_price_up_tt
+		}
+	}
+}
+
+# Regular Country Events
+country_event = {
+	id = imp_oil.3
+	title = imp_oil.3.t
+	desc = imp_oil.3.d
+	picture = GFX_news_imp_oil_bad
+	is_triggered_only = yes
+
+	option = {
+		name = imp_oil.3.o1
+
+		set_party_index_to_ruling_party = yes
+		set_temp_variable = { party_popularity_increase = -0.04 }
+		set_temp_variable = { temp_outlook_increase = -0.04 }
+		change_relative_party_popularity = yes
+	}
+
+	option = {
+		name = imp_oil.3.o2
+
+		set_temp_variable = { treasury_change = 0 }
+		subtract_from_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = 0.01 }
+		modify_treasury_effect = yes
+	}
+
+	option = {
+		name = imp_oil.3.o3
+
+		trigger = {
+			OR = {
+				has_idea = imp_major_oil_exporter
+				has_idea = imp_minor_oil_exporter
+			}
+			has_idea = fossil_fuel_industry
+		}
+
+		add_timed_idea = {
+			idea = imp_oil_internal_market_first
+			days = 90
+		}
+
+		set_temp_variable = { oil_cost_multiplier_t = 0.005 }
+        imp_spike_oil_price = yes
+
+		custom_effect_tooltip = {
+    		localization_key = oil_price_up_extra_tt
+		}
+	}
+}
+
+country_event = {
+	id = imp_oil.4
+	title = imp_oil.4.t
+	desc = imp_oil.4.d
+	picture = GFX_news_imp_oil_bad
+	is_triggered_only = yes
+
+	option = {
+		name = imp_oil.4.o1
+
+		add_stability = -0.005
+	}
+
+	option = {
+		name = imp_oil.4.o2
+
+		set_temp_variable = { treasury_change = 0 }
+		subtract_from_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = 0.01 }
+		modify_treasury_effect = yes
+	}
+
+	option = {
+		name = imp_oil.4.o3
+
+		trigger = {
+			OR = {
+				has_idea = imp_major_oil_exporter
+				has_idea = imp_minor_oil_exporter
+			}
+			has_idea = fossil_fuel_industry
+		}
+
+		add_timed_idea = {
+			idea = imp_oil_internal_market_first
+			days = 90
+		}
+
+		set_temp_variable = { oil_cost_multiplier_t = 0.005 }
+        imp_spike_oil_price = yes
+
+		custom_effect_tooltip = {
+    		localization_key = oil_price_up_extra_tt
+		}
+	}
+}
+
+country_event = {
+	id = imp_oil.5
+	title = imp_oil.5.t
+	desc = imp_oil.5.d
+	picture = GFX_news_imp_oil_good
+	is_triggered_only = yes
+
+	option = {
+		name = imp_oil.5.o1
+
+		set_party_index_to_ruling_party = yes
+		set_temp_variable = { party_popularity_increase = 0.03 }
+		set_temp_variable = { temp_outlook_increase = 0.03 }
+		change_relative_party_popularity = yes
+	}
+}
+
+country_event = {
+	id = imp_oil.6
+	title = imp_oil.6.t
+	desc = imp_oil.6.d
+	picture = GFX_news_imp_oil_good
+	is_triggered_only = yes
+
+	option = {
+		name = imp_oil.6.o1
+
+		add_stability = 0.005
+	}
+}
+
+# Oil Crisis
+news_event = 
+{
+	id = imp_oil.7
+	title = imp_oil.7.t
+	desc = imp_oil.7.d
+	picture = GFX_news_imp_oil_shock
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.7.o1
+
+		add_timed_idea = { idea = imp_oil_shock days = 180 }
+		
+		decrease_economic_growth = yes
+
+		set_party_index_to_ruling_party = yes
+		set_temp_variable = { party_popularity_increase = -0.08 }
+		set_temp_variable = { temp_outlook_increase = -0.08 }
+		change_relative_party_popularity = yes
+	}
+}
+
+# GC Events
+country_event = {
+	id = imp_oil.8
+	title = imp_oil.8.t
+	desc = imp_oil.8.d
+	picture = GFX_news_imp_gm_intervention_up
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.8.o1
+	}
+}
+
+country_event = {
+	id = imp_oil.9
+	title = imp_oil.9.t
+	desc = imp_oil.9.d
+	picture = GFX_news_imp_gm_intervention_down
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.9.o1
+	}
+}
+
+# GC Strait Blocks
+# Hormuz
+news_event = {
+	id = imp_oil.10
+	title = imp_oil.10.t
+	desc = imp_oil.10.d
+	picture = GFX_news_imp_gm_oil_hormuz
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.10.o1
+	}
+}
+
+# Babel
+news_event = {
+	id = imp_oil.11
+	title = imp_oil.11.t
+	desc = imp_oil.11.d
+	picture = GFX_news_imp_gm_oil_babel
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.11.o1
+	}
+}
+
+# Suez
+news_event = {
+	id = imp_oil.12
+	title = imp_oil.12.t
+	desc = imp_oil.12.d
+	picture = GFX_news_imp_gm_oil_suez
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.12.o1
+	}
+}
+
+# Malacca
+news_event = {
+	id = imp_oil.13
+	title = imp_oil.13.t
+	desc = imp_oil.13.d
+	picture = GFX_news_imp_gm_oil_malacca
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.13.o1
+	}
+}
+
+# Bosporus
+news_event = {
+	id = imp_oil.14
+	title = imp_oil.14.t
+	desc = imp_oil.14.d
+	picture = GFX_news_imp_gm_oil_bosporus
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.14.o1
+	}
+}
+
+# RANDOM EVENTS
+# Oil Tanker
+country_event = {
+	id = imp_oil.15
+	title = imp_oil.15.t
+	desc = imp_oil.15.d
+	picture = GFX_news_imp_oil_random1
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.15.o1
+
+		trigger = {
+			NOT = { 
+				tag = global.imp_random_oil
+			}
+		}
+	}	
+
+	option = {
+		name = imp_oil.15.o2
+
+		trigger = {
+			tag = global.imp_random_oil
+		}
+
+		set_temp_variable = { treasury_change = 0 }
+		subtract_from_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = 0.005 }
+		modify_treasury_effect = yes
+	}
+}
+
+# Pipeline Exploding
+country_event = {
+	id = imp_oil.16
+	title = imp_oil.16.t
+	desc = imp_oil.16.d
+	picture = GFX_news_imp_oil_random2
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.16.o1
+
+		trigger = {
+			NOT = { 
+				tag = global.imp_random_oil
+			}
+		}
+	}	
+
+	option = {
+		name = imp_oil.16.o2
+
+		trigger = {
+			tag = global.imp_random_oil
+		}
+
+		set_temp_variable = { treasury_change = 0 }
+		subtract_from_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = 0.005 }
+		modify_treasury_effect = yes
+	}	
+}
+
+# Oil Field Smaller
+country_event = {
+	id = imp_oil.17
+	title = imp_oil.17.t
+	desc = imp_oil.17.d
+	picture = GFX_news_imp_oil_random3
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.17.o1
+
+		trigger = {
+			NOT = { 
+				tag = global.imp_random_oil
+			}
+		}
+	}	
+
+	option = {
+		name = imp_oil.17.o2
+
+		trigger = {
+			tag = global.imp_random_oil
+		}
+
+		random_owned_state = {
+			limit = {
+				has_resources_amount = {
+					resource = oil
+					amount > 10
+				}
+			}
+			add_resource = {
+				type = oil
+				amount = -5
+			}
+		}
+	}	
+}
+
+# Maintainance
+country_event = {
+	id = imp_oil.18
+	title = imp_oil.18.t
+	desc = imp_oil.18.d
+	picture = GFX_news_imp_oil_random4
+	is_triggered_only = yes
+	major = yes
+
+		option = {
+		name = imp_oil.18.o1
+
+		trigger = {
+			NOT = { 
+				tag = global.imp_random_oil
+			}
+		}
+	}	
+
+	option = {
+		name = imp_oil.18.o2
+
+		trigger = {
+			tag = global.imp_random_oil
+		}
+
+		set_temp_variable = { treasury_change = 0 }
+		subtract_from_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = 0.001 }
+		modify_treasury_effect = yes
+	}
+}
+
+# Storm
+country_event = {
+	id = imp_oil.19
+	title = imp_oil.19.t
+	desc = imp_oil.19.d
+	picture = GFX_news_imp_oil_random5
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.19.o1
+
+		trigger = {
+			NOT = { 
+				tag = global.imp_random_oil
+			}
+		}
+	}	
+
+	option = {
+		name = imp_oil.19.o2
+
+		trigger = {
+			tag = global.imp_random_oil
+		}
+
+		set_temp_variable = { treasury_change = 0 }
+		subtract_from_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = 0.001 }
+		modify_treasury_effect = yes
+	}
+}
+
+# Mild Winter
+country_event = {
+	id = imp_oil.20
+	title = imp_oil.20.t
+	desc = imp_oil.20.d
+	picture = GFX_news_imp_oil_random6
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.20.o1
+	}
+}
+
+# More Oil
+country_event = {
+	id = imp_oil.21
+	title = imp_oil.21.t
+	desc = imp_oil.21.d
+	picture = GFX_news_imp_oil_random7
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.21.o1
+	}
+}
+
+# Sanction Oil
+country_event = {
+	id = imp_oil.22
+	title = imp_oil.22.t
+	desc = imp_oil.22.d
+	picture = GFX_news_imp_oil_random8
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.22.o1
+	}
+}
+
+# Oil Field Bigger
+country_event = {
+	id = imp_oil.23
+	title = imp_oil.23.t
+	desc = imp_oil.23.d
+	picture = GFX_news_imp_oil_random9
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.23.o1
+
+		trigger = {
+			NOT = { 
+				tag = global.imp_random_oil
+			}
+		}
+	}	
+
+	option = {
+		name = imp_oil.23.o2
+
+		trigger = {
+			tag = global.imp_random_oil
+		}
+
+		random_owned_state = {
+			limit = {
+				has_resources_amount = {
+					resource = oil
+					amount > 10
+				}
+			}
+			add_resource = {
+				type = oil
+				amount = 5
+			}
+		}
+	}	
+}
+
+# Sanctions Added & Oil
+country_event = {
+	id = imp_oil.24
+	title = imp_oil.24.t
+	desc = imp_oil.24.d
+	picture = GFX_news_imp_oil_sanction_up
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.24.o1
+	}		
+}
+
+# Sanctions Lifted & Oil
+country_event = {
+	id = imp_oil.25
+	title = imp_oil.25.t
+	desc = imp_oil.25.d
+	picture = GFX_news_imp_oil_sanction_down
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.25.o1
+	}		
+}
+
+# Massive Production Decrease
+country_event = {
+	id = imp_oil.50
+	title = imp_oil.50.t
+	desc = imp_oil.50.d
+	picture = GFX_news_imp_oil_supply_cut
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.50.o1
+	}		
+}
+
+# Major Production Decrease
+country_event = {
+	id = imp_oil.51
+	title = imp_oil.51.t
+	desc = imp_oil.51.d
+	picture = GFX_news_imp_oil_supply_cut
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.51.o1
+	}		
+}
+
+# Massive Production Increase
+country_event = {
+	id = imp_oil.52
+	title = imp_oil.52.t
+	desc = imp_oil.52.d
+	picture = GFX_news_imp_oil_supply_up
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.52.o1
+
+		trigger = { 
+			NOT = {
+				tag = FROM
+			}
+		}
+	}
+
+	option = {
+		name = imp_oil.53.o2
+
+		trigger = { 
+			tag = FROM
+		}
+	}
+}
+
+# Major Production Increase
+country_event = {
+	id = imp_oil.53
+	title = imp_oil.53.t
+	desc = imp_oil.53.d
+	picture = GFX_news_imp_oil_supply_up
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = imp_oil.53.o1
+
+		trigger = { 
+			NOT = {
+				tag = FROM
+			}
+		}
+	}
+
+	option = {
+		name = imp_oil.53.o2
+
+		trigger = { 
+			tag = FROM
+		}
+	}	
+}

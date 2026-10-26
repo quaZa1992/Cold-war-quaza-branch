@@ -1,0 +1,9 @@
+-- IMPERIA COLD WAR: Project-specific integration; preserve existing author credits.
+NDefines.NDiplomacy.EMBARGO_COST = 35
+NDefines.NDiplomacy.REVOKE_EMBARGO_COST = 35
+NDefines.NDiplomacy.EMBARGO_THREAT_THRESHOLD = -1
+NDefines.NDiplomacy.EMBARGO_SAME_IDEOLOGY_AI_WEIGHT = -200
+NDefines.NDiplomacy.EMBARGO_DIFFERENT_IDEOLOGY_AI_WEIGHT = -200
+NDefines.NDiplomacy.EMBARGO_DIFFERENT_IDEOLOGY_AT_OFFENSIVE_WAR_AI_WEIGHT = -200
+NDefines.NDiplomacy.EMBARGO_RECIPIENT_IS_MAJOR_AI_WEIGHT = -200
+NDefines.NDiplomacy.EMBARGO_NEIGHBOUR_AI_WEIGHT = -200

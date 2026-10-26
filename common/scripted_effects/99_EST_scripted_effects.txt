@@ -1,0 +1,40 @@
+
+EST_ai_path_setup = {
+	hidden_effect = {
+		if = {
+			limit = { is_ai = yes }
+			if = {
+				limit = { has_global_flag = EST_CONSERVATIVE_FOCUS_PATH }
+				set_temp_variable = { EST_path_party = 1 }
+			}
+			else_if = {
+				limit = { has_global_flag = EST_SOCIAL_DEMOCRATIC_FOCUS_PATH }
+				set_temp_variable = { EST_path_party = 3 }
+			}
+			else_if = {
+				limit = { has_global_flag = EST_CENTRIST_FOCUS_PATH }
+				set_temp_variable = { EST_path_party = 15 }
+			}
+			else_if = {
+				limit = { has_global_flag = EST_NATIONALIST_FOCUS_PATH }
+				set_temp_variable = { EST_path_party = 21 }
+			}
+			else_if = {
+				limit = { EST_ai_historical_path = yes }
+				set_temp_variable = { EST_path_party = 2 }
+			}
+			if = {
+				limit = { check_variable = { EST_path_party > 0 } }
+				if = {
+					limit = { NOT = { check_variable = { ruling_party = EST_path_party } } }
+					set_temp_variable = { rul_party_temp = EST_path_party }
+					change_ruling_party_effect = yes
+				}
+				set_temp_variable = { party_index = EST_path_party }
+				set_temp_variable = { party_popularity_increase = 0.35 }
+				set_temp_variable = { temp_outlook_increase = 0.35 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+}

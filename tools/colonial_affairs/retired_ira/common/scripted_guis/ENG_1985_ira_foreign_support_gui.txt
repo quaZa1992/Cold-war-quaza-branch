@@ -1,0 +1,355 @@
+# IMPERIA CW — Cold War: Integrated ENG 1985 ira foreign support gui — scripted interface.
+# =============================================================================
+# ENG 1985 - IRA Foreign Support state-context GUI (TWO WINDOWS)
+# =============================================================================
+# We render TWO state-context windows on Northern Ireland (state 17):
+#
+#   1. ENG_1985_ira_foreign_support_trigger_gui  -> the small "fist" button
+#      that's always visible to non-British players when they have NI selected.
+#      Clicking it toggles the country flag ENG_1985_ira_panel_open. This is
+#      the ONLY thing on the state pane by default - keeps the map clean.
+#
+#   2. ENG_1985_ira_foreign_support_panel_gui    -> the big popup with the
+#      six action buttons. Only visible when the flag is set. Clicking the
+#      close button clears the flag.
+#
+# Both share the same visibility envelope (state 17 + 1985 IRA system live +
+# viewer is not the United Kingdom), but the panel is additionally gated by
+# the toggle flag. This gives the user the "small icon you click to open"
+# pattern they asked for, with the diegetic state-pane real estate kept tidy.
+# =============================================================================
+
+scripted_gui = {
+
+	# -------------------------------------------------------------------------
+	# TRIGGER WINDOW - the small fist icon shown directly on Northern Ireland
+	# -------------------------------------------------------------------------
+	ENG_1985_ira_foreign_support_trigger_gui = {
+		context_type = selected_state_context
+		window_name = "ENG_1985_ira_foreign_support_trigger_window"
+		parent_window_token = selected_state_view
+
+		visible = {
+			state = 17
+			ENG = {
+				has_country_flag = ENG_1985_ira_mechanic_active
+				NOT = { has_country_flag = ENG_1985_ira_mechanic_resolved }
+			}
+			NOT = { ROOT = { original_tag = ENG } }
+			ROOT = { is_ai = no }
+		}
+
+		effects = {
+			# Toggle behaviour: open if closed, close if open.
+			ENG_1985_ira_open_panel_click = {
+				ROOT = {
+					if = {
+						limit = { has_country_flag = ENG_1985_ira_panel_open }
+						clr_country_flag = ENG_1985_ira_panel_open
+					}
+					else = {
+						set_country_flag = ENG_1985_ira_panel_open
+					}
+				}
+			}
+		}
+	}
+
+	# -------------------------------------------------------------------------
+	# POPUP WINDOW - the full action panel with six buttons
+	# -------------------------------------------------------------------------
+	ENG_1985_ira_foreign_support_panel_gui = {
+		context_type = selected_state_context
+		window_name = "ENG_1985_ira_foreign_support_panel_window"
+		parent_window_token = selected_state_view
+
+		visible = {
+			state = 17
+			ENG = {
+				has_country_flag = ENG_1985_ira_mechanic_active
+				NOT = { has_country_flag = ENG_1985_ira_mechanic_resolved }
+			}
+			NOT = { ROOT = { original_tag = ENG } }
+			ROOT = { is_ai = no }
+			ROOT = { has_country_flag = ENG_1985_ira_panel_open }
+		}
+
+		effects = {
+
+			# Close panel
+			ENG_1985_ira_close_panel_click = {
+				ROOT = { clr_country_flag = ENG_1985_ira_panel_open }
+			}
+
+			# Arms shipment - "Libyan playbook"
+			# Real stockpile drain: 100 infantry equipment, 30 support equipment,
+			# 15 anti-tank. The trigger guard below makes sure the supplier has
+			# the goods before the button is even clickable.
+			ENG_1985_ira_send_arms_shipment_click = {
+				ROOT = {
+					add_political_power = -25
+					add_equipment_to_stockpile = {
+						type = infantry_weapons_type
+						amount = -100
+						producer = ROOT
+					}
+					add_equipment_to_stockpile = {
+						type = cnc_equipment_type
+						amount = -30
+						producer = ROOT
+					}
+					add_equipment_to_stockpile = {
+						type = L_AT_Equipment
+						amount = -15
+						producer = ROOT
+					}
+					set_country_flag = {
+						flag = ENG_1985_ira_arms_recent
+						days = 270
+						value = 1
+					}
+					ENG = {
+						add_to_variable = { ENG_ira_foreign_funding = 3 }
+						add_to_variable = { ENG_ira_militancy = 1 }
+						add_to_variable = { ENG_ira_intelligence_penetration = -1 }
+						add_to_variable = { ENG_ira_loyalist_tension = 1 }
+						ENG_1985_ira_clamp_values = yes
+					}
+					reverse_add_opinion_modifier = {
+						target = ENG
+						modifier = ENG_1985_ira_arms_supplier
+					}
+					ENG = {
+						add_opinion_modifier = {
+							target = ROOT
+							modifier = ENG_1985_ira_arms_supplier
+						}
+						set_country_flag = { flag = ENG_1985_ira_foreign_support_recent days = 120 value = 1 }
+						random_list = {
+							60 = { }
+							40 = { country_event = { id = eng_troubles.11 days = 1 } }
+						}
+					}
+				}
+			}
+
+			# Funds transfer - "NORAID-style"
+			# Cash gets routed through diaspora trust funds; we burn 15 convoys
+			# to model the laundering pipeline + couriers crossing the Atlantic
+			# / North Sea, plus a stability nick from the political pressure of
+			# admitting that you fund a foreign insurgency.
+			ENG_1985_ira_send_funds_click = {
+				ROOT = {
+					add_political_power = -15
+					add_stability = -0.01
+					add_equipment_to_stockpile = {
+						type = convoy_1
+						amount = -15
+						producer = ROOT
+					}
+					set_country_flag = {
+						flag = ENG_1985_ira_funds_recent
+						days = 180
+						value = 1
+					}
+					ENG = {
+						add_to_variable = { ENG_ira_foreign_funding = 2 }
+						add_to_variable = { ENG_ira_support = 1 }
+						ENG_1985_ira_clamp_values = yes
+					}
+					ENG = {
+						add_opinion_modifier = {
+							target = ROOT
+							modifier = ENG_1985_ira_financier
+						}
+						set_country_flag = { flag = ENG_1985_ira_foreign_support_recent days = 120 value = 1 }
+						random_list = {
+							70 = { }
+							30 = { country_event = { id = eng_troubles.12 days = 1 } }
+						}
+					}
+				}
+			}
+
+			# Propaganda support
+			ENG_1985_ira_propaganda_click = {
+				ROOT = {
+					add_political_power = -10
+					set_country_flag = {
+						flag = ENG_1985_ira_propaganda_recent
+						days = 120
+						value = 1
+					}
+					ENG = {
+						add_to_variable = { ENG_ira_support = 2 }
+						add_to_variable = { ENG_ira_peace_progress = -1 }
+						ENG_1985_ira_clamp_values = yes
+					}
+					ENG = {
+						add_opinion_modifier = {
+							target = ROOT
+							modifier = ENG_1985_ira_propaganda_sponsor
+						}
+						set_country_flag = { flag = ENG_1985_ira_foreign_support_recent days = 90 value = 1 }
+						random_list = {
+							80 = { }
+							20 = { country_event = { id = eng_troubles.13 days = 1 } }
+						}
+					}
+				}
+			}
+
+			# Cross-border safe haven - "Dundalk option"
+			# Real cost: domestic stability hit because hosting foreign militants
+			# spawns loyalist counter-protests inside your own borders.
+			ENG_1985_ira_provide_safe_haven_click = {
+				ROOT = {
+					add_political_power = -30
+					add_stability = -0.03
+					set_country_flag = {
+						flag = ENG_1985_ira_safehaven_recent
+						days = 365
+						value = 1
+					}
+					ENG = {
+						add_to_variable = { ENG_ira_militancy = 1 }
+						add_to_variable = { ENG_ira_security_pressure = -3 }
+						add_to_variable = { ENG_ira_intelligence_penetration = -1 }
+						add_to_variable = { ENG_ira_loyalist_tension = 2 }
+						ENG_1985_ira_clamp_values = yes
+					}
+					ENG = {
+						add_opinion_modifier = {
+							target = ROOT
+							modifier = ENG_1985_ira_safe_haven
+						}
+						set_country_flag = { flag = ENG_1985_ira_foreign_support_recent days = 150 value = 1 }
+						random_list = {
+							55 = { }
+							45 = { country_event = { id = eng_troubles.14 days = 1 } }
+						}
+					}
+				}
+			}
+
+			# Soviet-style intelligence handoff
+			# Real cost: command power for the SIGINT exposure + the trainer
+			# cadres pulled out of your own intelligence service.
+			ENG_1985_ira_intel_handoff_click = {
+				ROOT = {
+					add_political_power = -20
+					add_command_power = -25
+					set_country_flag = {
+						flag = ENG_1985_ira_intel_recent
+						days = 240
+						value = 1
+					}
+					ENG = {
+						add_to_variable = { ENG_ira_foreign_funding = 2 }
+						add_to_variable = { ENG_ira_militancy = 1 }
+						add_to_variable = { ENG_ira_intelligence_penetration = -2 }
+						ENG_1985_ira_clamp_values = yes
+					}
+					ENG = {
+						add_opinion_modifier = {
+							target = ROOT
+							modifier = ENG_1985_ira_intel_partner
+						}
+						set_country_flag = { flag = ENG_1985_ira_foreign_support_recent days = 120 value = 1 }
+						random_list = {
+							65 = { }
+							35 = { country_event = { id = eng_troubles.15 days = 1 } }
+						}
+					}
+				}
+			}
+
+			# Pull funding - undo what you did
+			ENG_1985_ira_pull_funding_click = {
+				ROOT = {
+					add_political_power = -5
+					set_country_flag = {
+						flag = ENG_1985_ira_pulled_recent
+						days = 120
+						value = 1
+					}
+					ENG = {
+						add_to_variable = { ENG_ira_foreign_funding = -4 }
+						add_to_variable = { ENG_ira_militancy = -1 }
+						add_to_variable = { ENG_ira_intelligence_penetration = 1 }
+						ENG_1985_ira_clamp_values = yes
+					}
+					ENG = {
+						add_opinion_modifier = {
+							target = ROOT
+							modifier = ENG_1985_ira_funding_withdrawn
+						}
+						random_list = {
+							80 = { }
+							20 = { country_event = { id = eng_troubles.16 days = 1 } }
+						}
+					}
+				}
+			}
+		}
+
+		# -------------------------------------------------------------------
+		# Cooldown / cost / role gating per button
+		# -------------------------------------------------------------------
+		triggers = {
+			ENG_1985_ira_send_arms_shipment_click_enabled = {
+				ROOT = {
+					NOT = { has_country_flag = ENG_1985_ira_arms_recent }
+					ENG = { NOT = { has_country_flag = ENG_1985_ira_foreign_support_recent } }
+					has_political_power > 24
+					# Stockpile gate: must actually have the goods to ship.
+					has_equipment = { infantry_weapons_type > 99 }
+					has_equipment = { cnc_equipment_type > 29 }
+					has_equipment = { L_AT_Equipment > 14 }
+				}
+			}
+			ENG_1985_ira_send_funds_click_enabled = {
+				ROOT = {
+					NOT = { has_country_flag = ENG_1985_ira_funds_recent }
+					ENG = { NOT = { has_country_flag = ENG_1985_ira_foreign_support_recent } }
+					has_political_power > 14
+					# Need at least 15 convoys to launder the cash through.
+					has_equipment = { convoy_1 > 14 }
+				}
+			}
+			ENG_1985_ira_propaganda_click_enabled = {
+				ROOT = {
+					NOT = { has_country_flag = ENG_1985_ira_propaganda_recent }
+					ENG = { NOT = { has_country_flag = ENG_1985_ira_foreign_support_recent } }
+					has_political_power > 9
+				}
+			}
+			ENG_1985_ira_provide_safe_haven_click_enabled = {
+				ROOT = {
+					NOT = { has_country_flag = ENG_1985_ira_safehaven_recent }
+					ENG = { NOT = { has_country_flag = ENG_1985_ira_foreign_support_recent } }
+					has_political_power > 29
+					OR = {
+						original_tag = IRE
+						any_owned_state = { is_coastal = yes is_on_continent = europe }
+					}
+				}
+			}
+			ENG_1985_ira_intel_handoff_click_enabled = {
+				ROOT = {
+					NOT = { has_country_flag = ENG_1985_ira_intel_recent }
+					ENG = { NOT = { has_country_flag = ENG_1985_ira_foreign_support_recent } }
+					has_political_power > 19
+					command_power > 24
+				}
+			}
+			ENG_1985_ira_pull_funding_click_enabled = {
+				ROOT = {
+					NOT = { has_country_flag = ENG_1985_ira_pulled_recent }
+					has_political_power > 4
+					ENG = { check_variable = { ENG_ira_foreign_funding > 25 } }
+				}
+			}
+		}
+	}
+}

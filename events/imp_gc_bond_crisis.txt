@@ -1,0 +1,225 @@
+# IMPERIA CW — Cold War: Imperia gc bond crisis — game content.
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+add_namespace = imp_bond_crisis
+
+# Bond Crisis
+news_event = {
+	id = imp_bond_crisis.1
+	picture = GFX_news_event_bond_crisis_1
+
+	title = imp_bond_crisis.1.t
+	desc = imp_bond_crisis.1.d
+	major = yes
+	is_triggered_only = yes
+
+	option = {
+		name = imp_bond_crisis.1.o1
+
+		add_timed_idea = { idea = imp_bond_crisis days = 1080 }
+		decrease_economic_growth = yes
+
+		hidden_effect = {
+			news_event = 
+			{  
+				id = imp_bond_crisis.2
+				days = 7
+			}
+		}
+	}
+}
+
+news_event = {
+	id = imp_bond_crisis.2
+	picture = GFX_news_event_bond_crisis_2
+
+	title = imp_bond_crisis.2.t
+	desc = imp_bond_crisis.2.d
+	is_triggered_only = yes
+
+	option = {
+		name = imp_bond_crisis.2.o1
+
+		add_ideas = imp_currency_devaluation
+		decrease_economic_growth = yes
+
+		trigger = { 
+			check_variable = { 
+				var = globalism_value
+				value = 50
+				compare = greater_than_or_equals
+			}
+		}
+
+		hidden_effect = {
+			news_event = 
+			{  
+				id = imp_bond_crisis.3
+				days = 7
+			}
+		}
+	}
+
+	option = {
+		name = imp_bond_crisis.2.o1
+
+		add_ideas = imp_currency_devaluation_min
+		decrease_economic_growth = yes
+
+		trigger = { 
+			check_variable = { globalism_value < 50 }
+		}
+
+		hidden_effect = {
+			news_event = 
+			{  
+				id = imp_bond_crisis.3
+				days = 7
+			}
+		}
+	}
+}
+
+news_event = { 
+	id = imp_bond_crisis.3
+	picture = GFX_news_event_bond_crisis_3
+
+	title = imp_bond_crisis.3.t
+	desc = imp_bond_crisis.3.d
+	is_triggered_only = yes
+
+	option = {
+		name = imp_bond_crisis.3.o1
+
+		trigger = { 
+			check_variable = { 
+				var = globalism_value
+				value = 50
+				compare = greater_than_or_equals
+			}
+		}
+		
+		add_ideas = imp_global_recession_bonds
+		decrease_economic_growth = yes
+
+		hidden_effect = {
+			news_event = 
+			{  
+				id = imp_bond_crisis.4
+				days = 7
+			}
+		}
+
+		custom_effect_tooltip = imp_bond_crisis_tt
+	}
+
+	option = {
+		name = imp_bond_crisis.3.o2
+
+		add_ideas = imp_global_recession_bonds_min
+		decrease_economic_growth = yes
+
+		trigger = { 
+			check_variable = { globalism_value < 50 }
+			check_variable = { 
+				var = globalism_value
+				value = 20
+				compare = greater_than_or_equals
+			}
+		}
+
+		hidden_effect = {
+			news_event = 
+			{  
+				id = imp_bond_crisis.4
+				days = 7
+			}
+		}
+
+		custom_effect_tooltip = imp_bond_crisis_tt
+	}
+
+	option = {
+		name = imp_bond_crisis.3.o3
+
+		trigger = { 
+			check_variable = { globalism_value < 20 }
+		}
+
+		add_ideas = imp_global_recession_bonds_minmin
+		decrease_economic_growth = yes
+
+		hidden_effect = {
+			news_event = 
+			{  
+				id = imp_bond_crisis.4
+				days = 7
+			}
+		}
+
+		custom_effect_tooltip = imp_bond_crisis_tt
+	}
+}
+
+news_event = { 
+	id = imp_bond_crisis.4
+	picture = GFX_news_event_bond_crisis_4
+
+	title = imp_bond_crisis.4.t
+	desc = imp_bond_crisis.4.d
+	is_triggered_only = yes
+
+	immediate = { 
+		if = { 
+			limit = { 
+				tag = LIC
+			}
+
+			set_temp_variable = { oil_cost_multiplier_t = -1.25 }
+			imp_spike_oil_price = yes
+		}
+	}
+
+	option = {
+		name = imp_bond_crisis.4.o1
+
+		trigger = { 
+			NOT = { 
+				has_idea = imp_major_oil_exporter
+				has_idea = imp_minor_oil_exporter
+			}
+		}
+		add_ideas = imp_reduced_oil_demand
+	}
+	
+	option = {
+		name = imp_bond_crisis.4.o2
+
+		trigger = { 
+			OR = { 
+				has_idea = imp_major_oil_exporter
+				has_idea = imp_minor_oil_exporter
+			}
+		}
+
+		add_ideas = imp_reduced_oil_demand
+		decrease_economic_growth = yes
+	}
+}
+
+news_event = { 
+	id = imp_bond_crisis.5
+	picture = GFX_news_event_bond_crisis_5
+
+	title = imp_bond_crisis.5.t
+	desc = imp_bond_crisis.5.d
+	is_triggered_only = yes
+
+	option = {
+		name = imp_bond_crisis.5.o1
+
+		increase_economic_growth = yes
+	}
+}

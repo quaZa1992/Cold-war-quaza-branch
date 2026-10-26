@@ -1,0 +1,397 @@
+# IMPERIA CW — Cold War: Integrated ENG 1985 ira counter decisions — decisions.
+# =============================================================================
+# ENG 1985 - British counter-IRA decisions
+# =============================================================================
+# All decisions live inside the ENG_1985_ira_mechanic category so they appear
+# directly under the live IRA tracker GUI - the British player gets the
+# 5-slider readout, the threat-phase status, and the click-able counters
+# in one place.
+#
+# Each decision:
+#   - has its own ENG_1985_<x>_recent country flag for cooldowns
+#   - costs PP (always) + at least one secondary cost (CP / stability / convoys)
+#   - mutates one or more IRA sliders by meaningful amounts (>= 5 typically)
+#   - many also award something concrete (recovered equipment, opinion, etc.)
+#
+# Designed to be the LATE half of the British player's tool-kit. The early
+# half (security sweep, community outreach, etc.) live in the existing
+# ENG_1985_decisions.txt; these are the heavier, more committed responses.
+# =============================================================================
+
+ENG_1985_ira_mechanic = {
+	# -------------------------------------------------------------------------
+	# Convoy Interdiction - the answer to foreign sponsors
+	# -------------------------------------------------------------------------
+	# Visible only when at least one non-British country is in the cooldown
+	# of a recent IRA-supply action AND IRA Foreign Funding is over 30. That
+	# way the player can't spam-click it as a free militancy reduction - it's
+	# a counter-move tied to actual ongoing foreign support.
+	ENG_1985_convoy_interdiction = {
+		icon = GFX_decision_generic_naval
+		cost = 30
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_convoy_interdiction_recent }
+			check_variable = { ENG_ira_foreign_funding > 30 }
+			command_power > 14
+			any_country = {
+				NOT = { original_tag = ENG }
+				OR = {
+					has_country_flag = ENG_1985_ira_arms_recent
+					has_country_flag = ENG_1985_ira_funds_recent
+					has_country_flag = ENG_1985_ira_intel_recent
+				}
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_convoy_interdiction"
+			custom_effect_tooltip = ENG_1985_convoy_interdiction_tt
+			add_command_power = -15
+			set_country_flag = {
+				flag = ENG_1985_convoy_interdiction_recent
+				days = 90
+				value = 1
+			}
+			add_to_variable = { ENG_ira_foreign_funding = -15 }
+			add_to_variable = { ENG_ira_militancy = -3 }
+			add_to_variable = { ENG_ira_intelligence_penetration = 8 }
+			add_to_variable = { ENG_ira_loyalist_tension = -2 }
+			add_equipment_to_stockpile = {
+				type = infantry_weapons_type
+				amount = 50
+				producer = ENG
+			}
+			add_equipment_to_stockpile = {
+				type = L_AT_Equipment
+				amount = 15
+				producer = ENG
+			}
+			ENG_1985_ira_clamp_values = yes
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Supergrass Programme - decapitate leadership
+	# -------------------------------------------------------------------------
+	# Mid-tier cost, mid-tier cooldown. The big lever for chopping militancy
+	# without lifting public sympathy too much. Real cost: 50 PP + 30 CP +
+	# 0.03 stability hit because supergrass trials were deeply controversial.
+	ENG_1985_supergrass_program = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 50
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_supergrass_recent }
+			command_power > 29
+			check_variable = { ENG_ira_militancy > 30 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_supergrass_program"
+			custom_effect_tooltip = ENG_1985_supergrass_program_tt
+			add_command_power = -30
+			add_stability = -0.03
+			set_country_flag = {
+				flag = ENG_1985_supergrass_recent
+				days = 240
+				value = 1
+			}
+			add_to_variable = { ENG_ira_militancy = -18 }
+			add_to_variable = { ENG_ira_foreign_funding = -8 }
+			add_to_variable = { ENG_ira_support = -5 }
+			add_to_variable = { ENG_ira_security_pressure = 5 }
+			add_to_variable = { ENG_ira_intelligence_penetration = 16 }
+			add_to_variable = { ENG_ira_loyalist_tension = 3 }
+			ENG_1985_ira_clamp_values = yes
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Tolerate Loyalist Paramilitaries - ugly, effective, dangerous
+	# -------------------------------------------------------------------------
+	# Crushes Republican public support but lifts militancy as PIRA retaliates.
+	# Lose 10 opinion with USA + IRE because international press furious.
+	# High WT generation - keep this as a desperate option.
+	ENG_1985_loyalist_paramilitary = {
+		icon = GFX_decision_generic_political_rally
+		cost = 25
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_loyalist_paramilitary_recent }
+			check_variable = { ENG_ira_support > 50 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_loyalist_paramilitary"
+			custom_effect_tooltip = ENG_1985_loyalist_paramilitary_tt
+			add_stability = -0.04
+			add_named_threat = { threat = 1.5 name = ENG_1985_loyalist_paramilitary_threat }
+			set_country_flag = {
+				flag = ENG_1985_loyalist_paramilitary_recent
+				days = 180
+				value = 1
+			}
+			add_to_variable = { ENG_ira_support = -12 }
+			add_to_variable = { ENG_ira_militancy = 8 }
+			add_to_variable = { ENG_ira_loyalist_tension = 20 }
+			add_to_variable = { ENG_ira_peace_progress = -5 }
+			ENG_1985_ira_clamp_values = yes
+			if = {
+				limit = { country_exists = USA }
+				USA = {
+					add_opinion_modifier = {
+						target = ENG
+						modifier = ENG_1985_security_crackdown
+					}
+				}
+			}
+			if = {
+				limit = { country_exists = IRE }
+				IRE = {
+					add_opinion_modifier = {
+						target = ENG
+						modifier = ENG_1985_security_crackdown
+					}
+				}
+			}
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Diplock Courts - emergency single-judge trials
+	# -------------------------------------------------------------------------
+	ENG_1985_diplock_courts = {
+		icon = GFX_decision_generic_arrest
+		cost = 40
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_diplock_recent }
+			check_variable = { ENG_ira_militancy > 40 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_diplock_courts"
+			custom_effect_tooltip = ENG_1985_diplock_courts_tt
+			add_stability = -0.02
+			set_country_flag = {
+				flag = ENG_1985_diplock_recent
+				days = 180
+				value = 1
+			}
+			add_to_variable = { ENG_ira_militancy = -10 }
+			add_to_variable = { ENG_ira_support = 5 }
+			add_to_variable = { ENG_ira_security_pressure = 8 }
+			add_to_variable = { ENG_ira_intelligence_penetration = 6 }
+			add_to_variable = { ENG_ira_peace_progress = -2 }
+			ENG_1985_ira_clamp_values = yes
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Anglo-Irish Dialogue Round - the only real long-term path
+	# -------------------------------------------------------------------------
+	# Costs 40 PP. Lifts Peace Progress by 12 (HUGE; the threshold is 35).
+	# Earns 25 opinion with Dublin. Cooldown 150 days so the player can
+	# realistically push Peace Progress over the line in 2-3 cycles.
+	ENG_1985_anglo_irish_dialogue = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 40
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			country_exists = IRE
+			NOT = { has_country_flag = ENG_1985_anglo_irish_dialogue_recent }
+			OR = {
+				has_country_flag = ENG_1985_irish_dialogue_unlocked
+				has_completed_focus = ENG_the_hillsborough_route
+				has_completed_focus = ENG_talks_in_ulster
+				has_completed_focus = ENG_good_friday_framework
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_anglo_irish_dialogue"
+			custom_effect_tooltip = ENG_1985_anglo_irish_dialogue_tt
+			set_country_flag = {
+				flag = ENG_1985_anglo_irish_dialogue_recent
+				days = 150
+				value = 1
+			}
+			set_country_flag = { flag = ENG_1985_awaiting_irish_dialogue_response days = 60 }
+			IRE = { country_event = { id = ire_troubles.2 days = 3 random_hours = 48 } }
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Protect the Informant Network - keep Special Branch alive
+	# -------------------------------------------------------------------------
+	ENG_1985_protect_informant_network = {
+		icon = GFX_decision_generic_intelligence_operation
+		cost = 35
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_informant_network_recent }
+			command_power > 14
+			check_variable = { ENG_ira_intelligence_penetration < 80 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_protect_informant_network"
+			custom_effect_tooltip = ENG_1985_protect_informant_network_tt
+			add_command_power = -15
+			set_country_flag = {
+				flag = ENG_1985_informant_network_recent
+				days = 120
+				value = 1
+			}
+			add_to_variable = { ENG_ira_intelligence_penetration = 12 }
+			add_to_variable = { ENG_ira_foreign_funding = -4 }
+			add_to_variable = { ENG_ira_militancy = -3 }
+			add_to_variable = { ENG_ira_loyalist_tension = 2 }
+			ENG_1985_ira_clamp_values = yes
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Unionist Liaison - lower loyalist temperature without pretending peace
+	# -------------------------------------------------------------------------
+	ENG_1985_unionist_liaison = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 35
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_unionist_liaison_recent }
+			check_variable = { ENG_ira_loyalist_tension > 35 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_unionist_liaison"
+			custom_effect_tooltip = ENG_1985_unionist_liaison_tt
+			set_country_flag = {
+				flag = ENG_1985_unionist_liaison_recent
+				days = 120
+				value = 1
+			}
+			add_to_variable = { ENG_ira_loyalist_tension = -12 }
+			add_to_variable = { ENG_ira_peace_progress = 3 }
+			add_to_variable = { ENG_ira_support = 2 }
+			add_stability = -0.005
+			ENG_1985_ira_clamp_values = yes
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Victims' Support Scheme - reduce legitimacy, not the whole crisis
+	# -------------------------------------------------------------------------
+	ENG_1985_victims_support_scheme = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 45
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_victims_support_recent }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_victims_support_scheme"
+			custom_effect_tooltip = ENG_1985_victims_support_scheme_tt
+			set_country_flag = {
+				flag = ENG_1985_victims_support_recent
+				days = 150
+				value = 1
+			}
+			add_stability = 0.01
+			add_to_variable = { ENG_ira_support = -6 }
+			add_to_variable = { ENG_ira_peace_progress = 4 }
+			add_to_variable = { ENG_ira_militancy = -2 }
+			ENG_1985_ira_clamp_values = yes
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+
+	# -------------------------------------------------------------------------
+	# Ports and Border Checks - pressure logistics, at a civil-liberty cost
+	# -------------------------------------------------------------------------
+	ENG_1985_ports_and_border_checks = {
+		icon = GFX_decision_generic_police_action
+		cost = 40
+
+		visible = {
+			has_country_flag = ENG_1985_ira_mechanic_active
+		}
+
+		available = {
+			NOT = { has_country_flag = ENG_1985_ports_border_recent }
+			check_variable = { ENG_ira_foreign_funding > 25 }
+			OR = {
+				has_country_flag = ENG_1985_irish_security_cooperation
+				has_completed_focus = ENG_border_and_broadcast_controls
+				has_completed_focus = ENG_law_and_order_platform
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision ENG_1985_ports_and_border_checks"
+			custom_effect_tooltip = ENG_1985_ports_and_border_checks_tt
+			add_stability = -0.01
+			set_country_flag = {
+				flag = ENG_1985_ports_border_recent
+				days = 120
+				value = 1
+			}
+			add_to_variable = { ENG_ira_foreign_funding = -8 }
+			add_to_variable = { ENG_ira_security_pressure = 6 }
+			add_to_variable = { ENG_ira_intelligence_penetration = 4 }
+			add_to_variable = { ENG_ira_support = 3 }
+			ENG_1985_ira_clamp_values = yes
+		}
+
+		ai_will_do = { factor = 0 }
+	}
+}

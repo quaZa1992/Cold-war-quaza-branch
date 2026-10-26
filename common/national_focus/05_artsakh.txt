@@ -1,0 +1,1011 @@
+# Author(s): LordBogdanoff
+focus_tree = {
+	default = no
+	id = artsakh_focus
+	country = { base = 0 }
+
+	continuous_focus_position = { x = 1000 y = 1750 }
+
+	focus = {
+		id = NKR_economy_start
+		icon = artsakh_mount
+
+		x = -7
+		y = 4
+
+		cost = 5
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_start executed"
+			one_random_agriculture_district = yes
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 0
+				can_staff_an_agriculture_district = no
+			}
+			modifier = {
+				factor = 0
+				has_active_mission = bankruptcy_incoming_collapse
+			}
+		}
+	}
+
+	focus = {
+		id = NKR_economy_nalog
+		icon = nkr_tax
+
+		x = -2
+		y = 1
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_start }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_nalog executed"
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_economy_modifier }
+			add_to_variable = { NKR_econ_stability_factor = 0.15 tooltip = stability_factor_tt }
+			add_to_variable = { NKR_econ_tax_gain_multiplier_modifier = -0.10 tooltip = tax_gain_multiplier_modifier_tt }
+			add_to_variable = { NKR_econ_econ_cycle_upg_cost_multiplier_modifier = 0.15 tooltip = econ_cycle_upg_cost_multiplier_modifier_tt }
+			add_to_variable = { NKR_econ_production_speed_buildings_factor = 0.15 tooltip = production_speed_buildings_factor_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_corruption
+		icon = NKO_anti_corruption
+
+		x = 0
+		y = 1
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_start }
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_corruption executed"
+			decrease_corruption = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_police
+		icon = arm_policewoman
+
+		x = 2
+		y = 1
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_start }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_police executed"
+			remove_ideas = NKR_corruption_in_police_idea
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_land
+		icon = goal_JAP_agrarian_reform
+
+		x = 3
+		y = 2
+		relative_position_id = NKR_economy_start
+
+		cost = 3
+
+		prerequisite = { focus = NKR_economy_police }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_land executed"
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_gas
+		icon = nkr_gasification
+
+		x = 3
+		y = 3
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_land }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_gas executed"
+			remove_ideas = NKR_gaz_energy_problems
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_support_local
+		icon = nkr_local_production
+
+		x = 2
+		y = 4
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_gas }
+		prerequisite = { focus = NKR_economy_fermers }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_support_local executed"
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_economy_modifier }
+			add_to_variable = { NKR_econ_industrial_capacity_factory = 0.04 tooltip = industrial_capacity_factory_tt }
+			add_to_variable = { NKR_econ_production_speed_buildings_factor = 0.04 tooltip = production_speed_buildings_factor_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_selhoz
+		icon = nkr_selhoz
+
+		x = 1
+		y = 2
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_police }
+		prerequisite = { focus = NKR_economy_corruption }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_selhoz executed"
+			set_temp_variable = { temp_opinion = 5 }
+			change_farmers_opinion = yes
+			set_temp_variable = { treasury_change = -0.2 }
+			modify_treasury_effect = yes
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_economy_modifier }
+			add_to_variable = { NKR_econ_agricolture_productivity_modifier = 0.05 tooltip = agricolture_productivity_modifier_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_fermers
+		icon = nkr_fermers
+
+		x = 1
+		y = 3
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_selhoz }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_fermers executed"
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_economy_modifier }
+			add_to_variable = { NKR_econ_agriculture_district_income_tax_modifier = -0.03 tooltip = agriculture_district_income_tax_modifier_tt }
+			add_to_variable = { NKR_econ_agriculture_tax_modifier = -0.03 tooltip = agriculture_tax_modifier_tt }
+			add_to_variable = { NKR_econ_agricolture_productivity_modifier = 0.11 tooltip = agricolture_productivity_modifier_tt }
+			set_temp_variable = { temp_opinion = 5 }
+			change_farmers_opinion = yes
+			change_small_medium_business_owners_opinion = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_invest_climate
+		icon = nkr_invest_climate
+
+		x = 0
+		y = 4
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_gornaya }
+		prerequisite = { focus = NKR_economy_fermers }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_invest_climate executed"
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_economy_modifier }
+			add_to_variable = { NKR_econ_receiving_investment_cost_modifier = -0.10 tooltip = receiving_investment_cost_modifier_tt }
+			add_to_variable = { NKR_econ_investment_duration_modifier = -0.05 tooltip = investment_duration_modifier_tt }
+			add_to_variable = { NKR_econ_return_on_investment_modifier = 0.05 tooltip = return_on_investment_modifier_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_construction
+		icon = generic_factory
+
+		x = -1
+		y = 2
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_nalog }
+		prerequisite = { focus = NKR_economy_corruption }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_construction executed"
+			710 = {
+				one_state_industrial_complex = yes
+			}
+			set_temp_variable = { temp_opinion = 5 }
+			change_small_medium_business_owners_opinion = yes
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 0
+				can_staff_an_industrial_complex = no
+			}
+			modifier = {
+				factor = 0
+				has_active_mission = bankruptcy_incoming_collapse
+			}
+		}
+	}
+
+	focus = {
+		id = NKR_economy_gornaya
+		icon = coal_mining_2
+
+		x = -1
+		y = 3
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_construction }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_gornaya executed"
+			random_owned_controlled_state = {
+				add_resource = {
+					type = steel
+					amount = 2
+				}
+			}
+			set_temp_variable = { treasury_change = -1.875 }
+			modify_treasury_effect = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_antimonopol
+		icon = dram_crisis
+
+		x = -3
+		y = 2
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_nalog }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_antimonopol executed"
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_economy_modifier }
+			add_to_variable = { NKR_econ_industrial_capacity_factory = 0.06 tooltip = industrial_capacity_factory_tt }
+			add_to_variable = { NKR_econ_stability_factor = 0.06 tooltip = stability_factor_tt }
+			add_to_variable = { NKR_econ_production_speed_buildings_factor = 0.06 tooltip = production_speed_buildings_factor_tt }
+			set_temp_variable = { temp_opinion = 5 }
+			change_small_medium_business_owners_opinion = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_copper_gold
+		icon = generic_resource_extr
+
+		x = -3
+		y = 3
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_antimonopol }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_copper_gold executed"
+			random_owned_controlled_state = {
+				add_resource = {
+					type = chromium
+					amount = 2
+				}
+			}
+			set_temp_variable = { treasury_change = -1.875 }
+			modify_treasury_effect = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_forest
+		icon = focus_CHL_expand_the_forestry
+
+		x = -2
+		y = 4
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_gornaya }
+		prerequisite = { focus = NKR_economy_copper_gold }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_forest executed"
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_economy_modifier }
+			add_to_variable = { NKR_econ_energy_use_multiplier = -0.01 tooltip = energy_use_multiplier_tt }
+			add_to_variable = { NKR_econ_energy_gain_multiplier = 0.01 tooltip = energy_gain_multiplier_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_economy_boring_10
+		icon = nkr_boring_10_percent
+
+		x = 0
+		y = 5
+		relative_position_id = NKR_economy_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_economy_invest_climate }
+		prerequisite = { focus = NKR_economy_forest }
+		prerequisite = { focus = NKR_economy_support_local }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ECONOMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_economy_boring_10 executed"
+			increase_economic_growth = yes
+			add_stability = 0.05
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_start
+		icon = give_artsakh
+
+		x = 2
+		y = 4
+
+		cost = 1
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY FOCUS_FILTER_ARMENIA_POLICE }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_start executed"
+			add_stability = 0.03
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_mvd
+		icon = mvd_arm
+
+		x = 2
+		y = 1
+		relative_position_id = NKR_safe_start
+
+		cost = 3
+
+		prerequisite = { focus = NKR_safe_start }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_POLICE }
+
+		available = { has_completed_focus = NKR_economy_police }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_mvd executed"
+			increase_policing_budget = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_police_troops
+		icon = arm_police_spec
+
+		x = 1
+		y = 2
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_mvd }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_POLICE }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_police
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_police_troops executed"
+			set_variable = { NKR_police_troops_level = 1 }
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_security_modifier }
+			add_to_variable = { NKR_sec_root_out_resistance_effectiveness_factor = 0.15 tooltip = root_out_resistance_effectiveness_factor_tt }
+			add_to_variable = { NKR_sec_foreign_subversive_activites = -0.15 tooltip = foreign_subversive_activites_tt }
+			add_to_variable = { NKR_sec_compliance_growth = 0.10 tooltip = compliance_growth_tt }
+			add_to_variable = { NKR_sec_police_cost_multiplier_modifier = 0.02 tooltip = police_cost_multiplier_modifier_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_nss
+		icon = arm_nss
+
+		x = 3
+		y = 2
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_mvd }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_POLICE }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_nss
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_nss executed"
+			set_variable = { NKR_nss_level = 1 }
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_security_modifier }
+			add_to_variable = { NKR_sec_intelligence_agency_defense = 0.20 tooltip = intelligence_agency_defense_tt }
+			add_to_variable = { NKR_sec_encryption_factor = 0.15 tooltip = encryption_factor_tt }
+			add_to_variable = { NKR_sec_foreign_influence_defense_modifier = 0.15 tooltip = foreign_influence_defense_modifier_tt }
+			add_to_variable = { NKR_sec_agency_upgrade_time = -0.10 tooltip = agency_upgrade_time_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_border_troops
+		icon = border_guard_nss
+
+		x = 2
+		y = 3
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_nss }
+		prerequisite = { focus = NKR_safe_police_troops }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_POLICE }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_take_border_troops
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_border_troops executed"
+			set_variable = { NKR_nss_border_level = 1 }
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_security_modifier }
+			add_to_variable = { NKR_sec_foreign_influence_defense_modifier = 0.02 tooltip = foreign_influence_defense_modifier_tt }
+			add_to_variable = { NKR_sec_army_core_defence_factor = 0.02 tooltip = army_core_defence_factor_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_army
+		icon = Artsakh_Defence_Army
+
+		x = -2
+		y = 1
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_start }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_army executed"
+			NKR_bad_army_remove = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_planes
+		icon = Artsakh_Air_Defence_Force
+
+		x = 0
+		y = 1
+		relative_position_id = NKR_safe_start
+
+		cost = 3
+
+		prerequisite = { focus = NKR_safe_start }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_air_fedence_force
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_planes executed"
+			remove_ideas = ARM_outdated_airforce_idea1
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_univer
+		icon = ARM_new_army
+
+		x = -3
+		y = 2
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_army }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_univer executed"
+			NKR_bad_army_remove = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_special_forces
+		icon = armenian_militarism
+
+		x = -1
+		y = 2
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_army }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_special_forces executed"
+			NKR_bad_army_remove = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_vazgen
+		icon = AFARM
+
+		x = 0
+		y = 3
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_special_forces }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_vazgen_academy
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_vazgen executed"
+			NKR_bad_army_remove = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_mo_ra
+		icon = armenianvpk
+
+		x = -2
+		y = 3
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_special_forces }
+		prerequisite = { focus = NKR_safe_univer }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_institute_mo_ra
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_mo_ra executed"
+			NKR_bad_army_remove = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_anti_air
+		icon = ARM_anti_air
+
+		x = -4
+		y = 3
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_univer }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_pvo_troops
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_anti_air executed"
+			set_variable = { NKR_anti_air_level = 1 }
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_airforce_modifier }
+			add_to_variable = { NKR_air_static_anti_air_damage_factor = 0.10 tooltip = static_anti_air_damage_factor_tt }
+			add_to_variable = { NKR_air_static_anti_air_hit_chance_factor = 0.10 tooltip = static_anti_air_hit_chance_factor_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_aspar
+		icon = aspar_arms
+
+		x = -3
+		y = 4
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_anti_air }
+		prerequisite = { focus = NKR_safe_mo_ra }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_aspar_arms
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_aspar executed"
+			add_equipment_bonus = { name = NKR_safe_aspar bonus = { infantry_weapons_type = { build_cost_ic = -0.04 } } }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_davisur
+		icon = DAVISUR
+
+		x = -1
+		y = 4
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_vazgen }
+		prerequisite = { focus = NKR_safe_mo_ra }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			ARM = {
+				has_completed_focus = ARM_davisur_arm
+			}
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_davisur executed"
+			add_tech_bonus = {
+				name = NKR_safe_davisur
+				uses = 1
+				bonus = 1
+				technology = camouflage_3
+			}
+			set_variable = { NKR_davisur_level = 1 }
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = NKR_landforce_modifier }
+			add_to_variable = { NKR_land_army_defence_factor = 0.05 tooltip = army_defence_factor_tt }
+			add_to_variable = { NKR_land_army_infantry_attack_factor = 0.05 tooltip = army_infantry_attack_factor_tt }
+			add_to_variable = { NKR_land_acclimatization_cold_climate_gain_factor = 0.08 tooltip = acclimatization_cold_climate_gain_factor_tt }
+			add_to_variable = { NKR_land_acclimatization_hot_climate_gain_factor = 0.08 tooltip = acclimatization_hot_climate_gain_factor_tt }
+			add_to_variable = { NKR_land_army_org_factor = 0.03 tooltip = army_org_factor_tt }
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_safe_full_integrate_army
+		icon = ARM_warfare
+
+		x = -2
+		y = 5
+		relative_position_id = NKR_safe_start
+
+		cost = 5
+
+		prerequisite = { focus = NKR_safe_davisur }
+		prerequisite = { focus = NKR_safe_aspar }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			NKR_integrate_army_of_armenia_available = yes
+			is_subject_of = ARM
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_safe_full_integrate_army executed"
+			NKR_integrate_army_of_armenia = yes
+			ARM = {
+				country_event = arm_milit.5
+			}
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_we_are_at_war
+		icon = nkr_war_against_azer
+
+		x = 4
+		y = 3
+		relative_position_id = NKR_safe_start
+
+		cost = 0.5
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = { has_war_with = AZE }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_we_are_at_war executed"
+			add_manpower = 1000
+			add_war_support = 0.5
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_scorched_earth
+		icon = burning_their_fields
+
+		x = 4
+		y = 4
+		relative_position_id = NKR_safe_start
+
+		cost = 2
+
+		prerequisite = { focus = NKR_we_are_at_war }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			has_completed_focus = NKR_economy_construction
+			has_war_with = AZE
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_scorched_earth executed"
+			710 = {
+				if = {
+					limit = { industrial_complex > 0 }
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+			}
+			ARM = {
+				add_offsite_building = { type = industrial_complex level = 1 }
+			}
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_plant_minefields
+		icon = nkr_minefield
+
+		x = 2
+		y = 4
+		relative_position_id = NKR_safe_start
+
+		cost = 2
+
+		prerequisite = { focus = NKR_we_are_at_war }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = {
+			has_war_with = AZE
+			OR = {
+				NOT = {
+					controls_state = 1037
+				}
+				NOT = {
+					controls_state = 1036
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_plant_minefields executed"
+			custom_effect_tooltip = mines_lostprov_tt
+			if = {
+				limit = {
+					NOT = {
+						controls_state = 1037
+					}
+				}
+				1037 = {
+					add_dynamic_modifier = {
+						modifier = ARM_landmines
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						controls_state = 1036
+					}
+				}
+				1036 = {
+					add_dynamic_modifier = {
+						modifier = ARM_landmines
+					}
+				}
+			}
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	focus = {
+		id = NKR_final_defense
+		icon = nkr_last_defence
+
+		x = 3
+		y = 5
+		relative_position_id = NKR_safe_start
+
+		cost = 1
+
+		prerequisite = { focus = NKR_plant_minefields focus = NKR_scorched_earth }
+
+		search_filters = { FOCUS_FILTER_ARMENIA_ARMY }
+
+		available = { has_war_with = AZE }
+
+		completion_reward = {
+			log = "[GetDateText]: [This.GetName]: focus NKR_final_defense executed"
+			add_timed_idea = {
+				idea = NKR_last_defense
+				days = 44
+			}
+		}
+
+		ai_will_do = { base = 1 }
+	}
+}

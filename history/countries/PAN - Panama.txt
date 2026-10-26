@@ -1,0 +1,258 @@
+capital = 853
+
+# IMPERIA CW — Cold War: 1970 scenario country history.
+# Authored Cold War 1970 snapshot; native later history retained.
+1970.1.1 = {
+	# IMPERIA CW — Cold War: 1970 scenario country history.
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY BEGIN
+	if = {
+		limit = { IMP_is_1970_scenario = yes }
+		set_country_flag = IMP_1970_historical_politics
+	}
+	set_popularities = { democratic = 4 communism = 9 fascism = 3 neutrality = 24 nationalist = 60 }
+	set_politics = { ruling_party = nationalist elections_allowed = no }
+	clear_array = party_pop_array
+	clear_array = party_pop_elect_array
+	clear_array = pos_array
+	clear_variable = ruling_party
+	clear_array = gov_coalition_array
+	resize_array = { array = party_pop_array size = 24 }
+	resize_array = { array = party_pop_elect_array size = 24 value = -1 }
+	resize_array = { array = pos_array size = 24 }
+	resize_array = { array = party_banned_array size = 24 value = 0 }
+	set_variable = { party_pop_array^1 = 0.04 }
+	set_variable = { party_pop_array^7 = 0.08 }
+	set_variable = { party_pop_array^10 = 0.03 }
+	set_variable = { party_pop_array^13 = 0.17 }
+	set_variable = { party_pop_array^18 = 0.05 }
+	set_variable = { party_pop_array^20 = 0.10 }
+	set_variable = { party_pop_array^22 = 0.60 }
+	set_variable = { ruling_party = 22 }
+	add_to_array = { gov_coalition_array = 13 }
+	create_country_leader = {
+		name = "Omar Torrijos"
+		picture = "gfx/Leaders/PAN/PAN_Coldwar_Omar_Torrijos.dds"
+		expire = "1981.7.31"
+		ideology = Nat_Autocracy
+	}
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY END
+
+	if = {
+		limit = { date < 1985.1.1 }
+		mdcw_apply_1970_infantry_research = yes
+		load_focus_tree = mdcw_1970_generic_focus
+		set_variable = { gdp_per_capita = 0.893 }
+		set_variable = { overall_productivity = 317.539 }
+		if = {
+			limit = { exists = yes }
+			set_oob = "mdcw_1970_empty_land"
+		}
+
+
+	}
+
+		# Temporary user decision: starting armies, fleets, air wings and equipment deferred.
+		set_oob = "mdcw_1970_empty_land"
+		set_naval_oob = "mdcw_1970_empty_naval"
+		set_air_oob = "mdcw_1970_empty_air"
+	}
+
+2000.1.1 = {
+	set_variable = { currency_strength = 0.65 }
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_air_oob = "PAN_2000_bba"
+		else = {
+			set_air_oob = "PAN_2000_nonbba"
+		}
+	}
+
+	oob = "PAN_2000"
+
+	set_cosmetic_tag = PAN
+	set_country_flag = dynamic_flag
+	set_country_flag = dynamic_rebel_flag
+	set_country_flag = is_getting_cdf_subsidies
+	add_to_array = { global.uncdf_recipients = THIS }
+	add_dynamic_modifier = { modifier = un_aid_subsidies_modifier }
+	set_variable = { gdp_per_capita = 15.179 }
+
+	add_ideas = {
+		wto_member
+		partially_privatized_healthcare
+		balanced_protections
+		standard_maintenance
+		us_dollar
+		light_regulations
+
+		fast_growth
+		corruption_level_07
+		maritime_industry
+		international_bankers
+		landowners
+		bureau_03
+		defence_01
+		police_03
+		edu_03
+		health_04
+		social_04
+		md_closed_economy
+		no_military
+		volunteer_women
+		officer_military_school
+		christian
+		full_control_of_panama
+		no_currency_backing
+	}
+
+	# Cartel System
+	set_variable = { cartel_political_influence = 20 }
+	set_variable = { strength_of_cartels = 40 }
+
+	# Starting tech
+	set_technology = {
+
+		railway_system_01 = 1
+		infantry_mass_assault = 1
+
+		infantry_weapons_1 = 1
+		cnc_equipment_1 = 1
+		Anti_tank_1 = 1
+		util_vehicle_1 = 1
+		Heavy_Anti_tank_1 = 1
+		combat_eng_equipment = 1
+		camouflage_1 = 1
+		camouflage_2 = 1
+
+		basic_computing = 1
+		integrated_circuit = 1
+		computing_1 = 1
+
+		radar = 1
+		fuel_silos = 1
+
+		internet_1 = 1
+		internet_2 = 1
+
+		nanofibers_1 = 1
+		printing_1 = 1
+		fuel_refining = 1
+		construction1 = 1
+	}
+
+	if = {
+		limit = { NOT = { has_dlc = "La Resistance" } }
+		set_technology = {
+			decryption_1 = 1
+			encryption_1 = 1
+		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+
+		set_technology = {
+			nsb_Anti_Air_0 = 1
+		}
+		else = {
+			set_technology = {
+				Anti_Air_0 = 1
+			}
+		}
+	}
+
+	add_opinion_modifier = { target = URG modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = URG modifier = spanish_speaking }
+
+	#Influence system
+	init_influence = yes
+	set_variable = { domestic_influence_amount = 100 }
+	add_to_array = { influence_array = USA.id }
+	add_to_array = { influence_array_val = 50 }
+	add_to_array = { influence_array = COL.id }
+	add_to_array = { influence_array_val = 25 }
+	add_to_array = { influence_array = TAI.id }
+	add_to_array = { influence_array_val = 35 }
+	add_to_array = { influence_array = CHI.id }
+	add_to_array = { influence_array_val = 5 }
+	add_to_array = { influence_array = CUB.id }
+	add_to_array = { influence_array_val = 2 }
+	add_to_array = { influence_array = MEX.id }
+	add_to_array = { influence_array_val = 15 }
+	sort_influence = yes
+
+	### Economy
+	set_variable = { var = debt value = 36 }
+	set_variable = { var = treasury value = 1 }
+	set_variable = { var = corporate_tax_rate value = 15 }
+	set_variable = { var = population_tax_rate value = 17 }
+	set_variable = { var = int_investments value = 0 }
+	set_variable = { inflation_rate_var = 0.01247 }
+	set_variable = { cb_policy_rate = 3 }
+	set_variable = { overall_productivity = 466 }
+
+	set_popularities = {
+		democratic = 38.0
+		communism = 19.0
+		fascism = 0.0
+		neutrality = 4.0
+		nationalist = 39.0
+	}
+	set_politics = {
+		ruling_party = nationalist
+		last_election = "1999.9.1"
+		election_frequency = 48
+		elections_allowed = yes
+	}
+
+	start_politics_input = yes
+
+	### Party Popularities
+	set_variable = { party_pop_array^1 = 0.31 } #conservatism
+	set_variable = { party_pop_array^2 = 0.01 } #liberalism
+	set_variable = { party_pop_array^3 = 0.06 } #socialism
+	set_variable = { party_pop_array^4 = 0.06 } #communist_state
+	set_variable = { party_pop_array^5 = 0.11 } #anarchist_communism
+	set_variable = { party_pop_array^6 = 0.02 } #Conservative
+	set_variable = { party_pop_array^14 = 0.04 } #Neutral_conservatism
+	set_variable = { party_pop_array^20 = 0.39 } #Nat_Populism
+
+	### Ruling Party
+	set_variable = { ruling_party = 20 }
+
+	startup_politics = yes
+
+	create_country_leader = {
+		name = "Mireya Moscoso"
+		picture = "mireya_moscoso.dds"
+		ideology = Nat_Populism
+		traits = {
+			nationalist_Nat_Populism
+		}
+	}
+	set_variable = { term_limit = 1 }
+	set_variable = { current_term = 1 }
+
+	recruit_character = PAN_omar_pinzon
+	recruit_character = PAN_eric_estrada
+	recruit_character = PAN_cristian_enrique_hayer_alvarado
+	recruit_character = PAN_belsio_gonzalez
+
+
+	# Relation Starting Configuration (moved from on_startup)
+	add_opinion_modifier = { target = HAM modifier = HAM_Not_A_Recognized_country }
+	add_opinion_modifier = { target = CUB modifier = sanctions }
+	add_relation_modifier = { target = USA modifier = USA_World_Economical_Relations }
+	add_relation_modifier = { target = SOV modifier = SOV_World_Economical_Relations }
+	add_relation_modifier = { target = CHI modifier = CHI_World_Economical_Relations }
+	add_relation_modifier = { target = FRA modifier = FRA_World_Economical_Relations }
+	add_relation_modifier = { target = GER modifier = GER_World_Economical_Relations }
+	add_relation_modifier = { target = ENG modifier = ENG_World_Economical_Relations }
+	add_relation_modifier = { target = SPR modifier = SPR_World_Economical_Relations }
+	add_relation_modifier = { target = ITA modifier = ITA_World_Economical_Relations }
+	add_relation_modifier = { target = UKR modifier = UKR_world_economical_relations }
+	add_relation_modifier = { target = ISR modifier = ISR_World_Economical_Relations }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists_Trade }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists_Trade }
+}

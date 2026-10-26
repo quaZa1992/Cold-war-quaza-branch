@@ -1,0 +1,96 @@
+# IMPERIA CW — Cold War: Optional employment programmes with human-only recruitment.
+# Existing remittances are not removed when either programme closes.
+ideas = {
+	imp_national_ideas_2 = {
+		law = yes
+		use_list_view = yes
+
+		mdcw_ni_overseas_employment_programme = {
+			# IMPERIA CW — Cold War: Generated badge matching this selector category.
+			picture = COLDWAR_selector_overseas_employment_programme
+			cost = 150
+			removal_cost = 150
+			allowed_civil_war = { always = yes }
+			visible = { always = yes }
+			available = { OR = { is_ai = no mdcw_gw_ai_sender_eligible = yes } }
+
+			allowed_to_remove = {
+				custom_trigger_tooltip = {
+					tooltip = flag_ni_tt
+					NOT = { has_country_flag = mdcw_gw_overseas_employment_commitment }
+				}
+			}
+
+			on_add = {
+				hidden_effect = {
+					set_country_flag = { flag = mdcw_gw_overseas_employment_commitment days = 1440 value = 1 }
+					ingame_update_setup = yes
+				}
+			}
+			on_remove = {
+				hidden_effect = { ingame_update_setup = yes }
+			}
+
+			modifier = {
+				bureaucracy_cost_multiplier_modifier = 0.05
+				custom_modifier_tooltip = mdcw_gw_remittance_status_tt
+			}
+
+			ai_will_do = {
+				factor = 5
+				modifier = { factor = 0 NOT = { mdcw_gw_ai_sender_eligible = yes } }
+			}
+			cancel_if_invalid = no
+		}
+
+		mdcw_ni_guest_worker_recruitment_programme = {
+			# IMPERIA CW — Cold War: Generated badge matching this selector category.
+			picture = COLDWAR_selector_guest_worker_recruitment_programme
+			cost = 150
+			removal_cost = 150
+			allowed_civil_war = { always = yes }
+			visible = { always = yes }
+			available = { is_ai = no }
+
+			allowed_to_remove = {
+                custom_trigger_tooltip = {
+                    tooltip = gw_locked_residents_tt
+                    NOT = { check_variable = { mdcw_gw_guest_workers_k > 0 } }
+                    NOT = { has_country_flag = gw_project_active }
+                    NOT = { has_country_flag = gw_return_active }
+                    NOT = { has_country_flag = mdcw_gw_request_pending }
+                    NOT = { has_country_flag = mdcw_gw_offer_pending }
+                    NOT = { has_country_flag = mdcw_gw_offer_window_open }
+                }
+
+			}
+
+			on_add = {
+				hidden_effect = {
+					clr_country_flag = mdcw_gw_recruitment_programme_commitment
+					ingame_update_setup = yes
+				}
+			}
+			on_remove = {
+				hidden_effect = { ingame_update_setup = yes }
+			}
+
+			modifier = {
+				bureaucracy_cost_multiplier_modifier = 0.05
+				custom_modifier_tooltip = mdcw_gw_resident_status_tt
+			}
+
+			ai_will_do = { factor = 0 }
+			cancel_if_invalid = no
+		}
+	}
+ country = {
+  mdcw_gw_immigration_backlash = {
+   # IMPERIA CW — Cold War: Recruitment badge shared with the resident backlash spirit.
+   picture = COLDWAR_selector_guest_worker_recruitment_programme
+   allowed = { always = no }
+   removal_cost = -1
+   modifier = { nationalist_drift = 0.02 }
+  }
+ }
+}

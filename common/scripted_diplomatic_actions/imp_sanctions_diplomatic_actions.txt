@@ -1,0 +1,391 @@
+# IMPERIA CW — Cold War: Imperia sanctions diplomatic actions — game content.
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+scripted_diplomatic_actions = 
+{
+	# DIPLOMATIC SANCTIONS
+	imp_diplo_sanctions_impose = {
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			NOT = { 
+				is_in_array = { 
+					array = imp_dip_sanc_on_us
+					value = ROOT
+				}
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_DIPLO_SANCTIONS_IMPOSE_SEND
+		accept_title = IMP_DIPLO_SANCTIONS_IMPOSE_ACCEPT
+		accept_description = IMP_DIPLO_SANCTIONS_IMPOSE_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			add_to_array = 
+			{ 
+				array = imp_dip_sanc_on_us
+				value = ROOT
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_dip_sanctioned_us
+			}
+			ROOT = {
+				add_to_array = { 
+					array = imp_dip_sanc_by_us
+					value = PREV
+				}
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 1 }
+			mdcw_cw_on_sanction_imposed = yes
+		}
+	}
+
+	imp_diplo_sanctions_lift = 
+	{
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			is_in_array = { 
+				array = imp_dip_sanc_on_us
+				value = ROOT
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_DIPLO_SANCTIONS_LIFT_SEND
+		accept_title = IMP_DIPLO_SANCTIONS_LIFT_ACCEPT
+		accept_description = IMP_DIPLO_SANCTIONS_LIFT_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			remove_from_array = 
+			{ 
+				array = imp_dip_sanc_on_us
+				value = ROOT
+			}
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_dip_sanctioned_us
+			}
+			ROOT = {
+				remove_from_array = { 
+					array = imp_dip_sanc_by_us
+					value = PREV
+				}
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 1 }
+			mdcw_cw_on_sanction_lifted = yes
+		}
+	}
+	
+	# FINANCIAL SANCTIONS
+	imp_fin_sanctions_impose = {
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			NOT = { 
+				is_in_array = { 
+					array = imp_fin_sanc_on_us
+					value = ROOT
+				}
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_FIN_SANCTIONS_IMPOSE_SEND
+		accept_title = IMP_FIN_SANCTIONS_IMPOSE_ACCEPT
+		accept_description = IMP_FIN_SANCTIONS_IMPOSE_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			add_to_array = 
+			{ 
+				array = imp_fin_sanc_on_us
+				value = ROOT
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_fin_sanctioned_us
+			}
+			ROOT = {
+				add_to_array = { 
+					array = imp_fin_sanc_by_us
+					value = PREV
+				}
+				if = {
+					limit = { PREV = { original_tag = LBA } }
+					remove_ideas = LBA_libyan_capital_inflows
+				}
+			}
+			if = {
+				limit = { original_tag = LBA }
+				LBA = { LBA_update_western_portfolio = yes }
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 2 }
+			mdcw_cw_on_sanction_imposed = yes
+		}
+	}
+
+	imp_fin_sanctions_lift = 
+	{
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			is_in_array = { 
+				array = imp_fin_sanc_on_us
+				value = ROOT
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_FIN_SANCTIONS_LIFT_SEND
+		accept_title = IMP_FIN_SANCTIONS_LIFT_ACCEPT
+		accept_description = IMP_FIN_SANCTIONS_LIFT_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			remove_from_array = 
+			{ 
+				array = imp_fin_sanc_on_us
+				value = ROOT
+			}
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_fin_sanctioned_us
+			}
+			ROOT = {
+				remove_from_array = { 
+					array = imp_fin_sanc_by_us
+					value = PREV
+				}
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 2 }
+			mdcw_cw_on_sanction_lifted = yes
+		}
+	}
+
+	# ECONOMIC SANCTIONS
+	imp_eco_sanctions_impose = {
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			NOT = { 
+				is_in_array = { 
+					array = imp_eco_sanc_on_us
+					value = ROOT
+				}
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_ECO_SANCTIONS_IMPOSE_SEND
+		accept_title = IMP_ECO_SANCTIONS_IMPOSE_ACCEPT
+		accept_description = IMP_ECO_SANCTIONS_IMPOSE_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			add_to_array = 
+			{ 
+				array = imp_eco_sanc_on_us
+				value = ROOT
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_eco_sanctioned_us
+			}
+			ROOT = {
+				add_to_array = { 
+					array = imp_eco_sanc_by_us
+					value = PREV
+				}
+				if = {
+					limit = { PREV = { original_tag = LBA } }
+					remove_ideas = LBA_libyan_capital_inflows
+				}
+			}
+			if = {
+				limit = { original_tag = LBA }
+				LBA = { LBA_update_western_portfolio = yes }
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 3 }
+			mdcw_cw_on_sanction_imposed = yes
+		}
+	}
+
+	imp_eco_sanctions_lift = 
+	{
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			is_in_array = { 
+				array = imp_eco_sanc_on_us
+				value = ROOT
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_ECO_SANCTIONS_LIFT_SEND
+		accept_title = IMP_ECO_SANCTIONS_LIFT_ACCEPT
+		accept_description = IMP_ECO_SANCTIONS_LIFT_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			remove_from_array = 
+			{ 
+				array = imp_eco_sanc_on_us
+				value = ROOT
+			}
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_eco_sanctioned_us
+			}
+			ROOT = {
+				remove_from_array = { 
+					array = imp_eco_sanc_by_us
+					value = PREV
+				}
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 3 }
+			mdcw_cw_on_sanction_lifted = yes
+		}
+	}
+
+	# MILITARY SANCTIONS
+	imp_mil_sanctions_impose = {
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			NOT = { 
+				is_in_array = { 
+					array = imp_mil_sanc_on_us
+					value = ROOT
+				}
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_MIL_SANCTIONS_IMPOSE_SEND
+		accept_title = IMP_MIL_SANCTIONS_IMPOSE_ACCEPT
+		accept_description = IMP_MIL_SANCTIONS_IMPOSE_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			add_to_array = 
+			{ 
+				array = imp_mil_sanc_on_us
+				value = ROOT
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_mil_sanctioned_us
+			}
+			ROOT = {
+				add_to_array = { 
+					array = imp_mil_sanc_by_us
+					value = PREV
+				}
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 4 }
+			mdcw_cw_on_sanction_imposed = yes
+		}
+	}
+
+	imp_mil_sanctions_lift = 
+	{
+		icon = 19
+		cost = 35
+
+		allowed = {
+
+		}
+		visible = {
+			is_in_array = { 
+				array = imp_mil_sanc_on_us
+				value = ROOT
+			}
+		}
+		selectable = {
+
+		}
+
+		send_description = IMP_MIL_SANCTIONS_LIFT_SEND
+		accept_title = IMP_MIL_SANCTIONS_LIFT_ACCEPT
+		accept_description = IMP_MIL_SANCTIONS_LIFT_ACCEPT_DESC
+
+		requires_acceptance = no
+		complete_effect = {
+			remove_from_array = 
+			{ 
+				array = imp_mil_sanc_on_us
+				value = ROOT
+			}
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = opinion_mil_sanctioned_us
+			}
+			ROOT = {
+				remove_from_array = { 
+					array = imp_mil_sanc_by_us
+					value = PREV
+				}
+			}
+			# MD Cold War: Cold War Equilibrium bloc embargo and tension hook (THIS = target, ROOT = sender).
+			set_temp_variable = { mdcw_cw_t_sanc_type = 4 }
+			mdcw_cw_on_sanction_lifted = yes
+		}
+	}
+}

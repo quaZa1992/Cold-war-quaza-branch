@@ -1,0 +1,151 @@
+# IMPERIA CW — Cold War: covert action 1970 effects — scripted effects.
+# COLDWAR | Covert Action at the 1970 start
+# In MD the 2000 start gives the big services the agency upgrade that unlocks the cyber system
+# (now reskinned as Covert Action). The 1970 history only creates the KGB, so nobody could open
+# the Covert Action panel at the start. This setup gives the services that historically ran
+# covert action in 1970 their agency and the "Special Activities Division".
+# Kept outside history/countries so the SOV generator (cw_build.py) cannot drop it.
+# Every agency upgrade raises intelligence community opinion in its complete_effect;
+# the opinion is stored before and restored after, so the starting faction opinions (e.g. KGB = 70) stay as designed.
+
+# Remembers the intelligence community opinion before the agency upgrades. Scope: country.
+COLDWAR_covert_action_store_opinion = {
+	if = {
+		limit = { has_idea = intelligence_community }
+		set_temp_variable = { COLDWAR_ca_ic_opinion = intelligence_community_opinion }
+	}
+}
+
+# Grants the Special Activities Division (and the crypto department it needs). Scope: country with an agency.
+COLDWAR_covert_action_grant_division = {
+	if = {
+		limit = {
+			has_intelligence_agency = yes
+			NOT = { has_done_agency_upgrade = upgrade_establish_cyber_operations_division }
+		}
+		if = {
+			limit = { NOT = { has_done_agency_upgrade = upgrade_form_department } }
+			upgrade_intelligence_agency = upgrade_form_department
+		}
+		upgrade_intelligence_agency = upgrade_establish_cyber_operations_division
+	}
+}
+
+# Restores the intelligence community opinion stored above (undoes the +2 per upgrade). Scope: country.
+COLDWAR_covert_action_restore_opinion = {
+	if = {
+		limit = { has_idea = intelligence_community }
+		set_variable = { intelligence_community_opinion = COLDWAR_ca_ic_opinion }
+		apply_intelligence_community_dynamic_effect_DYNMOD = yes
+	}
+}
+
+COLDWAR_covert_action_1970_setup = {
+	if = {
+		limit = { has_dlc = "La Resistance" }
+
+		# Soviet Union: KGB exists from history -> First Chief Directorate, Service A (active measures) and Department V
+		SOV = {
+			if = {
+				limit = { exists = yes IMP_is_1970_scenario = yes }
+				COLDWAR_covert_action_store_opinion = yes
+				set_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_grant_division = yes
+				clr_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_restore_opinion = yes
+			}
+		}
+
+		# United States: CIA (Directorate of Plans, NSA for signals intelligence)
+		USA = {
+			if = {
+				limit = { exists = yes IMP_is_1970_scenario = yes has_intelligence_agency = no }
+				create_intelligence_agency = {
+					name = "Central Intelligence Agency (CIA)"
+					icon = GFX_intelligence_agency_logo_usa
+				}
+				COLDWAR_covert_action_store_opinion = yes
+				set_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_grant_division = yes
+				upgrade_intelligence_agency = upgrade_crypto_strength # NSA
+				upgrade_intelligence_agency = upgrade_decryption_boost # NSA
+				upgrade_intelligence_agency = upgrade_passive_defense
+				upgrade_intelligence_agency = upgrade_invisible_ink # clandestine service
+				upgrade_intelligence_agency = upgrade_invisible_ink
+				upgrade_intelligence_agency = upgrade_training_centers # Camp Peary ("The Farm")
+				clr_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_restore_opinion = yes
+			}
+		}
+
+		# United Kingdom: Secret Intelligence Service (MI6) with GCHQ
+		ENG = {
+			if = {
+				limit = { exists = yes IMP_is_1970_scenario = yes has_intelligence_agency = no }
+				create_intelligence_agency = {
+					name = "Secret Intelligence Service MI6 (SIS)"
+					icon = GFX_intelligence_agency_logo_eng
+				}
+				COLDWAR_covert_action_store_opinion = yes
+				set_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_grant_division = yes
+				upgrade_intelligence_agency = upgrade_crypto_strength # GCHQ
+				upgrade_intelligence_agency = upgrade_decryption_boost # GCHQ
+				upgrade_intelligence_agency = upgrade_invisible_ink
+				upgrade_intelligence_agency = upgrade_training_centers # Fort Monckton
+				clr_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_restore_opinion = yes
+			}
+		}
+
+		# France: SDECE with its Service Action
+		FRA = {
+			if = {
+				limit = { exists = yes IMP_is_1970_scenario = yes has_intelligence_agency = no }
+				create_intelligence_agency = {
+					name = "External Documentation and Counter-Espionage Service (SDECE)"
+					icon = GFX_intelligence_agency_logo_fra
+				}
+				COLDWAR_covert_action_store_opinion = yes
+				set_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_grant_division = yes
+				upgrade_intelligence_agency = upgrade_passive_defense
+				upgrade_intelligence_agency = upgrade_invisible_ink
+				upgrade_intelligence_agency = upgrade_training_centers
+				clr_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_restore_opinion = yes
+			}
+		}
+
+		# Israel: Mossad
+		ISR = {
+			if = {
+				limit = { exists = yes IMP_is_1970_scenario = yes has_intelligence_agency = no }
+				create_intelligence_agency = {
+					name = "Mossad"
+					icon = GFX_intelligence_agency_logo_isr
+				}
+				COLDWAR_covert_action_store_opinion = yes
+				set_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_grant_division = yes
+				upgrade_intelligence_agency = upgrade_invisible_ink
+				upgrade_intelligence_agency = upgrade_invisible_ink
+				upgrade_intelligence_agency = upgrade_training_centers
+				clr_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_restore_opinion = yes
+			}
+		}
+
+		# East Germany: if the MfS agency already exists (DDR content), give it the HVA's active measures division
+		DDR = {
+			if = {
+				limit = { exists = yes IMP_is_1970_scenario = yes has_intelligence_agency = yes }
+				COLDWAR_covert_action_store_opinion = yes
+				set_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_grant_division = yes
+				clr_country_flag = MD_skip_treasury_cost
+				COLDWAR_covert_action_restore_opinion = yes
+			}
+		}
+	}
+}

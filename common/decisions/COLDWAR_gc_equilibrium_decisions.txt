@@ -1,0 +1,558 @@
+# IMPERIA CW — Cold War: GC equilibrium controls and graduated crisis penalties.
+imp_gc_tools_decisions = {
+	COLDWAR_gc_cw_expand = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			NOT = { has_country_flag = COLDWAR_gc_equilibrium_expanded }
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		}
+		complete_effect = {
+			if = {
+				limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+				set_country_flag = COLDWAR_gc_equilibrium_expanded
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_collapse = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		}
+		complete_effect = {
+			if = {
+				limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+				clr_country_flag = COLDWAR_gc_equilibrium_expanded
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_tension_raise_5 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_tension_raise_allowed_tt
+				check_variable = { global.mdcw_cw_tension < 100 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_tension_raise_5_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment tension 5"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 5 }
+				COLDWAR_gc_cw_change_tension = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_tension_raise_20 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_tension_raise_allowed_tt
+				check_variable = { global.mdcw_cw_tension < 100 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_tension_raise_20_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment tension 20"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 20 }
+				COLDWAR_gc_cw_change_tension = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_tension_lower_5 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_tension_lower_allowed_tt
+				check_variable = { global.mdcw_cw_tension > 0 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_tension_lower_5_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment tension -5"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -5 }
+				COLDWAR_gc_cw_change_tension = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_tension_lower_20 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_tension_lower_allowed_tt
+				check_variable = { global.mdcw_cw_tension > 0 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_tension_lower_20_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment tension -20"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -20 }
+				COLDWAR_gc_cw_change_tension = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_tension_reset = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_tension_reset_allowed_tt
+				has_variable = global.mdcw_cw_tension_baseline
+				NOT = {
+					check_variable = { global.mdcw_cw_tension = global.mdcw_cw_tension_baseline }
+				}
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_tension_reset_tt
+			hidden_effect = { log = "[GetDateText]: [Root.GetName]: GC equilibrium reset tension" COLDWAR_gc_cw_reset_tension = yes }
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_market_raise_5 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_market_raise_allowed_tt
+				check_variable = { global.mdcw_cw_market < 100 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_market_raise_5_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment market 5"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 5 }
+				COLDWAR_gc_cw_change_market = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_market_raise_20 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_market_raise_allowed_tt
+				check_variable = { global.mdcw_cw_market < 100 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_market_raise_20_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment market 20"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 20 }
+				COLDWAR_gc_cw_change_market = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_market_lower_5 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_market_lower_allowed_tt
+				check_variable = { global.mdcw_cw_market > 5 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_market_lower_5_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment market -5"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -5 }
+				COLDWAR_gc_cw_change_market = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_market_lower_20 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_market_lower_allowed_tt
+				check_variable = { global.mdcw_cw_market > 5 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_market_lower_20_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment market -20"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -20 }
+				COLDWAR_gc_cw_change_market = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_market_reset = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_market_reset_allowed_tt
+				OR = {
+					check_variable = { global.COLDWAR_gc_cw_market_adjustment > 0 }
+					check_variable = { global.COLDWAR_gc_cw_market_adjustment < 0 }
+				}
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_market_reset_tt
+			hidden_effect = { log = "[GetDateText]: [Root.GetName]: GC equilibrium reset market" COLDWAR_gc_cw_reset_market = yes }
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_arms_raise_5 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_arms_raise_allowed_tt
+				check_variable = { global.mdcw_cw_arms < 100 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_arms_raise_5_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment arms 5"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 5 }
+				COLDWAR_gc_cw_change_arms = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_arms_raise_20 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_arms_raise_allowed_tt
+				check_variable = { global.mdcw_cw_arms < 100 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_arms_raise_20_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment arms 20"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 20 }
+				COLDWAR_gc_cw_change_arms = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_arms_lower_5 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_arms_lower_allowed_tt
+				check_variable = { global.mdcw_cw_arms > 0 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_arms_lower_5_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment arms -5"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -5 }
+				COLDWAR_gc_cw_change_arms = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_arms_lower_20 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_arms_lower_allowed_tt
+				check_variable = { global.mdcw_cw_arms > 0 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_arms_lower_20_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment arms -20"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -20 }
+				COLDWAR_gc_cw_change_arms = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_arms_reset = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_arms_reset_allowed_tt
+				OR = {
+					check_variable = { global.COLDWAR_gc_cw_arms_adjustment > 0 }
+					check_variable = { global.COLDWAR_gc_cw_arms_adjustment < 0 }
+				}
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_arms_reset_tt
+			hidden_effect = { log = "[GetDateText]: [Root.GetName]: GC equilibrium reset arms" COLDWAR_gc_cw_reset_arms = yes }
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_oil_raise_0_25 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_oil_raise_allowed_tt
+				check_variable = { global.mdcw_cw_oil_level < 12 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_oil_raise_0_25_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment oil 0.25"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 0.25 }
+				COLDWAR_gc_cw_change_oil = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_oil_raise_1 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_oil_raise_allowed_tt
+				check_variable = { global.mdcw_cw_oil_level < 12 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_oil_raise_1_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment oil 1"
+				set_temp_variable = { COLDWAR_gc_cw_delta = 1 }
+				COLDWAR_gc_cw_change_oil = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_oil_lower_0_25 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_oil_lower_allowed_tt
+				check_variable = { global.mdcw_cw_oil_level > 0.5 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_oil_lower_0_25_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment oil -0.25"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -0.25 }
+				COLDWAR_gc_cw_change_oil = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_oil_lower_1 = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_oil_lower_allowed_tt
+				check_variable = { global.mdcw_cw_oil_level > 0.5 }
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_oil_lower_1_tt
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: GC equilibrium adjustment oil -1"
+				set_temp_variable = { COLDWAR_gc_cw_delta = -1 }
+				COLDWAR_gc_cw_change_oil = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_cw_oil_reset = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			has_global_flag = mdcw_cw_initialized
+			has_country_flag = COLDWAR_gc_equilibrium_expanded
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_gc_cw_oil_reset_allowed_tt
+				NOT = {
+					check_variable = { global.mdcw_cw_oil_level = 1 }
+				}
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_cw_oil_reset_tt
+			hidden_effect = { log = "[GetDateText]: [Root.GetName]: GC equilibrium reset oil" COLDWAR_gc_cw_reset_oil = yes }
+		}
+		ai_will_do = { factor = 0 }
+	}
+}

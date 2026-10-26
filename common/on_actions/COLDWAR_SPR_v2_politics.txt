@@ -1,0 +1,25 @@
+# IMPERIA CW — Cold War: Spain 1970 succession and constitutional government.
+on_actions = {
+on_daily_SPR = { effect = { if = { limit = { COLDWAR_SPR_campaign = yes } COLDWAR_SPR_initialize = yes
+if = { limit = { has_country_flag = COLDWAR_SPR_franco_incumbency NOT = { has_country_flag = COLDWAR_SPR_franco_departed } NOT = { has_country_leader = { name = "Francisco Franco" ruling_only = yes } } date < 1975.11.20 } COLDWAR_SPR_franco_departure = yes }
+COLDWAR_SPR_health_daily = yes
+COLDWAR_SPR_refresh_politics = yes
+COLDWAR_SPR_retry_completed_focuses = yes
+if = { limit = { has_country_flag = elections_in_progress } set_country_flag = COLDWAR_SPR_native_campaign_seen }
+if = { limit = { has_country_flag = COLDWAR_SPR_native_campaign_seen NOT = { has_country_flag = elections_in_progress } NOT = { has_country_flag = coalition_forming } }
+ clr_country_flag = COLDWAR_SPR_native_campaign_seen
+ add_to_variable = { COLDWAR_SPR_government_generation = 1 }
+ COLDWAR_SPR_invalidate_old_mandate = yes
+ if = { limit = { check_variable = { ruling_party = 1 } } COLDWAR_SPR_request_mandate = yes }
+ COLDWAR_SPR_refresh_politics = yes
+}
+if = { limit = { has_country_flag = COLDWAR_SPR_constituent_campaign_pending has_country_flag = elections_in_progress } set_country_flag = COLDWAR_SPR_constituent_campaign_seen }
+if = { limit = { has_country_flag = COLDWAR_SPR_constituent_campaign_seen NOT = { has_country_flag = elections_in_progress } NOT = { has_country_flag = coalition_forming } }
+ clr_country_flag = COLDWAR_SPR_constituent_campaign_seen
+ set_country_flag = COLDWAR_SPR_constituent_ratification_pending
+ set_variable = { COLDWAR_SPR_constituent_generation = COLDWAR_SPR_government_generation }
+ country_event = { id = COLDWAR_SPR_v2_politics.12 }
+} } } }
+on_monthly_SPR = { effect = { if = { limit = { COLDWAR_SPR_campaign = yes } COLDWAR_SPR_health_monthly = yes COLDWAR_SPR_historical_succession = yes } } }
+on_ruling_party_change = { effect = { if = { limit = { COLDWAR_SPR_campaign = yes } COLDWAR_SPR_refresh_politics = yes } } }
+}

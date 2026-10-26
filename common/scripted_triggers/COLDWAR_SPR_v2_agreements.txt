@@ -1,0 +1,294 @@
+# IMPERIA CW — Cold War: Spain V2 development and negotiated agreements.
+COLDWAR_SPR_has_operating_nuclear_generation = {
+custom_trigger_tooltip = {
+tooltip = COLDWAR_SPR_operating_generation_tt
+check_variable = { nuclear_energy_generation > 0 }
+NOT = { has_country_flag = disable_nuclear_power_plant_flag }
+NOT = { has_idea = non_nuclear_power }
+any_owned_state = { is_controlled_by = ROOT nuclear_reactor > 0 }
+}
+}
+
+COLDWAR_SPR_nuclear_investment_site_valid = {
+is_owned_by = SPR is_controlled_by = SPR NOT = { is_in_array = { projects_in_state = SPR.id } } free_building_slots = { building = nuclear_reactor size > 0 include_locked = no }
+}
+
+COLDWAR_SPR_nuclear_investment_can_confirm = {
+tag = SPR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_SPR_unlock_nuclear_investment has_country_flag = COLDWAR_SPR_applied_nuclear_programme has_tech = reactor1 country_can_build_nuclear_reactors = yes
+has_country_flag = COLDWAR_SPR_project_confirmation_pending
+check_variable = { project_building_type^-1 = 13 }
+check_variable = { project_build_amount^-1 = 1 }
+any_state = { state = SPR.investments_state_target COLDWAR_SPR_nuclear_investment_site_valid = yes }
+has_available_treasury_investment = yes
+NOT = { has_active_mission = bankruptcy_incoming_collapse }
+NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+check_variable = { active_projects < 15 }
+}
+
+COLDWAR_SPR_conventional_investment_site_valid = {
+is_owned_by = SPR is_controlled_by = SPR NOT = { is_in_array = { projects_in_state = SPR.id } } free_building_slots = { building = fossil_powerplant size > 0 include_locked = no }
+}
+
+COLDWAR_SPR_conventional_investment_can_confirm = {
+tag = SPR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_SPR_unlock_conventional_investment has_country_flag = COLDWAR_SPR_applied_conventional_power
+has_country_flag = COLDWAR_SPR_project_confirmation_pending
+check_variable = { project_building_type^-1 = 12 }
+check_variable = { project_build_amount^-1 = 1 }
+any_state = { state = SPR.investments_state_target COLDWAR_SPR_conventional_investment_site_valid = yes }
+has_available_treasury_investment = yes
+NOT = { has_active_mission = bankruptcy_incoming_collapse }
+NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+check_variable = { active_projects < 15 }
+}
+
+COLDWAR_SPR_uranium_investment_site_valid = {
+is_owned_by = SPR is_controlled_by = SPR NOT = { is_in_array = { projects_in_state = SPR.id } } imp_uranium_investment_one_level_available = yes
+}
+
+COLDWAR_SPR_uranium_investment_can_confirm = {
+tag = SPR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_SPR_unlock_uranium_investment has_country_flag = COLDWAR_SPR_applied_uranium_surveys
+has_country_flag = COLDWAR_SPR_project_confirmation_pending
+check_variable = { project_building_type^-1 = 15 }
+check_variable = { project_build_amount^-1 = 1 }
+any_state = { state = SPR.investments_state_target COLDWAR_SPR_uranium_investment_site_valid = yes }
+has_available_treasury_investment = yes
+NOT = { has_active_mission = bankruptcy_incoming_collapse }
+NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+check_variable = { active_projects < 15 }
+}
+
+COLDWAR_SPR_reserve_facility_owned = {
+any_owned_state = { is_controlled_by = ROOT fuel_silo > 0 }
+}
+
+COLDWAR_SPR_reserve_law_available = {
+OR = {
+AND = { has_idea = no_military
+				if = {
+					limit = {
+						OR = {
+							has_idea = partial_draft_army
+							has_idea = draft_army
+						}
+						conscription_decrease_blocked = yes
+					}
+					conscription_decrease_blocked = no
+				}
+				if = {
+					limit = {
+						has_idea = no_military
+						conscription_increase_blocked = yes
+					}
+					conscription_increase_blocked = no
+				}
+				if = {
+					limit = {
+						original_tag = AST
+					 }
+					 has_completed_focus = AST_residency_eligibility
+				}
+			 }
+AND = { has_idea = volunteer_army
+				# IMPERIA CW — Cold War: Scenario integration.
+				NOT = { has_doctrine = mdcw_all_volunteer_force } # COLDWAR: All-Volunteer Force subdoctrine rules out conscription
+				OR = {
+					has_stability > 0.49
+					has_war_support > 0.49
+				}
+				if = {
+					limit = {
+						has_idea = draft_army
+						conscription_decrease_blocked = yes
+					}
+					conscription_decrease_blocked = no
+				}
+				if = {
+					limit = {
+						OR = {
+							has_idea = no_military
+							has_idea = volunteer_army
+						}
+						conscription_increase_blocked = yes
+					}
+					conscription_increase_blocked = no
+				}
+				if = {
+					limit = {
+						original_tag = AST
+					 }
+					 has_completed_focus = AST_residency_eligibility
+				}
+			 }
+AND = { has_idea = partial_draft_army
+				# IMPERIA CW — Cold War: Scenario integration.
+				NOT = { has_doctrine = mdcw_all_volunteer_force } # COLDWAR: All-Volunteer Force subdoctrine rules out conscription
+				OR = {
+					has_stability > 0.69
+					has_war_support > 0.69
+				}
+				if = {
+					limit = {
+						OR = {
+							has_idea = no_military
+							has_idea = volunteer_army
+							has_idea = partial_draft_army
+						}
+						conscription_increase_blocked = yes
+					}
+					conscription_increase_blocked = no
+				}
+				if = {
+					limit = {
+						original_tag = AST
+					 }
+					 has_completed_focus = AST_residency_eligibility
+				}
+			 }
+}
+}
+
+COLDWAR_SPR_v2_us_bases_offer_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_us_negotiation has_country_flag = COLDWAR_SPR_unlock_us_bases_offer NOT = { has_country_flag = COLDWAR_SPR_v2_us_bases_offer_concluded }
+
+}
+
+COLDWAR_SPR_v2_us_bases_offer_accept_live = {
+exists = yes OR = { tag = USA } NOT = { has_war_with = SPR } check_variable = { var = treasury value = 1.5 compare = greater_than_or_equals }
+SPR = { exists = yes COLDWAR_SPR_v2_us_bases_offer_sender_live = yes has_country_flag = COLDWAR_SPR_v2_us_bases_offer_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_us_bases_offer_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_limited_access_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_nonaligned_access has_country_flag = COLDWAR_SPR_unlock_limited_access NOT = { has_country_flag = COLDWAR_SPR_v2_limited_access_concluded }
+
+}
+
+COLDWAR_SPR_v2_limited_access_accept_live = {
+exists = yes OR = { tag = USA } NOT = { has_war_with = SPR }
+SPR = { exists = yes COLDWAR_SPR_v2_limited_access_sender_live = yes has_country_flag = COLDWAR_SPR_v2_limited_access_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_limited_access_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_bilateral_training_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_atlantic_contacts has_country_flag = COLDWAR_SPR_unlock_bilateral_training NOT = { has_country_flag = COLDWAR_SPR_v2_bilateral_training_concluded }
+check_variable = { var = treasury value = 0.3 compare = greater_than_or_equals }
+}
+
+COLDWAR_SPR_v2_bilateral_training_accept_live = {
+exists = yes OR = { tag = USA tag = ENG tag = FRA } NOT = { has_war_with = SPR } check_variable = { var = treasury value = 0.3 compare = greater_than_or_equals }
+SPR = { exists = yes COLDWAR_SPR_v2_bilateral_training_sender_live = yes has_country_flag = COLDWAR_SPR_v2_bilateral_training_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_bilateral_training_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_mediterranean_offer_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_mediterranean_contacts has_country_flag = COLDWAR_SPR_unlock_mediterranean_offer
+check_variable = { var = treasury value = 0.5 compare = greater_than_or_equals }
+}
+
+COLDWAR_SPR_v2_mediterranean_offer_accept_live = {
+exists = yes OR = { tag = ITA tag = FRA tag = POR } NOT = { has_war_with = SPR } check_variable = { var = treasury value = 0.5 compare = greater_than_or_equals }
+SPR = { exists = yes COLDWAR_SPR_v2_mediterranean_offer_sender_live = yes has_country_flag = COLDWAR_SPR_v2_mediterranean_offer_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_mediterranean_offer_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_european_trade_offer_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_european_trade has_country_flag = COLDWAR_SPR_unlock_european_trade_offer
+
+}
+
+COLDWAR_SPR_v2_european_trade_offer_accept_live = {
+exists = yes has_idea = EU_member NOT = { has_war_with = SPR }
+SPR = { exists = yes COLDWAR_SPR_v2_european_trade_offer_sender_live = yes has_country_flag = COLDWAR_SPR_v2_european_trade_offer_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_european_trade_offer_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_eec_application_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_european_application has_country_flag = COLDWAR_SPR_unlock_eec_application has_government = democratic has_elections = yes has_country_flag = COLDWAR_SPR_v2_ec_legal_ready NOT = { has_idea = EU_member }
+
+}
+
+COLDWAR_SPR_v2_eec_application_accept_live = {
+exists = yes has_idea = EU_member NOT = { has_war_with = SPR }
+SPR = { exists = yes COLDWAR_SPR_v2_eec_application_sender_live = yes has_country_flag = COLDWAR_SPR_v2_eec_application_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_eec_application_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_sahara_conference_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_sahara_talks has_country_flag = COLDWAR_SPR_unlock_sahara_conference
+
+}
+
+COLDWAR_SPR_v2_sahara_conference_accept_live = {
+exists = yes OR = { tag = MOR tag = MAU tag = ALG tag = SHA } NOT = { has_war_with = SPR }
+SPR = { exists = yes COLDWAR_SPR_v2_sahara_conference_sender_live = yes has_country_flag = COLDWAR_SPR_v2_sahara_conference_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_sahara_transition_offer_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_sahara_transition has_country_flag = COLDWAR_SPR_unlock_sahara_transition_offer COLDWAR_SPR_v2_sahara_conference_all_consented = yes
+
+}
+
+COLDWAR_SPR_v2_sahara_transition_offer_accept_live = {
+exists = yes OR = { tag = MOR tag = MAU tag = ALG tag = SHA } NOT = { has_war_with = SPR }
+SPR = { exists = yes COLDWAR_SPR_v2_sahara_transition_offer_sender_live = yes has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_sahara_presence_offer_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_sahara_presence has_country_flag = COLDWAR_SPR_unlock_sahara_presence_offer COLDWAR_SPR_v2_sahara_conference_all_consented = yes
+
+}
+
+COLDWAR_SPR_v2_sahara_presence_offer_accept_live = {
+exists = yes OR = { tag = MOR tag = MAU tag = ALG tag = SHA } NOT = { has_war_with = SPR }
+SPR = { exists = yes COLDWAR_SPR_v2_sahara_presence_offer_sender_live = yes has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_maghreb_commerce_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_maghreb_dialogue has_country_flag = COLDWAR_SPR_unlock_maghreb_commerce
+check_variable = { var = treasury value = 0.5 compare = greater_than_or_equals }
+}
+
+COLDWAR_SPR_v2_maghreb_commerce_accept_live = {
+exists = yes OR = { tag = MOR tag = ALG tag = TUN tag = MAU } NOT = { has_war_with = SPR } check_variable = { var = treasury value = 0.5 compare = greater_than_or_equals }
+SPR = { exists = yes COLDWAR_SPR_v2_maghreb_commerce_sender_live = yes has_country_flag = COLDWAR_SPR_v2_maghreb_commerce_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_maghreb_commerce_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_iberoamerican_credit_sender_live = {
+tag = SPR IMP_is_1970_scenario = yes is_subject = no has_country_flag = COLDWAR_SPR_applied_iberoamerican_links has_country_flag = COLDWAR_SPR_unlock_iberoamerican_credit NOT = { has_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_concluded }
+check_variable = { var = treasury value = 2 compare = greater_than_or_equals }
+}
+
+COLDWAR_SPR_v2_iberoamerican_credit_accept_live = {
+exists = yes OR = { tag = ARG tag = BRA tag = CHL tag = BOL tag = COL tag = ECU tag = PAR tag = PRU tag = URG tag = VEN tag = MEX tag = CUB tag = DOM tag = GUA tag = HON tag = NIC tag = COS tag = PAN tag = ELS } NOT = { has_war_with = SPR }
+SPR = { exists = yes COLDWAR_SPR_v2_iberoamerican_credit_sender_live = yes has_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_pending@ROOT NOT = { has_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_accepted@ROOT } }
+}
+
+COLDWAR_SPR_v2_nato_offer_live = {
+tag = SPR IMP_is_1970_scenario = yes
+has_country_flag = COLDWAR_SPR_applied_atlantic_application has_government = democratic has_elections = yes can_join_NATO = yes
+has_country_flag = COLDWAR_SPR_v2_nato_pending NOT = { has_idea = NATO_member }
+any_other_country = { has_idea = NATO_member is_faction_leader = yes NOT = { has_war_with = SPR } }
+}
+
+COLDWAR_SPR_v2_sahara_conference_all_consented = {
+if = { limit = { MOR = { exists = yes } } MOR = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@MOR }
+if = { limit = { MAU = { exists = yes } } MAU = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@MAU }
+if = { limit = { ALG = { exists = yes } } ALG = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@ALG }
+if = { limit = { SHA = { exists = yes } } SHA = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@SHA }
+}
+
+COLDWAR_SPR_v2_sahara_transition_offer_all_consented = {
+if = { limit = { MOR = { exists = yes } } MOR = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@MOR }
+if = { limit = { MAU = { exists = yes } } MAU = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@MAU }
+if = { limit = { ALG = { exists = yes } } ALG = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@ALG }
+if = { limit = { SHA = { exists = yes } } SHA = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@SHA }
+if = { limit = { MOR = { exists = yes } } MOR = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_accepted@MOR }
+if = { limit = { MAU = { exists = yes } } MAU = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_accepted@MAU }
+if = { limit = { ALG = { exists = yes } } ALG = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_accepted@ALG }
+if = { limit = { SHA = { exists = yes } } SHA = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_transition_offer_accepted@SHA }
+}
+
+COLDWAR_SPR_v2_sahara_presence_offer_all_consented = {
+if = { limit = { MOR = { exists = yes } } MOR = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@MOR }
+if = { limit = { MAU = { exists = yes } } MAU = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@MAU }
+if = { limit = { ALG = { exists = yes } } ALG = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@ALG }
+if = { limit = { SHA = { exists = yes } } SHA = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_conference_accepted@SHA }
+if = { limit = { MOR = { exists = yes } } MOR = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_accepted@MOR }
+if = { limit = { MAU = { exists = yes } } MAU = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_accepted@MAU }
+if = { limit = { ALG = { exists = yes } } ALG = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_accepted@ALG }
+if = { limit = { SHA = { exists = yes } } SHA = { NOT = { has_war_with = SPR } } has_country_flag = COLDWAR_SPR_v2_sahara_presence_offer_accepted@SHA }
+}

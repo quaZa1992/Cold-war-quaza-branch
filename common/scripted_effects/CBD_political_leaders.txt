@@ -1,0 +1,57 @@
+set_leader_CBD = {
+# IMPERIA CW — Cold War: Historical leader and portrait routing.
+# MDCW HISTORICAL NATIVE POOL CBD BEGIN
+if = {
+	limit = { IMP_is_1970_scenario = yes check_variable = { ruling_party = 4 } }
+	MDCW_HP_native_pool_CBD_4 = yes
+}
+else_if = {
+	limit = { IMP_is_1970_scenario = yes check_variable = { ruling_party = 7 } }
+	MDCW_HP_native_pool_CBD_7 = yes
+}
+else_if = {
+	limit = { IMP_is_1970_scenario = yes check_variable = { ruling_party = 23 } }
+	MDCW_HP_native_pool_CBD_23 = yes
+}
+else = {
+
+	if = { limit = { check_variable = { ruling_party = 16 } }
+		if = { limit = { check_variable = { Neutral_Libertarian_leader = 0 } }
+			add_to_variable = { Neutral_Libertarian_leader = 1 }
+			hidden_effect = { kill_country_leader = yes }
+
+			create_country_leader = {
+				name = "Sam Rainsy"
+				picture = "sam_rainsy.dds"
+				ideology = Neutral_Libertarian
+				traits = {
+					neutrality_Neutral_Libertarian
+				}
+			}
+
+			if = { limit = { has_country_flag = do_not_retire } subtract_from_variable = { Neutral_Libertarian_leader = 1 } }
+			if = { limit = { date < 2016.1.2 } set_temp_variable = { b = 1 } } #skip if 2017
+		}
+	}
+	else_if = { limit = { check_variable = { ruling_party = 23 } }
+		if = { limit = { check_variable = { Monarchist_leader = 0 } }
+			add_to_variable = { Monarchist_leader = 1 }
+			hidden_effect = { kill_country_leader = yes }
+
+			create_country_leader = {
+				name = "Norodom Sihanouk"
+				picture = "norodom_sihanouk.dds"
+				expire = "2004.1.1" #Historically Abdiacted in 2004
+				ideology = Monarchist
+				traits = {
+					nationalist_Monarchist
+				}
+			}
+
+			if = { limit = { has_country_flag = do_not_retire } subtract_from_variable = { Monarchist_leader = 1 } }
+			if = { limit = { date < 2004.1.1 } set_temp_variable = { b = 1 } } #skip if 2004
+		}
+	}
+
+}
+# MDCW HISTORICAL NATIVE POOL END CBD}

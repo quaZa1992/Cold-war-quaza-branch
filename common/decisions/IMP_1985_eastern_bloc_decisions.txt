@@ -1,0 +1,1275 @@
+# IMPERIA CW — Cold War: Imperia 1985 eastern bloc decisions — decisions.
+IMP_1985_eastern_bloc_category = {
+	IMP_1985_eb_regime_control_status = {
+		icon = GFX_imp_1985_eb_regime_control_icon
+		visible = {
+			always = no
+		}
+		available = { always = no }
+		fire_only_once = no
+	}
+
+	IMP_1985_eb_democratic_pressure_status = {
+		icon = GFX_imp_1985_eb_democratic_pressure_icon
+		visible = {
+			always = no
+		}
+		available = { always = no }
+		fire_only_once = no
+	}
+
+	IMP_1985_eb_economic_strain_status = {
+		icon = GFX_imp_1985_eb_economic_strain_icon
+		visible = {
+			always = no
+		}
+		available = { always = no }
+		fire_only_once = no
+	}
+
+	IMP_1985_eb_security_loyalty_status = {
+		icon = GFX_imp_1985_eb_security_loyalty_icon
+		visible = {
+			always = no
+		}
+		available = { always = no }
+		fire_only_once = no
+	}
+
+	IMP_1985_eb_moscow_leverage_status = {
+		icon = GFX_imp_1985_eb_moscow_leverage_icon
+		visible = {
+			always = no
+		}
+		available = { always = no }
+		fire_only_once = no
+	}
+
+	IMP_1985_eb_democratic_pressure_tick = {
+		icon = GFX_decision_generic_political_discourse
+		activation = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = { always = no }
+		fire_only_once = no
+		selectable_mission = no
+		is_good = no
+		days_mission_timeout = 90
+		days_re_enable = 3
+		timeout_effect = {
+			IMP_1985_eb_periodic_democratic_pressure = yes
+		}
+	}
+
+	IMP_1985_eb_economic_strain_tick = {
+		icon = GFX_decision_money_dec
+		activation = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = { always = no }
+		fire_only_once = no
+		selectable_mission = no
+		is_good = no
+		days_mission_timeout = 120
+		days_re_enable = 3
+		timeout_effect = {
+			IMP_1985_eb_periodic_economic_strain = yes
+		}
+	}
+
+	IMP_1985_eb_moscow_slippage_tick = {
+		icon = GFX_decision_category_sov_great_patriotic_war
+		activation = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = { always = no }
+		fire_only_once = no
+		selectable_mission = no
+		is_good = no
+		days_mission_timeout = 180
+		days_re_enable = 3
+		timeout_effect = {
+			IMP_1985_eb_periodic_moscow_slippage = yes
+		}
+	}
+
+	IMP_1985_eb_strike_wave_mission = {
+		icon = GFX_decision_fist
+		activation = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_country_flag = imp_1985_eb_recent_strike_wave }
+			NOT = { has_civil_war = yes }
+			OR = {
+				check_variable = { imp_eb_democratic_pressure > 78 }
+				check_variable = { imp_eb_economic_strain > 79 }
+			}
+		}
+		available = { always = no }
+		fire_only_once = no
+		selectable_mission = no
+		is_good = no
+		days_mission_timeout = 120
+		days_re_enable = 7
+		timeout_effect = {
+			country_event = { id = imp_1985_eb.1 }
+		}
+	}
+
+	IMP_1985_eb_mass_demonstrations_mission = {
+		icon = GFX_decision_generic_civil_support
+		activation = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_country_flag = imp_1985_eb_recent_mass_demonstrations }
+			NOT = { has_civil_war = yes }
+			OR = {
+				check_variable = { imp_eb_democratic_pressure > 87 }
+				AND = {
+					check_variable = { imp_eb_democratic_pressure > 74 }
+					check_variable = { imp_eb_regime_control < 40 }
+				}
+				AND = {
+					check_variable = { imp_eb_democratic_pressure > 74 }
+					check_variable = { imp_eb_economic_strain > 84 }
+				}
+			}
+		}
+		available = { always = no }
+		fire_only_once = no
+		selectable_mission = no
+		is_good = no
+		days_mission_timeout = 150
+		days_re_enable = 7
+		timeout_effect = {
+			set_country_flag = { flag = imp_1985_eb_recent_mass_demonstrations days = 240 value = 1 }
+			random_list = {
+				55 = { country_event = { id = imp_1985_eb.2 } }
+				45 = { country_event = { id = imp_1985_eb.4 } }
+			}
+		}
+	}
+
+	IMP_1985_eb_security_breakdown_mission = {
+		icon = GFX_decision_generic_prepare_civil_war_new
+		activation = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_country_flag = imp_1985_eb_recent_security_breakdown }
+			NOT = { has_civil_war = yes }
+			check_variable = { imp_eb_democratic_pressure > 91 }
+			OR = {
+				check_variable = { imp_eb_security_loyalty < 43 }
+				check_variable = { imp_eb_regime_control < 36 }
+			}
+		}
+		available = { always = no }
+		fire_only_once = no
+		selectable_mission = no
+		is_good = no
+		days_mission_timeout = 90
+		days_re_enable = 7
+		timeout_effect = {
+			IMP_1985_eb_trigger_security_breakdown = yes
+			country_event = { id = imp_1985_eb.3 }
+		}
+	}
+
+	IMP_1985_eb_subsidize_consumer_goods = {
+		icon = GFX_decision_civ_fac
+		cost = 120
+		custom_cost_trigger = {
+			check_variable = { treasury > 18 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_18_TREASURY
+		days_remove = 45
+		days_re_enable = 90
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			check_variable = { imp_eb_economic_strain > 24 }
+		}
+		modifier = {
+			consumer_goods_factor = 0.08
+			tax_gain_multiplier_modifier = -0.025
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_subsidize_consumer_goods"
+				set_temp_variable = { treasury_change = -18 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_market_supply_costs days = 90 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_eb_subsidize_consumer_goods_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_consumer_subsidies = yes
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 3
+				check_variable = { imp_eb_economic_strain > 69 }
+			}
+		}
+	}
+
+	IMP_1985_eb_factory_supply_priorities = {
+		icon = GFX_decision_civ_fac
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 12 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_12_TREASURY
+		days_remove = 40
+		days_re_enable = 100
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			check_variable = { imp_eb_economic_strain > 34 }
+		}
+		modifier = {
+			consumer_goods_factor = 0.055
+			tax_gain_multiplier_modifier = -0.02
+			productivity_growth_modifier = -0.02
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_factory_supply_priorities"
+				set_temp_variable = { treasury_change = -12 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_factory_priority_costs days = 75 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_eb_factory_supply_priorities_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_factory_supply_priorities = yes
+			}
+		}
+		ai_will_do = {
+			factor = 18
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_economic_strain > 64 }
+			}
+		}
+	}
+
+	IMP_1985_eb_local_grievance_commissions = {
+		icon = GFX_decision_generic_civil_support
+		cost = 95
+		custom_cost_trigger = {
+			check_variable = { treasury > 6 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_6_TREASURY
+		days_remove = 35
+		days_re_enable = 90
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			OR = {
+				check_variable = { imp_eb_democratic_pressure > 24 }
+				check_variable = { imp_eb_economic_strain > 39 }
+			}
+		}
+		modifier = {
+			political_power_factor = -0.04
+			tax_gain_multiplier_modifier = -0.015
+			consumer_goods_factor = 0.015
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { treasury_change = -6 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_party_administration_costs days = 70 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_local_grievance_commissions"
+			custom_effect_tooltip = IMP_1985_eb_local_grievance_commissions_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_local_grievance_commissions = yes
+			}
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_democratic_pressure > 59 }
+			}
+		}
+	}
+
+	IMP_1985_eb_rotate_party_secretaries = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 120
+		custom_cost_trigger = {
+			command_power > 19
+		}
+		custom_cost_text = IMP_1985_EB_COST_20_CP
+		days_remove = 45
+		days_re_enable = 120
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			OR = {
+				check_variable = { imp_eb_regime_control < 84 }
+				check_variable = { imp_eb_democratic_pressure > 34 }
+			}
+		}
+		modifier = {
+			political_power_factor = -0.06
+			tax_gain_multiplier_modifier = -0.015
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -20
+				add_timed_idea = { idea = imp_1985_eb_party_administration_costs days = 90 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_rotate_party_secretaries"
+			custom_effect_tooltip = IMP_1985_eb_rotate_party_secretaries_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_rotate_party_secretaries = yes
+			}
+		}
+		ai_will_do = {
+			factor = 16
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_regime_control < 50 }
+			}
+		}
+	}
+
+	IMP_1985_eb_mass_organization_campaign = {
+		icon = GFX_decision_propaganda
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 5 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_5_TREASURY
+		days_remove = 30
+		days_re_enable = 75
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			check_variable = { imp_eb_democratic_pressure > 19 }
+		}
+		modifier = {
+			consumer_goods_factor = 0.04
+			political_power_factor = -0.035
+			tax_gain_multiplier_modifier = -0.01
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { treasury_change = -5 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_party_mobilization_costs days = 80 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_mass_organization_campaign"
+			custom_effect_tooltip = IMP_1985_eb_mass_organization_campaign_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_mass_organization_campaign = yes
+			}
+		}
+		ai_will_do = {
+			factor = 12
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_democratic_pressure > 49 }
+			}
+		}
+	}
+
+	IMP_1985_eb_workplace_cadre_visits = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 85
+		custom_cost_trigger = {
+			command_power > 9
+		}
+		custom_cost_text = IMP_1985_EB_COST_10_CP
+		days_remove = 25
+		days_re_enable = 60
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			OR = {
+				check_variable = { imp_eb_democratic_pressure > 14 }
+				check_variable = { imp_eb_regime_control < 85 }
+			}
+		}
+		modifier = {
+			political_power_factor = -0.035
+			productivity_growth_modifier = -0.01
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -10
+				add_timed_idea = { idea = imp_1985_eb_party_mobilization_costs days = 60 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_workplace_cadre_visits"
+			custom_effect_tooltip = IMP_1985_eb_workplace_cadre_visits_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_workplace_cadre_visits = yes
+			}
+		}
+		ai_will_do = {
+			factor = 14
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_regime_control < 55 }
+			}
+		}
+	}
+
+	IMP_1985_eb_expand_informal_privileges = {
+		icon = GFX_decision_money_dec
+		cost = 105
+		custom_cost_trigger = {
+			check_variable = { treasury > 12 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_12_TREASURY
+		days_remove = 30
+		days_re_enable = 75
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			OR = {
+				check_variable = { imp_eb_economic_strain > 24 }
+				check_variable = { imp_eb_democratic_pressure > 29 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.07
+			tax_gain_multiplier_modifier = -0.035
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_expand_informal_privileges"
+				set_temp_variable = { treasury_change = -12 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_market_supply_costs days = 90 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_eb_expand_informal_privileges_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_informal_privileges = yes
+			}
+		}
+		ai_will_do = {
+			factor = 13
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_economic_strain > 64 }
+			}
+		}
+	}
+
+	IMP_1985_eb_church_union_surveillance = {
+		icon = GFX_decision_generic_arrest
+		cost = 120
+		custom_cost_trigger = {
+			command_power > 34
+			has_equipment = { infantry_weapons_type > 499 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_35_CP_500_INF
+		days_remove = 40
+		days_re_enable = 110
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			check_variable = { imp_eb_democratic_pressure > 29 }
+		}
+		modifier = {
+			consumer_goods_factor = 0.035
+			political_power_factor = -0.04
+			tax_gain_multiplier_modifier = -0.02
+			police_cost_multiplier_modifier = 0.30
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_church_union_surveillance"
+				add_command_power = -35
+				add_equipment_to_stockpile = { type = infantry_weapons_1 amount = -500 }
+				add_timed_idea = { idea = imp_1985_eb_security_operation_costs days = 90 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_eb_church_union_surveillance_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_church_union_surveillance = yes
+			}
+		}
+		ai_will_do = {
+			factor = 16
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_democratic_pressure > 64 }
+			}
+		}
+	}
+
+	IMP_1985_eb_request_soviet_party_advisors = {
+		icon = GFX_imp_1985_eb_moscow_leverage_icon
+		cost = 110
+		custom_cost_trigger = {
+			check_variable = { treasury > 12 }
+			command_power > 19
+		}
+		custom_cost_text = IMP_1985_EB_COST_12_TREASURY_20_CP
+		days_remove = 35
+		days_re_enable = 120
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { original_tag = SOV }
+			NOT = { has_civil_war = yes }
+			check_variable = { imp_eb_moscow_leverage > 29 }
+		}
+		available = {
+			OR = {
+				check_variable = { imp_eb_democratic_pressure > 34 }
+				check_variable = { imp_eb_security_loyalty < 80 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.035
+			political_power_factor = -0.04
+			tax_gain_multiplier_modifier = -0.02
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_request_soviet_party_advisors"
+				set_temp_variable = { treasury_change = -12 }
+				modify_treasury_effect = yes
+				add_command_power = -20
+				add_timed_idea = { idea = imp_1985_eb_soviet_advisory_costs days = 120 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_eb_request_soviet_party_advisors_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_request_soviet_party_advisors = yes
+			}
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 2
+				check_variable = { imp_eb_moscow_leverage > 64 }
+			}
+		}
+	}
+
+	IMP_1985_eb_expand_state_security = {
+		icon = GFX_decision_generic_arrest
+		cost = 155
+		custom_cost_trigger = {
+			command_power > 49
+			has_equipment = { infantry_weapons_type > 999 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_50_CP_1000_INF
+		days_remove = 50
+		days_re_enable = 120
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			check_variable = { imp_eb_democratic_pressure > 34 }
+		}
+		modifier = {
+			consumer_goods_factor = 0.06
+			tax_gain_multiplier_modifier = -0.035
+			police_cost_multiplier_modifier = 0.45
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_expand_state_security"
+				add_command_power = -50
+				add_equipment_to_stockpile = { type = infantry_weapons_1 amount = -1000 }
+				add_timed_idea = { idea = imp_1985_eb_security_operation_costs days = 120 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_eb_expand_state_security_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_security_expansion = yes
+			}
+		}
+		ai_will_do = {
+			factor = 30
+			modifier = {
+				factor = 3
+				check_variable = { imp_eb_democratic_pressure > 69 }
+			}
+		}
+	}
+
+	IMP_1985_eb_controlled_liberalization = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 160
+		custom_cost_trigger = {
+			check_variable = { treasury > 10 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_10_TREASURY
+		days_remove = 70
+		days_re_enable = 240
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+			OR = {
+				has_country_flag = imp_1985_eb_civic_channels_unlocked
+				AND = {
+					check_variable = { imp_eb_democratic_pressure > 74 }
+					check_variable = { imp_eb_economic_strain > 64 }
+				}
+				AND = {
+					check_variable = { imp_eb_democratic_pressure > 84 }
+					check_variable = { imp_eb_regime_control < 45 }
+				}
+			}
+		}
+		available = {
+			check_variable = { imp_eb_democratic_pressure > 64 }
+			check_variable = { imp_eb_regime_control > 34 }
+			check_variable = { imp_eb_security_loyalty > 34 }
+		}
+		modifier = {
+			political_power_factor = -0.05
+			tax_gain_multiplier_modifier = -0.025
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { treasury_change = -10 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_reform_disruption_costs days = 120 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_controlled_liberalization"
+			custom_effect_tooltip = IMP_1985_eb_controlled_liberalization_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_controlled_liberalization = yes
+			}
+		}
+		ai_will_do = {
+			factor = 12
+			modifier = {
+				factor = 3
+				check_variable = { imp_eb_democratic_pressure > 84 }
+			}
+		}
+	}
+
+	IMP_1985_eb_hard_currency_loans = {
+		icon = GFX_decision_money_dec
+		cost = 85
+		days_remove = 30
+		days_re_enable = 365
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+		}
+		available = {
+			check_variable = { imp_eb_economic_strain > 54 }
+		}
+		modifier = {
+			tax_gain_multiplier_modifier = -0.04
+			political_power_factor = -0.02
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_hard_currency_loans"
+			custom_effect_tooltip = IMP_1985_eb_hard_currency_loans_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_hard_currency_loans = yes
+			}
+		}
+		ai_will_do = {
+			factor = 8
+			modifier = {
+				factor = 4
+				check_variable = { treasury < 4 }
+			}
+		}
+	}
+
+	IMP_1985_eb_emergency_law = {
+		icon = GFX_decision_oppression
+		cost = 220
+		custom_cost_trigger = {
+			command_power > 74
+			has_equipment = { infantry_weapons_type > 1499 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_75_CP_1500_INF
+		days_remove = 35
+		days_re_enable = 180
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+			check_variable = { imp_eb_democratic_pressure > 69 }
+		}
+		available = {
+			check_variable = { imp_eb_security_loyalty > 29 }
+		}
+		modifier = {
+			consumer_goods_factor = 0.12
+			tax_gain_multiplier_modifier = -0.06
+			productivity_growth_modifier = -0.04
+			police_cost_multiplier_modifier = 0.70
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_emergency_law"
+				add_command_power = -75
+				add_equipment_to_stockpile = { type = infantry_weapons_1 amount = -1500 }
+				add_timed_idea = { idea = imp_1985_eb_emergency_mobilization_costs days = 150 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_eb_emergency_law_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_emergency_law = yes
+			}
+		}
+		ai_will_do = {
+			factor = 18
+			modifier = {
+				factor = 3
+				check_variable = { imp_eb_regime_control > 69 }
+			}
+		}
+	}
+
+	IMP_1985_eb_round_table_talks = {
+		icon = GFX_decision_generic_civil_support
+		cost = 240
+		custom_cost_trigger = {
+			check_variable = { treasury > 20 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_20_TREASURY
+		days_remove = 70
+		days_re_enable = 540
+		visible = {
+			has_country_flag = imp_1985_eastern_bloc_member
+			NOT = { has_civil_war = yes }
+			OR = {
+				has_country_flag = imp_1985_eb_round_table_channels_unlocked
+				AND = {
+					check_variable = { imp_eb_democratic_pressure > 89 }
+					OR = {
+						check_variable = { imp_eb_regime_control < 40 }
+						check_variable = { imp_eb_security_loyalty < 45 }
+						check_variable = { imp_eb_economic_strain > 84 }
+					}
+				}
+			}
+		}
+		available = {
+			check_variable = { imp_eb_democratic_pressure > 84 }
+			check_variable = { imp_eb_regime_control > 24 }
+		}
+		modifier = {
+			political_power_factor = -0.10
+			tax_gain_multiplier_modifier = -0.04
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { treasury_change = -20 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_reform_disruption_costs days = 180 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_eb_round_table_talks"
+			custom_effect_tooltip = IMP_1985_eb_round_table_talks_effect_tt
+			hidden_effect = {
+				IMP_1985_eb_apply_round_table_talks = yes
+			}
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 4
+				check_variable = { imp_eb_security_loyalty < 45 }
+			}
+		}
+	}
+}
+
+IMP_1985_moscow_leverage_category = {
+	IMP_1985_moscow_stabilize_DDR = {
+		icon = GFX_decision_category_sov_great_patriotic_war
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 16 }
+			command_power > 34
+		}
+		custom_cost_text = IMP_1985_EB_COST_16_TREASURY_35_CP
+		days_remove = 45
+		days_re_enable = 120
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			DDR = {
+				exists = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			DDR = {
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_moscow_leverage < 100 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.02
+			political_power_factor = -0.03
+			command_power_gain_mult = -0.05
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_stabilize_DDR"
+				add_command_power = -35
+				set_temp_variable = { treasury_change = -16 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 60 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_stabilization_effect_tt
+			hidden_effect = {
+				DDR = { IMP_1985_eb_apply_moscow_stabilization = yes }
+			}
+		}
+		ai_will_do = { factor = 15 }
+	}
+
+	IMP_1985_moscow_stabilize_POL = {
+		icon = GFX_decision_category_sov_great_patriotic_war
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 16 }
+			command_power > 34
+		}
+		custom_cost_text = IMP_1985_EB_COST_16_TREASURY_35_CP
+		days_remove = 45
+		days_re_enable = 120
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			POL = {
+				exists = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			POL = {
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_moscow_leverage < 100 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.02
+			political_power_factor = -0.03
+			command_power_gain_mult = -0.05
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_stabilize_POL"
+				add_command_power = -35
+				set_temp_variable = { treasury_change = -16 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 60 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_stabilization_effect_tt
+			hidden_effect = {
+				POL = { IMP_1985_eb_apply_moscow_stabilization = yes }
+			}
+		}
+		ai_will_do = { factor = 20 }
+	}
+
+	IMP_1985_moscow_stabilize_CZE = {
+		icon = GFX_decision_category_sov_great_patriotic_war
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 16 }
+			command_power > 34
+		}
+		custom_cost_text = IMP_1985_EB_COST_16_TREASURY_35_CP
+		days_remove = 45
+		days_re_enable = 120
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			CZE = {
+				exists = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			CZE = {
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_moscow_leverage < 100 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.02
+			political_power_factor = -0.03
+			command_power_gain_mult = -0.05
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_stabilize_CZE"
+				add_command_power = -35
+				set_temp_variable = { treasury_change = -16 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 60 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_stabilization_effect_tt
+			hidden_effect = {
+				CZE = { IMP_1985_eb_apply_moscow_stabilization = yes }
+			}
+		}
+		ai_will_do = { factor = 12 }
+	}
+
+	IMP_1985_moscow_stabilize_HUN = {
+		icon = GFX_decision_category_sov_great_patriotic_war
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 16 }
+			command_power > 34
+		}
+		custom_cost_text = IMP_1985_EB_COST_16_TREASURY_35_CP
+		days_remove = 45
+		days_re_enable = 120
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			HUN = {
+				exists = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			HUN = {
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_moscow_leverage < 100 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.02
+			political_power_factor = -0.03
+			command_power_gain_mult = -0.05
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_stabilize_HUN"
+				add_command_power = -35
+				set_temp_variable = { treasury_change = -16 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 60 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_stabilization_effect_tt
+			hidden_effect = {
+				HUN = { IMP_1985_eb_apply_moscow_stabilization = yes }
+			}
+		}
+		ai_will_do = { factor = 12 }
+	}
+
+	IMP_1985_moscow_stabilize_ROM = {
+		icon = GFX_decision_category_sov_great_patriotic_war
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 16 }
+			command_power > 34
+		}
+		custom_cost_text = IMP_1985_EB_COST_16_TREASURY_35_CP
+		days_remove = 45
+		days_re_enable = 120
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			ROM = {
+				exists = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			ROM = {
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_moscow_leverage < 100 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.02
+			political_power_factor = -0.03
+			command_power_gain_mult = -0.05
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_stabilize_ROM"
+				add_command_power = -35
+				set_temp_variable = { treasury_change = -16 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 60 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_stabilization_effect_tt
+			hidden_effect = {
+				ROM = { IMP_1985_eb_apply_moscow_stabilization = yes }
+			}
+		}
+		ai_will_do = { factor = 7 }
+	}
+
+	IMP_1985_moscow_stabilize_BUL = {
+		icon = GFX_decision_category_sov_great_patriotic_war
+		cost = 100
+		custom_cost_trigger = {
+			check_variable = { treasury > 16 }
+			command_power > 34
+		}
+		custom_cost_text = IMP_1985_EB_COST_16_TREASURY_35_CP
+		days_remove = 45
+		days_re_enable = 120
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			BUL = {
+				exists = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			BUL = {
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_moscow_leverage < 100 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.02
+			political_power_factor = -0.03
+			command_power_gain_mult = -0.05
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_stabilize_BUL"
+				add_command_power = -35
+				set_temp_variable = { treasury_change = -16 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 60 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_stabilization_effect_tt
+			hidden_effect = {
+				BUL = { IMP_1985_eb_apply_moscow_stabilization = yes }
+			}
+		}
+		ai_will_do = { factor = 12 }
+	}
+
+	IMP_1985_moscow_reopen_tirana_channels = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 140
+		custom_cost_trigger = {
+			check_variable = { treasury > 25 }
+			command_power > 64
+		}
+		custom_cost_text = IMP_1985_EB_COST_25_TREASURY_65_CP
+		days_remove = 70
+		days_re_enable = 240
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			has_completed_focus = SOV_1985_warsaw_pact_reform
+			ALB = {
+				exists = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			ALB = {
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_moscow_leverage < 60 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.025
+			political_power_factor = -0.04
+			command_power_gain_mult = -0.08
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_reopen_tirana_channels"
+				add_command_power = -65
+				set_temp_variable = { treasury_change = -25 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 90 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_reopen_tirana_channels_effect_tt
+			hidden_effect = {
+				ALB = {
+					add_to_variable = { imp_eb_moscow_leverage = 10 }
+					add_to_variable = { imp_eb_economic_strain = -3 }
+					add_to_variable = { imp_eb_democratic_pressure = 2 }
+					add_autonomy_score = { value = -15 }
+					set_temp_variable = { percent_change = 2 }
+					set_temp_variable = { tag_index = SOV.id }
+					set_temp_variable = { influence_target = THIS.id }
+					change_influence_percentage = yes
+					IMP_1985_eb_refresh = yes
+				}
+			}
+		}
+		ai_will_do = { factor = 1 }
+	}
+
+	IMP_1985_moscow_warsaw_pact_security_coordination = {
+		icon = GFX_decision_generic_arrest
+		cost = 160
+		custom_cost_trigger = {
+			check_variable = { treasury > 30 }
+			command_power > 74
+		}
+		custom_cost_text = IMP_1985_EB_COST_30_TREASURY_75_CP
+		days_remove = 60
+		days_re_enable = 180
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			has_completed_focus = SOV_1985_hold_the_warsaw_pact
+			any_country = {
+				IMP_1985_is_warsaw_pact_bloc_tag = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			any_country = {
+				IMP_1985_is_warsaw_pact_bloc_tag = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+				NOT = { has_civil_war = yes }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.02
+			political_power_factor = -0.05
+			command_power_gain_mult = -0.08
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_warsaw_pact_security_coordination"
+				add_command_power = -75
+				set_temp_variable = { treasury_change = -30 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 90 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_warsaw_pact_security_coordination_effect_tt
+			hidden_effect = {
+				every_country = {
+					limit = {
+						IMP_1985_is_warsaw_pact_bloc_tag = yes
+						has_country_flag = imp_1985_eastern_bloc_member
+						NOT = { has_civil_war = yes }
+					}
+					IMP_1985_eb_apply_moscow_security_coordination = yes
+				}
+			}
+		}
+		ai_will_do = { factor = 6 }
+	}
+
+	IMP_1985_moscow_cheap_energy_exports = {
+		icon = GFX_decision_money_dec
+		cost = 110
+		custom_cost_trigger = {
+			check_variable = { treasury > 26 }
+		}
+		custom_cost_text = IMP_1985_EB_COST_26_TREASURY
+		days_remove = 45
+		days_re_enable = 180
+		visible = {
+			original_tag = SOV
+			IMP_is_1985_scenario = yes
+			has_completed_focus = SOV_1985_hold_the_warsaw_pact
+			any_country = {
+				IMP_1985_is_warsaw_pact_bloc_tag = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+			}
+		}
+		available = {
+			any_country = {
+				IMP_1985_is_warsaw_pact_bloc_tag = yes
+				has_country_flag = imp_1985_eastern_bloc_member
+				NOT = { has_civil_war = yes }
+				check_variable = { imp_eb_economic_strain > 39 }
+			}
+		}
+		modifier = {
+			consumer_goods_factor = 0.035
+			political_power_factor = -0.02
+		}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName]: Decision IMP_1985_moscow_cheap_energy_exports"
+				set_temp_variable = { treasury_change = -26 }
+				modify_treasury_effect = yes
+				add_timed_idea = { idea = imp_1985_eb_soviet_commitment days = 70 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = IMP_1985_moscow_cheap_energy_exports_effect_tt
+			hidden_effect = {
+				every_country = {
+					limit = {
+						IMP_1985_is_warsaw_pact_bloc_tag = yes
+						has_country_flag = imp_1985_eastern_bloc_member
+						NOT = { has_civil_war = yes }
+					}
+					IMP_1985_eb_apply_moscow_energy_exports = yes
+				}
+			}
+		}
+		ai_will_do = { factor = 8 }
+	}
+}

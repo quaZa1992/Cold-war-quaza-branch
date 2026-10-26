@@ -1,0 +1,816 @@
+# IMPERIA CW — Cold War: South Korean presentation.
+add_namespace = COLDWAR_KOR_transition
+country_event = {
+	id = COLDWAR_KOR_transition.230
+	title = COLDWAR_KOR_transition.230.t
+	desc = COLDWAR_KOR_transition.230.d
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_KOR_transition.230.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_require_ys_merger_pending_tt
+				not_tooltip = COLDWAR_KOR_require_ys_merger_pending_tt_NOT
+				has_country_flag = COLDWAR_KOR_ys_merger_pending
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_dec15f346bff_tt
+				not_tooltip = COLDWAR_KOR_condition_dec15f346bff_tt_NOT
+				check_variable = { party_banned_array^2 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_f1483e6edb7e_tt
+				not_tooltip = COLDWAR_KOR_condition_f1483e6edb7e_tt_NOT
+				check_variable = { party_pop_array^2 > 0 }
+			}
+			NOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_KOR_require_conservative_merger_ratified_tt
+					not_tooltip = COLDWAR_KOR_require_conservative_merger_ratified_tt_NOT
+					has_country_flag = COLDWAR_KOR_conservative_merger_ratified
+				}
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_ys_merger_authorized }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_ys_merger_pending }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.230.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_ys_merger_pending }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.12
+	title = COLDWAR_KOR_transition.12.t
+	desc = COLDWAR_KOR_transition.12.d
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_KOR_transition.12.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_require_caretaker_installed_tt
+				not_tooltip = COLDWAR_KOR_require_caretaker_installed_tt_NOT
+				has_country_flag = COLDWAR_KOR_caretaker_installed
+			}
+			NOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_KOR_require_nationwide_martial_law_tt
+					not_tooltip = COLDWAR_KOR_require_nationwide_martial_law_tt_NOT
+					has_country_flag = COLDWAR_KOR_nationwide_martial_law
+				}
+			}
+		}
+		add_political_power = -75
+		set_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		add_timed_idea = { idea = COLDWAR_KOR_command_reorganization days = 90 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_negotiating_commitment }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_command_settlement_pending }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.12.option_b
+		add_political_power = -25
+		hidden_effect = { set_country_flag = COLDWAR_KOR_military_reconsolidation }
+		hidden_effect = {
+			set_country_flag = { flag = COLDWAR_KOR_talks_retry_cooldown days = 90 }
+		}
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_command_settlement_pending }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_negotiating_commitment }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_caretaker_installed }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_transition_open }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_military_opening_authorized }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.30
+	title = COLDWAR_KOR_transition.30.t
+	desc = COLDWAR_KOR_transition.30.d
+	is_triggered_only = yes
+	immediate = {
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_KOR_ballot_pending
+				has_country_flag = COLDWAR_KOR_charter_mandate
+				check_variable = { COLDWAR_KOR_charter_model > 0 }
+				check_variable = { COLDWAR_KOR_charter_model < 4 }
+			}
+			COLDWAR_KOR_calculate_charter_vote = yes
+			if = {
+				limit = {
+					check_variable = { COLDWAR_KOR_charter_support_share > 0.5 }
+				}
+				set_country_flag = COLDWAR_KOR_constitutional_ratification_passed
+				clr_country_flag = COLDWAR_KOR_ballot_pending
+				clr_country_flag = COLDWAR_KOR_charter_rejected
+				if = {
+					limit = {
+						check_variable = { COLDWAR_KOR_charter_model = 1 }
+					}
+					set_country_flag = COLDWAR_KOR_constitution_presidential
+				}
+				if = {
+					limit = {
+						check_variable = { COLDWAR_KOR_charter_model = 2 }
+					}
+					set_country_flag = COLDWAR_KOR_constitution_parliamentary
+				}
+				if = {
+					limit = {
+						check_variable = { COLDWAR_KOR_charter_model = 3 }
+					}
+					set_country_flag = COLDWAR_KOR_constitution_consensus
+				}
+			}
+			else = {
+				clr_country_flag = COLDWAR_KOR_ballot_pending
+				set_country_flag = COLDWAR_KOR_charter_rejected
+				set_country_flag = { flag = COLDWAR_KOR_charter_retry_cooldown days = 90 }
+			}
+		}
+	}
+	option = { name = COLDWAR_KOR_transition.30.option_a }
+}
+country_event = {
+	id = COLDWAR_KOR_transition.88
+	title = COLDWAR_KOR_transition.88.t
+	desc = COLDWAR_KOR_transition.88.d
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_KOR_transition.88.option_a
+		trigger = { COLDWAR_KOR_pending_court_commission = yes }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_judicial_review_operational }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_court_implementation_pending }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_court_event_queued }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.88.option_b
+		trigger = {
+			NOT = { COLDWAR_KOR_pending_court_commission = yes }
+		}
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_court_event_queued }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.100
+	title = COLDWAR_KOR_historical.1979.t
+	desc = COLDWAR_KOR_historical.1979.d
+	trigger = {
+		tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1979.10.25
+		date < 1979.10.28
+		has_country_leader = { name = "Park Chung Hee" ruling_only = yes }
+		has_country_flag = COLDWAR_KOR_park_succession_unresolved
+	}
+	mean_time_to_happen = { days = 1 }
+	fire_only_once = yes
+	option = {
+		name = COLDWAR_KOR_historical.1979.option_a
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_park_succession_unresolved }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_select_interim_choi }
+		hidden_effect = {
+			set_temp_variable = { rul_party_temp = 0 }
+		}
+		hidden_effect = {
+			set_temp_variable = { disable_elections = 1 }
+		}
+		change_ruling_party_effect = yes
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_open }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_civilian_succession_open }
+		add_timed_idea = { idea = COLDWAR_KOR_interim_government days = 180 }
+	}
+	option = {
+		name = COLDWAR_KOR_historical.1979.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_park_succession_unresolved }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_select_interim_choi }
+		hidden_effect = {
+			set_temp_variable = { rul_party_temp = 0 }
+		}
+		hidden_effect = {
+			set_temp_variable = { disable_elections = 1 }
+		}
+		change_ruling_party_effect = yes
+		hidden_effect = { set_country_flag = COLDWAR_KOR_officer_council_contest }
+		add_timed_idea = { idea = COLDWAR_KOR_contested_command days = 90 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.200
+	title = COLDWAR_KOR_transition.200.t
+	desc = COLDWAR_KOR_transition.200.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_0 }
+	option = {
+		name = COLDWAR_KOR_transition.200.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_0bbfbdf7e647_tt
+				not_tooltip = COLDWAR_KOR_condition_0bbfbdf7e647_tt_NOT
+				check_variable = { party_banned_array^0 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_6ecaee42370d_tt
+				not_tooltip = COLDWAR_KOR_condition_6ecaee42370d_tt_NOT
+				check_variable = { party_pop_array^0 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_0 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_0 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.200.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_0 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.201
+	title = COLDWAR_KOR_transition.201.t
+	desc = COLDWAR_KOR_transition.201.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_1 }
+	option = {
+		name = COLDWAR_KOR_transition.201.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_31a4f88c6ad5_tt
+				not_tooltip = COLDWAR_KOR_condition_31a4f88c6ad5_tt_NOT
+				check_variable = { party_banned_array^1 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_7cc849035d2b_tt
+				not_tooltip = COLDWAR_KOR_condition_7cc849035d2b_tt_NOT
+				check_variable = { party_pop_array^1 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_1 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_1 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.201.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_1 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.202
+	title = COLDWAR_KOR_transition.202.t
+	desc = COLDWAR_KOR_transition.202.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_2 }
+	option = {
+		name = COLDWAR_KOR_transition.202.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_dec15f346bff_tt
+				not_tooltip = COLDWAR_KOR_condition_dec15f346bff_tt_NOT
+				check_variable = { party_banned_array^2 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_f1483e6edb7e_tt
+				not_tooltip = COLDWAR_KOR_condition_f1483e6edb7e_tt_NOT
+				check_variable = { party_pop_array^2 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_2 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_2 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.202.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_2 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.203
+	title = COLDWAR_KOR_transition.203.t
+	desc = COLDWAR_KOR_transition.203.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_3 }
+	option = {
+		name = COLDWAR_KOR_transition.203.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_2e1b61cb9d58_tt
+				not_tooltip = COLDWAR_KOR_condition_2e1b61cb9d58_tt_NOT
+				check_variable = { party_banned_array^3 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_b86245840c4d_tt
+				not_tooltip = COLDWAR_KOR_condition_b86245840c4d_tt_NOT
+				check_variable = { party_pop_array^3 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_3 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_3 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.203.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_3 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.204
+	title = COLDWAR_KOR_transition.204.t
+	desc = COLDWAR_KOR_transition.204.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_4 }
+	option = {
+		name = COLDWAR_KOR_transition.204.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_require_electoral_party_4_legal_tt
+				not_tooltip = COLDWAR_KOR_require_electoral_party_4_legal_tt_NOT
+				has_country_flag = COLDWAR_KOR_electoral_party_4_legal
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_5a6cf53a4058_tt
+				not_tooltip = COLDWAR_KOR_condition_5a6cf53a4058_tt_NOT
+				check_variable = { party_banned_array^4 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_4d20ae668176_tt
+				not_tooltip = COLDWAR_KOR_condition_4d20ae668176_tt_NOT
+				check_variable = { party_pop_array^4 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_4 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_4 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.204.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_4 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.205
+	title = COLDWAR_KOR_transition.205.t
+	desc = COLDWAR_KOR_transition.205.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_5 }
+	option = {
+		name = COLDWAR_KOR_transition.205.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_require_civic_legal_5_tt
+				not_tooltip = COLDWAR_KOR_require_civic_legal_5_tt_NOT
+				has_country_flag = COLDWAR_KOR_civic_legal_5
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_8d74295bdc1d_tt
+				not_tooltip = COLDWAR_KOR_condition_8d74295bdc1d_tt_NOT
+				check_variable = { party_banned_array^5 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_c95f59dbffee_tt
+				not_tooltip = COLDWAR_KOR_condition_c95f59dbffee_tt_NOT
+				check_variable = { party_pop_array^5 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_5 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_5 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.205.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_5 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.219
+	title = COLDWAR_KOR_transition.219.t
+	desc = COLDWAR_KOR_transition.219.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_19 }
+	option = {
+		name = COLDWAR_KOR_transition.219.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_require_civic_legal_19_tt
+				not_tooltip = COLDWAR_KOR_require_civic_legal_19_tt_NOT
+				has_country_flag = COLDWAR_KOR_civic_legal_19
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_8fa47ce27575_tt
+				not_tooltip = COLDWAR_KOR_condition_8fa47ce27575_tt_NOT
+				check_variable = { party_banned_array^19 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_fc0e810c33b1_tt
+				not_tooltip = COLDWAR_KOR_condition_fc0e810c33b1_tt_NOT
+				check_variable = { party_pop_array^19 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_19 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_19 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.219.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_19 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.222
+	title = COLDWAR_KOR_transition.222.t
+	desc = COLDWAR_KOR_transition.222.d
+	is_triggered_only = yes
+	trigger = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_charter_endorsement_pending_22 }
+	option = {
+		name = COLDWAR_KOR_transition.222.option_a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_require_electoral_party_22_legal_tt
+				not_tooltip = COLDWAR_KOR_require_electoral_party_22_legal_tt_NOT
+				has_country_flag = COLDWAR_KOR_electoral_party_22_legal
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_eea0c6714f90_tt
+				not_tooltip = COLDWAR_KOR_condition_eea0c6714f90_tt_NOT
+				check_variable = { party_banned_array^22 = 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_KOR_condition_fe9b4b1095d9_tt
+				not_tooltip = COLDWAR_KOR_condition_fe9b4b1095d9_tt_NOT
+				check_variable = { party_pop_array^22 > 0 }
+			}
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_supporter_22 }
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_22 }
+	}
+	option = {
+		name = COLDWAR_KOR_transition.222.option_b
+		hidden_effect = { clr_country_flag = COLDWAR_KOR_charter_endorsement_pending_22 }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.101
+	title = COLDWAR_KOR_labour_1970.t
+	desc = COLDWAR_KOR_labour_1970.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1970.11.13
+		date < 1970.12.31
+		has_country_flag = COLDWAR_KOR_labour_crisis_open
+		NOT = { has_country_flag = COLDWAR_KOR_labour_1970_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_labour_1970.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_labour_1970_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_labour_inspection_authorized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_labour_1970_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_labour_1970.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_labour_1970_recorded }
+		add_timed_idea = { idea = COLDWAR_KOR_wage_discipline days = 180 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_labour_1970_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.102
+	title = COLDWAR_KOR_transition_1971.t
+	desc = COLDWAR_KOR_transition_1971.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1971.4.27
+		date < 1971.12.31
+		has_country_flag = COLDWAR_KOR_1971_contest_pending
+		NOT = { has_country_flag = COLDWAR_KOR_transition_1971_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_transition_1971.option_a
+		add_political_power = -50
+		add_stability = 0.03
+		hidden_effect = { set_country_flag = COLDWAR_KOR_constitutional_crisis }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_electoral_opening }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_1971_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_transition_1971.option_b
+		add_political_power = 50
+		add_stability = -0.05
+		hidden_effect = { set_country_flag = COLDWAR_KOR_constitutional_crisis }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_executive_emergency_proposed }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_1971_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.103
+	title = COLDWAR_KOR_yh_1979.t
+	desc = COLDWAR_KOR_yh_1979.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1979.8.11
+		date < 1979.12.31
+		has_country_flag = COLDWAR_KOR_yh_case_open
+		NOT = { has_country_flag = COLDWAR_KOR_yh_1979_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_yh_1979.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_yh_case_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_workplace_mediation_authorized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_yh_1979_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_yh_1979.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_yh_case_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_repression_costs_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_yh_1979_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.104
+	title = COLDWAR_KOR_buma_1979.t
+	desc = COLDWAR_KOR_buma_1979.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1979.10.16
+		date < 1979.12.31
+		has_country_flag = COLDWAR_KOR_buma_crisis_open
+		NOT = { has_country_flag = COLDWAR_KOR_buma_1979_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_buma_1979.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_buma_crisis_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_military_opening_authorized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_buma_1979_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_buma_1979.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_buma_crisis_recorded }
+		add_timed_idea = { idea = COLDWAR_KOR_emergency_controls days = 180 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_buma_1979_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.105
+	title = COLDWAR_KOR_martial_law_may17.t
+	desc = COLDWAR_KOR_martial_law_may17.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1980.5.17
+		date < 1980.12.31
+		has_country_flag = COLDWAR_KOR_officer_control_crisis
+		NOT = { has_country_flag = COLDWAR_KOR_martial_law_may17_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_martial_law_may17.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_may17_decision_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_open }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_martial_law_may17_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_martial_law_may17.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_may17_decision_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_nationwide_martial_law }
+		add_ideas = COLDWAR_KOR_martial_law_legitimacy_scar
+		hidden_effect = { set_country_flag = COLDWAR_KOR_martial_law_may17_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.106
+	title = COLDWAR_KOR_transition_gwangju.t
+	desc = COLDWAR_KOR_transition_gwangju.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1980.5.18
+		date < 1980.12.31
+		has_country_flag = COLDWAR_KOR_nationwide_martial_law
+		NOT = { has_country_flag = COLDWAR_KOR_transition_gwangju_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_transition_gwangju.option_a
+		add_political_power = -75
+		hidden_effect = { set_country_flag = COLDWAR_KOR_gwangju_case_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_military_opening_authorized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_gwangju_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_transition_gwangju.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_gwangju_case_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_controlled_fifth_republic }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_gwangju_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.107
+	title = COLDWAR_KOR_transition_1985.t
+	desc = COLDWAR_KOR_transition_1985.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1985.2.12
+		date < 1985.12.31
+		has_country_flag = COLDWAR_KOR_opposition_reorganization_pending
+		NOT = { has_country_flag = COLDWAR_KOR_transition_1985_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_transition_1985.option_a
+		add_political_power = -50
+		hidden_effect = { set_country_flag = COLDWAR_KOR_opposition_reorganized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_opposition_constitutional_demand }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_1985_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_transition_1985.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_opposition_reorganized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_separate_democratic_organizations }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_1985_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.108
+	title = COLDWAR_KOR_park_jongcheol_1987.t
+	desc = COLDWAR_KOR_park_jongcheol_1987.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1987.1.14
+		date < 1987.12.31
+		has_country_flag = COLDWAR_KOR_torture_disclosure_crisis
+		NOT = { has_country_flag = COLDWAR_KOR_park_jongcheol_1987_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_park_jongcheol_1987.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_torture_disclosure_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_case_records_preserved }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_independent_inquiry_authorized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_park_jongcheol_1987_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_park_jongcheol_1987.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_torture_disclosure_recorded }
+		add_timed_idea = { idea = COLDWAR_KOR_disclosure_suppression days = 180 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_park_jongcheol_1987_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.109
+	title = COLDWAR_KOR_april13_1987.t
+	desc = COLDWAR_KOR_april13_1987.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1987.4.13
+		date < 1987.12.31
+		has_country_flag = COLDWAR_KOR_opposition_constitutional_demand
+		NOT = { has_country_flag = COLDWAR_KOR_april13_1987_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_april13_1987.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_april13_position_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_military_opening_authorized }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_april13_1987_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_april13_1987.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_april13_position_recorded }
+		add_timed_idea = { idea = COLDWAR_KOR_indirect_selection_crisis days = 180 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_april13_1987_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.110
+	title = COLDWAR_KOR_june_movement_1987.t
+	desc = COLDWAR_KOR_june_movement_1987.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1987.6.10
+		date < 1987.12.31
+		has_country_flag = COLDWAR_KOR_constitutional_mobilization
+		NOT = { has_country_flag = COLDWAR_KOR_june_movement_1987_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_june_movement_1987.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_june_mobilization_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_mandate }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_june_movement_1987_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_june_movement_1987.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_june_mobilization_recorded }
+		add_timed_idea = { idea = COLDWAR_KOR_unresolved_constitutional_crisis days = 180 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_june_movement_1987_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.111
+	title = COLDWAR_KOR_workers_1987.t
+	desc = COLDWAR_KOR_workers_1987.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1987.7.1
+		date < 1987.12.31
+		has_country_flag = COLDWAR_KOR_post_june_labor_wave
+		NOT = { has_country_flag = COLDWAR_KOR_workers_1987_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_workers_1987.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_workers_1987_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_lawful_labour_bargaining }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_workers_1987_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_workers_1987.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_workers_1987_recorded }
+		add_timed_idea = { idea = COLDWAR_KOR_labour_conflict days = 180 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_workers_1987_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.112
+	title = COLDWAR_KOR_eight_member_talks.t
+	desc = COLDWAR_KOR_eight_member_talks.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1987.8.31
+		date < 1987.12.31
+		has_country_flag = COLDWAR_KOR_charter_mandate
+		NOT = { has_country_flag = COLDWAR_KOR_eight_member_talks_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_eight_member_talks.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_negotiations_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_ballot_pending }
+		country_event = { id = COLDWAR_KOR_transition.30 days = 30 }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_eight_member_talks_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_eight_member_talks.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_charter_negotiations_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_eight_member_talks_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.113
+	title = COLDWAR_KOR_court_1988.t
+	desc = COLDWAR_KOR_court_1988.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1988.9.1
+		date < 1988.12.31
+		has_country_flag = COLDWAR_KOR_court_commissioning_delay
+		NOT = { has_country_flag = COLDWAR_KOR_court_1988_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_court_1988.option_a
+		if = {
+			limit = { COLDWAR_KOR_pending_court_commission = yes }
+			set_country_flag = COLDWAR_KOR_judicial_review_operational
+			clr_country_flag = COLDWAR_KOR_court_implementation_pending
+		}
+		hidden_effect = { set_country_flag = COLDWAR_KOR_court_1988_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_court_1988.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_court_appointments_delayed }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_court_1988_recorded }
+	}
+}
+country_event = {
+	id = COLDWAR_KOR_transition.114
+	title = COLDWAR_KOR_transition_1990.t
+	desc = COLDWAR_KOR_transition_1990.d
+	trigger = {
+		original_tag = KOR
+		IMP_is_1970_scenario = yes
+		date > 1990.1.22
+		date < 1990.12.31
+		has_country_flag = COLDWAR_KOR_merger_talks_pending
+		NOT = { has_country_flag = COLDWAR_KOR_transition_1990_recorded }
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = COLDWAR_KOR_transition_1990.option_a
+		hidden_effect = { set_country_flag = COLDWAR_KOR_1990_merger_recorded }
+		hidden_effect = { set_country_flag = COLDWAR_KOR_conservative_merger_ratified }
+		add_political_power = 75
+		add_stability = -0.03
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_1990_recorded }
+	}
+	option = {
+		name = COLDWAR_KOR_transition_1990.option_b
+		hidden_effect = { set_country_flag = COLDWAR_KOR_1990_merger_recorded }
+		add_political_power = 25
+		hidden_effect = { set_country_flag = COLDWAR_KOR_transition_1990_recorded }
+	}
+}

@@ -1,0 +1,87 @@
+# IMPERIA CW — Cold War: imperia infrastructure effects — scripted effects.
+# Ported from current Cold War imp_economies_effects.txt. Native MD handles internet once.
+# Own remaining coefficients and modifier remain unchanged; these are weekly expense components.
+@spending_laws_gdp_scaling = 0.006
+
+update_infrastructure_rate = {
+    #gdp scaling
+	set_temp_variable = { gdp_infra_cost_modifier = gdp_per_capita }
+	multiply_temp_variable = { gdp_infra_cost_modifier = @spending_laws_gdp_scaling }
+	add_to_temp_variable = { gdp_infra_cost_modifier = 1 }
+
+	#Additional additive modifiers
+	set_temp_variable = { infra_cost_multiplier = 1 }
+	add_to_temp_variable = { infra_cost_multiplier = modifier@infra_cost_multiplier_modifier }
+	set_variable = { infra_cost_multiplier_display = infra_cost_multiplier }
+	subtract_from_variable = { infra_cost_multiplier_display = 1 }
+
+    set_variable = { infrastructure_gain = 0 }
+    set_variable = { infrastructure_cost_roads = 0 }
+    set_variable = { infrastructure_internet_station = 0 }
+    set_variable = { infrastructure_air_base = 0 }
+    set_variable = { infrastructure_radar_station = 0 }
+    set_variable = { infrastructure_anti_air_building = 0 }
+    set_variable = { infrastructure_fuel_silo = 0 }
+    set_variable = { infrastructure_rocket_site = 0 }
+    set_variable = { infrastructure_stronghold_network = 0 }
+    set_variable = { infrastructure_civilian_shelter = 0 }
+
+    every_owned_state = { 
+        set_temp_variable = { inf_cost_t = 0.005 }
+        multiply_temp_variable = { inf_cost_t = infrastructure_level }
+        add_to_variable = { PREV.infrastructure_cost_roads = inf_cost_t }
+
+        # Internet upkeep is computed once by native MD update_infra_rate (user decision).
+
+        set_temp_variable = { inf_cost_t = 0.005 }
+        multiply_temp_variable = { inf_cost_t = non_damaged_building_level@air_base }
+        add_to_variable = { PREV.infrastructure_air_base = inf_cost_t }
+
+        set_temp_variable = { inf_cost_t = 0.007 }
+        multiply_temp_variable = { inf_cost_t = non_damaged_building_level@radar_station }
+        add_to_variable = { PREV.infrastructure_radar_station = inf_cost_t }
+
+        set_temp_variable = { inf_cost_t = 0.007 }
+        multiply_temp_variable = { inf_cost_t = non_damaged_building_level@anti_air_building }
+        add_to_variable = { PREV.infrastructure_anti_air_building = inf_cost_t }
+
+        set_temp_variable = { inf_cost_t = 0.002 }
+        multiply_temp_variable = { inf_cost_t = non_damaged_building_level@fuel_silo }
+        add_to_variable = { PREV.infrastructure_fuel_silo = inf_cost_t }
+		
+		 # SHELTERS; Damaged means door/entrance is blocked; needs higher maintenance when entrance is blocked. Otherwise protective properties are still present.
+		
+		set_temp_variable = { inf_cost_t = 0.02 }
+        multiply_temp_variable = { inf_cost_t = damaged_building_level@civilian_shelter }
+        add_to_variable = { PREV.infrastructure_civilian_shelter = inf_cost_t }
+		set_temp_variable = { inf_cost_t = 0.008 }
+        multiply_temp_variable = { inf_cost_t = non_damaged_building_level@civilian_shelter }
+        add_to_variable = { PREV.infrastructure_civilian_shelter = inf_cost_t }
+
+        set_temp_variable = { inf_cost_t = 0.001 }
+        multiply_temp_variable = { inf_cost_t = non_damaged_building_level@rocket_site }
+        add_to_variable = { PREV.infrastructure_rocket_site = inf_cost_t }
+        
+        set_temp_variable = { inf_cost_t = 0.05 }
+        multiply_temp_variable = { inf_cost_t = non_damaged_building_level@stronghold_network }
+        add_to_variable = { PREV.infrastructure_stronghold_network = inf_cost_t }
+    }
+
+    multiply_variable = { infrastructure_cost_roads = infra_cost_multiplier }
+    multiply_variable = { infrastructure_air_base = infra_cost_multiplier }
+    multiply_variable = { infrastructure_radar_station = infra_cost_multiplier }
+    multiply_variable = { infrastructure_anti_air_building = infra_cost_multiplier }
+    multiply_variable = { infrastructure_fuel_silo = infra_cost_multiplier }
+    multiply_variable = { infrastructure_rocket_site = infra_cost_multiplier }
+    multiply_variable = { infrastructure_stronghold_network = infra_cost_multiplier }
+    multiply_variable = { infrastructure_civilian_shelter = infra_cost_multiplier }
+
+    add_to_variable = { infrastructure_gain = infrastructure_cost_roads }
+    add_to_variable = { infrastructure_gain = infrastructure_air_base }
+    add_to_variable = { infrastructure_gain = infrastructure_radar_station }
+    add_to_variable = { infrastructure_gain = infrastructure_anti_air_building }
+    add_to_variable = { infrastructure_gain = infrastructure_fuel_silo }
+    add_to_variable = { infrastructure_gain = infrastructure_rocket_site }
+    add_to_variable = { infrastructure_gain = infrastructure_stronghold_network }
+    add_to_variable = { infrastructure_gain = infrastructure_civilian_shelter }
+}

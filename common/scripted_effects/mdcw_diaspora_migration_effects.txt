@@ -1,0 +1,284 @@
+# IMPERIA CW — Cold War: Voluntary migration, shared physical transfers and annual return accounts.
+# ROOT is the host throughout a migration event. Quantities are thousands of people.
+# State targets are transaction-local; there is no permanent residence-state matrix.
+
+mdcw_dp_ensure_arrays = {
+ if = { limit = { NOT = { has_country_flag = gw_migration_arrays_ready } }
+  clear_array = gw_return_basis clear_array = gw_return_sum clear_array = gw_return_credit
+  clear_array = gw_return_rate clear_array = gw_return_last
+  for_each_loop = { array = gw_origins index = gw_init_i value = gw_init_origin
+   add_to_array = { gw_return_basis = 0 } add_to_array = { gw_return_sum = 0 }
+   add_to_array = { gw_return_credit = 0 } add_to_array = { gw_return_rate = 0 } add_to_array = { gw_return_last = 0 }
+  }
+  set_country_flag = gw_migration_arrays_ready
+ }
+}
+
+mdcw_dp_start_reviews = {
+ if = {
+  limit = { check_variable = { gw_known_k > 0 } NOT = { has_country_flag = gw_migration_ready } }
+  set_country_flag = gw_migration_ready
+  set_variable = { gw_migration_quarter = 0 }
+  for_each_loop = {
+   array = gw_ui_indices index = gw_active_i value = gw_mi
+   set_temp_variable = { gw_mo = gw_origins^gw_mi }
+   set_variable = { gw_return_basis^gw_mi = gw_stock^gw_mi }
+   set_variable = { gw_return_sum^gw_mi = 0 }
+  }
+ }
+ if = {
+  limit = { check_variable = { gw_known_k > 0 } NOT = { has_country_flag = gw_quarterly_scheduled } }
+  set_country_flag = gw_quarterly_scheduled
+  # Engine-owned hour jitter spreads simultaneous MP openings; subsequent years
+  # retain the same 365-day cadence without a global date scan.
+  country_event = { id = mdcw_diaspora.60 days = 91 random_hours = 23 }
+ }
+}
+
+# Four small reviews use cached national GDP/c and stability. No state iterator.
+# Rates are percentage points, preserving native fixed-point precision.
+mdcw_dp_return_rate = {
+ set_temp_variable = { gw_rate = 1 }
+ set_temp_variable = { gw_ratio = 0 }
+ set_temp_variable = { gw_stability_gap = 0 }
+ set_temp_variable = { gw_homecoming = 0 }
+ var:gw_mo = {
+  PREV = {
+   if = { limit = { check_variable = { PREV.gdp_per_capita > 0 } }
+    set_temp_variable = { gw_ratio = gdp_per_capita }
+    divide_temp_variable = { gw_ratio = PREV.gdp_per_capita }
+   }
+   set_temp_variable = { gw_stability_gap = PREV.stability }
+   subtract_from_temp_variable = { gw_stability_gap = stability }
+  }
+  if = { limit = { has_country_flag = gw_dp_homecoming check_variable = { gw_abroad_k > 0 } }
+   set_temp_variable = { gw_homecoming_share = gw_dp_homecoming_covered }
+   divide_temp_variable = { gw_homecoming_share = gw_abroad_k }
+   clamp_temp_variable = { var = gw_homecoming_share min = 0 max = 1 }
+   multiply_temp_variable = { gw_homecoming_share = 4 }
+   PREV = { set_temp_variable = { gw_homecoming = PREV.gw_homecoming_share } }
+  }
+ }
+ if = { limit = { check_variable = { gw_ratio > 0 } }
+  if = { limit = { check_variable = { gw_ratio < 1 } } set_temp_variable = { gw_rate = 10 } }
+  else_if = { limit = { check_variable = { gw_ratio < 1.25 } } set_temp_variable = { gw_rate = 8 } }
+  else_if = { limit = { check_variable = { gw_ratio < 1.5 } } set_temp_variable = { gw_rate = 6 } }
+  else_if = { limit = { check_variable = { gw_ratio < 2 } } set_temp_variable = { gw_rate = 4 } }
+  else_if = { limit = { check_variable = { gw_ratio < 3 } } set_temp_variable = { gw_rate = 2 } }
+ }
+ # IMPERIA CW — Cold War: 5pp stability steps, bounded to +/-2pp of annual returns.
+ if = { limit = { NOT = { check_variable = { gw_stability_gap < 0.10 } } } add_to_temp_variable = { gw_rate = 2 } }
+ else_if = { limit = { NOT = { check_variable = { gw_stability_gap < 0.05 } } } add_to_temp_variable = { gw_rate = 1 } }
+ else_if = { limit = { NOT = { check_variable = { gw_stability_gap > -0.10 } } } subtract_from_temp_variable = { gw_rate = 2 } }
+ else_if = { limit = { NOT = { check_variable = { gw_stability_gap > -0.05 } } } subtract_from_temp_variable = { gw_rate = 1 } }
+ add_to_temp_variable = { gw_rate = gw_homecoming }
+ set_temp_variable = { gw_retention = 0 }
+ if = { limit = { has_country_flag = gw_dp_retention } set_temp_variable = { gw_retention = 0.35 } }
+ if = { limit = { check_variable = { gw_stock^gw_mi > 0 } }
+  set_temp_variable = { gw_relief = gw_housed^gw_mi }
+  multiply_temp_variable = { gw_relief = 0.10 }
+  divide_temp_variable = { gw_relief = gw_stock^gw_mi }
+  add_to_temp_variable = { gw_retention = gw_relief }
+  set_temp_variable = { gw_relief = gw_protected^gw_mi }
+  multiply_temp_variable = { gw_relief = 0.10 }
+  divide_temp_variable = { gw_relief = gw_stock^gw_mi }
+  add_to_temp_variable = { gw_retention = gw_relief }
+  set_temp_variable = { gw_relief = gw_registered^gw_mi }
+  multiply_temp_variable = { gw_relief = 0.05 }
+  divide_temp_variable = { gw_relief = gw_stock^gw_mi }
+  add_to_temp_variable = { gw_retention = gw_relief }
+ }
+ clamp_temp_variable = { var = gw_retention min = 0 max = 0.60 }
+ multiply_temp_variable = { gw_retention = -1 }
+ add_to_temp_variable = { gw_retention = 1 }
+ multiply_temp_variable = { gw_rate = gw_retention }
+ # IMPERIA CW — Cold War: Country-level war pressure reuses quarterly reviews.
+ # Exclusive checks leave the rate unchanged when both countries are at war.
+ if = { limit = { has_war = yes var:gw_mo = { has_war = no } }
+  multiply_temp_variable = { gw_rate = 4 }
+  clamp_temp_variable = { var = gw_rate min = 0.5 max = 60 }
+ }
+ else = {
+  if = { limit = { has_war = no var:gw_mo = { has_war = yes } }
+   multiply_temp_variable = { gw_rate = 0.25 }
+  }
+  clamp_temp_variable = { var = gw_rate min = 0.5 max = 15 }
+ }
+}
+
+mdcw_dp_migration_review = {
+ if = { limit = { check_variable = { gw_known_k > 0 } }
+  add_to_variable = { gw_migration_quarter = 1 }
+  set_variable = { gw_last_annual_out_k = 0 }
+  for_each_loop = {
+   array = gw_ui_indices index = gw_active_i value = gw_mi
+   set_temp_variable = { gw_mo = gw_origins^gw_mi }
+   if = { limit = { check_variable = { gw_stock^gw_mi > 0 } var:gw_mo = { exists = yes } }
+    mdcw_dp_return_rate = yes
+    set_variable = { gw_return_rate^gw_mi = gw_rate }
+    add_to_variable = { gw_return_sum^gw_mi = gw_rate }
+    if = { limit = { check_variable = { gw_migration_quarter = 4 } }
+     set_variable = { gw_move_origin = gw_mo }
+     set_variable = { gw_move_index = gw_mi }
+     set_variable = { gw_move_k = gw_return_basis^gw_mi }
+     divide_variable = { gw_move_k = 100 }
+     set_temp_variable = { gw_average_rate = gw_return_sum^gw_mi }
+     divide_temp_variable = { gw_average_rate = 4 }
+     multiply_variable = { gw_move_k = gw_average_rate }
+     # A financed early return discharges this year's natural-return budget once.
+     subtract_from_variable = { gw_move_k = gw_return_credit^gw_mi }
+     clamp_variable = { var = gw_move_k min = 0 max = gw_stock^gw_mi }
+     set_variable = { gw_return_credit^gw_mi = 0 }
+     set_variable = { gw_move_mode = 1 }
+     mdcw_dp_move_population = yes
+     set_variable = { gw_return_last^gw_mi = gw_move_actual_k }
+     add_to_variable = { gw_last_annual_out_k = gw_move_actual_k }
+    }
+   }
+   if = { limit = { check_variable = { gw_migration_quarter = 4 } }
+    set_variable = { gw_return_basis^gw_mi = gw_stock^gw_mi }
+    set_variable = { gw_return_sum^gw_mi = 0 }
+   }
+  }
+  if = { limit = { check_variable = { gw_migration_quarter = 4 } }
+   set_variable = { gw_migration_quarter = 0 }
+   mdcw_gw_recount_ledger = yes
+   ingame_update_setup = yes
+  }
+ }
+}
+
+# All population mutations are validated before the first withdrawal. Only a due
+# return selects states; quarterly forecasts and finance never iterate states.
+mdcw_dp_move_population = {
+ # Bounded million-person chunks avoid native fixed-point overflow in raw people.
+ # Normal communities execute one chunk; invalid destinations terminate immediately.
+ set_variable = { gw_move_remaining = gw_move_k }
+ set_variable = { gw_move_total = 0 }
+ set_variable = { gw_move_chunks = 0 }
+ while_loop_effect = {
+  limit = { check_variable = { gw_move_remaining > 0 } check_variable = { gw_move_chunks < 64 } }
+  set_variable = { gw_move_k = gw_move_remaining }
+  clamp_variable = { var = gw_move_k min = 0 max = 1000 }
+  mdcw_dp_move_chunk = yes
+  add_to_variable = { gw_move_total = gw_move_actual_k }
+  if = { limit = { check_variable = { gw_move_actual_k > 0 } }
+   subtract_from_variable = { gw_move_remaining = gw_move_actual_k }
+  }
+  else = { set_variable = { gw_move_remaining = 0 } }
+  add_to_variable = { gw_move_chunks = 1 }
+ }
+ set_variable = { gw_move_actual_k = gw_move_total }
+ set_variable = { gw_move_k = gw_move_total }
+}
+
+mdcw_dp_move_chunk = {
+ # Native state effects consume whole residents. Normalise before any preview or book entry.
+ set_variable = { gw_move_whole_people = gw_move_k }
+ multiply_variable = { gw_move_whole_people = 1000 }
+ round_variable = gw_move_whole_people
+ set_variable = { gw_move_k = gw_move_whole_people }
+ divide_variable = { gw_move_k = 1000 }
+ set_variable = { gw_move_actual_k = 0 }
+ set_variable = { gw_move_valid = 0 }
+ set_variable = { gw_move_first_people = 0 } set_variable = { gw_move_second_people = 0 }
+ set_variable = { gw_move_home_people = 0 }
+ set_variable = { gw_move_found1 = 0 } set_variable = { gw_move_found2 = 0 }
+ if = { limit = {
+  check_variable = { gw_move_k > 0 }
+  NOT = { check_variable = { gw_move_index < 0 } }
+  NOT = { check_variable = { gw_stock^gw_move_index < gw_move_k } }
+  var:gw_move_origin = { exists = yes any_owned_state = { is_controlled_by = PREV } }
+ }
+  set_variable = { gw_move_first_k = gw_move_k }
+  set_variable = { gw_move_second_k = 0 }
+  # IMPERIA CW — Cold War: Reuse the previously checked source within this batch.
+  if = { limit = { event_target:gw_dp_source1 = { is_owned_by = ROOT is_controlled_by = ROOT NOT = { check_variable = { state_population_k < ROOT.gw_move_k } } } }
+   set_variable = { gw_move_valid = 1 }
+  }
+  else_if = { limit = { any_owned_state = { is_controlled_by = PREV NOT = { check_variable = { state_population_k < PREV.gw_move_k } } } }
+   random_owned_state = { limit = { is_controlled_by = PREV NOT = { check_variable = { state_population_k < PREV.gw_move_k } } } save_event_target_as = gw_dp_source1 }
+   set_variable = { gw_move_valid = 1 }
+  }
+  else = {
+   set_variable = { gw_move_first_k = gw_move_k }
+   divide_variable = { gw_move_first_k = 2 }
+   # Round only within safe native headcount range, before any state mutation.
+   multiply_variable = { gw_move_first_k = 1000 } round_variable = gw_move_first_k divide_variable = { gw_move_first_k = 1000 }
+   set_variable = { gw_move_second_k = gw_move_k }
+   subtract_from_variable = { gw_move_second_k = gw_move_first_k }
+   random_owned_state = { limit = {
+    is_controlled_by = PREV NOT = { check_variable = { state_population_k < PREV.gw_move_first_k } }
+    PREV = { any_owned_state = { is_controlled_by = PREV NOT = { state = PREV.PREV } NOT = { check_variable = { state_population_k < PREV.gw_move_second_k } } } }
+   } save_event_target_as = gw_dp_source1 ROOT = { set_variable = { gw_move_found1 = 1 } } }
+   if = { limit = { check_variable = { gw_move_found1 = 1 } }
+    random_owned_state = { limit = { is_controlled_by = PREV NOT = { state = event_target:gw_dp_source1 } NOT = { check_variable = { state_population_k < PREV.gw_move_second_k } } } save_event_target_as = gw_dp_source2 ROOT = { set_variable = { gw_move_found2 = 1 } } }
+    if = { limit = { check_variable = { gw_move_found2 = 1 } } set_variable = { gw_move_valid = 1 } }
+   }
+  }
+ }
+ if = { limit = { check_variable = { gw_move_valid = 1 } }
+  var:gw_move_origin = { random_owned_state = { limit = { is_controlled_by = PREV } save_event_target_as = gw_dp_home } }
+  set_variable = { gw_move_reserve_before = manpower }
+  set_variable = { gw_move_first_people = gw_move_first_k } multiply_variable = { gw_move_first_people = -1000 }
+  set_variable = { gw_move_second_people = gw_move_second_k } multiply_variable = { gw_move_second_people = -1000 }
+  event_target:gw_dp_source1 = { add_manpower = ROOT.gw_move_first_people }
+  if = { limit = { check_variable = { gw_move_second_k > 0 } } event_target:gw_dp_source2 = { add_manpower = ROOT.gw_move_second_people } }
+  set_temp_variable = { gw_move_reserve_gain = manpower }
+  subtract_from_temp_variable = { gw_move_reserve_gain = gw_move_reserve_before }
+  if = { limit = { check_variable = { gw_move_reserve_gain > 0 } } multiply_temp_variable = { gw_move_reserve_gain = -1 } add_manpower = gw_move_reserve_gain }
+  set_variable = { gw_move_home_people = gw_move_k } multiply_variable = { gw_move_home_people = 1000 }
+  event_target:gw_dp_home = { add_manpower = ROOT.gw_move_home_people }
+  set_temp_variable = { gw_retained_share = gw_stock^gw_move_index }
+  subtract_from_temp_variable = { gw_retained_share = gw_move_k }
+  divide_temp_variable = { gw_retained_share = gw_stock^gw_move_index }
+  mdcw_dp_note_departure = yes
+  subtract_from_variable = { gw_stock^gw_move_index = gw_move_k }
+  multiply_variable = { gw_registered^gw_move_index = gw_retained_share }
+  multiply_variable = { gw_housed^gw_move_index = gw_retained_share }
+  multiply_variable = { gw_protected^gw_move_index = gw_retained_share }
+  add_to_variable = { mdcw_gw_net_emigration_k = gw_move_k }
+  var:gw_move_origin = {
+   set_temp_variable = { gw_before = gw_abroad_k }
+   subtract_from_variable = { gw_abroad_k = ROOT.gw_move_k }
+   clamp_variable = { var = gw_abroad_k min = 0 }
+   if = { limit = { check_variable = { gw_before > 0 } }
+    set_temp_variable = { gw_share = gw_abroad_k } divide_temp_variable = { gw_share = gw_before }
+    multiply_variable = { mdcw_gw_remittance_pool_m = gw_share }
+   }
+   subtract_from_variable = { mdcw_gw_net_emigration_k = ROOT.gw_move_k }
+   mdcw_dp_policy_totals = yes
+   ingame_update_setup = yes
+   add_to_variable = { gw_ui_dirty = 1 }
+  }
+  set_variable = { gw_move_actual_k = gw_move_k }
+  add_to_variable = { gw_ui_dirty = 1 }
+ }
+}
+
+# Also called by the existing forced-return transaction before its stock mutation.
+# Source programmes are at most two constant-size slots. No origin/host matrix scan.
+mdcw_dp_note_departure = {
+ if = { limit = { has_country_flag = gw_project_active check_variable = { gw_project_origin = gw_move_origin } }
+  multiply_variable = { gw_project_covered_k = gw_retained_share }
+ }
+ multiply_variable = { gw_return_basis^gw_move_index = gw_retained_share }
+ if = { limit = { check_variable = { gw_move_mode = 3 } } add_to_variable = { gw_return_credit^gw_move_index = gw_move_k } }
+ var:gw_move_origin = {
+  if = { limit = { has_country_flag = gw_dp_homecoming check_variable = { gw_abroad_k > 0 } }
+   set_temp_variable = { gw_homecoming_left = gw_abroad_k }
+   subtract_from_temp_variable = { gw_homecoming_left = ROOT.gw_move_k }
+   clamp_temp_variable = { var = gw_homecoming_left min = 0 }
+   divide_temp_variable = { gw_homecoming_left = gw_abroad_k }
+   multiply_variable = { gw_dp_homecoming_covered = gw_homecoming_left }
+  }
+  mdcw_dp_departure_slots = yes
+ }
+}
+
+# Annexation voids agreements with the former host; native age guards make its
+# already queued expiry events harmless if a source reuses a programme place.
+mdcw_dp_cancel_annexed_host = {
+ if = { limit = { has_country_flag = gw_dp_active_1 check_variable = { gw_dp_host_1 = PREV.id } } mdcw_dp_clear_slot_1 = yes }
+ if = { limit = { has_country_flag = gw_dp_active_2 check_variable = { gw_dp_host_2 = PREV.id } } mdcw_dp_clear_slot_2 = yes }
+}

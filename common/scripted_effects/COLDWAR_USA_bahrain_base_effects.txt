@@ -1,0 +1,52 @@
+# IMPERIA CW — Cold War: USA bahrain base effects — scripted effects.
+# USA scope. The focus sends a proposal; only Bahrain's response transfers land.
+COLDWAR_USA_request_bahrain_base = {
+	custom_effect_tooltip = COLDWAR_USA_bahrain_base_request_tt
+	custom_effect_tooltip = COLDWAR_USA_bahrain_base_accept_tt
+	effect_tooltip = { transfer_state = 624 }
+	custom_effect_tooltip = COLDWAR_USA_bahrain_base_refuse_tt
+	effect_tooltip = {
+		add_opinion_modifier = {
+			target = BHR
+			modifier = COLDWAR_USA_bahrain_base_refused_opinion
+		}
+	}
+	hidden_effect = {
+		if = {
+			limit = { COLDWAR_USA_bahrain_base_can_request = yes }
+			set_country_flag = COLDWAR_USA_bahrain_base_pending
+			BHR = {
+				set_country_flag = COLDWAR_USA_bahrain_base_pending
+				country_event = { id = COLDWAR_USA_Bahrain.1 }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = USA
+				NOT = { has_country_flag = COLDWAR_USA_bahrain_base_pending }
+				NOT = { has_country_flag = COLDWAR_USA_bahrain_base_accepted }
+				NOT = { has_country_flag = COLDWAR_USA_bahrain_base_refused }
+				NOT = { has_country_flag = COLDWAR_USA_bahrain_base_cancelled }
+			}
+			set_country_flag = COLDWAR_USA_bahrain_base_cancelled
+			country_event = { id = COLDWAR_USA_Bahrain.4 }
+		}
+	}
+}
+
+# USA scope. An invalid or stale offer carries no refusal penalty.
+COLDWAR_USA_cancel_bahrain_base_talks = {
+	if = {
+		limit = {
+			tag = USA
+			has_country_flag = COLDWAR_USA_bahrain_base_pending
+		}
+		clr_country_flag = COLDWAR_USA_bahrain_base_pending
+		set_country_flag = COLDWAR_USA_bahrain_base_cancelled
+		if = {
+			limit = { country_exists = BHR }
+			BHR = { clr_country_flag = COLDWAR_USA_bahrain_base_pending }
+		}
+		country_event = { id = COLDWAR_USA_Bahrain.4 }
+	}
+}

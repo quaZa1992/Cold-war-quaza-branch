@@ -1,0 +1,285 @@
+# IMPERIA CW — Cold War: historical air naval — research technologies.
+# COLDWAR | Pre-1965 aircraft, helicopter, hull and naval module generations ahead of the MD 1965 lines.
+# Layout (absolute positions are the folder gridbox origin plus x/y slots):
+#  infantry_folder      1940 = -10, 1945 = -8, 1950 = -6, 1955 = -4, 1960 = -2, 1965 = 0 (exact MD scale)
+#  armour_folder        1940 = -12, 1943 = -8, 1945 = -4 (Early_APC, with the 1955 tank above and the 1960 APC below), 1965 = 0
+#  nsb_armour_folder    1940 = -8, 1943 = -6, 1945 = -4 (mbt_tech_ops, 1955 chassis beside it), 1965 = -2 (years run along x)
+#  artillery_folder     1940 = -4, 1950/1955 = -2, 1965 = 0
+#  fixed_wing_folder    1940 = -11, 1945 = -8 (early_fighter), 1950 = -6, 1955 = -3, 1965 = 0
+#  bba_aircraft_folder  1945 = -7, 1950 = -4, 1955 = -1 (early_airframe_designs)
+#  naval_folder         1945 = -5 (MD foundations), 1955 = -1, 1965 = 3
+#  civilian_folder      rows relative to the MD civilian gridboxes (y = 840 px): 1940 = -12 ... 1975 = -2, MD 1985 = 2
+#  electronics_folder   machine tool column 32/36, two rows per generation (1940 = 2 ... 1970 = 10)
+technologies = {
+	mdcw_piston_fighter_1940 = {
+		enable_equipments = { mdcw_piston_fighter_1940_model }
+
+		research_cost = 0.9
+		start_year = 1940
+
+		path = { research_cost_coeff = 1 leads_to_tech = early_fighter }
+		folder = { name = fixed_wing_folder position = { x = 2 y = -11 } }
+
+		categories = { CAT_military CAT_aircraft CAT_medium_aircraft }
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_early_jet_fighter_1950 = {
+		enable_equipments = { mdcw_early_jet_fighter_1950_model }
+
+		research_cost = 1.4
+		start_year = 1950
+
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_early_supersonic_fighter_1955 }
+		folder = { name = fixed_wing_folder position = { x = 2 y = -6 } }
+
+		categories = { CAT_military CAT_aircraft CAT_medium_aircraft }
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_early_supersonic_fighter_1955 = {
+		enable_equipments = { mdcw_early_supersonic_fighter_1955_model }
+
+		research_cost = 1.8
+		start_year = 1955
+
+		path = { research_cost_coeff = 1 leads_to_tech = AS_Fighter1 }
+		path = { research_cost_coeff = 1 leads_to_tech = MR_Fighter1 }
+		path = { research_cost_coeff = 1 leads_to_tech = Strike_fighter1 }
+		folder = { name = fixed_wing_folder position = { x = 2 y = -3 } }
+
+		categories = { CAT_military CAT_aircraft CAT_medium_aircraft }
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_early_airframes_1945 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_aircraft_project } }
+		allow_branch = { has_dlc = "By Blood Alone" }
+
+		enable_equipments = { mdcw_bba_early_small_airframe_1945 }
+		enable_equipment_modules = {
+			wing_straight
+			avionics_manned_1
+			engine_prop_single_1
+			weap_multi_gun_1
+			module_mdcw_early_fighter_guns
+		}
+
+		research_cost = 1.2
+		start_year = 1945
+
+		special_project_specialization = { specialization_air }
+
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_early_jet_airframes_1950 }
+		folder = { name = bba_aircraft_folder position = { x = -1 y = -7 } }
+
+		categories = {
+			CAT_military
+			CAT_aircraft
+			CAT_light_aircraft
+			CAT_air_modules
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_early_jet_airframes_1950 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_aircraft_project } }
+		allow_branch = { has_dlc = "By Blood Alone" }
+
+		enable_equipments = { mdcw_bba_early_jet_medium_airframe_1950 }
+		enable_equipment_modules = { wing_swept engine_jet_single_1 }
+
+		research_cost = 1.5
+		start_year = 1950
+
+		special_project_specialization = { specialization_air }
+
+		path = { research_cost_coeff = 1 leads_to_tech = early_airframe_designs }
+		folder = { name = bba_aircraft_folder position = { x = -1 y = -4 } }
+
+		categories = {
+			CAT_military
+			CAT_aircraft
+			CAT_light_aircraft
+			CAT_air_modules
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_utility_helicopter_1955 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_helicopter_project } }
+
+		enable_equipments = { mdcw_utility_helicopter_1955_model }
+		enable_subunits = { L_Air_assault_Bat helicopter_combat_service_support }
+
+		research_cost = 1.2
+		start_year = 1955
+
+		special_project_specialization = { specialization_air }
+
+		path = { research_cost_coeff = 1 leads_to_tech = transport_helicopter_1 }
+		path = { research_cost_coeff = 1 leads_to_tech = nsb_transport_helicopter_1 ignore_for_layout = yes }
+		folder = { name = air_techs_folder position = { x = -4 y = 0 } }
+
+		categories = { CAT_military CAT_helicopters CAT_transport_helicopters }
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_carrier_hull_1955 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_naval_vessel_project } }
+
+		enable_equipments = { mdcw_carrier_hull_1955_model }
+
+		research_cost = 2
+		start_year = 1955
+
+		special_project_specialization = { specialization_naval }
+
+		dependencies = { tech_naval_systems_engineering = 1 }
+		path = { research_cost_coeff = 1 leads_to_tech = carrier_hull_1 }
+		folder = { name = naval_folder position = { x = 15 y = -1 } }
+
+		categories = {
+			CAT_military
+			CAT_naval
+			CAT_surface_ships
+			CAT_aircraft_carriers
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_destroyer_hull_1955 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_naval_vessel_project } }
+
+		enable_equipment_modules = { module_naval_mdcw_early_sonar module_naval_mdcw_early_torpedoes }
+		enable_equipments = { mdcw_destroyer_hull_1955_model }
+
+		research_cost = 1.5
+		start_year = 1955
+
+		special_project_specialization = { specialization_naval }
+
+		dependencies = { tech_naval_systems_engineering = 1 }
+		path = { research_cost_coeff = 1 leads_to_tech = destroyer_hull_1 }
+		folder = { name = naval_folder position = { x = 6 y = -1 } }
+
+		categories = {
+			CAT_military
+			CAT_naval
+			CAT_surface_ships
+			CAT_destroyers
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_naval_sam_1955 = {
+		enable_equipment_modules = {
+			module_naval_mdcw_terrier_launcher_early
+			module_naval_mdcw_terrier_ammo_early
+		}
+
+		research_cost = 1.6
+		start_year = 1955
+
+		special_project_specialization = { specialization_naval }
+
+		path = { research_cost_coeff = 1 leads_to_tech = tech_turret_missiles_aa_1 ignore_for_layout = yes }
+		folder = { name = naval_module_folder position = { x = 26 y = 1 } }
+
+		categories = {
+			CAT_military
+			CAT_naval
+			CAT_naval_modules
+			CAT_naval_armament
+			CAT_naval_missiles
+			CAT_anti_air
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_submarine_reactor_1955 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_medium_naval_nuclear_engines } }
+
+		enable_equipment_modules = { module_sub_early_reactor_power }
+
+		research_cost = 1.8
+		start_year = 1955
+
+		special_project_specialization = { specialization_naval }
+
+		dependencies = { tech_submarine_engineering_1 = 1 }
+		path = { research_cost_coeff = 1 leads_to_tech = tech_nuclear_power_systems_1 }
+		folder = { name = naval_module_folder position = { x = 2 y = 1 } }
+
+		categories = {
+			CAT_military
+			CAT_naval
+			CAT_naval_modules
+			CAT_submarines
+			CAT_submarine_engines
+			CAT_naval_reactors
+			CAT_engines
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_attack_submarine_hull_1955 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_naval_vessel_project } }
+
+		enable_equipment_modules = { module_naval_mdcw_early_sonar module_naval_mdcw_early_torpedoes }
+		enable_equipments = { mdcw_attack_submarine_hull_1955_model }
+
+		research_cost = 2
+		start_year = 1955
+
+		special_project_specialization = { specialization_naval }
+
+		dependencies = { mdcw_submarine_reactor_1955 = 1 }
+		path = { research_cost_coeff = 1 leads_to_tech = missile_submarine_hull_1 }
+		path = { research_cost_coeff = 1 leads_to_tech = attack_submarine_hull_1 }
+		folder = { name = naval_folder position = { x = 21 y = -1 } }
+
+		categories = {
+			CAT_military
+			CAT_naval
+			CAT_submarines
+			CAT_attack_submarines
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_diesel_submarine_hull_1959 = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_naval_vessel_project } }
+
+		enable_equipment_modules = { module_naval_mdcw_early_sonar module_naval_mdcw_early_torpedoes }
+		enable_equipments = { mdcw_diesel_submarine_hull_1959_model }
+
+		research_cost = 1.4
+		start_year = 1959
+
+		special_project_specialization = { specialization_naval }
+
+		path = { research_cost_coeff = 1 leads_to_tech = attack_submarine_hull_1 }
+		folder = { name = naval_folder position = { x = 17 y = -1 } }
+
+		categories = {
+			CAT_military
+			CAT_naval
+			CAT_submarines
+			CAT_attack_submarines
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+}

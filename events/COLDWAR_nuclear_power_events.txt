@@ -1,0 +1,383 @@
+# IMPERIA COLD WAR: Project-specific integration; preserve existing author credits.
+# COLDWAR | Kernenergie-Umbau – accidents, world news, fuel contracts, turnkey reactors
+add_namespace = COLDWAR_nuclear
+
+# Reactor incident (INES 1-3): one reactor out for 120 days, repair 0.1 % of GDP
+country_event = {
+	id = COLDWAR_nuclear.1
+	title = COLDWAR_nuclear.1.t
+	desc = COLDWAR_nuclear.1.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_nuclear.1"
+		random_controlled_state = {
+			limit = { nuclear_reactor > 0 }
+			save_event_target_as = COLDWAR_nuc_site
+		}
+	}
+
+	option = {
+		name = COLDWAR_nuclear.1.a
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.001 }
+		modify_treasury_effect = yes
+		custom_effect_tooltip = COLDWAR_nuclear_outage_tt
+		hidden_effect = {
+			set_variable = { COLDWAR_nuc_outage = -1 }
+			divide_variable = { COLDWAR_nuc_outage = nuclear_reactors }
+			clamp_variable = { var = COLDWAR_nuc_outage min = -0.25 max = 0 }
+			add_dynamic_modifier = { modifier = COLDWAR_reactor_outage_modifier days = 120 }
+			force_update_dynamic_modifier = yes
+		}
+	}
+}
+
+# Serious accident (INES 4-5): one reactor lost, local contamination, clean-up, anti-nuclear movement, world news
+country_event = {
+	id = COLDWAR_nuclear.2
+	title = COLDWAR_nuclear.2.t
+	desc = COLDWAR_nuclear.2.d
+	picture = GFX_imp_radiation
+	is_triggered_only = yes
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_nuclear.2"
+		random_controlled_state = {
+			limit = { nuclear_reactor > 0 }
+			save_event_target_as = COLDWAR_nuc_site
+		}
+	}
+
+	option = {
+		name = COLDWAR_nuclear.2.a
+		event_target:COLDWAR_nuc_site = {
+			remove_building = { type = nuclear_reactor level = 1 }
+			add_dynamic_modifier = { modifier = nuclear_contamination days = 365 }
+		}
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.015 }
+		modify_treasury_effect = yes
+		add_stability = -0.03
+		COLDWAR_nuc_add_anti_nuclear_weak = yes
+		custom_effect_tooltip = COLDWAR_nuclear_world_news_tt
+		hidden_effect = {
+			every_other_country = {
+				limit = { exists = yes }
+				news_event = { id = COLDWAR_nuclear.4 days = 2 }
+			}
+		}
+	}
+}
+
+# Catastrophe (INES 6-7): reactor destroyed, exclusion zone, radiation spreads over borders (Imperia nuke spread), world news
+country_event = {
+	id = COLDWAR_nuclear.3
+	title = COLDWAR_nuclear.3.t
+	desc = COLDWAR_nuclear.3.d
+	picture = GFX_event_JAP_fukushima_disaster
+	is_triggered_only = yes
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_nuclear.3"
+		random_controlled_state = {
+			limit = { nuclear_reactor > 0 }
+			save_event_target_as = COLDWAR_nuc_site
+		}
+	}
+
+	option = {
+		name = COLDWAR_nuclear.3.a
+		event_target:COLDWAR_nuc_site = {
+			remove_building = { type = nuclear_reactor level = 1 }
+			add_dynamic_modifier = { modifier = nuclear_devastation days = 1095 }
+			add_dynamic_modifier = { modifier = COLDWAR_nuclear_exclusion_zone days = 7300 }
+			save_event_target_as = imp_contam_spreader
+		}
+		custom_effect_tooltip = COLDWAR_nuclear_spread_tt
+		hidden_effect = {
+			country_event = { id = imp_nukes.10 days = 5 }
+		}
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.015 }
+		modify_treasury_effect = yes
+		if = {
+			limit = { NOT = { has_idea = COLDWAR_catastrophe_cleanup } }
+			add_timed_idea = { idea = COLDWAR_catastrophe_cleanup days = 1825 }
+		}
+		add_stability = -0.08
+		add_war_support = -0.05
+		COLDWAR_nuc_add_anti_nuclear_strong = yes
+		custom_effect_tooltip = COLDWAR_nuclear_world_news_tt
+		hidden_effect = {
+			every_other_country = {
+				limit = { exists = yes }
+				news_event = { id = COLDWAR_nuclear.5 days = 2 }
+			}
+		}
+	}
+}
+
+# World news: serious accident (operators with a player programme learn from it)
+news_event = {
+	id = COLDWAR_nuclear.4
+	title = COLDWAR_nuclear.4.t
+	desc = COLDWAR_nuclear.4.d
+	picture = GFX_imp_radiation
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.4.a
+		if = {
+			limit = {
+				COLDWAR_nuc_player_programme = yes
+				NOT = { has_idea = COLDWAR_nuclear_lessons_learned }
+			}
+			add_timed_idea = { idea = COLDWAR_nuclear_lessons_learned days = 1825 }
+		}
+	}
+}
+
+# World news: catastrophe (neighbours resent the fallout, player operators review their plants)
+news_event = {
+	id = COLDWAR_nuclear.5
+	title = COLDWAR_nuclear.5.t
+	desc = COLDWAR_nuclear.5.d
+	picture = GFX_event_JAP_fukushima_disaster
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.5.a
+		if = {
+			limit = { is_neighbor_of = FROM }
+			add_opinion_modifier = { target = FROM modifier = COLDWAR_nuclear_fallout }
+		}
+		if = {
+			limit = {
+				COLDWAR_nuc_player_programme = yes
+				NOT = { has_idea = COLDWAR_post_accident_reviews }
+			}
+			add_timed_idea = { idea = COLDWAR_post_accident_reviews days = 730 }
+		}
+	}
+}
+
+# Fuel request, to the supplier
+country_event = {
+	id = COLDWAR_nuclear.10
+	title = COLDWAR_nuclear.10.t
+	desc = COLDWAR_nuclear.10.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.10.a
+		ai_chance = {
+			base = 40
+			modifier = {
+				add = 40
+				has_opinion = { target = FROM value > 24 }
+			}
+			modifier = {
+				factor = 0
+				has_opinion = { target = FROM value < -24 }
+			}
+		}
+		if = {
+			limit = { NOT = { is_in_array = { COLDWAR_fuel_customers = FROM.id } } }
+			add_to_array = { COLDWAR_fuel_customers = FROM.id }
+		}
+		add_opinion_modifier = { target = FROM modifier = COLDWAR_nuclear_fuel_partner }
+		custom_effect_tooltip = COLDWAR_nuclear.10.a_tt
+		FROM = { country_event = { id = COLDWAR_nuclear.11 days = 1 } }
+	}
+
+	option = {
+		name = COLDWAR_nuclear.10.b
+		ai_chance = { base = 30 }
+		FROM = { country_event = { id = COLDWAR_nuclear.12 days = 1 } }
+	}
+}
+
+# Fuel request accepted, to the buyer
+country_event = {
+	id = COLDWAR_nuclear.11
+	title = COLDWAR_nuclear.11.t
+	desc = COLDWAR_nuclear.11.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.11.a
+		if = {
+			limit = {
+				has_variable = COLDWAR_fuel_supplier
+				NOT = { check_variable = { COLDWAR_fuel_supplier = FROM.id } }
+			}
+			var:COLDWAR_fuel_supplier = { country_event = { id = COLDWAR_nuclear.14 days = 1 } }
+		}
+		set_variable = { COLDWAR_fuel_supplier = FROM.id }
+		clr_country_flag = COLDWAR_fuel_request_pending
+		custom_effect_tooltip = COLDWAR_nuclear.11.a_tt
+	}
+}
+
+# Fuel request rejected, to the buyer
+country_event = {
+	id = COLDWAR_nuclear.12
+	title = COLDWAR_nuclear.12.t
+	desc = COLDWAR_nuclear.12.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.12.a
+		clr_country_flag = COLDWAR_fuel_request_pending
+	}
+}
+
+# Contract terminated by the supplier, to the buyer
+country_event = {
+	id = COLDWAR_nuclear.13
+	title = COLDWAR_nuclear.13.t
+	desc = COLDWAR_nuclear.13.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.13.a
+		if = {
+			limit = { check_variable = { COLDWAR_fuel_supplier = FROM.id } }
+			clear_variable = COLDWAR_fuel_supplier
+		}
+	}
+}
+
+# Contract cancelled by the buyer, to the supplier
+country_event = {
+	id = COLDWAR_nuclear.14
+	title = COLDWAR_nuclear.14.t
+	desc = COLDWAR_nuclear.14.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.14.a
+		remove_from_array = { COLDWAR_fuel_customers = FROM.id }
+	}
+}
+
+# Contract lapsed (supplier gone or at war with us), to the buyer
+country_event = {
+	id = COLDWAR_nuclear.15
+	title = COLDWAR_nuclear.15.t
+	desc = COLDWAR_nuclear.15.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.15.a
+	}
+}
+
+# Turnkey reactor offer, to the developing country
+country_event = {
+	id = COLDWAR_nuclear.20
+	title = COLDWAR_nuclear.20.t
+	desc = COLDWAR_nuclear.20.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.20.a
+		ai_chance = {
+			base = 20
+			modifier = {
+				add = 30
+				has_opinion = { target = FROM value > 24 }
+			}
+			modifier = {
+				factor = 0
+				has_opinion = { target = FROM value < 0 }
+			}
+		}
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.018 }
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_turnkey_reactor_operator
+		if = {
+			limit = {
+				has_variable = COLDWAR_fuel_supplier
+				NOT = { check_variable = { COLDWAR_fuel_supplier = FROM.id } }
+			}
+			var:COLDWAR_fuel_supplier = { country_event = { id = COLDWAR_nuclear.14 days = 1 } }
+		}
+		set_variable = { COLDWAR_fuel_supplier = FROM.id }
+		custom_effect_tooltip = COLDWAR_nuclear.20.a_tt
+		hidden_effect = {
+			country_event = { id = COLDWAR_nuclear.23 days = 1460 }
+			FROM = { country_event = { id = COLDWAR_nuclear.21 days = 1 } }
+		}
+	}
+
+	option = {
+		name = COLDWAR_nuclear.20.b
+		ai_chance = { base = 50 }
+		FROM = { country_event = { id = COLDWAR_nuclear.22 days = 1 } }
+	}
+}
+
+# Turnkey offer accepted, to the supplier: paid 75 % of the price, becomes the fuel supplier
+country_event = {
+	id = COLDWAR_nuclear.21
+	title = COLDWAR_nuclear.21.t
+	desc = COLDWAR_nuclear.21.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.21.a
+		set_temp_variable = { treasury_change = FROM.gdp_total }
+		multiply_temp_variable = { treasury_change = 0.0135 }
+		modify_treasury_effect = yes
+		if = {
+			limit = { NOT = { is_in_array = { COLDWAR_fuel_customers = FROM.id } } }
+			add_to_array = { COLDWAR_fuel_customers = FROM.id }
+		}
+		add_opinion_modifier = { target = FROM modifier = COLDWAR_nuclear_fuel_partner }
+	}
+}
+
+# Turnkey offer rejected, to the supplier
+country_event = {
+	id = COLDWAR_nuclear.22
+	title = COLDWAR_nuclear.22.t
+	desc = COLDWAR_nuclear.22.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.22.a
+	}
+}
+
+# Turnkey reactor completed after four years, to the buyer
+country_event = {
+	id = COLDWAR_nuclear.23
+	title = COLDWAR_nuclear.23.t
+	desc = COLDWAR_nuclear.23.d
+	picture = GFX_SIN_singapore_builds_first_nuclear_reactor
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_nuclear.23.a
+		capital_scope = {
+			add_building_construction = {
+				type = nuclear_reactor
+				level = 1
+				instant_build = yes
+			}
+		}
+	}
+}

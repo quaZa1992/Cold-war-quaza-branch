@@ -1,0 +1,103 @@
+# Author(s): AngriestBird
+on_actions = {
+	on_weekly_SAU = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				if = {
+					limit = {
+						NOT = { has_country_flag = SAU_houthi_power_struggle }
+						country_exists = HOU
+						HOU = {
+							has_war_with = YEM
+							has_government = communism
+							has_country_leader = {
+								ruling_only = yes
+								name = "Abdul-Malik Al-Houthi"
+							}
+						}
+					}
+					country_event = { id = Saleh.1 days = 1 random_days = 14 }
+				}
+
+			}
+		}
+	}
+
+	on_weekly_ISI = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				if = {
+					limit = {
+						NOT = { has_country_flag = ISI_annexed_al_nusra }
+						country_exists = NUS
+						NUS = { is_ai = yes }
+						ISI = { surrender_progress < 0.7 }
+						NUS = { surrender_progress > 0.5 }
+					}
+					country_event = { id = isis.6 days = 2 random_days = 5 }
+				}
+				if = {
+					limit = {
+						NOT = { has_country_flag = ISI_infiltrated_al_nusra }
+						country_exists = NUS
+						ISI = {
+							is_neighbor_of = NUS
+							NOT = { has_war_with = NUS }
+							surrender_progress < 0.6
+						}
+						NUS = {
+							surrender_progress < 0.5
+						}
+					}
+					country_event = { id = isis.2 days = 2 random_days = 5 }
+				}
+				if = {
+					limit = { NOT = { has_global_flag = ISI_hvt_pool_seeded } }
+					ISI_setup_hvt_pool = yes
+				}
+				if = {
+					limit = {
+						has_war = yes
+						NOT = { has_country_flag = ISI_hvt_cooldown }
+						check_variable = { global.ISI_hvt_pool^num > 0 }
+					}
+					random = {
+						chance = 20
+						ISI_burn_hvt = yes
+					}
+				}
+			}
+		}
+	}
+
+	on_weekly_HOU = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				if = {
+					limit = {
+						NOT = { has_country_flag = HOU_revolutionary_committee_event }
+						has_global_flag = GLOBAL_yemeni_civil_war_over
+						has_country_flag = saleh_ally
+						NOT = {
+							OR = {
+								country_exists = YEM
+								country_exists = AQY
+								has_war = yes
+							}
+						}
+					}
+					country_event = { id = Saleh.7 days = 1 random_days = 14 }
+				}
+			}
+		}
+	}
+}

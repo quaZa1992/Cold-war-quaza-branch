@@ -1,0 +1,90 @@
+<!-- IMPERIA CW — Cold War: North Korean focus-tree approval preview, native MD art and measured geometry. -->
+<div id="coldwar-nko-concept">
+ <div class="nko-window">
+  <div class="nko-top"><strong>COLDWAR · DPRK</strong><span>JANUARY 1970—1990 · CONCEPT</span></div>
+  <div class="nko-controls">
+   <label>Section <select id="nko-section"><option value="all">Full tree</option></select></label>
+   <label>Government <select id="nko-government"><option value="4">WPK · historical start</option><option value="5">Korean Democratic Party</option><option value="7">Chondoist Chongu</option><option value="13">Cabinet</option><option value="22">KPA emergency council</option><option value="2">Yan’an reform programme</option><option value="3">Labour federation</option><option value="14">Christian federation</option></select></label>
+   <button id="nko-fit" type="button">Fit section</button><button id="nko-native" type="button">Native grid</button><button id="nko-spirits" type="button">Starting spirits</button>
+  </div>
+  <div class="nko-caption" id="nko-caption"></div>
+  <div class="nko-viewport" id="nko-viewport"><div id="nko-canvas"><svg id="nko-connectors" aria-hidden="true"></svg><div id="nko-nodes"></div><div id="nko-headings"></div></div></div>
+  <div class="nko-legend">Solid lines: prerequisites · Red links: mutually exclusive · Muted: another government · 7 days per focus cost point</div>
+  <div class="nko-inspector" id="nko-inspector" aria-live="polite"></div>
+ </div>
+</div>
+<style>
+#coldwar-nko-concept{font:14px Arial,sans-serif;color:#e7e5d7;color-scheme:dark}
+#coldwar-nko-concept *{box-sizing:border-box}
+#coldwar-nko-concept .nko-window{background:#252c27;border:1px solid #596353;width:100%}
+#coldwar-nko-concept .nko-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;background:#343c31;border-bottom:1px solid #778064;color:#d5c894;letter-spacing:1px}
+#coldwar-nko-concept .nko-top span{font-size:12px;align-self:center}
+#coldwar-nko-concept .nko-controls{display:flex;align-items:end;flex-wrap:wrap;gap:8px;padding:12px}
+#coldwar-nko-concept label{display:flex;flex-direction:column;gap:4px;max-width:100%;font-size:12px}
+#coldwar-nko-concept select,#coldwar-nko-concept button:not(.nko-focus){background:#3b4437;color:#ece9d8;border:1px solid #6a745a;border-radius:0;padding:7px;max-width:100%;font:inherit}
+#coldwar-nko-concept select{min-width:0}
+#coldwar-nko-concept .nko-caption{padding:0 12px 10px;color:#d5d2bd;min-height:30px}
+#coldwar-nko-concept .nko-viewport{height:570px;overflow:auto;background:radial-gradient(ellipse at 40% 30%,#384136,#202721);border-top:1px solid #515e49;border-bottom:1px solid #515e49;position:relative}
+#coldwar-nko-concept #nko-canvas{position:relative;transform-origin:0 0}
+#coldwar-nko-concept #nko-connectors{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+#coldwar-nko-concept .nko-focus{position:absolute;width:165px;height:128px;background:transparent;border:0;padding:0;color:#e9e6d2;font:14px Arial,sans-serif}
+#coldwar-nko-concept .nko-focus img{position:absolute;max-width:112px;max-height:98px;left:50%;top:0;transform:translateX(-50%);object-fit:contain}
+#coldwar-nko-concept .nko-focus .nko-title{position:absolute;left:.5px;top:73px;width:164px;height:50px;padding:0 8px;line-height:50px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;background-size:164px 50px;font-size:13px}
+#coldwar-nko-concept .nko-focus.inactive img{filter:grayscale(.8) brightness(.65)}
+#coldwar-nko-concept .nko-focus.inactive .nko-title{color:#adb19f}
+#coldwar-nko-concept .nko-focus.selected img{filter:drop-shadow(0 0 7px #d9c774)}
+#coldwar-nko-concept .nko-group-title{position:absolute;white-space:nowrap;transform:translateX(-50%);color:#d7c58c;font-size:18px;letter-spacing:.4px}
+#coldwar-nko-concept .nko-legend{font-size:12px;color:#d1cdb8;padding:9px 12px}
+#coldwar-nko-concept .nko-inspector{padding:14px 18px;background:#202720;border-top:1px solid #6a745a;min-height:200px;overflow-wrap:anywhere}
+#coldwar-nko-concept .nko-inspector h3{margin:0 0 8px;font-size:18px;color:#ded19f}
+#coldwar-nko-concept .nko-inspector p{line-height:1.45;margin:6px 0}
+#coldwar-nko-concept .nko-inspector ul{padding-left:20px;line-height:1.55}
+#coldwar-nko-concept .nko-inspector .nko-meta{color:#bfc4ae;font-size:12px}
+#coldwar-nko-concept details{margin-top:10px}
+#coldwar-nko-concept summary{color:#d7c58c}
+#coldwar-nko-concept pre{overflow:auto;white-space:pre-wrap;background:#161d17;padding:12px;font-size:12px}
+@media(max-width:500px){#coldwar-nko-concept .nko-viewport{height:480px}#coldwar-nko-concept select{width:100%}#coldwar-nko-concept label{width:100%}#coldwar-nko-concept .nko-controls>button{min-height:44px}}
+</style>
+<script>
+(()=>{
+ const root=document.getElementById('coldwar-nko-concept'),data=__DATA__,art=__ART__;
+ const $=s=>root.querySelector(s),ids=Object.fromEntries(data.nodes.map(n=>[n.id,n]));
+ const section=$('#nko-section'),gov=$('#nko-government'),canvas=$('#nko-canvas'),viewport=$('#nko-viewport');
+ let state={section:'all',government:4,selected:data.nodes[0].id},scale=1,current=[];
+ for(const g of data.groups){const o=document.createElement('option');o.value=g.id;o.textContent=g.title;section.append(o)}
+ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function show(n){
+  state.selected=n.id;
+  root.querySelectorAll('.nko-focus').forEach(b=>b.classList.toggle('selected',b.dataset.id===n.id));
+  let pre=n.prerequisites.map(g=>g.map(id=>ids[id].title).join(' OR ')).join(' AND ')||'Section entry';
+  let guard=n.slot===null?'All governments':`Governing subparty ${n.slot} · ${n.slot===state.government?'current':'inactive in this government'}`;
+  $('#nko-inspector').innerHTML=`<h3>${esc(n.title)}</h3><p>${esc(n.description)}</p><p class="nko-meta">${esc(n.id)} · (${n.x}, ${n.y}) · ${n.days} days · ${esc(guard)}</p><p>Requires: ${esc(pre)}</p>${n.gate?`<p>Additional requirement: ${esc(n.gate)}</p>`:''}${n.mutex.length?`<p>Mutually exclusive: ${n.mutex.map(id=>esc(ids[id].title)).join(' / ')}</p>`:''}<ul>${n.effects.map(s=>`<li>${esc(s)}</li>`).join('')}</ul><p class="nko-meta">${esc(n.ownership)}. ${n.slot!==null?'Earned policy returns with this government; one-time grants do not repeat.':''}</p><details><summary>Proposed native effect recipe</summary><pre>${esc(n.code)}</pre></details>`;
+ }
+ function spirits(){
+  $('#nko-inspector').innerHTML='<h3>January 1970 · Starting National Spirits</h3>'+data.starting_spirits.map(s=>`<article><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p><ul>${Object.entries(s.mods).map(([k,v])=>`<li>${esc(data.stats[k][1])}: ${v>=0?'+':''}${Math.round(v*100)}%</li>`).join('')}</ul><p>${esc(s.remedy)}</p></article>`).join('');
+ }
+ function draw(native=false){
+  current=state.section==='all'?data.nodes:data.nodes.filter(n=>n.group===state.section);
+  let minx=Math.min(...current.map(n=>n.x)),maxx=Math.max(...current.map(n=>n.x)),miny=Math.min(...current.map(n=>n.y)),maxy=Math.max(...current.map(n=>n.y));
+  let w=(maxx-minx)*96+230,h=(maxy-miny)*130+210;
+  scale=native?1:Math.min(1,(viewport.clientWidth-12)/w);
+  canvas.style.width=(w*scale)+'px';canvas.style.height=(h*scale)+'px';
+  const pt=n=>({x:(n.x-minx)*96+115,y:(n.y-miny)*130+65});
+  const layer=$('#nko-nodes');layer.innerHTML='';layer.style.transform=`scale(${scale})`;layer.style.transformOrigin='0 0';
+  for(const n of current){const p=pt(n),b=document.createElement('button');b.type='button';b.className='nko-focus'+(n.slot!==null&&n.slot!==state.government?' inactive':'')+(n.id===state.selected?' selected':'');b.dataset.id=n.id;b.setAttribute('aria-label',n.title);b.style.left=(p.x-82.5)+'px';b.style.top=p.y+'px';b.innerHTML=`<img src="${art[n.icon]}" alt=""><span class="nko-title" style="background-image:url('${art[n.slot===null||n.slot===state.government?'available':'unavailable']}')">${esc(n.title)}</span>`;b.onclick=()=>show(n);layer.append(b)}
+  const visible=new Set(current.map(n=>n.id)),svg=$('#nko-connectors');svg.setAttribute('width',w*scale);svg.setAttribute('height',h*scale);svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.innerHTML='';
+  const path=(d,cls,color)=>{const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke',color);p.setAttribute('stroke-width','2');p.setAttribute('class',cls);svg.append(p)};
+  for(const n of current){const p=pt(n);for(const g of n.prerequisites)for(const id of g){if(!visible.has(id))continue;let a=pt(ids[id]),start=a.y+128,end=p.y,mid=(start+end)/2;path(`M${a.x},${start} V${mid} H${p.x} V${end}`,'prerequisite','#8e9985')}
+   for(const id of n.mutex){if(!visible.has(id)||n.id>id)continue;let a=pt(ids[id]);if(current.some(b=>b.y===n.y&&b.x>Math.min(n.x,ids[id].x)&&b.x<Math.max(n.x,ids[id].x)&&n.mutex.includes(b.id)))continue;path(`M${Math.min(a.x,p.x)+83},${p.y+114} H${Math.max(a.x,p.x)-83}`,'exclusive','#b76b59')}
+  }
+  const heads=$('#nko-headings');heads.innerHTML='';heads.style.transform=`scale(${scale})`;heads.style.transformOrigin='0 0';
+  for(const g of data.groups){const ns=current.filter(n=>n.group===g.id);if(!ns.length)continue;const p=pt(ns[0]),t=document.createElement('div');t.className='nko-group-title';t.style.left=p.x+'px';t.style.top=(p.y-37)+'px';t.textContent=g.title;heads.append(t)}
+  $('#nko-caption').textContent=state.section==='all'?`${data.nodes.length} focuses · 12 sections · 6 starting spirits · Full overview; select a section to inspect its focuses.`:data.groups.find(g=>g.id===state.section).note;
+  viewport.scrollTo(0,0);
+ }
+ section.onchange=()=>{state.section=section.value;draw();show(current[0])};gov.onchange=()=>{state.government=Number(gov.value);draw();show(ids[state.selected])};
+ $('#nko-fit').onclick=()=>draw();$('#nko-native').onclick=()=>draw(true);$('#nko-spirits').onclick=spirits;
+ new ResizeObserver(()=>draw()).observe(viewport);
+ draw();show(data.nodes[0]);
+})();
+</script>

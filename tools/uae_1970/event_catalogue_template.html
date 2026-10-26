@@ -1,0 +1,124 @@
+<div id="cw-events-review">
+  <h2>UAE &amp; GCC events</h2>
+  <div class="viz-controls">
+    <label class="form-label">Event type<select class="form-select" id="cw-event-type" aria-label="Event type"></select></label>
+    <label class="form-label">Exact event ID<select class="form-select" id="cw-event-id" aria-label="Exact event ID"></select></label>
+  </div>
+  <p class="text-small" id="cw-event-count" aria-live="polite">Loading the installed events…</p>
+  <article aria-label="Selected event" class="card">
+    <h3 id="cw-event-title">The Founders' Settlement</h3>
+    <img id="cw-event-picture" alt="Registered Millennium Dawn event illustration" hidden>
+    <p id="cw-event-description">The rulers must agree where common authority ends and emirate guarantees begin.</p>
+    <div id="cw-event-options" aria-label="Event options"></div>
+    <div id="cw-event-detail" aria-live="polite"></div>
+  </article>
+  <p class="text-small" id="cw-event-source"></p>
+  <details><summary>Exact event source</summary><pre><code id="cw-event-code"></code></pre></details>
+</div>
+<style>
+#cw-events-review #cw-event-picture {display:block;max-width:100%;width:420px;height:auto;margin:12px auto}
+#cw-events-review #cw-event-description {white-space:pre-wrap}
+#cw-events-review #cw-event-options {display:grid;gap:8px}
+#cw-events-review #cw-event-detail {margin-top:16px}
+#cw-events-review pre {white-space:pre-wrap;overflow-wrap:anywhere}
+#cw-events-review details {margin-top:12px}
+#cw-events-review .effect-list {padding-left:20px}
+</style>
+<script>
+(async()=>{
+ const root=document.getElementById('cw-events-review');
+ const el=id=>root.querySelector('#'+id);
+ const packed='__EVENT_DATA_GZIP__';
+ const bytes=Uint8Array.from(atob(packed),c=>c.charCodeAt(0));
+ const unpacked=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+ const data=JSON.parse(unpacked),type=el('cw-event-type'),ids=el('cw-event-id');
+ let current,optionIndex=0;
+ const friendly={political_power_factor:'Political Power Gain',bureaucracy_cost_multiplier_modifier:'Bureaucracy Cost',training_time_factor:'Training Time',offices_productivity:'Office Sector Productivity',energy_use_multiplier:'Energy Use',army_org_factor:'Division Organisation',army_personnel_cost_multiplier_modifier:'Military Personnel Cost'};
+ const clean=t=>String(t).replace(/§./g,'');
+ const num=v=>Number.isFinite(Number(v))?Number(v):null;
+ const sign=n=>(n>0?'+':'')+Number(n.toFixed(4));
+ function summary(rows,scope='',out=[],hidden=false){
+   let cash;
+   for(const [k,op,v] of rows){
+     if(k==='limit'||k==='trigger'||k==='ai_chance'||k==='name')continue;
+     if(k==='hidden_effect')continue;
+     if(k==='set_temp_variable'&&Array.isArray(v)){
+       const pair=v.find(r=>r[0]==='treasury_change');if(pair)cash=pair[2];
+     }else if(k==='multiply_temp_variable'&&Array.isArray(v)){
+       const pair=v.find(r=>r[0]==='treasury_change');if(pair&&cash!==undefined){
+         cash=num(cash)!==null?num(cash)*Number(pair[2]):(Number(pair[2])===-1?'−'+cash:cash+' × '+pair[2]);
+       }
+     }else if(k==='modify_treasury_effect'&&cash!==undefined){
+       out.push(scope+'Treasury: '+(num(cash)!==null?sign(num(cash)):'['+cash+']')+' billion');
+     }else if(['add_political_power','add_stability','add_war_support','army_experience','navy_experience','air_experience'].includes(k)){
+       const label={add_political_power:'Political Power',add_stability:'Stability',add_war_support:'War Support',army_experience:'Army Experience',navy_experience:'Navy Experience',air_experience:'Air Experience'}[k];
+       out.push(scope+label+': '+(num(v)!==null?sign(Number(v)*(k==='add_stability'||k==='add_war_support'?100:1)):v)+(k==='add_stability'||k==='add_war_support'?'%':''));
+     }else if(['add_ideas','remove_ideas','add_to_tech_sharing_group','remove_from_tech_sharing_group','give_military_access','set_autonomy'].includes(k)){
+       out.push(scope+k.replaceAll('_',' ')+': '+(Array.isArray(v)?v.map(r=>r[0]+' '+r[2]).join('; '):v));
+     }else if(k==='add_dynamic_modifier'&&Array.isArray(v)){
+       out.push(scope+'Programme: '+v.map(r=>r[0]+': '+r[2]).join('; '));
+     }else if(k==='add_to_variable'&&Array.isArray(v)&&v.some(r=>r[0]==='tooltip')){
+       const pair=v.find(r=>r[0]!=='tooltip');
+       if(pair)out.push(scope+(friendly[pair[0]]||pair[0])+': '+pair[2]);
+     }else if(k==='send_equipment'&&Array.isArray(v)){
+       out.push(scope+'Equipment transfer: '+v.map(r=>r[0]+': '+r[2]).join('; '));
+     }else if(k==='country_event'){
+       const eid=Array.isArray(v)?v.find(r=>r[0]==='id')?.[2]:v;
+       out.push(scope+'Follow-up event: '+eid);
+     }else if(k==='effect_tooltip'&&Array.isArray(v)){
+       summary(v,scope,out);
+     }else if(['if','else_if','else','random_list'].includes(k)&&Array.isArray(v)){
+       summary(v,scope,out);
+     }else if(/^[A-Z]{3}$/.test(k)&&Array.isArray(v)){
+       summary(v,scope+k+': ',out);
+     }else if(k.startsWith('var:')&&Array.isArray(v)){
+       summary(v,scope+'Partner: ',out);
+     }else if(k==='every_owned_state'&&Array.isArray(v)){
+       summary(v,scope+'Each qualifying state: ',out);
+     }else if(k==='add_building_construction'){
+       out.push(scope+'Construction: '+(Array.isArray(v)?v.map(r=>r[0]+': '+r[2]).join('; '):v));
+     }else if(k==='add_to_variable'&&Array.isArray(v)){
+       const pair=v[0];if(pair?.[0]==='productivity')out.push(scope+'Productivity: '+sign(Number(pair[2])));
+     }
+   }
+   return [...new Set(out)];
+ }
+ function save(){
+   if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{review:'UAE and GCC events',event:current.id,title:current.title,option:current.options[optionIndex]?.name},privateContent:{group:Number(type.value),event:Number(ids.value),option:optionIndex,eventCount:data.events.length}}).catch(()=>{});
+ }
+ function showOption(index,persist){
+   optionIndex=index;const opt=current.options[index],detail=el('cw-event-detail');detail.replaceChildren();
+   [...el('cw-event-options').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));
+   const h=document.createElement('h3');h.textContent='Effect preview';detail.append(h);
+   const effects=summary(opt.effects);
+   if(effects.length){const list=document.createElement('ul');list.className='effect-list';for(const line of effects){const li=document.createElement('li');li.textContent=clean(line);list.append(li)}detail.append(list)}
+   else{const p=document.createElement('p');p.textContent='No direct numerical effect is exposed here. The option may change agreement or policy flags.';detail.append(p)}
+   for(const [label,value] of [['Option conditions',opt.condition||'Unconditional option'],['Executed script, including hidden effects',opt.source||'No script effects']]){
+     const d=document.createElement('details'),s=document.createElement('summary'),pre=document.createElement('pre'),code=document.createElement('code');s.textContent=label;code.textContent=value;pre.append(code);d.append(s,pre);detail.append(d);
+   }
+   if(persist)save();
+ }
+ function showEvent(index,selected=0){
+   current=data.events[index];ids.value=String(index);
+   el('cw-event-title').textContent=clean(current.title);el('cw-event-description').textContent=clean(current.description);
+   const img=el('cw-event-picture');img.src=data.images[current.picture];img.hidden=!img.src;
+   el('cw-event-code').textContent=current.source;
+   el('cw-event-source').textContent=current.file+':'+current.line+' · '+current.id+' · Source preview; no HOI4 render';
+   const options=el('cw-event-options');options.replaceChildren();
+   current.options.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='btn btn-block';b.textContent=clean(o.name);b.onclick=()=>showOption(i,true);options.append(b)});
+   showOption(Math.min(selected,current.options.length-1),false);
+ }
+ function showGroup(index,eventIndex,option=0){
+   type.value=String(index);ids.replaceChildren();
+   const g=data.groups[index];for(const i of g.events){const opt=document.createElement('option');opt.value=i;opt.textContent=data.events[i].id;ids.append(opt)}
+   const chosen=g.events.includes(eventIndex)?eventIndex:g.events[0];
+   el('cw-event-count').textContent=data.events.length+' exact event IDs · '+data.groups.length+' text/option variants · '+g.events.length+' instances of this variant';
+   showEvent(chosen,option);
+ }
+ data.groups.forEach((g,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=(g.file.includes('GCC')?'GCC · ':'UAE · ')+clean(g.title)+' ('+g.events.length+')';type.append(opt)});
+ const restore=s=>{const p=s?.privateContent||{},saved=s?.modelContent?.event,i=data.events.findIndex(e=>e.id===saved);if(i>=0){showGroup(data.groups.findIndex(g=>g.events.includes(i)),i,p.option||0)}else if(!saved&&p.eventCount===data.events.length&&data.groups[p.group]){showGroup(p.group,p.event,p.option||0)}else{showGroup(0)}};
+ type.onchange=()=>{showGroup(Number(type.value));save()};ids.onchange=()=>{showEvent(Number(ids.value));save()};
+ restore(window.openai?.widgetState);
+ window.addEventListener('openai:set_globals',event=>{if(event.detail?.globals?.widgetState)restore(event.detail.globals.widgetState)});
+})().catch(error=>{const out=document.getElementById('cw-event-count');out.textContent=error.message;out.setAttribute('role','alert')});
+</script>

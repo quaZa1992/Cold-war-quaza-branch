@@ -1,0 +1,94 @@
+# IMPERIA CW — Cold War: IMP military industrial complex effects — scripted effects.
+# Recalculate the shared arms-market conditions once per monthly pulse.
+IMP_cold_war_recalculate_military_industrial_complex = {
+	set_variable = { global.IMP_military_industrial_complex_warring_countries = 0 }
+	every_country = {
+		limit = {
+			exists = yes
+			has_war = yes
+		}
+		add_to_variable = { global.IMP_military_industrial_complex_warring_countries = 1 }
+	}
+
+	if = {
+		# Cold War Equilibrium (1970): Arms Demand (0-100) replaces world tension here.
+		# The interest group already grants up to +20% military industry tax at high approval.
+		# This additional export-market effect is +/-0.4% per Arms Demand point
+		# around 25, bounded to -10%...+30% before the war-market contribution.
+		limit = { has_global_flag = mdcw_cw_initialized }
+		set_variable = { global.IMP_military_industrial_complex_tension_bonus = global.mdcw_cw_arms }
+		subtract_from_variable = { global.IMP_military_industrial_complex_tension_bonus = 25 }
+		multiply_variable = { global.IMP_military_industrial_complex_tension_bonus = 0.004 }
+	}
+	else = {
+		# threat is stored as 0-1: at 100% World Tension this adds 30%.
+		set_variable = { global.IMP_military_industrial_complex_tension_bonus = threat }
+		multiply_variable = { global.IMP_military_industrial_complex_tension_bonus = 0.30 }
+	}
+	clamp_variable = { var = global.IMP_military_industrial_complex_tension_bonus min = -0.10 max = 0.30 }
+
+	set_variable = {
+		global.IMP_military_industrial_complex_war_bonus = global.IMP_military_industrial_complex_warring_countries
+	}
+	# Wars also feed Arms Demand, so this separate effect is deliberately small.
+	multiply_variable = { global.IMP_military_industrial_complex_war_bonus = 0.005 }
+	clamp_variable = { var = global.IMP_military_industrial_complex_war_bonus min = 0 max = 0.10 }
+
+	set_variable = {
+		global.IMP_military_industrial_complex_total_bonus = global.IMP_military_industrial_complex_tension_bonus
+	}
+	add_to_variable = {
+		global.IMP_military_industrial_complex_total_bonus = global.IMP_military_industrial_complex_war_bonus
+	}
+	clamp_variable = { var = global.IMP_military_industrial_complex_total_bonus min = -0.10 max = 0.40 }
+}
+
+# Only countries with the interest group receive the shared export-market result.
+IMP_cold_war_update_military_industrial_complex_country = {
+	if = {
+		limit = { has_idea = defense_industry }
+		set_variable = {
+			IMP_military_industrial_complex_tension_bonus = global.IMP_military_industrial_complex_tension_bonus
+		}
+		set_variable = {
+			IMP_military_industrial_complex_war_bonus = global.IMP_military_industrial_complex_war_bonus
+		}
+		set_variable = {
+			IMP_military_industrial_complex_tax_bonus = global.IMP_military_industrial_complex_total_bonus
+		}
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = IMP_military_industrial_complex_dynamic_modifier } } }
+			add_dynamic_modifier = { modifier = IMP_military_industrial_complex_dynamic_modifier }
+		}
+		force_update_dynamic_modifier = yes
+	}
+	else_if = {
+		limit = {
+			NOT = { has_idea = defense_industry }
+			has_dynamic_modifier = { modifier = IMP_military_industrial_complex_dynamic_modifier }
+		}
+		remove_dynamic_modifier = { modifier = IMP_military_industrial_complex_dynamic_modifier }
+	}
+	if = {
+		limit = {
+			is_ai = yes
+			NOT = { has_idea = IMP_cold_war_ai_war_declaration_lock }
+		}
+		add_ideas = IMP_cold_war_ai_war_declaration_lock
+	}
+	else_if = {
+		limit = {
+			is_ai = no
+			has_idea = IMP_cold_war_ai_war_declaration_lock
+		}
+		remove_ideas = IMP_cold_war_ai_war_declaration_lock
+	}
+}
+
+IMP_cold_war_initialize_military_industrial_complex = {
+	IMP_cold_war_recalculate_military_industrial_complex = yes
+	every_country = {
+		limit = { exists = yes }
+		IMP_cold_war_update_military_industrial_complex_country = yes
+	}
+}

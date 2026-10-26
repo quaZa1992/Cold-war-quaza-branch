@@ -1,0 +1,86 @@
+# IMPERIA CW — Cold War: Historical country definitions and scenario history.
+capital = 45
+
+# IMPERIA CW — Cold War: 1970 scenario country history.
+# IMPERIA 1970 COUNTRY SNAPSHOT START
+1970.1.1 = {
+	# IMPERIA CW — Cold War: 1970 scenario country history.
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY BEGIN
+	if = {
+		limit = { IMP_is_1970_scenario = yes }
+		set_country_flag = IMP_1970_historical_politics
+	}
+	set_cosmetic_tag = DDR_DDR
+	set_popularities = { democratic = 3 communism = 90 fascism = 0 neutrality = 5 nationalist = 2 }
+	set_politics = { ruling_party = communism elections_allowed = no }
+	clear_array = party_pop_array
+	clear_array = party_pop_elect_array
+	clear_array = pos_array
+	clear_variable = ruling_party
+	clear_array = gov_coalition_array
+	resize_array = { array = party_pop_array size = 24 }
+	resize_array = { array = party_pop_elect_array size = 24 value = -1 }
+	resize_array = { array = pos_array size = 24 }
+	resize_array = { array = party_banned_array size = 24 value = 0 }
+	set_variable = { party_pop_array^1 = 0.03 }
+	set_variable = { party_pop_array^4 = 0.78 }
+	set_variable = { party_pop_array^5 = 0.04 }
+	set_variable = { party_pop_array^7 = 0.08 }
+	set_variable = { party_pop_array^13 = 0.03 }
+	set_variable = { party_pop_array^19 = 0.04 }
+	set_variable = { party_pop_array^22 = 0.03 }
+	set_variable = { ruling_party = 4 }
+	create_country_leader = {
+		name = "Walter Ulbricht"
+		picture = "gfx/Leaders/DDR/DDR_Coldwar_WalterUlbricht.dds"
+		ideology = communist_state
+		traits = { emerging_communist_state }
+	}
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY END
+
+	if = {
+		limit = { date < 1985.1.1 }
+		mdcw_apply_1970_infantry_research = yes
+		load_focus_tree = COLDWAR_DDR_1970_focus # COLDWAR | German Democratic Republic 1970 tree
+		set_variable = { gdp_per_capita = 2.100 }
+		set_variable = { overall_productivity = 488.800 }
+		if = {
+			limit = { exists = yes }
+			set_oob = "mdcw_1970_empty_land"
+		}
+
+		# Historical labour programme: Hungarian contract-worker recruitment under the 1967 agreement.
+		add_ideas = mdcw_ni_guest_worker_recruitment_programme
+
+		COLDWAR_DDR_initialize_1970 = yes # COLDWAR | laws, factions, start spirits, parties, Moscow's Trust, the Inner-German course
+	}
+
+		# Temporary user decision: starting armies, fleets, air wings and equipment deferred.
+		set_oob = "mdcw_1970_empty_land"
+		set_naval_oob = "mdcw_1970_empty_naval"
+		set_air_oob = "mdcw_1970_empty_air"
+	}
+# IMPERIA 1970 COUNTRY SNAPSHOT END
+
+
+
+# IMPERIA CW — Cold War: 1985 scenario country history.
+# IMPERIA 1985 PRODUCTIVITY BASELINE START
+
+# IMPERIA 1985 PRODUCTIVITY BASELINE END
+
+# IMPERIA CW — Cold War: 1970 scenario country history.
+# COLDWAR HISTORICAL1970 MODERN IDENTITY COMPATIBILITY BEGIN
+# Preserve the native modern default when past dated history is replayed.
+# Setup compatibility boundary only; not a claimed historical renaming date.
+1999.12.31 = {
+	if = {
+		limit = {
+			NOT = { IMP_is_1970_scenario = yes }
+			has_cosmetic_tag = DDR_DDR
+		}
+		drop_cosmetic_tag = yes
+	}
+}
+# COLDWAR HISTORICAL1970 MODERN IDENTITY COMPATIBILITY END
+

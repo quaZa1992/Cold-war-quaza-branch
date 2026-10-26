@@ -1,0 +1,39 @@
+@@ -0,0 +1,37 @@
+
++# Imperia: nuclear weapons programme disrupted when enrichment facilities are lost
++# (see common/dynamic_modifiers/imp_nuclear_programme_dynamic_modifiers.txt)
++# and the AI's nuclear weapons decision (common/scripted_effects/imp_nuclear_ai_effects.txt)
++
++on_actions = {
++	on_monthly = {
++		effect = {
++			if = {
++				limit = { is_ai = yes }
++				imp_ai_nuclear_need_update = yes
++				imp_ai_enrichment_build = yes
++			}
++		}
++	}
++
++	on_weekly = {
++		effect = {
++			if = {
++				limit = {
++					OR = {
++						is_special_project_being_researched = sp:sp_nuclear_bomb
++						is_special_project_being_researched = sp:sp_nuclear_warhead_program
++					}
++					check_variable = { undamaged_enrichment_facilities < 3 }
++				}
++				if = {
++					limit = { NOT = { has_dynamic_modifier = { modifier = imp_nuclear_programme_disrupted } } }
++					add_dynamic_modifier = { modifier = imp_nuclear_programme_disrupted }
++				}
++			}
++			else_if = {
++				limit = { has_dynamic_modifier = { modifier = imp_nuclear_programme_disrupted } }
++				remove_dynamic_modifier = { modifier = imp_nuclear_programme_disrupted }
++			}
++		}
++	}
++}

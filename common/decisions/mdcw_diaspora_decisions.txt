@@ -1,0 +1,40 @@
+# IMPERIA CW — Cold War: Ministry actions replace the former consular lists; legacy record repair remains.
+mdcw_guest_workers_decisions = {
+ mdcw_gw_diaspora_outreach = {
+  icon = GFX_decision_generic_civil_support cost = 75
+  target_array = gw_hosts
+  target_root_trigger = { is_ai = no exists = yes }
+  target_trigger = { FROM = { mdcw_gw_outreach_target_valid = yes NOT = { tag = ROOT } } }
+  visible = { always = no }
+  available = { NOT = { check_variable = { treasury < 0.5 } } }
+  complete_effect = { set_temp_variable = { treasury_change = -0.5 } effect_tooltip = { modify_treasury_effect = yes } hidden_effect = { mdcw_gw_start_outreach = yes } }
+  ai_will_do = { factor = 0 }
+ }
+ mdcw_gw_resume_agreements = {
+  icon = GFX_decision_generic_civil_support cost = 0
+  target_array = gw_suspended_hosts
+  target_root_trigger = { is_ai = no exists = yes }
+  target_trigger = { is_in_array = { gw_suspended_hosts = FROM.id } }
+  visible = { always = no }
+  complete_effect = { remove_from_array = { gw_suspended_hosts = FROM.id } }
+  ai_will_do = { factor = 0 }
+ }
+ mdcw_gw_register_legacy_origin = {
+  icon = GFX_decision_generic_civil_support cost = 0
+  target_root_trigger = { is_ai = no check_variable = { gw_unrecorded_k > 0 } }
+  target_trigger = { FROM = { exists = yes NOT = { tag = ROOT } } }
+  visible = { check_variable = { gw_unrecorded_k > 0 } FROM = { exists = yes NOT = { tag = ROOT } } }
+  available = { NOT = { has_country_flag = gw_project_active } NOT = { has_country_flag = gw_return_active } }
+  complete_effect = { hidden_effect = { mdcw_gw_register_legacy_origin = yes } }
+  ai_will_do = { factor = 0 }
+ }
+ mdcw_gw_inspect_overseas_community = {
+  icon = GFX_decision_generic_civil_support cost = 0
+  target_array = gw_hosts
+  target_root_trigger = { is_ai = no exists = yes }
+  target_trigger = { FROM = { mdcw_gw_origin_present_here = yes } }
+  visible = { always = no }
+  complete_effect = { hidden_effect = { mdcw_gw_inspect_overseas_community = yes } }
+  ai_will_do = { factor = 0 }
+ }
+}

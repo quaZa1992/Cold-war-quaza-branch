@@ -1,0 +1,60 @@
+<!-- IMPERIA CW — Cold War: installed event/decision explorer; read-only documentation. -->
+<div id="cw-iraq-event-guide">
+  <h3>Irak: Events und Decisions</h3>
+  <p class="text-small" id="ieg-count">Aktueller Code · Lesemodus</p>
+  <div class="viz-controls">
+    <label class="form-label">Bereich<select class="form-select" id="ieg-group"></select></label>
+    <label class="form-label">Eintrag<select class="form-select" id="ieg-item"></select></label>
+  </div>
+  <div class="viz-row"><button class="btn" type="button" id="ieg-back">Zurück</button><button class="btn" type="button" id="ieg-prev">Vorheriger</button><button class="btn" type="button" id="ieg-next">Nächster</button><span class="text-small" id="ieg-index"></span></div>
+  <section id="ieg-detail" aria-live="polite"></section>
+</div>
+<!-- GUIDE_DATA -->
+<style>
+#cw-iraq-event-guide{color:var(--foreground);width:100%}
+#cw-iraq-event-guide #ieg-detail{margin-top:16px;overflow-wrap:anywhere}
+#cw-iraq-event-guide .ieg-options{margin-top:16px}
+#cw-iraq-event-guide .ieg-option{margin:16px 0}
+#cw-iraq-event-guide .ieg-original{white-space:pre-line}
+#cw-iraq-event-guide pre{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+#cw-iraq-event-guide details{margin:10px 0}
+#cw-iraq-event-guide .ieg-links{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+#cw-iraq-event-guide h3{padding-right:90px}
+</style>
+<script>
+(async()=>{
+const root=document.getElementById('cw-iraq-event-guide'),$=s=>root.querySelector(s);
+const bytes=Uint8Array.from(atob(document.getElementById('cw-events-data').textContent.trim()),c=>c.charCodeAt(0));
+const data=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).json();
+const records=new Map(data.records.map(r=>[r.id,r])),group=$('#ieg-group'),item=$('#ieg-item'),detail=$('#ieg-detail');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const countries={IRQ:'Irak',USA:'USA',SOV:'Sowjetunion',ENG:'Großbritannien',FRA:'Frankreich',PER:'Iran',KUW:'Kuwait',SAU:'Saudi-Arabien',UAE:'VAE',TUR:'Türkei',KUR:'Kurdistan',PUK:'PUK',EGY:'Ägypten',SYR:'Syrien',JOR:'Jordanien',PAL:'Palästina'};
+let selected='auto_rising',history=[];
+function code(label,text){return text?`<details><summary>${esc(label)}</summary><pre><code>${esc(text)}</code></pre></details>`:'';}
+function links(ids,label='Folgeevent ansehen'){return [...new Set(ids||[])].filter(k=>records.has(k)).map(k=>`<div><span>${esc(records.get(k).title)}</span> <button type="button" class="btn" data-open="${esc(k)}">${esc(label)}</button></div>`).join('');}
+function providers(ids){return (ids||[]).filter(k=>data.providers[k]).map(k=>`<details><summary>${esc(k)}</summary><p class="text-small">${esc(data.providers[k].source)}</p><pre><code>${esc(data.providers[k].script)}</code></pre></details>`).join('');}
+function remember(){window.openai?.setWidgetState?.({modelContent:{country:'Iraq',mode:'Installed events/decisions explanation',entry:records.get(selected)?.title,id:selected},privateContent:{version:'iraq-events-oct21',selected,history:history.slice(-15)}})?.catch?.(()=>{});}
+function groupItems(id){return data.records.filter(r=>r.group===id);}
+function fillItems(g){item.replaceChildren();for(const r of groupItems(g)){const o=document.createElement('option');o.value=r.id;o.textContent=r.title+(r.type==='event'?' · '+r.id.split('.').pop():'');item.append(o);}}
+function explainRelated(r){if(r.explanation)return `<h4>Was es tatsächlich tut</h4><p>${esc(r.explanation)}</p>`;if(r.type!=='event')return'';const related=(r.origins||[]).map(k=>records.get(k)).filter(d=>d?.explanation);if(!related.length)return'';const descriptions=[...new Set(related.map(d=>d.explanation))];return `<details><summary>Ablauf der auslösenden Decision</summary>${descriptions.map(t=>`<p>${esc(t)}</p>`).join('')}</details>`;}
+function show(id,push=true){const r=records.get(id);if(!r)return;if(push&&selected!==id)history.push(selected);selected=id;if(group.value!==r.group){group.value=r.group;fillItems(r.group);}item.value=id;item.setAttribute('data-tooltip',r.title);const ns=groupItems(r.group),index=ns.findIndex(n=>n.id===id);$('#ieg-index').textContent=`${index+1} / ${ns.length}`;$('#ieg-back').disabled=!history.length;$('#ieg-prev').disabled=index===0;$('#ieg-next').disabled=index===ns.length-1;
+ let meta=r.type==='decision'?`Decision · Grundkosten: ${r.pp} PP${r.cooldown?' · Wiederverfügbar nach '+r.cooldown+' Tagen':''}`:r.type==='event'?`Event · Empfänger: ${countries[r.recipient]||r.recipient} · ${r.options.length} Optionen`:'Automatischer Beobachter';
+ const source=r.source?`<p class="text-small">${esc(r.source.file)}:${r.source.line} · ${esc(r.id)}</p>`:'';
+ const originals=r.type==='observer'?`<p>${esc(r.description)}</p>`:`<details${r.type==='event'?' open':''}><summary>Englischer Originaltext</summary><p class="ieg-original">${esc(r.description)}</p></details>`;
+ const associated=r.type==='event'?data.records.filter(d=>d.type==='decision'&&d.events.includes(r.id)).map(d=>d.id):[];
+ const cost=r.custom_cost?`<p class="tabular-nums">Weitere Kosten: ${esc(r.custom_cost)}</p>`:'';
+ detail.innerHTML=`<div class="card"><h4>${esc(r.title)}</h4><p class="text-small tabular-nums">${esc(meta)}</p>${cost}${explainRelated(r)}${originals}${source}</div>`;
+ if(r.type==='decision'){detail.insertAdjacentHTML('beforeend',`<section class="ieg-options"><h4>Verknüpfte Events</h4>${r.events.length?links(r.events):'<p>Kein Event im verfolgten Effektpfad; die Decision wirkt direkt.</p>'}${code('Aktuelle Voraussetzungen',r.conditions)}${code('Direkter Ausführungscode',r.script)}<details><summary>Aufgerufene Effekte</summary>${providers(r.providers)}</details></section>`);}
+ if(r.type==='event'){detail.insertAdjacentHTML('beforeend',`<section class="ieg-options"><h4>Optionen im Event</h4>${r.options.map((o,i)=>`<div class="ieg-option"><p><strong>${i+1}. ${esc(o.title)}</strong></p>${o.highlights?.length?`<details open><summary>Direkte Effekte bei gültiger Umsetzung</summary><ul>${o.highlights.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>`:''}${links(o.events)}${code('Bedingungen dieser Option',o.conditions)}${code('Wirkung laut geladenem Code',o.script)}${o.providers.length?`<details><summary>Weitere aufgerufene Effekte</summary>${providers(o.providers)}</details>`:''}</div>${i<r.options.length-1?'<hr>':''}`).join('')}${associated.length?'<h4>Auslösende Decisions</h4>'+links(associated,'Decision ansehen'):''}${code('Vorbereitende Eventeffekte',r.immediate)}${code('Eventvoraussetzungen',r.conditions)}</section>`);}
+}
+for(const [key,label]of Object.entries(data.groups)){const o=document.createElement('option');o.value=key;o.textContent=label;group.append(o);}group.value='auto';fillItems('auto');
+$('#ieg-count').textContent=`150 Decision-Definitionen · 162 Events · 449 Eventoptionen · 839 technische Nachhol-/Statuseinträge separat · Saddam-Neuentwurf noch nicht eingebaut`;
+group.addEventListener('change',()=>{fillItems(group.value);show(groupItems(group.value)[0].id);remember();});item.addEventListener('change',()=>{show(item.value);remember();});
+detail.addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b){show(b.dataset.open);remember();}});
+$('#ieg-back').onclick=()=>{if(history.length)show(history.pop(),false);remember();};
+for(const [button,delta]of [['#ieg-prev',-1],['#ieg-next',1]])$(button).onclick=()=>{const ns=groupItems(group.value),i=ns.findIndex(r=>r.id===selected);if(ns[i+delta])show(ns[i+delta].id);remember();};
+function restore(state){const p=state?.privateContent;if(p?.version!=='iraq-events-oct21'||!records.has(p.selected))return false;history=(p.history||[]).filter(k=>records.has(k));show(p.selected,false);return true;}
+window.addEventListener('openai:set_globals',e=>{if(e.detail?.globals?.widgetState)restore(e.detail.globals.widgetState);});
+if(!restore(window.openai?.widgetState))show(selected,false);root.dataset.ready='true';root._guide={data,show};
+})().catch(e=>{document.getElementById('cw-iraq-event-guide').innerHTML='<p role="alert">Der Katalog konnte nicht geladen werden.</p>';console.error(e);});
+</script>

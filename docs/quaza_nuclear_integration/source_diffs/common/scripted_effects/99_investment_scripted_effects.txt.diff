@@ -1,0 +1,334 @@
+@@ -1,29 +1,29 @@
+
+ # International Investments System
+ # Player (GUI) and AI (investments_event.500) both call start_project_two.
+ # Slot conventions: ^-1 = staging, ^-2 = snapshot, ^0..14 = active projects.
+ # Building types: 1=CIC, 2=MIC, 3=Dockyard, 4=Infra, 5=Offices, 6=SAM, 7=Radar,
+-#                 8=Airbase, 9=Fuel, 10=Internet, 11=Renewable, 12=Fossil, 13=Nuclear, 14=Agri
++#                 8=Airbase, 9=Fuel, 10=Internet, 11=Renewable, 12=Fossil, 13=Nuclear, 14=Agri, 15=Uranium Mine
+ 
+ # Initialize global building cost arrays at game start.
+ # Called once in on_startup - do not trigger more than once.
+ init_investment_system = {
+-	# Building cost arrays (for array lookup - index = building type 1..14)
++	# Building cost arrays (for array lookup - index = building type 1..15)
+ 	set_variable = { global.build_cost_array^0 = 0 }
+-	set_variable = { global.build_cost_array^1 = 12 } # CIC
+-	set_variable = { global.build_cost_array^2 = 12.50 } # MIC
+-	set_variable = { global.build_cost_array^3 = 12 } # NIC
+-	set_variable = { global.build_cost_array^4 = 5.5 } # INFRA
+-	set_variable = { global.build_cost_array^5 = 20 } # OFFICES
+-	set_variable = { global.build_cost_array^6 = 5.50 } # AA
+-	set_variable = { global.build_cost_array^7 = 4.50 } # RADAR
+-	set_variable = { global.build_cost_array^8 = 5.25 } # AIRBASE
+-	set_variable = { global.build_cost_array^9 = 5.25 } # FUEL_SILO
++	set_variable = { global.build_cost_array^1 = 8 }    # CIC Imp change 10 -> 8
++	set_variable = { global.build_cost_array^2 = 10 } # MIC Imp change 12.5 -> 10
++	set_variable = { global.build_cost_array^3 = 10 }    # NIC Imp change 12 -> 10
++	set_variable = { global.build_cost_array^4 = 2 }   # INFRA Imp change 5.5 -> 2
++	set_variable = { global.build_cost_array^5 = 15 }    # OFFICES Imp change 20 -> 15
++	set_variable = { global.build_cost_array^6 = 5.50 }  # AA
++	set_variable = { global.build_cost_array^7 = 4.50 }  # RADAR
++	set_variable = { global.build_cost_array^8 = 5.25 }  # AIRBASE
++	set_variable = { global.build_cost_array^9 = 5.25 }  # FUEL_SILO
+ 	set_variable = { global.build_cost_array^10 = 4.65 } # INTERNET
+ 	set_variable = { global.build_cost_array^11 = 13.60 }# REF
+ 	set_variable = { global.build_cost_array^12 = 5.2 } # FOSSIL
+ 	set_variable = { global.build_cost_array^13 = 14.4 } # NUCLEAR
+-	set_variable = { global.build_cost_array^14 = 5.8 } # AGRICULTURE
++	set_variable = { global.build_cost_array^14 = 6 }  # AGRICULTURE Imp change 5.8 -> 6
+ 
+ 	# Building const cost arrays (for construction speed calculation)
+ 	set_variable = { global.build_const_cost_array^0 = 0 }
+ 	set_variable = { global.build_const_cost_array^1 = 47500 } # CIC
+
+@@ -56,8 +56,16 @@
+
+ 	set_variable = { global.max_build_amount_array^11 = 10 } # REF
+ 	set_variable = { global.max_build_amount_array^12 = 10 } # FOSSIL
+ 	set_variable = { global.max_build_amount_array^13 = 10 } # NUCLEAR
+ 	set_variable = { global.max_build_amount_array^14 = 10 } # AGRICULTURE
++	imp_uranium_init_investment_type = yes
++}
++
++# Also called on every load to extend investment arrays in existing saves.
++imp_uranium_init_investment_type = {
++	set_variable = { global.build_cost_array^15 = 6 } # Uranium mine: $6 billion per level
++	set_variable = { global.build_const_cost_array^15 = 32000 }
++	set_variable = { global.max_build_amount_array^15 = 3 }
+ }
+ 
+ # Called in the spawning of a new nation in-game
+ # Purely used to update the variables of a nation if you are trying to play as a releasable
+
+@@ -98,51 +106,67 @@
+
+ 	set_variable = { pending_offer_state = FROM.investments_state_target }
+ }
+ 
+ accept_pending_investment_offer = {
+-	FROM = {
+-		set_variable = { project_building_type^-1 = PREV.pending_offer_type }
+-		set_variable = { project_build_amount^-1 = PREV.pending_offer_amount }
+-		set_variable = { project_monetary_cost^-1 = PREV.pending_offer_total_cost }
+-		set_variable = { project_construction_duration^-1 = PREV.pending_offer_duration }
+-		set_variable = { investments_state_target = PREV.pending_offer_state }
+-		set_variable = {
+-			project_monetary_cost_effect = {
+-				value = PREV.pending_offer_total_cost
+-				multiply = -1
+-			}
+-		}
+-
+-		start_project_two = yes
+-		clr_country_flag = this_investment_offer_pending@PREV
+-		clr_country_flag = investments_ai_pending
+-	}
+ 	if = {
+-		limit = { NOT = { has_country_flag = influence_gained_@FROM } }
+-		set_temp_variable = { percent_change = global.investment_percent_change_value }
+-		set_temp_variable = { tag_index = FROM.id }
+-		change_influence_percentage = yes
+-		newline = yes
+-
+-		if = { limit = { has_game_rule = { rule = rule_influence_cooldown_limits option = day_14_cooldown } }
+-			set_country_flag = { flag = influence_gained_@FROM value = 1 days = 14 }
+-			custom_effect_tooltip = cooldown_influence_limit_14_tooltip
+-		}
+-		else_if = { limit = { has_game_rule = { rule = rule_influence_cooldown_limits option = day_30_cooldown } }
+-			set_country_flag = { flag = influence_gained_@FROM value = 1 days = 30 }
+-			custom_effect_tooltip = cooldown_influence_limit_30_tooltip
+-		}
+-	}
+-
+-	set_temp_variable = { treasury_change = FROM.project_monetary_cost_effect }
+-	multiply_temp_variable = { treasury_change = 0.1 }
+-	modify_treasury_effect = yes
+-	clear_variable = investor_cost
+-	clear_variable = pending_offer_total_cost
+-	clear_variable = pending_offer_duration
+-	clear_variable = pending_offer_amount
+-	clear_variable = pending_offer_type
+-	clear_variable = pending_offer_state
++		limit = { imp_uranium_pending_offer_valid = yes }
++		FROM = {
++			set_variable = { project_building_type^-1 = PREV.pending_offer_type }
++			set_variable = { project_build_amount^-1 = PREV.pending_offer_amount }
++			set_variable = { project_monetary_cost^-1 = PREV.pending_offer_total_cost }
++			set_variable = { project_construction_duration^-1 = PREV.pending_offer_duration }
++			set_variable = { investments_state_target = PREV.pending_offer_state }
++			set_variable = {
++				project_monetary_cost_effect = {
++					value = PREV.pending_offer_total_cost
++					multiply = -1
++				}
++			}
++
++			start_project_two = yes
++			clr_country_flag = this_investment_offer_pending@PREV
++			clr_country_flag = investments_ai_pending
++		}
++		if = {
++			limit = { NOT = { has_country_flag = influence_gained_@FROM } }
++			set_temp_variable = { percent_change = global.investment_percent_change_value }
++			set_temp_variable = { tag_index = FROM.id }
++			change_influence_percentage = yes
++			newline = yes
++
++			if = { limit = { has_game_rule = { rule = rule_influence_cooldown_limits option = day_14_cooldown } }
++				set_country_flag = { flag = influence_gained_@FROM value = 1 days = 14 }
++				custom_effect_tooltip = cooldown_influence_limit_14_tooltip
++			}
++			else_if = { limit = { has_game_rule = { rule = rule_influence_cooldown_limits option = day_30_cooldown } }
++				set_country_flag = { flag = influence_gained_@FROM value = 1 days = 30 }
++				custom_effect_tooltip = cooldown_influence_limit_30_tooltip
++			}
++		}
++
++		set_temp_variable = { treasury_change = FROM.project_monetary_cost_effect }
++		multiply_temp_variable = { treasury_change = 0.1 }
++		modify_treasury_effect = yes
++		clear_variable = investor_cost
++		clear_variable = pending_offer_total_cost
++		clear_variable = pending_offer_duration
++		clear_variable = pending_offer_amount
++		clear_variable = pending_offer_type
++		clear_variable = pending_offer_state
++	}
++	else = {
++		# A deposit may disappear or fill while the offer is pending. No charge or influence.
++		FROM = {
++			clr_country_flag = this_investment_offer_pending@PREV
++			clr_country_flag = investments_ai_pending
++		}
++		clear_variable = investor_cost
++		clear_variable = pending_offer_total_cost
++		clear_variable = pending_offer_duration
++		clear_variable = pending_offer_amount
++		clear_variable = pending_offer_type
++		clear_variable = pending_offer_state
++	}
+ }
+ 
+ # Recomputes staging-slot (^-1) cost/duration when player tweaks GUI.
+ # Scope: ROOT = investor, PREV = selected state.
+
+@@ -269,8 +293,12 @@
+
+ 		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_nuclear_reactor_factor }
+ 	}
+ 	else_if = { limit = { check_variable = { project_type = 14 } }
+ 		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_agriculture_district_factor }
++	}
++	else_if = { limit = { check_variable = { project_type = 15 } }
++		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_uranium_mine_factor }
++		add_to_temp_variable = { building_cost = imp_uranium_investment_extra_cost }
+ 	}
+ 
+ 	add_to_temp_variable = { var = construction_speed value = -0.40 }
+ 	add_to_temp_variable = { var = construction_speed value = modifier@production_speed_buildings_factor }
+
+@@ -289,65 +317,78 @@
+
+ }
+ 
+ # Add completed building to state (called by complete_project).
+ add_finished_buildings = {
+-	set_temp_variable = { var_cost = ROOT.project_monetary_cost^ROOT.project }
+-	multiply_temp_variable = { var_cost = -1 }
+-	set_temp_variable = { _remaining = ROOT.project_build_amount^ROOT.project }
+-	clamp_temp_variable = { var = _remaining min = 1 }
+-	divide_temp_variable = { var = var_cost value = _remaining }
+-
+-	# Buildings to Add
+-	if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 1 } }
+-		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 2 } }
+-		add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 3 } }
+-		add_building_construction = { type = dockyard level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 4 } }
+-		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 5 } }
+-		add_building_construction = { type = offices level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 6 } }
+-		add_building_construction = { type = anti_air_building level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 7 } }
+-		add_building_construction = { type = radar_station level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 8 } }
+-		add_building_construction = { type = air_base level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 9 } }
+-		add_building_construction = { type = fuel_silo level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 10 } }
+-		add_building_construction = { type = internet_station level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 11 } }
+-		add_building_construction = { type = renewable_energy_infra level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 12 } }
+-		add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 13 } }
+-		add_building_construction = { type = nuclear_reactor level = 1 instant_build = yes }
+-	}
+-	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 14 } }
+-		add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+-	}
+-
+-	add_to_variable = { ROOT.project_monetary_cost^ROOT.project = var_cost }
++	if = {
++		limit = { OR = { NOT = { check_variable = { ROOT.project_building_type^ROOT.project = 15 } } imp_uranium_investment_one_level_available = yes } }
++		set_temp_variable = { var_cost = ROOT.project_monetary_cost^ROOT.project }
++		multiply_temp_variable = { var_cost = -1 }
++		set_temp_variable = { _remaining = ROOT.project_build_amount^ROOT.project }
++		clamp_temp_variable = { var = _remaining min = 1 }
++		divide_temp_variable = { var = var_cost value = _remaining }
++
++		# Buildings to Add
++		if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 1 } }
++			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 2 } }
++			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 3 } }
++			add_building_construction = { type = dockyard level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 4 } }
++			add_building_construction = { type = infrastructure level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 5 } }
++			add_building_construction = { type = offices level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 6 } }
++			add_building_construction = { type = anti_air_building level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 7 } }
++			add_building_construction = { type = radar_station level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 8 } }
++			add_building_construction = { type = air_base level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 9 } }
++			add_building_construction = { type = fuel_silo level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 10 } }
++			add_building_construction = { type = internet_station level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 11 } }
++			add_building_construction = { type = renewable_energy_infra level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 12 } }
++			add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 13 } }
++			add_building_construction = { type = nuclear_reactor level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 14 } }
++			add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
++		}
++		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 15 } }
++			imp_uranium_sync_mine_slots = yes
++			add_building_construction = { type = uranium_mine level = 1 instant_build = yes }
++			imp_uranium_count_mine_levels = yes
++			imp_uranium_sync_mine_output = yes
++		}
++
++		add_to_variable = { ROOT.project_monetary_cost^ROOT.project = var_cost }
++	}
+ }
+ 
+ # Precompute state-level construction data. Must be called in STATE scope with
+ # PREV = the investing country. Writes temp variables: local_state_modifier and
+ # receiving_investment_duration_temp, consumed by calculate_project_duration.
+ precompute_state_construction_data = {
++	# Each invested mine level keeps the normal 4000 IC cost increase.
++	set_temp_variable = { imp_uranium_investment_extra_cost = building_level@uranium_mine }
++	multiply_temp_variable = { imp_uranium_investment_extra_cost = 4000 }
++
+ 	# State-local construction speed bonus (infra + internet + state-flag effects)
+ 	set_temp_variable = { local_state_modifier = 0 }
+ 
+ 	set_temp_variable = { tmp_speed = building_level@infrastructure }
+
+@@ -486,9 +527,9 @@
+
+ 		log = "[GetDateText]: [THIS.GetName]: DEBUG: start_project_two - new_project = [?new_project], state = [?investments_state_target], building_type = [?project_building_type^-1], amount = [?project_build_amount^-1]"
+ 	}
+ 
+ 	# new_project sets the correct index for the new project
+-	if = { limit = { has_variable = new_project }
++	if = { limit = { has_variable = new_project imp_uranium_investment_start_allowed = yes }
+ 
+ 		# Initializes the Project
+ 		set_variable = { project = new_project }
+ 		set_variable = { project_type = project_building_type^-1 }

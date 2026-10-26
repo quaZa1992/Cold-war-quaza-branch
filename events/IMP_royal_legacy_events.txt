@@ -1,0 +1,109 @@
+# IMPERIA CW — Cold War: Imperia royal legacy events — game content.
+add_namespace = IMP_royal_legacy
+
+country_event = {
+	id = IMP_royal_legacy.5
+	title = IMP_royal_legacy.5.t
+	desc = IMP_royal_legacy.5.d
+	picture = GFX_elizabeth_II
+
+
+	is_triggered_only = yes
+
+	option = {
+		name = IMP_royal_legacy.5.o1
+		log = "[GetDateText]: [This.GetName]: britain_md.5.o1 executed"
+		set_country_flag = ENG_monarchy_abolished
+		if = {
+			limit = { has_country_flag = ENG_royal_family_mechanic_active }
+			ENG_royal_family_cleanup = yes
+		}
+		if = {
+			limit = { has_idea = ENG_queen_elizabeth_2 }
+			remove_ideas = ENG_queen_elizabeth_2
+		}
+		if = {
+			limit = { has_idea = ENG_king_charles_3 }
+			remove_ideas = ENG_king_charles_3
+		}
+		if = {
+			limit = { has_idea = ENG_king_william_5 }
+			remove_ideas = ENG_king_william_5
+		}
+	}
+}
+
+country_event = {
+	id = IMP_royal_legacy.25
+	title = IMP_royal_legacy.25.t
+	desc = IMP_royal_legacy.25.d
+	picture = GFX_ENG_generic
+
+	trigger = {
+		tag = ENG
+		NOT = { has_country_flag = ENG_monarchy_abolished }
+		has_idea = ENG_queen_elizabeth_2
+		date > 2020.1.1
+	}
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = IMP_royal_legacy.25.o1
+		log = "[GetDateText]: [This.GetName]: britain_md.25.o1 executed"
+		set_country_flag = ENG_elizabeth_dead_dead
+		set_country_flag = ENG_royal_elizabeth_dead
+		if = {
+			limit = { has_country_flag = ENG_royal_family_mechanic_active }
+			ENG_clear_royal_family_selection = yes
+			set_country_flag = ENG_show_royal_charles_decisions
+			ENG_update_royal_family_modifier = yes
+		}
+		remove_ideas = ENG_queen_elizabeth_2
+		add_ideas = ENG_king_charles_3
+		hidden_effect = {
+			create_country_leader = {
+				name = "Charles III"
+				ideology = Monarchist
+				picture = "Prince_Charles.dds"
+			}
+		}
+	}
+}
+
+country_event = {
+	id = IMP_royal_legacy.26
+	title = IMP_royal_legacy.26.t
+	desc = IMP_royal_legacy.26.d
+	picture = GFX_ENG_generic
+
+	trigger = {
+		tag = ENG
+		NOT = { has_country_flag = ENG_monarchy_abolished }
+		has_idea = ENG_king_charles_3
+		date > 2035.1.1
+	}
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = IMP_royal_legacy.26.o1
+		log = "[GetDateText]: [This.GetName]: britain_md.26.o1 executed"
+		set_country_flag = ENG_royal_charles_dead
+		if = {
+			limit = { has_country_flag = ENG_royal_family_mechanic_active }
+			ENG_clear_royal_family_selection = yes
+			set_country_flag = ENG_show_royal_philip_decisions
+			ENG_update_royal_family_modifier = yes
+		}
+		remove_ideas = ENG_king_charles_3
+		add_ideas = ENG_king_william_5
+		hidden_effect = {
+			create_country_leader = {
+				name = "William V"
+				ideology = Monarchist
+				picture = "ENG_prince_william_large_ic.dds"
+			}
+		}
+	}
+}

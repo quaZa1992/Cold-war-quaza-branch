@@ -1,0 +1,447 @@
+# IMPERIA CW — Cold War: Guest-worker replies refresh the country's Ministry UI lock.
+# Sender offers: ROOT sends, FROM is the receiving applicant. Accept is shown first.
+# No native non-first timeout default is assumed: day-1 offers time out after 17 days.
+# Existing day-17 request watchdogs clear/refund before the day-18 automatic selection.
+# Require a full 17 days on the current request: an older resolved request's
+# timer must not expire a replacement opened on the following day.
+# The sender's separate UI-window lock survives cleanup until either option closes this popup,
+# preventing an old auto-accept from matching a fresh request to the same partner and tier.
+# effect_tooltip uses saved state targets for named native population effects,
+# plus treasury/PP and read-only remittance preview calculations;
+# the hidden callback alone executes the transaction, after full revalidation.
+# AI preferences remain financial-only; both player buttons stay unrestricted.
+# Approval callbacks restore ROOT=receiver and FROM=sender.
+
+add_namespace = mdcw_guest_workers
+
+country_event = {
+	id = mdcw_guest_workers.1
+	title = mdcw_guest_workers.1.t
+	desc = mdcw_guest_workers.1.d
+	picture = GFX_mdcw_guest_workers_arrival
+	is_triggered_only = yes
+	timeout_days = 17
+	trigger = {
+		mdcw_gw_offer_pair_pending = yes
+		check_variable = { mdcw_gw_pending_tier = 1 }
+	}
+	option = {
+		name = mdcw_guest_workers.accept
+		ai_chance = {
+			base = 55
+			modifier = {
+				factor = 0
+				NOT = { mdcw_gw_ai_offer_viable_25000 = yes }
+			}
+			modifier = { factor = 1.25 mdcw_gw_ai_financial_pressure = yes }
+			modifier = {
+				factor = 1.4
+				check_variable = { gdp_total > 0 }
+				NOT = {
+					check_variable = { gdp_total > 40 }
+				}
+			}
+			modifier = {
+				factor = 1.2
+				check_variable = { gdp_total > 40 }
+				NOT = {
+					check_variable = { gdp_total > 100 }
+				}
+			}
+			modifier = {
+				factor = 0.85
+				NOT = {
+					check_variable = { mdcw_gw_remittance_pool_m < 2700 }
+				}
+			}
+		}
+		effect_tooltip = {
+			if = {
+				limit = { mdcw_gw_offer_pair_pending = yes }
+				set_temp_variable = { treasury_change = 10 }
+				modify_treasury_effect = yes
+				add_political_power = 25
+				event_target:mdcw_gw_origin_state = {
+					add_manpower = -25000
+				}
+				FROM = {
+					event_target:mdcw_gw_destination_state = {
+						add_manpower = 25000
+					}
+				}
+				set_temp_variable = { mdcw_gw_offer_previous_positive_k = mdcw_gw_net_emigration_k }
+				clamp_temp_variable = { var = mdcw_gw_offer_previous_positive_k min = 0 }
+				set_temp_variable = { mdcw_gw_offer_eligible_k = mdcw_gw_net_emigration_k }
+				add_to_temp_variable = { mdcw_gw_offer_eligible_k = 25 }
+				clamp_temp_variable = { var = mdcw_gw_offer_eligible_k min = 0 }
+				subtract_from_temp_variable = { mdcw_gw_offer_eligible_k = mdcw_gw_offer_previous_positive_k }
+				divide_temp_variable = { mdcw_gw_offer_eligible_k = 25 }
+				multiply_temp_variable = { mdcw_gw_offer_eligible_k = 150 }
+				set_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_remittance_pool_m }
+				add_to_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_offer_eligible_k }
+				clamp_temp_variable = { var = mdcw_gw_offer_remittance_m min = 0 max = 3000 }
+				subtract_from_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_remittance_pool_m }
+				# IMPERIA CW — Cold War: Show the actual combined income gain at the shared cap.
+				set_temp_variable = { gw_dp_offer_people_k = 25 }
+				mdcw_dp_preview_export_income = yes
+				custom_effect_tooltip = mdcw_gw_accept_offer_25000_tt
+			}
+			else = {
+				custom_effect_tooltip = mdcw_gw_offer_expired_tt
+			}
+		}
+		hidden_effect = {
+			mdcw_gw_close_offer_window = yes
+			FROM = {
+				country_event = { id = mdcw_guest_workers.11 }
+			}
+		}
+	}
+	option = {
+		name = mdcw_guest_workers.refuse
+		ai_chance = { base = 45 }
+		custom_effect_tooltip = mdcw_gw_refuse_offer_tt
+		hidden_effect = {
+			mdcw_gw_close_offer_window = yes
+			FROM = {
+				country_event = { id = mdcw_guest_workers.20 }
+			}
+		}
+	}
+}
+
+country_event = {
+	id = mdcw_guest_workers.2
+	title = mdcw_guest_workers.2.t
+	desc = mdcw_guest_workers.2.d
+	picture = GFX_mdcw_guest_workers_arrival
+	is_triggered_only = yes
+	timeout_days = 17
+	trigger = {
+		mdcw_gw_offer_pair_pending = yes
+		check_variable = { mdcw_gw_pending_tier = 2 }
+	}
+	option = {
+		name = mdcw_guest_workers.accept
+		ai_chance = {
+			base = 55
+			modifier = {
+				factor = 0
+				NOT = { mdcw_gw_ai_offer_viable_50000 = yes }
+			}
+			modifier = { factor = 1.25 mdcw_gw_ai_financial_pressure = yes }
+			modifier = {
+				factor = 1.4
+				check_variable = { gdp_total > 0 }
+				NOT = {
+					check_variable = { gdp_total > 60 }
+				}
+			}
+			modifier = {
+				factor = 1.2
+				check_variable = { gdp_total > 60 }
+				NOT = {
+					check_variable = { gdp_total > 150 }
+				}
+			}
+			modifier = {
+				factor = 0.85
+				NOT = {
+					check_variable = { mdcw_gw_remittance_pool_m < 2700 }
+				}
+			}
+		}
+		effect_tooltip = {
+			if = {
+				limit = { mdcw_gw_offer_pair_pending = yes }
+				set_temp_variable = { treasury_change = 15 }
+				modify_treasury_effect = yes
+				add_political_power = 50
+				event_target:mdcw_gw_origin_state = {
+					add_manpower = -50000
+				}
+				FROM = {
+					event_target:mdcw_gw_destination_state = {
+						add_manpower = 50000
+					}
+				}
+				set_temp_variable = { mdcw_gw_offer_previous_positive_k = mdcw_gw_net_emigration_k }
+				clamp_temp_variable = { var = mdcw_gw_offer_previous_positive_k min = 0 }
+				set_temp_variable = { mdcw_gw_offer_eligible_k = mdcw_gw_net_emigration_k }
+				add_to_temp_variable = { mdcw_gw_offer_eligible_k = 50 }
+				clamp_temp_variable = { var = mdcw_gw_offer_eligible_k min = 0 }
+				subtract_from_temp_variable = { mdcw_gw_offer_eligible_k = mdcw_gw_offer_previous_positive_k }
+				divide_temp_variable = { mdcw_gw_offer_eligible_k = 50 }
+				multiply_temp_variable = { mdcw_gw_offer_eligible_k = 250 }
+				set_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_remittance_pool_m }
+				add_to_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_offer_eligible_k }
+				clamp_temp_variable = { var = mdcw_gw_offer_remittance_m min = 0 max = 3000 }
+				subtract_from_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_remittance_pool_m }
+				# IMPERIA CW — Cold War: Show the actual combined income gain at the shared cap.
+				set_temp_variable = { gw_dp_offer_people_k = 50 }
+				mdcw_dp_preview_export_income = yes
+				custom_effect_tooltip = mdcw_gw_accept_offer_50000_tt
+			}
+			else = {
+				custom_effect_tooltip = mdcw_gw_offer_expired_tt
+			}
+		}
+		hidden_effect = {
+			mdcw_gw_close_offer_window = yes
+			FROM = {
+				country_event = { id = mdcw_guest_workers.12 }
+			}
+		}
+	}
+	option = {
+		name = mdcw_guest_workers.refuse
+		ai_chance = { base = 45 }
+		custom_effect_tooltip = mdcw_gw_refuse_offer_tt
+		hidden_effect = {
+			mdcw_gw_close_offer_window = yes
+			FROM = {
+				country_event = { id = mdcw_guest_workers.20 }
+			}
+		}
+	}
+}
+
+country_event = {
+	id = mdcw_guest_workers.3
+	title = mdcw_guest_workers.3.t
+	desc = mdcw_guest_workers.3.d
+	picture = GFX_mdcw_guest_workers_arrival
+	is_triggered_only = yes
+	timeout_days = 17
+	trigger = {
+		mdcw_gw_offer_pair_pending = yes
+		check_variable = { mdcw_gw_pending_tier = 3 }
+	}
+	option = {
+		name = mdcw_guest_workers.accept
+		ai_chance = {
+			base = 55
+			modifier = {
+				factor = 0
+				NOT = { mdcw_gw_ai_offer_viable_100000 = yes }
+			}
+			modifier = { factor = 1.25 mdcw_gw_ai_financial_pressure = yes }
+			modifier = {
+				factor = 1.4
+				check_variable = { gdp_total > 0 }
+				NOT = {
+					check_variable = { gdp_total > 100 }
+				}
+			}
+			modifier = {
+				factor = 1.2
+				check_variable = { gdp_total > 100 }
+				NOT = {
+					check_variable = { gdp_total > 250 }
+				}
+			}
+			modifier = {
+				factor = 0.85
+				NOT = {
+					check_variable = { mdcw_gw_remittance_pool_m < 2700 }
+				}
+			}
+		}
+		effect_tooltip = {
+			if = {
+				limit = { mdcw_gw_offer_pair_pending = yes }
+				set_temp_variable = { treasury_change = 25 }
+				modify_treasury_effect = yes
+				add_political_power = 100
+				event_target:mdcw_gw_origin_state = {
+					add_manpower = -50000
+				}
+				event_target:mdcw_gw_origin_state_2 = {
+					add_manpower = -50000
+				}
+				FROM = {
+					event_target:mdcw_gw_destination_state = {
+						add_manpower = 100000
+					}
+				}
+				set_temp_variable = { mdcw_gw_offer_previous_positive_k = mdcw_gw_net_emigration_k }
+				clamp_temp_variable = { var = mdcw_gw_offer_previous_positive_k min = 0 }
+				set_temp_variable = { mdcw_gw_offer_eligible_k = mdcw_gw_net_emigration_k }
+				add_to_temp_variable = { mdcw_gw_offer_eligible_k = 100 }
+				clamp_temp_variable = { var = mdcw_gw_offer_eligible_k min = 0 }
+				subtract_from_temp_variable = { mdcw_gw_offer_eligible_k = mdcw_gw_offer_previous_positive_k }
+				divide_temp_variable = { mdcw_gw_offer_eligible_k = 100 }
+				multiply_temp_variable = { mdcw_gw_offer_eligible_k = 400 }
+				set_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_remittance_pool_m }
+				add_to_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_offer_eligible_k }
+				clamp_temp_variable = { var = mdcw_gw_offer_remittance_m min = 0 max = 3000 }
+				subtract_from_temp_variable = { mdcw_gw_offer_remittance_m = mdcw_gw_remittance_pool_m }
+				# IMPERIA CW — Cold War: Show the actual combined income gain at the shared cap.
+				set_temp_variable = { gw_dp_offer_people_k = 100 }
+				mdcw_dp_preview_export_income = yes
+				custom_effect_tooltip = mdcw_gw_accept_offer_100000_tt
+			}
+			else = {
+				custom_effect_tooltip = mdcw_gw_offer_expired_tt
+			}
+		}
+		hidden_effect = {
+			mdcw_gw_close_offer_window = yes
+			FROM = {
+				country_event = { id = mdcw_guest_workers.13 }
+			}
+		}
+	}
+	option = {
+		name = mdcw_guest_workers.refuse
+		ai_chance = { base = 45 }
+		custom_effect_tooltip = mdcw_gw_refuse_offer_tt
+		hidden_effect = {
+			mdcw_gw_close_offer_window = yes
+			FROM = {
+				country_event = { id = mdcw_guest_workers.20 }
+			}
+		}
+	}
+}
+
+country_event = {
+	id = mdcw_guest_workers.11
+	hidden = yes
+	is_triggered_only = yes
+	immediate = { mdcw_gw_complete_agreement_25000 = yes }
+}
+
+country_event = {
+	id = mdcw_guest_workers.12
+	hidden = yes
+	is_triggered_only = yes
+	immediate = { mdcw_gw_complete_agreement_50000 = yes }
+}
+
+country_event = {
+	id = mdcw_guest_workers.13
+	hidden = yes
+	is_triggered_only = yes
+	immediate = { mdcw_gw_complete_agreement_100000 = yes }
+}
+
+country_event = {
+	id = mdcw_guest_workers.20
+	hidden = yes
+	is_triggered_only = yes
+	immediate = {
+		if = {
+			limit = { mdcw_gw_pair_pending = yes }
+			mdcw_gw_refund_request = yes
+			country_event = { id = mdcw_guest_workers.31 }
+		}
+	}
+}
+
+country_event = {
+	id = mdcw_guest_workers.30
+	title = mdcw_guest_workers.30.t
+	desc = mdcw_guest_workers.30.d
+	picture = GFX_mdcw_guest_workers_arrival
+	is_triggered_only = yes
+	# Close before the 60-day receiving cooldown can allow another receipt
+	# to replace this country's measured transfer values.
+	timeout_days = 13
+	option = {
+		name = mdcw_guest_workers.30.a
+		custom_effect_tooltip = mdcw_gw_arrival_applied_tt
+		custom_effect_tooltip = mdcw_gw_arrival_observed_tt
+		effect_tooltip = {
+			# Display only: population was already transferred in the acceptance callback.
+			# Native effect previews do not execute the temporary arithmetic previously used here.
+			if = {
+				limit = { check_variable = { mdcw_gw_last_source_count = 2 } }
+				event_target:mdcw_gw_origin_state = { add_manpower = -50000 }
+				event_target:mdcw_gw_origin_state_2 = { add_manpower = -50000 }
+				event_target:mdcw_gw_destination_state = { add_manpower = 100000 }
+			}
+			else_if = {
+				limit = { check_variable = { mdcw_gw_last_arrival_k = 50 } }
+				event_target:mdcw_gw_origin_state = { add_manpower = -50000 }
+				event_target:mdcw_gw_destination_state = { add_manpower = 50000 }
+			}
+			else = {
+				event_target:mdcw_gw_origin_state = { add_manpower = -25000 }
+				event_target:mdcw_gw_destination_state = { add_manpower = 25000 }
+			}
+			add_stability = gw_last_stability_loss
+			add_timed_idea = { idea = mdcw_gw_immigration_backlash days = 180 }
+		}
+		custom_effect_tooltip = mdcw_gw_resident_status_tt
+	}
+}
+
+country_event = {
+	id = mdcw_guest_workers.31
+	title = mdcw_guest_workers.31.t
+	desc = mdcw_guest_workers.31.d
+	picture = GFX_mdcw_guest_workers_arrival
+	is_triggered_only = yes
+	option = { name = mdcw_guest_workers.31.a }
+}
+
+country_event = {
+	id = mdcw_guest_workers.32
+	title = mdcw_guest_workers.32.t
+	desc = mdcw_guest_workers.32.d
+	picture = GFX_mdcw_guest_workers_arrival
+	is_triggered_only = yes
+	option = { name = mdcw_guest_workers.32.a }
+}
+
+country_event = {
+	id = mdcw_guest_workers.90
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+		has_country_flag = { flag = mdcw_gw_request_pending days > 16 }
+	}
+	immediate = {
+		mdcw_gw_refund_request = yes
+		country_event = { id = mdcw_guest_workers.32 }
+	}
+}
+
+country_event = {
+	id = mdcw_guest_workers.91
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+		has_country_flag = { flag = mdcw_gw_offer_pending days > 16 }
+	}
+	immediate = {
+		if = {
+			limit = {
+				var:mdcw_gw_partner = {
+					exists = yes
+					has_country_flag = mdcw_gw_request_pending
+					var:mdcw_gw_partner = { tag = ROOT }
+				}
+			}
+			var:mdcw_gw_partner = {
+				country_event = { id = mdcw_guest_workers.92 }
+			}
+		}
+		else = { mdcw_gw_clear_pending = yes }
+	}
+}
+
+country_event = {
+	id = mdcw_guest_workers.92
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+		has_country_flag = { flag = mdcw_gw_request_pending days > 16 }
+		mdcw_gw_pair_pending = yes
+	}
+	immediate = {
+		mdcw_gw_refund_request = yes
+		country_event = { id = mdcw_guest_workers.32 }
+	}
+}

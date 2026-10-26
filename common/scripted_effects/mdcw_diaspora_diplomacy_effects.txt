@@ -1,0 +1,225 @@
+# IMPERIA CW — Cold War: Guest-worker and diaspora mechanics.
+# Country-level outreach and legacy bookkeeping. These run only from explicit
+# decisions/events, not daily pairwise country scans.
+
+# ROOT sends, FROM hosts (native targeted decision convention).
+mdcw_gw_start_outreach = {
+	if = {
+		limit = {
+			NOT = { check_variable = { treasury < 0.5 } }
+			FROM = { mdcw_gw_outreach_target_valid = yes }
+		}
+		subtract_from_variable = { treasury = 0.5 }
+		FROM = {
+			set_temp_variable = { gw_lookup_origin = ROOT.id }
+			mdcw_gw_find_origin = yes
+			set_variable = { gw_outreach^gw_index = 1 }
+			add_to_variable = { gw_ui_dirty = 1 }
+			country_event = { id = mdcw_diaspora.80 days = 180 }
+		}
+		ingame_update_setup = yes
+	}
+}
+
+# ROOT hosts, FROM is the original outreach sponsor. No shared/global event target.
+mdcw_gw_finish_outreach = {
+	set_temp_variable = { gw_lookup_origin = FROM.id }
+	mdcw_gw_find_origin = yes
+	if = {
+		limit = { check_variable = { gw_index > -1 } }
+		set_variable = { gw_outreach^gw_index = 0 }
+		add_to_variable = { gw_ui_dirty = 1 }
+	}
+}
+
+# An old save has no reliable historical origins. Explicitly identify up to 100k
+# residents per action; this never creates POP, remittances, cash or PP rewards.
+mdcw_gw_register_legacy_origin = {
+	mdcw_gw_ledger_initialize = yes
+	if = {
+		limit = {
+			check_variable = { gw_unrecorded_k > 0 }
+			NOT = { has_country_flag = gw_project_active }
+			NOT = { has_country_flag = gw_return_active }
+			FROM = { exists = yes NOT = { tag = ROOT } }
+		}
+		set_temp_variable = { gw_legacy_amount = gw_unrecorded_k }
+		clamp_temp_variable = { var = gw_legacy_amount min = 0 max = 100 }
+		set_temp_variable = { gw_lookup_origin = FROM.id }
+		mdcw_gw_ensure_origin = yes
+		add_to_variable = { gw_stock^gw_index = gw_legacy_amount }
+		subtract_from_variable = { gw_unrecorded_k = gw_legacy_amount }
+		FROM = {
+			add_to_variable = { gw_abroad_k = ROOT.gw_legacy_amount }
+			if = { limit = { NOT = { is_in_array = { gw_hosts = ROOT.id } } } add_to_array = { gw_hosts = ROOT.id } }
+		}
+		mdcw_gw_recount_ledger = yes
+		ingame_update_setup = yes
+	}
+}
+
+# Full annexation transfers a national register to the annexing country. The
+# country-level model intentionally does not assign groups to individual states.
+# ROOT annexes FROM. Return-to-origin entries cease to be foreign residents.
+mdcw_gw_absorb_annexed_ledger = {
+	mdcw_gw_ledger_initialize = yes
+	FROM = {
+		if = {
+			limit = { has_country_flag = mdcw_gw_ledger_ready }
+			for_each_loop = {
+				array = gw_origins index = gw_annex_i value = gw_annex_origin
+				if = {
+					limit = { check_variable = { gw_stock^gw_annex_i > 0 } }
+					set_variable = { gw_annex_stock = gw_stock^gw_annex_i }
+					# IMPERIA CW — Cold War: Contracts with the former host end on annexation.
+					var:gw_annex_origin = { mdcw_dp_cancel_annexed_host = yes }
+					set_variable = { gw_annex_registered = gw_registered^gw_annex_i }
+					set_variable = { gw_annex_housed = gw_housed^gw_annex_i }
+					set_variable = { gw_annex_protected = gw_protected^gw_annex_i }
+					ROOT = {
+						if = {
+							limit = { check_variable = { PREV.gw_annex_origin = THIS.id } }
+							set_temp_variable = { gw_annex_abroad_before = gw_abroad_k }
+							subtract_from_variable = { gw_abroad_k = PREV.gw_annex_stock }
+							subtract_from_variable = { mdcw_gw_net_emigration_k = PREV.gw_annex_stock }
+							clamp_variable = { var = gw_abroad_k min = 0 }
+							if = {
+								limit = { check_variable = { gw_annex_abroad_before > 0 } }
+								set_temp_variable = { gw_annex_retained_share = gw_abroad_k }
+								divide_temp_variable = { gw_annex_retained_share = gw_annex_abroad_before }
+								multiply_variable = { mdcw_gw_remittance_pool_m = gw_annex_retained_share }
+								# IMPERIA CW — Cold War: Funded homecoming coverage follows actual citizens abroad.
+								multiply_variable = { gw_dp_homecoming_covered = gw_annex_retained_share }
+							}
+						}
+						else = {
+							set_temp_variable = { gw_lookup_origin = PREV.gw_annex_origin }
+							mdcw_gw_ensure_origin = yes
+							add_to_variable = { gw_stock^gw_index = PREV.gw_annex_stock }
+							add_to_variable = { gw_registered^gw_index = PREV.gw_annex_registered }
+							add_to_variable = { gw_housed^gw_index = PREV.gw_annex_housed }
+							add_to_variable = { gw_protected^gw_index = PREV.gw_annex_protected }
+							set_temp_variable = { gw_annex_incoming_k = PREV.gw_annex_stock }
+							mdcw_gw_account_annexed_residents = yes
+							var:gw_lookup_origin = { if = { limit = { NOT = { is_in_array = { gw_hosts = ROOT.id } } } add_to_array = { gw_hosts = ROOT.id } } }
+						}
+					}
+				}
+			}
+			ROOT = {
+				add_to_variable = { gw_unrecorded_k = PREV.gw_unrecorded_k }
+				set_temp_variable = { gw_annex_incoming_k = PREV.gw_unrecorded_k }
+				mdcw_gw_account_annexed_residents = yes
+			}
+			clear_array = gw_origins
+			clear_array = gw_stock
+			clear_array = gw_registered
+			clear_array = gw_housed
+			clear_array = gw_protected
+			clear_array = gw_outreach
+			# IMPERIA CW — Cold War: Discard old host-year bookkeeping before any future revival.
+			clear_array = gw_return_basis clear_array = gw_return_sum clear_array = gw_return_credit
+			clear_array = gw_return_rate clear_array = gw_return_last
+			clr_country_flag = gw_migration_ready clr_country_flag = gw_migration_arrays_ready
+			mdcw_dp_clear_slot_1 = yes mdcw_dp_clear_slot_2 = yes
+			set_variable = { gw_unrecorded_k = 0 }
+			set_variable = { mdcw_gw_guest_workers_k = 0 }
+			clr_country_flag = gw_project_active
+			clr_country_flag = gw_return_active
+			mdcw_gw_recount_ledger = yes
+		}
+	}
+	mdcw_gw_recount_ledger = yes
+	ingame_update_setup = yes
+}
+
+# The same net-import/remittance rule as recruitment, without creating rewards.
+mdcw_gw_account_annexed_residents = {
+	if = {
+		limit = { check_variable = { gw_annex_incoming_k > 0 } }
+		set_temp_variable = { gw_annex_positive_before = mdcw_gw_net_emigration_k }
+		clamp_temp_variable = { var = gw_annex_positive_before min = 0 }
+		subtract_from_variable = { mdcw_gw_net_emigration_k = gw_annex_incoming_k }
+		if = {
+			limit = { check_variable = { gw_annex_positive_before > 0 } }
+			set_temp_variable = { gw_annex_income_fraction = mdcw_gw_net_emigration_k }
+			clamp_temp_variable = { var = gw_annex_income_fraction min = 0 }
+			divide_temp_variable = { gw_annex_income_fraction = gw_annex_positive_before }
+			multiply_variable = { mdcw_gw_remittance_pool_m = gw_annex_income_fraction }
+		}
+		else = { set_variable = { mdcw_gw_remittance_pool_m = 0 } }
+	}
+}
+
+mdcw_gw_quarterly_review = {
+ # IMPERIA CW — Cold War: Upgrade an existing save before consuming its old scheduled review.
+ if = { limit = { NOT = { has_country_flag = gw_migration_ready } } mdcw_dp_start_reviews = yes }
+ clr_country_flag = gw_quarterly_scheduled
+ # IMPERIA CW — Cold War: Reuse this existing scheduler for four annual-rate samples.
+ mdcw_dp_migration_review = yes
+ if = {
+  limit = { check_variable = { mdcw_gw_guest_workers_k > 0 } }
+  set_country_flag = gw_quarterly_scheduled
+  if = { limit = { check_variable = { gw_migration_quarter = 3 } } country_event = { id = mdcw_diaspora.60 days = 92 } }
+  else = { country_event = { id = mdcw_diaspora.60 days = 91 } }
+  if = {
+   limit = {
+    NOT = { has_country_flag = gw_incident_cooldown }
+    NOT = { has_country_flag = gw_incident_open }
+    check_variable = { gw_known_k > 0 }
+   }
+   random_list = {
+    80 = { }
+    10 = {
+     modifier = { factor = 0.9 check_variable = { gw_protection_share > 0.249 } }
+     modifier = { factor = 0.8 check_variable = { gw_protection_share > 0.499 } }
+     modifier = { factor = 0.7 check_variable = { gw_protection_share > 0.749 } }
+     set_country_flag = gw_incident_open
+     set_country_flag = { flag = gw_incident_cooldown days = 365 }
+     country_event = { id = mdcw_diaspora.61 }
+    }
+    10 = {
+     modifier = { factor = 1.5 check_variable = { gw_population_share > 0.00999 } }
+     modifier = { factor = 2 check_variable = { gw_population_share > 0.04999 } }
+     modifier = { factor = 0.7 check_variable = { gw_protection_share > 0.499 } }
+     set_country_flag = gw_incident_open
+     set_country_flag = { flag = gw_incident_cooldown days = 365 }
+     # Snapshot the response bill; later arrivals do not rewrite an open offer.
+     set_variable = { gw_campaign_response_cash = mdcw_gw_guest_workers_k }
+     divide_variable = { gw_campaign_response_cash = 100 }
+     multiply_variable = { gw_campaign_response_cash = 0.1 }
+     clamp_variable = { var = gw_campaign_response_cash min = 0.1 max = 5 }
+     country_event = { id = mdcw_diaspora.63 }
+    }
+   }
+  }
+ }
+}
+
+# ROOT = origin, FROM = host. Read a real bilateral community, without rewriting
+# the host's currently selected UI row or awarding influence/population.
+mdcw_gw_inspect_overseas_community = {
+	set_variable = { gw_inspected_host = FROM.id }
+	set_variable = { gw_inspected_stock = 0 }
+	set_variable = { gw_inspected_registered = 0 }
+	set_variable = { gw_inspected_housed = 0 }
+	set_variable = { gw_inspected_protected = 0 }
+	FROM = {
+		set_temp_variable = { gw_lookup_origin = ROOT.id }
+		mdcw_gw_find_origin = yes
+		if = {
+			limit = { check_variable = { gw_index > -1 } }
+			set_variable = { gw_inspection_stock = gw_stock^gw_index }
+			set_variable = { gw_inspection_registered = gw_registered^gw_index }
+			set_variable = { gw_inspection_housed = gw_housed^gw_index }
+			set_variable = { gw_inspection_protected = gw_protected^gw_index }
+			ROOT = {
+				set_variable = { gw_inspected_stock = PREV.gw_inspection_stock }
+				set_variable = { gw_inspected_registered = PREV.gw_inspection_registered }
+				set_variable = { gw_inspected_housed = PREV.gw_inspection_housed }
+				set_variable = { gw_inspected_protected = PREV.gw_inspection_protected }
+			}
+		}
+	}
+	country_event = { id = mdcw_diaspora.85 }
+}

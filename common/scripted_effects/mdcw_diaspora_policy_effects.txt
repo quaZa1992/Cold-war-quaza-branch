@@ -1,0 +1,257 @@
+# IMPERIA CW — Cold War: Bilateral diaspora programmes and national migration policy.
+# Two country-local programme slots; all prices in MD billions, headcounts in thousands.
+
+mdcw_dp_prepare_selected = {
+ set_variable = { gw_dp_target = gw_ui_host }
+ mdcw_dp_prepare_target = yes
+}
+mdcw_dp_prepare_target = {
+ mdcw_dp_policy_totals = yes
+ set_variable = { gw_dp_stock = 0 }
+ set_variable = { gw_dp_target_free = 0 }
+ if = { limit = { has_variable = gw_dp_target check_variable = { gw_dp_target > -1 } }
+  var:gw_dp_target = { if = { limit = { exists = yes NOT = { tag = ROOT } }
+   set_temp_variable = { gw_lookup_origin = ROOT.id } mdcw_gw_find_origin = yes
+   if = { limit = { check_variable = { gw_index > -1 } }
+    ROOT = { set_variable = { gw_dp_stock = PREV.gw_stock^PREV.gw_index } }
+    if = { limit = { NOT = { has_country_flag = gw_dp_cooldown@ROOT } mdcw_gw_negotiation_free = yes }
+     ROOT = { set_variable = { gw_dp_target_free = 1 } }
+    }
+   }
+  } }
+ }
+ set_variable = { gw_dp_campaign_k = gw_dp_stock }
+ set_temp_variable = { gw_dp_space = 300 }
+ subtract_from_temp_variable = { gw_dp_space = gw_dp_remit_stock_k }
+ clamp_temp_variable = { var = gw_dp_space min = 0 }
+ clamp_variable = { var = gw_dp_campaign_k min = 0 max = gw_dp_space }
+ set_temp_variable = { gw_dp_eligible = mdcw_gw_net_emigration_k }
+ subtract_from_temp_variable = { gw_dp_eligible = gw_dp_remit_stock_k }
+ clamp_temp_variable = { var = gw_dp_eligible min = 0 }
+ clamp_variable = { var = gw_dp_campaign_k min = 0 max = gw_dp_eligible }
+ set_variable = { gw_dp_campaign_cash = gw_dp_campaign_k }
+ divide_variable = { gw_dp_campaign_cash = 200 }
+ set_variable = { gw_dp_trade_k = gw_dp_stock }
+ set_temp_variable = { gw_dp_space = 200 }
+ subtract_from_temp_variable = { gw_dp_space = gw_dp_trade_stock_k }
+ clamp_temp_variable = { var = gw_dp_space min = 0 }
+ clamp_variable = { var = gw_dp_trade_k min = 0 max = gw_dp_space }
+ set_variable = { gw_dp_trade_cash = gw_dp_trade_k } divide_variable = { gw_dp_trade_cash = 100 }
+ set_variable = { gw_dp_trade_preview = gw_dp_trade_k } multiply_variable = { gw_dp_trade_preview = -0.03 } divide_variable = { gw_dp_trade_preview = 100 }
+ set_variable = { gw_dp_skill_k = gw_dp_stock } divide_variable = { gw_dp_skill_k = 10 }
+ clamp_variable = { var = gw_dp_skill_k min = 0 max = 25 }
+ set_variable = { gw_dp_skill_cash = gw_dp_skill_k } divide_variable = { gw_dp_skill_cash = 10 }
+ set_variable = { gw_dp_skill_research = gw_dp_skill_k } multiply_variable = { gw_dp_skill_research = 0.002 }
+ clamp_variable = { var = gw_dp_skill_research min = 0 max = 0.03 }
+ set_variable = { gw_dp_homecoming_cash = gw_abroad_k } divide_variable = { gw_dp_homecoming_cash = 200 }
+ set_variable = { gw_dp_retention_weekly = mdcw_gw_guest_workers_k } divide_variable = { gw_dp_retention_weekly = 4000 }
+ add_to_variable = { gw_ui_dirty = 1 }
+}
+
+# Read-only financial preview, also used by the native weekly-income calculation.
+mdcw_dp_income_preview = {
+ set_variable = { gw_dp_bonus_m = gw_dp_remit_stock_k }
+ set_temp_variable = { gw_dp_positive = mdcw_gw_net_emigration_k }
+ clamp_temp_variable = { var = gw_dp_positive min = 0 }
+ clamp_variable = { var = gw_dp_bonus_m min = 0 max = gw_dp_positive }
+ clamp_variable = { var = gw_dp_bonus_m min = 0 max = 300 }
+ set_temp_variable = { gw_dp_income_space = 3000 }
+ subtract_from_temp_variable = { gw_dp_income_space = mdcw_gw_remittance_pool_m }
+ clamp_temp_variable = { var = gw_dp_income_space min = 0 }
+ clamp_variable = { var = gw_dp_bonus_m min = 0 max = gw_dp_income_space }
+ set_variable = { gw_dp_total_income_m = mdcw_gw_remittance_pool_m }
+ add_to_variable = { gw_dp_total_income_m = gw_dp_bonus_m }
+ clamp_variable = { var = gw_dp_total_income_m min = 0 max = 3000 }
+}
+
+# Acceptance tooltips report the real change in combined income, including an
+# existing savings campaign displaced by new base remittances at the shared cap.
+# Input: gw_dp_offer_people_k and the already computed base-income increment.
+mdcw_dp_preview_export_income = {
+ set_temp_variable = { gw_dp_old_bonus = gw_dp_remit_stock_k }
+ set_temp_variable = { gw_dp_old_net = mdcw_gw_net_emigration_k }
+ clamp_temp_variable = { var = gw_dp_old_net min = 0 }
+ clamp_temp_variable = { var = gw_dp_old_bonus min = 0 max = gw_dp_old_net }
+ clamp_temp_variable = { var = gw_dp_old_bonus min = 0 max = 300 }
+ set_temp_variable = { gw_dp_space = 3000 }
+ subtract_from_temp_variable = { gw_dp_space = mdcw_gw_remittance_pool_m }
+ clamp_temp_variable = { var = gw_dp_space min = 0 }
+ clamp_temp_variable = { var = gw_dp_old_bonus min = 0 max = gw_dp_space }
+ set_temp_variable = { gw_dp_old_total = mdcw_gw_remittance_pool_m }
+ add_to_temp_variable = { gw_dp_old_total = gw_dp_old_bonus }
+ set_temp_variable = { gw_dp_new_base = mdcw_gw_remittance_pool_m }
+ add_to_temp_variable = { gw_dp_new_base = mdcw_gw_offer_remittance_m }
+ set_temp_variable = { gw_dp_new_net = mdcw_gw_net_emigration_k }
+ add_to_temp_variable = { gw_dp_new_net = gw_dp_offer_people_k }
+ clamp_temp_variable = { var = gw_dp_new_net min = 0 }
+ set_temp_variable = { gw_dp_new_bonus = gw_dp_remit_stock_k }
+ clamp_temp_variable = { var = gw_dp_new_bonus min = 0 max = gw_dp_new_net }
+ clamp_temp_variable = { var = gw_dp_new_bonus min = 0 max = 300 }
+ set_temp_variable = { gw_dp_space = 3000 }
+ subtract_from_temp_variable = { gw_dp_space = gw_dp_new_base }
+ clamp_temp_variable = { var = gw_dp_space min = 0 }
+ clamp_temp_variable = { var = gw_dp_new_bonus min = 0 max = gw_dp_space }
+ set_temp_variable = { mdcw_gw_offer_remittance_m = gw_dp_new_base }
+ add_to_temp_variable = { mdcw_gw_offer_remittance_m = gw_dp_new_bonus }
+ subtract_from_temp_variable = { mdcw_gw_offer_remittance_m = gw_dp_old_total }
+}
+
+# The three private-policy funding dialogs freeze their host, quantity and bill.
+mdcw_dp_open_remittance = {
+ mdcw_dp_prepare_selected = yes
+ if = { limit = { mdcw_dp_can_remittance = yes NOT = { has_country_flag = gw_dialog_window } }
+  set_variable = { gw_dp_confirm_kind = 1 }
+  set_variable = { gw_dp_confirm_host = gw_dp_target }
+  set_variable = { gw_dp_confirm_k = gw_dp_campaign_k }
+  set_variable = { gw_dp_confirm_cash = gw_dp_campaign_cash }
+  set_country_flag = gw_dialog_window set_country_flag = { flag = gw_dialog_valid days = 13 }
+  add_to_variable = { gw_ui_dirty = 1 }
+  country_event = { id = mdcw_dp.20 }
+ }
+}
+mdcw_dp_open_retention = {
+ if = { limit = { mdcw_dp_can_retention = yes NOT = { has_country_flag = gw_dialog_window } }
+  set_variable = { gw_dp_confirm_kind = 4 }
+  set_country_flag = gw_dialog_window set_country_flag = { flag = gw_dialog_valid days = 13 }
+  add_to_variable = { gw_ui_dirty = 1 }
+  country_event = { id = mdcw_dp.21 }
+ }
+}
+mdcw_dp_open_homecoming = {
+ mdcw_dp_prepare_selected = yes
+ if = { limit = { mdcw_dp_can_homecoming = yes NOT = { has_country_flag = gw_dialog_window } }
+  set_variable = { gw_dp_confirm_kind = 5 }
+  set_variable = { gw_dp_confirm_k = gw_abroad_k }
+  set_variable = { gw_dp_confirm_cash = gw_dp_homecoming_cash }
+  set_country_flag = gw_dialog_window set_country_flag = { flag = gw_dialog_valid days = 13 }
+  add_to_variable = { gw_ui_dirty = 1 }
+  country_event = { id = mdcw_dp.22 }
+ }
+}
+mdcw_dp_close_dialog = {
+ clr_country_flag = gw_dialog_window clr_country_flag = gw_dialog_valid
+ add_to_variable = { gw_ui_dirty = 1 }
+}
+mdcw_dp_confirm_remittance = {
+ if = { limit = { has_country_flag = gw_dialog_window has_country_flag = gw_dialog_valid check_variable = { gw_dp_confirm_kind = 1 } }
+  set_variable = { gw_dp_target = gw_dp_confirm_host } mdcw_dp_prepare_target = yes
+  if = { limit = { mdcw_dp_can_remittance = yes NOT = { check_variable = { gw_dp_campaign_k < gw_dp_confirm_k } } NOT = { check_variable = { treasury < gw_dp_confirm_cash } } }
+   add_political_power = -75 subtract_from_variable = { treasury = gw_dp_confirm_cash }
+   set_variable = { gw_dp_new_type = 1 } set_variable = { gw_dp_new_k = gw_dp_confirm_k }
+   mdcw_dp_start_slot = yes
+   var:gw_dp_target = { set_country_flag = { flag = gw_dp_cooldown@ROOT days = 365 } }
+   ingame_update_setup = yes
+  }
+ }
+ mdcw_dp_close_dialog = yes
+}
+mdcw_dp_confirm_retention = {
+ if = { limit = { has_country_flag = gw_dialog_window has_country_flag = gw_dialog_valid check_variable = { gw_dp_confirm_kind = 4 } mdcw_dp_can_retention = yes }
+  add_political_power = -75
+  set_country_flag = gw_dp_retention
+  country_event = { id = mdcw_dp.23 days = 365 }
+  ingame_update_setup = yes
+ }
+ mdcw_dp_close_dialog = yes
+}
+mdcw_dp_confirm_homecoming = {
+ if = { limit = { has_country_flag = gw_dialog_window has_country_flag = gw_dialog_valid check_variable = { gw_dp_confirm_kind = 5 } mdcw_dp_can_homecoming = yes NOT = { check_variable = { treasury < gw_dp_confirm_cash } } }
+  add_political_power = -75 subtract_from_variable = { treasury = gw_dp_confirm_cash }
+  set_country_flag = gw_dp_homecoming
+  set_variable = { gw_dp_homecoming_covered = gw_dp_confirm_k }
+  country_event = { id = mdcw_dp.24 days = 365 }
+  ingame_update_setup = yes
+ }
+ mdcw_dp_close_dialog = yes
+}
+
+# One bilateral offer per participant. All callbacks revalidate the captured pair.
+mdcw_dp_request_trade = {
+ mdcw_dp_prepare_selected = yes
+ if = { limit = { mdcw_dp_can_trade = yes NOT = { has_country_flag = gw_dialog_window } }
+  add_political_power = -50
+  set_variable = { gw_dp_request_kind = 2 } set_variable = { gw_dp_request_pp = 50 }
+  set_variable = { gw_dp_request_k = gw_dp_trade_k } set_variable = { gw_dp_request_cash = gw_dp_trade_cash }
+  mdcw_dp_send_offer = yes
+ }
+}
+mdcw_dp_request_skill = {
+ mdcw_dp_prepare_selected = yes
+ if = { limit = { mdcw_dp_can_skill = yes NOT = { has_country_flag = gw_dialog_window } }
+  add_political_power = -100
+  set_variable = { gw_dp_request_kind = 3 } set_variable = { gw_dp_request_pp = 100 }
+  set_variable = { gw_dp_request_k = gw_dp_skill_k } set_variable = { gw_dp_request_cash = gw_dp_skill_cash }
+  mdcw_dp_send_offer = yes
+ }
+}
+mdcw_dp_send_offer = {
+ set_country_flag = gw_dp_request
+ set_variable = { gw_dp_partner = gw_dp_target }
+ add_to_variable = { gw_ui_dirty = 1 }
+ country_event = { id = mdcw_dp.90 days = 17 }
+ var:gw_dp_partner = {
+  set_country_flag = gw_dp_offer
+  set_country_flag = { flag = gw_dp_offer_window days = 19 }
+  set_variable = { gw_dp_partner = ROOT.id }
+  set_variable = { gw_dp_offer_kind = ROOT.gw_dp_request_kind }
+  set_variable = { gw_dp_offer_cash = ROOT.gw_dp_request_cash }
+  set_variable = { gw_dp_offer_k = ROOT.gw_dp_request_k }
+  set_variable = { gw_dp_offer_compensation = gw_dp_offer_cash } divide_variable = { gw_dp_offer_compensation = 2 }
+  add_to_variable = { gw_ui_dirty = 1 }
+  if = { limit = { check_variable = { gw_dp_offer_kind = 2 } } country_event = { id = mdcw_dp.1 days = 1 } }
+  else = { country_event = { id = mdcw_dp.2 days = 1 } }
+  country_event = { id = mdcw_dp.91 days = 17 }
+ }
+}
+mdcw_dp_clear_pending = {
+ clr_country_flag = gw_dp_request clr_country_flag = gw_dp_offer
+ clear_variable = gw_dp_partner
+ add_to_variable = { gw_ui_dirty = 1 }
+}
+mdcw_dp_close_offer = {
+ if = { limit = { has_country_flag = gw_dp_offer_window }
+  clr_country_flag = gw_dp_offer_window add_to_variable = { gw_ui_dirty = 1 }
+ }
+}
+mdcw_dp_refund_offer = {
+ if = { limit = { has_country_flag = gw_dp_request }
+  add_political_power = gw_dp_request_pp
+  var:gw_dp_partner = {
+   if = { limit = { has_country_flag = gw_dp_offer var:gw_dp_partner = { tag = ROOT } } mdcw_dp_clear_pending = yes }
+  }
+  mdcw_dp_clear_pending = yes
+ }
+}
+mdcw_dp_accept_offer = {
+ if = { limit = { mdcw_dp_pair_pending = yes }
+  set_variable = { gw_dp_target = gw_dp_partner }
+  # Offer's own locks are permitted; no new request can overwrite either party.
+  mdcw_dp_prepare_target = yes
+  if = { limit = {
+   is_ai = no
+   check_variable = { gw_dp_active_count < 2 }
+   NOT = { check_variable = { treasury < gw_dp_request_cash } }
+   OR = {
+    AND = { check_variable = { gw_dp_request_kind = 2 } NOT = { check_variable = { gw_dp_trade_k < gw_dp_request_k } } }
+    AND = { check_variable = { gw_dp_request_kind = 3 } NOT = { has_country_flag = gw_dp_skill_cooldown } NOT = { check_variable = { gw_dp_skill_k < gw_dp_request_k } } }
+   }
+   var:gw_dp_target = { NOT = { has_country_flag = gw_dp_cooldown@ROOT } }
+  }
+   set_variable = { gw_dp_new_type = gw_dp_request_kind }
+   set_variable = { gw_dp_new_k = gw_dp_request_k }
+   if = { limit = { check_variable = { gw_dp_new_type = 2 } }
+    subtract_from_variable = { treasury = gw_dp_request_cash }
+    var:gw_dp_target = { add_to_variable = { treasury = ROOT.gw_dp_request_cash } ingame_update_setup = yes }
+   }
+   else = { set_country_flag = { flag = gw_dp_skill_cooldown days = 730 } }
+   mdcw_dp_start_slot = yes
+   var:gw_dp_target = { set_country_flag = { flag = gw_dp_cooldown@ROOT days = 365 } }
+   var:gw_dp_partner = { mdcw_dp_clear_pending = yes }
+   mdcw_dp_clear_pending = yes
+   ingame_update_setup = yes
+   if = { limit = { check_variable = { gw_dp_new_slot = 1 } } country_event = { id = mdcw_dp.51 } }
+   else = { country_event = { id = mdcw_dp.52 } }
+  }
+  else = { mdcw_dp_refund_offer = yes country_event = { id = mdcw_dp.11 } }
+ }
+}

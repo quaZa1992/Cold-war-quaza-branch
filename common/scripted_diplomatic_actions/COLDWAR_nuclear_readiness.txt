@@ -1,0 +1,363 @@
+# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+scripted_diplomatic_actions = {
+	COLDWAR_nr_warning = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+			ROOT = { COLDWAR_nr_nuclear_power = yes }
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_warning COLDWAR_nr_can_warn_prev = yes }
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_warning COLDWAR_nr_can_warn_prev = yes }
+			}
+		}
+		cost = 50
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		icon = 22
+		send_description = COLDWAR_nr_warning_send
+		receive_description = COLDWAR_nr_warning_receive
+		accept_title = COLDWAR_nr_warning_accept_title
+		accept_description = COLDWAR_nr_warning_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		complete_effect = {
+			ROOT = { COLDWAR_nr_begin_crisis = yes }
+		}
+		ai_desire = { base = -1000 }
+	}
+	COLDWAR_nr_counter = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+			ROOT = {
+				COLDWAR_nr_pair_valid = yes
+				check_variable = { COLDWAR_nr_opponent = PREV.id }
+				NOT = {
+					check_variable = { COLDWAR_nr_initiator = THIS.id }
+				}
+			}
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_nr_tt_counter
+					COLDWAR_nr_is_opponent_prev = yes
+					COLDWAR_nr_nuclear_power = yes
+					check_variable = { COLDWAR_nr_level < 4 }
+					NOT = {
+						check_variable = { COLDWAR_nr_initiator = THIS.id }
+					}
+					NOT = { has_country_flag = COLDWAR_nr_countered }
+				}
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_nr_tt_counter
+					COLDWAR_nr_is_opponent_prev = yes
+					COLDWAR_nr_nuclear_power = yes
+					check_variable = { COLDWAR_nr_level < 4 }
+					NOT = {
+						check_variable = { COLDWAR_nr_initiator = THIS.id }
+					}
+					NOT = { has_country_flag = COLDWAR_nr_countered }
+				}
+			}
+		}
+		cost = 25
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		icon = 22
+		send_description = COLDWAR_nr_counter_send
+		receive_description = COLDWAR_nr_counter_receive
+		accept_title = COLDWAR_nr_counter_accept_title
+		accept_description = COLDWAR_nr_counter_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		complete_effect = {
+			ROOT = { COLDWAR_nr_counter_signal = yes }
+		}
+		ai_desire = { base = -1000 }
+	}
+	COLDWAR_nr_hotline = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+			ROOT = {
+				COLDWAR_nr_is_opponent_prev = yes
+				NOT = { has_country_flag = COLDWAR_nr_hotline }
+			}
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_nr_tt_hotline
+					COLDWAR_nr_can_offer_prev = yes
+					NOT = { has_country_flag = COLDWAR_nr_hotline }
+				}
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_nr_tt_hotline
+					COLDWAR_nr_can_offer_prev = yes
+					NOT = { has_country_flag = COLDWAR_nr_hotline }
+				}
+			}
+		}
+		cost = 15
+		requires_acceptance = yes
+		show_acceptance_on_action_button = yes
+		icon = 22
+		send_description = COLDWAR_nr_hotline_send
+		receive_description = COLDWAR_nr_hotline_receive
+		accept_title = COLDWAR_nr_hotline_accept_title
+		accept_description = COLDWAR_nr_hotline_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		on_sent_effect = {
+			ROOT = { COLDWAR_nr_send_offer_1 = yes }
+		}
+		can_be_accepted = {
+			ROOT = {
+				COLDWAR_nr_pending_prev = yes
+				COLDWAR_nr_offer_intact_prev = yes
+				check_variable = { COLDWAR_nr_offer_kind@PREV = 1 }
+			}
+		}
+		reject_effect = {
+			ROOT = { COLDWAR_nr_reject_offer = yes }
+		}
+		ai_acceptance = {
+			COLDWAR_nr_ai_reason = {
+				base = 50
+				modifier = {
+					add = -100
+					ROOT = { has_war_with = PREV }
+				}
+			}
+		}
+		complete_effect = {
+			ROOT = {
+				set_variable = { COLDWAR_nr_accept_kind = 1 }
+				COLDWAR_nr_finish_offer_1 = yes
+			}
+		}
+		ai_desire = { base = -1000 }
+	}
+	COLDWAR_nr_standdown = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+			ROOT = { COLDWAR_nr_is_opponent_prev = yes has_country_flag = COLDWAR_nr_hotline }
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_standdown_offer COLDWAR_nr_can_offer_prev = yes has_country_flag = COLDWAR_nr_hotline }
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_standdown_offer COLDWAR_nr_can_offer_prev = yes has_country_flag = COLDWAR_nr_hotline }
+			}
+		}
+		cost = 15
+		requires_acceptance = yes
+		show_acceptance_on_action_button = yes
+		icon = 22
+		send_description = COLDWAR_nr_standdown_send
+		receive_description = COLDWAR_nr_standdown_receive
+		accept_title = COLDWAR_nr_standdown_accept_title
+		accept_description = COLDWAR_nr_standdown_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		on_sent_effect = {
+			ROOT = { COLDWAR_nr_send_offer_2 = yes }
+		}
+		can_be_accepted = {
+			ROOT = {
+				COLDWAR_nr_pending_prev = yes
+				COLDWAR_nr_offer_intact_prev = yes
+				check_variable = { COLDWAR_nr_offer_kind@PREV = 2 }
+			}
+		}
+		reject_effect = {
+			ROOT = { COLDWAR_nr_reject_offer = yes }
+		}
+		ai_acceptance = {
+			COLDWAR_nr_ai_reason = {
+				base = 50
+				modifier = {
+					add = -100
+					ROOT = { has_war_with = PREV }
+				}
+			}
+		}
+		complete_effect = {
+			ROOT = {
+				set_variable = { COLDWAR_nr_accept_kind = 2 }
+				COLDWAR_nr_finish_offer_2 = yes
+			}
+		}
+		ai_desire = { base = -1000 }
+	}
+	COLDWAR_nr_withdraw = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+			ROOT = { COLDWAR_nr_can_withdraw_prev = yes }
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_withdraw COLDWAR_nr_can_withdraw_prev = yes }
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_withdraw COLDWAR_nr_can_withdraw_prev = yes }
+			}
+		}
+		cost = 0
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		icon = 22
+		send_description = COLDWAR_nr_withdraw_send
+		receive_description = COLDWAR_nr_withdraw_receive
+		accept_title = COLDWAR_nr_withdraw_accept_title
+		accept_description = COLDWAR_nr_withdraw_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		complete_effect = {
+			ROOT = { COLDWAR_nr_withdraw = yes }
+		}
+		ai_desire = { base = -1000 }
+	}
+	COLDWAR_nr_assess = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_nr_tt_assess
+					PREV = { exists = yes }
+					NOT = {
+						check_variable = { COLDWAR_nr_assess_cd@PREV > global.num_days }
+					}
+				}
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_nr_tt_assess
+					PREV = { exists = yes }
+					NOT = {
+						check_variable = { COLDWAR_nr_assess_cd@PREV > global.num_days }
+					}
+				}
+			}
+		}
+		cost = 10
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		icon = 22
+		send_description = COLDWAR_nr_assess_send
+		receive_description = COLDWAR_nr_assess_receive
+		accept_title = COLDWAR_nr_assess_accept_title
+		accept_description = COLDWAR_nr_assess_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		complete_effect = {
+			ROOT = {
+				set_variable = {
+					COLDWAR_nr_assess_cd@PREV = { value = global.num_days add = 14 }
+				}
+				COLDWAR_nr_assess_prev = yes
+			}
+		}
+		ai_desire = { base = -1000 }
+	}
+	COLDWAR_nr_ultimatum = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+			ROOT = {
+				COLDWAR_nr_is_opponent_prev = yes
+				NOT = { has_war_with = PREV }
+			}
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_ultimatum COLDWAR_nr_can_ultimatum_prev = yes }
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_ultimatum COLDWAR_nr_can_ultimatum_prev = yes }
+			}
+		}
+		cost = 100
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		icon = 22
+		send_description = COLDWAR_nr_ultimatum_send
+		receive_description = COLDWAR_nr_ultimatum_receive
+		accept_title = COLDWAR_nr_ultimatum_accept_title
+		accept_description = COLDWAR_nr_ultimatum_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		complete_effect = {
+			ROOT = { COLDWAR_nr_issue_ultimatum = yes }
+		}
+		ai_desire = { base = -1000 }
+	}
+	COLDWAR_nr_revoke = {
+		allowed = { always = yes }
+		visible = {
+			NOT = { tag = ROOT }
+			ROOT = { is_ai = no COLDWAR_nr_enabled = yes }
+			ROOT = { COLDWAR_nr_can_revoke_prev = yes }
+		}
+		selectable = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_revoke COLDWAR_nr_can_revoke_prev = yes }
+			}
+		}
+		can_be_sent = {
+			ROOT = {
+				custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_revoke COLDWAR_nr_can_revoke_prev = yes }
+			}
+		}
+		cost = 0
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		icon = 22
+		send_description = COLDWAR_nr_revoke_send
+		receive_description = COLDWAR_nr_revoke_receive
+		accept_title = COLDWAR_nr_revoke_accept_title
+		accept_description = COLDWAR_nr_revoke_accept
+		reject_title = COLDWAR_nr_offer_reject_title
+		reject_description = COLDWAR_nr_offer_reject
+		complete_effect = {
+			ROOT = { COLDWAR_nr_revoke_first_use = yes }
+		}
+		ai_desire = { base = -1000 }
+	}
+}

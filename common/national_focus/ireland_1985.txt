@@ -1,0 +1,2047 @@
+# IMPERIA CW — Cold War: Integrated ireland 1985 — national focus tree.
+## Ireland 1985 Focus Tree
+## Static-spirit pass inspired by the Russia 2000 tree structure.
+focus_tree = {
+	id = ireland_1985_focus
+	country = { base = 0 }
+	default = no
+
+	continuous_focus_position = { x = 42 y = 18 }
+	initial_show_position = { x = 20 y = 0 }
+
+	shortcut = {
+		name = IRE_political_tree_shortcut
+		target = IRE_the_28th_dail
+		scroll_wheel_factor = 0.80
+	}
+	shortcut = {
+		name = IRE_economy_tree_shortcut
+		target = IRE_econ_the_debt_mountain
+		scroll_wheel_factor = 0.80
+	}
+	shortcut = {
+		name = IRE_military_tree_shortcut
+		target = IRE_defence_forces_review
+		scroll_wheel_factor = 0.80
+	}
+	shortcut = {
+		name = IRE_foreign_tree_shortcut
+		target = IRE_foreign_policy_review
+		scroll_wheel_factor = 0.80
+	}
+
+	focus = {
+		id = IRE_state_of_the_nation
+		icon = Focus_ireland_map
+		x = 20
+		y = 0
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_state_of_the_nation"
+			IRE_1985_initialize_mechanics = yes
+			add_political_power = 35
+			add_stability = -0.01
+		}
+
+		ai_will_do = {
+			base = 1000
+		}
+	}
+
+	focus = {
+		id = IRE_political_landscape
+		icon = irish_government
+		x = 20
+		y = 1
+		cost = 10
+		prerequisite = { focus = IRE_state_of_the_nation }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_political_landscape"
+			add_political_power = 25
+			add_stability = 0.01
+		}
+
+		ai_will_do = {
+			base = 1000
+		}
+	}
+
+	focus = {
+		id = IRE_the_28th_dail
+		icon = irish_assembly
+		x = 20
+		y = 2
+		cost = 10
+		prerequisite = { focus = IRE_political_landscape }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_the_28th_dail"
+			add_political_power = 20
+			custom_effect_tooltip = IRE_1985_party_branches_tt
+		}
+
+		ai_will_do = {
+			base = 1000
+		}
+	}
+
+	### Workers' Party
+	focus = {
+		id = IRE_wp_a_workers_breakthrough
+		icon = irish_commies
+		x = 0
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_the_28th_dail }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			OR = {
+				emerging_communist_state_are_in_power = yes
+				neutrality_neutral_communism_are_in_power = yes
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_wp_a_workers_breakthrough"
+			set_country_flag = IRE_1985_workers_path
+			add_ideas = IRE_1985_workers_republic_spirit
+			add_political_power = 35
+			add_stability = -0.02
+		}
+	}
+
+	focus = {
+		id = IRE_wp_industrial_democracy
+		icon = irish_assembly
+		x = -1
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_wp_a_workers_breakthrough }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+
+		available = {
+			OR = {
+				emerging_communist_state_are_in_power = yes
+				neutrality_neutral_communism_are_in_power = yes
+			}
+			has_country_flag = IRE_1985_workers_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_wp_industrial_democracy"
+			add_ideas = IRE_1985_workers_democracy_spirit
+			add_stability = 0.02
+			add_political_power = -25
+		}
+	}
+
+	focus = {
+		id = IRE_wp_the_commanding_heights
+		icon = irish_commies
+		x = 1
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_wp_a_workers_breakthrough }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			OR = {
+				emerging_communist_state_are_in_power = yes
+				neutrality_neutral_communism_are_in_power = yes
+			}
+			has_country_flag = IRE_1985_workers_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_wp_the_commanding_heights"
+			add_ideas = IRE_1985_planned_economy_spirit
+			add_stability = -0.03
+			add_political_power = -50
+		}
+	}
+
+	focus = {
+		id = IRE_wp_a_secular_republic
+		icon = irish_referendum
+		x = -1
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_wp_industrial_democracy }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			OR = {
+				emerging_communist_state_are_in_power = yes
+				neutrality_neutral_communism_are_in_power = yes
+			}
+			has_country_flag = IRE_1985_workers_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_wp_a_secular_republic"
+			add_ideas = IRE_1985_secular_republic_spirit
+			add_stability = 0.02
+		}
+	}
+
+	focus = {
+		id = IRE_wp_a_workers_republic
+		icon = celtic_cross
+		x = 0
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_wp_a_secular_republic }
+		prerequisite = { focus = IRE_wp_the_commanding_heights }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			OR = {
+				emerging_communist_state_are_in_power = yes
+				neutrality_neutral_communism_are_in_power = yes
+			}
+			has_country_flag = IRE_1985_workers_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_wp_a_workers_republic"
+			add_ideas = IRE_1985_socialist_republic_spirit
+			add_political_power = 75
+			add_stability = 0.03
+			IRE_1985_clear_starting_government_crises = yes
+		}
+	}
+
+	### Labour
+	focus = {
+		id = IRE_lab_the_spring_tide
+		icon = irish_demcoratic_socialism
+		x = 7
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_the_28th_dail }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			OR = {
+				western_social_democrats_are_in_power = yes
+				neutrality_neutral_social_are_in_power = yes
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_lab_the_spring_tide"
+			set_country_flag = IRE_1985_labour_path
+			add_ideas = IRE_1985_labour_spring_tide_spirit
+			add_political_power = 35
+			add_stability = 0.02
+		}
+	}
+
+	focus = {
+		id = IRE_lab_a_real_welfare_state
+		icon = irish_healthcare
+		x = 6
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_lab_the_spring_tide }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			OR = {
+				western_social_democrats_are_in_power = yes
+				neutrality_neutral_social_are_in_power = yes
+			}
+			has_country_flag = IRE_1985_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_lab_a_real_welfare_state"
+			add_ideas = IRE_1985_welfare_state_spirit
+			add_political_power = -30
+			add_stability = 0.03
+		}
+	}
+
+	focus = {
+		id = IRE_lab_stand_with_the_unions
+		icon = irish_assembly
+		x = 8
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_lab_the_spring_tide }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			OR = {
+				western_social_democrats_are_in_power = yes
+				neutrality_neutral_social_are_in_power = yes
+			}
+			has_country_flag = IRE_1985_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_lab_stand_with_the_unions"
+			add_ideas = IRE_1985_trade_union_compact_spirit
+			add_stability = 0.02
+			add_political_power = 20
+		}
+	}
+
+	focus = {
+		id = IRE_lab_democratic_socialism
+		icon = irish_demcoratic_socialism
+		x = 7
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_lab_a_real_welfare_state }
+		prerequisite = { focus = IRE_lab_stand_with_the_unions }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			OR = {
+				western_social_democrats_are_in_power = yes
+				neutrality_neutral_social_are_in_power = yes
+			}
+			has_country_flag = IRE_1985_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_lab_democratic_socialism"
+			add_ideas = IRE_1985_democratic_socialism_spirit
+			add_political_power = 70
+			add_stability = 0.04
+			IRE_1985_clear_starting_government_crises = yes
+		}
+	}
+
+	### Fine Gael
+	focus = {
+		id = IRE_FG_lab_coalition
+		icon = Fine_Gail
+		x = 14
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_the_28th_dail }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_FG_lab_coalition"
+			set_country_flag = IRE_1985_fine_gael_labour_path
+			add_ideas = IRE_1985_coalition_programme_spirit
+			add_political_power = 45
+			add_stability = 0.025
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				change_relative_party_popularity = yes
+				set_temp_variable = { party_index = 3 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+			}
+		}
+
+		ai_will_do = {
+			base = 1000
+		}
+	}
+
+	focus = {
+		id = IRE_fg_programme_for_government
+		icon = irish_government
+		x = 12
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_FG_lab_coalition }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_fg_programme_for_government"
+			if = {
+				limit = { has_idea = IRE_1985_coalition_programme_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_coalition_programme_spirit
+					add_idea = IRE_1985_programme_for_government_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_programme_for_government_spirit }
+			add_political_power = 35
+			add_stability = 0.015
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_fg_manage_labour_ministers
+		icon = irish_demcoratic_socialism
+		x = 16
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_FG_lab_coalition }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_fg_manage_labour_ministers"
+			add_ideas = IRE_1985_labour_coalition_compromise_spirit
+			add_political_power = 20
+			add_stability = 0.025
+			hidden_effect = {
+				set_temp_variable = { party_index = 3 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_cabinet_collective_responsibility
+		icon = irish_government
+		x = 16
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_fg_programme_for_government }
+		prerequisite = { focus = IRE_fg_manage_labour_ministers }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_cabinet_collective_responsibility"
+			if = {
+				limit = { has_idea = IRE_1985_programme_for_government_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_programme_for_government_spirit
+					add_idea = IRE_1985_cabinet_discipline_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_cabinet_discipline_spirit }
+			add_political_power = 30
+			add_stability = 0.02
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+				set_temp_variable = { party_index = 3 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_constitutional_crusade
+		icon = irish_referendum
+		x = 10
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_fg_programme_for_government }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_constitutional_crusade"
+			add_ideas = IRE_1985_constitutional_crusade_spirit
+			add_stability = -0.01
+			add_political_power = 30
+		}
+	}
+
+	focus = {
+		id = IRE_tallaght_strategy
+		icon = delerlict_property_tax
+		x = 14
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_fg_programme_for_government }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_tallaght_strategy"
+			add_ideas = IRE_1985_tallaght_consensus_spirit
+			add_political_power = 35
+			add_stability = 0.025
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_department_of_finance_orthodoxy
+		icon = delerlict_property_tax
+		x = 14
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_tallaght_strategy }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_department_of_finance_orthodoxy"
+			set_temp_variable = { treasury_change = 15 }
+			modify_treasury_effect = yes
+			add_political_power = 15
+			add_stability = -0.01
+		}
+	}
+
+	focus = {
+		id = IRE_anglo_irish_negotiations
+		icon = downing_street
+		x = 18
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_fg_manage_labour_ministers }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FOREIGN_POLICY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_anglo_irish_negotiations"
+			add_ideas = IRE_1985_anglo_irish_negotiations_spirit
+			add_political_power = 20
+			ENG = { add_opinion_modifier = { target = IRE modifier = IRE_1985_partnership } }
+		}
+	}
+
+	focus = {
+		id = IRE_family_planning_compromise
+		icon = irish_healthcare
+		x = 8
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_constitutional_crusade }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_family_planning_compromise"
+			add_ideas = IRE_1985_family_planning_compromise_spirit
+			set_temp_variable = { treasury_change = -8 }
+			modify_treasury_effect = yes
+			add_stability = 0.025
+			add_political_power = -10
+			hidden_effect = {
+				set_temp_variable = { party_index = 3 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_divorce_referendum
+		icon = irish_referendum
+		x = 10
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_constitutional_crusade }
+		mutually_exclusive = { focus = IRE_defer_the_divorce_question }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_divorce_referendum"
+			add_political_power = -20
+			add_stability = -0.03
+			add_ideas = IRE_1985_divorce_referendum_defeat_spirit
+			set_country_flag = IRE_1985_divorce_referendum_held
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = -0.01 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_defer_the_divorce_question
+		icon = celtic_cross
+		x = 12
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_constitutional_crusade }
+		mutually_exclusive = { focus = IRE_divorce_referendum }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_defer_the_divorce_question"
+			add_ideas = IRE_1985_cautious_constitutionalism_spirit
+			add_stability = 0.03
+			add_political_power = 10
+		}
+	}
+
+	focus = {
+		id = IRE_mary_robinson_moment
+		icon = mary_mcaleese
+		x = 8
+		y = 11
+		cost = 10
+		prerequisite = { focus = IRE_divorce_referendum focus = IRE_defer_the_divorce_question }
+		prerequisite = { focus = IRE_european_social_charter }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_mary_robinson_moment"
+			add_ideas = IRE_1985_presidential_liberalism_spirit
+			add_political_power = 35
+			add_stability = 0.03
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+				set_temp_variable = { party_index = 3 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_budgetary_emergency
+		icon = Focus_delerlict_property_tax
+		x = 14
+		y = 8
+		cost = 10
+		prerequisite = { focus = IRE_department_of_finance_orthodoxy }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_budgetary_emergency"
+			if = {
+				limit = { has_idea = IRE_1985_debt_overhang }
+				swap_ideas = {
+					remove_idea = IRE_1985_debt_overhang
+					add_idea = IRE_1985_debt_overhang_reduced
+				}
+			}
+			add_ideas = IRE_1985_budget_emergency_spirit
+			set_temp_variable = { treasury_change = 25 }
+			modify_treasury_effect = yes
+			add_political_power = -20
+			add_stability = -0.03
+		}
+	}
+
+	focus = {
+		id = IRE_sign_anglo_irish_agreement
+		icon = downing_street
+		x = 18
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_anglo_irish_negotiations }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FOREIGN_POLICY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_sign_anglo_irish_agreement"
+			if = {
+				limit = { has_idea = IRE_1985_troubles_spillover }
+				remove_ideas = IRE_1985_troubles_spillover
+			}
+			if = {
+				limit = { has_idea = IRE_1985_anglo_irish_negotiations_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_anglo_irish_negotiations_spirit
+					add_idea = IRE_1985_anglo_irish_agreement_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_anglo_irish_agreement_spirit }
+			add_political_power = 25
+			add_stability = 0.025
+			ENG = { add_opinion_modifier = { target = IRE modifier = IRE_1985_partnership } }
+		}
+	}
+
+	focus = {
+		id = IRE_social_partnership_opening
+		icon = irish_assembly
+		x = 12
+		y = 8
+		cost = 10
+		prerequisite = { focus = IRE_fg_manage_labour_ministers }
+		prerequisite = { focus = IRE_budgetary_emergency }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_social_partnership_opening"
+			add_ideas = IRE_1985_social_partnership_spirit
+			add_political_power = 20
+			add_stability = 0.02
+		}
+	}
+
+	focus = {
+		id = IRE_public_service_pay_restraint
+		icon = irish_government
+		x = 15
+		y = 9
+		cost = 10
+		prerequisite = { focus = IRE_budgetary_emergency }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_public_service_pay_restraint"
+			add_ideas = IRE_1985_public_service_pay_restraint_spirit
+			set_temp_variable = { treasury_change = 18 }
+			modify_treasury_effect = yes
+			add_political_power = 20
+			add_stability = -0.015
+		}
+	}
+
+	focus = {
+		id = IRE_tax_base_broadening
+		icon = Focus_delerlict_property_tax
+		x = 17
+		y = 9
+		cost = 10
+		prerequisite = { focus = IRE_budgetary_emergency }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_tax_base_broadening"
+			if = {
+				limit = { has_idea = IRE_1985_budget_emergency_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_budget_emergency_spirit
+					add_idea = IRE_1985_tax_base_broadening_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_tax_base_broadening_spirit }
+			set_temp_variable = { treasury_change = 22 }
+			modify_treasury_effect = yes
+			add_political_power = 15
+			add_stability = -0.01
+		}
+	}
+
+	focus = {
+		id = IRE_face_unionist_backlash
+		icon = peace_wall
+		x = 17
+		y = 8
+		cost = 10
+		prerequisite = { focus = IRE_sign_anglo_irish_agreement }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_face_unionist_backlash"
+			add_timed_idea = { idea = IRE_1985_unionist_backlash_spirit days = 365 }
+			add_stability = -0.03
+			add_war_support = 0.03
+			add_political_power = 30
+		}
+	}
+
+	focus = {
+		id = IRE_cross_border_secretariat
+		icon = ireland_north_and_south
+		x = 19
+		y = 8
+		cost = 10
+		prerequisite = { focus = IRE_sign_anglo_irish_agreement }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FOREIGN_POLICY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_cross_border_secretariat"
+			if = {
+				limit = { has_idea = IRE_1985_unionist_backlash_spirit }
+				remove_ideas = IRE_1985_unionist_backlash_spirit
+			}
+			if = {
+				limit = { has_idea = IRE_1985_anglo_irish_agreement_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_anglo_irish_agreement_spirit
+					add_idea = IRE_1985_cross_border_secretariat_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_cross_border_secretariat_spirit }
+			add_stability = 0.03
+			add_political_power = 30
+		}
+	}
+
+	focus = {
+		id = IRE_modernise_garda_special_branch
+		icon = focus_ire_garda
+		x = 19
+		y = 10
+		cost = 10
+		prerequisite = { focus = IRE_face_unionist_backlash }
+		prerequisite = { focus = IRE_cross_border_secretariat }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_modernise_garda_special_branch"
+			add_ideas = IRE_1985_garda_special_branch_spirit
+			set_temp_variable = { treasury_change = -12 }
+			modify_treasury_effect = yes
+			add_command_power = 25
+			add_stability = 0.025
+		}
+	}
+
+	focus = {
+		id = IRE_european_pioneer
+		icon = ireland_arrows
+		x = 22
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_fg_programme_for_government }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FOREIGN_POLICY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_european_pioneer"
+			add_ideas = IRE_1985_european_reformer_spirit
+			add_political_power = 30
+		}
+	}
+
+	focus = {
+		id = IRE_single_european_act
+		icon = ireland_arrows
+		x = 22
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_european_pioneer }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FOREIGN_POLICY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_single_european_act"
+			if = {
+				limit = { has_idea = IRE_1985_european_reformer_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_european_reformer_spirit
+					add_idea = IRE_1985_single_european_act_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_single_european_act_spirit }
+			add_political_power = 25
+		}
+	}
+
+	focus = {
+		id = IRE_structural_funds_strategy
+		icon = Focus_ireland_railroad_1
+		x = 22
+		y = 8
+		cost = 10
+		prerequisite = { focus = IRE_single_european_act }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_structural_funds_strategy"
+			if = {
+				limit = { has_idea = IRE_1985_single_european_act_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_single_european_act_spirit
+					add_idea = IRE_1985_structural_funds_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_structural_funds_spirit }
+			set_temp_variable = { treasury_change = -10 }
+			modify_treasury_effect = yes
+			add_political_power = 20
+			add_stability = 0.015
+		}
+	}
+
+	focus = {
+		id = IRE_expand_regional_technical_colleges
+		icon = irish_roads
+		x = 22
+		y = 9
+		cost = 10
+		prerequisite = { focus = IRE_structural_funds_strategy }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_expand_regional_technical_colleges"
+			set_temp_variable = { treasury_change = -18 }
+			modify_treasury_effect = yes
+			add_offsite_building = { type = offices level = 1 }
+			add_research_slot = 1
+			add_political_power = 10
+		}
+	}
+
+	focus = {
+		id = IRE_fg_programme_for_national_recovery
+		icon = irish_assembly
+		x = 14
+		y = 10
+		cost = 10
+		prerequisite = { focus = IRE_social_partnership_opening }
+		prerequisite = { focus = IRE_public_service_pay_restraint }
+		prerequisite = { focus = IRE_tax_base_broadening }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_fg_programme_for_national_recovery"
+			if = {
+				limit = { has_idea = IRE_1985_debt_overhang_reduced }
+				remove_ideas = IRE_1985_debt_overhang_reduced
+			}
+			if = {
+				limit = { has_idea = IRE_1985_public_service_pay_restraint_spirit }
+				remove_ideas = IRE_1985_public_service_pay_restraint_spirit
+			}
+			if = {
+				limit = { has_idea = IRE_1985_social_partnership_spirit }
+				remove_ideas = IRE_1985_social_partnership_spirit
+			}
+			if = {
+				limit = { has_idea = IRE_1985_budget_emergency_spirit }
+				remove_ideas = IRE_1985_budget_emergency_spirit
+			}
+			if = {
+				limit = { has_idea = IRE_1985_tax_base_broadening_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_tax_base_broadening_spirit
+					add_idea = IRE_1985_programme_for_national_recovery_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_programme_for_national_recovery_spirit }
+			set_temp_variable = { treasury_change = 20 }
+			modify_treasury_effect = yes
+			add_political_power = 45
+			add_stability = 0.04
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_low_corporation_tax_compromise
+		icon = celtic_tiger
+		x = 18
+		y = 11
+		cost = 10
+		prerequisite = { focus = IRE_fg_programme_for_national_recovery }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_low_corporation_tax_compromise"
+			add_ideas = IRE_1985_ida_export_platform_spirit
+			set_temp_variable = { treasury_change = -16 }
+			modify_treasury_effect = yes
+			add_political_power = 20
+			add_stability = 0.01
+		}
+	}
+
+	focus = {
+		id = IRE_prepare_dublin_financial_services
+		icon = celtic_tiger
+		x = 18
+		y = 12
+		cost = 10
+		prerequisite = { focus = IRE_low_corporation_tax_compromise }
+		prerequisite = { focus = IRE_maastricht_question }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_prepare_dublin_financial_services"
+			add_ideas = IRE_1985_ifsc_blueprint_spirit
+			set_temp_variable = { treasury_change = -22 }
+			modify_treasury_effect = yes
+			add_offsite_building = { type = offices level = 1 }
+			add_political_power = 25
+			add_stability = 0.01
+		}
+	}
+
+	focus = {
+		id = IRE_european_social_charter
+		icon = irish_demcoratic_socialism
+		x = 10
+		y = 10
+		cost = 10
+		prerequisite = { focus = IRE_social_partnership_opening }
+		prerequisite = { focus = IRE_single_european_act }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_european_social_charter"
+			add_ideas = IRE_1985_european_social_charter_spirit
+			set_temp_variable = { treasury_change = -10 }
+			modify_treasury_effect = yes
+			add_stability = 0.025
+			add_political_power = 25
+		}
+	}
+
+	focus = {
+		id = IRE_maastricht_question
+		icon = ireland_arrows
+		x = 22
+		y = 10
+		cost = 10
+		prerequisite = { focus = IRE_structural_funds_strategy }
+		prerequisite = { focus = IRE_expand_regional_technical_colleges }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FOREIGN_POLICY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_maastricht_question"
+			if = {
+				limit = { has_idea = IRE_1985_structural_funds_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_structural_funds_spirit
+					add_idea = IRE_1985_maastricht_consensus_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_maastricht_consensus_spirit }
+			add_stability = 0.025
+			add_political_power = 35
+		}
+	}
+
+	focus = {
+		id = IRE_european_monetary_anchor
+		icon = ireland_arrows
+		x = 22
+		y = 11
+		cost = 10
+		prerequisite = { focus = IRE_maastricht_question }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_european_monetary_anchor"
+			if = {
+				limit = { has_idea = IRE_1985_maastricht_consensus_spirit }
+				swap_ideas = {
+					remove_idea = IRE_1985_maastricht_consensus_spirit
+					add_idea = IRE_1985_european_monetary_anchor_spirit
+				}
+			}
+			else = { add_ideas = IRE_1985_european_monetary_anchor_spirit }
+			add_political_power = 25
+			add_stability = 0.02
+		}
+	}
+
+	focus = {
+		id = IRE_keep_the_coalition_together
+		icon = Fine_Gail
+		x = 12
+		y = 11
+		cost = 10
+		prerequisite = { focus = IRE_fg_programme_for_national_recovery }
+		mutually_exclusive = { focus = IRE_call_the_1987_election }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_keep_the_coalition_together"
+			add_ideas = IRE_1985_coalition_survives_spirit
+			add_political_power = 60
+			add_stability = 0.045
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				change_relative_party_popularity = yes
+				set_temp_variable = { party_index = 3 }
+				set_temp_variable = { party_popularity_increase = 0.01 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_call_the_1987_election
+		icon = irish_assembly
+		x = 16
+		y = 11
+		cost = 10
+		prerequisite = { focus = IRE_fg_programme_for_national_recovery }
+		mutually_exclusive = { focus = IRE_keep_the_coalition_together }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_call_the_1987_election"
+			add_ideas = IRE_1985_1987_election_prepared_spirit
+			add_political_power = 90
+			add_stability = -0.015
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.03 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_brutons_modernisers
+		icon = Focus_ireland_hands_of_bruton_1
+		x = 16
+		y = 12
+		cost = 10
+		prerequisite = { focus = IRE_call_the_1987_election }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_brutons_modernisers"
+			add_ideas = IRE_1985_bruton_modernisers_spirit
+			add_political_power = 45
+			create_country_leader = {
+				name = "John Bruton"
+				picture = "gfx/leaders/IRE/IRE_john_bruton.dds"
+				expire = "2002.1.1"
+				ideology = Neutral_conservatism
+				traits = { }
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_the_1992_rainbow_formula
+		icon = mary_mcaleese
+		x = 12
+		y = 13
+		cost = 10
+		prerequisite = { focus = IRE_keep_the_coalition_together focus = IRE_brutons_modernisers }
+		prerequisite = { focus = IRE_european_social_charter }
+		prerequisite = { focus = IRE_mary_robinson_moment }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_the_1992_rainbow_formula"
+			add_ideas = IRE_1985_rainbow_formula_spirit
+			add_political_power = 70
+			add_stability = 0.04
+			IRE_1985_clear_starting_government_crises = yes
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				change_relative_party_popularity = yes
+				set_temp_variable = { party_index = 3 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	focus = {
+		id = IRE_age_of_fitzgerald
+		icon = Fine_Gail
+		x = 17
+		y = 14
+		cost = 10
+		prerequisite = { focus = IRE_modernise_garda_special_branch }
+		prerequisite = { focus = IRE_european_monetary_anchor }
+		prerequisite = { focus = IRE_prepare_dublin_financial_services }
+		prerequisite = { focus = IRE_the_1992_rainbow_formula }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			neutrality_neutral_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fine_gael_labour_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_age_of_fitzgerald"
+			add_ideas = IRE_1985_1990s_open_republic_spirit
+			add_political_power = 100
+			add_stability = 0.055
+			IRE_1985_clear_starting_government_crises = yes
+			add_to_tech_sharing_group = Major_Non_NATO_Ally_Share
+			hidden_effect = {
+				set_temp_variable = { party_index = 14 }
+				set_temp_variable = { party_popularity_increase = 0.03 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+
+	### Fianna Fail
+	focus = {
+		id = IRE_ff_the_boss_returns
+		icon = Fianna_Fail
+		x = 22
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_the_28th_dail }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			western_conservatism_are_in_power = yes
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_ff_the_boss_returns"
+			set_country_flag = IRE_1985_fianna_fail_path
+			add_ideas = IRE_1985_haughey_machine_spirit
+			add_political_power = 40
+		}
+	}
+
+	focus = {
+		id = IRE_ff_the_haughey_grip
+		icon = Fianna_Fail
+		x = 21
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_ff_the_boss_returns }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			western_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fianna_fail_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_ff_the_haughey_grip"
+			add_ideas = IRE_1985_haughey_grip_spirit
+			add_political_power = 35
+			add_stability = -0.01
+		}
+	}
+
+	focus = {
+		id = IRE_ff_the_great_u_turn
+		icon = delerlict_property_tax
+		x = 23
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_ff_the_boss_returns }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			western_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fianna_fail_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_ff_the_great_u_turn"
+			if = {
+				limit = { has_idea = IRE_1985_debt_overhang }
+				swap_ideas = {
+					remove_idea = IRE_1985_debt_overhang
+					add_idea = IRE_1985_debt_overhang_reduced
+				}
+			}
+			add_political_power = 20
+			add_stability = -0.02
+		}
+	}
+
+	focus = {
+		id = IRE_ff_forge_social_partnership
+		icon = irish_assembly
+		x = 23
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_ff_the_great_u_turn }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			western_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fianna_fail_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_ff_forge_social_partnership"
+			add_ideas = IRE_1985_social_partnership_spirit
+			add_stability = 0.03
+		}
+	}
+
+	focus = {
+		id = IRE_ff_a_modern_republican_party
+		icon = Fianna_Fail
+		x = 22
+		y = 7
+		cost = 10
+		prerequisite = { focus = IRE_ff_the_haughey_grip }
+		prerequisite = { focus = IRE_ff_forge_social_partnership }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			western_conservatism_are_in_power = yes
+			has_country_flag = IRE_1985_fianna_fail_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_ff_a_modern_republican_party"
+			add_ideas = IRE_1985_fianna_fail_recovery_spirit
+			add_political_power = 80
+			add_stability = 0.04
+			IRE_1985_clear_starting_government_crises = yes
+		}
+	}
+
+	### Progressive Democrats
+	focus = {
+		id = IRE_pd_break_the_mould
+		icon = celtic_tiger
+		x = 30
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_the_28th_dail }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_libertarians_are_in_power = yes
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_pd_break_the_mould"
+			set_country_flag = IRE_1985_progressive_democrats_path
+			add_ideas = IRE_1985_break_the_mould_spirit
+			add_political_power = 35
+		}
+	}
+
+	focus = {
+		id = IRE_pd_radical_tax_reform
+		icon = delerlict_property_tax
+		x = 29
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_pd_break_the_mould }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_libertarians_are_in_power = yes
+			has_country_flag = IRE_1985_progressive_democrats_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_pd_radical_tax_reform"
+			add_ideas = IRE_1985_low_tax_economy_spirit
+			add_political_power = -25
+			add_stability = -0.01
+		}
+	}
+
+	focus = {
+		id = IRE_pd_slash_the_deficit
+		icon = Focus_delerlict_property_tax
+		x = 31
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_pd_break_the_mould }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_libertarians_are_in_power = yes
+			has_country_flag = IRE_1985_progressive_democrats_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_pd_slash_the_deficit"
+			if = {
+				limit = { has_idea = IRE_1985_debt_overhang }
+				swap_ideas = {
+					remove_idea = IRE_1985_debt_overhang
+					add_idea = IRE_1985_debt_overhang_reduced
+				}
+			}
+			add_stability = -0.03
+			add_political_power = -30
+		}
+	}
+
+	focus = {
+		id = IRE_pd_the_enterprise_economy
+		icon = celtic_tiger
+		x = 30
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_pd_radical_tax_reform }
+		prerequisite = { focus = IRE_pd_slash_the_deficit }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ECONOMY }
+
+		available = {
+			neutrality_neutral_libertarians_are_in_power = yes
+			has_country_flag = IRE_1985_progressive_democrats_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_pd_the_enterprise_economy"
+			add_ideas = IRE_1985_enterprise_economy_spirit
+			add_political_power = 60
+			IRE_1985_clear_starting_government_crises = yes
+		}
+	}
+
+	### Sinn Fein
+	focus = {
+		id = IRE_sf_ballot_and_armalite
+		icon = redSF
+		x = 38
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_the_28th_dail }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			nationalist_right_wing_populists_are_in_power = yes
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_sf_ballot_and_armalite"
+			set_country_flag = IRE_1985_republican_path
+			add_ideas = IRE_1985_provisional_politics_spirit
+			add_war_support = 0.05
+			add_stability = -0.03
+		}
+	}
+
+	focus = {
+		id = IRE_sf_end_abstentionism
+		icon = redSF
+		x = 37
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_sf_ballot_and_armalite }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			nationalist_right_wing_populists_are_in_power = yes
+			has_country_flag = IRE_1985_republican_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_sf_end_abstentionism"
+			add_ideas = IRE_1985_republican_mobilisation_spirit
+			add_political_power = 35
+		}
+	}
+
+	focus = {
+		id = IRE_sf_eire_nua
+		icon = ireland_north_and_south
+		x = 39
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_sf_ballot_and_armalite }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			nationalist_right_wing_populists_are_in_power = yes
+			has_country_flag = IRE_1985_republican_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_sf_eire_nua"
+			add_ideas = IRE_1985_eire_nua_spirit
+			add_stability = 0.01
+		}
+	}
+
+	focus = {
+		id = IRE_sf_thirty_two_county_republic
+		icon = United_ireland
+		x = 38
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_sf_end_abstentionism }
+		prerequisite = { focus = IRE_sf_eire_nua }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+
+		available = {
+			nationalist_right_wing_populists_are_in_power = yes
+			has_country_flag = IRE_1985_republican_path
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_sf_thirty_two_county_republic"
+			add_ideas = IRE_1985_united_republic_spirit
+			add_political_power = 75
+			add_war_support = 0.08
+			IRE_1985_clear_starting_government_crises = yes
+		}
+	}
+
+	### Economy
+	focus = {
+		id = IRE_econ_the_debt_mountain
+		icon = delerlict_property_tax
+		x = 48
+		y = 2
+		cost = 10
+		prerequisite = { focus = IRE_state_of_the_nation }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_STABILITY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_the_debt_mountain"
+			add_political_power = 20
+			custom_effect_tooltip = IRE_1985_debt_mountain_tt
+		}
+	}
+
+	focus = {
+		id = IRE_econ_spending_review
+		icon = Focus_delerlict_property_tax
+		x = 47
+		y = 3
+		cost = 10
+		prerequisite = { focus = IRE_econ_the_debt_mountain }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_STABILITY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_spending_review"
+			if = {
+				limit = { has_idea = IRE_1985_debt_overhang }
+				swap_ideas = {
+					remove_idea = IRE_1985_debt_overhang
+					add_idea = IRE_1985_debt_overhang_reduced
+				}
+			}
+			add_ideas = IRE_1985_spending_review_spirit
+			add_political_power = -35
+			add_stability = -0.02
+		}
+	}
+
+	focus = {
+		id = IRE_econ_programme_for_national_recovery
+		icon = irish_assembly
+		x = 49
+		y = 3
+		cost = 10
+		prerequisite = { focus = IRE_econ_the_debt_mountain }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_POLITICAL }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_programme_for_national_recovery"
+			add_ideas = IRE_1985_programme_for_national_recovery_spirit
+			add_stability = 0.02
+			add_political_power = 25
+		}
+	}
+
+	focus = {
+		id = IRE_econ_keep_them_home
+		icon = Focus_ireland_map
+		x = 46
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_econ_spending_review }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_keep_them_home"
+			if = {
+				limit = { has_idea = IRE_1985_emigration_pressure }
+				remove_ideas = IRE_1985_emigration_pressure
+			}
+			add_ideas = IRE_1985_jobs_at_home_spirit
+			add_manpower = 25000
+		}
+	}
+
+	focus = {
+		id = IRE_econ_ida_export_platform
+		icon = celtic_tiger
+		x = 48
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_econ_programme_for_national_recovery }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_ida_export_platform"
+			add_ideas = IRE_1985_ida_export_platform_spirit
+			add_political_power = 20
+		}
+	}
+
+	focus = {
+		id = IRE_econ_regional_technical_colleges
+		icon = irish_roads
+		x = 50
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_econ_programme_for_national_recovery }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_regional_technical_colleges"
+			add_ideas = IRE_1985_technological_colleges_spirit
+			add_research_slot = 1
+		}
+	}
+
+	focus = {
+		id = IRE_econ_ifsc_blueprint
+		icon = celtic_tiger
+		x = 49
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_econ_ida_export_platform }
+		prerequisite = { focus = IRE_econ_regional_technical_colleges }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_ifsc_blueprint"
+			add_ideas = IRE_1985_ifsc_blueprint_spirit
+			add_political_power = 30
+		}
+	}
+
+	focus = {
+		id = IRE_econ_celtic_tiger_seed
+		icon = celtic_tiger
+		x = 48
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_econ_keep_them_home }
+		prerequisite = { focus = IRE_econ_ifsc_blueprint }
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_econ_celtic_tiger_seed"
+			remove_ideas = IRE_1985_debt_overhang
+			remove_ideas = IRE_1985_debt_overhang_reduced
+			add_ideas = IRE_1985_celtic_tiger_seed_spirit
+			add_stability = 0.04
+			add_political_power = 60
+		}
+	}
+
+	### Defence Forces
+	focus = {
+		id = IRE_defence_forces_review
+		icon = Irish_Army
+		x = 59
+		y = 2
+		cost = 10
+		prerequisite = { focus = IRE_state_of_the_nation }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_MILITARY_LAWS }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_defence_forces_review"
+			add_ideas = IRE_1985_defence_review_spirit
+			army_experience = 10
+		}
+	}
+
+	focus = {
+		id = IRE_professionalise_the_army
+		icon = Irish_Army_2
+		x = 58
+		y = 3
+		cost = 10
+		prerequisite = { focus = IRE_defence_forces_review }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_MILITARY_LAWS }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_professionalise_the_army"
+			add_ideas = IRE_1985_professional_army_spirit
+			army_experience = 20
+		}
+	}
+
+	focus = {
+		id = IRE_expand_the_naval_service
+		icon = Irish_Naval_Service
+		x = 60
+		y = 3
+		cost = 10
+		prerequisite = { focus = IRE_defence_forces_review }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_NAVY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_expand_the_naval_service"
+			add_ideas = IRE_1985_naval_service_spirit
+			navy_experience = 20
+		}
+	}
+
+	focus = {
+		id = IRE_air_corps_modernisation
+		icon = Irish_Air_Corps
+		x = 62
+		y = 3
+		cost = 10
+		prerequisite = { focus = IRE_defence_forces_review }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_air_corps_modernisation"
+			add_ideas = IRE_1985_air_corps_spirit
+			air_experience = 20
+		}
+	}
+
+	focus = {
+		id = IRE_un_peacekeeping_command
+		icon = Irish_Army
+		x = 59
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_professionalise_the_army }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_FOREIGN_POLICY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_un_peacekeeping_command"
+			add_ideas = IRE_1985_un_peacekeeping_tradition
+			add_war_support = 0.02
+		}
+	}
+
+	focus = {
+		id = IRE_modernise_the_defence_forces
+		icon = defenceline_ireland
+		x = 60
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_un_peacekeeping_command }
+		prerequisite = { focus = IRE_expand_the_naval_service }
+		prerequisite = { focus = IRE_air_corps_modernisation }
+		search_filters = { FOCUS_FILTER_MILITARY FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_modernise_the_defence_forces"
+			if = {
+				limit = { has_idea = IRE_1985_neutral_defence_posture }
+				remove_ideas = IRE_1985_neutral_defence_posture
+			}
+			add_ideas = IRE_1985_modern_defence_forces
+			army_experience = 15
+			navy_experience = 15
+			air_experience = 10
+		}
+	}
+
+	### Foreign policy and NATO
+	focus = {
+		id = IRE_foreign_policy_review
+		icon = Ireland
+		x = 70
+		y = 2
+		cost = 10
+		prerequisite = { focus = IRE_state_of_the_nation }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_DIPLOMACY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_foreign_policy_review"
+			add_political_power = 25
+			USA = { add_opinion_modifier = { target = IRE modifier = IRE_1985_kinship } }
+			ENG = { add_opinion_modifier = { target = IRE modifier = IRE_1985_partnership } }
+		}
+	}
+
+	focus = {
+		id = IRE_deepen_the_eec
+		icon = ireland_arrows
+		x = 69
+		y = 3
+		cost = 10
+		prerequisite = { focus = IRE_foreign_policy_review }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_DIPLOMACY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_deepen_the_eec"
+			add_ideas = IRE_1985_european_reformer_spirit
+			add_political_power = 25
+		}
+	}
+
+	focus = {
+		id = IRE_guard_our_neutrality
+		icon = ireland_map_noglow
+		x = 67
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_deepen_the_eec }
+		mutually_exclusive = { focus = IRE_open_the_nato_question }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_DIPLOMACY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_guard_our_neutrality"
+			add_ideas = IRE_1985_active_neutrality_spirit
+			add_stability = 0.03
+		}
+	}
+
+	focus = {
+		id = IRE_open_the_nato_question
+		icon = NATO_squad_doctrine
+		x = 71
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_deepen_the_eec }
+		mutually_exclusive = { focus = IRE_guard_our_neutrality }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_NATO }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_open_the_nato_question"
+			add_ideas = IRE_1985_western_partner_spirit
+			add_political_power = -35
+			add_stability = -0.02
+			USA = { add_opinion_modifier = { target = IRE modifier = IRE_1985_kinship } }
+		}
+	}
+
+	focus = {
+		id = IRE_partnership_for_peace
+		icon = NATO_squad_doctrine
+		x = 71
+		y = 5
+		cost = 10
+		prerequisite = { focus = IRE_open_the_nato_question }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_NATO FOCUS_FILTER_MILITARY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_partnership_for_peace"
+			add_ideas = IRE_1985_nato_interoperability_spirit
+			add_to_tech_sharing_group = Major_Non_NATO_Ally_Share
+			add_political_power = 20
+		}
+	}
+
+	focus = {
+		id = IRE_request_nato_guarantees
+		icon = NATO_squad_doctrine
+		x = 71
+		y = 6
+		cost = 10
+		prerequisite = { focus = IRE_partnership_for_peace }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_NATO }
+
+		available = {
+			NOT = { has_idea = NATO_member }
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_request_nato_guarantees"
+			NATO_join_via_event = yes
+			add_political_power = -50
+			add_stability = -0.03
+		}
+	}
+
+	focus = {
+		id = IRE_anglo_irish_agreement
+		icon = downing_street
+		x = 75
+		y = 3
+		cost = 10
+		prerequisite = { focus = IRE_foreign_policy_review }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_STABILITY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_anglo_irish_agreement"
+			if = {
+				limit = { has_idea = IRE_1985_troubles_spillover }
+				remove_ideas = IRE_1985_troubles_spillover
+			}
+			add_ideas = IRE_1985_anglo_irish_agreement_spirit
+			ENG = { add_opinion_modifier = { target = IRE modifier = IRE_1985_partnership } }
+			add_stability = 0.02
+		}
+	}
+
+	focus = {
+		id = IRE_shared_island_policy
+		icon = peace_wall
+		x = 74
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_anglo_irish_agreement }
+		mutually_exclusive = { focus = IRE_prepare_a_border_poll }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_STABILITY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_shared_island_policy"
+			add_ideas = IRE_1985_shared_island_spirit
+			add_stability = 0.03
+		}
+	}
+
+	focus = {
+		id = IRE_prepare_a_border_poll
+		icon = United_ireland
+		x = 76
+		y = 4
+		cost = 10
+		prerequisite = { focus = IRE_anglo_irish_agreement }
+		mutually_exclusive = { focus = IRE_shared_island_policy }
+		search_filters = { FOCUS_FILTER_FOREIGN_POLICY FOCUS_FILTER_STABILITY }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus IRE_prepare_a_border_poll"
+			add_ideas = IRE_1985_path_to_unity_spirit
+			add_political_power = 50
+			set_country_flag = IRE_1985_border_poll_path
+		}
+	}
+}

@@ -1,0 +1,283 @@
+# IMPERIA CW — Cold War: historical land — research technologies.
+# COLDWAR | Pre-1965 towed artillery, first ATGM, support weapons and early armour (generic generations; national names come from TAG_ localisation).
+# Layout (absolute positions are the folder gridbox origin plus x/y slots):
+#  infantry_folder      1940 = -10, 1945 = -8, 1950 = -6, 1955 = -4, 1960 = -2, 1965 = 0 (exact MD scale)
+#  armour_folder        1940 = -12, 1943 = -8, 1945 = -4 (Early_APC, with the 1955 tank above and the 1960 APC below), 1965 = 0
+#  nsb_armour_folder    1940 = -8, 1943 = -6, 1945 = -4 (mbt_tech_ops, 1955 chassis beside it), 1965 = -2 (years run along x)
+#  artillery_folder     1940 = -4, 1950/1955 = -2, 1965 = 0
+#  fixed_wing_folder    1940 = -11, 1945 = -8 (early_fighter), 1950 = -6, 1955 = -3, 1965 = 0
+#  bba_aircraft_folder  1945 = -7, 1950 = -4, 1955 = -1 (early_airframe_designs)
+#  naval_folder         1945 = -5 (MD foundations), 1955 = -1, 1965 = 3
+#  civilian_folder      rows relative to the MD civilian gridboxes (y = 840 px): 1940 = -12 ... 1975 = -2, MD 1985 = 2
+#  electronics_folder   machine tool column 32/36, two rows per generation (1940 = 2 ... 1970 = 10)
+technologies = {
+	mdcw_gpmg_support_1957 = {
+		category_non_militia = { soft_attack = 0.025 }
+
+		research_cost = 0.65
+		start_year = 1957
+
+		path = { research_cost_coeff = 1 leads_to_tech = support_weapons }
+		folder = { name = infantry_folder position = { x = 2 y = -2 } }
+
+		categories = {
+			CAT_military
+			CAT_infantry
+			CAT_infantry_weapons
+			CAT_support_weapons
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_tracked_apc_1960_legacy = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_armoured_vehicle_project } }
+		allow_branch = { NOT = { has_dlc = "No Step Back" } }
+
+		enable_equipments = { mdcw_tracked_apc_1960_model }
+
+		research_cost = 0.8
+		start_year = 1960
+
+		path = { research_cost_coeff = 1 leads_to_tech = APC_1 }
+		folder = { name = armour_folder position = { x = 2 y = -4 } }
+
+		categories = {
+			CAT_military
+			CAT_armor
+			CAT_armored_personnel_carriers
+			CAT_armored_fighting_vehicles
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_postwar_medium_tank_1955_legacy = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_armoured_vehicle_project } }
+		allow_branch = { NOT = { has_dlc = "No Step Back" } }
+
+		enable_equipments = { mdcw_postwar_medium_tank_1955_model }
+
+		research_cost = 1.5
+		start_year = 1955
+
+		path = { research_cost_coeff = 1 leads_to_tech = MBT_1 }
+		folder = { name = armour_folder position = { x = -2 y = -4 } }
+
+		categories = {
+			CAT_military
+			CAT_armor
+			CAT_main_battle_tanks
+			CAT_tanks
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_postwar_medium_tank_1955_nsb = {
+		allow = { ROOT = { is_special_project_completed = sp:sp_armoured_vehicle_project } }
+		allow_branch = { has_dlc = "No Step Back" }
+
+		enable_equipments = {
+			medium_tank_chassis_mdcw_1955
+			medium_tank_aa_chassis_mdcw_1955
+			medium_tank_artillery_chassis_mdcw_1955
+			medium_tank_rocket_chassis_mdcw_1955
+			medium_tank_destroyer_chassis_mdcw_1955
+			medium_tank_flame_chassis_mdcw_1955
+			medium_tank_amphibious_chassis_mdcw_1955
+		}
+		enable_equipment_modules = {
+			mdcw_tank_gun_1943
+			tank_base_tank_turret
+			tank_torsion_bar_suspension_medium
+			mdcw_tank_steel_armor_1943
+			mdcw_tank_engine_1943
+			manual_loading
+			mdcw_tank_optical_fire_control_1943
+			mdcw_tank_mixed_ammo_1940
+			afv_machine_gun
+			tank_no_turret
+			tank_torsion_bar_suspension_light
+			afv_alum_armor_gen1
+			mdcw_tank_engine_1940
+			mdcw_tank_optical_fire_control_1940
+			machine_gun_ammo_1
+			afv_troop_capacity
+			mixed_autocannon_ammo_1
+		}
+
+		research_cost = 1.5
+		start_year = 1955
+
+		path = { research_cost_coeff = 1 leads_to_tech = mbt_tech }
+		folder = { name = nsb_armour_folder position = { x = -4 y = 4 } }
+
+		categories = {
+			CAT_military
+			CAT_armor
+			CAT_main_battle_tanks
+			CAT_tanks
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_m101_model_1940_legacy = {
+		allow_branch = { NOT = { has_dlc = "No Step Back" } }
+
+		enable_equipments = { mdcw_m101_model_1940_model }
+
+		research_cost = 0.4
+		start_year = 1940
+
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_m101_service_model_1955_legacy }
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_155mm_m114_option_legacy }
+		folder = { name = artillery_folder position = { x = 0 y = -4 } }
+
+		categories = {
+			CAT_military
+			CAT_heavy_weapons
+			CAT_artillery
+			CAT_towed_artillery
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_m101_model_1940_nsb = {
+		allow_branch = { has_dlc = "No Step Back" }
+
+		enable_equipments = { mdcw_m101_model_1940_model }
+		enable_equipment_modules = {
+			mdcw_howitzer_1940
+			mdcw_artillery_light_ammo_1940
+			mdcw_artillery_medium_ammo_1940
+		}
+
+		research_cost = 0.4
+		start_year = 1940
+
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_m101_service_model_1955_nsb }
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_155mm_m114_option_nsb }
+		folder = { name = artillery_folder position = { x = -4 y = -4 } }
+
+		categories = {
+			CAT_military
+			CAT_heavy_weapons
+			CAT_artillery
+			CAT_towed_artillery
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_m101_service_model_1955_legacy = {
+		allow_branch = { NOT = { has_dlc = "No Step Back" } }
+
+		enable_equipments = { mdcw_m101_service_model_1955_model }
+
+		research_cost = 0.45
+		start_year = 1955
+
+		path = { research_cost_coeff = 1 leads_to_tech = tech_arty_0 }
+		folder = { name = artillery_folder position = { x = 0 y = -2 } }
+
+		categories = {
+			CAT_military
+			CAT_heavy_weapons
+			CAT_artillery
+			CAT_towed_artillery
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_m101_service_model_1955_nsb = {
+		allow_branch = { has_dlc = "No Step Back" }
+
+		enable_equipments = { mdcw_m101_service_model_1955_model }
+		enable_equipment_modules = {
+			mdcw_howitzer_1955
+			mdcw_rocket_launcher_1955
+			mdcw_rocket_rack_1955
+		}
+
+		research_cost = 0.45
+		start_year = 1955
+
+		path = { research_cost_coeff = 1 leads_to_tech = nsb_artillery_1 }
+		folder = { name = artillery_folder position = { x = -4 y = -2 } }
+
+		categories = {
+			CAT_military
+			CAT_heavy_weapons
+			CAT_artillery
+			CAT_towed_artillery
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_155mm_m114_option_legacy = {
+		allow_branch = { NOT = { has_dlc = "No Step Back" } }
+
+		enable_equipments = { mdcw_155mm_m114_option_model }
+
+		research_cost = 0.48
+		start_year = 1942
+
+		path = { research_cost_coeff = 1 leads_to_tech = tech_arty_0 ignore_for_layout = yes }
+		folder = { name = artillery_folder position = { x = 3 y = -3 } }
+
+		categories = {
+			CAT_military
+			CAT_heavy_weapons
+			CAT_artillery
+			CAT_towed_artillery
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_155mm_m114_option_nsb = {
+		allow_branch = { has_dlc = "No Step Back" }
+
+		enable_equipments = { mdcw_155mm_m114_option_model }
+		enable_equipment_modules = { mdcw_artillery_heavy_ammo_1942 }
+
+		research_cost = 0.48
+		start_year = 1942
+
+		path = { research_cost_coeff = 1 leads_to_tech = nsb_artillery_1 ignore_for_layout = yes }
+		folder = { name = artillery_folder position = { x = -1 y = -3 } }
+
+		categories = {
+			CAT_military
+			CAT_heavy_weapons
+			CAT_artillery
+			CAT_towed_artillery
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+
+	mdcw_heavy_at_ss10_1958 = {
+		enable_equipments = { mdcw_heavy_at_ss10_1958_model }
+
+		research_cost = 0.7
+		start_year = 1958
+
+		path = { research_cost_coeff = 1 leads_to_tech = Heavy_Anti_tank_1 }
+		folder = { name = artillery_folder position = { x = 11 y = -2 } }
+
+		categories = {
+			CAT_military
+			CAT_heavy_weapons
+			CAT_anti_tank
+			CAT_heavy_anti_tank
+		}
+
+		ai_will_do = { factor = 1 }
+	}
+}

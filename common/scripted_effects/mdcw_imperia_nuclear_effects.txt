@@ -1,0 +1,302 @@
+# IMPERIA CW — Cold War: imperia nuclear effects — scripted effects.
+imp_tac_nuke_effects ={
+    # Tactical nukes are fired at military targets, which are often not near population centers.
+    # Their purpose isn't to maximize military casualities, and as such shouldn't maximize civilian casualties.
+    # They have a lower yield. 2% of the population in casualties seems fair.
+
+    add_dynamic_modifier = {
+        modifier = nuclear_contamination
+        days = 1095
+    }
+
+    hidden_effect = {
+	
+		# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+		COLDWAR_nr_civilian_protection = yes
+		set_temp_variable = { temp_state_pop = state_population_k }
+		if = {
+			limit = { civilian_shelter > 0 }
+			set_temp_variable = { shelter_levels_effect = building_level@civilian_shelter }
+			multiply_temp_variable = { shelter_levels_effect = -0.10 }
+			set_temp_variable = { shelter_sufficiency = 1 }
+			add_to_temp_variable = { shelter_sufficiency = shelter_levels_effect }
+			multiply_temp_variable = { casualty_rate = shelter_sufficiency }
+		}
+		
+		multiply_temp_variable = { temp_state_pop = casualty_rate }
+		multiply_temp_variable = { temp_state_pop = 250 } #Optimization, gets rid of 996 loop iterations, maximum casualty = 8 Million People per state; If by one reason you need bigger limit then you did something wrong.
+		for_loop_effect = {
+			end = 4
+			add_manpower = temp_state_pop
+		}
+		#multiply_temp_variable = { productivity_damage = missile_interception }
+		# Approved historical1970 floor: min(previous productivity,100), never raise on a hit.
+		set_temp_variable = { mdcw_nuke_productivity_before = productivity_state_var }
+		set_temp_variable = { mdcw_nuke_productivity_floor = mdcw_nuke_productivity_before }
+		clamp_temp_variable = { var = mdcw_nuke_productivity_floor max = 100 }
+		multiply_variable = { productivity_state_var = productivity_damage }
+		clamp_variable = {
+			var = productivity_state_var
+			min = mdcw_nuke_productivity_floor
+			max = mdcw_nuke_productivity_before
+		}
+	
+        #set_temp_variable = { state_pop_t = state_population_k }
+        #divide_temp_variable = { state_pop_t = 100 } # We want ~2% of the population to die. However, integer overflow will kick in, so we do 2x1 instead.
+        #multiply_temp_variable = { state_pop_t = 1000 }
+
+        #set_temp_variable = { casualties_t = 0 }
+        #subtract_from_temp_variable = { casualties_t = state_pop_t }
+
+        #for_loop_effect = {
+        #    end = 3
+        #    add_manpower = casualties_t
+        #}
+
+        save_event_target_as = imp_contam_spreader
+        CONTROLLER = {
+            country_event = { id = imp_nukes.11 days = 5 }
+        }
+
+        # Store this for later use?
+        add_to_variable = { global.total_nukes_explodes = 1 }
+    }
+
+    if = {
+        limit = { NOT = { has_global_flag = imp_first_tact_used has_global_flag = imp_first_nuke_used } }
+        set_variable = { global.state_tact_first = THIS }
+        every_country = {
+            news_event = 
+            {
+                id = imp_nukes.1
+                days = 1
+            }
+
+            news_event = 
+            {
+                id = imp_nukes.3
+                days = 7
+            }
+        }
+        set_global_flag = imp_first_tact_used
+    }
+}
+
+imp_big_nuke_effects = { ## Double tags are for disabled during Nuke Overhaul, Those are handled directly in the raid effects.
+    # These nukes are meant to kill people. So they will. - OLD
+    # 10% base seems fair? - OLD
+
+    add_dynamic_modifier = {
+        modifier = nuclear_devastation
+        days = 1095
+    }
+    if = {
+        limit = { has_dynamic_modifier = { modifier = nuclear_contamination } }
+        remove_dynamic_modifier = { modifier = nuclear_contamination }
+    }
+
+    hidden_effect = {
+	
+		# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+		COLDWAR_nr_civilian_protection = yes
+		set_temp_variable = { temp_state_pop = state_population_k }
+		if = {
+			limit = { civilian_shelter > 0 }
+			set_temp_variable = { shelter_levels_effect = building_level@civilian_shelter }
+			multiply_temp_variable = { shelter_levels_effect = -0.08 }
+			set_temp_variable = { shelter_sufficiency = 1 }
+			add_to_temp_variable = { shelter_sufficiency = shelter_levels_effect }
+			multiply_temp_variable = { casualty_rate = shelter_sufficiency }
+		}
+		## Doesn't Work ATM; All SAM Missile related disabled
+		#set_temp_variable = { sam_missiles_deployed = PREV.num_deployed_planes_with_type@sam_missile_equipment}
+		#clamp_temp_variable = { var = sam_missiles_deployed max = 80 }
+		
+		#if = {
+		#	limit = { NOT = { PREV.has_equipment = { sam_missile_equipment > sam_missiles_deployed } } }
+		#	sam_missiles_deployed = PREV.num_deployed_planes_with_type@sam_missile_equipment
+		#}
+	
+	
+		#if = { 
+		#	limit = { sam_missiles_deployed = 80 }
+		#	imp_nuke_intercept_effects = yes
+		#}
+	
+		
+		#send_equipment = {
+		#	equipment = sam_missile_equipment
+		#	amount = sam_missiles_deployed
+		#	target = EUU
+		#}
+		
+		#set_temp_variable = { missile_interception = sam_missiles_deployed }
+		#multiply_temp_variable = { missile_interception = -0.0125 }
+		#add_to_temp_variable = { missile_interception = 1 }
+		#multiply_temp_variable = { casualty_rate = missile_interception }
+		multiply_temp_variable = { temp_state_pop = casualty_rate }
+		multiply_temp_variable = { temp_state_pop = 50 } #Optimization, gets rid of 980 loop iterations, maximum casualty = 40 Million People per state; If by one reason you need bigger limit then you did something wrong.
+		for_loop_effect = {
+			end = 20
+			add_manpower = temp_state_pop
+		}
+		#multiply_temp_variable = { productivity_damage = missile_interception }
+		# Approved historical1970 floor: min(previous productivity,100), never raise on a hit.
+		set_temp_variable = { mdcw_nuke_productivity_before = productivity_state_var }
+		set_temp_variable = { mdcw_nuke_productivity_floor = mdcw_nuke_productivity_before }
+		clamp_temp_variable = { var = mdcw_nuke_productivity_floor max = 100 }
+		multiply_variable = { productivity_state_var = productivity_damage }
+		clamp_variable = {
+			var = productivity_state_var
+			min = mdcw_nuke_productivity_floor
+			max = mdcw_nuke_productivity_before
+		}
+		
+		
+		
+		## BUILDING EFFECTS
+		
+		# User-approved permanent economic destruction, exactly once per big-Nuke state callback.
+        mdcw_imperia_nuclear_building_loss = yes
+        save_event_target_as = imp_contam_spreader
+        CONTROLLER = {
+            country_event = { id = imp_nukes.10 days = 5 }
+        }
+
+        # Store this for later use?
+        add_to_variable = { global.total_nukes_explodes = 2 }
+    }
+
+    if = {
+        limit = { NOT = { has_global_flag = imp_first_nuke_used } }
+        set_variable = { global.state_nuked_first = THIS }
+        every_country = {
+            news_event = 
+            {
+                id = imp_nukes.2
+                days = 1
+            }
+
+            news_event = 
+            {
+                id = imp_nukes.4
+                days = 7
+            }
+        }
+        set_global_flag = imp_first_nuke_used
+    }
+}
+
+# Exact original permanent building loss. User approved alongside native damage; cumulative1.19runtime measurement pending.
+mdcw_imperia_nuclear_building_loss = {
+set_temp_variable = { building_damages_n = 1 }
+		subtract_from_temp_variable = { building_damages_n = productivity_damage }
+		
+		# Civs
+		
+		set_temp_variable = { nuked_building_t = building_level@industrial_complex }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = industrial_complex level = nuked_building_t }
+		
+		
+		# Mils
+		
+		set_temp_variable = { nuked_building_t = building_level@arms_factory }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = arms_factory level = nuked_building_t }
+		
+		
+		# Office
+		
+		set_temp_variable = { nuked_building_t = building_level@offices }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = offices level = nuked_building_t }
+		
+		
+		# Dockyard
+		
+		set_temp_variable = { nuked_building_t = building_level@dockyard }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = dockyard level = nuked_building_t }
+	
+	
+		# Infrastructure
+		
+		set_temp_variable = { nuked_building_t = building_level@infrastructure }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = infrastructure level = nuked_building_t }
+	
+	
+		# Internet
+		
+		set_temp_variable = { nuked_building_t = building_level@internet_station }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = internet_station level = nuked_building_t }
+	
+	
+		# Airport
+		
+		set_temp_variable = { nuked_building_t = building_level@air_base }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = air_base level = nuked_building_t }
+
+	
+	
+		# Farm
+		
+		set_temp_variable = { nuked_building_t = building_level@agriculture_district }
+		multiply_temp_variable = { nuked_building_t = building_damages_n }
+		round_temp_variable = nuked_building_t
+		
+		remove_building = { type = agriculture_district level = nuked_building_t }
+
+
+
+
+        
+}
+
+imp_nuke_intercept_effects = {
+	if = {
+        limit = { NOT = { has_dynamic_modifier = { modifier = nuclear_devastation } } }
+        add_dynamic_modifier = {
+			modifier = nuclear_contamination
+			days = 365
+		}
+    }
+	add_to_variable = { global.total_nukes_explodes = 1 }
+	
+	if = {
+        limit = { NOT = { has_global_flag = imp_first_nuke_used } }
+        set_variable = { global.state_nuked_first = THIS }
+        every_country = {
+            news_event = 
+            {
+                id = imp_nukes.2
+                days = 1
+            }
+
+            news_event = 
+            {
+                id = imp_nukes.4
+                days = 7
+            }
+        }
+        set_global_flag = imp_first_nuke_used
+    }
+	
+}

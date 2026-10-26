@@ -1,0 +1,91 @@
+{
+  "unit": "MD monetary values in billions; IC for native construction costs; resource units are native production/research requirements.",
+  "starting_production": "Zero raw uranium production in every state; 57 surveyed districts enable paid mine development.",
+  "mine": {
+    "construction_ic": 32000,
+    "extra_ic_per_existing_level": 4000,
+    "international_investment_billion_per_level": 6.0,
+    "base_weekly_infrastructure_billion_per_level": 0.022,
+    "upkeep_adjustment": "Infrastructure cost modifier, common_money_modifier (GDP/c and inflation) and native population-size scaling.",
+    "base_power_gw": 0.25,
+    "working_output": "3–12 raw units/level by deposit; damaged levels produce no additional uranium."
+  },
+  "enrichment": {
+    "construction_ic": 45000,
+    "uranium_required_per_facility": 25,
+    "shortage_output": "Proportional, with zero new fuel output when uranium supply is zero.",
+    "separate_new_cash_upkeep": false,
+    "cash_note": "No additional standalone enrichment-facility operating fee was introduced; existing native reactor upkeep remains in infrastructure spending."
+  },
+  "special_project_resources": {
+    "sp_nuclear_energy": {
+      "file": "common/special_projects/projects/nuclear_projects.txt",
+      "resources": {
+        "uranium": 2
+      }
+    },
+    "sp_thorium_nuclear_fuel": {
+      "file": "common/special_projects/projects/nuclear_projects.txt",
+      "resources": {
+        "uranium": 1,
+        "tungsten": 3,
+        "chromium": 2
+      }
+    },
+    "sp_nuclear_bomb": {
+      "file": "common/special_projects/projects/nuclear_projects.txt",
+      "resources": {
+        "uranium": 4
+      }
+    },
+    "sp_nuclear_warhead_program": {
+      "file": "common/special_projects/projects/nuclear_projects.txt",
+      "resources": {
+        "uranium": 4,
+        "tungsten": 80,
+        "chromium": 80
+      }
+    },
+    "sp_medium_naval_nuclear_engines": {
+      "file": "common/special_projects/projects/naval_projects.txt",
+      "resources": {
+        "uranium": 2
+      }
+    },
+    "sp_nuclear_torpedoes": {
+      "file": "common/special_projects/projects/naval_projects.txt",
+      "resources": {
+        "uranium": 1,
+        "aluminium": 12,
+        "chromium": 4
+      }
+    }
+  },
+  "weapons_research_budgets": {
+    "rates": {
+      "sp:sp_nuclear_bomb": {
+        "base_weekly_billion": 0.15384,
+        "weekly_at_gdpc_36k_inflation_1": 0.15384
+      },
+      "sp:sp_nuclear_warhead_program": {
+        "base_weekly_billion": 0.09615,
+        "weekly_at_gdpc_36k_inflation_1": 0.09615
+      }
+    },
+    "weekly_formula": "weekly_base × clamp(GDP/c_in_thousands / 36, 0.4, 1.2) × inflation_multiplier",
+    "active_condition": "Actual special project being researched; both add if active together; no arsenal-size exemption.",
+    "lifecycle": "Calculated on native economic refresh; completion/cancellation resets the rate, disruption does not waive costs.",
+    "accounting_path": [
+      "COLDWAR_calculate_nuclear_development_budget",
+      "update_military_rate -> defence_gain",
+      "update_display -> display_expense -> treasury_rate",
+      "MD_on_actions on_weekly -> treasury"
+    ],
+    "display": [
+      "Defence Spending breakdown",
+      "Atomic bomb and warhead project descriptions"
+    ],
+    "refresh_safety": "Rate calculation overwrites its result and never directly modifies treasury."
+  },
+  "raid_policy": "50/50 raids block AI in both available and launchable."
+}

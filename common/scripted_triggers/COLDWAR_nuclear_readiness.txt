@@ -1,0 +1,173 @@
+# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+COLDWAR_nr_enabled = { IMP_is_1970_scenario = yes has_dlc = "Gotterdammerung" }
+COLDWAR_nr_nuclear_power = {
+	COLDWAR_nr_enabled = yes
+	has_capitulated = no
+	OR = {
+		has_equipment = { nuclear_missile_equipment > 0 }
+		has_equipment = { nuclear_ballistic_missile_equipment > 0 }
+	}
+}
+COLDWAR_nr_can_change = {
+	custom_trigger_tooltip = { tooltip = COLDWAR_nr_tt_arsenal COLDWAR_nr_nuclear_power = yes }
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_nr_tt_transition
+		check_variable = { COLDWAR_nr_build_days = 0 }
+	}
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_nr_tt_standdown
+		NOT = { has_country_flag = COLDWAR_nr_standdown }
+	}
+	has_political_power > 24
+}
+COLDWAR_nr_pair_valid = {
+	if = {
+		limit = { has_variable = COLDWAR_nr_opponent has_capitulated = no }
+		var:COLDWAR_nr_opponent = {
+			exists = yes
+			has_capitulated = no
+			check_variable = { COLDWAR_nr_opponent = PREV.id }
+			check_variable = { COLDWAR_nr_serial = PREV.COLDWAR_nr_serial }
+		}
+	}
+	else = { always = no }
+}
+COLDWAR_nr_can_warn_prev = {
+	is_ai = no
+	COLDWAR_nr_nuclear_power = yes
+	check_variable = { COLDWAR_nr_level < 4 }
+	check_variable = { COLDWAR_nr_build_days = 0 }
+	NOT = { has_variable = COLDWAR_nr_opponent }
+	NOT = { has_country_flag = COLDWAR_nr_standdown }
+	NOT = {
+		check_variable = { COLDWAR_nr_cooldown@PREV > global.num_days }
+	}
+	PREV = {
+		exists = yes
+		has_capitulated = no
+		is_subject = no
+		NOT = { tag = ROOT }
+		NOT = { is_in_faction_with = ROOT }
+		NOT = { has_variable = COLDWAR_nr_opponent }
+		NOT = {
+			check_variable = { COLDWAR_nr_cooldown@ROOT > global.num_days }
+		}
+	}
+}
+COLDWAR_nr_is_opponent_prev = {
+	COLDWAR_nr_pair_valid = yes
+	check_variable = { COLDWAR_nr_opponent = PREV.id }
+}
+COLDWAR_nr_can_withdraw_prev = {
+	COLDWAR_nr_is_opponent_prev = yes
+	check_variable = { COLDWAR_nr_initiator = THIS.id }
+}
+COLDWAR_nr_pending_prev = {
+	COLDWAR_nr_is_opponent_prev = yes
+	check_variable = { COLDWAR_nr_offer_serial@PREV = COLDWAR_nr_serial }
+	check_variable = { COLDWAR_nr_offer_until@PREV > global.num_days }
+}
+COLDWAR_nr_offer_intact_prev = {
+	check_variable = { COLDWAR_nr_offer_own_use@PREV = COLDWAR_nr_strike_revision }
+	check_variable = { COLDWAR_nr_offer_peer_use@PREV = PREV.COLDWAR_nr_strike_revision }
+}
+COLDWAR_nr_can_offer_prev = {
+	COLDWAR_nr_is_opponent_prev = yes
+	NOT = {
+		check_variable = { COLDWAR_nr_offer_until@PREV > global.num_days }
+	}
+	NOT = {
+		check_variable = { PREV.COLDWAR_nr_offer_until@THIS > global.num_days }
+	}
+	NOT = {
+		check_variable = { COLDWAR_nr_offer_cd@PREV > global.num_days }
+	}
+}
+COLDWAR_nr_retaliation_allowed = {
+	if = {
+		limit = { COLDWAR_nr_enabled = yes }
+		is_in_array = { array = COLDWAR_nr_aggressors value = FROM.id }
+	}
+	else = { has_country_flag = has_been_nuked }
+}
+COLDWAR_nr_tactical_ready = {
+	custom_override_tooltip = {
+		tooltip = COLDWAR_nr_tt_tactical_ready
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			set_temp_variable = {
+				COLDWAR_nr_launch_allocation = {
+					value = num_equipment@nuclear_missile_equipment
+					add = num_equipment@nuclear_ballistic_missile_equipment
+					multiply = COLDWAR_nr_ready_share
+					round = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_tactical_ready
+				COLDWAR_nr_nuclear_power = yes
+				has_country_flag = COLDWAR_nr_initialized
+				check_variable = { COLDWAR_nr_level < 4 }
+				check_variable = { COLDWAR_nr_launch_allocation > 0 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_standdown
+				NOT = { has_country_flag = COLDWAR_nr_standdown }
+			}
+		}
+	}
+}
+COLDWAR_nr_state_ready = {
+	custom_override_tooltip = {
+		tooltip = COLDWAR_nr_tt_state_ready
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			set_temp_variable = {
+				COLDWAR_nr_launch_allocation = {
+					value = num_equipment@nuclear_missile_equipment
+					add = num_equipment@nuclear_ballistic_missile_equipment
+					multiply = COLDWAR_nr_ready_share
+					round = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_state_ready
+				COLDWAR_nr_nuclear_power = yes
+				has_country_flag = COLDWAR_nr_initialized
+				check_variable = { COLDWAR_nr_level < 3 }
+				check_variable = { COLDWAR_nr_launch_allocation > 19 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_standdown
+				NOT = { has_country_flag = COLDWAR_nr_standdown }
+			}
+		}
+	}
+}
+COLDWAR_nr_strategic_ready = {
+	custom_override_tooltip = {
+		tooltip = COLDWAR_nr_tt_strategic_ready
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			set_temp_variable = {
+				COLDWAR_nr_launch_allocation = {
+					value = num_equipment@nuclear_missile_equipment
+					add = num_equipment@nuclear_ballistic_missile_equipment
+					multiply = COLDWAR_nr_ready_share
+					round = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_strategic_ready
+				COLDWAR_nr_nuclear_power = yes
+				has_country_flag = COLDWAR_nr_initialized
+				check_variable = { COLDWAR_nr_level = 1 }
+				check_variable = { COLDWAR_nr_launch_allocation > 199 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_standdown
+				NOT = { has_country_flag = COLDWAR_nr_standdown }
+			}
+		}
+	}
+}

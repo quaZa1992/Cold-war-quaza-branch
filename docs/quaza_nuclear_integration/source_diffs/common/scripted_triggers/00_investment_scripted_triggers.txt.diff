@@ -1,0 +1,114 @@
+@@ -520,8 +520,11 @@
+
+ 	}
+ 	else_if = { limit = { check_variable = { ROOT.project_building_type^-1 = 14 } }
+ 		investments_building_agriculture_district_available = yes
+ 	}
++	else_if = { limit = { check_variable = { ROOT.project_building_type^-1 = 15 } }
++		investments_building_uranium_mine_available = yes
++	}
+ 	else = { always = no }
+ }
+ 
+ # investment_building_slot_available:
+
+@@ -567,8 +570,11 @@
+
+ 		free_building_slots = { building = nuclear_reactor size > 0 include_locked = no }
+ 	}
+ 	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 14 } }
+ 		free_building_slots = { building = agriculture_district size > 0 include_locked = no }
++	}
++	else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 15 } }
++		imp_uranium_investment_one_level_available = yes
+ 	}
+ }
+ 
+ # AI Related STuff
+
+@@ -644,4 +650,84 @@
+
+ 	}
+ 	check_for_investment_project_limits = yes
+ 	ROOT = { NOT = { has_active_mission = bankruptcy_incoming_collapse } }
+ }
++
++# State scope. No parameterized scripted triggers: the engine requires plain yes/no calls.
++imp_uranium_investment_one_level_available = {
++	has_dynamic_modifier = { modifier = imp_uranium_deposit }
++	has_variable = imp_uranium_per_level
++	is_demilitarized_zone = no
++	check_variable = { imp_uranium_mine_slots > building_level@uranium_mine }
++	free_building_slots = { building = uranium_mine size > 0 }
++}
++
++imp_uranium_investment_two_levels_available = {
++	imp_uranium_investment_one_level_available = yes
++	check_variable = { imp_uranium_mine_slots > 1 }
++	free_building_slots = { building = uranium_mine size > 1 }
++	if = { limit = { check_variable = { imp_uranium_mine_slots < 3 } }
++		uranium_mine < 1
++	}
++	else = { uranium_mine < 2 }
++}
++
++imp_uranium_investment_three_levels_available = {
++	imp_uranium_investment_one_level_available = yes
++	check_variable = { imp_uranium_mine_slots > 2 }
++	uranium_mine < 1
++	free_building_slots = { building = uranium_mine size > 2 }
++}
++
++investments_building_uranium_mine_available = {
++	if = { limit = { check_variable = { ROOT.project_build_amount^-1 = 1 } }
++		imp_uranium_investment_one_level_available = yes
++	}
++	else_if = { limit = { check_variable = { ROOT.project_build_amount^-1 = 2 } }
++		imp_uranium_investment_two_levels_available = yes
++	}
++	else_if = { limit = { check_variable = { ROOT.project_build_amount^-1 = 3 } }
++		imp_uranium_investment_three_levels_available = yes
++	}
++	else = { always = no }
++}
++
++# Country scope: THIS is the investor, even if ROOT is the recipient during acceptance.
++imp_uranium_investment_start_allowed = {
++	if = { limit = { check_variable = { project_building_type^-1 = 15 } }
++		any_state = {
++			state = PREV.investments_state_target
++			if = { limit = { check_variable = { PREV.project_build_amount^-1 = 1 } }
++				imp_uranium_investment_one_level_available = yes
++			}
++			else_if = { limit = { check_variable = { PREV.project_build_amount^-1 = 2 } }
++				imp_uranium_investment_two_levels_available = yes
++			}
++			else_if = { limit = { check_variable = { PREV.project_build_amount^-1 = 3 } }
++				imp_uranium_investment_three_levels_available = yes
++			}
++			else = { always = no }
++		}
++	}
++	else = { always = yes }
++}
++
++# Country scope: THIS is the recipient; validate the offer snapshot, not GUI staging.
++imp_uranium_pending_offer_valid = {
++	if = { limit = { check_variable = { pending_offer_type = 15 } }
++		FROM = { check_variable = { active_projects < 15 } }
++		any_state = {
++			state = PREV.pending_offer_state
++			if = { limit = { check_variable = { PREV.pending_offer_amount = 1 } }
++				imp_uranium_investment_one_level_available = yes
++			}
++			else_if = { limit = { check_variable = { PREV.pending_offer_amount = 2 } }
++				imp_uranium_investment_two_levels_available = yes
++			}
++			else_if = { limit = { check_variable = { PREV.pending_offer_amount = 3 } }
++				imp_uranium_investment_three_levels_available = yes
++			}
++			else = { always = no }
++		}
++	}
++	else = { always = yes }
++}

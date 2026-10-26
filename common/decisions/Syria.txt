@@ -1,0 +1,2660 @@
+Syria_decisions = {
+	SYR_al_abbas_brigades = {
+		allowed = { original_tag = SYR }
+		icon = GFX_decision_generic_prepare_civil_war
+		fire_only_once = yes
+
+		visible = {
+			OR = {
+				emerging_autocracy_are_in_power = yes
+				emerging_mod_vilyat_e_faqih_in_power_or_coalition = yes
+				emerging_vilayat_e_faqih_in_power_or_coalition = yes
+			}
+			has_civil_war = yes
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_al_abbas_brigades"
+			if = {
+				limit = { NOT = { has_template = "Mechanized Brigade" } }
+				division_template = {
+					name = "Mechanized Brigade"
+					regiments = {
+						armor_Bat = { x = 0 y = 0 }
+						Mech_Inf_Bat = { x = 1 y = 0 }
+						Mech_Inf_Bat = { x = 1 y = 1 }
+						Mech_Inf_Bat = { x = 1 y = 2 }
+						SP_Arty_Bat = { x = 2 y = 0 }
+						SP_Arty_Bat = { x = 2 y = 1 }
+					}
+					support = {
+						H_Engi_Comp = { x = 0 y = 0 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Liwa al-Abbas\" division_template = \"Mechanized Brigade\" start_experience_factor = 0.8 start_equipment_factor = 1.0"
+					owner = PREV
+					count = 1
+				}
+			}
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	hire_PMC = {
+		icon = GFX_decision_generic_army_support_new
+		allowed = { original_tag = SYR }
+
+		visible = {
+			has_government = communism
+			check_variable = { SYR_hired_PMCs < 3 }
+			hidden_trigger = { NOT = { has_global_flag = GLOBAL_syrian_civil_war_over } }
+			OR = {
+				has_war_with = NUS
+				has_war_with = FSA
+			}
+		}
+
+		available = {
+			has_government = communism
+			custom_trigger_tooltip = {
+				tooltip = TT_HIRE_PMCS_LIMIT
+				OR = {
+					NOT = { has_variable = SYR_hired_PMCs }
+					check_variable = { SYR_hired_PMCs < 3 }
+				}
+			}
+		}
+
+		cost = 200
+		days_remove = 30
+		days_re_enable = 120
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision hire_PMC"
+			add_popularity = { ideology = communism popularity = -0.05 }
+			set_temp_variable = { treasury_change = 0.5 }
+			modify_treasury_effect = yes
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision remove hire_PMC"
+			hidden_effect = { add_manpower = 4000 }
+			if = {
+				limit = { check_variable = { SYR_hired_PMCs > 2 } }
+				186 = {
+					create_unit = {
+						division = " name = \"Pride of Syria\" division_template = \"Private Military Company\" start_experience_factor = 0.5"
+						owner = ROOT
+						prioritize_location = 4111
+					}
+				}
+				add_to_variable = { SYR_hired_PMCs = 1 }
+			}
+			if = {
+				limit = { check_variable = { SYR_hired_PMCs > 1 } }
+				186 = {
+					create_unit = {
+						division = " name = \"Damascus Shield\" division_template = \"Private Military Company\" start_experience_factor = 0.5"
+						owner = ROOT
+						prioritize_location = 4111
+					}
+				}
+				add_to_variable = { SYR_hired_PMCs = 1 }
+			}
+			if = {
+				limit = { NOT = { has_variable = SYR_hired_PMCs } }
+				186 = {
+					create_unit = {
+						division = " name = \"Hawk Brigade\" division_template = \"Private Military Company\" start_experience_factor = 0.5"
+						owner = ROOT
+						prioritize_location = 4111
+					}
+				}
+				set_variable = { SYR_hired_PMCs = 1 }
+			}
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 0
+				num_divisions > 50
+			}
+		}
+	}
+
+	renounce_claims_on_golan = {
+		icon = GFX_decision_generic_break_treaty
+
+		allowed = {
+			OR = {
+				original_tag = FSA
+				original_tag = DRU
+			}
+		}
+
+		visible = {
+			587 = {
+				OR = {
+					is_core_of = ROOT
+					is_claimed_by = ROOT
+				}
+			}
+			NOT = { has_country_flag = Golan_Negotiations }
+			ISR = { owns_state = 587 }
+			OR = {
+				has_war_with = SYR
+				has_war_with = FSA
+			}
+		}
+
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision renounce_claims_on_golan"
+			set_country_flag = Golan_Negotiations
+			ISR = { country_event = { id = SyriaDecisions.0 days = 3 } }
+			set_temp_variable = { party_popularity_increase = -0.10 }
+			set_temp_variable = { temp_outlook_increase = -0.05 }
+			change_relative_party_popularity = yes
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 1
+				original_tag = DRU
+				surrender_progress > 0.1
+			}
+			modifier = {
+				add = 1
+				original_tag = FSA
+				any_country_with_original_tag = {
+					original_tag_to_check = ISR
+					has_government = ROOT
+				}
+			}
+		}
+	}
+
+	renounce_claims_on_hatay = {
+		icon = GFX_decision_generic_break_treaty
+		allowed = { original_tag = ALA }
+
+		visible = {
+			158 = {
+				OR = {
+					is_core_of = ROOT
+					is_claimed_by = ROOT
+				}
+			}
+			NOT = { has_country_flag = Hatay_Negotiations }
+			TUR = { owns_state = 158 }
+			has_war_with = FSA
+		}
+
+		cost = 50
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision renounce_claims_on_hatay"
+			set_country_flag = Hatay_Negotiations
+			TUR = { country_event = { id = SyriaDecisions.3 days = 3 } }
+			set_temp_variable = { party_popularity_increase = -0.10 }
+			set_temp_variable = { temp_outlook_increase = -0.05 }
+			change_relative_party_popularity = yes
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 1
+				tag = ALA
+				surrender_progress > 0.1
+			}
+		}
+	}
+
+	guarantee_rojava_independence = {
+		icon = GFX_decision_generic_nationalism
+
+		allowed = {
+			OR = {
+				original_tag = SYR
+				original_tag = FSA
+			}
+		}
+
+		visible = {
+			OR = {
+				has_war_with = SYR
+				has_war_with = FSA
+				has_war_with = NUS
+			}
+			country_exists = ROJ
+			NOT = { has_country_flag = Rojava_Negotiations }
+		}
+
+		cost = 200
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision guarantee_rojava_independence"
+			set_country_flag = Rojava_Negotiations
+			ROJ = { country_event = { id = SyriaDecisions.6 days = 3 } }
+			set_temp_variable = { party_popularity_increase = -0.20 }
+			set_temp_variable = { temp_outlook_increase = -0.10 }
+			change_relative_party_popularity = yes
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 50
+				surrender_progress > 0.8
+				is_historical_focus_on = no
+			}
+		}
+	}
+
+	concede_rojava = {
+		allowed = { original_tag = SYR }
+
+		visible = {
+			has_war_with = FSA
+			controls_state = 193
+		}
+
+		icon = GFX_decision_generic_nationalism
+		fire_only_once = yes
+		cost = 10
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision concede_rojava"
+			ROJ = {
+				add_state_core = 193
+				add_state_core = 575
+				add_state_core = 191
+				add_state_core = 995
+				hidden_effect = { load_oob = ROJ_2017 }
+			}
+			SYR = {
+				release = ROJ
+				hidden_effect = {
+					add_state_core = 193
+					add_state_core = 575
+					add_state_core = 191
+					add_state_core = 995
+				}
+			}
+			hidden_effect = { ROJ = { load_oob = ROJ_2017 } }
+		}
+
+		ai_will_do = { base = 10 }
+	}
+}
+
+Syria_hafez_succession = {
+	SYR_bushra_present_to_inner_circle = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_bushra_present_to_inner_circle"
+			custom_effect_tooltip = TT_SYRIA_PRESENT_TO_INNER_CIRCLE
+			add_to_variable = { bushra_popularity = 10 }
+			hidden_effect = { add_to_variable = { added_bushra_popularity = 10 } }
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 has_global_flag = SYR_IRON_LADY_FOCUS_PATH }
+			modifier = { factor = 0 SYR_ai_not_iron_lady_path = yes }
+		}
+	}
+
+	SYR_bashar_present_to_inner_circle = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_bashar_present_to_inner_circle"
+			custom_effect_tooltip = TT_SYRIA_PRESENT_TO_INNER_CIRCLE
+			add_to_variable = { bashar_popularity = 10 }
+			hidden_effect = { add_to_variable = { added_bashar_popularity = 10 } }
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 SYR_ai_historical_path = yes }
+			modifier = { factor = 0 SYR_ai_not_historical_path = yes }
+		}
+	}
+
+	SYR_maher_present_to_inner_circle = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_maher_present_to_inner_circle"
+			custom_effect_tooltip = TT_SYRIA_PRESENT_TO_INNER_CIRCLE
+			add_to_variable = { maher_popularity = 10 }
+			hidden_effect = { add_to_variable = { added_maher_popularity = 10 } }
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 has_global_flag = SYR_SYRIAN_SAVAGE_FOCUS_PATH }
+			modifier = { factor = 0 SYR_ai_not_savage_path = yes }
+		}
+	}
+
+	SYR_bushra_gather_public_support = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_bushra_gather_public_support"
+			custom_effect_tooltip = TT_SYRIA_GATHER_PUBLIC_SUPPORT
+			add_to_variable = { bushra_popularity = 5 }
+			hidden_effect = { add_to_variable = { added_bushra_popularity = 5 } }
+			add_popularity = { ideology = neutrality popularity = 0.05 }
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 has_global_flag = SYR_IRON_LADY_FOCUS_PATH }
+			modifier = { factor = 0 SYR_ai_not_iron_lady_path = yes }
+		}
+	}
+
+	SYR_bashar_gather_public_support = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_bashar_gather_public_support"
+			custom_effect_tooltip = TT_SYRIA_GATHER_PUBLIC_SUPPORT
+			add_to_variable = { bashar_popularity = 5 }
+			hidden_effect = { add_to_variable = { added_bashar_popularity = 5 } }
+			add_popularity = { ideology = communism popularity = 0.05 }
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 SYR_ai_historical_path = yes }
+			modifier = { factor = 0 SYR_ai_not_historical_path = yes }
+		}
+	}
+
+	SYR_maher_gather_public_support = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_maher_gather_public_support"
+			custom_effect_tooltip = TT_SYRIA_GATHER_PUBLIC_SUPPORT
+			add_to_variable = { maher_popularity = 5 }
+			hidden_effect = { add_to_variable = { added_maher_popularity = 5 } }
+			add_popularity = { ideology = nationalist popularity = 0.05 }
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 has_global_flag = SYR_SYRIAN_SAVAGE_FOCUS_PATH }
+			modifier = { factor = 0 SYR_ai_not_savage_path = yes }
+		}
+	}
+
+	SYR_bushra_familiarise_in_government = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_bushra_familiarise_in_government"
+			custom_effect_tooltip = TT_SYRIA_GATHER_PUBLIC_SUPPORT
+			add_to_variable = { bushra_popularity = 5 }
+			hidden_effect = { add_to_variable = { added_bushra_popularity = 5 } }
+			add_stability = 0.05
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 has_global_flag = SYR_IRON_LADY_FOCUS_PATH }
+			modifier = { factor = 0 SYR_ai_not_iron_lady_path = yes }
+		}
+	}
+
+	SYR_bashar_familiarise_in_government = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_bashar_familiarise_in_government"
+			custom_effect_tooltip = TT_SYRIA_GATHER_PUBLIC_SUPPORT
+			add_to_variable = { bashar_popularity = 5 }
+			hidden_effect = { add_to_variable = { added_bashar_popularity = 5 } }
+			add_stability = 0.05
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 SYR_ai_historical_path = yes }
+			modifier = { factor = 0 SYR_ai_not_historical_path = yes }
+		}
+	}
+
+	SYR_maher_familiarise_in_government = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TT_HAFEZ_NOT_DEAD
+				NOT = { has_country_flag = Syria_Hafez_dead }
+			}
+		}
+
+		days_re_enable = 30
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SYR_maher_familiarise_in_government"
+			custom_effect_tooltip = TT_SYRIA_GATHER_PUBLIC_SUPPORT
+			add_to_variable = { maher_popularity = 5 }
+			hidden_effect = { add_to_variable = { added_maher_popularity = 5 } }
+			add_stability = 0.05
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 25 has_global_flag = SYR_SYRIAN_SAVAGE_FOCUS_PATH }
+			modifier = { factor = 0 SYR_ai_not_savage_path = yes }
+		}
+	}
+}
+
+Syria_greater_syria_decisions = {
+	demand_submission_from_palestine = {
+		visible = {
+			has_completed_focus = SYR_arm_palestinians_to_fight
+			has_completed_focus = SYR_zionist_threat
+			OR = {
+				AND = {
+					country_exists = PAL
+					PAL = { NOT = { is_subject_of = ROOT } }
+				}
+				AND = {
+					country_exists = HAM
+					HAM = { NOT = { is_subject_of = ROOT } }
+				}
+			}
+		}
+
+		available = {
+			has_war = no
+			OR = {
+				NOT = { country_exists = ISR }
+				ISR = { is_subject_of = ROOT }
+			}
+		}
+
+		cost = 50
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision demand_submission_from_palestine"
+			if = {
+				limit = {
+					country_exists = PAL
+					PAL = { NOT = { is_subject_of = ROOT } }
+				}
+				PAL = { country_event = { id = md4.14 hours = 6 } }
+			}
+			if = {
+				limit = {
+					country_exists = HAM
+					HAM = { NOT = { is_subject_of = ROOT } }
+				}
+				HAM = { country_event = { id = md4.14 hours = 6 } }
+			}
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	integrate_palestine = {
+		visible = {
+			has_completed_focus = SYR_zionist_threat
+			OR = {
+				HAM = { is_subject_of = ROOT }
+				PAL = { is_subject_of = ROOT }
+				ISR = { is_subject_of = ROOT }
+			}
+		}
+
+		available = { has_war = no }
+		cost = 150
+		days_remove = 180
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision integrate_palestine"
+			if = {
+				limit = { PAL = { is_subject_of = ROOT } }
+				PAL = { every_owned_state = { add_core_of = ROOT } }
+				annex_country = {
+					target = PAL
+					transfer_troops = yes
+				}
+			}
+			if = {
+				limit = { HAM = { is_subject_of = ROOT } }
+				HAM = { every_owned_state = { add_core_of = ROOT } }
+				annex_country = {
+					target = HAM
+					transfer_troops = yes
+				}
+			}
+			if = {
+				limit = { ISR = { is_subject_of = ROOT } }
+				ISR = { every_owned_state = { add_core_of = ROOT } }
+				annex_country = {
+					target = ISR
+					transfer_troops = yes
+				}
+			}
+			#Reorganise Israel
+			hidden_effect = {
+				587 = { remove_core_of = ISR }
+				205 = {
+					add_core_of = ISR
+					add_core_of = PAL
+					remove_core_of = HAM
+					remove_claim_by = HAM
+				}
+				208 = {
+					add_core_of = ISR
+					add_core_of = PAL
+					remove_core_of = HAM
+					remove_claim_by = HAM
+				}
+				204 = {
+					add_core_of = ISR
+					add_core_of = PAL
+					remove_core_of = HAM
+					remove_claim_by = HAM
+				}
+				207 = {
+					add_core_of = ISR
+					add_core_of = PAL
+					remove_core_of = HAM
+					remove_claim_by = HAM
+				}
+				209 = {
+					add_core_of = ISR
+					add_core_of = PAL
+					remove_core_of = HAM
+					remove_claim_by = HAM
+				}
+				206 = {
+					add_core_of = ISR
+					add_core_of = PAL
+					remove_core_of = HAM
+					remove_claim_by = HAM
+				}
+			}
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	new_jewish_diaspora = {
+		available = { always = no }
+
+		activation = {
+			owns_state = 205
+			owns_state = 208
+			owns_state = 204
+			owns_state = 207
+			owns_state = 209
+			owns_state = 206
+			has_completed_focus = SYR_zionist_threat
+		}
+
+		days_mission_timeout = 180
+		fire_only_once = yes
+
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision new_jewish_diaspora"
+			if = {
+				limit = { NOT = { has_idea = syria_jewish_rights_guaranteed } }
+				205 = { add_manpower = -640000 }
+				204 = { add_manpower = -925000 }
+				207 = { add_manpower = -311375 }
+				206 = { add_manpower = -357355 }
+			}
+			if = {
+				limit = { has_idea = syria_jewish_rights_guaranteed }
+				205 = { add_manpower = -320000 add_core_of = ROOT }
+				204 = { add_manpower = -462500 add_core_of = ROOT }
+				207 = { add_manpower = -155687 add_core_of = ROOT }
+				206 = { add_manpower = -178677 add_core_of = ROOT }
+			}
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	guarantee_jewish_rights = {
+		visible = {
+			owns_state = 205
+			owns_state = 208
+			owns_state = 204
+			owns_state = 207
+			owns_state = 209
+			owns_state = 206
+			NOT = { has_idea = syria_jewish_rights_guaranteed }
+			has_active_mission = new_jewish_diaspora
+		}
+
+		cost = 150
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision guarantee_jewish_rights"
+			add_ideas = syria_jewish_rights_guaranteed
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_ally_with_houthis = {
+		visible = {
+			has_completed_focus = SYR_crush_the_sauds
+			has_war_with = SAU
+			country_exists = HOU
+		}
+
+		available = {
+			has_idea = shia
+			HOU = {
+				is_subject = no
+				is_in_faction = no
+				has_idea = shia
+			}
+		}
+
+		cost = 150
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_ally_with_houthis"
+			HOU = { country_event = { id = SyriaFocus.70 hours = 6 } }
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_shia_uprising_in_qatif = {
+		visible = {
+			has_completed_focus = SYR_crush_the_sauds
+			has_war_with = SAU
+			NOT = { country_exists = QTF }
+		}
+
+		available = {
+			SAU = { owns_state = 174 }
+			has_idea = shia
+		}
+
+		cost = 150
+		fire_only_once = yes
+		war_with_on_complete = SAU
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_shia_uprising_in_qatif"
+			SAU = { release = QTF }
+			QTF = { declare_war_on = { target = SAU type = annex_everything } }
+			hidden_effect = {
+				QTF = { load_oob = QTF_uprising }
+				SAU = {
+					set_province_controller = 3462
+					set_province_controller = 10850
+					set_province_controller = 7995
+					set_province_controller = 9032
+					set_province_controller = 5024
+					set_province_controller = 3374
+					set_province_controller = 4932
+				}
+			}
+			SAU = { country_event = { id = SyriaFocus.71 hours = 6 } }
+			QTF = { country_event = { id = SyriaFocus.71 hours = 6 } }
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_operation_eastern_whirlwind = {
+		visible = {
+			has_completed_focus = SYR_weaken_iran
+			PER = { NOT = { is_subject_of = ROOT } }
+		}
+
+		available = {
+			NOT = { is_in_faction_with = PER }
+			NOT = { has_war_with = PER }
+		}
+
+		days_remove = 30
+		war_with_on_remove = PER
+		fire_only_once = yes
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_operation_eastern_whirlwind"
+			set_country_flag = SYR_attacked_iran
+			declare_war_on = {
+				target = PER
+				type = annex_everything
+			}
+			if = {
+				limit = { has_country_flag = SYR_arabistan_armed }
+				add_state_core = 399
+				hidden_effect = { load_oob = SYR_arab_units }
+			}
+			if = {
+				limit = { has_country_flag = SYR_luristan_armed }
+				PER = { release = LOR }
+				LOR = { declare_war_on = { target = PER type = annex_everything } }
+				hidden_effect = {
+					LOR = { load_oob = SYR_LOR_units }
+					PER = {
+						set_province_controller = 5050
+						set_province_controller = 9074
+						set_province_controller = 1922
+						set_province_controller = 5005
+						set_province_controller = 3908
+					}
+					if = {
+						limit = { ROOT = { is_in_faction = yes } }
+						ROOT = { add_to_faction = LOR }
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = SYR_azerbaijan_armed
+					is_in_faction_with = AZE
+				}
+				AZE = {
+					add_to_war = {
+						targeted_alliance = ROOT
+						enemy = PER
+					}
+					hidden_effect = { load_oob = SYR_AZE_units }
+				}
+			}
+			if = {
+				limit = { has_country_flag = SYR_tabaristan_armed }
+				PER = { release = TAB }
+				TAB = { declare_war_on = { target = PER type = annex_everything } }
+				hidden_effect = {
+					TAB = { load_oob = SYR_TAB_units }
+					PER = {
+						set_province_controller = 4637
+						set_province_controller = 4580
+						set_province_controller = 10385
+						set_province_controller = 4499
+					}
+					if = {
+						limit = { ROOT = { is_in_faction = yes } }
+						ROOT = { add_to_faction = TAB }
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = SYR_balochistan_armed }
+				PER = { release = BLC }
+				BLC = { declare_war_on = { target = PER type = annex_everything } }
+				hidden_effect = {
+					BLC = { load_oob = SYR_BLC_units }
+					PER = {
+						set_province_controller = 4891
+						set_province_controller = 13082
+						set_province_controller = 1889
+						set_province_controller = 3744
+						set_province_controller = 2039
+						set_province_controller = 3777
+						set_province_controller = 2070
+						set_province_controller = 1986
+						set_province_controller = 12895
+					}
+					if = {
+						limit = { ROOT = { is_in_faction = yes } }
+						ROOT = { add_to_faction = BLC }
+					}
+				}
+			}
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_iran_recruit_arab_militias = {
+		visible = {
+			PER = { owns_state = 399 }
+			has_completed_focus = SYR_weaken_iran
+			NOT = { has_country_flag = SYR_attacked_iran }
+		}
+
+		cost = 20
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_iran_recruit_arab_militias"
+			custom_effect_tooltip = TT_SYR_ARABISTAN_ARMED
+			set_temp_variable = { treasury_change = -1.5 }
+			modify_treasury_effect = yes
+			set_country_flag = SYR_arabistan_armed
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_iran_recruit_lur_militias = {
+		visible = {
+			PER = { owns_state = 406 }
+			has_completed_focus = SYR_weaken_iran
+			NOT = { has_country_flag = SYR_attacked_iran }
+		}
+
+		cost = 100
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_iran_recruit_lur_militias"
+			custom_effect_tooltip = TT_SYR_LURISTAN_ARMED
+			set_temp_variable = { treasury_change = -7.5 }
+			modify_treasury_effect = yes
+			set_country_flag = SYR_luristan_armed
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_iran_recruit_azeri_militias = {
+		visible = {
+			PER = { owns_state = 407 }
+			has_completed_focus = SYR_weaken_iran
+			NOT = { has_country_flag = SYR_attacked_iran }
+		}
+
+		available = { is_in_faction_with = AZE }
+		cost = 200
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_iran_recruit_azeri_militias"
+			custom_effect_tooltip = TT_SYR_AZERBAIJAN_ARMED
+			set_temp_variable = { treasury_change = -22.5 }
+			modify_treasury_effect = yes
+			set_country_flag = SYR_azerbaijan_armed
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_iran_recruit_tabaristani_militias = {
+		visible = {
+			PER = { owns_state = 403 }
+			has_completed_focus = SYR_weaken_iran
+			NOT = { has_country_flag = SYR_attacked_iran }
+		}
+
+		cost = 80
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_iran_recruit_tabaristani_militias"
+			custom_effect_tooltip = TT_SYR_TABARISTAN_ARMED
+			set_temp_variable = { treasury_change = -9 }
+			modify_treasury_effect = yes
+			set_country_flag = SYR_tabaristan_armed
+		}
+
+		ai_will_do = { base = 10 }
+	}
+
+	syria_iran_recruit_balochi_militias = {
+		visible = {
+			PER = { owns_state = 401 }
+			has_completed_focus = SYR_weaken_iran
+			NOT = { has_country_flag = SYR_attacked_iran }
+		}
+
+		cost = 50
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_iran_recruit_balochi_militias"
+			custom_effect_tooltip = TT_SYR_BALOCHISTAN_ARMED
+			set_temp_variable = { treasury_change = -3 }
+			modify_treasury_effect = yes
+			set_country_flag = SYR_balochistan_armed
+		}
+
+		ai_will_do = { base = 10 }
+	}
+}
+
+Syria_foreign_policy = {
+	#Hezbollah related
+	infiltrate_hezbollah = {
+		visible = {
+			has_completed_focus = SYR_against_hezbollah
+			country_exists = HEZ
+			NOT = { has_country_flag = HEZ_Infiltrated_by_SYR }
+		}
+
+		available = {
+			NOT = { is_in_faction_with = HEZ }
+			NOT = { HEZ = { is_subject_of = ROOT } }
+		}
+
+		cost = 200
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision infiltrate_hezbollah"
+			custom_effect_tooltip = TT_SYR_INFILTRATE_HEZ
+			hidden_effect = {
+				HEZ = { set_country_flag = HEZ_Infiltrated_by_SYR }
+				set_country_flag = HEZ_Infiltrated_by_SYR
+			}
+			add_ideas = infiltrate_hezbollah_idea
+			set_temp_variable = { temp_opinion = 5 }
+			change_intelligence_community_opinion = yes
+		}
+
+		ai_will_do = { base = 100 }
+	}
+
+	sow_discord_between_HEZ_and_PER = {
+		visible = {
+			has_completed_focus = SYR_against_hezbollah
+			country_exists = HEZ
+			NOT = { has_country_flag = Discord_Between_HEZ_PER }
+			HEZ = { is_in_faction_with = PER }
+		}
+
+		available = {
+			NOT = { is_in_faction_with = HEZ }
+			NOT = { HEZ = { is_subject_of = ROOT } }
+		}
+
+		cost = 200
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision sow_discord_between_HEZ_and_PER"
+			custom_effect_tooltip = TT_SYR_DISCORD_HEZ
+			hidden_effect = {
+				HEZ = { set_country_flag = Discord_Between_HEZ_PER }
+				set_country_flag = Discord_Between_HEZ_PER
+			}
+			set_temp_variable = { temp_opinion = 5 }
+			change_intelligence_community_opinion = yes
+		}
+
+		ai_will_do = { base = 100 }
+	}
+}
+
+Syria_external_countries = {
+	#Hezbollah gains ground
+	intervene_against_hezbollah = {
+		war_with_on_complete = HEZ
+
+		visible = {
+			HEZ = { owns_state = 184 }
+			NOT = { is_in_faction_with = HEZ }
+			NOT = { has_country_flag = ISR_Destroy_HEZ }
+		}
+
+		available = { always = yes }
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision intervene_against_hezbollah"
+			hidden_effect = { add_state_claim = 201 }
+			set_temp_variable = { wargoal_on = HEZ }
+			set_temp_variable = { wargoal_type = 2 }
+			add_threat_from_wargoal_effect = yes
+			create_wargoal = {
+				type = annex_everything
+				target = HEZ
+			}
+			set_country_flag = ISR_Destroy_HEZ
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				HEZ = { is_subject_of = PER }
+			}
+		}
+	}
+}
+
+Syria_damascus_spring_organization = {
+	sectarian_groups_start_to_seek_independence = {
+		war_with_on_timeout = DRU
+		activation = {
+			has_completed_focus = SYR_islamist_opposition_victory
+			has_civil_war = yes
+			NOT = { has_country_flag = SYR_druze_has_spawned }
+		}
+
+		days_mission_timeout = 65
+		available = { has_civil_war = no }
+
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: Mission timeout sectarian_groups_start_to_seek_independence"
+			country_event = SyriaFocus.97
+			if = {
+				limit = { has_idea = idea_syrian_kurds_without_citizenships }
+				country_event = SyriaFocus.111
+			}
+		}
+	}
+}
+
+Syria_economic_investments = {
+	invigorate_hisiyah = {
+		icon = GFX_decision_generic_factory
+
+		available = {
+			controls_state = 188
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_TWO_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 1
+			}
+		}
+
+		visible = { has_completed_focus = SYR_initiate_industrialization }
+		fire_only_once = yes
+		days_remove = 360
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision invigorate_hisiyah"
+			syrian_industry_effect1 = yes
+			custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+			add_ideas = idea_hisiyah
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision invigorate_hisiyah"
+			remove_ideas = idea_hisiyah
+			set_country_flag = hisiyah_invigorated
+			188 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			if = {
+				limit = { has_completed_focus = SYR_keep_banks_national }
+				set_temp_variable = { arg_popularity = 0.2 }
+				add_ruling_outlook_popularity = yes
+				set_temp_variable = { percent_change = 10 }
+				change_domestic_influence_percentage = yes
+				set_temp_variable = { temp_opinion = 10 }
+				change_oligarchs_opinion = yes
+			}
+			else = {
+				set_temp_variable = { temp_opinion = 5 }
+				change_small_medium_business_owners_opinion = yes
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	hisiyah_industrial_expansion = {
+		icon = GFX_decision_generic_factory
+
+		visible = {
+			has_completed_focus = SYR_legalise_private_banking
+			has_country_flag = hisiyah_invigorated
+		}
+
+		available = {
+			controls_state = 188
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_THREE_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 2
+			}
+			OR = {
+				has_idea = fast_growth
+				has_idea = economic_boom
+			}
+		}
+
+		fire_only_once = yes
+		days_remove = 300
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision hisiyah_industrial_expansion"
+			syrian_industry_effect1 = yes
+			custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+			add_ideas = idea_hisiyah1
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision hisiyah_industrial_expansion"
+			remove_ideas = idea_hisiyah1
+			188 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	clear_aleppan_slums = {
+		icon = GFX_decision_generic_construction
+
+		available = {
+			controls_state = 566
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_TWO_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 1
+			}
+		}
+
+		visible = { has_completed_focus = SYR_initiate_industrialization }
+		fire_only_once = yes
+		days_remove = 360
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision clear_aleppan_slums"
+			add_ideas = idea_aleppan_slums
+			syrian_industry_effect1 = yes
+			custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision clear_aleppan_slums"
+			remove_ideas = idea_aleppan_slums
+			set_country_flag = aleppan_slums_cleared
+			if = {
+				limit = { has_completed_focus = SYR_keep_banks_national }
+				566 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				set_temp_variable = { arg_popularity = 0.2 }
+				add_ruling_outlook_popularity = yes
+				set_temp_variable = { percent_change = 10 }
+				change_domestic_influence_percentage = yes
+				set_temp_variable = { temp_opinion = 10 }
+				change_oligarchs_opinion = yes
+			}
+			else = {
+				566 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				set_temp_variable = { temp_opinion = 5 }
+				change_small_medium_business_owners_opinion = yes
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	aleppan_economy_booming = {
+		icon = GFX_decision_gre_paying_ifc_debt
+
+		visible = {
+			has_completed_focus = SYR_legalise_private_banking
+			has_country_flag = aleppan_slums_cleared
+		}
+
+		available = {
+			controls_state = 566
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_THREE_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 2
+			}
+			OR = {
+				has_idea = fast_growth
+				has_idea = economic_boom
+			}
+		}
+
+		fire_only_once = yes
+		days_remove = 300
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision aleppan_economy_booming"
+			syrian_industry_effect1 = yes
+			custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+			add_ideas = idea_aleppan_slums1
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision aleppan_economy_booming"
+			remove_ideas = idea_aleppan_slums1
+			566 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	damascus_private_sector_encouragement = {
+		icon = GFX_decision_gre_investment_decisions
+
+		available = {
+			controls_state = 186
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_TWO_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 1
+			}
+		}
+
+		visible = { has_completed_focus = SYR_economic_revitalization }
+		fire_only_once = yes
+		days_remove = 360
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision damascus_private_sector_encouragement"
+			syrian_industry_effect2 = yes
+			custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+			add_ideas = idea_damascus_priv_sector
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision damascus_private_sector_encouragement"
+			remove_ideas = idea_damascus_priv_sector
+			set_country_flag = damascus_private_sector_encouraged
+			if = {
+				limit = { has_completed_focus = SYR_keep_banks_national }
+				186 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = offices
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				set_temp_variable = { arg_popularity = 0.2 }
+				add_ruling_outlook_popularity = yes
+				set_temp_variable = { percent_change = 10 }
+				change_domestic_influence_percentage = yes
+				set_temp_variable = { temp_opinion = 10 }
+				change_oligarchs_opinion = yes
+			}
+			else = {
+				186 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = offices
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				set_temp_variable = { temp_opinion = 5 }
+				change_small_medium_business_owners_opinion = yes
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	damascus_private_sector_booming = {
+		icon = GFX_decision_generic_industry
+
+		visible = {
+			has_completed_focus = SYR_economic_revitalization
+			has_country_flag = damascus_private_sector_encouraged
+		}
+
+		available = {
+			controls_state = 186
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_THREE_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 2
+			}
+			OR = {
+				has_idea = fast_growth
+				has_idea = economic_boom
+			}
+		}
+
+		fire_only_once = yes
+		days_remove = 300
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision damascus_private_sector_booming"
+			add_ideas = idea_damascus_priv_sector1
+			syrian_industry_effect1 = yes
+			custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision damascus_private_sector_booming"
+			remove_ideas = idea_damascus_priv_sector1
+			186 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	eastern_oil_excavation_phase1 = {
+		icon = GFX_decision_oil
+
+		available = {
+			OR = {
+				controls_state = 995
+				controls_state = 192
+				controls_state = 193
+			}
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_ONE_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 0
+			}
+			has_tech = excavation1
+		}
+
+		visible = { has_completed_focus = SYR_tap_into_the_oil_reserves }
+		fire_only_once = yes
+		days_remove = 180
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision eastern_oil_excavation_phase1"
+			add_ideas = idea_syr_eastern_excavation
+			syrian_energy_effect = yes
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision eastern_oil_excavation_phase1"
+			remove_ideas = idea_syr_eastern_excavation
+			set_country_flag = syrian_oil_extraction_phase1_complete
+			if = {
+				limit = { controls_state = 995 }
+				995 = {
+					add_resource = {
+						type = oil
+						amount = 2
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 192 }
+				192 = {
+					add_resource = {
+						type = oil
+						amount = 2
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 193 }
+				if = {
+					limit = {
+						OR = {
+							check_variable = { kurdish_status > 49 }
+							NOT = {
+								has_dynamic_modifier = {
+									modifier = kurdish_political_inclusiveness_dynamic_modifier
+									scope = SYR
+								}
+							}
+						}
+					}
+					193 = {
+						add_resource = {
+							type = oil
+							amount = 3
+						}
+					}
+				}
+				else = {
+					193 = {
+						add_resource = {
+							type = oil
+							amount = 1
+						}
+					}
+				}
+			}
+			add_stability = -0.02
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	eastern_oil_excavation_phase2 = {
+		icon = GFX_decision_oil
+
+		available = {
+			has_completed_focus = SYR_tap_into_the_oil_reserves
+			OR = {
+				controls_state = 995
+				controls_state = 192
+				controls_state = 193
+			}
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_ONE_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 0
+			}
+			has_tech = excavation2
+		}
+
+		visible = { has_country_flag = syrian_oil_extraction_phase1_complete }
+		fire_only_once = yes
+		days_remove = 180
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision eastern_oil_excavation_phase2"
+			add_ideas = idea_syr_eastern_excavation
+			syrian_energy_effect = yes
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision eastern_oil_excavation_phase2"
+			remove_ideas = idea_syr_eastern_excavation
+			set_country_flag = syrian_oil_extraction_phase2_complete
+			if = {
+				limit = { controls_state = 995 }
+				995 = {
+					add_resource = {
+						type = oil
+						amount = 2
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 192 }
+				192 = {
+					add_resource = {
+						type = oil
+						amount = 2
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 193 }
+				if = {
+					limit = {
+						OR = {
+							check_variable = { kurdish_status > 49 }
+							NOT = {
+								has_dynamic_modifier = {
+									modifier = kurdish_political_inclusiveness_dynamic_modifier
+									scope = SYR
+								}
+							}
+						}
+					}
+					193 = {
+						add_resource = {
+							type = oil
+							amount = 3
+						}
+					}
+				}
+				else = {
+					193 = {
+						add_resource = {
+							type = oil
+							amount = 1
+						}
+					}
+				}
+			}
+			add_stability = -0.02
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	eastern_oil_excavation_phase3 = {
+		icon = GFX_decision_oil
+
+		available = {
+			has_completed_focus = SYR_tap_into_the_oil_reserves
+			OR = {
+				controls_state = 995
+				controls_state = 192
+				controls_state = 193
+			}
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_ONE_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 0
+			}
+			has_tech = excavation3
+		}
+
+		visible = { has_country_flag = syrian_oil_extraction_phase2_complete }
+		fire_only_once = yes
+		days_remove = 180
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision eastern_oil_excavation_phase3"
+			add_ideas = idea_syr_eastern_excavation
+			syrian_energy_effect = yes
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision eastern_oil_excavation_phase3"
+			remove_ideas = idea_syr_eastern_excavation
+			if = {
+				limit = { controls_state = 995 }
+				995 = {
+					add_resource = {
+						type = oil
+						amount = 2
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 192 }
+				192 = {
+					add_resource = {
+						type = oil
+						amount = 2
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 193 }
+				if = {
+					limit = {
+						OR = {
+							check_variable = { kurdish_status > 49 }
+							NOT = {
+								has_dynamic_modifier = {
+									modifier = kurdish_political_inclusiveness_dynamic_modifier
+									scope = SYR
+								}
+							}
+						}
+					}
+					193 = {
+						add_resource = {
+							type = oil
+							amount = 3
+						}
+					}
+				}
+				else = {
+					193 = {
+						add_resource = {
+							type = oil
+							amount = 1
+						}
+					}
+				}
+			}
+			add_stability = -0.02
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	invest_in_eastern_cotton = {
+		icon = GFX_decision_generic_factory
+
+		available = {
+			controls_state = 193
+			custom_trigger_tooltip = {
+				tooltip = SYR_ECONOMIC_DECISIONS_ONE_FREE_FACTORIES_EXPLANATION
+				num_of_civilian_factories_available_for_projects > 0
+			}
+		}
+
+		visible = { has_completed_focus = SYR_invest_in_hasakan_cotton }
+		fire_only_once = yes
+		days_remove = 180
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision invest_in_eastern_cotton"
+			add_ideas = idea_syr_eastern_cotton
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision invest_in_eastern_cotton"
+			remove_ideas = idea_syr_eastern_cotton
+			if = {
+				limit = { controls_state = 193 }
+				if = {
+					limit = {
+						OR = {
+							check_variable = { kurdish_status > 49 }
+							NOT = {
+								has_dynamic_modifier = {
+									modifier = kurdish_political_inclusiveness_dynamic_modifier
+									scope = SYR
+								}
+							}
+						}
+						has_completed_focus = SYR_legalise_private_banking
+					}
+					193 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = agriculture_district
+							level = 1
+							instant_build = yes
+						}
+					}
+					syrian_corrcost_agri = yes
+					syrian_corrcost_civ = yes
+					custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+				}
+				else = {
+					193 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = agriculture_district
+							level = 2
+							instant_build = yes
+						}
+					}
+					syrian_corrcost_civ = yes
+					custom_effect_tooltip = TT_SYR_CORRUPTION_COSTS
+				}
+			}
+			custom_effect_tooltip = TT_SYR_COTTON_INVESTMENTS
+		}
+
+		ai_will_do = { base = 0 }
+	}
+}
+Syria_agricultural_subsidies_decisions = {
+	syria_decision_increase_subsidies = {
+		icon = GFX_decision_SWI_support_humanitarian_efforts
+		available = { NOT = { has_idea = syria_increased_agricultural_subsidies } }
+		days_re_enable = 180
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_increase_subsidies"
+			custom_effect_tooltip = TT_SYR_AGRICULTURAL_SUBSIDIES_INCREASED_FOCUS
+			set_temp_variable = { temp_opinion = 5 }
+			change_farmers_opinion = yes
+			set_temp_variable = { temp_opinion = -5 }
+			change_landowners_opinion = yes
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							has_idea = syria_agricultural_subsidies
+							has_idea = syria_decreased_agricultural_subsidies
+						}
+					}
+				}
+				add_ideas = syria_decreased_agricultural_subsidies
+			}
+			else_if = {
+				limit = { has_idea = syria_agricultural_subsidies }
+				swap_ideas = {
+					add_idea = syria_increased_agricultural_subsidies
+					remove_idea = syria_agricultural_subsidies
+				}
+			}
+			else_if = {
+				limit = { has_idea = syria_decreased_agricultural_subsidies }
+				swap_ideas = {
+					add_idea = syria_agricultural_subsidies
+					remove_idea = syria_decreased_agricultural_subsidies
+				}
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_decrease_subsidies = {
+		icon = GFX_decision_RAJ_famine
+
+		available = {
+			OR = {
+				has_idea = syria_decreased_agricultural_subsidies
+				has_idea = syria_increased_agricultural_subsidies
+				has_idea = syria_agricultural_subsidies
+			}
+		}
+
+		days_re_enable = 180
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_decrease_subsidies"
+			custom_effect_tooltip = TT_SYR_AGRICULTURAL_SUBSIDIES_DECREASED_FOCUS
+			set_temp_variable = { temp_opinion = -5 }
+			change_farmers_opinion = yes
+			set_temp_variable = { temp_opinion = 5 }
+			change_landowners_opinion = yes
+			if = {
+				limit = { has_idea = syria_decreased_agricultural_subsidies }
+				remove_ideas = syria_decreased_agricultural_subsidies
+			}
+			else_if = {
+				limit = { has_idea = syria_agricultural_subsidies }
+				swap_ideas = {
+					add_idea = syria_decreased_agricultural_subsidies
+					remove_idea = syria_agricultural_subsidies
+				}
+			}
+			else_if = {
+				limit = { has_idea = syria_increased_agricultural_subsidies }
+				swap_ideas = {
+					add_idea = syria_agricultural_subsidies
+					remove_idea = syria_increased_agricultural_subsidies
+				}
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+}
+
+Syria_digital_investments_decisions = {
+	syria_decision_increase_investments = {
+		icon = GFX_decision_SWE_paid_holidays_policy
+		available = { NOT = { has_idea = syrian_digital_investment5 } }
+		visible = { has_completed_focus = SYR_digitalisation_campaign }
+		days_re_enable = 70
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_increase_investments"
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							has_idea = syrian_digital_investment1
+							has_idea = syrian_digital_investment2
+							has_idea = syrian_digital_investment3
+							has_idea = syrian_digital_investment4
+						}
+					}
+				}
+				add_ideas = syrian_digital_investment1
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment1 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment2
+					remove_idea = syrian_digital_investment1
+				}
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment2 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment3
+					remove_idea = syrian_digital_investment2
+				}
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment3 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment4
+					remove_idea = syrian_digital_investment3
+				}
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment4 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment5
+					remove_idea = syrian_digital_investment4
+				}
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_decrease_investments = {
+		icon = GFX_decision_gre_investment_decisions
+
+		available = {
+			OR = {
+				has_idea = syrian_digital_investment1
+				has_idea = syrian_digital_investment2
+				has_idea = syrian_digital_investment3
+				has_idea = syrian_digital_investment4
+				has_idea = syrian_digital_investment5
+			}
+		}
+
+		visible = { has_completed_focus = SYR_digitalisation_campaign }
+		days_re_enable = 70
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_decrease_investments"
+			if = {
+				limit = { has_idea = syrian_digital_investment1 }
+				remove_ideas = syrian_digital_investment1
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment2 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment1
+					remove_idea = syrian_digital_investment2
+				}
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment3 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment2
+					remove_idea = syrian_digital_investment3
+				}
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment4 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment3
+					remove_idea = syrian_digital_investment4
+				}
+			}
+			else_if = {
+				limit = { has_idea = syrian_digital_investment5 }
+				swap_ideas = {
+					add_idea = syrian_digital_investment4
+					remove_idea = syrian_digital_investment5
+				}
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+}
+
+Syria_centralization_balance_of_power_category = {
+	syria_decision_increase_local_accountability_officials = {
+		icon = GFX_decision_syr_officials_button
+		#available = {}
+		visible = { has_completed_focus = SYR_address_ethnic_divides }
+		days_remove = 120
+		fixed_random_seed = no
+		days_re_enable = 35
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_increase_local_accountability_officials"
+			add_timed_idea = {
+				idea = syria_local_accountability_investment
+				days = 120
+			}
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_increase_local_accountability_officials"
+			set_temp_variable = { local_accountability_chance = 0 }
+			if = {
+				limit = { has_idea = corruption_level_10 }
+				add_to_temp_variable = { local_accountability_chance = 2.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_09 }
+				add_to_temp_variable = { local_accountability_chance = 5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_08 }
+				add_to_temp_variable = { local_accountability_chance = 7.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_07 }
+				add_to_temp_variable = { local_accountability_chance = 10 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_06 }
+				add_to_temp_variable = { local_accountability_chance = 12.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_05 }
+				add_to_temp_variable = { local_accountability_chance = 15 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_04 }
+				add_to_temp_variable = { local_accountability_chance = 17.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_03 }
+				add_to_temp_variable = { local_accountability_chance = 20 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_02 }
+				add_to_temp_variable = { local_accountability_chance = 22.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_01 }
+				add_to_temp_variable = { local_accountability_chance = 25 }
+			}
+			if = {
+				limit = { has_idea = police_01 }
+				add_to_temp_variable = { local_accountability_chance = 5 }
+			}
+			else_if = {
+				limit = { has_idea = police_02 }
+				add_to_temp_variable = { local_accountability_chance = 10 }
+			}
+			else_if = {
+				limit = { has_idea = police_03 }
+				add_to_temp_variable = { local_accountability_chance = 15 }
+			}
+			else_if = {
+				limit = { has_idea = police_04 }
+				add_to_temp_variable = { local_accountability_chance = 20 }
+			}
+			else_if = {
+				limit = { has_idea = police_05 }
+				add_to_temp_variable = { local_accountability_chance = 25 }
+			}
+			set_temp_variable = { syrian_centralization_minority_average = 0 }
+			set_temp_variable = { syrian_number_of_minorities = 0 }
+			if = {
+				limit = { has_dynamic_modifier = { modifier = alawite_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = alawite_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = druze_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = druze_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = kurdish_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = kurdish_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { check_variable = { syrian_number_of_minorities = 0 } }
+				add_to_temp_variable = { syrian_centralization_minority_average = 25 }
+			}
+			else = {
+				divide_temp_variable = { syrian_centralization_minority_average = syrian_number_of_minorities }
+				multiply_temp_variable = { syrian_centralization_minority_average = 0.25 }
+			}
+			add_to_temp_variable = { local_accountability_chance = syrian_centralization_minority_average }
+			if = {
+				limit = { is_in_array = { gov_coalition_array = 20 } }
+				add_to_temp_variable = { local_accountability_chance = 25 }
+			}
+			set_temp_variable = { remaining_chance = 100 }
+			subtract_from_temp_variable = { remaining_chance = local_accountability_chance }
+			clamp_temp_variable = {
+				var = remaining_chance
+				min = 0
+				max = 100
+			}
+			random_list = {
+				1 = {
+					modifier = { factor = remaining_chance }
+					SYR = { country_event = { id = SyriaFocus.93 days = 2 } }
+				}
+				1 = {
+					modifier = { factor = local_accountability_chance }
+					SYR = { country_event = { id = SyriaFocus.94 days = 2 } }
+				}
+			}
+			custom_effect_tooltip = SYR_LOCAL_ACCOUNTABILITY_SUCCESS_EFFECTS
+			custom_effect_tooltip = TT_SYR_BOP_SUCCESSFUL_REPUBLICAN_EFFECT
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_find_promising_bureaucracy = {
+		icon = GFX_decision_syr_burecrats_button
+		#available = {}
+		visible = { has_completed_focus = SYR_address_ethnic_divides }
+		days_remove = 120
+		fixed_random_seed = no
+		days_re_enable = 35
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_find_promising_bureaucracy"
+			add_timed_idea = {
+				idea = syria_finding_promising_bureaucracy
+				days = 120
+			}
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_find_promising_bureaucracy"
+			set_temp_variable = { promising_pol_rep_chance = 0 }
+			if = {
+				limit = { has_idea = corruption_level_10 }
+				add_to_temp_variable = { promising_pol_rep_chance = 4 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_09 }
+				add_to_temp_variable = { promising_pol_rep_chance = 8 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_08 }
+				add_to_temp_variable = { promising_pol_rep_chance = 12 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_07 }
+				add_to_temp_variable = { promising_pol_rep_chance = 16 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_06 }
+				add_to_temp_variable = { promising_pol_rep_chance = 20 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_05 }
+				add_to_temp_variable = { promising_pol_rep_chance = 24 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_04 }
+				add_to_temp_variable = { promising_pol_rep_chance = 28 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_03 }
+				add_to_temp_variable = { promising_pol_rep_chance = 32 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_02 }
+				add_to_temp_variable = { promising_pol_rep_chance = 36 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_01 }
+				add_to_temp_variable = { promising_pol_rep_chance = 40 }
+			}
+			if = {
+				limit = { has_idea = bureau_01 }
+				add_to_temp_variable = { promising_pol_rep_chance = 0 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_02 }
+				add_to_temp_variable = { promising_pol_rep_chance = 10 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_03 }
+				add_to_temp_variable = { promising_pol_rep_chance = 20 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_04 }
+				add_to_temp_variable = { promising_pol_rep_chance = 30 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_05 }
+				add_to_temp_variable = { promising_pol_rep_chance = 40 }
+			}
+			if = {
+				limit = { is_in_array = { gov_coalition_array = 20 } }
+				add_to_temp_variable = { promising_pol_rep_chance = 20 }
+			}
+			set_temp_variable = { remaining_chance = 100 }
+			subtract_from_temp_variable = { remaining_chance = promising_pol_rep_chance }
+			clamp_temp_variable = {
+				var = remaining_chance
+				min = 0
+				max = 100
+			}
+			random_list = {
+				1 = {
+					modifier = { factor = remaining_chance }
+					SYR = { country_event = { id = SyriaFocus.96 days = 2 } }
+				}
+				1 = {
+					modifier = { factor = promising_pol_rep_chance }
+					SYR = { country_event = { id = SyriaFocus.95 days = 2 } }
+				}
+			}
+			custom_effect_tooltip = SYR_FINDING_PROMISING_BUREAUCRACY_EFFECTS
+			custom_effect_tooltip = TT_SYR_BOP_SUCCESSFUL_REPUBLICAN_EFFECT
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_build_bureaucratic_infrastructure1 = {
+		icon = GFX_decision_syr_infra_button
+		available = { all_owned_state = { infrastructure > 1 } }
+		visible = { has_completed_focus = SYR_address_ethnic_divides }
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_build_bureaucratic_infrastructure1"
+			set_temp_variable = { treasury_change = -7 }
+			modify_treasury_effect = yes
+			add_power_balance_value = {
+				id = Syria_centralization_balance_of_power_category
+				value = 0.05
+				tooltip_side = SYR_republican_bop_right_side
+			}
+			set_country_flag = built_bureaucratic_infrastructure1
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_build_bureaucratic_infrastructure2 = {
+		icon = GFX_decision_syr_infra_button
+		available = { all_owned_state = { infrastructure > 2 } }
+
+		visible = {
+			has_completed_focus = SYR_address_ethnic_divides
+			has_country_flag = built_bureaucratic_infrastructure1
+		}
+
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_build_bureaucratic_infrastructure2"
+			set_temp_variable = { treasury_change = -7 }
+			modify_treasury_effect = yes
+			add_power_balance_value = {
+				id = Syria_centralization_balance_of_power_category
+				value = 0.05
+				tooltip_side = SYR_republican_bop_right_side
+			}
+			set_country_flag = built_bureaucratic_infrastructure2
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_build_bureaucratic_infrastructure3 = {
+		icon = GFX_decision_syr_infra_button
+		available = { all_owned_state = { infrastructure > 3 } }
+
+		visible = {
+			has_completed_focus = SYR_address_ethnic_divides
+			has_country_flag = built_bureaucratic_infrastructure2
+		}
+
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_build_bureaucratic_infrastructure3"
+			set_temp_variable = { treasury_change = -7 }
+			modify_treasury_effect = yes
+			add_power_balance_value = {
+				id = Syria_centralization_balance_of_power_category
+				value = 0.05
+				tooltip_side = SYR_republican_bop_right_side
+			}
+			set_country_flag = built_bureaucratic_infrastructure3
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_build_bureaucratic_infrastructure4 = {
+		icon = GFX_decision_syr_infra_button
+		available = { all_owned_state = { infrastructure > 4 } }
+
+		visible = {
+			has_completed_focus = SYR_address_ethnic_divides
+			has_country_flag = built_bureaucratic_infrastructure3
+		}
+
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_build_bureaucratic_infrastructure4"
+			set_temp_variable = { treasury_change = -7 }
+			modify_treasury_effect = yes
+			add_power_balance_value = {
+				id = Syria_centralization_balance_of_power_category
+				value = 0.05
+				tooltip_side = SYR_republican_bop_right_side
+			}
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_fund_voluntary_organizations = {
+		icon = GFX_decision_syr_money_button
+		#available = {}
+		visible = { has_completed_focus = SYR_address_ethnic_divides }
+		days_remove = 120
+		fixed_random_seed = no
+		days_re_enable = 35
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_fund_voluntary_organizations"
+			add_timed_idea = {
+				idea = syria_funding_voluntary_organizations
+				days = 120
+			}
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_fund_voluntary_organizations"
+			set_temp_variable = { voluntary_groups_chance = 0 }
+			set_temp_variable = { syrian_centralization_minority_average = 0 }
+			set_temp_variable = { syrian_number_of_minorities = 0 }
+			if = {
+				limit = { has_dynamic_modifier = { modifier = alawite_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = alawite_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = druze_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = druze_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = kurdish_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = kurdish_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { check_variable = { syrian_number_of_minorities = 0 } }
+				add_to_temp_variable = { syrian_centralization_minority_average = 80 }
+			}
+			else = {
+				divide_temp_variable = { syrian_centralization_minority_average = syrian_number_of_minorities }
+				divide_temp_variable = { syrian_centralization_minority_average = 1.25 }
+			}
+			add_to_temp_variable = { voluntary_groups_chance = syrian_centralization_minority_average }
+			if = {
+				limit = { is_in_array = { gov_coalition_array = 17 } }
+				add_to_temp_variable = { voluntary_groups_chance = 20 }
+			}
+			set_temp_variable = { remaining_chance = 100 }
+			subtract_from_temp_variable = { remaining_chance = voluntary_groups_chance }
+			clamp_temp_variable = {
+				var = remaining_chance
+				min = 0
+				max = 100
+			}
+			random_list = {
+				1 = {
+					modifier = { factor = remaining_chance }
+					SYR = { country_event = { id = SyriaFocus.92 days = 2 } }
+				}
+				1 = {
+					modifier = { factor = voluntary_groups_chance }
+					SYR = { country_event = { id = SyriaFocus.86 days = 2 } }
+				}
+			}
+			custom_effect_tooltip = SYR_FUND_VOLUNTARY_ORGANIZATIONS_SUCCESS_EFFECTS
+			custom_effect_tooltip = TT_SYR_BOP_SUCCESSFUL_FEDERALISM_EFFECT
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_encourage_economic_self_reliance = {
+		icon = GFX_decision_syr_self_button
+		#available = {}
+		visible = { has_completed_focus = SYR_address_ethnic_divides }
+		days_remove = 120
+		fixed_random_seed = no
+		days_re_enable = 35
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_encourage_economic_self_reliance"
+			add_timed_idea = {
+				idea = syria_encouraging_economic_self_reliance
+				days = 120
+			}
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_encourage_economic_self_reliance"
+			set_temp_variable = { economic_self_reliance_chance = 0 }
+			if = {
+				limit = { has_idea = corruption_level_10 }
+				add_to_temp_variable = { economic_self_reliance_chance = 2.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_09 }
+				add_to_temp_variable = { economic_self_reliance_chance = 5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_08 }
+				add_to_temp_variable = { economic_self_reliance_chance = 7.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_07 }
+				add_to_temp_variable = { economic_self_reliance_chance = 10 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_06 }
+				add_to_temp_variable = { economic_self_reliance_chance = 12.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_05 }
+				add_to_temp_variable = { economic_self_reliance_chance = 15 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_04 }
+				add_to_temp_variable = { economic_self_reliance_chance = 17.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_03 }
+				add_to_temp_variable = { economic_self_reliance_chance = 20 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_02 }
+				add_to_temp_variable = { economic_self_reliance_chance = 22.5 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_01 }
+				add_to_temp_variable = { economic_self_reliance_chance = 25 }
+			}
+			if = {
+				limit = { has_idea = bureau_01 }
+				add_to_temp_variable = { economic_self_reliance_chance = 25 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_02 }
+				add_to_temp_variable = { economic_self_reliance_chance = 20 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_03 }
+				add_to_temp_variable = { economic_self_reliance_chance = 15 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_04 }
+				add_to_temp_variable = { economic_self_reliance_chance = 10 }
+			}
+			else_if = {
+				limit = { has_idea = bureau_05 }
+				add_to_temp_variable = { economic_self_reliance_chance = 5 }
+			}
+			set_temp_variable = { syrian_centralization_minority_average = 0 }
+			set_temp_variable = { syrian_number_of_minorities = 0 }
+			if = {
+				limit = { has_dynamic_modifier = { modifier = alawite_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = alawite_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = druze_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = druze_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = kurdish_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = kurdish_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { check_variable = { syrian_number_of_minorities = 0 } }
+				add_to_temp_variable = { syrian_centralization_minority_average = 25 }
+			}
+			else = {
+				divide_temp_variable = { syrian_centralization_minority_average = syrian_number_of_minorities }
+				multiply_temp_variable = { syrian_centralization_minority_average = 0.25 }
+			}
+			add_to_temp_variable = { economic_self_reliance_chance = syrian_centralization_minority_average }
+			if = {
+				limit = { is_in_array = { gov_coalition_array = 17 } }
+				add_to_temp_variable = { economic_self_reliance_chance = 10 }
+			}
+			set_temp_variable = { remaining_chance = 100 }
+			subtract_from_temp_variable = { remaining_chance = economic_self_reliance_chance }
+			clamp_temp_variable = {
+				var = remaining_chance
+				min = 0
+				max = 100
+			}
+			random_list = {
+				1 = {
+					modifier = { factor = remaining_chance }
+					SYR = { country_event = { id = SyriaFocus.100 days = 2 } }
+				}
+				1 = {
+					modifier = { factor = economic_self_reliance_chance }
+					SYR = { country_event = { id = SyriaFocus.87 days = 2 } }
+				}
+			}
+			custom_effect_tooltip = SYR_ENCOURAGE_ECONOMIC_SELF_RELIANCE
+			custom_effect_tooltip = TT_SYR_BOP_SUCCESSFUL_FEDERALISM_EFFECT
+		}
+
+		ai_will_do = { base = 0 }
+	}
+
+	syria_decision_encourage_state_decision_making = {
+		icon = GFX_decision_syr_govern_button
+		#available = {}
+		visible = { has_completed_focus = SYR_address_ethnic_divides }
+		days_remove = 120
+		fixed_random_seed = no
+		days_re_enable = 35
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_encourage_state_decision_making"
+			add_timed_idea = {
+				idea = syria_encouraging_state_decision_making
+				days = 120
+			}
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision syria_decision_encourage_state_decision_making"
+			set_temp_variable = { state_level_decision_chance = 0 }
+			if = {
+				limit = { has_idea = corruption_level_10 }
+				add_to_temp_variable = { state_level_decision_chance = 4 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_09 }
+				add_to_temp_variable = { state_level_decision_chance = 8 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_08 }
+				add_to_temp_variable = { state_level_decision_chance = 12 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_07 }
+				add_to_temp_variable = { state_level_decision_chance = 16 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_06 }
+				add_to_temp_variable = { state_level_decision_chance = 20 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_05 }
+				add_to_temp_variable = { state_level_decision_chance = 24 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_04 }
+				add_to_temp_variable = { state_level_decision_chance = 28 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_03 }
+				add_to_temp_variable = { state_level_decision_chance = 32 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_02 }
+				add_to_temp_variable = { state_level_decision_chance = 36 }
+			}
+			else_if = {
+				limit = { has_idea = corruption_level_01 }
+				add_to_temp_variable = { state_level_decision_chance = 40 }
+			}
+			set_temp_variable = { syrian_centralization_minority_average = 0 }
+			set_temp_variable = { syrian_number_of_minorities = 0 }
+			if = {
+				limit = { has_dynamic_modifier = { modifier = alawite_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = alawite_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = druze_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = druze_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = kurdish_political_inclusiveness_dynamic_modifier scope = SYR } }
+				add_to_temp_variable = { syrian_centralization_minority_average = kurdish_status }
+				add_to_temp_variable = { syrian_number_of_minorities = 1 }
+			}
+			if = {
+				limit = { check_variable = { syrian_number_of_minorities = 0 } }
+				add_to_temp_variable = { syrian_centralization_minority_average = 40 }
+			}
+			else = {
+				divide_temp_variable = { syrian_centralization_minority_average = syrian_number_of_minorities }
+				divide_temp_variable = { syrian_centralization_minority_average = 2.5 }
+			}
+			add_to_temp_variable = { state_level_decision_chance = syrian_centralization_minority_average }
+			if = {
+				limit = { is_in_array = { gov_coalition_array = 17 } }
+				add_to_temp_variable = { state_level_decision_chance = 20 }
+			}
+			set_temp_variable = { remaining_chance = 100 }
+			subtract_from_temp_variable = { remaining_chance = state_level_decision_chance }
+			clamp_temp_variable = {
+				var = remaining_chance
+				min = 0
+				max = 100
+			}
+			random_list = {
+				1 = {
+					modifier = { factor = remaining_chance }
+					SYR = { country_event = { id = SyriaFocus.101 days = 2 } }
+				}
+				1 = {
+					modifier = { factor = state_level_decision_chance }
+					SYR = { country_event = { id = SyriaFocus.102 days = 2 } }
+				}
+			}
+			custom_effect_tooltip = SYR_STATE_DECISION_MAKING_SUCCESS_EFFECTS
+			custom_effect_tooltip = TT_SYR_BOP_SUCCESSFUL_FEDERALISM_EFFECT
+		}
+
+		ai_will_do = { base = 0 }
+	}
+}

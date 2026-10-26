@@ -1,0 +1,94 @@
+{
+  "review_date": "2026-10-16",
+  "scope": "Read-only comparison of Israel 1970 authored focus rewards with installed MD generic and Russia reward patterns; no files changed except this review and MD_REWARD_REVIEW.md.",
+  "sources": {
+    "israel_reward_authoring": "tools/israel_1970/revised_rewards.py",
+    "israel_effects": "common/scripted_effects/ISR70_effects.txt",
+    "israel_ideas": "common/ideas/ISR70_ideas.txt",
+    "israel_dynamic_modifiers": "common/dynamic_modifiers/ISR70_dynamic_modifiers.txt",
+    "design_source": "tools/israel_1970/design_source.json",
+    "generic_reference": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/00_generic.txt",
+    "russia_reference": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_russia.txt",
+    "interest_rate_definition": "common/modifier_definitions/money_modifier_definitions.txt",
+    "interest_rate_formula": "common/scripted_effects/00_money_system.txt"
+  },
+  "count_interpretation": {
+    "design_source_nodes": 347,
+    "obsolete_political_unlock_nodes_removed": 32,
+    "live_focus_count": 315,
+    "note": "The 347-node design input is reduced by 32 obsolete political-unlock nodes to 315 live focuses as stated in README. The revised_rewards.py comment now refers to legacy focus gates."
+  },
+  "reference_patterns": {
+    "generic": "Typical direct rewards: 100-200 political power, stability or war support +0.05, one-use research bonuses about +0.25, timed ideas for 365 or 730 days, and concrete construction with eligibility and cost checks.",
+    "russia_2000": "Economy-focused persistent rewards use named dynamic modifiers and visible add_to_variable increments, often research/corporate tax around +0.01 to +0.05, cycle cost around -0.01 to -0.04, and bureaucracy costs around -0.05 to -0.10. Large territory/resource packages are country-specific and should not be transferred to Israel."
+  },
+  "calculation_method": {
+    "shared_reward_envelope": "Sum negative and positive permanent modifier contributions from common focus rewards separately. This preserves optional penalties and benefits without netting opposite-sign alternatives. It intentionally includes mutually exclusive common choices and is an unattainable conservative envelope.",
+    "active_programme": "For each of 20 active party slots, sum institution + finish + one ea/eb choice and its deepen focus + one ca/cb choice and its deepen focus. Also include p1 gahal_coalition; for p3 include alignment_balance, golda_labour, golda_manager, golda_housing, and one of rabin_cabinet/peres_cabinet, since the scripted effect feeds these into p1/p3 variables. Report minimum/maximum over these valid packages.",
+    "combined": "Shared negative lower envelope plus minimum active programme; shared positive upper envelope plus maximum active programme. This bounds stacking, not a reachable campaign state. Four disabled party slots 8-11 are excluded."
+  },
+  "modifier_envelope": {
+    "bureaucracy_cost_multiplier_modifier": {"shared_negative": -0.4, "shared_positive": 0.05, "programme_range": [-0.2, 0.0], "combined_envelope": [-0.6, 0.05]},
+    "receiving_investment_cost_modifier": {"shared_negative": -0.55, "shared_positive": 0.0, "programme_range": [-0.15, 0.0], "combined_envelope": [-0.7, 0.0]},
+    "social_cost_multiplier_modifier": {"shared_negative": -0.15, "shared_positive": 0.0, "programme_range": [-0.2, 0.0], "combined_envelope": [-0.35, 0.0]},
+    "health_cost_multiplier_modifier": {"shared_negative": -0.1, "shared_positive": 0.0, "programme_range": [-0.05, 0.0], "combined_envelope": [-0.15, 0.0]},
+    "supply_consumption_factor": {"shared_negative": -0.18, "shared_positive": 0.0, "programme_range": [-0.15, 0.0], "combined_envelope": [-0.33, 0.0]},
+    "training_time_army_factor": {"shared_negative": -0.05, "shared_positive": 0.0, "programme_range": [-0.05, 0.0], "combined_envelope": [-0.1, 0.0]},
+    "industrial_capacity_factory": {"shared_negative": 0.0, "shared_positive": 0.05, "programme_range": [0.0, 0.08], "combined_envelope": [0.0, 0.13]},
+    "army_defence_factor": {"shared_negative": 0.0, "shared_positive": 0.26, "programme_range": [0.0, 0.05], "combined_envelope": [0.0, 0.31]},
+    "army_org_factor": {"shared_negative": 0.0, "shared_positive": 0.18, "programme_range": [0.0, 0.05], "combined_envelope": [0.0, 0.23]},
+    "mobilization_speed": {"shared_negative": 0.0, "shared_positive": 0.4, "programme_range": [0.0, 0.25], "combined_envelope": [0.0, 0.65], "programme_max_source": "p21"},
+    "political_power_factor": {"shared_negative": 0.0, "shared_positive": 0.2, "programme_range": [0.0, 0.15], "combined_envelope": [0.0, 0.35]},
+    "research_speed_factor": {"shared_negative": 0.0, "shared_positive": 0.08, "programme_range": [0.0, 0.04], "combined_envelope": [0.0, 0.12], "programme_max_source": "p17"},
+    "productivity_growth_modifier": {"shared_negative": 0.0, "shared_positive": 0.2, "programme_range": [0.0, 0.15], "combined_envelope": [0.0, 0.35]},
+    "production_speed_infrastructure_factor": {"shared_negative": 0.0, "shared_positive": 0.25, "programme_range": [0.0, 0.15], "combined_envelope": [0.0, 0.4]},
+    "production_speed_offices_factor": {"shared_negative": 0.0, "shared_positive": 0.35, "programme_range": [0.0, 0.15], "combined_envelope": [0.0, 0.5]},
+    "foreign_influence_defense_modifier": {"shared_negative": 0.0, "shared_positive": 0.45, "programme_range": [0.0, 0.1], "combined_envelope": [0.0, 0.55]},
+    "interest_rate_multiplier_modifier": {"shared_negative": -0.5, "shared_positive": 0.0, "programme_range": [0.0, 0.0], "combined_envelope": [-0.5, 0.0]}
+  },
+  "interest_rate_interpretation": {
+    "focus": "steady_budget",
+    "focus_id": "ISR70_steady_budget",
+    "modifier_value": -0.5,
+    "modifier_definition": "value_type = number",
+    "formula_behavior": "Added directly to pre_clamp_interest_rate; calculated result is clamped to 0.8-50.",
+    "unit": "percentage points",
+    "meaning": "Subtracts 0.50 percentage points from calculated interest, not 50 percent multiplicatively.",
+    "recommendation": "Keep; this is a bounded credit improvement, not an extreme or invalid value."
+  },
+  "notable_tradeoffs": [
+    {
+      "focus_ids": ["ISR70_p15_eb", "ISR70_p15_cb"],
+      "effect": "The patronage route can accumulate corruption_cost_factor +0.10 in its active programme.",
+      "assessment": "Intentional and described as the cost of privileged concessions/patronage; no correction recommended."
+    },
+    {
+      "focus_id": "ISR70_territory_administration",
+      "effect": "resistance_damage_to_garrison -0.15 and bureaucracy_cost_multiplier_modifier +0.05, with a GDP-funded cost.",
+      "assessment": "Explicitly paid administrative tradeoff; not an unexplained free territorial bonus."
+    },
+    {
+      "focus_ids": ["ISR70_import_substitution", "ISR70_export_specialization"],
+      "assessment": "Mutually exclusive resilience/exposure economic choices."
+    },
+    {
+      "focus_ids": ["ISR70_steady_budget", "ISR70_development_budget"],
+      "assessment": "Mutually exclusive credit-cost versus funded-development choices."
+    }
+  ],
+  "starting_spirits": {
+    "ISR70_unity": {"stability_factor": 0.04, "political_power_factor": -0.05, "replacement": "ISR70_unity_cabinet or ISR70_narrow_cabinet removes it."},
+    "ISR70_citizen_army": {"mobilization_speed": 0.15, "army_org_factor": 0.03, "replacement": "ISR70_reserve_system removes it."},
+    "ISR70_histadrut": {"production_speed_industrial_complex_factor": 0.05, "social_cost_multiplier_modifier": -0.03, "replacement": "Retained as a distinct starting spirit."},
+    "ISR70_attrition": {"war_support_factor": 0.03, "mobilization_speed": 0.05, "personnel_cost_multiplier_modifier": 0.08, "replacement": "Removed by ISR70_ceasefire or ISR70_egypt_peace; retained by ISR70_armed_stalemate."},
+    "ISR70_embargo": {"production_speed_arms_factory_factor": -0.05, "replacement": "Removed by ISR70_air_maintenance when ISR70_local_aircraft_programme flag exists."},
+    "ISR70_absorption": {"monthly_population": 0.05, "social_cost_multiplier_modifier": 0.05, "replacement": "ISR70_absorption_reform swaps to integrated immigration, retaining growth and removing surcharge."},
+    "ISR70_ambiguity": {"foreign_influence_defense_modifier": 0.05, "replacement": "Removed by ISR70_keep_ambiguity or ISR70_nuclear_transparency before distinct reward."}
+  },
+  "result": {
+    "cost_modifier_at_or_below_minus_one_found": false,
+    "gameplay_balance_conclusion": "None; this is only a static plausibility screen, not a gameplay balance test.",
+    "broken_modifier_id_found": false,
+    "recommendation": "No broken reward ID or extreme static range was identified. This does not establish gameplay balance or rule out changes supported by playtesting. Engine loading and tooltip execution still require an in-game check."
+  }
+}

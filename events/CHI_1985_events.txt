@@ -1,0 +1,287 @@
+# IMPERIA CW — Cold War: Integrated CHI 1985 events — game content.
+# =============================================================================
+# CHINA 1985 - Event chains (Imperia RP Cold War)
+# =============================================================================
+# Naming: china_1985.<n>. Triggered events fire from focuses or from
+# CHI_1985_monthly_event_check (in scripted_effects). Picture references use
+# only stock GFX so the events render even if the mod's custom event GFX
+# isn't installed.
+# =============================================================================
+
+add_namespace = china_1985
+
+# -----------------------------------------------------------------------------
+# china_1985.1 - 1986 Student Demonstrations (focus: 1986_student_demonstrations)
+# -----------------------------------------------------------------------------
+country_event = {
+	id = china_1985.1
+	title = china_1985.1.t
+	desc = china_1985.1.d
+	picture = GFX_report_event_generic_riot
+	is_triggered_only = yes
+
+	option = {
+		name = china_1985.1.a # Defend Hu Yaobang
+		add_stability = -0.01
+		add_to_variable = { CHI_student_mobilization = -3 }
+		add_to_variable = { CHI_reform_momentum = 5 }
+		add_to_variable = { CHI_conservative_elder_power = 6 }
+		CHI_1985_monthly_state_update = yes
+	}
+	option = {
+		name = china_1985.1.b # Sacrifice the Liberals
+		add_stability = 0.02
+		add_to_variable = { CHI_student_mobilization = 8 }
+		add_to_variable = { CHI_reform_momentum = -10 }
+		add_to_variable = { CHI_conservative_elder_power = 10 }
+		add_to_variable = { CHI_party_control = 8 }
+		CHI_1985_monthly_state_update = yes
+	}
+	option = {
+		name = china_1985.1.c # Open a Controlled Dialogue
+		add_political_power = -50
+		add_to_variable = { CHI_student_mobilization = -5 }
+		add_to_variable = { CHI_reform_momentum = 2 }
+		add_to_variable = { CHI_party_control = -2 }
+		CHI_1985_monthly_state_update = yes
+	}
+	option = {
+		name = china_1985.1.e # Send the Police but Avoid Bloodshed
+		add_stability = -0.02
+		add_to_variable = { CHI_student_mobilization = -2 }
+		add_to_variable = { CHI_party_control = 5 }
+		add_to_variable = { CHI_reform_momentum = -2 }
+		CHI_1985_monthly_state_update = yes
+	}
+}
+
+# -----------------------------------------------------------------------------
+# china_1985.2 - Inflation in the Cities
+# -----------------------------------------------------------------------------
+country_event = {
+	id = china_1985.2
+	title = china_1985.2.t
+	desc = china_1985.2.d
+	picture = GFX_report_event_generic_factory_strike
+
+	trigger = {
+		tag = CHI
+		has_country_flag = CHI_1985_state_system_enabled
+		check_variable = { CHI_inflation_pressure > 60 }
+		NOT = { has_country_flag = CHI_1985_inflation_event_fired }
+	}
+
+	mean_time_to_happen = { days = 30 }
+	fire_only_once = yes
+
+	immediate = { set_country_flag = CHI_1985_inflation_event_fired }
+
+	option = {
+		name = china_1985.2.a # Freeze Prices
+		add_to_variable = { CHI_inflation_pressure = -10 }
+		add_to_variable = { CHI_marketization_level = -5 }
+		add_to_variable = { CHI_reform_momentum = -3 }
+		add_stability = 0.02
+		CHI_1985_monthly_state_update = yes
+	}
+	option = {
+		name = china_1985.2.b # Blame Speculators
+		add_to_variable = { CHI_inflation_pressure = -3 }
+		add_to_variable = { CHI_corruption_pressure = -5 }
+		add_to_variable = { CHI_party_control = 4 }
+		add_stability = -0.01
+		CHI_1985_monthly_state_update = yes
+	}
+	option = {
+		name = china_1985.2.c # Continue Reform
+		add_to_variable = { CHI_inflation_pressure = 5 }
+		add_to_variable = { CHI_marketization_level = 4 }
+		add_to_variable = { CHI_student_mobilization = 5 }
+		CHI_1985_monthly_state_update = yes
+	}
+	option = {
+		name = china_1985.2.e # Increase Urban Subsidies
+		add_to_variable = { CHI_inflation_pressure = -6 }
+		add_to_variable = { CHI_corruption_pressure = 3 }
+		add_to_variable = { CHI_inland_neglect = 4 }
+		CHI_1985_monthly_state_update = yes
+	}
+}
+
+# -----------------------------------------------------------------------------
+# china_1985.3 - Student Posters Appear
+# -----------------------------------------------------------------------------
+country_event = {
+	id = china_1985.3
+	title = china_1985.3.t
+	desc = china_1985.3.d
+	picture = GFX_report_event_generic_riot
+
+	trigger = {
+		tag = CHI
+		has_country_flag = CHI_1985_state_system_enabled
+		check_variable = { CHI_student_mobilization > 40 }
+		NOT = { has_country_flag = CHI_1985_posters_event_fired }
+	}
+
+	mean_time_to_happen = { days = 60 }
+	fire_only_once = yes
+
+	immediate = { set_country_flag = CHI_1985_posters_event_fired }
+
+	option = {
+		name = china_1985.3.a # Remove the Posters
+		add_to_variable = { CHI_student_mobilization = -4 }
+		add_to_variable = { CHI_party_control = 4 }
+		add_to_variable = { CHI_reform_momentum = -2 }
+	}
+	option = {
+		name = china_1985.3.b # Permit Controlled Discussion
+		add_to_variable = { CHI_student_mobilization = 3 }
+		add_to_variable = { CHI_reform_momentum = 5 }
+		add_to_variable = { CHI_party_control = -3 }
+	}
+	option = {
+		name = china_1985.3.c # Arrest the Organizers
+		add_to_variable = { CHI_student_mobilization = -8 }
+		add_to_variable = { CHI_party_control = 8 }
+		add_stability = -0.02
+	}
+	option = {
+		name = china_1985.3.e # Call for Anti-Corruption Reform
+		add_to_variable = { CHI_corruption_pressure = -6 }
+		add_to_variable = { CHI_student_mobilization = -2 }
+		add_to_variable = { CHI_reform_momentum = 4 }
+	}
+}
+
+# -----------------------------------------------------------------------------
+# china_1985.4 - Elders Demand Discipline
+# -----------------------------------------------------------------------------
+country_event = {
+	id = china_1985.4
+	title = china_1985.4.t
+	desc = china_1985.4.d
+	picture = GFX_report_event_generic_political_crisis
+
+	trigger = {
+		tag = CHI
+		has_country_flag = CHI_1985_state_system_enabled
+		check_variable = { CHI_student_mobilization > 50 }
+		check_variable = { CHI_conservative_elder_power > 65 }
+		NOT = { has_country_flag = CHI_1985_elders_event_fired }
+	}
+
+	mean_time_to_happen = { days = 45 }
+	fire_only_once = yes
+
+	immediate = { set_country_flag = CHI_1985_elders_event_fired }
+
+	option = {
+		name = china_1985.4.a # Sacrifice Hu Yaobang
+		add_to_variable = { CHI_conservative_elder_power = 6 }
+		add_to_variable = { CHI_reform_momentum = -8 }
+		add_to_variable = { CHI_party_control = 6 }
+		add_stability = 0.02
+	}
+	option = {
+		name = china_1985.4.b # Defend the Reformers
+		add_to_variable = { CHI_conservative_elder_power = -8 }
+		add_to_variable = { CHI_reform_momentum = 5 }
+		add_stability = -0.03
+	}
+	option = {
+		name = china_1985.4.c # Delay and Investigate
+		add_to_variable = { CHI_central_authority = 4 }
+		add_to_variable = { CHI_conservative_elder_power = 2 }
+	}
+}
+
+# -----------------------------------------------------------------------------
+# china_1985.5 - Provincial Reform Race
+# -----------------------------------------------------------------------------
+country_event = {
+	id = china_1985.5
+	title = china_1985.5.t
+	desc = china_1985.5.d
+	picture = GFX_report_event_generic_factory
+
+	trigger = {
+		tag = CHI
+		has_country_flag = CHI_1985_state_system_enabled
+		check_variable = { CHI_marketization_level > 50 }
+		NOT = { has_country_flag = CHI_1985_provincial_race_fired }
+	}
+
+	mean_time_to_happen = { days = 90 }
+	fire_only_once = yes
+
+	immediate = { set_country_flag = CHI_1985_provincial_race_fired }
+
+	option = {
+		name = china_1985.5.a # Encourage Competition
+		add_to_variable = { CHI_provincial_experimentation = 8 }
+		add_to_variable = { CHI_marketization_level = 4 }
+		add_to_variable = { CHI_central_authority = -3 }
+	}
+	option = {
+		name = china_1985.5.b # Rein in Provinces
+		add_to_variable = { CHI_central_authority = 8 }
+		add_to_variable = { CHI_provincial_experimentation = -5 }
+		add_to_variable = { CHI_party_control = 4 }
+	}
+	option = {
+		name = china_1985.5.c # Reward Coastal Growth
+		add_to_variable = { CHI_coastal_growth = 8 }
+		add_to_variable = { CHI_inland_neglect = 5 }
+	}
+	option = {
+		name = china_1985.5.e # Redirect Funds Inland
+		add_to_variable = { CHI_coastal_growth = -3 }
+		add_to_variable = { CHI_inland_neglect = -8 }
+		add_to_variable = { CHI_rural_discontent = -3 }
+	}
+}
+
+# -----------------------------------------------------------------------------
+# china_1985.6 - PLA Resents the Cuts
+# -----------------------------------------------------------------------------
+country_event = {
+	id = china_1985.6
+	title = china_1985.6.t
+	desc = china_1985.6.d
+	picture = GFX_report_event_generic_army
+
+	trigger = {
+		tag = CHI
+		has_country_flag = CHI_1985_state_system_enabled
+		has_idea = CHI_idea_pla_reform_underway
+		check_variable = { CHI_pla_bloat < 55 }
+		check_variable = { CHI_pla_professionalization < 45 }
+		NOT = { has_country_flag = CHI_1985_pla_resents_fired }
+	}
+
+	mean_time_to_happen = { days = 90 }
+	fire_only_once = yes
+
+	immediate = { set_country_flag = CHI_1985_pla_resents_fired }
+
+	option = {
+		name = china_1985.6.a # Increase Officer Benefits
+		add_political_power = -50
+		add_to_variable = { CHI_pla_professionalization = 5 }
+		add_to_variable = { CHI_corruption_pressure = 3 }
+	}
+	option = {
+		name = china_1985.6.b # Ignore the Old Guard
+		add_to_variable = { CHI_pla_modernization = 4 }
+		add_to_variable = { CHI_conservative_elder_power = 6 }
+		add_stability = -0.02
+	}
+	option = {
+		name = china_1985.6.c # Slow the Demobilization
+		add_to_variable = { CHI_pla_bloat = 8 }
+		add_to_variable = { CHI_pla_professionalization = -3 }
+		add_to_variable = { CHI_veteran_resettlement_pressure = -5 }
+	}
+}

@@ -1,0 +1,208 @@
+capital = 730
+
+# IMPERIA CW — Cold War: 1970 scenario country history.
+# Authored Cold War 1970 snapshot; native later history retained.
+1970.1.1 = {
+	if = {
+		limit = { date < 1985.1.1 }
+		mdcw_apply_1970_infantry_research = yes
+		load_focus_tree = mdcw_1970_generic_focus
+		set_variable = { gdp_per_capita = 0.258 }
+		set_variable = { overall_productivity = 226.893 }
+		if = {
+			limit = { exists = yes }
+			set_oob = "mdcw_1970_empty_land"
+		}
+	}
+
+		# Temporary user decision: starting armies, fleets, air wings and equipment deferred.
+		set_oob = "mdcw_1970_empty_land"
+		set_naval_oob = "mdcw_1970_empty_naval"
+		set_air_oob = "mdcw_1970_empty_air"
+	}
+
+2000.1.1 = {
+	set_variable = { currency_strength = 0.55 }
+	oob = "PAP_2000"
+
+	set_cosmetic_tag = PAP
+	set_country_flag = dynamic_flag
+	set_country_flag = dynamic_rebel_flag
+	set_variable = { gdp_per_capita = 3.048 }
+
+	add_ideas = {
+		wto_member
+		partially_privatized_healthcare
+		balanced_protections
+		standard_maintenance
+		us_dollar
+		light_regulations
+
+		corruption_level_09
+		christian
+		stable_growth
+		defence_02
+		edu_01
+		health_02
+		social_01
+		bureau_03
+		police_01
+		volunteer_army
+		volunteer_women
+		industrial_conglomerates
+		farmers
+		small_medium_business_owners
+		semi_consumption_economy
+		multi_ethnic_state_idea
+		officer_basic_training
+		at_member
+		rentier_state
+		no_currency_backing
+	}
+	add_dynamic_modifier = { modifier = Commonwealth_member_modifier }
+	add_to_array = { global.commonwealth_member = THIS }
+
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_air_oob = "PAP_2000_bba"
+		else = {
+			set_air_oob = "PAP_2000_nonbba"
+		}
+	}
+
+	add_opinion_modifier = { target = SOL modifier = melanesian_spearhead_group }
+	add_opinion_modifier = { target = FIJ modifier = melanesian_spearhead_group }
+	add_opinion_modifier = { target = AST modifier = melanesian_diplomacy }
+
+	# Starting tech
+	set_technology = {
+
+		railway_system_01 = 1
+		infantry_mass_assault = 1
+
+		infantry_weapons_1 = 1
+		cnc_equipment_1 = 1
+		Anti_tank_1 = 1
+		util_vehicle_1 = 1
+		Heavy_Anti_tank_1 = 1
+		combat_eng_equipment = 1
+
+		basic_computing = 1
+		integrated_circuit = 1
+		computing_1 = 1
+
+		radar = 1
+		fuel_silos = 1
+
+		nanofibers_1 = 1
+		printing_1 = 1
+		fuel_refining = 1
+		construction1 = 1
+	}
+
+	if = {
+		limit = { NOT = { has_dlc = "La Resistance" } }
+		set_technology = {
+			decryption_1 = 1
+			encryption_1 = 1
+		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+
+		set_technology = {
+			nsb_Anti_Air_0 = 1
+		}
+		else = {
+			set_technology = {
+				Anti_Air_0 = 1
+			}
+		}
+	}
+
+	#Influence system
+	init_influence = yes
+	set_variable = { domestic_influence_amount = 75 }
+	add_to_array = { influence_array = CHI.id }
+	add_to_array = { influence_array_val = 22 }
+	add_to_array = { influence_array = USA.id }
+	add_to_array = { influence_array_val = 27 }
+	add_to_array = { influence_array = AST.id }
+	add_to_array = { influence_array_val = 54 }
+	add_to_array = { influence_array = NZL.id }
+	add_to_array = { influence_array_val = 22 }
+	add_to_array = { influence_array = IND.id }
+	add_to_array = { influence_array_val = 40 }
+	sort_influence = yes
+
+	set_variable = { industrial_conglomerates_opinion = 60 }
+
+	set_variable = { var = debt value = 7.114 }
+	set_variable = { var = treasury value = 3 }
+	set_variable = { var = corporate_tax_rate value = 30 }
+	set_variable = { var = population_tax_rate value = 42 }
+	set_variable = { var = int_investments value = 0 }
+	set_variable = { inflation_rate_var = 0.14932 }
+	set_variable = { cb_policy_rate = 3 }
+
+	set_popularities = {
+		democratic = 39.0
+		communism = 13.0
+		fascism = 0.0
+		neutrality = 48.0
+		nationalist = 0.0
+	}
+	set_politics = {
+		ruling_party = neutrality
+		last_election = "1997.6.17"
+		election_frequency = 60
+		elections_allowed = yes
+	}
+
+	start_politics_input = yes
+
+	### Party Popularities
+	set_variable = { party_pop_array^2 = 0.2 } #liberalism
+	set_variable = { party_pop_array^3 = 0.19 } #socialism
+	set_variable = { party_pop_array^5 = 0.13 } #anarchist_communism
+	set_variable = { party_pop_array^14 = 0.45 } #Neutral_conservatism
+	set_variable = { party_pop_array^18 = 0.03 } #neutral_Social
+
+	### Ruling Party
+	set_variable = { ruling_party = 14 }
+
+	startup_politics = yes
+
+	create_country_leader = {
+		name = "Mekere Morauta"
+		picture = "Mekere_Morauta.dds"
+		ideology = Neutral_conservatism
+		traits = {
+			neutrality_Neutral_conservatism
+		}
+	}
+
+	set_variable = { overall_productivity = 391 }
+
+	recruit_character = PAP_francis_agwi
+	recruit_character = PAP_john_matagarakikai
+	recruit_character = PAP_philip_makoan
+
+
+	# Relation Starting Configuration (moved from on_startup)
+	add_opinion_modifier = { target = CUB modifier = sanctions }
+	add_relation_modifier = { target = USA modifier = USA_World_Economical_Relations }
+	add_relation_modifier = { target = SOV modifier = SOV_World_Economical_Relations }
+	add_relation_modifier = { target = CHI modifier = CHI_World_Economical_Relations }
+	add_relation_modifier = { target = FRA modifier = FRA_World_Economical_Relations }
+	add_relation_modifier = { target = GER modifier = GER_World_Economical_Relations }
+	add_relation_modifier = { target = ENG modifier = ENG_World_Economical_Relations }
+	add_relation_modifier = { target = SPR modifier = SPR_World_Economical_Relations }
+	add_relation_modifier = { target = ITA modifier = ITA_World_Economical_Relations }
+	add_relation_modifier = { target = UKR modifier = UKR_world_economical_relations }
+	add_relation_modifier = { target = ISR modifier = ISR_World_Economical_Relations }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists_Trade }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists_Trade }
+}

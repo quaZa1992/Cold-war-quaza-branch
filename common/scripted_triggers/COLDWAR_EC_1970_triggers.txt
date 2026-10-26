@@ -1,0 +1,43 @@
+# IMPERIA CW — Cold War: EC 1970 triggers — scripted triggers.
+###########################################################################################
+### COLDWAR: European Communities 1970 triggers (EC mode of the native MD EU system)
+###########################################################################################
+
+# COLDWAR: any scope. Before the European Monetary System there is no central bank office;
+# the Commission prepares and executes the Community budget.
+COLDWAR_EC_commission_budget_authority = {
+	has_global_flag = COLDWAR_EC_1970_mode
+	NOT = { has_global_flag = COLDWAR_EC_monetary_system }
+}
+
+# COLDWAR: country scope. Holds the budget office: native ECB president, or the Commission in the EC era.
+COLDWAR_EC_budget_holder = {
+	OR = {
+		has_idea = ECB_president
+		AND = {
+			COLDWAR_EC_commission_budget_authority = yes
+			has_idea = EU_commission_president
+		}
+	}
+}
+
+# COLDWAR: any scope. The budget office is filled (added to the native "central bank taken" checks).
+COLDWAR_EC_budget_office_filled = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_EC_budget_office_filled_tt
+		COLDWAR_EC_commission_budget_authority = yes
+		NOT = { check_variable = { global.eu_commission = EUU.id } }
+		var:global.eu_commission = { has_idea = EU_commission_president }
+	}
+}
+
+# COLDWAR: any scope. The euro exists only after Economic and Monetary Union in the EC era.
+COLDWAR_EC_euro_allowed = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_EC_euro_allowed_tt
+		OR = {
+			NOT = { has_global_flag = COLDWAR_EC_1970_mode }
+			has_global_flag = COLDWAR_EC_economic_and_monetary_union
+		}
+	}
+}

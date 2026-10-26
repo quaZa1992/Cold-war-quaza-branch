@@ -1,0 +1,59 @@
+# IMPERIA CW — Cold War: Live diaspora-policy guards; confirmation rechecks captured inputs.
+mdcw_dp_own_free = {
+ is_ai = no
+ mdcw_gw_negotiation_free = yes
+ NOT = { has_country_flag = gw_return_active }
+}
+mdcw_dp_foreign_ready = {
+ mdcw_dp_own_free = yes
+ check_variable = { gw_dp_target > -1 }
+ check_variable = { gw_dp_target_free = 1 }
+ NOT = { check_variable = { gw_dp_stock < 25 } }
+ check_variable = { gw_dp_active_count < 2 }
+}
+mdcw_dp_can_remittance = {
+ mdcw_dp_foreign_ready = yes
+ NOT = { check_variable = { political_power < 75 } }
+ NOT = { check_variable = { gw_dp_campaign_k < 25 } }
+ NOT = { check_variable = { treasury < gw_dp_campaign_cash } }
+ check_variable = { gw_dp_total_income_m < 3000 }
+}
+mdcw_dp_can_trade = {
+ mdcw_dp_foreign_ready = yes
+ NOT = { check_variable = { political_power < 50 } }
+ NOT = { check_variable = { gw_dp_trade_k < 25 } }
+ NOT = { check_variable = { treasury < gw_dp_trade_cash } }
+}
+mdcw_dp_can_skill = {
+ mdcw_dp_foreign_ready = yes
+ NOT = { check_variable = { political_power < 100 } }
+ NOT = { has_country_flag = gw_dp_skill_cooldown }
+ NOT = { check_variable = { treasury < gw_dp_skill_cash } }
+ check_variable = { gw_dp_skill_k > 0 }
+ any_owned_state = { is_controlled_by = PREV }
+}
+mdcw_dp_can_retention = {
+ mdcw_dp_own_free = yes
+ check_variable = { mdcw_gw_guest_workers_k > 0 }
+ NOT = { check_variable = { political_power < 75 } }
+ NOT = { has_country_flag = gw_dp_retention }
+}
+mdcw_dp_can_homecoming = {
+ mdcw_dp_own_free = yes
+ NOT = { check_variable = { gw_abroad_k < 25 } }
+ NOT = { check_variable = { political_power < 75 } }
+ NOT = { has_country_flag = gw_dp_homecoming }
+ NOT = { check_variable = { treasury < gw_dp_homecoming_cash } }
+}
+# ROOT is the source applicant, FROM the host in acceptance/refusal callbacks.
+mdcw_dp_pair_pending = {
+ has_country_flag = gw_dp_request
+ check_variable = { gw_dp_partner = FROM.id }
+ FROM = { has_country_flag = gw_dp_offer check_variable = { gw_dp_partner = ROOT.id } }
+}
+# ROOT is the host reading a visible offer, FROM the source applicant.
+mdcw_dp_offer_pending = {
+ has_country_flag = gw_dp_offer
+ check_variable = { gw_dp_partner = FROM.id }
+ FROM = { has_country_flag = gw_dp_request check_variable = { gw_dp_partner = ROOT.id } }
+}

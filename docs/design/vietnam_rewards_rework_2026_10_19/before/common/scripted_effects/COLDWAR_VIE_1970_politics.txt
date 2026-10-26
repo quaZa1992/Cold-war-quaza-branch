@@ -1,0 +1,279 @@
+# COLDWAR | North Vietnam 1970 political identity and native leader integration.
+# Native MD set_leader remains the only political dispatcher. No parallel menu.
+# Ordinals 0/1/2/3: Le Duan / Truong Chinh / Nguyen Van Linh / alternate Vo Van Kiet.
+
+COLDWAR_VIE_1970_initialize_politics = {
+	if = {
+		limit = { original_tag = VIE IMP_is_1970_scenario = yes is_dynamic_country = no }
+		if = {
+			limit = { NOT = { has_country_flag = COLDWAR_VIE_1970_politics_initialized } }
+			set_country_flag = COLDWAR_VIE_1970_politics_initialized
+			# Preserve the authored January 1970 leader, parties, coalition and popularity.
+			if = {
+				limit = { has_country_leader = { name = "Le Duan" ruling_only = yes } }
+				set_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 }
+			}
+			COLDWAR_VIE_1970_sync_leader_counter = yes
+		}
+		update_set_politics = yes
+	}
+}
+
+# Called by the VIE-only portion of the existing native counter synchronizer,
+# before set_leader removes the outgoing country leader.
+COLDWAR_VIE_1970_sync_leader_counter = {
+	if = {
+		limit = { original_tag = VIE IMP_is_1970_scenario = yes check_variable = { ruling_party = 4 } }
+		if = {
+			limit = { has_country_leader = { name = "Le Duan" ruling_only = yes } }
+			set_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 }
+		}
+		else_if = {
+			limit = { has_country_leader = { name = "Truong Chinh" ruling_only = yes } }
+			set_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 }
+		}
+		else_if = {
+			limit = { has_country_leader = { name = "Nguyen Van Linh" ruling_only = yes } }
+			set_variable = { COLDWAR_VIE_1970_communist_incumbent = 2 }
+		}
+		else_if = {
+			limit = { has_country_leader = { name = "Vo Van Kiet" ruling_only = yes } }
+			set_variable = { COLDWAR_VIE_1970_communist_incumbent = 3 }
+		}
+		if = {
+			limit = { has_variable = COLDWAR_VIE_1970_communist_incumbent }
+			set_variable = { communist_state_leader = COLDWAR_VIE_1970_communist_incumbent }
+		}
+	}
+}
+
+COLDWAR_VIE_1970_set_communist_leader = {
+	if = {
+		limit = { has_variable = COLDWAR_VIE_1970_install_communist }
+		set_variable = { COLDWAR_VIE_1970_communist_incumbent = COLDWAR_VIE_1970_install_communist }
+		clear_variable = COLDWAR_VIE_1970_install_communist
+	}
+	else_if = {
+		limit = {
+			check_variable = { MDCW_HP_native_retirement = 1 }
+			NOT = { has_country_flag = do_not_retire }
+			has_variable = COLDWAR_VIE_1970_communist_incumbent
+		}
+		# The existing retirement button selects an alternate mandate. Daily
+		# historical checks must not subsequently undo a player's succession.
+		set_country_flag = COLDWAR_VIE_1970_alternate_succession
+		add_to_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 }
+		if = {
+			limit = { check_variable = { COLDWAR_VIE_1970_communist_incumbent > 3 } }
+			set_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 }
+		}
+	}
+	if = {
+		limit = { NOT = { has_variable = COLDWAR_VIE_1970_communist_incumbent } }
+		if = {
+			limit = { date > 1986.12.17 }
+			set_variable = { COLDWAR_VIE_1970_communist_incumbent = 2 }
+		}
+		else_if = {
+			limit = { date > 1986.7.13 }
+			set_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 }
+		}
+		else = { set_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 } }
+	}
+	# Native retirement must not resurrect a chief after his historical death.
+	if = {
+		limit = { date > 1986.7.9 check_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 } }
+		set_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 }
+	}
+	if = {
+		limit = { date > 1988.9.29 check_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 } }
+		set_variable = { COLDWAR_VIE_1970_communist_incumbent = 2 }
+	}
+	if = {
+		limit = { check_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 } }
+		create_country_leader = {
+			name = "Truong Chinh"
+			picture = "gfx/leaders/VIE/1970/COLDWAR_VIE_1970_truong_chinh.dds"
+			ideology = communist_state
+			traits = { }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_VIE_1970_communist_incumbent = 2 } }
+		create_country_leader = {
+			name = "Nguyen Van Linh"
+			picture = "gfx/leaders/mdcw_historical_pool/VIE_nguyen_van_linh.dds"
+			ideology = communist_state
+			traits = { }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_VIE_1970_communist_incumbent = 3 } }
+		# Deliberate alternate party-chief mandate; Kiet was historically a
+		# cabinet/local administrator and never the national General Secretary.
+		create_country_leader = {
+			name = "Vo Van Kiet"
+			picture = "gfx/leaders/mdcw_historical_pool/VIE_vo_van_kiet.dds"
+			ideology = communist_state
+			traits = { }
+		}
+	}
+	else = {
+		set_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 }
+		create_country_leader = {
+			name = "Le Duan"
+			picture = "gfx/Leaders/VIE/VIE_Coldwar_Le_Duan.dds"
+			ideology = communist_state
+			traits = { }
+		}
+	}
+	set_variable = { communist_state_leader = COLDWAR_VIE_1970_communist_incumbent }
+}
+
+# Country provider called inside native set_leader_VIE, after its normal
+# update_set_politics. Supported parties use existing MD array slots only.
+COLDWAR_VIE_1970_set_leader = {
+	if = {
+		limit = { check_variable = { ruling_party = 4 } }
+		COLDWAR_VIE_1970_set_communist_leader = yes
+	}
+	else_if = {
+		limit = { check_variable = { ruling_party = 2 } }
+		create_country_leader = {
+			name = "Nghiem Xuan Yem"
+			picture = "gfx/leaders/VIE/1970/COLDWAR_VIE_1970_nghiem_xuan_yem.dds"
+			ideology = liberalism
+			traits = { }
+		}
+		set_variable = { liberalism_leader = 0 }
+	}
+	else_if = {
+		limit = { check_variable = { ruling_party = 3 } }
+		if = {
+			limit = {
+				check_variable = { MDCW_HP_native_retirement = 1 }
+				NOT = { has_country_flag = do_not_retire }
+			}
+			add_to_variable = { COLDWAR_VIE_1970_socialist_incumbent = 1 }
+			if = {
+				limit = { check_variable = { COLDWAR_VIE_1970_socialist_incumbent > 1 } }
+				set_variable = { COLDWAR_VIE_1970_socialist_incumbent = 0 }
+			}
+		}
+		if = {
+			limit = { check_variable = { COLDWAR_VIE_1970_socialist_incumbent = 1 } }
+			create_country_leader = {
+				name = "Hoang Minh Giam"
+				picture = "gfx/leaders/VIE/1970/COLDWAR_VIE_1970_hoang_minh_giam.dds"
+				ideology = socialism
+				traits = { }
+			}
+		}
+		else = {
+			set_variable = { COLDWAR_VIE_1970_socialist_incumbent = 0 }
+			create_country_leader = {
+				name = "Nguyen Xien"
+				picture = "gfx/leaders/VIE/1970/COLDWAR_VIE_1970_nguyen_xien.dds"
+				ideology = socialism
+				traits = { }
+			}
+		}
+		set_variable = { socialism_leader = COLDWAR_VIE_1970_socialist_incumbent }
+	}
+	else_if = {
+		limit = { check_variable = { ruling_party = 0 } }
+		create_country_leader = {
+			name = "Nationalist Return Committee"
+			picture = "gfx/texticons/generic_Western_Autocracy.dds"
+			ideology = Western_Autocracy
+			traits = { }
+		}
+		set_variable = { Western_Autocracy_leader = 0 }
+	}
+	else_if = {
+		limit = { check_variable = { ruling_party = 19 } }
+		create_country_leader = {
+			name = "Fatherland Front Presidium"
+			picture = "gfx/texticons/generic_Neutral_Communism.dds"
+			ideology = Neutral_Communism
+			traits = { }
+		}
+		set_variable = { Neutral_Communism_leader = 0 }
+	}
+	else_if = {
+		limit = { check_variable = { ruling_party = 22 } }
+		create_country_leader = {
+			name = "Provisional Military Council"
+			picture = "gfx/texticons/generic_Nat_Autocracy.dds"
+			ideology = Nat_Autocracy
+			traits = { }
+		}
+		set_variable = { Nat_Autocracy_leader = 0 }
+	}
+	set_correct_ideology_trait = yes
+	COLDWAR_VIE_sync_programmes = yes
+}
+
+# Idempotent scenario observer. Remembered incumbency survives engine expiry;
+# known current leaders are synchronized first so a later human choice wins.
+# The latest due historical successor is installed once on delayed catch-up.
+COLDWAR_VIE_1970_update_politics = {
+	if = {
+		limit = { original_tag = VIE IMP_is_1970_scenario = yes is_dynamic_country = no }
+		COLDWAR_VIE_1970_sync_leader_counter = yes
+		if = {
+			limit = {
+				check_variable = { ruling_party = 4 }
+				has_variable = COLDWAR_VIE_1970_communist_incumbent
+			}
+			if = {
+				limit = { NOT = { has_country_flag = COLDWAR_VIE_1970_alternate_succession } }
+				if = {
+					limit = {
+						date > 1986.12.17
+						OR = {
+							check_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 }
+							check_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 }
+						}
+					}
+					set_variable = { COLDWAR_VIE_1970_install_communist = 2 }
+					set_leader = yes
+					set_country_flag = COLDWAR_VIE_1970_historical_handover_linh
+				}
+				else_if = {
+					limit = { date > 1986.7.13 check_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 } }
+					set_variable = { COLDWAR_VIE_1970_install_communist = 1 }
+					set_leader = yes
+					set_country_flag = COLDWAR_VIE_1970_historical_handover_chinh
+				}
+			}
+			else = {
+				# Alternative mandates survive congress dates, but not the chiefs'
+				# deaths. Remembered ordinals also handle an expired/missing leader.
+				if = {
+					limit = {
+						date > 1988.9.29
+						OR = {
+							check_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 }
+							check_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 }
+						}
+					}
+					set_variable = { COLDWAR_VIE_1970_install_communist = 2 }
+					set_leader = yes
+				}
+				else_if = {
+					limit = { date > 1986.7.13 check_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 } }
+					set_variable = { COLDWAR_VIE_1970_install_communist = 1 }
+					set_leader = yes
+				}
+			}
+		}
+		# Rename the historical party without altering its slot, outlook or support.
+		if = {
+			limit = { date > 1976.12.19 NOT = { has_country_flag = COLDWAR_VIE_1970_party_name_1976 } }
+			set_country_flag = COLDWAR_VIE_1970_party_name_1976
+			update_set_politics = yes
+			update_dirty_politicsview_expanded = yes
+		}
+	}
+}

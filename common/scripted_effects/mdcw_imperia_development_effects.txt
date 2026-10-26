@@ -1,0 +1,214 @@
+# IMPERIA CW — Cold War: imperia development effects — scripted effects.
+imp_eco_progress_calc = {
+    ## Become Developed Nation
+    if = {
+        limit = { 
+            IMP_developed_productivity_level = yes
+            NOT = { 
+                has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier } 
+            }
+            has_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier }
+        }
+
+        remove_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier }
+        add_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+        news_event = imp_economy.2
+    }
+    ## Become Emerging Nation
+    else_if = { 
+        limit = { 
+            IMP_emerging_productivity_level = yes
+            NOT = { has_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier } }
+            has_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier } 
+        }
+
+        remove_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier }
+        add_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier }
+        news_event = imp_economy.1
+    }
+    ## Assigning (In case of new nations)
+    else_if = { 
+        limit = { 
+            IMP_developed_productivity_level = yes
+            NOT = { 
+                has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+                has_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier } 
+                has_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier } 
+            }
+        }
+        add_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+    }
+    else_if = { 
+        limit = { 
+            IMP_emerging_productivity_level = yes
+            NOT = { 
+                has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+                has_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier } 
+                has_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier } 
+            }
+        }
+        add_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier }
+    }
+    else_if = { 
+        limit = { 
+            NOT = { 
+                has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+                has_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier } 
+                has_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier } 
+            }
+        }
+        add_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier }
+    }
+
+    ## Set Modifiers
+    if = {
+        limit = { 
+            has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier } 
+        }
+        set_temp_variable = { imp_eco_p_t = overall_productivity }
+        subtract_from_temp_variable = { imp_eco_p_t = 700 }
+        divide_temp_variable = { imp_eco_p_t = 1100 }
+        clamp_temp_variable = { var = imp_eco_p_t min = 0 max = 1 }
+
+        ## War Support -40% at 3000
+        set_variable = { imp_eco_war_sup = -0.4 }
+        multiply_variable = { imp_eco_war_sup = imp_eco_p_t }
+
+        ## Workforce Offices -15% at 3000
+        set_variable = { imp_eco_wf_o = -0.15 }
+        multiply_variable = { imp_eco_wf_o = imp_eco_p_t }
+
+        ## Factory Workforce -7.5% at 3000
+        set_variable = { imp_eco_wf_f = -0.075 }
+        multiply_variable = { imp_eco_wf_f = imp_eco_p_t }
+
+        ## Return On Investments 4% at 3000
+        set_variable = { imp_eco_wf_investment = 0.04 }
+        multiply_variable = { imp_eco_wf_investment = imp_eco_p_t }
+
+        ## Eco Upgrade +60% at 3000
+        set_variable = { imp_eco_upgrade_cost = 0.60 }
+        multiply_variable = { imp_eco_upgrade_cost = imp_eco_p_t }
+
+        set_temp_variable = { imp_eco_p_t = overall_productivity }
+        subtract_from_temp_variable = { imp_eco_p_t = 350 }
+        divide_temp_variable = { imp_eco_p_t = 1450 }
+        clamp_temp_variable = { var = imp_eco_p_t min = 0 max = 1 }
+
+        ## Pop Growth -150% at very high productivity
+        set_variable = { imp_eco_pop_growth = -1.5 }
+        multiply_variable = { imp_eco_pop_growth = imp_eco_p_t }
+    }
+    else_if = {
+        limit = { 
+            OR = { 
+                has_dynamic_modifier = { modifier = imp_eco_2_dynamic_modifier } 
+            }
+        }
+
+        ## Shared with Developing
+        set_temp_variable = { imp_eco_p_t_2 = overall_productivity }
+        divide_temp_variable = { imp_eco_p_t_2 = 700 }
+        set_temp_variable = { imp_eco_p_t = 1 }
+        subtract_from_temp_variable = { imp_eco_p_t = imp_eco_p_t_2 }
+        clamp_temp_variable = { var = imp_eco_p_t min = 0 max = 1 }
+
+        ## Corruption Cost +100% at 0
+        set_variable = { imp_eco_cor = 1 }
+        multiply_variable = { imp_eco_cor = imp_eco_p_t }
+
+        ## Eco Upgrade -40% at 0
+        set_variable = { imp_eco_upgrade_cost = -0.4 }
+        multiply_variable = { imp_eco_upgrade_cost = imp_eco_p_t }
+
+        ## Interest Rate +5% at 0
+        set_variable = { imp_eco_interest_rates = 5 }
+        multiply_variable = { imp_eco_interest_rates = imp_eco_p_t }
+
+        ## Pop Growth is shared with Developed
+        set_temp_variable = { imp_eco_p_t = overall_productivity }
+        subtract_from_temp_variable = { imp_eco_p_t = 350 }
+        divide_temp_variable = { imp_eco_p_t = 1450 }
+        clamp_temp_variable = { var = imp_eco_p_t min = 0 max = 1 }
+
+        ## Pop Growth -150% at very high productivity
+        set_variable = { imp_eco_pop_growth = -1.5 }
+        multiply_variable = { imp_eco_pop_growth = imp_eco_p_t }
+
+        # Let's not be extra cruel to super tiny countries. Their extra worker spirit is reduced by 75% or 50% And interest rates a bit too.
+        if = { limit = { check_variable = { max_manpower_k < 10000 } } 
+            multiply_variable = { imp_eco_wf_o = 0.25 }
+            multiply_variable = { imp_eco_wf_f = 0.25 }
+            multiply_variable = { imp_eco_interest_rates = 0.5 }
+        }
+        else_if = { limit = { check_variable = { max_manpower_k < 20000 } } 
+            multiply_variable = { imp_eco_wf_o = 0.5 }
+            multiply_variable = { imp_eco_wf_f = 0.5 }
+            multiply_variable = { imp_eco_interest_rates = 0.5 }
+        }
+        # But let's also not be too permissable with the pop growth buff for super big countries.
+        else_if = { limit = { check_variable = { max_manpower_k > 300000 } } 
+            multiply_variable = { imp_eco_pop_growth = 0.25 }
+        }
+        else_if = { limit = { check_variable = { max_manpower_k > 100000 } } 
+            multiply_variable = { imp_eco_pop_growth = 0.5 }
+        }
+        else_if = { limit = { check_variable = { max_manpower_k > 75000 } } 
+            multiply_variable = { imp_eco_pop_growth = 0.75 }
+        }
+    }
+    else_if = {
+        limit = { 
+            OR = { 
+                has_dynamic_modifier = { modifier = imp_eco_3_dynamic_modifier } 
+            }
+        }
+
+        ## Shared with Developing
+        set_temp_variable = { imp_eco_p_t_2 = overall_productivity }
+        divide_temp_variable = { imp_eco_p_t_2 = 700 }
+        set_temp_variable = { imp_eco_p_t = 1 }
+        subtract_from_temp_variable = { imp_eco_p_t = imp_eco_p_t_2 }
+        clamp_temp_variable = { var = imp_eco_p_t min = 0 max = 1 }
+
+        ## Corruption Cost +100% at 0
+        set_variable = { imp_eco_cor = 1 }
+        multiply_variable = { imp_eco_cor = imp_eco_p_t }
+
+        ## Eco Upgrade -40% at 0
+        set_variable = { imp_eco_upgrade_cost = -0.4 }
+        multiply_variable = { imp_eco_upgrade_cost = imp_eco_p_t }
+
+        ## Interest Rate +5% at 0
+        set_variable = { imp_eco_interest_rates = 5 }
+        multiply_variable = { imp_eco_interest_rates = imp_eco_p_t }
+
+        set_temp_variable = { imp_eco_p_t_2 = overall_productivity }
+        divide_temp_variable = { imp_eco_p_t_2 = 350 }
+        set_temp_variable = { imp_eco_p_t = 1 }
+        subtract_from_temp_variable = { imp_eco_p_t = imp_eco_p_t_2 }
+        clamp_temp_variable = { var = imp_eco_p_t min = 0 max = 1 }
+
+        ## Pop Growth +150% at 0, falling out by the emerging threshold.
+        set_variable = { imp_eco_pop_growth = 1.5 }
+        multiply_variable = { imp_eco_pop_growth = imp_eco_p_t }
+
+        # Let's not be extra cruel to super tiny countries. Their extra worker spirit is reduced by 75% or 50% And interest rates a bit too.
+        if = { limit = { check_variable = { max_manpower_k < 10000 } } 
+            multiply_variable = { imp_eco_interest_rates = 0.5 }
+        }
+        else_if = { limit = { check_variable = { max_manpower_k < 20000 } } 
+            multiply_variable = { imp_eco_interest_rates = 0.5 }
+        }
+        # But let's also not be too permissable with the pop growth buff for super big countries.
+        else_if = { limit = { check_variable = { max_manpower_k > 300000 } } 
+            multiply_variable = { imp_eco_pop_growth = 0.25 }
+        }
+        else_if = { limit = { check_variable = { max_manpower_k > 100000 } } 
+            multiply_variable = { imp_eco_pop_growth = 0.5 }
+        }
+        else_if = { limit = { check_variable = { max_manpower_k > 75000 } } 
+            multiply_variable = { imp_eco_pop_growth = 0.75 }
+        }
+    }
+}

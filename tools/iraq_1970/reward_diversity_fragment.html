@@ -1,0 +1,75 @@
+<div id="irq-reward-diversity">
+  <h2>Irak · Belohnungsaudit</h2>
+  <p id="ird-summary" class="text-small"></p>
+  <div class="viz-controls">
+    <label class="form-label">Zweig
+      <select id="ird-branch" class="form-select" aria-label="Fokuszweig"></select>
+    </label>
+    <label class="form-label">Fokus
+      <select id="ird-focus" class="form-select" aria-label="Fokus mit aktuellen Effekten auswählen"></select>
+    </label>
+  </div>
+  <div id="ird-detail" aria-live="polite"></div>
+  <hr>
+  <p id="ird-count" class="text-small"></p>
+  <table class="table table-sm">
+    <thead><tr><th>Fokus</th><th>Aktuelle Kernwirkung</th></tr></thead>
+    <tbody id="ird-rows"></tbody>
+  </table>
+</div>
+<style>
+  #irq-reward-diversity { overflow-wrap: anywhere; }
+</style>
+<script type="application/json" id="ird-data">AUDIT_DATA_HERE</script>
+<script>
+(() => {
+  const root = document.getElementById('irq-reward-diversity');
+  const data = JSON.parse(document.getElementById('ird-data').textContent);
+  const branch = root.querySelector('#ird-branch'), focus = root.querySelector('#ird-focus');
+  const detail = root.querySelector('#ird-detail'), rows = root.querySelector('#ird-rows');
+  const byId = new Map(data.records.map(r => [r.id,r]));
+  const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const list = values => values.length ? '<ul>'+values.map(v=>'<li>'+esc(v)+'</li>').join('')+'</ul>' : '';
+  const initial = window.openai?.widgetState;
+  let selected = initial?.privateContent?.focus;
+  if(!byId.has(selected)) selected='COLDWAR_IRQ_foreign_dossier';
+  const storedBranch=initial?.privateContent?.branch;
+  for(const g of data.stats.branch_summary){
+    const option=document.createElement('option');option.value=g.id;option.textContent=g.name;branch.append(option);
+  }
+  branch.value = data.stats.branch_summary.some(g=>g.id===storedBranch) ? storedBranch : byId.get(selected).branch;
+  root.querySelector('#ird-summary').textContent = `${data.stats.focuses} aktive Foki · 140 mit höheren Bürokratiekosten · ${data.stats.manual_recommendations} konkrete Bewertungen · Vorschläge nicht umgesetzt`;
+  function save(){
+    const r=byId.get(selected);
+    if(window.openai?.setWidgetState) window.openai.setWidgetState({modelContent:{audit:'Iraq reward diversity',focus:r.name,id:r.id,branch:r.branch,proposal:r.recommendation?.proposal||null},privateContent:{branch:branch.value,focus:selected}}).catch(()=>{});
+  }
+  function pick(id,persist=false){
+    if(!byId.has(id))return;
+    selected=id;focus.value=id;const r=byId.get(id),p=r.recommendation;
+    const actual=r.current_modifiers.concat(r.one_time,r.spirit_changes,r.decisions.map(x=>'Entscheidung: '+x),r.extra_unlocks.map(x=>'Finanzierungskanal: '+x));
+    const verdict=p?.priority==='keep'?'Behalten':p?'Änderungsvorschlag':'Inventar';
+    detail.innerHTML=`<h3>${esc(r.name)}</h3><p class="tabular-nums">${r.days} Tage · einmalig ${r.gdp_cost_percent}% BIP · ${esc(r.branch_name)}</p><h3>Aktuell</h3>${actual.length?list(actual):'<p>Keine direkte numerische, physische oder Entscheidungsbelohnung; Voraussetzung für weitere Foki.</p>'}<h3>${verdict}</h3>${p?'<p>'+esc(p.issue)+'</p><p>'+esc(p.proposal)+'</p><p class="text-small">'+esc(p.reason)+'</p>':'<p>Inventar erfasst; kein individueller Änderungsentwurf in diesem Audit.</p>'}${r.exclusive_with.length?'<p>Exklusiv mit: '+esc(r.exclusive_with.map(id=>byId.get(id)?.name||id).join(' / '))+'</p>':''}${r.conditions.length?'<details><summary>Zusätzliche Bedingungen</summary>'+list(r.conditions)+'</details>':''}<p class="text-small">Bürokratie-/Sozialkosten und Consumer Goods sind relative Faktoren; positive Programm-Stabilität ist insgesamt auf 15 Punkte begrenzt. Einmalige Lieferungen und Vertragszustimmung folgen ihren tatsächlichen Bedingungen.</p>`;
+    if(persist)save();
+  }
+  function populate(persist=false){
+    const ns=data.records.filter(r=>r.branch===branch.value);focus.replaceChildren();rows.replaceChildren();
+    for(const n of ns){
+      const option=document.createElement('option');option.value=n.id;option.textContent=n.name;focus.append(option);
+      const tr=document.createElement('tr'),name=document.createElement('td'),effects=document.createElement('td');
+      name.textContent=n.name;
+      const summary=n.current_modifiers.concat(n.one_time,n.spirit_changes,n.decisions.length?[`${n.decisions.length} Entscheidungsfreischaltungen`]:[]);
+      effects.textContent=summary.join('; ')||'Voraussetzung ohne direkte numerische/physische Belohnung';tr.append(name,effects);rows.append(tr);
+    }
+    if(!ns.some(r=>r.id===selected))selected=ns[0].id;
+    root.querySelector('#ird-count').textContent=`${ns.length} Foki · ${ns.filter(n=>n.modifiers.bureaucracy_cost_multiplier_modifier>0).length} Bürokratieaufschläge · ${ns.filter(n=>n.recommendation).length} konkrete Bewertungen`;
+    pick(selected,persist);
+  }
+  branch.addEventListener('change',()=>populate(true));focus.addEventListener('change',()=>pick(focus.value,true));
+  window.addEventListener('openai:set_globals',event=>{
+    const s=event.detail?.globals?.widgetState?.privateContent;
+    if(!s||!byId.has(s.focus))return;
+    selected=s.focus;branch.value=byId.get(selected).branch;populate(false);
+  });
+  populate(false);root.dataset.ready='true';root._audit={data,pick};
+})();
+</script>

@@ -1,0 +1,875 @@
+different_country_flags_category = {
+
+	#Generic
+	Reset_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = {
+			NOT = { original_tag = USA }
+			NOT = { original_tag = BOS }
+			NOT = { original_tag = SMA }
+			NOT = { original_tag = RAJ }
+			NOT = { original_tag = BUL }
+			NOT = { original_tag = CUB }
+			NOT = { original_tag = POL }
+			NOT = { original_tag = CZE }
+			NOT = { original_tag = SLO }
+
+		}
+
+		visible = {
+			has_country_flag = dynamic_flag
+			has_elections = yes
+			NOT = {
+				OR = {
+					if = {
+						limit = { has_country_flag = dynamic_flag_new }
+						check_variable = { dynamic_flag_variant = 1 }
+					}
+					else = {
+						check_variable = { dynamic_flag_variant = 0 }
+					}
+					has_civil_war = yes
+					check_variable = { dynamic_flag_variant = 6 }
+					check_variable = { dynamic_flag_variant = 7 }
+					if = {
+						limit = { has_country_flag = is_civil_war_faction }
+						NOT = { tag = var:civil_war_original_tag }
+					}
+					else = {
+						NOT = { tag = original_tag }
+					}
+				}
+			}
+			if = {
+				limit = { tag = PER }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { tag = AZE }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision Reset_flag"
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				meta_effect = {
+					text = {
+						if = {
+							limit = { has_country_flag = dynamic_flag_new }
+							set_cosmetic_tag = [ROOTTAG]_NEW
+							set_variable = { dynamic_flag_variant = 1 }
+						}
+						else = {
+							set_cosmetic_tag = [ROOTTAG]
+							clear_variable = dynamic_flag_variant
+						}
+					}
+					ROOTTAG = "[?civil_war_original_tag.GetTag]"
+				}
+			}
+			else = {
+				meta_effect = {
+					text = {
+						if = {
+							limit = { has_country_flag = dynamic_flag_new }
+							set_cosmetic_tag = [ROOTTAG]_NEW
+							set_variable = { dynamic_flag_variant = 1 }
+						}
+						else = {
+							set_cosmetic_tag = [ROOTTAG]
+							clear_variable = dynamic_flag_variant
+						}
+					}
+					ROOTTAG = "[?original_tag.GetTag]"
+				}
+				custom_effect_tooltip = tooltip_change_flag
+			}
+		}
+	}
+	Autocracy_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = {
+			NOT = { original_tag = BOS }
+			NOT = { original_tag = SMA }
+			NOT = { original_tag = RAJ }
+			NOT = { original_tag = BUL }
+			NOT = { original_tag = CZE }
+			NOT = { original_tag = SLO }
+		}
+		visible = {
+			has_country_flag = dynamic_flag
+			has_elections = no
+			NOT = {
+				OR = {
+					has_cosmetic_tag = PER_REB
+					has_cosmetic_tag = CZR_union
+					has_cosmetic_tag = GER_AUTH_S
+					has_cosmetic_tag = GER_com_reb_tech
+					has_cosmetic_tag = EGY_COPTIC
+					has_cosmetic_tag = CZE_imperka
+					has_cosmetic_tag = SLO_imperka
+					has_cosmetic_tag = ARM_armen_empire_nationalist
+					has_cosmetic_tag = ARM_djavakhq
+					has_cosmetic_tag = POL_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_nationalist
+					has_cosmetic_tag = ARM_AUTH_STWO_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_West_Armenia_nationalist
+					has_cosmetic_tag = CAN_american_monarchist_subject
+					has_cosmetic_tag = MEX_american_monarchist_subject
+					has_cosmetic_tag = CUB_american_monarchist_subject
+					has_cosmetic_tag = PAN_american_monarchist_subject
+					has_cosmetic_tag = COL_american_monarchist_subject
+					has_cosmetic_tag = BRA_american_monarchist_subject
+				}
+			}
+			if = {
+				limit = { tag = PER }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { tag = AZE }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+
+			OR = {
+				western_autocrats_are_in_power = yes
+				emerging_autocracy_are_in_power = yes
+				neutrality_neutral_autocracy_are_in_power = yes
+				nationalist_military_junta_are_in_power = yes
+
+				# Normally democratic party is AUTH
+				AND = {
+					has_civil_war = no
+					OR = {
+						western_conservatism_are_in_power = yes
+						western_liberals_are_in_power = yes
+						western_social_democrats_are_in_power = yes
+						emerging_anarchist_communism_are_in_power = yes
+						emerging_reactionaries_are_in_power = yes
+						neutrality_neutral_muslim_brotherhood_are_in_power = yes
+						neutrality_neutral_conservatism_are_in_power = yes
+						neutrality_neutral_oligarch_are_in_power = yes
+						neutrality_neutral_libertarians_are_in_power = yes
+						neutrality_neutral_green_are_in_power = yes
+						neutrality_neutral_social_are_in_power = yes
+						nationalist_right_wing_populists_are_in_power = yes
+					}
+				}
+			}
+
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				set_temp_variable = { temp_var = civil_war_original_tag }
+			}
+			else = {
+				set_temp_variable = { temp_var = original_tag }
+			}
+			var:temp_var = { NOT = { check_variable = { dynamic_flag_variant = 2 } } }
+
+			NOT = {
+				OR = {
+					has_civil_war = yes
+					nationalist_military_junta_are_in_power = yes
+					AND = {
+						NOT = { tag = var:temp_var }
+						var:temp_var = {
+							OR = {
+								western_autocrats_are_in_power = yes
+								emerging_autocracy_are_in_power = yes
+								neutrality_neutral_autocracy_are_in_power = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision Autocracy_flag"
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_AUTH }
+					ROOTTAG = "[?civil_war_original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 2 }
+			}
+			else = {
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_AUTH }
+					ROOTTAG = "[?original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 2 }
+			}
+			custom_effect_tooltip = tooltip_change_flag
+		}
+	}
+
+	Special_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = {
+			NOT = { original_tag = BOS }
+			NOT = { original_tag = SMA }
+			NOT = { original_tag = RAJ }
+			NOT = { original_tag = BUL }
+		}
+		visible = {
+			has_country_flag = dynamic_flag
+			has_elections = no
+			NOT = {
+				OR = {
+					has_cosmetic_tag = PER_REB
+					has_cosmetic_tag = CZR_union
+					has_cosmetic_tag = GER_AUTH_S
+					has_cosmetic_tag = GER_com_reb_tech
+					has_cosmetic_tag = EGY_COPTIC
+					has_cosmetic_tag = CZE_imperka
+					has_cosmetic_tag = SLO_imperka
+					has_cosmetic_tag = ARM_armen_empire_nationalist
+					has_cosmetic_tag = ARM_djavakhq
+					has_cosmetic_tag = POL_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_nationalist
+					has_cosmetic_tag = ARM_AUTH_STWO_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_West_Armenia_nationalist
+					has_cosmetic_tag = CAN_american_monarchist_subject
+					has_cosmetic_tag = MEX_american_monarchist_subject
+					has_cosmetic_tag = CUB_american_monarchist_subject
+					has_cosmetic_tag = PAN_american_monarchist_subject
+					has_cosmetic_tag = COL_american_monarchist_subject
+					has_cosmetic_tag = BRA_american_monarchist_subject
+				}
+			}
+			if = {
+				limit = { tag = PER }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { tag = AZE }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				set_temp_variable = { temp_var = civil_war_original_tag }
+			}
+			else = {
+				set_temp_variable = { temp_var = original_tag }
+			}
+			var:temp_var = { NOT = { check_variable = { dynamic_flag_variant = 3 } } }
+
+			OR = {
+				check_variable = { ruling_party = 10 }
+				check_variable = { ruling_party = 23 }
+				AND = {
+					OR = {
+						check_variable = { ruling_party = 4 }
+						check_variable = { ruling_party = 19 }
+					}
+					OR = {
+						has_civil_war = no
+						AND = {
+							has_civil_war = yes
+							tag = var:temp_var
+						}
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision Special_flag"
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_AUTH_S }
+					ROOTTAG = "[?civil_war_original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 3 }
+			}
+			else = {
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_AUTH_S }
+					ROOTTAG = "[?original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 3 }
+				custom_effect_tooltip = tooltip_change_flag
+			}
+		}
+	}
+
+	More_Special_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = {
+			NOT = { original_tag = BOS }
+			NOT = { original_tag = SMA }
+			NOT = { original_tag = RAJ }
+			NOT = { original_tag = BUL }
+		}
+		visible = {
+			has_country_flag = dynamic_flag
+			has_elections = no
+			NOT = {
+				OR = {
+					has_cosmetic_tag = CZR_union
+					has_cosmetic_tag = GER_AUTH_S
+					has_cosmetic_tag = GER_com_reb_tech
+					has_cosmetic_tag = EGY_COPTIC
+					has_cosmetic_tag = CZE_imperka
+					has_cosmetic_tag = SLO_imperka
+					has_cosmetic_tag = ARM_armen_empire_nationalist
+					has_cosmetic_tag = ARM_djavakhq
+					has_cosmetic_tag = POL_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_nationalist
+					has_cosmetic_tag = ARM_AUTH_STWO_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_West_Armenia_nationalist
+					has_cosmetic_tag = CAN_american_monarchist_subject
+					has_cosmetic_tag = MEX_american_monarchist_subject
+					has_cosmetic_tag = CUB_american_monarchist_subject
+					has_cosmetic_tag = PAN_american_monarchist_subject
+					has_cosmetic_tag = COL_american_monarchist_subject
+					has_cosmetic_tag = BRA_american_monarchist_subject
+				}
+			}
+			if = {
+				limit = { tag = PER }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { tag = AZE }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				if = {
+					limit = {
+						has_country_flag = dynamic_flag_edgy
+						has_game_rule = { rule = allow_edgy_flags option = yes }
+						check_variable = { ruling_party = 21 }
+					}
+					NOT = { check_variable = { dynamic_flag_variant = 5 } }
+				}
+				else = {
+					NOT = { check_variable = { dynamic_flag_variant = 4 } }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						has_country_flag = dynamic_flag_edgy
+						has_game_rule = { rule = allow_edgy_flags option = yes }
+						check_variable = { ruling_party = 21 }
+					}
+					NOT = {
+						OR = {
+							check_variable = { dynamic_flag_variant = 4 }
+							check_variable = { dynamic_flag_variant = 5 }
+						}
+					}
+				}
+				else = {
+					NOT = { check_variable = { dynamic_flag_variant = 4 } }
+				}
+			}
+			OR = {
+				check_variable = { ruling_party = 21 }
+				check_variable = { ruling_party = 8 }
+				check_variable = { ruling_party = 9 }
+				check_variable = { ruling_party = 11 }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision More_Special_flag"
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				if = {
+					limit = {
+						has_country_flag = dynamic_flag_edgy
+						has_game_rule = { rule = allow_edgy_flags option = yes }
+						check_variable = { ruling_party = 21 }
+					}
+					meta_effect = {
+						text = { set_cosmetic_tag = [ROOTTAG]_AUTH_SS_EDGY }
+						ROOTTAG = "[?civil_war_original_tag.GetTag]"
+					}
+					set_variable = { dynamic_flag_variant = 5 }
+				}
+				else = {
+					meta_effect = {
+						text = { set_cosmetic_tag = [ROOTTAG]_AUTH_SS }
+						ROOTTAG = "[?civil_war_original_tag.GetTag]"
+					}
+					set_variable = { dynamic_flag_variant = 4 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						has_country_flag = dynamic_flag_edgy
+						has_game_rule = { rule = allow_edgy_flags option = yes }
+						check_variable = { ruling_party = 21 }
+					}
+					meta_effect = {
+						text = { set_cosmetic_tag = [ROOTTAG]_AUTH_SS_EDGY }
+						ROOTTAG = "[?original_tag.GetTag]"
+					}
+					set_variable = { dynamic_flag_variant = 5 }
+				}
+				else = {
+					meta_effect = {
+						text = { set_cosmetic_tag = [ROOTTAG]_AUTH_SS }
+						ROOTTAG = "[?original_tag.GetTag]"
+					}
+					set_variable = { dynamic_flag_variant = 4 }
+				}
+				custom_effect_tooltip = tooltip_change_flag
+			}
+		}
+	}
+
+	Rebel_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = {
+			NOT = { original_tag = BOS }
+			NOT = { original_tag = SMA }
+			NOT = { original_tag = RAJ }
+			NOT = { original_tag = BUL }
+		}
+		visible = {
+			has_country_flag = dynamic_rebel_flag
+			has_civil_war = yes
+			if = {
+				limit = { tag = PER }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { tag = AZE }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				set_temp_variable = { temp_var = civil_war_original_tag }
+			}
+			else = {
+				set_temp_variable = { temp_var = original_tag }
+			}
+			if = {
+				limit = { NOT = { tag = original_tag } }
+				any_country_with_original_tag = {
+					original_tag_to_check = ROOT
+					check_variable = { dynamic_flag_variant = 0 }
+				}
+			}
+			else = { always = no }
+			NOT = {
+				OR = {
+					check_variable = { dynamic_flag_variant = 6 }
+					tag = var:temp_var
+					check_variable = { ruling_party = 4 }
+					check_variable = { ruling_party = 19 }
+					check_variable = { ruling_party = 22 }
+					check_variable = { ruling_party = 21 }
+					check_variable = { ruling_party = 8 }
+					check_variable = { ruling_party = 9 }
+					check_variable = { ruling_party = 10 }
+					check_variable = { ruling_party = 11 }
+					check_variable = { ruling_party = 23 }
+					western_autocrats_are_in_power = yes
+					check_variable = { ruling_party = 7 }
+					check_variable = { ruling_party = 13 }
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision Rebel_flag"
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_REB }
+					ROOTTAG = "[?civil_war_original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 6 }
+			}
+			else = {
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_REB }
+					ROOTTAG = "[?original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 6 }
+				custom_effect_tooltip = tooltip_change_flag
+			}
+		}
+	}
+
+	Special_Rebel_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = {
+			NOT = { original_tag = RAJ }
+			NOT = { original_tag = BOS }
+			NOT = { original_tag = SMA }
+			NOT = { original_tag = BUL }
+		}
+		visible = {
+			has_country_flag = dynamic_rebel_flag
+			has_civil_war = yes
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				set_temp_variable = { temp_var = civil_war_original_tag }
+			}
+			else = {
+				set_temp_variable = { temp_var = original_tag }
+			}
+			NOT = { check_variable = { dynamic_flag_variant = 7 } }
+			OR = {
+				check_variable = { ruling_party = 22 }
+				AND = {
+					OR = {
+						check_variable = { ruling_party = 4 }
+						check_variable = { ruling_party = 19 }
+					}
+					NOT = { tag = var:temp_var }
+				}
+			}
+			if = {
+				limit = { tag = PER }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { tag = AZE }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision Special_Rebel_flag"
+
+			if = {
+				limit = { has_country_flag = is_civil_war_faction }
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_REB_S }
+					ROOTTAG = "[?civil_war_original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 7 }
+			}
+			else = {
+				meta_effect = {
+					text = { set_cosmetic_tag = [ROOTTAG]_REB_S }
+					ROOTTAG = "[?original_tag.GetTag]"
+				}
+				set_variable = { dynamic_flag_variant = 7 }
+				custom_effect_tooltip = tooltip_change_flag
+			}
+		}
+	}
+
+	add_dynamic_flag = {
+		ai_will_do = { base = 1 }
+		visible = {
+			NOT = {
+				OR = {
+					has_country_flag = dynamic_flag
+					has_country_flag = fix_your_broken_dynamic_tags
+					has_cosmetic_tag = CZR_union
+					has_cosmetic_tag = GER_AUTH_S
+					has_cosmetic_tag = GER_com_reb_tech
+					has_cosmetic_tag = EGY_COPTIC
+					has_cosmetic_tag = CZE_imperka
+					has_cosmetic_tag = SLO_imperka
+					has_cosmetic_tag = ARM_armen_empire_nationalist
+					has_cosmetic_tag = ARM_djavakhq
+					has_cosmetic_tag = POL_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_AUTH_S_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_nationalist
+					has_cosmetic_tag = ARM_AUTH_STWO_nationalist
+					has_cosmetic_tag = ARM_Monarch_Bagratuni_West_Armenia_nationalist
+					has_cosmetic_tag = PER_mullahs_government
+					has_cosmetic_tag = CAN_american_monarchist_subject
+					has_cosmetic_tag = MEX_american_monarchist_subject
+					has_cosmetic_tag = CUB_american_monarchist_subject
+					has_cosmetic_tag = PAN_american_monarchist_subject
+					has_cosmetic_tag = COL_american_monarchist_subject
+					has_cosmetic_tag = BRA_american_monarchist_subject
+				}
+			}
+			if = {
+				limit = { NOT = { tag = original_tag } }
+				any_country_with_original_tag = {
+					original_tag_to_check = ROOT
+					has_country_flag = dynamic_flag
+				}
+			}
+			else = { always = no }
+			if = {
+				limit = { tag = PER }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+			if = {
+				limit = { tag = AZE }
+				NOT = {
+					OR = {
+						emerging_hardline_shiite_are_in_power = yes
+						emerging_moderate_shiite_are_in_power = yes
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision add_dynamic_flag"
+			set_country_flag = dynamic_flag
+			set_country_flag = dynamic_rebel_flag
+			if = {
+				limit = {
+					any_country_with_original_tag = {
+						original_tag_to_check = ROOT
+						has_country_flag = is_civil_war_faction
+					}
+				}
+				set_country_flag = is_civil_war_faction
+				random_country_with_original_tag = {
+					original_tag_to_check = ROOT
+					set_variable = { civil_war_original_tag@ROOT = civil_war_original_tag@THIS }
+				}
+			}
+		}
+	}
+
+	#Custom
+	SER_flag_change = {
+		allowed = { original_tag = SER }
+		icon = GFX_decision_generic_form_nation
+
+		visible = {
+			NOT = { has_country_flag = fix_your_broken_dynamic_tags }
+			NOT = {
+				OR = {
+					has_country_flag = dynamic_flag
+					owns_state = 134
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision SER_flag_change"
+			set_cosmetic_tag = SER
+			clear_variable = dynamic_flag_variant
+			set_country_flag = dynamic_flag
+			set_country_flag = dynamic_rebel_flag
+			custom_effect_tooltip = tooltip_change_flag
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+	USA_Reset_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = { original_tag = USA }
+		visible = {
+			has_country_flag = dynamic_flag
+			has_elections = yes
+
+			OR = {
+				AND = {
+					OR = {
+						has_cosmetic_tag = USA
+						has_cosmetic_tag = USA_51
+					}
+					has_country_flag = flag_update_required
+				}
+				NOT = {
+					OR = {
+						has_cosmetic_tag = USA
+						has_cosmetic_tag = USA_51
+						has_cosmetic_tag = USA_52
+						has_cosmetic_tag = USA_cosmetic_tag_red_junta
+						has_cosmetic_tag = USA_cosmetic_tag_military_junta_completed
+						has_cosmetic_tag = USA_cosmetic_tag_monarchist
+						has_cosmetic_tag = USA_free_american_territories
+						has_civil_war = yes
+						NOT = { tag = USA }
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision USA_Reset_flag"
+			if = {
+				limit = { check_variable = { USA_state_number = 50 } }
+				set_cosmetic_tag = USA
+			}
+			else_if = {
+				limit = { check_variable = { USA_state_number = 51 } }
+				set_cosmetic_tag = USA_51
+			}
+			else = {
+				set_cosmetic_tag = USA_52
+			}
+			clr_country_flag = flag_update_required
+		}
+	}
+
+	#Historic Flag Changes
+
+	#New flag
+	MAU_NEW_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = { original_tag = MAU }
+		visible = {
+			has_cosmetic_tag = MAU
+			date > 2017.11.28
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision MAU_NEW_flag"
+			set_country_flag = dynamic_flag_new
+			set_cosmetic_tag = MAU_NEW
+			set_variable = { dynamic_flag_variant = 1 }
+		}
+	}
+
+	DRC_NEW_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = { original_tag = DRC }
+		visible = {
+			has_cosmetic_tag = DRC_OLD
+			NOT = {
+				OR = {
+					has_war_with = MLC
+					has_war_with = RCD
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision DRC_NEW_flag"
+			set_country_flag = dynamic_flag
+			set_country_flag = dynamic_rebel_flag
+
+			set_cosmetic_tag = DRC_AUTH
+			set_variable = { dynamic_flag_variant = 2 }
+		}
+	}
+
+	RWA_NEW_flag = {
+		allowed = { original_tag = RWA }
+		icon = GFX_decision_generic_form_nation
+
+		visible = {
+			has_cosmetic_tag = RWA_OLD
+			date > 2001.10.25
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision RWA_NEW_flag"
+			set_country_flag = dynamic_flag
+
+			set_cosmetic_tag = RWA
+			clear_variable = dynamic_flag_variant
+		}
+
+		ai_will_do = {
+			base = 10
+		}
+	}
+
+	GER_monarchist_flag = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = { base = 1 }
+		allowed = { original_tag = GER }
+		visible = {
+			NOT = { has_global_flag = GAME_RULE_disable_formable_nations }
+		}
+		available = {
+			NOT = { has_cosmetic_tag = GER_empire }
+			nationalist_monarchists_are_in_power = yes
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision GER_monarchist_flag"
+			custom_effect_tooltip = tooltip_change_flag
+			set_cosmetic_tag = GER_empire
+			mark_formed_country_formable = yes
+			clr_country_flag = dynamic_flag
+			clr_country_flag = dynamic_rebel_flag
+		}
+	}
+}

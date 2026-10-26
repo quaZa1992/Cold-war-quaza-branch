@@ -1,0 +1,144 @@
+# IMPERIA CW — Cold War: GC equilibrium controls and graduated crisis penalties.
+COLDWAR_gc_cw_apply_market = {
+	set_variable = { global.COLDWAR_gc_cw_market_base = global.mdcw_cw_market }
+	add_to_variable = { global.mdcw_cw_market = global.COLDWAR_gc_cw_market_adjustment }
+	clamp_variable = { var = global.mdcw_cw_market min = 5 max = 100 }
+	round_variable = global.mdcw_cw_market
+}
+
+COLDWAR_gc_cw_apply_arms = {
+	set_variable = { global.COLDWAR_gc_cw_arms_base = global.mdcw_cw_arms }
+	add_to_variable = { global.mdcw_cw_arms = global.COLDWAR_gc_cw_arms_adjustment }
+	clamp_variable = { var = global.mdcw_cw_arms min = 0 max = 100 }
+	round_variable = global.mdcw_cw_arms
+}
+
+COLDWAR_gc_cw_refresh = {
+	mdcw_cw_update_world_situation = yes
+	IMP_cold_war_recalculate_military_industrial_complex = yes
+	imp_update_oil_price_display = yes
+	every_country = {
+		limit = { has_country_flag = mdcw_cw_initialized }
+		set_temp_variable = { imp_oil_factor_t = global.imp_global_oil_price }
+		mdcw_cw_oil_effective_price = yes
+		set_variable = { mdcw_cw_oil_crisis_ratio = imp_oil_factor_t }
+		divide_variable = { mdcw_cw_oil_crisis_ratio = 75 }
+		if = {
+			limit = {
+				check_variable = { imp_oil_factor_t > 75 }
+			}
+			imp_calculate_oil_dynamic_modifiers_high = yes
+		}
+		else = { imp_calculate_oil_dynamic_modifiers_low = yes }
+		mdcw_cw_update_oil_crisis_tier = yes
+		if = {
+			limit = { has_idea = defense_industry }
+			set_variable = { IMP_military_industrial_complex_tension_bonus = global.IMP_military_industrial_complex_tension_bonus }
+			set_variable = { IMP_military_industrial_complex_war_bonus = global.IMP_military_industrial_complex_war_bonus }
+			set_variable = { IMP_military_industrial_complex_tax_bonus = global.IMP_military_industrial_complex_total_bonus }
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = IMP_military_industrial_complex_dynamic_modifier }
+					}
+				}
+				add_dynamic_modifier = { modifier = IMP_military_industrial_complex_dynamic_modifier }
+			}
+		}
+		mdcw_cw_update_world_market = yes
+	}
+	mdcw_cw_touch_gui = yes
+}
+
+COLDWAR_gc_cw_change_tension = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		set_temp_variable = { mdcw_cw_tension_delta = COLDWAR_gc_cw_delta }
+		mdcw_cw_add_tension = yes
+		COLDWAR_gc_cw_refresh = yes
+	}
+}
+
+COLDWAR_gc_cw_reset_tension = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		set_variable = { global.mdcw_cw_tension = global.mdcw_cw_tension_baseline }
+		clamp_variable = { var = global.mdcw_cw_tension min = 0 max = 100 }
+		COLDWAR_gc_cw_refresh = yes
+	}
+}
+
+COLDWAR_gc_cw_change_market = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		if = {
+			limit = {
+				NOT = { has_variable = global.COLDWAR_gc_cw_market_base }
+			}
+			mdcw_cw_update_world_situation = yes
+		}
+		set_temp_variable = { COLDWAR_gc_cw_target = global.mdcw_cw_market }
+		add_to_temp_variable = { COLDWAR_gc_cw_target = COLDWAR_gc_cw_delta }
+		clamp_temp_variable = { var = COLDWAR_gc_cw_target min = 5 max = 100 }
+		set_variable = { global.COLDWAR_gc_cw_market_adjustment = COLDWAR_gc_cw_target }
+		subtract_from_variable = { global.COLDWAR_gc_cw_market_adjustment = global.COLDWAR_gc_cw_market_base }
+		COLDWAR_gc_cw_refresh = yes
+	}
+}
+
+COLDWAR_gc_cw_reset_market = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		set_variable = { global.COLDWAR_gc_cw_market_adjustment = 0 }
+		COLDWAR_gc_cw_refresh = yes
+	}
+}
+
+COLDWAR_gc_cw_change_arms = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		if = {
+			limit = {
+				NOT = { has_variable = global.COLDWAR_gc_cw_arms_base }
+			}
+			mdcw_cw_update_world_situation = yes
+		}
+		set_temp_variable = { COLDWAR_gc_cw_target = global.mdcw_cw_arms }
+		add_to_temp_variable = { COLDWAR_gc_cw_target = COLDWAR_gc_cw_delta }
+		clamp_temp_variable = { var = COLDWAR_gc_cw_target min = 0 max = 100 }
+		set_variable = { global.COLDWAR_gc_cw_arms_adjustment = COLDWAR_gc_cw_target }
+		subtract_from_variable = { global.COLDWAR_gc_cw_arms_adjustment = global.COLDWAR_gc_cw_arms_base }
+		COLDWAR_gc_cw_refresh = yes
+	}
+}
+
+COLDWAR_gc_cw_reset_arms = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		set_variable = { global.COLDWAR_gc_cw_arms_adjustment = 0 }
+		COLDWAR_gc_cw_refresh = yes
+	}
+}
+
+COLDWAR_gc_cw_change_oil = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		if = {
+			limit = {
+				NOT = { has_variable = global.mdcw_cw_oil_level }
+			}
+			set_variable = { global.mdcw_cw_oil_level = 1 }
+		}
+		add_to_variable = { global.mdcw_cw_oil_level = COLDWAR_gc_cw_delta }
+		clamp_variable = { var = global.mdcw_cw_oil_level min = 0.5 max = 12 }
+		COLDWAR_gc_cw_refresh = yes
+	}
+}
+
+COLDWAR_gc_cw_reset_oil = {
+	if = {
+		limit = { is_ai = no has_idea = imp_gc_nation has_global_flag = mdcw_cw_initialized }
+		set_variable = { global.mdcw_cw_oil_level = 1 }
+		COLDWAR_gc_cw_refresh = yes
+	}
+}

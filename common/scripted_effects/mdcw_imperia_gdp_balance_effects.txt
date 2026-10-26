@@ -1,0 +1,178 @@
+# IMPERIA CW — Cold War: imperia gdp balance effects — scripted effects.
+# Source-owned economy curves on current MD APIs. Startup calibration runs afterwards exactly once.
+mdcw_imperia_resource_employment_fraction = {
+	if = { 
+		limit = { 
+			IMP_developed_productivity_level = yes
+		}
+		set_temp_variable = { resource_sector_workers_percentage = 0.1 }
+	}
+	else = {
+		set_temp_variable = { productivity_factor = 1 }
+		set_temp_variable = { res_p = overall_productivity }
+		if = {
+			limit = { has_start_date < 1990.1.1 }
+			divide_temp_variable = { res_p = 650 }
+		}
+		else = {
+			divide_temp_variable = { res_p = 1250 }
+		}
+		subtract_from_temp_variable = { productivity_factor = res_p }
+
+		set_temp_variable = { resource_sector_workers_percentage = 0.9 }
+		multiply_temp_variable = { resource_sector_workers_percentage = productivity_factor }
+		clamp_temp_variable = { var = resource_sector_workers_percentage min = 0.1 max = 1 }
+	}
+}
+
+mdcw_imperia_agriculture_employment_fraction = {
+	if = { 
+		limit = { 
+			IMP_developed_productivity_level = yes
+		}
+		set_temp_variable = { agriculture_workers_percentage = 0.05 }
+	}
+	else = {
+		set_temp_variable = { productivity_factor = 1 }
+		set_temp_variable = { prod_p = overall_productivity }
+		if = {
+			limit = { has_start_date < 1990.1.1 }
+			divide_temp_variable = { prod_p = 650 }
+		}
+		else = {
+			divide_temp_variable = { prod_p = 1250 }
+		}
+		subtract_from_temp_variable = { productivity_factor = prod_p }
+
+		set_temp_variable = { agriculture_workers_percentage = 0.9 }
+		multiply_temp_variable = { agriculture_workers_percentage = productivity_factor }
+		clamp_temp_variable = { var = agriculture_workers_percentage min = 0.05 max = 0.9}
+	}
+
+	# Modifiers to the Subsistence Agricultural Workers Percentage
+	set_temp_variable = { agriculture_workers_perc_modifier = modifier@agriculture_workers_modifier }
+	add_to_temp_variable = { agriculture_workers_perc_modifier = 1 }
+	multiply_temp_variable = { agriculture_workers_percentage = agriculture_workers_perc_modifier }
+	# just in case there are very very low gdp/c
+	clamp_temp_variable = { var = agriculture_workers_percentage min = 0.0 max = 0.9 }
+
+}
+
+mdcw_imperia_apply_own_gdp_curves = {
+	## Alright. Let's do another pass of this. This way gdps with less than 1000 productivity get another shaft without destroying them.
+	## Especially in combination with removing a lot of gdp/c penalties native to the game.
+	if = { 
+		limit = { check_variable = { overall_productivity < 1000 } }
+
+		set_temp_variable = { imp_extra_p = overall_productivity }
+		divide_temp_variable = { imp_extra_p = 1000 }
+		multiply_variable = { gdp_total = imp_extra_p }
+	}
+
+	## Then do some manual adjustments
+	if = {
+		limit = { tag = USA }
+		# Just add extra gdp for the USA. Eaz. 
+		multiply_variable = { gdp_total = 1.3 }
+	}
+	else_if = {
+		# Japan is complicated. Mexico is also complicated lol. We will fake these.
+		limit = { 
+			tag = JAP
+			date < 2030.01.01
+			# COLDWAR: 2000-era Imperia fudge (x2.1 in 1970, shrinking 3 %/year) - modern starts only
+			NOT = { has_start_date < 1999.1.1 }
+		}
+		set_temp_variable = { jap_t_y = global.year }
+		subtract_from_temp_variable = { jap_t_y = 2000 }
+		multiply_temp_variable = { jap_t_y = 0.03 }
+
+		set_temp_variable = { jap_t = 1.20 }
+		subtract_from_temp_variable = { jap_t = jap_t_y }
+
+		multiply_variable = { gdp_total = jap_t }
+	}
+	else_if = {
+		# Every else is tiny.
+		limit = { 
+			NOT = { tag = CHI } 
+		}
+		multiply_variable = { gdp_total = 0.80 }
+	}
+
+	## Individual Adjustments
+	if = { 
+		# Iran & Argentina are also complicated urgh They don't have the manpower to have a realistic GDP so we'll just fake it.
+		limit = { 
+			OR = { 
+				tag = PER
+				tag = ARG
+			}
+			date < 2020.01.01
+			# COLDWAR: this adds 200 - 10 * (year - 2000) bn $ (+500 in 1970, -10 bn per year).
+			# Against the fixed 1970 calibration Iran/Argentina would lose 10 bn GDP per year. Modern starts only.
+			NOT = { has_start_date < 1999.1.1 }
+		}
+
+		set_temp_variable = { per_t_y = global.year }
+		subtract_from_temp_variable = { per_t_y = 2000 }
+		multiply_temp_variable = { per_t_y = 10 }
+
+		set_temp_variable = { per_t = 200 }
+		subtract_from_temp_variable = { per_t = per_t_y }
+
+		add_to_variable = { gdp_total = per_t }
+	}
+	else_if = { 
+		# These countries aren't doing great in 2000.
+		limit = { 
+			OR = { 
+				tag = SOV
+				tag = UKR
+			}
+			date > 1990.1.1
+		}
+
+		set_temp_variable = { sov_t_y = global.year }
+		subtract_from_temp_variable = { sov_t_y = 2000 }
+		multiply_temp_variable = { sov_t_y = 0.05 }
+
+		set_temp_variable = { sov_t = 0.25 }
+		add_to_temp_variable = { sov_t = sov_t_y }
+
+		if = { 
+			limit = { 
+				check_variable = { sov_t > 0.75 }
+			}
+			set_temp_variable = { sov_t = 0.75 }
+		}
+		if = { 
+			limit = { 
+				check_variable = { sov_t < 0.25 }
+			}
+			set_temp_variable = { sov_t = 0.25 }
+		}
+
+		multiply_variable = { gdp_total = sov_t }
+	}
+
+	## Then, since even that is not enough. Let's artificially lower the gdp of sub 1T gdp nations further.
+	## It's just artificial, which means they will still be perfectly playable. Just lower debt ceilings.
+	if = { 
+		limit = { 
+			check_variable = { gdp_total < 1000 } 
+			}
+		set_temp_variable = { imp_add_red_t = gdp_total }
+		divide_temp_variable = { imp_add_red_t = 1000 }
+		
+		##and then add 25% of that back. To make a less curvey curve.
+		set_temp_variable = { imp_add_corr_t = 1 }
+		subtract_from_temp_variable = { imp_add_corr_t = imp_add_red_t}
+		multiply_temp_variable = { imp_add_corr_t = 0.75 }
+
+		add_to_temp_variable = { imp_add_red_t = imp_add_corr_t }
+
+		multiply_variable = { gdp_total = imp_add_red_t }
+	}
+
+}

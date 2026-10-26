@@ -1,0 +1,48 @@
+# IMPERIA CW — Cold War: zzzzzz imperia globalism on actions — event hooks.
+on_actions = {
+    on_startup = { effect = { every_country = { imp_eco_globalism_tick = yes } } }
+    on_weekly = { effect = { imp_eco_globalism_tick = yes } }
+### Investment Target
+    on_monthly = { 
+        effect = { 
+            if = { 
+                limit = { 
+                    check_variable = { overall_productivity > 500 }
+                    check_variable = { globalism_value > 50 }
+                    check_variable = { stability > 0.4 }
+                    check_variable = { total_unemployed_percentage_display > 0.05 }
+                    NOT = { 
+                        has_dynamic_modifier = { modifier = imp_eco_1_dynamic_modifier }
+                    }
+                }
+
+                if = { 
+                    limit = { 
+                        NOT = { 
+                            has_dynamic_modifier = { modifier = imp_investment_target }
+                        }
+                    }
+                    add_dynamic_modifier = { modifier = imp_investment_target }
+                }
+            }
+            ## Max is 100.
+            set_variable = { imp_mod_reward = 0.1 }
+
+            ## First let's give 0.05 for every point over 50 globalism.
+            set_temp_variable = { glob_t = globalism_value }
+            subtract_from_temp_variable = { glob_t = 50 }
+            multiply_temp_variable = { glob_t = 0.005 }
+            add_to_variable = { imp_mod_reward = glob_t}
+
+            ## Then let's give 0.05 for every point over 40% stability.
+            set_temp_variable = { stab_t = stability }
+            subtract_from_temp_variable = { stab_t = 0.5 }
+            divide_temp_variable = { stab_t = 2 }
+            add_to_variable = { imp_mod_reward = stab_t }
+
+            ## Add unemployment %
+            add_to_variable = { imp_mod_reward = total_unemployed_percentage_display }
+            clamp_variable = { var = imp_mod_reward min = 0.1 max = 1 }
+        }
+    }
+}

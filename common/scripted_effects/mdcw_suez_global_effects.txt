@@ -1,0 +1,136 @@
+# IMPERIA CW — Cold War: suez global effects — scripted effects.
+# Worldwide shipping burden. These effects only READ the resolved physical canal
+# flag: never call the canal updater here, or its transition broadcast would recurse.
+mdcw_suez_calculate_exposure = {
+	# Startup/released-country fallback reads equilibrium without changing Globalism.
+	set_variable = { mdcw_suez_globalism = modifier@globalism_equilibrium }
+	if = {
+		limit = { has_variable = globalism_value }
+		set_variable = { mdcw_suez_globalism = globalism_value }
+	}
+	clamp_variable = { var = mdcw_suez_globalism min = 0 max = 100 }
+
+	set_variable = { mdcw_suez_route = 0.20 }
+	if = {
+		limit = { OR = { original_tag = SOV original_tag = RUS } }
+		set_variable = { mdcw_suez_route = 0.35 }
+	}
+	else_if = {
+		limit = { mdcw_suez_red_sea_economy = yes }
+		set_variable = { mdcw_suez_route = 1 }
+	}
+	else_if = {
+		limit = { mdcw_suez_high_route_exposure = yes }
+		set_variable = { mdcw_suez_route = 0.85 }
+	}
+	else_if = {
+		limit = { mdcw_suez_medium_route_exposure = yes }
+		set_variable = { mdcw_suez_route = 0.65 }
+	}
+	else_if = {
+		limit = { mdcw_suez_pacific_route_exposure = yes }
+		set_variable = { mdcw_suez_route = 0.40 }
+	}
+	if = {
+		limit = { NOT = { mdcw_suez_has_home_coast = yes } }
+		multiply_variable = { mdcw_suez_route = 0.60 }
+	}
+	clamp_variable = { var = mdcw_suez_route min = 0 max = 1 }
+
+	# F = .20 + .80 * (G/100) * (.25 + .75*R).
+	# Minimum worldwide burden 20%; no permanent productivity-growth change.
+	set_variable = { mdcw_suez_burden = mdcw_suez_route }
+	multiply_variable = { mdcw_suez_burden = 0.75 }
+	add_to_variable = { mdcw_suez_burden = 0.25 }
+	multiply_variable = { mdcw_suez_burden = mdcw_suez_globalism }
+	multiply_variable = { mdcw_suez_burden = 0.008 }
+	add_to_variable = { mdcw_suez_burden = 0.20 }
+	clamp_variable = { var = mdcw_suez_burden min = 0.20 max = 1 }
+
+	# Approved absolute maxima. Investor-only cash surcharge avoids charging both
+	# sides of a foreign project. Native modifiers remain visible as numeric rows.
+	set_variable = { mdcw_suez_construction = mdcw_suez_burden }
+	multiply_variable = { mdcw_suez_construction = -0.20 }
+	set_variable = { mdcw_suez_investment_cost = mdcw_suez_burden }
+	multiply_variable = { mdcw_suez_investment_cost = 0.20 }
+	set_variable = { mdcw_suez_civilian_productivity = mdcw_suez_burden }
+	multiply_variable = { mdcw_suez_civilian_productivity = -0.12 }
+	set_variable = { mdcw_suez_factory_output = mdcw_suez_burden }
+	multiply_variable = { mdcw_suez_factory_output = -0.08 }
+	set_variable = { mdcw_suez_dockyard_output = mdcw_suez_burden }
+	multiply_variable = { mdcw_suez_dockyard_output = -0.08 }
+	set_variable = { mdcw_suez_export_revenue = mdcw_suez_burden }
+	multiply_variable = { mdcw_suez_export_revenue = -0.24 }
+}
+
+mdcw_suez_update_country = {
+	if = {
+		limit = {
+			has_global_flag = SUEZ_CANAL_BLOCKED
+			NOT = { MD_special_countries = yes }
+		}
+		set_temp_variable = { mdcw_suez_previous_burden = -1 }
+		if = {
+			limit = { has_variable = mdcw_suez_burden }
+			set_temp_variable = { mdcw_suez_previous_burden = mdcw_suez_burden }
+		}
+		mdcw_suez_calculate_exposure = yes
+		if = {
+			limit = { NOT = { check_variable = { mdcw_suez_burden = mdcw_suez_previous_burden } } }
+			# Native output compensation must include changed construction,
+			# factory and dockyard sources even when productivity itself is stable.
+			set_variable = { last_productivity_check = -1 }
+		}
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = mdcw_suez_canal_closure } } }
+			add_dynamic_modifier = { modifier = mdcw_suez_canal_closure }
+		}
+		force_update_dynamic_modifier = yes
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_variable = mdcw_suez_burden
+				has_dynamic_modifier = { modifier = mdcw_suez_canal_closure }
+			}
+		}
+		if = {
+			limit = { has_dynamic_modifier = { modifier = mdcw_suez_canal_closure } }
+			remove_dynamic_modifier = { modifier = mdcw_suez_canal_closure }
+		}
+		set_variable = { last_productivity_check = -1 }
+		clear_variable = mdcw_suez_globalism
+		clear_variable = mdcw_suez_route
+		clear_variable = mdcw_suez_burden
+		clear_variable = mdcw_suez_construction
+		clear_variable = mdcw_suez_investment_cost
+		clear_variable = mdcw_suez_civilian_productivity
+		clear_variable = mdcw_suez_factory_output
+		clear_variable = mdcw_suez_dockyard_output
+		clear_variable = mdcw_suez_export_revenue
+		force_update_dynamic_modifier = yes
+	}
+}
+
+# Startup and actual canal transitions only. Weekly updates run once per country.
+mdcw_suez_update_world = {
+	every_country = {
+		if = {
+			limit = {
+				has_variable = last_quarter_gdp_total
+				OR = {
+					AND = {
+						has_global_flag = SUEZ_CANAL_BLOCKED
+						NOT = { MD_special_countries = yes }
+					}
+					has_variable = mdcw_suez_burden
+					has_dynamic_modifier = { modifier = mdcw_suez_canal_closure }
+				}
+			}
+			# This entry point updates the spirit first, then the actual cached
+			# GDP/tax/export receipts. Only transitions refresh the whole world.
+			ingame_update_setup = yes
+		}
+		else = { mdcw_suez_update_country = yes }
+	}
+}

@@ -1,0 +1,118 @@
+# IMPERIA CW — Cold War: DDR 1970 quality — game content.
+add_namespace = COLDWAR_DDR_Q
+
+country_event = {
+    id = COLDWAR_DDR_Q.1
+    title = COLDWAR_DDR_Q.1.t
+    desc = COLDWAR_DDR_Q.1.d
+    picture = GFX_politics_negotiations
+    is_triggered_only = yes
+    timeout_days = 7
+    option = {
+        name = COLDWAR_DDR_Q.accept
+        trigger = { COLDWAR_DDR_Q_can_sell_tanks = yes }
+        ai_chance = { base = 70 modifier = { factor = 0.3 NOT = { has_government = communism } } }
+        effect_tooltip = { send_equipment = { type = medium_tank_chassis amount = 90 target = DDR }
+            custom_effect_tooltip = COLDWAR_DDR_Q_import_payment_tt }
+        hidden_effect = { COLDWAR_DDR_Q_accept_import = yes }
+    }
+    option = {
+        name = COLDWAR_DDR_Q.refuse
+        ai_chance = { base = 30 }
+        hidden_effect = {
+            if = { limit = { country_exists = DDR DDR = { has_country_flag = COLDWAR_DDR_Q_trade_pending } } DDR = { clr_country_flag = COLDWAR_DDR_Q_trade_pending country_event = { id = COLDWAR_DDR_Q.7 hours = 1 } } }
+        }
+    }
+}
+
+country_event = {
+    id = COLDWAR_DDR_Q.2
+    title = COLDWAR_DDR_Q.2.t
+    desc = COLDWAR_DDR_Q.2.d
+    picture = GFX_politics_negotiations
+    is_triggered_only = yes
+    timeout_days = 7
+    option = {
+        name = COLDWAR_DDR_Q.accept
+        trigger = { COLDWAR_DDR_Q_can_offer_licence = yes }
+        ai_chance = { base = 70 modifier = { factor = 0.3 NOT = { has_government = communism } } }
+        effect_tooltip = { custom_effect_tooltip = COLDWAR_DDR_Q_licence_payment_tt
+            custom_effect_tooltip = COLDWAR_DDR_Q_licence_native_tt }
+        hidden_effect = { COLDWAR_DDR_Q_accept_licence = yes }
+    }
+    option = {
+        name = COLDWAR_DDR_Q.refuse
+        ai_chance = { base = 30 }
+        hidden_effect = {
+            if = { limit = { country_exists = DDR DDR = { has_country_flag = COLDWAR_DDR_Q_trade_pending } } DDR = { clr_country_flag = COLDWAR_DDR_Q_trade_pending country_event = { id = COLDWAR_DDR_Q.7 hours = 1 } } }
+        }
+    }
+}
+
+country_event = {
+    id = COLDWAR_DDR_Q.3
+    title = COLDWAR_DDR_Q.3.t
+    desc = COLDWAR_DDR_Q.3.d
+    picture = GFX_politics_negotiations
+    is_triggered_only = yes
+    option = { name = COLDWAR_DDR_Q.ack custom_effect_tooltip = COLDWAR_DDR_Q_import_receipt_tt }
+}
+
+country_event = {
+    id = COLDWAR_DDR_Q.4
+    title = COLDWAR_DDR_Q.4.t
+    desc = COLDWAR_DDR_Q.4.d
+    picture = GFX_politics_negotiations
+    is_triggered_only = yes
+    option = { name = COLDWAR_DDR_Q.ack custom_effect_tooltip = COLDWAR_DDR_Q_licence_receipt_tt }
+}
+
+country_event = {
+    id = COLDWAR_DDR_Q.5
+    title = COLDWAR_DDR_Q.5.t
+    desc = COLDWAR_DDR_Q.5.d
+    picture = GFX_politics_negotiations
+    is_triggered_only = yes
+    option = { name = COLDWAR_DDR_Q.ack  }
+}
+
+country_event = {
+    id = COLDWAR_DDR_Q.7
+    title = COLDWAR_DDR_Q.7.t
+    desc = COLDWAR_DDR_Q.7.d
+    picture = GFX_politics_negotiations
+    is_triggered_only = yes
+    option = { name = COLDWAR_DDR_Q.ack  }
+}
+
+country_event = {
+    id = COLDWAR_DDR_Q.6
+    title = COLDWAR_DDR_Q.6.t
+    desc = COLDWAR_DDR_Q.6.d
+    picture = GFX_politics_negotiations
+    is_triggered_only = yes
+    timeout_days = 7
+    immediate = { COLDWAR_DDR_Q_prepare_repayment = yes }
+    option = {
+        name = COLDWAR_DDR_Q.repay
+        trigger = {
+            has_country_flag = COLDWAR_DDR_Q_repayment_dialog
+            has_country_flag = COLDWAR_DDR_Q_repayment_open
+            NOT = { has_country_flag = COLDWAR_DDR_Q_repayment_done }
+            NOT = { has_country_flag = MD_skip_treasury_cost }
+            check_variable = { COLDWAR_DDR_Q_repayment_cost > 0 }
+            check_variable = { var = debt value = COLDWAR_DDR_Q_repayment_cost compare = greater_than_or_equals }
+            check_variable = { var = treasury value = COLDWAR_DDR_Q_repayment_cost compare = greater_than_or_equals }
+        }
+        ai_chance = { base = 100 }
+        effect_tooltip = {
+            custom_effect_tooltip = COLDWAR_DDR_Q_repayment_payment_tt
+            add_timed_idea = { idea = COLDWAR_DDR_Q_creditworthiness days = 730 }
+        }
+        hidden_effect = {
+            if = { limit = { has_country_flag = COLDWAR_DDR_Q_repayment_dialog } COLDWAR_DDR_Q_finish_repayment = yes }
+            clr_country_flag = COLDWAR_DDR_Q_repayment_dialog
+        }
+    }
+    option = { name = COLDWAR_DDR_Q.cancel ai_chance = { base = 0 } clr_country_flag = COLDWAR_DDR_Q_repayment_dialog }
+}

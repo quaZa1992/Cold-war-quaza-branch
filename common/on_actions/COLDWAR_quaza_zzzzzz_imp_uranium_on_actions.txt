@@ -1,0 +1,34 @@
+# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+# Adapted from quaZa Feature Test, workshop 3818306694.
+# Imperia: uranium resource (see common/scripted_effects/imp_uranium_effects.txt)
+on_actions = {
+	on_startup = {
+		effect = {
+			# on_startup has no scope: run everything from a country scope
+			random_country = {
+				if = {
+					limit = { NOT = { has_global_flag = imp_uranium_deposits_v4_set } }
+					set_global_flag = imp_uranium_deposits_v4_set
+					if = { limit = { IMP_is_1970_scenario = yes } COLDWAR_uranium_setup_1970_deposits = yes }
+					else = { imp_uranium_setup_deposits = yes }
+				}
+				imp_uranium_init_investment_type = yes
+				# New-game initialization; state slot reservations are saved with the campaign.
+				every_state = { imp_uranium_sync_mine_slots = yes }
+				# Give an uninitialized uranium market its starting price.
+				if = {
+					limit = { check_variable = { global.uranium_price < 0.001 } }
+					set_variable = { global.uranium_price = 0.20 }
+					set_variable = { global.starting_uranium_price = 0.20 }
+				}
+			}
+		}
+	}
+	
+	# IMPERIA CW — Cold War: saved slot reservations need no daily world scan.
+ on_weekly = {
+		effect = {
+			imp_uranium_update_mines = yes
+		}
+	}
+}

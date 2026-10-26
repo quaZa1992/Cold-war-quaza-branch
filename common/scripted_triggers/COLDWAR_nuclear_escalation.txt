@@ -1,0 +1,126 @@
+# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+COLDWAR_nr_first_use_policy = {
+	COLDWAR_nr_nuclear_power = yes
+	is_ai = no
+	is_subject = no
+	has_idea = nuclear_power_off
+	OR = { has_idea = full_first_use has_idea = tac_first_use_strat_retaliation }
+}
+COLDWAR_nr_first_use_posture = {
+	COLDWAR_nr_first_use_policy = yes
+	check_variable = { COLDWAR_nr_level = 1 }
+	check_variable = { COLDWAR_nr_build_days = 0 }
+	NOT = { has_country_flag = COLDWAR_nr_standdown }
+}
+COLDWAR_nr_can_ultimatum_prev = {
+	COLDWAR_nr_is_opponent_prev = yes
+	COLDWAR_nr_first_use_posture = yes
+	NOT = { has_variable = COLDWAR_nr_fu_partner }
+	NOT = { has_country_flag = COLDWAR_nr_fu_cooldown }
+	NOT = { has_war_with = PREV }
+	PREV = {
+		exists = yes
+		has_capitulated = no
+		is_subject = no
+		NOT = { is_in_faction_with = ROOT }
+		NOT = { has_non_aggression_pact_with = ROOT }
+	}
+}
+COLDWAR_nr_first_use_context = {
+	if = {
+		limit = { has_variable = COLDWAR_nr_fu_partner }
+		COLDWAR_nr_first_use_posture = yes
+		COLDWAR_nr_pair_valid = yes
+		check_variable = { COLDWAR_nr_fu_partner = COLDWAR_nr_opponent }
+		check_variable = { COLDWAR_nr_fu_serial = COLDWAR_nr_serial }
+		check_variable = { COLDWAR_nr_fu_own_use = COLDWAR_nr_strike_revision }
+		var:COLDWAR_nr_fu_partner = {
+			exists = yes
+			has_capitulated = no
+			is_subject = no
+			check_variable = { COLDWAR_nr_strike_revision = PREV.COLDWAR_nr_fu_peer_use }
+			NOT = { has_war_with = PREV }
+			NOT = { is_in_faction_with = PREV }
+			NOT = { has_non_aggression_pact_with = PREV }
+		}
+	}
+	else = { always = no }
+}
+COLDWAR_nr_can_revoke_prev = {
+	COLDWAR_nr_is_opponent_prev = yes
+	check_variable = { COLDWAR_nr_fu_partner = PREV.id }
+	check_variable = { COLDWAR_nr_fu_serial = COLDWAR_nr_serial }
+	OR = { has_country_flag = COLDWAR_nr_fu_waiting has_country_flag = COLDWAR_nr_fu_authorised }
+}
+COLDWAR_nr_release_for_from = {
+	COLDWAR_nr_first_use_context = yes
+	check_variable = { COLDWAR_nr_fu_partner = FROM.id }
+	has_country_flag = COLDWAR_nr_fu_authorised
+	check_variable = { COLDWAR_nr_fu_hours > 0 }
+}
+COLDWAR_nr_ultimatum_for_from = {
+	COLDWAR_nr_first_use_context = yes
+	check_variable = { COLDWAR_nr_fu_partner = FROM.id }
+	OR = { has_country_flag = COLDWAR_nr_fu_waiting has_country_flag = COLDWAR_nr_fu_authorised }
+	check_variable = { COLDWAR_nr_fu_hours > 0 }
+}
+COLDWAR_nr_raid_target_from = {
+	FROM = {
+		exists = yes
+		has_capitulated = no
+		NOT = { tag = ROOT }
+		NOT = { is_subject_of = ROOT }
+		NOT = { has_non_aggression_pact_with = ROOT }
+		NOT = { is_in_faction_with = ROOT }
+	}
+}
+COLDWAR_nr_can_prepare_nuclear_operation = {
+	if = {
+		limit = { COLDWAR_nr_enabled = yes }
+		custom_trigger_tooltip = {
+			tooltip = COLDWAR_nr_tt_prepare_first_use
+			COLDWAR_nr_raid_target_from = yes
+			OR = { has_war_with = FROM COLDWAR_nr_ultimatum_for_from = yes }
+		}
+	}
+	else = { has_war_with = FROM }
+}
+COLDWAR_nr_can_prepare_tactical_operation = {
+	if = {
+		limit = { COLDWAR_nr_enabled = yes }
+		COLDWAR_nr_can_prepare_nuclear_operation = yes
+	}
+}
+COLDWAR_nr_can_launch_nuclear_operation = {
+	if = {
+		limit = { COLDWAR_nr_enabled = yes }
+		custom_trigger_tooltip = {
+			tooltip = COLDWAR_nr_tt_launch_first_use
+			COLDWAR_nr_raid_target_from = yes
+			OR = { has_war_with = FROM COLDWAR_nr_release_for_from = yes }
+		}
+	}
+	else = { has_war_with = FROM }
+}
+COLDWAR_nr_foreign_ultimatum = {
+	if = {
+		limit = { COLDWAR_nr_pair_valid = yes }
+		var:COLDWAR_nr_opponent = {
+			check_variable = { COLDWAR_nr_fu_partner = PREV.id }
+			check_variable = { COLDWAR_nr_fu_serial = PREV.COLDWAR_nr_serial }
+			OR = { has_country_flag = COLDWAR_nr_fu_waiting has_country_flag = COLDWAR_nr_fu_authorised }
+		}
+	}
+	else = { always = no }
+}
+COLDWAR_nr_foreign_release = {
+	if = {
+		limit = { COLDWAR_nr_pair_valid = yes }
+		var:COLDWAR_nr_opponent = {
+			check_variable = { COLDWAR_nr_fu_partner = PREV.id }
+			check_variable = { COLDWAR_nr_fu_serial = PREV.COLDWAR_nr_serial }
+			has_country_flag = COLDWAR_nr_fu_authorised
+		}
+	}
+	else = { always = no }
+}

@@ -1,0 +1,29 @@
+# IMPERIA CW — Cold War: NKO historical death and succession.
+# The 1970 leader expiry is 9 July so this 8 July event can identify the living incumbent.
+COLDWAR_NKO_succession_daily = {
+ if = {
+  limit = { tag = NKO IMP_is_1970_scenario = yes NOT = { date < 1994.7.8 } date < 1994.7.9 NOT = { has_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent } }
+  set_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent
+  set_country_flag = COLDWAR_NKO_kim_il_sung_death_recorded
+  if = {
+   limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Kim Il Sung" ruling_only = yes } }
+   kill_country_leader = yes
+   if = {
+    limit = { NOT = { has_country_flag = COLDWAR_NKO_kim_jong_il_unavailable } }
+    create_country_leader = { name = "Kim Jong-il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state }
+    set_country_flag = COLDWAR_NKO_kim_jong_il_succeeded
+    set_global_flag = COLDWAR_NKO_1994_succession_announced
+   }
+  }
+  COLDWAR_NKO_refresh_programmes = yes
+  news_event = { id = COLDWAR_NKO_succession.1 }
+ }
+}
+# Country daily scope. This fallback broadcasts the death even if NKO no longer exists.
+COLDWAR_NKO_world_succession_daily = {
+ if = {
+  limit = { IMP_is_1970_scenario = yes NOT = { date < 1994.7.8 } date < 1994.7.9 NOT = { has_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent } }
+  if = { limit = { country_exists = NKO } NKO = { COLDWAR_NKO_succession_daily = yes } }
+  else = { set_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent news_event = { id = COLDWAR_NKO_succession.1 } }
+ }
+}

@@ -1,0 +1,36 @@
+{
+  "ownership": "IMPERIA CW — Cold War: startup war, cartel initialization and equilibrium launcher fixes",
+  "date": "2026-10-21",
+  "changes": {
+    "arab_coalition": {
+      "cause": "Palestine joined Egypt's war but was omitted from Egypt's faction despite starting fully occupied.",
+      "fix": "Add Palestine to the Arab Joint Defense Command before Egypt's declaration; retain the existing add_to_war targeting Egypt against Israel.",
+      "preserved": ["Palestinian ownership of West Bank and Gaza", "Israeli starting occupation", "Existing war goal", "Once-only setup guard", "Later legitimate peace"],
+      "runtime": ["common/scripted_effects/IMP_1970_world_politics_effects.txt"],
+      "regression_tests_passed": 7,
+      "test": "tools/scenario_startup/test_arab_coalition.py"
+    },
+    "cartels": {
+      "cause": "All 28 startup cartel countries were activated in 1970, but their strength and influence were defined only in dated 2000 history. Unset values satisfied the defeat thresholds.",
+      "fix": "Initialize missing 1970 stocks from native country-specific baselines before penalty calculation. Require both stocks to exist before declaring victory.",
+      "preserved": ["Explicit stocks, including zero", "Country-specific native MD baselines", "Modern starts", "Holland's later activation", "Genuine cartel defeat", "Already completed victories"],
+      "runtime": ["common/scripted_effects/IMPERIA_CW_1970_cartel_effects.txt", "common/on_actions/00_on_actions.txt", "events/cartel_events.txt"],
+      "regression_tests_passed": 11,
+      "test": "tools/cartels_1970/test_startup.py",
+      "independent_review": "Passed; all 28 profiles, startup order, native variable existence semantics and final-victory guards reviewed."
+    },
+    "equilibrium_launcher": {
+      "fix": "Use the native lower global-status area, right-anchored at (-210, 88), with the original 56 by 26 button.",
+      "runtime": ["interface/mdcw_cold_war.gui"],
+      "preserved": ["Button art and numeric display", "Clicks and visibility", "Globalism position", "Alert wrapping", "Other Cold War windows"],
+      "canonical_patch": "tools/cold_war_ui/place_launcher.py",
+      "evidence": "tools/cold_war_ui/placement_validation.json",
+      "checks": ["Eight logical UI widths from 1280 to 2560", "Date and speed controls", "Expanded music controls", "Army, navy and air overview controls", "World tension and achievements", "Alert overhang", "Theatre container", "Source AST preservation", "UTF-8 without BOM", "Byte-idempotent patch"]
+    }
+  },
+  "performance": "No new daily or monthly country loops. Cartel initialization reuses the existing startup pass; faction membership is set during existing world setup; launcher behavior and dirty updates are unchanged.",
+  "native_hoi4_runtime_tested": false,
+  "multiplayer_tested": false,
+  "save_compatibility": "Use a fresh 1970 start to verify the starting war and cartel initialization. Existing completed peace settlements and cartel victories are not reversed.",
+  "committed_or_pushed": false
+}

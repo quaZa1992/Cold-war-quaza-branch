@@ -1,0 +1,116 @@
+<div id="isr70-tree">
+  <section class="focus-window" aria-label="Israel national focus tree in game layout">
+    <header class="focus-header"><div><span class="nation-label">ISRAEL</span><h2>National Focus</h2></div><span class="design-status">1 JANUARY 1970 · IMPLEMENTED TREE</span></header>
+    <div class="focus-toolbar">
+      <label>Show branch <select id="isr70-branch" aria-label="Select focus branch"></select></label>
+      <div class="focus-tools">
+        <button class="cursor-interaction" type="button" id="isr70-overview">Entire tree</button>
+        <button class="cursor-interaction" type="button" id="isr70-fit">Fit branch</button>
+        <button class="cursor-interaction" type="button" id="isr70-minus" aria-label="Zoom out">−</button>
+        <span id="isr70-zoom" class="zoom-value">100 %</span>
+        <button class="cursor-interaction" type="button" id="isr70-plus" aria-label="Zoom in">+</button>
+      </div>
+    </div>
+    <div class="branch-caption" id="isr70-branch-meta"></div>
+    <div class="focus-viewport" id="isr70-view" aria-label="Focus tree: drag to pan, mouse wheel to zoom">
+      <div class="focus-world" id="isr70-world"><svg class="focus-connections" aria-label="Prerequisites and mutually exclusive choices"></svg></div>
+      <div class="map-help">Drag to pan · Wheel / + − to zoom</div>
+    </div>
+    <div class="focus-legend"><span><i class="connection-sample"></i> Prerequisite</span><span><i class="exclusive-sample"></i> Exclusive choice</span><span>315 focuses · Direct party access</span></div>
+    <div class="focus-detail" id="isr70-selected" aria-live="polite"></div>
+    <div class="focus-bottom"><button class="cursor-interaction" id="isr70-spirits" type="button">Starting Spirits</button><details id="isr70-decisions"><summary>Decisions for this branch</summary><div id="isr70-decision-list"></div></details></div>
+  </section>
+</div>
+<!-- DESIGN_DATA -->
+<style>
+#isr70-tree {--game-bg:#202b30;--game-panel:#303b40;--game-deep:#172328;--game-text:#e4e4d7;--game-secondary:#bac4c6;--game-gold:#d4bd77;--game-line:#96a6aa;--game-exclusion:#dd9c75;color:var(--game-text);font:14px/1.45 Georgia,serif;}
+#isr70-tree *{box-sizing:border-box;}
+#isr70-tree .focus-window{background:var(--game-bg);border:1px solid #687576;box-shadow:inset 0 0 0 3px #182126;overflow:hidden;}
+#isr70-tree .focus-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 22px;background:linear-gradient(#465256,#303b3e);border-bottom:2px solid #8e804f;}
+#isr70-tree h2{font:500 23px/1.15 Georgia,serif;color:var(--game-text);margin:0;}
+#isr70-tree .nation-label{font:500 11px/1.5 Arial,sans-serif;letter-spacing:2px;color:var(--game-gold);}
+#isr70-tree .design-status{font:12px/1.5 Arial,sans-serif;color:var(--game-secondary);text-align:right;max-width:190px;}
+#isr70-tree .focus-toolbar{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:12px 18px;background:var(--game-deep);border-bottom:1px solid #4a5658;font-family:Arial,sans-serif;}
+#isr70-tree .focus-toolbar label{flex:1 1 280px;min-width:0;font-size:12px;color:var(--game-secondary);}
+#isr70-tree select{display:block;width:100%;max-width:100%;margin-top:5px;background:#374349;color:var(--game-text);border:1px solid #8b8c79;border-radius:2px;padding:9px 10px;font:14px Arial,sans-serif;}
+#isr70-tree .focus-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+#isr70-tree .focus-tools button,#isr70-tree .focus-bottom>button{color:var(--game-text);background:linear-gradient(#4b5351,#333b38);border:1px solid #8b8c79;border-radius:2px;padding:8px 11px;font:13px/1.3 Arial,sans-serif;}
+#isr70-tree .focus-tools button:hover,#isr70-tree .focus-bottom>button:hover{border-color:var(--game-gold);background:#535a4e;}
+#isr70-tree .zoom-value{min-width:47px;text-align:center;font:12px Arial,sans-serif;color:var(--game-gold);}
+#isr70-tree .branch-caption{padding:9px 18px;color:var(--game-secondary);font:13px/1.5 Arial,sans-serif;min-height:39px;}
+#isr70-tree .focus-viewport{height:860px;position:relative;overflow:hidden;touch-action:none;background:radial-gradient(ellipse at center,#34484e,#1b2a30 80%);cursor:grab;isolation:isolate;}
+#isr70-tree .focus-viewport.dragging{cursor:grabbing;}
+#isr70-tree .focus-world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;}
+#isr70-tree .focus-connections{position:absolute;inset:0;overflow:visible;pointer-events:none;}
+#isr70-tree .focus-connections .prerequisite{fill:none;stroke:var(--game-line);stroke-width:2;opacity:.8;}
+#isr70-tree .focus-connections .prerequisite.is-related{stroke:var(--game-gold);opacity:1;stroke-width:2.5;}
+#isr70-tree .focus-connections .exclusive{fill:none;stroke:var(--game-exclusion);stroke-width:2;stroke-dasharray:5 4;}
+#isr70-tree .focus-connections .exclusive-label{fill:var(--game-exclusion);font:500 20px Georgia,serif;text-anchor:middle;}
+#isr70-tree .focus-node{position:absolute;display:flex;align-items:center;flex-direction:column;width:148px;height:160px;padding:0;border:0;background:transparent;color:var(--game-text);font:var(--node-font,18px)/1.15 Georgia,serif;text-align:center;}
+#isr70-tree .focus-node img{width:94px;height:80px;object-fit:contain;filter:drop-shadow(0 3px 4px #0009);pointer-events:none;}
+#isr70-tree .focus-node .focus-name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;height:72px;min-height:72px;width:148px;padding:4px 5px;background:linear-gradient(#3a4440,#293431);border:1px solid #93885f;box-shadow:0 3px 5px #0005;overflow-wrap:anywhere;overflow:hidden;pointer-events:none;}
+#isr70-tree .focus-node[aria-pressed="true"] img{filter:drop-shadow(0 0 7px #dbc67c);}
+#isr70-tree .focus-node[aria-pressed="true"] .focus-name{color:#fff0b5;border-color:#e5ce83;background:#4c5038;}
+#isr70-tree .focus-node:hover .focus-name{border-color:#d4bd77;}
+#isr70-tree .focus-world.overview-scale .focus-name{visibility:hidden;}
+#isr70-tree .group-name{position:absolute;color:#e3d297;font:500 21px/1.3 Georgia,serif;letter-spacing:1px;text-align:center;width:600px;pointer-events:none;}
+#isr70-tree .map-help{position:absolute;bottom:12px;left:14px;padding:6px 9px;background:#172328e8;color:var(--game-secondary);font:12px Arial,sans-serif;pointer-events:none;}
+#isr70-tree .focus-legend{display:flex;gap:22px;flex-wrap:wrap;padding:12px 18px;background:var(--game-deep);color:var(--game-secondary);font:12px/1.5 Arial,sans-serif;}
+#isr70-tree .focus-legend span{display:flex;align-items:center;gap:7px;}
+#isr70-tree .connection-sample{width:24px;border-top:2px solid var(--game-line);}
+#isr70-tree .exclusive-sample{width:24px;border-top:2px dashed var(--game-exclusion);}
+#isr70-tree .focus-detail{padding:18px 22px;background:var(--game-panel);border-top:1px solid #596367;overflow-wrap:anywhere;}
+#isr70-tree .focus-detail h3{font:500 20px/1.3 Georgia,serif;margin:0 0 8px;color:var(--game-gold);}
+#isr70-tree .focus-detail p{margin:7px 0;font:14px/1.5 Arial,sans-serif;}
+#isr70-tree .focus-detail details,#isr70-tree .focus-bottom details{margin-top:12px;font:13px/1.5 Arial,sans-serif;}
+#isr70-tree pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 Consolas,monospace;color:var(--game-text);background:#202b30;padding:12px;}
+#isr70-tree .focus-bottom{padding:12px 22px;background:var(--game-deep);}
+#isr70-tree .spirit-list{display:grid;gap:12px;}
+#isr70-tree .spirit-list article{border-bottom:1px solid #687576;padding:8px 0;}
+#isr70-tree .spirit-list h3{font-size:17px;}
+@media(max-width:600px){#isr70-tree .focus-viewport{height:720px;}#isr70-tree .focus-header{padding:12px;}#isr70-tree .focus-tools{gap:6px;}#isr70-tree .focus-toolbar{padding:12px;}#isr70-tree .map-help{right:12px;font-size:11px;}#isr70-tree .design-status{max-width:115px;font-size:11px;}#isr70-tree select{font-size:16px;}}
+@media(prefers-reduced-motion:no-preference){#isr70-tree .focus-node img{transition:filter .16s;}}
+</style>
+<script>
+(() => {
+ const root=document.getElementById('isr70-tree'),data=JSON.parse(document.getElementById('isr70-data').textContent);
+ const select=root.querySelector('#isr70-branch'),viewport=root.querySelector('#isr70-view'),world=root.querySelector('#isr70-world'),svg=world.querySelector('svg');
+ const selected=root.querySelector('#isr70-selected'),meta=root.querySelector('#isr70-branch-meta'),decisions=root.querySelector('#isr70-decision-list'),decisionPanel=root.querySelector('#isr70-decisions');
+ const nodeMap=new Map(data.nodes.map(n=>[n.id,n])),groupMap=new Map(data.groups.map(g=>[g.id,g]));
+ const positions=new Map(data.nodes.map(n=>[n.id,{x:n.xy[0]*data.layout.x_unit,y:n.xy[1]*data.layout.y_unit}]));
+ const bounds={width:Math.max(...[...positions.values()].map(p=>p.x))+300,height:Math.max(...[...positions.values()].map(p=>p.y))+250};
+ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ let current='party_3',picked='ISR70_p3_ea',mode='tree',camera={x:0,y:0,z:1},drag=null;const instanceId=Date.now().toString(36)+Math.random().toString(36).slice(2);
+ const groupOptions=document.createElement('optgroup');groupOptions.label='Shared State Branches';const outlookOptions=new Map();
+ const outlookLabels={western:'Western parties',emerging:'Emerging parties',nonaligned:'Non-Aligned parties',nationalist:'Nationalist parties'};
+ for(const g of data.groups){if(g.outlook!==null&&!outlookOptions.has(g.outlook)){const opt=document.createElement('optgroup');opt.label=outlookLabels[g.outlook];outlookOptions.set(g.outlook,opt);}const o=document.createElement('option');o.value=g.id;o.textContent=g.label;(g.outlook===null?groupOptions:outlookOptions.get(g.outlook)).append(o);}
+ select.append(groupOptions,...outlookOptions.values());world.style.width=bounds.width+'px';world.style.height=bounds.height+'px';svg.setAttribute('width',bounds.width);svg.setAttribute('height',bounds.height);svg.setAttribute('viewBox',`0 0 ${bounds.width} ${bounds.height}`);
+ function svgEl(name,attrs){const el=document.createElementNS('http://www.w3.org/2000/svg',name);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));return el;}
+ const defs=svgEl('defs',{}),marker=svgEl('marker',{id:'isr70-arrow',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:5,markerHeight:5,orient:'auto-start-reverse'});marker.append(svgEl('path',{d:'M0 1 L9 5 L0 9',fill:'none',stroke:'#96a6aa','stroke-width':1.5}));defs.append(marker);svg.append(defs);
+ for(const n of data.nodes){const p=positions.get(n.id);
+  for(const row of n.visual_prerequisites)for(const id of row){const from=positions.get(id);if(!from)continue;const x1=from.x+74,y1=from.y+160,x2=p.x+74,y2=p.y-8,middle=(y1+y2)/2;const edge=svgEl('path',{class:'prerequisite',d:`M${x1},${y1} V${middle} H${x2} V${y2}`,'marker-end':'url(#isr70-arrow)'});edge.dataset.from=id;edge.dataset.to=n.id;svg.append(edge);}
+  for(const id of n.mutually_exclusive){if(id<n.id)continue;const other=positions.get(id);if(!other||Math.abs(p.y-other.y)>1)continue;const left=Math.min(p.x,other.x)+121,right=Math.max(p.x,other.x)+27,y=p.y+38;svg.append(svgEl('path',{class:'exclusive',d:`M${left},${y} H${right}`}));const cross=svgEl('text',{class:'exclusive-label',x:(left+right)/2,y:y-8});cross.textContent='×';svg.append(cross);}
+  const b=document.createElement('button');b.type='button';b.className='focus-node cursor-interaction';b.dataset.action='focus';b.dataset.value=n.id;b.dataset.node=n.id;b.setAttribute('aria-label',n.label);b.setAttribute('data-tooltip',n.label);b.setAttribute('aria-pressed','false');b.style.left=p.x+'px';b.style.top=p.y+'px';b.innerHTML=`<img src="${data.layout.icons[n.icon]}" alt=""><span class="focus-name">${escape(n.label)}</span>`;world.append(b);
+ }
+ for(const g of data.groups){const list=data.nodes.filter(n=>n.group===g.id),xs=list.map(n=>positions.get(n.id).x),ys=list.map(n=>positions.get(n.id).y);const label=document.createElement('div');label.className='group-name';label.textContent=g.label;label.style.left=((Math.min(...xs)+Math.max(...xs))/2+74-300)+'px';label.style.top=(Math.min(...ys)-65)+'px';world.append(label);}
+ function applyCamera(){world.style.transform=`translate(${camera.x}px,${camera.y}px) scale(${camera.z})`;world.style.setProperty('--node-font',Math.max(18,11.5/camera.z)+'px');world.classList.toggle('overview-scale',camera.z<.25);root.querySelector('#isr70-zoom').textContent=Math.round(camera.z*100)+' %';}
+ function remember(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{selectedBranch:groupMap.get(current)?.label,selectedFocus:nodeMap.get(picked)?.label,mode},privateContent:{layoutVersion:4,instanceId,current,picked,mode,camera:{...camera}}}).catch(()=>{});}
+ function fit(all=false){const list=all?data.nodes:data.nodes.filter(n=>n.group===current),ps=list.map(n=>positions.get(n.id));const left=Math.min(...ps.map(p=>p.x))-28,top=Math.min(...ps.map(p=>p.y))-80,right=Math.max(...ps.map(p=>p.x))+176,bottom=Math.max(...ps.map(p=>p.y))+166,width=viewport.clientWidth,height=viewport.clientHeight;camera.z=all?Math.min((width-40)/(right-left),(height-40)/(bottom-top)):Math.max(.4,Math.min(1,(width-40)/(right-left),(height-40)/(bottom-top)));camera.x=(width-(right-left)*camera.z)/2-left*camera.z;camera.y=(height-(bottom-top)*camera.z)/2-top*camera.z;applyCamera();}
+ function zoom(factor,cx=viewport.clientWidth/2,cy=viewport.clientHeight/2){const next=Math.max(.025,Math.min(1.65,camera.z*factor));camera.x=cx-(cx-camera.x)*next/camera.z;camera.y=cy-(cy-camera.y)*next/camera.z;camera.z=next;applyCamera();}
+ function format(mods){return Object.entries(mods).map(([k,v])=>`${k}: ${v>0?'+':''}${Number(v.toFixed(5))}`).join(' · ')||'No additional permanent modifier';}
+ function detail(n){picked=n.id;const pre=n.prerequisites.map(row=>row.map(id=>nodeMap.get(id)?.label||id).join(' OR ')).join(' AND ')||'Entry focus',ex=n.mutually_exclusive.map(id=>nodeMap.get(id)?.label||id).join(' / ');selected.innerHTML=`<h3>${escape(n.label)}</h3><p>${n.days} days · Focus position x=${n.xy[0]}, y=${n.xy[1]}</p><p>Prerequisite: ${escape(pre)}</p>${ex?`<p>Exclusive choice: ${escape(ex)}</p>`:''}${n.note?`<p>${escape(n.note)}</p>`:''}<h4>Rewards on completion</h4><ul>${n.reward_summary.map(line=>`<li>${escape(line)}</li>`).join('')}</ul>${n.available?`<details><summary>Government and conditions</summary><pre><code>${escape(n.available)}</code></pre></details>`:''}<details><summary>Implemented MD effects</summary><pre><code>${escape(n.completion_reward_code)}</code></pre></details>`;for(const b of world.querySelectorAll('.focus-node'))b.setAttribute('aria-pressed',String(b.dataset.value===picked));for(const edge of svg.querySelectorAll('.prerequisite'))edge.classList.toggle('is-related',edge.dataset.from===picked||edge.dataset.to===picked);}
+ function updateGroup(){select.value=current;const g=groupMap.get(current),list=data.nodes.filter(n=>n.group===current);meta.textContent=`${g.label} · ${list.length} focuses${g.party!==null?' · Opens directly when this party governs':''}`;const ids=new Set(list.map(n=>n.id)),ds=data.decisions.filter(d=>ids.has(d.unlock)||(g.party!==null&&new RegExp('^ISR70_decision_(campaign|found)_'+g.party+'$').test(d.id)));decisionPanel.hidden=false;decisions.innerHTML=ds.length?ds.map(d=>`<details><summary>${escape(d.label)} · ${d.cost} PP</summary><p>${d.days} days · ${d.repeatable?'Repeatable, '+d.cooldown+' day cooldown':'Once only'}</p><p>${escape(d.note)}</p><pre><code>${escape(d.reward)}</code></pre></details>`).join(''):'<p>Political organization is available without an outlook focus.</p>';detail(nodeMap.get(picked)?.group===current?nodeMap.get(picked):list[0]);}
+ function overview(){mode='overview';meta.textContent=`${data.nodes.length} focuses · 20 party branches · Direct access for the governing party`;fit(true);decisionPanel.hidden=true;selected.innerHTML='<h3>The Entire Focus Tree</h3><p>Select a branch to inspect its arrangement.</p>';}
+ function spirits(){mode='spirits';const keys=['citizen_army','histadrut','unity','attrition','embargo','absorption','ambiguity'];selected.innerHTML='<div class="spirit-list">'+keys.map(key=>{const s=data.starting_spirits[key];return `<article><h3>${escape(s.label)}</h3><p>${escape(format(s.modifiers))}</p><p>${escape(s.treatment)}</p></article>`;}).join('')+'</div>';}
+ root.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!root.contains(b))return;if(b.id==='isr70-overview')overview();else if(b.id==='isr70-fit'){mode='tree';updateGroup();fit();}else if(b.id==='isr70-minus')zoom(1/1.2);else if(b.id==='isr70-plus')zoom(1.2);else if(b.id==='isr70-spirits')spirits();else if(b.dataset.action==='focus'){const n=nodeMap.get(b.dataset.value);current=n.group;mode='tree';updateGroup();detail(n);}remember();});
+ select.addEventListener('change',()=>{current=select.value;picked='';mode='tree';updateGroup();fit();remember();});
+ viewport.addEventListener('wheel',e=>{e.preventDefault();const r=viewport.getBoundingClientRect();zoom(e.deltaY<0?1.12:1/1.12,e.clientX-r.left,e.clientY-r.top);remember();},{passive:false});
+ viewport.addEventListener('pointerdown',e=>{if(e.target.closest('button')||e.button!==0)return;drag={x:e.clientX,y:e.clientY,cx:camera.x,cy:camera.y,id:e.pointerId};viewport.setPointerCapture(e.pointerId);viewport.classList.add('dragging');});
+ viewport.addEventListener('pointermove',e=>{if(!drag)return;camera.x=drag.cx+e.clientX-drag.x;camera.y=drag.cy+e.clientY-drag.y;applyCamera();});
+ function stopDrag(){if(!drag)return;drag=null;viewport.classList.remove('dragging');remember();}viewport.addEventListener('pointerup',stopDrag);viewport.addEventListener('pointercancel',stopDrag);
+ root.addEventListener('keydown',e=>{if(e.target.tagName==='SELECT')return;const offsets={ArrowLeft:[80,0],ArrowRight:[-80,0],ArrowUp:[0,80],ArrowDown:[0,-80]};if(offsets[e.key]){e.preventDefault();camera.x+=offsets[e.key][0];camera.y+=offsets[e.key][1];applyCamera();remember();}});
+ world.addEventListener('focusin',e=>{const n=nodeMap.get(e.target.dataset.value);if(!n)return;const p=positions.get(n.id),x=p.x*camera.z+camera.x,y=p.y*camera.z+camera.y;if(x<0||x+148*camera.z>viewport.clientWidth||y<0||y+148*camera.z>viewport.clientHeight){camera.x=viewport.clientWidth/2-(p.x+74)*camera.z;camera.y=viewport.clientHeight/2-(p.y+74)*camera.z;applyCamera();}});
+ function restore(state){const saved=state?.privateContent;if(saved?.layoutVersion===4&&groupMap.has(saved.current)){current=saved.current;picked=nodeMap.has(saved.picked)?saved.picked:'';mode=saved.mode;updateGroup();if(mode==='overview')overview();else if(mode==='spirits')spirits();if(saved.camera&&[saved.camera.x,saved.camera.y,saved.camera.z].every(Number.isFinite)){camera=saved.camera;applyCamera();}else fit();}else{current='party_3';picked='ISR70_p3_institution';mode='tree';updateGroup();fit();}}
+ window.addEventListener('openai:set_globals',e=>{const state=e.detail?.globals?.widgetState;if(state&&state.privateContent?.instanceId!==instanceId)restore(state);});let measuredWidth=0;new ResizeObserver(()=>{if(Math.abs(viewport.clientWidth-measuredWidth)>4){measuredWidth=viewport.clientWidth;fit(mode==='overview');}}).observe(viewport);restore(window.openai?.widgetState);
+})();
+</script>

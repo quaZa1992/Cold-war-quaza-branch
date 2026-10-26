@@ -1,0 +1,945 @@
+--- 
+
++++ 
+
+@@ -2,10 +2,7 @@
+
+ 	#Hits a province
+ 	tactical_nuclear_strike = {
+-		# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-		# COLDWAR_AI_RAIDS_DISABLED
+-		
+ 		allowed = { has_dlc = "Gotterdammerung" }
+ 		days_to_prepare = 1
+-		days_re_enable = 10
++		days_re_enable = 60
+ 
+ 		category = nuclear_raids
+@@ -22,20 +19,12 @@
+
+ 		# Can prepare
+ 		available = {
+-			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-			# COLDWAR_AI_RAIDS_DISABLED
+-			is_ai = no
+ 			FROM = {
+ 				NOT = { is_subject_of = ROOT }
+ 				NOT = { has_non_aggression_pact_with = ROOT }
+ 			}
+-			set_temp_variable = { temp_check = 1 }
+-			check_if_nuclear_weapons_in_stockpile = yes
+ 			is_able_to_launch_a_nuclear_strike = yes
+ 			is_able_to_use_nuclear_strikes_tac = yes
+ 		}
+ 		launchable = {
+-			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-			# COLDWAR_AI_RAIDS_DISABLED
+-			is_ai = no
+ 			has_war_with = FROM
+ 		}
+@@ -47,4 +36,17 @@
+
+ 		}
+ 
++		unit_requirements = {
++			equipment = {
++				type = { nuclear_missile_equipment }
++				amount = { min = 1 }
++			}
++		}
++		# Imperia: nuclear IRBMs can carry out nuclear strikes as well
++		unit_requirements = {
++			equipment = {
++				type = { nuclear_ballistic_missile_equipment }
++				amount = { min = 1 }
++			}
++		}
+ 		unit_requirements = {
+ 			equipment = {
+@@ -54,12 +56,6 @@
+
+ 			}
+ 		}
+-		unit_requirements = {
+-			equipment = {
+-				type = { nuclear_ballistic_missile_equipment }
+-				amount = { min = 1 }
+-			}
+-		}
+ 		starting_point = {
+-			types = { carrier air_base rocket_site submarine }
++			types = { air_base rocket_site }
+ 		}
+ 
+@@ -99,6 +95,6 @@
+
+ 				# Target
+ 				interception = {
+-					reference = 50
+-					weight = -1
++					reference = 10
++					weight = -0.25
+ 				}
+ 				anti_air = {
+@@ -123,8 +119,4 @@
+
+ 						add_political_power = -50
+ 					}
+-					raid_damage_units = {
+-						plane_loss = 0.5
+-						ratio = yes
+-					}
+ 				}
+ 			}
+@@ -133,8 +125,4 @@
+
+ 					var:actor_country = {
+ 						custom_effect_tooltip = strike_aborted_tt
+-					}
+-					raid_damage_units = {
+-						plane_loss = 0.3
+-						ratio = yes
+ 					}
+ 				}
+@@ -160,5 +148,5 @@
+
+ 					}
+ 					raid_damage_units = {
+-						plane_loss = 0.3
++						plane_loss = 0.05
+ 						ratio = yes
+ 					}
+@@ -166,9 +154,7 @@
+
+ 				victim_effects = {
+ 					var:target_state = {
+- set_temp_variable = { casualty_rate = -0.02 }
+- set_temp_variable = { productivity_damage = 0.99 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_tac_nuke_effects = yes
+-
++						set_temp_variable = { casualty_rate = -0.02 }
++						set_temp_variable = { productivity_damage = 0.99 }
++						imp_tac_nuke_effects = yes # Imperia: population loss, productivity damage
+ 						custom_effect_tooltip = raid_nuclear_strike_tt
+ 						add_dynamic_modifier = {
+@@ -204,10 +190,12 @@
+
+ 				victim_effects = {
+ 					var:target_state = {
+- set_temp_variable = { casualty_rate = -0.05 }
+- set_temp_variable = { productivity_damage = 0.98 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_tac_nuke_effects = yes
+-
++						set_temp_variable = { casualty_rate = -0.05 }
++						set_temp_variable = { productivity_damage = 0.98 }
++						imp_tac_nuke_effects = yes # Imperia: population loss, productivity damage
+ 						custom_effect_tooltip = raid_nuclear_strike_tt
++						add_dynamic_modifier = {
++							modifier = nuclear_fallout
++							days = 1095
++						}
+ 					}
+ 					var:victim_country = {
+@@ -221,4 +209,9 @@
+
+ 			base = 0
+ 			modifier = {
++				add = 2
++				longest_war_length > 2
++				surrender_progress > 0.25
++			}
++			modifier = {
+ 				add = 10
+ 				surrender_progress > 0.5
+@@ -233,16 +226,25 @@
+
+ 			}
+ 			modifier = {
++				add = 1000
++				has_country_flag = has_been_nuked
++			}
++			modifier = {
++				factor = 0
++				longest_war_length < 3
++				NOT = { has_country_flag = has_been_nuked }
++				surrender_progress < 0.75
++			}
++			modifier = {
+ 				factor = 0
+ 				threat < 0.10
+-			}
+-			# Alliance gate — nukes are a deterrent; don't strike a stronger bloc
+-			# unless we are already desperate (surrender_progress >= 0.5 overrides caution).
++				NOT = { has_country_flag = has_been_nuked }
++			}
+ 			modifier = {
+ 				factor = 0
+ 				raid_alliance_unfavorable = yes
+ 				surrender_progress < 0.5
+-			}
+-			modifier = {
+-				# Don't target anyone who is not a potential enemy
++				NOT = { has_country_flag = has_been_nuked }
++			}
++			modifier = {
+ 				factor = 0
+ 				NOT = {
+@@ -257,11 +259,9 @@
+
+ 	#Nuke a whole state for the price of one
+ 	state_nuclear_strike = {
+-		# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-		# COLDWAR_AI_RAIDS_DISABLED
+-		
+ 		allowed = { has_dlc = "Gotterdammerung" }
+ 		category = nuclear_raids
+ 
+ 		days_to_prepare = 1
++		days_re_enable = 180
+ 
+ 		command_power = 5 # command power allocation cost
+@@ -277,7 +277,4 @@
+
+ 		# Can prepare
+ 		available = {
+-			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-			# COLDWAR_AI_RAIDS_DISABLED
+-			is_ai = no
+ 			FROM = {
+ 				NOT = { is_subject_of = ROOT }
+@@ -285,13 +282,8 @@
+
+ 				has_war_with = ROOT
+ 			}
+-			set_temp_variable = { temp_check = 1 }
+-			check_if_nuclear_weapons_in_stockpile = yes
+ 			is_able_to_use_nuclear_strikes = yes
+ 			is_able_to_launch_a_nuclear_strike = yes
+ 		}
+ 		launchable = {
+-			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-			# COLDWAR_AI_RAIDS_DISABLED
+-			is_ai = no
+ 			has_war_with = FROM
+ 		}
+@@ -304,15 +296,23 @@
+
+ 			equipment = {
+ 				type = { nuclear_missile_equipment }
+-				amount = { min = 10 }
+-			}
+-		}
++				amount = { min = 1 }
++			}
++		}
++		# Imperia: nuclear IRBMs can carry out nuclear strikes as well
+ 		unit_requirements = {
+ 			equipment = {
+ 				type = { nuclear_ballistic_missile_equipment }
+-				amount = { min = 10 }
++				amount = { min = 1 }
++			}
++		}
++		unit_requirements = {
++			equipment = {
++				type = { tactical_bomber strategic_bomber }
++				modules = { spec_nuclear_consent }
++				amount = { min = 1 }
+ 			}
+ 		}
+ 		starting_point = {
+-			types = { rocket_site submarine }
++			types = { air_base rocket_site }
+ 		}
+ 		arrow = {
+@@ -325,26 +325,8 @@
+
+ 		success_factors = {
+ 			success = {
+-				base = 0.3
+-				strategic_bomber = {
+-					reference = 1500
+-					start_weight = 0
+-					weight = 1
+-				}
+-				# Target
+-				#interception
+-				interception = {
+-					reference = 200
+-					weight = -1
+-				}
+-				anti_air = {
+-					reference = 5
+-					weight = -0.3
+-				}
+-				radar = {
+-					weight = -0.3
+-				}
++				base = 0.8
+ 				intel = {
+-					weight = 0.5
+-					start_reference = 0
++					weight = 0.2
++					#start_reference = 50
+ 					reference = 100
+ 				}
+@@ -358,12 +340,4 @@
+
+ 				actor_effects = {
+ 					var:actor_country = {
+-						launch_nuke = {
+-							province = var:ROOT.target_province #optional use either province or state
+-							use_nuke = no #will consume nuke if specified
+-						}
+-						launch_nuke = {
+-							state = var:ROOT.target_state
+-							use_nuke = no
+-						}
+ 						add_named_threat = {
+ 							threat = 50
+@@ -380,10 +354,10 @@
+
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+@@ -392,29 +366,12 @@
+
+ 				}
+ 				victim_effects = {
+-					var:victim_country = {
+-						set_country_flag = has_been_nuked
+-						set_country_flag = {
+-							flag = state_nuke_check
+-							days = 1
+-							value = 1
+-						}
+-					}
++					# Imperia: a failed state strike means the missile was intercepted
+ 					var:target_state = {
+- set_temp_variable = { casualty_rate = -0.05 }
+- set_temp_variable = { productivity_damage = 0.98 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-
+-						#custom_effect_tooltip = raid_nuclear_strike_tt
+-						add_dynamic_modifier = {
+-							modifier = nuclear_fallout
+-							days = 1095
+-						}
+-						damage_units = {
+-							state = THIS
+-							damage = 0.05
+-							ratio = yes
+-							army = yes
+-							navy = yes
++						imp_nuke_intercept_effects = yes
++					}
++					var:actor_country = {
++						launch_nuke = {
++							province = var:ROOT.target_province
++							use_nuke = no
+ 						}
+ 					}
+@@ -446,10 +403,10 @@
+
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+@@ -462,21 +419,8 @@
+
+ 					}
+ 					var:target_state = {
+- set_temp_variable = { casualty_rate = -0.2 }
+- set_temp_variable = { productivity_damage = 0.8 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-
+-						#custom_effect_tooltip = raid_nuclear_strike_tt
+-						add_dynamic_modifier = {
+-							modifier = nuclear_fallout
+-							days = 1095
+-						}
+-						damage_units = {
+-							state = THIS
+-							damage = 0.20
+-							ratio = yes
+-							army = yes
+-							navy = yes
+-						}
++						set_temp_variable = { casualty_rate = -0.2 }
++						set_temp_variable = { productivity_damage = 0.8 }
++						set_temp_variable = { military_casualties_n = 0.2 }
++						imp_big_nuke_effects = yes # Imperia: population loss, productivity/building damage, fallout, unit damage
+ 					}
+ 				}
+@@ -492,5 +436,4 @@
+
+ 							state = var:ROOT.target_state
+ 							use_nuke = no
+-							nuke_type = thermonuclear_bomb
+ 						}
+ 						add_named_threat = {
+@@ -508,10 +451,10 @@
+
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+@@ -524,21 +467,8 @@
+
+ 					}
+ 					var:target_state = {
+- set_temp_variable = { casualty_rate = -0.4 }
+- set_temp_variable = { productivity_damage = 0.65 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-
+-						#custom_effect_tooltip = raid_nuclear_strike_tt
+-						add_dynamic_modifier = {
+-							modifier = nuclear_fallout
+-							days = 1095
+-						}
+-						damage_units = {
+-							state = THIS
+-							damage = 0.40
+-							ratio = yes
+-							army = yes
+-							navy = yes
+-						}
++						set_temp_variable = { casualty_rate = -0.4 }
++						set_temp_variable = { productivity_damage = 0.65 }
++						set_temp_variable = { military_casualties_n = 0.4 }
++						imp_big_nuke_effects = yes # Imperia: population loss, productivity/building damage, fallout, unit damage
+ 					}
+ 				}
+@@ -549,6 +479,5 @@
+
+ 						launch_nuke = {
+ 							province = var:ROOT.target_province #optional use either province or state
+-							use_nuke = no
+-							nuke_type = thermonuclear_bomb #will consume nuke if specified
++							use_nuke = no #will consume nuke if specified
+ 						}
+ 						launch_nuke = {
+@@ -570,10 +499,10 @@
+
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = 20
++								amount = 1
+ 								target = EUU
+ 							}
+@@ -586,21 +515,8 @@
+
+ 					}
+ 					var:target_state = {
+- set_temp_variable = { casualty_rate = -0.6 }
+- set_temp_variable = { productivity_damage = 0.55 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-
+-						#custom_effect_tooltip = raid_nuclear_strike_tt
+-						add_dynamic_modifier = {
+-							modifier = nuclear_fallout
+-							days = 1095
+-						}
+-						damage_units = {
+-							state = THIS
+-							damage = 0.60
+-							ratio = yes
+-							army = yes
+-							navy = yes
+-						}
++						set_temp_variable = { casualty_rate = -0.6 }
++						set_temp_variable = { productivity_damage = 0.55 }
++						set_temp_variable = { military_casualties_n = 0.6 }
++						imp_big_nuke_effects = yes # Imperia: population loss, productivity/building damage, fallout, unit damage
+ 					}
+ 				}
+@@ -611,6 +527,11 @@
+
+ 			base = 0
+ 			modifier = {
++				add = 2
++				longest_war_length > 5
++				surrender_progress > 0.4
++			}
++			modifier = {
+ 				add = 10
+-				surrender_progress > 0.5
++				surrender_progress > 0.6
+ 			}
+ 			modifier = {
+@@ -623,16 +544,25 @@
+
+ 			}
+ 			modifier = {
++				add = 2500
++				has_country_flag = has_been_nuked
++			}
++			modifier = {
++				factor = 0
++				longest_war_length < 6
++				NOT = { has_country_flag = has_been_nuked }
++				surrender_progress < 0.75
++			}
++			modifier = {
+ 				factor = 0
+ 				threat < 0.10
+-			}
+-			# Alliance gate — nukes are a deterrent; don't strike a stronger bloc
+-			# unless we are already desperate (surrender_progress >= 0.5 overrides caution).
++				NOT = { has_country_flag = has_been_nuked }
++			}
+ 			modifier = {
+ 				factor = 0
+ 				raid_alliance_unfavorable = yes
+ 				surrender_progress < 0.5
+-			}
+-			modifier = {
+-				# Don't target anyone who is not a potential enemy
++				NOT = { has_country_flag = has_been_nuked }
++			}
++			modifier = {
+ 				factor = 0
+ 				NOT = {
+@@ -648,11 +578,9 @@
+
+ 	#The whole enchilada. It's the end of the world as we know it!
+ 	strategic_nuclear_strike = {
+-		# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-		# COLDWAR_AI_RAIDS_DISABLED
+-		
+ 		allowed = { has_dlc = "Gotterdammerung" }
+ 		category = nuclear_raids
+ 
+ 		days_to_prepare = 1
++		days_re_enable = 365
+ 		#Nuclear powers WILL get aggressive if they are about to be conquered
+ 		#Realistic behavior, so people should be careful about how they push wars
+@@ -670,7 +598,4 @@
+
+ 		# Can prepare
+ 		available = {
+-			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-			# COLDWAR_AI_RAIDS_DISABLED
+-			is_ai = no
+ 			FROM = {
+ 				NOT = { is_subject_of = ROOT }
+@@ -678,15 +603,14 @@
+
+ 				has_war_with = ROOT
+ 			}
+-			set_temp_variable = { temp_check = 200 }
+-			check_if_nuclear_weapons_in_stockpile = yes
+ 			is_able_to_use_nuclear_strikes = yes
+-			if = { limit = { has_idea = nuclear_power_def }
+-				surrender_progress > 0.5
++			if = {
++				limit = { has_idea = nuclear_power_def }
++				OR = {
++					surrender_progress > 0.5
++					has_country_flag = has_been_nuked
++				}
+ 			}
+ 		}
+ 		launchable = {
+-			# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+-			# COLDWAR_AI_RAIDS_DISABLED
+-			is_ai = no
+ 			has_war_with = FROM
+ 		}
+@@ -699,16 +623,24 @@
+
+ 			equipment = {
+ 				type = { nuclear_missile_equipment }
+-				amount = { min = 10 }
+-			}
+-		}
++				amount = { min = 1 }
++			}
++		}
++		# Imperia: nuclear IRBMs can carry out nuclear strikes as well
+ 		unit_requirements = {
+ 			equipment = {
+ 				type = { nuclear_ballistic_missile_equipment }
+-				amount = { min = 10 }
++				amount = { min = 1 }
++			}
++		}
++		unit_requirements = {
++			equipment = {
++				type = { tactical_bomber }
++				modules = { spec_nuclear_consent }
++				amount = { min = 1 }
+ 			}
+ 		}
+ 
+ 		starting_point = {
+-			types = { rocket_site submarine }
++			types = { air_base rocket_site }
+ 		}
+ 		arrow = {
+@@ -721,26 +653,9 @@
+
+ 		success_factors = {
+ 			success = {
+-				base = 0.1
+-				strategic_bomber = {
+-					reference = 1500
+-					start_weight = 0
+-					weight = 1
+-				}
++				base = 0.8
+ 				intel = {
++					weight = 0.2
++					#start_reference = 50
+ 					reference = 100
+-					weight = 0.2
+-				}
+-				# Target
+-				anti_air = {
+-					reference = 5
+-					weight = -0.5
+-				}
+-				radar = {
+-					weight = -0.3
+-				}
+-				#interception
+-				interception = {
+-					reference = 500
+-					weight = -1
+ 				}
+ 			}
+@@ -768,30 +683,12 @@
+
+ 								}
+ 							}
+-							
+- set_temp_variable = { casualty_rate = -0.05 }
+- set_temp_variable = { productivity_damage = 0.95 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-damage_units = {
+-								state = THIS
+-								damage = 0.02
+-								ratio = yes
+-								army = yes
+-								navy = yes
+-							}
+-							add_dynamic_modifier = {
+-								modifier = nuclear_fallout
+-								days = 1095
+-							}
+-						}
+-					}
+-				}
+-				actor_effects = {
+-					set_temp_variable = { num_states_temp_var = 0 }
+-					var:victim_country = {
+-						every_owned_state = {
+-							add_to_temp_variable = { num_states_temp_var = 1 }
+-						}
+-					}
++							set_temp_variable = { casualty_rate = -0.05 }
++							set_temp_variable = { productivity_damage = 0.95 }
++							set_temp_variable = { military_casualties_n = 0.02 }
++							imp_big_nuke_effects = yes # Imperia: population loss, productivity/building damage, fallout, unit damage
++						}
++					}
++				}
++				actor_effects = {
+ 					var:actor_country = {
+ 						add_named_threat = {
+@@ -807,14 +704,12 @@
+
+ 						}
+ 						hidden_effect = {
+-							set_temp_variable = { num_Nukes_spent = 10 }
+-							multiply_temp_variable = { num_Nukes_spent = num_states_temp_var }
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+@@ -841,30 +736,12 @@
+
+ 								}
+ 							}
+-							
+- set_temp_variable = { casualty_rate = -0.2 }
+- set_temp_variable = { productivity_damage = 0.8 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-damage_units = {
+-								state = THIS
+-								damage = 0.20
+-								ratio = yes
+-								army = yes
+-								navy = yes
+-							}
+-							add_dynamic_modifier = {
+-								modifier = nuclear_fallout
+-								days = 1095
+-							}
+-						}
+-					}
+-				}
+-				actor_effects = {
+-					set_temp_variable = { num_states_temp_var = 0 }
+-					var:victim_country = {
+-						every_owned_state = {
+-							add_to_temp_variable = { num_states_temp_var = 1 }
+-						}
+-					}
++							set_temp_variable = { casualty_rate = -0.2 }
++							set_temp_variable = { productivity_damage = 0.8 }
++							set_temp_variable = { military_casualties_n = 0.2 }
++							imp_big_nuke_effects = yes # Imperia: population loss, productivity/building damage, fallout, unit damage
++						}
++					}
++				}
++				actor_effects = {
+ 					var:actor_country = {
+ 						add_named_threat = {
+@@ -880,14 +757,12 @@
+
+ 						}
+ 						hidden_effect = {
+-							set_temp_variable = { num_Nukes_spent = 10 }
+-							multiply_temp_variable = { num_Nukes_spent = num_states_temp_var }
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+@@ -914,30 +789,12 @@
+
+ 								}
+ 							}
+-							
+- set_temp_variable = { casualty_rate = -0.4 }
+- set_temp_variable = { productivity_damage = 0.65 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-damage_units = {
+-								state = THIS
+-								damage = 0.35
+-								ratio = yes
+-								army = yes
+-								navy = yes
+-							}
+-							add_dynamic_modifier = {
+-								modifier = nuclear_fallout
+-								days = 1095
+-							}
+-						}
+-					}
+-				}
+-				actor_effects = {
+-					set_temp_variable = { num_states_temp_var = 0 }
+-					var:victim_country = {
+-						every_owned_state = {
+-							add_to_temp_variable = { num_states_temp_var = 1 }
+-						}
+-					}
++							set_temp_variable = { casualty_rate = -0.4 }
++							set_temp_variable = { productivity_damage = 0.65 }
++							set_temp_variable = { military_casualties_n = 0.35 }
++							imp_big_nuke_effects = yes # Imperia: population loss, productivity/building damage, fallout, unit damage
++						}
++					}
++				}
++				actor_effects = {
+ 					var:actor_country = {
+ 						add_named_threat = {
+@@ -953,14 +810,12 @@
+
+ 						}
+ 						hidden_effect = {
+-							set_temp_variable = { num_Nukes_spent = 10 }
+-							multiply_temp_variable = { num_Nukes_spent = num_states_temp_var }
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+@@ -985,30 +840,12 @@
+
+ 								}
+ 							}
+-							
+- set_temp_variable = { casualty_rate = -0.5 }
+- set_temp_variable = { productivity_damage = 0.55 }
+- # IMPERIA CW — Cold War: Scenario-specific raid availability and nuclear effects.
+- imp_big_nuke_effects = yes
+-damage_units = {
+-								state = THIS
+-								damage = 0.60
+-								ratio = yes
+-								army = yes
+-								navy = yes
+-							}
+-							add_dynamic_modifier = {
+-								modifier = nuclear_fallout
+-								days = 1095
+-							}
+-						}
+-					}
+-				}
+-				actor_effects = {
+-					set_temp_variable = { num_states_temp_var = 0 }
+-					var:victim_country = {
+-						every_owned_state = {
+-							add_to_temp_variable = { num_states_temp_var = 1 }
+-						}
+-					}
++							set_temp_variable = { casualty_rate = -0.5 }
++							set_temp_variable = { productivity_damage = 0.55 }
++							set_temp_variable = { military_casualties_n = 0.6 }
++							imp_big_nuke_effects = yes # Imperia: population loss, productivity/building damage, fallout, unit damage
++						}
++					}
++				}
++				actor_effects = {
+ 					var:actor_country = {
+ 						add_named_threat = {
+@@ -1024,14 +861,12 @@
+
+ 						}
+ 						hidden_effect = {
+-							set_temp_variable = { num_Nukes_spent = 10 }
+-							multiply_temp_variable = { num_Nukes_spent = num_states_temp_var }
+ 							send_equipment = {
+ 								equipment = nuclear_ballistic_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+ 							send_equipment = {
+ 								equipment = nuclear_missile_equipment
+-								amount = num_Nukes_spent
++								amount = 10
+ 								target = EUU
+ 							}
+@@ -1046,23 +881,52 @@
+
+ 			modifier = {
+ 				add = 10
+-				surrender_progress > 0.75
++				longest_war_length > 11
++				surrender_progress > 0.7
++			}
++			modifier = {
++				add = 10
++				surrender_progress > 0.85
+ 			}
+ 			modifier = {
+ 				factor = 5
+-				surrender_progress > 0.9
+-			}
+-			modifier = {
+-				factor = 0
+-				threat < 0.10
+-			}
+-			# Alliance gate — nukes are a deterrent; don't strike a stronger bloc
+-			# unless we are already desperate (surrender_progress >= 0.5 overrides caution).
++				surrender_progress > 0.85
++			}
++			modifier = {
++				factor = 10
++				surrender_progress > 0.95
++			}
++			modifier = {
++				add = 1000
++				NOT = { surrender_progress < 0.85 }
++			}
++			modifier = {
++				add = 500
++				surrender_progress > 0.5
++				FROM = {
++					has_country_flag = nuclear_warning_from@ROOT
++					NOT = { has_country_flag = nuclear_warning_grace_from@ROOT }
++				}
++			}
++			modifier = {
++				add = 10000
++				has_country_flag = has_been_nuked
++			}
++			modifier = {
++				factor = 0
++				NOT = { has_country_flag = has_been_nuked }
++				FROM = {
++					OR = {
++						NOT = { has_country_flag = nuclear_warning_from@ROOT }
++						has_country_flag = nuclear_warning_grace_from@ROOT
++					}
++				}
++			}
+ 			modifier = {
+ 				factor = 0
+ 				raid_alliance_unfavorable = yes
+ 				surrender_progress < 0.5
+-			}
+-			modifier = {
+-				# Don't target anyone who is not a potential enemy
++				NOT = { has_country_flag = has_been_nuked }
++			}
++			modifier = {
+ 				factor = 0
+ 				NOT = {

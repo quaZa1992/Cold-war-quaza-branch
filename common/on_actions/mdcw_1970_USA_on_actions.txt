@@ -1,0 +1,65 @@
+# IMPERIA CW — Cold War: 1970 USA on actions — event hooks.
+on_actions = {
+on_weekly_USA = { effect = {
+if = {
+				limit = {
+					original_tag = USA
+					IMP_is_1970_scenario = yes
+					has_country_flag = USA_1970_systems_initialized
+					OR = {
+						NOT = { has_country_flag = USA_1970_policy_decisions_initialized }
+						NOT = { has_country_flag = USA_1970_vietnam_military_overextension_initialized }
+					}
+				}
+				USA_1970_initialize_policy_decision_systems = yes
+			}
+if = {
+				limit = {
+					original_tag = USA
+					IMP_is_1970_scenario = yes
+					has_country_flag = USA_1970_systems_initialized
+					has_country_flag = USA_1970_vietnam_military_overextension_initialized
+					NOT = { has_country_flag = USA_1970_vietnam_wartime_costs_active }
+					OR = {
+						has_war_with = VIE
+						has_war_with = SVN
+					}
+				}
+				USA_1970_restore_vietnam_wartime_costs = yes
+			}
+} }
+on_war_relation_added = { effect = {
+if = {
+				limit = {
+					original_tag = USA
+					IMP_is_1970_scenario = yes
+					has_country_flag = USA_1970_systems_initialized
+					has_country_flag = USA_1970_vietnam_military_overextension_initialized
+					NOT = { has_country_flag = USA_1970_vietnam_wartime_costs_active }
+					FROM = {
+						OR = {
+							original_tag = VIE
+							original_tag = SVN
+						}
+					}
+				}
+				USA_1970_restore_vietnam_wartime_costs = yes
+			}
+if = {
+				limit = {
+					OR = {
+						original_tag = VIE
+						original_tag = SVN
+					}
+					FROM = {
+						original_tag = USA
+						IMP_is_1970_scenario = yes
+						has_country_flag = USA_1970_systems_initialized
+						has_country_flag = USA_1970_vietnam_military_overextension_initialized
+						NOT = { has_country_flag = USA_1970_vietnam_wartime_costs_active }
+					}
+				}
+				FROM = { USA_1970_restore_vietnam_wartime_costs = yes }
+			}
+} }
+}

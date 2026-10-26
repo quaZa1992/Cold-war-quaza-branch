@@ -1,0 +1,65 @@
+# Colonial affairs registry: historical basis and map audit
+
+This registry captures administrations present on 1 January 1970, using the mod's dated `1970.1.1` state history blocks for owner/controller and external historical sources for political status. It is intentionally a candidate scope registry: it does not repair map ownership, infer colonies from non-core status, or claim that all listed dependencies were governed as colonies.
+
+## Historical distinctions that affect gameplay
+
+- **War:** Portugal's Angola, Mozambique and Portuguese Guinea were theatres of active liberation wars in 1970. Portuguese Guinea had extensive PAIGC liberated zones; Angola and Mozambique had continuing armed operations. These are distinct from Portuguese Macau, Cape Verde, São Tomé and Timor.
+- **Disputed/contested administration:** South Africa still administered South West Africa despite the UN's 1966 termination of its mandate and Security Council Resolution 276 (1970), which declared its continued presence illegal. SWAPO's armed struggle had begun, so Namibia needs a distinct exception to ordinary colony status. In Western Sahara, the June 1970 Zemla uprising was violently suppressed, but the Polisario war had not yet begun; use a contested, not war, profile for a January start.
+- **Association/self-government:** The Cook Islands were self-governing in free association with New Zealand from 1965. Niue remained under New Zealand administration in January 1970; it declined the 1965 offer of autonomy and entered free association only on 19 October 1974. Suriname and the Netherlands Antilles were autonomous constituent countries in the Kingdom of the Netherlands; Puerto Rico was a Commonwealth; Bahamas had internal self-government; and Fiji was scheduled to become independent on 10 October 1970. Treat these as transition/associated records, never as ordinary centrally ruled colonies.
+- **Trusteeship:** The Trust Territory of the Pacific Islands was administered by the United States under a UN trusteeship agreement. It is legally and politically distinct from Guam, American Samoa, and the US Virgin Islands. The map merges Guam and the Northern Mariana Islands into one state, so that state is not safely assignable to the trust row.
+- **Protectorates:** Brunei, Bahrain, Qatar, the Trucial sheikhdoms and Tonga were protected sovereigns under UK treaty relationships, not British-owned land. Their rows use native-owned state anchors plus `subject_only: true` and `subject_tag`; runtime should apply the associated fee only while the subject/patron relationship is real. Their states must never be transferred or treated as ENG-owned colonies. Tonga's protection ended on 4 June 1970; the UK intended to end the Gulf treaty relationships by the end of 1971. Oman is an independent sovereign under heavy British influence rather than a British protectorate, so it is not included.
+- **Denmark:** Greenland was a Danish county with a developing local government, while the Faroe Islands had home rule from 1948. Both are quiet associated records; neither warrants manufactured armed resistance.
+- **Integral departments and special territories:** Réunion, French Guiana, Guadeloupe and Martinique were French departments/integral parts of France, not colonies. Saint-Pierre-et-Miquelon was a French overseas territory (TOM) in 1970; it became an overseas department in 1976, so it has its own quiet record. Kerguelen is uninhabited. The UK Crown Dependencies are self-governing dependencies, not colonies. They are excluded from colonial resistance effects.
+- **Protectorates and joint administration:** Brunei and several Gulf states were protected sovereigns rather than directly owned UK states. New Hebrides was an Anglo-French condominium, although the mod assigns its sole state to ENG. These relations need explicit runtime handling if the mechanic is meant to model diplomatic jurisdiction rather than only land ownership.
+
+## State owner/controller evidence
+
+State IDs and names are taken from the mod's `history/states/<id>-<name>.txt` files. The 1970 dated blocks inspected for the registry show owner and controller equal to the named administering tag for included records, with these exceptions/limits:
+
+- New Hebrides state 543 is ENG-owned/controller-controlled despite joint Anglo-French administration.
+- State 818 contains Guam and the Northern Mariana Islands. Both were under US administration, so it may be carried as one quiet associated record; do not assign it to an armed or forced-decolonization profile. States 819–821 represent the Trust Territory's Palau, Marshall and Caroline Islands.
+- State 824 (Diego Garcia) is UK sovereignty in 1970, despite the mod's USA owner/controller representation. Exclude it from USA colonial administration pending a separate Chagos/British Indian Ocean Territory map audit.
+- Papua and New Guinea do not map to a contiguous Australian-owned area in the dated setup. The only directly confirmed Australian states in the PNG region are Bismarck Archipelago (733) and Bougainville (941); nearby states 730–732 are not owned by Australia in the 1970 block. Preserve that map and mark the admin coverage partial.
+- State 533 (Solomon Islands) and 1225 (Guadalcanal) have no province overlap and are grouped in one administration.
+- Portuguese Timor state IDs 734 and 1226 have no province overlap and are grouped in one administration.
+- All 88 state IDs used by registry administration rows were checked for duplicate province assignments; none overlap. The United States' state 818 still deliberately combines the separately governed Guam and Northern Mariana Islands, so it is represented as quiet associated administration rather than a state-level legal split.
+- The current map's 1970 state-history additions are authored in this mod. The registry reports the loaded scenario as represented; it does not establish historical borders independently.
+
+## Monetary scale
+
+`weekly_base` is a gameplay abstraction rather than a claim about colonial treasury accounts. Values now follow the approved gameplay scale: small Caribbean/island administrations are roughly 0.0002–0.002 billion per week; Hong Kong and Papua are 0.004; Suriname is 0.002; and the Portuguese war administrations are 0.006–0.01. These remain balance values, not converted historical budgets. Runtime should use the project’s weekly MD units and apply its policy multipliers; historical annual accounts should only be used after a defensible scope match and conversion (`annual ÷ 52`).
+
+## Primary sources
+
+- UN current Non-Self-Governing Territories list, useful for identifying territorial scope and administering powers, but not treated as a 1970 status snapshot: <https://www.un.org/dppa/decolonization/en/nsgt>
+- UN trusteeship documentation and Trust Territory of the Pacific Islands: <https://research.un.org/en/docs/tc/territories> and <https://digitallibrary.un.org/record/490950/files/S_10196-EN.pdf>
+- UN Security Council 1970 resolutions register, including Resolutions 276/283/284 on Namibia and 287 admitting Fiji: <https://digitallibrary.un.org/record/229781/files/S_INF_25-EN.pdf>
+- FRUS 1970 record of Caetano's position and the Portuguese African territories: <https://history.state.gov/historicaldocuments/frus1969-76v28/d90>
+- FRUS September 1970 analysis of Mozambique and its colonial status: <https://history.state.gov/historicaldocuments/frus1969-76v28/d94>
+- FRUS 1970 Namibia policy and the UN status question: <https://history.state.gov/historicaldocuments/frus1969-76v28/d24> and <https://history.state.gov/historicaldocuments/frus1969-76v28/d31>
+
+## Remaining audit items
+
+Country-level British protectorate records have no state IDs by design; runtime should check actual subject/patron relations and must not create territorial ownership. The registry is reconciled against the project's dated state-owner inventory, core tags and province lists. The Papua/New Guinea discrepancy remains a deliberate no-correction caveat: historical Australian administration conflicts with state ownerships and no 1970 PAP puppet setup was found. French overseas status, Spanish Sahara's 1970 Zemla uprising, the Anglo-French condominium and map-merged island groups should retain the notes rather than being flattened into a single peaceful/war value.
+
+## Additional status sources
+
+- New Zealand yearbook for the contemporary status of the Cook Islands and Niue; New Zealand's official history records Niue's 1974 self-government date: <https://www3.stats.govt.nz/New_Zealand_Official_Yearbooks/1970/NZOYB_1970.html> and <https://nzhistory.govt.nz/niue-achieves-self-government>
+- French Archives nationales d'outre-mer records Saint-Pierre-et-Miquelon as TOM from 1946 to 1976, then department: <https://archives-nationales-outre-mer.culture.gouv.fr/faire-une-recherche/saint-pierre-et-miquelon>
+- Tonga's 1970 legislation and British parliamentary record establish the end of the protectorate on 4 June 1970: <https://www.legislation.govt.nz/act/public/1970/16/en/latest/> and <https://api.parliament.uk/historic-hansard/lords/1970/apr/28/tonga-bill-hl>
+- FRUS identifies the British-protected Gulf states and planned withdrawal by the end of 1971: <https://history.state.gov/historicaldocuments/frus1969-76ve04/d91> and <https://history.state.gov/historicaldocuments/frus1969-76v24/d82>
+- The UN report and 1961 UK Order in Council document New Hebrides as a joint UK-French condominium: <https://digitallibrary.un.org/record/724943/files/A_9623_Rev-1%5EVol-IV%5E-EN.pdf?version=1> and <https://www.legislation.gov.uk/uksi/1961/1831/pdfs/uksi_1961_1831_en.pdf>
+
+
+## New regional organisations and covert-disclosure precedents
+
+The IRA record represents republican clandestine organisation after the late-1969 split, not all Northern Irish civil-rights activism. The independent Saville Inquiry records the IRA split at the end of 1969 and the Sinn Fein split in January 1970 (Volume I, chapter 7, paragraphs 7.86-7.87): https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/279133/0029_i.pdf . The National Archives' contemporary April 1969 Callaghan speech explicitly warns against assuming IRA responsibility for the earlier civil-rights crisis: https://www.nationalarchives.gov.uk/education/resources/sixties-britain/callaghan-northern-ireland/ . The IWM contemporary film collection dates troop deployment to August 1969 and distinguishes the Official and Provisional IRA: https://film.iwmcollections.org.uk/record/32876 . Accordingly, the new domestic case does not create an occupation or copy the 1985 blanket garrison penalties into January 1970.
+
+The RAF is absent on 1 January 1970. The German Federal Agency for Civic Education dates its formation through Baader's release to 14 May 1970: https://www.bpb.de/themen/zeit-kulturgeschichte/deutschland-chronik/131756/14-mai-1970/ . The German Historical Museum likewise locates its beginning in Berlin in May 1970, and identifies later attacks on federal judicial and US military targets: https://www.dhm.de/ausstellungen/archiv/2014/raf/ . The selected game regions (Hessen, Baden-Wurttemberg, Hamburg and West Berlin) are a regional abstraction of cells and investigations, not a claim of popular territorial control. The shared RAF contact file reads and supports the existing German cadre/milieu model instead of creating another military-occupation or attack simulation.
+
+The Bundesarchiv documents the complex later RAF/Stasi relationship and refuge for ten former members in the DDR between 1980 and 1983: https://www.bundesarchiv.de/nachricht/die-raf-und-die-stasi-anarcho-terroristische-kraefte/ . This justifies covert external contact and exposure as an alternate-history gameplay possibility; it does not justify automatic DDR support or a 1970 historical arms programme. Likewise, foreign support for the IRA is a player decision rather than a scripted certainty. Disclosure percentages, budgets, organisation strength and incident frequency are authored balance values, not historical probability estimates.
+
+Community liaison is slower and expensive, investigations suppress organisation more quickly but constrain construction/workforce, and baseline policing permits gradual organisational recovery. Those institutional trade-offs replace the retired seven-slider model. Severe colonial pressure is confined to recorded contested/war administrations with real native resistance. Self-governing dependencies and integral departments retain their different historical status and standing administrative costs.
+
+Every named file has a visual identifier. The existing 52x40 IRA emblem is reused without modification. Other new archive badges use distinct colours/acronyms; these are interface identifiers rather than claims to reproduce historical heraldry. The Angola record represents the competing MPLA/FNLA/UNITA organisations collectively; aid effects remain a shared regional resistance effect and do not purport to resolve their rivalry.

@@ -1,0 +1,661 @@
+@math_expressions_max = 1000000
+
+# Function: update_state_category
+# Purpose: Updates the state category of the nation to improve to the next state category - Done once a year
+state_init_setup = {
+	for_each_scope_loop = {
+		array = global.states
+		# Descending thresholds: first match wins, so each state sets its category
+		# exactly once. States <= 300k keep their existing category (no else).
+		if = {
+			limit = { state_population_k > 65000 }
+			set_state_category = state_18
+		}
+		else_if = {
+			limit = { state_population_k > 52000 }
+			set_state_category = state_17
+		}
+		else_if = {
+			limit = { state_population_k > 42000 }
+			set_state_category = state_16
+		}
+		else_if = {
+			limit = { state_population_k > 34000 }
+			set_state_category = state_15
+		}
+		else_if = {
+			limit = { state_population_k > 27000 }
+			set_state_category = state_14
+		}
+		else_if = {
+			limit = { state_population_k > 23000 }
+			set_state_category = state_13
+		}
+		else_if = {
+			limit = { state_population_k > 19000 }
+			set_state_category = state_12
+		}
+		else_if = {
+			limit = { state_population_k > 16000 }
+			set_state_category = state_11
+		}
+		else_if = {
+			limit = { state_population_k > 13000 }
+			set_state_category = state_10
+		}
+		else_if = {
+			limit = { state_population_k > 10500 }
+			set_state_category = state_09
+		}
+		else_if = {
+			limit = { state_population_k > 8500 }
+			set_state_category = state_08
+		}
+		else_if = {
+			limit = { state_population_k > 6800 }
+			set_state_category = state_07
+		}
+		else_if = {
+			limit = { state_population_k > 5200 }
+			set_state_category = state_06
+		}
+		else_if = {
+			limit = { state_population_k > 3800 }
+			set_state_category = state_05
+		}
+		else_if = {
+			limit = { state_population_k > 2500 }
+			set_state_category = state_04
+		}
+		else_if = {
+			limit = { state_population_k > 1500 }
+			set_state_category = state_03
+		}
+		else_if = {
+			limit = { state_population_k > 800 }
+			set_state_category = state_02
+		}
+		else_if = {
+			limit = { state_population_k > 300 }
+			set_state_category = state_01
+		}
+	}
+}
+
+# Set/Remove Improved Trade Agreement
+# sender_nation --- the nation sending the trade agreement
+# receiver_nation --- Nation retrieving the agreement
+# remove_agreement -- OPTIONAL (Set to 1)
+set_improved_trade_agreement = {
+	if = {
+		limit = {
+			var:receiver_nation = {
+				var:sender_nation = {
+					NOT = { has_country_flag = trade_agreement@PREV }
+				}
+			}
+			NOT = { check_variable = { remove_agreement = 1 } }
+		}
+		var:receiver_nation = {
+			var:sender_nation = {
+				add_opinion_modifier = { target = PREV modifier = mutual_trade_agreement }
+				add_opinion_modifier = { target = PREV modifier = mutual_trade_opinion }
+				reverse_add_opinion_modifier = { target = PREV modifier = mutual_trade_opinion }
+				reverse_add_opinion_modifier = { target = PREV modifier = mutual_trade_agreement }
+
+				hidden_effect = {
+					add_to_variable = { signed_trade_agreements = 1 }
+					set_country_flag = trade_agreement@PREV
+					var:receiver_nation = {
+						add_to_variable = { signed_trade_agreements = 1 }
+						set_country_flag = trade_agreement@PREV
+					}
+				}
+			}
+		}
+		custom_effect_tooltip = set_improved_trade_agreement_tt
+	}
+	if = {
+		limit = {
+			var:receiver_nation = {
+				var:sender_nation = {
+					has_country_flag = trade_agreement@PREV
+				}
+			}
+			check_variable = { remove_agreement = 1 }
+		}
+		var:receiver_nation = {
+			var:sender_nation = {
+				remove_opinion_modifier = { target = PREV modifier = mutual_trade_agreement }
+				remove_opinion_modifier = { target = PREV modifier = mutual_trade_opinion }
+				add_opinion_modifier = { target = PREV modifier = broke_trade_agreement }
+
+				clr_country_flag = trade_agreement@PREV
+				add_to_variable = { signed_trade_agreements = -1 }
+				var:receiver_nation = {
+					remove_opinion_modifier = { target = PREV modifier = mutual_trade_agreement }
+					remove_opinion_modifier = { target = PREV modifier = mutual_trade_opinion }
+					add_opinion_modifier = { target = PREV modifier = broke_trade_agreement }
+					clr_country_flag = trade_agreement@PREV
+					add_to_variable = { signed_trade_agreements = -1 }
+				}
+			}
+		}
+		custom_effect_tooltip = remove_improved_trade_agreement_tt
+	}
+}
+
+# ROOT = the country that was just puppeted, FROM = its new overlord.
+reapply_agreement_opinion_modifiers = {
+	if = {
+		limit = { has_country_flag = trade_agreement@FROM }
+		add_opinion_modifier = { target = FROM modifier = mutual_trade_agreement }
+		add_opinion_modifier = { target = FROM modifier = mutual_trade_opinion }
+		reverse_add_opinion_modifier = { target = FROM modifier = mutual_trade_opinion }
+		reverse_add_opinion_modifier = { target = FROM modifier = mutual_trade_agreement }
+	}
+	if = {
+		limit = { has_country_flag = mutual_investment_treaty_@FROM }
+		add_opinion_modifier = { target = FROM modifier = mutual_investment_treaty_opinion }
+		add_opinion_modifier = { target = FROM modifier = mutual_investment_treaty_trade_opinion }
+		reverse_add_opinion_modifier = { target = FROM modifier = mutual_investment_treaty_opinion }
+		reverse_add_opinion_modifier = { target = FROM modifier = mutual_investment_treaty_trade_opinion }
+	}
+}
+
+quarterly_inflation_calculation = {
+	#Get and set the basic civilian economic growth for this quarter, and grab our old inflation rate
+	set_temp_variable = { last_inflation_rate = inflation_rate_var }
+
+	set_temp_variable = {
+		gdpc_productivity_catchup = {
+			value = global.average_world_productivity
+			divide = { value = overall_productivity clamp = { min = 0.001 max = @math_expressions_max } }
+			add = -1
+			clamp = { min = 0 max = 1 }
+			multiply = 0.02
+		}
+	}
+	set_temp_variable = {
+		gdpc_labor_slack = {
+			value = total_unemployed_percentage_display
+			subtract = unemployment_threshold_display_var
+			clamp = { min = 0 max = 0.2 }
+			multiply = 0.1
+		}
+	}
+	set_temp_variable = {
+		gdpc_worker_shortage = {
+			value = 1
+			subtract = average_worker_fulfillment
+			clamp = { min = 0 max = 0.2 }
+			multiply = 0.1
+		}
+	}
+	set_temp_variable = {
+		healthy_gdpc_growth = {
+			value = 0.01
+			add = gdpc_productivity_catchup
+			add = gdpc_labor_slack
+			subtract = gdpc_worker_shortage
+			clamp = { min = 0.005 max = 0.05 }
+		}
+	}
+	set_temp_variable = { normal_gdpc_growth = 0 }
+	set_temp_variable = { excess_gdpc_growth = 0 }
+	if = {
+		limit = { check_variable = { last_quarter_gdpc_growth_rate < 0 } }
+		set_temp_variable = {
+			gdpc_contraction_magnitude = {
+				value = last_quarter_gdpc_growth_rate
+				multiply = -1
+			}
+		}
+		set_temp_variable = {
+			normal_gdpc_growth = {
+				value = last_quarter_gdpc_growth_rate
+				divide = {
+					value = gdpc_contraction_magnitude
+					divide = 0.05
+					add = 1
+				}
+			}
+		}
+	}
+	else = {
+		set_temp_variable = {
+			normal_gdpc_growth = {
+				value = last_quarter_gdpc_growth_rate
+				min = healthy_gdpc_growth
+			}
+		}
+		set_temp_variable = {
+			raw_excess_gdpc_growth = {
+				value = last_quarter_gdpc_growth_rate
+				subtract = healthy_gdpc_growth
+				max = 0
+			}
+		}
+		set_temp_variable = {
+			excess_gdpc_growth = {
+				value = raw_excess_gdpc_growth
+				divide = {
+					value = raw_excess_gdpc_growth
+					divide = 0.05
+					add = 1
+				}
+			}
+		}
+	}
+	set_temp_variable = {
+		gdpc_inflation_adjuster = {
+			value = normal_gdpc_growth
+			multiply = 0.25
+			add = excess_gdpc_growth
+		}
+	}
+
+	set_temp_variable = {
+		quarterly_currency_depreciation = {
+			value = inflation_currency_strength_start
+			subtract = currency_strength
+			divide = { value = inflation_currency_strength_start clamp = { min = 0.15 max = @math_expressions_max } }
+			clamp = { min = 0 max = 1 }
+		}
+	}
+	set_temp_variable = {
+		total_resource_imports = {
+			value = resource_imported@oil
+			add = resource_imported@steel
+			add = resource_imported@chromium
+			add = resource_imported@rubber
+			add = resource_imported@aluminium
+			add = resource_imported@tungsten
+			add = resource_imported@microchips
+			add = resource_imported@composites
+		}
+	}
+	set_temp_variable = {
+		inflation_import_dependency = {
+			value = total_resource_imports
+			divide = {
+				value = total_resource_imports
+				add = total_resource_amount
+				clamp = { min = 0.001 max = @math_expressions_max }
+			}
+			clamp = { min = 0 max = 1 }
+		}
+	}
+	set_temp_variable = {
+		currency_weak_anchor_vulnerability = {
+			value = 1
+			subtract = currency_strength_base
+			clamp = { min = 0 max = 0.5 }
+			multiply = 0.25
+		}
+	}
+	set_temp_variable = {
+		currency_inflation_pass_through = {
+			value = 0.25
+			add = { value = inflation_import_dependency multiply = 0.5 }
+			add = currency_weak_anchor_vulnerability
+			clamp = { min = 0.15 max = 0.85 }
+		}
+	}
+	set_temp_variable = {
+		currency_depreciation_pressure = {
+			value = quarterly_currency_depreciation
+			clamp = { min = 0 max = 0.5 }
+			multiply = currency_inflation_pass_through
+			multiply = 0.5
+		}
+	}
+
+	set_temp_variable = {
+		annual_deficit_ratio = {
+			value = treasury_rate
+			multiply = -52
+			divide = { value = gdp_total clamp = { min = 0.001 max = @math_expressions_max } }
+			clamp = { min = 0 max = 0.5 }
+		}
+	}
+	set_temp_variable = {
+		fiscal_currency_allowance = {
+			value = currency_strength_base
+			subtract = 1
+			clamp = { min = -0.5 max = 0.5 }
+			multiply = 0.015
+		}
+	}
+	set_temp_variable = {
+		fiscal_debt_penalty = {
+			value = debt_ratio
+			clamp = { min = 0 max = 2 }
+			multiply = 0.01
+		}
+	}
+	set_temp_variable = {
+		fiscal_borrowing_risk = {
+			value = interest_rate
+			subtract = cb_rate_premium
+			subtract = 5
+			divide = 100
+			clamp = { min = 0 max = 0.1 }
+		}
+	}
+	set_temp_variable = {
+		sustainable_deficit_ratio = {
+			value = 0.05
+			add = fiscal_currency_allowance
+			subtract = fiscal_debt_penalty
+			subtract = fiscal_borrowing_risk
+			clamp = { min = 0.02 max = 0.08 }
+		}
+	}
+	set_temp_variable = {
+		excess_deficit_ratio = {
+			value = annual_deficit_ratio
+			subtract = sustainable_deficit_ratio
+			max = 0
+		}
+	}
+	set_temp_variable = {
+		fiscal_inflation_vulnerability = {
+			value = 0.25
+			add = { value = debt_ratio clamp = { min = 0 max = 2 } multiply = 0.25 }
+			add = {
+				value = 1
+				subtract = currency_strength
+				clamp = { min = 0 max = 1 }
+				multiply = 0.25
+			}
+			clamp = { min = 0.25 max = 1.25 }
+		}
+	}
+	set_temp_variable = {
+		severe_deficit_inflation_pressure = {
+			value = excess_deficit_ratio
+			multiply = fiscal_inflation_vulnerability
+		}
+	}
+
+	set_temp_variable = {
+		inflation_expectations_anchor = {
+			value = healthy_gdpc_growth
+			multiply = 0.25
+			add = 0.015
+		}
+	}
+	set_temp_variable = {
+		natural_real_interest_rate = {
+			value = healthy_gdpc_growth
+			multiply = 50
+			clamp = { min = 0.5 max = 2.5 }
+		}
+	}
+	set_temp_variable = {
+		policy_inflation_reference = {
+			value = inflation_rate_var
+			max = inflation_expectations_anchor
+			multiply = 100
+		}
+	}
+	set_temp_variable = {
+		neutral_cb_rate = {
+			value = policy_inflation_reference
+			add = natural_real_interest_rate
+			clamp = { min = 1 max = 30 }
+		}
+	}
+	set_temp_variable = {
+		policy_inflation_pressure = {
+			value = neutral_cb_rate
+			subtract = cb_policy_rate
+			multiply = 0.002
+			clamp = { min = -0.03 max = 0.03 }
+		}
+	}
+	set_temp_variable = {
+		inflation_above_expectations_anchor = {
+			value = inflation_rate_var
+			subtract = inflation_expectations_anchor
+			max = 0
+		}
+	}
+	set_temp_variable = {
+		expectations_vulnerability = {
+			value = 0.9
+			# Each policy rate point cuts a fixed share at any inflation level; an excess deficit halves it at most.
+			subtract = {
+				value = 1
+				subtract = { value = excess_deficit_ratio multiply = 5 clamp = { min = 0 max = 0.5 } }
+				multiply = cb_policy_rate
+				multiply = 0.025
+			}
+			# Below 1 so inflation decays once its drivers stop; at 1 or above it feeds itself.
+			clamp = { min = 0.25 max = 0.9 }
+		}
+	}
+	set_temp_variable = {
+		expectations_intensity = {
+			value = inflation_above_expectations_anchor
+			divide = { value = inflation_expectations_anchor clamp = { min = 0.001 max = @math_expressions_max } }
+			clamp = { min = 0 max = 1 }
+		}
+	}
+	set_temp_variable = {
+		inflation_expectations_pressure = {
+			value = inflation_above_expectations_anchor
+			multiply = expectations_intensity
+			multiply = expectations_vulnerability
+		}
+	}
+
+	set_temp_variable = {
+		annual_expenditure_ratio = {
+			value = display_expense
+			multiply = 52
+			divide = { value = gdp_total clamp = { min = 0.001 max = @math_expressions_max } }
+			clamp = { min = 0 max = 0.75 }
+		}
+	}
+	if = {
+		limit = { has_idea = depression }
+		set_temp_variable = { cycle_inflation_adjustment = -0.035 }
+	} else_if = {
+		limit = { has_idea = recession }
+		set_temp_variable = { cycle_inflation_adjustment = -0.025 }
+	} else_if = {
+		limit = { has_idea = stagnation }
+		set_temp_variable = { cycle_inflation_adjustment = -0.015 }
+	} else_if = {
+		limit = { has_idea = stable_growth }
+		set_temp_variable = { cycle_inflation_adjustment = 0 }
+	} else_if = {
+		limit = { has_idea = fast_growth }
+		set_temp_variable = { cycle_inflation_adjustment = 0.015 }
+	} else_if = {
+		limit = { has_idea = economic_boom }
+		set_temp_variable = { cycle_inflation_adjustment = 0.025 }
+	} else = {
+		set_temp_variable = { cycle_inflation_adjustment = 0 }
+	}
+
+	set_temp_variable = {
+		inflation_rate_adjuster = {
+			value = gdpc_inflation_adjuster
+			if = {
+				limit = {
+					value = gdpc_inflation_adjuster
+					less_than = 0
+				}
+				multiply = -1
+			}
+			multiply = { value = tax_rate multiply = -0.01 }
+			add = gdpc_inflation_adjuster
+			add = policy_inflation_pressure
+			add = {
+				value = cycle_inflation_adjustment
+				multiply = annual_expenditure_ratio
+			}
+			add = {
+				value = treasury_rate
+				multiply = 52
+				divide = { value = gdp_total clamp = { min = 0.001 max = @math_expressions_max } }
+				clamp = { min = -0.25 max = 0.25 }
+				multiply = -1
+				multiply = gdpc_inflation_adjuster
+			}
+			add = print_money_inflation_pressure
+			add = currency_depreciation_pressure
+			add = severe_deficit_inflation_pressure
+			add = inflation_expectations_pressure
+		}
+	}
+	set_variable = { print_money_inflation_pressure = 0 }
+	set_variable = { inflation_currency_strength_start = currency_strength }
+
+	#Calculation of the quarterly rate finished, now move to calculate the yearly average off those numbers
+	#Check to make sure the array has only 4 items, and add up the value
+	set_temp_variable = { total_elements = year_quarter_inflation_tracker^num }
+
+	if = { limit = { check_variable = { total_elements > 3 } }
+		remove_from_array = {
+			array = year_quarter_inflation_tracker
+			index = 0
+		}
+	}
+
+	#Add this to the array, so we can average yearly inflation. this should stop rapid swings up and down, slowing movement
+	add_to_array = { year_quarter_inflation_tracker = inflation_rate_adjuster }
+	set_temp_variable = { new_inflation_rate = 0 }
+	#Reset the tracker here; this will prevent divide by 0, and give the most current number before division
+	set_temp_variable = { total_elements = year_quarter_inflation_tracker^num }
+
+	for_each_loop = {
+		array = year_quarter_inflation_tracker
+		value = v
+
+		add_to_temp_variable = { new_inflation_rate = v }
+	}
+
+	#Maximum inflation movement per quarter of 10%. This means that the max you can move in a year is 40% in either direction
+	#This is a balance mechanic, both for gameplay, and for when you eat a whole country and your finances go crazy. On quick quarterly spike, and then back down
+	#Hard cap inflation at -200% to 200%
+	set_temp_variable = {
+		new_inflation_rate = {
+			value = new_inflation_rate
+			divide = total_elements
+			max = { value = last_inflation_rate subtract = 0.1 }
+			min = { value = last_inflation_rate add = 0.1 }
+			clamp = { min = -2 max = 2 }
+		}
+	}
+	set_variable = { inflation_rate_var = new_inflation_rate }
+	if = { limit = { is_debug = yes }
+		log = "[GetDateText]: [THIS.GetName]: DEBUG: Inflation Update: Current Inflation Rate: [?THIS.inflation_rate_var|%]"
+		log = "[GetDateText]: [THIS.GetName]: DEBUG: Inflation Update: Last Four Quarters: [?THIS.year_quarter_inflation_tracker^0|%] - [?THIS.year_quarter_inflation_tracker^1|%] - [?THIS.year_quarter_inflation_tracker^2|%] - [?THIS.year_quarter_inflation_tracker^3|%]"
+	}
+	calculate_inflation_effects = yes
+
+	#AI-only: adjust cb_policy_rate once per quarter based on current inflation level
+	#AI keeps a 60-day cooldown on this flag; the player GUI buttons use 30 days
+	if = {
+		limit = {
+			is_ai = yes
+			NOT = { has_country_flag = temp_cb_rate_changed }
+		}
+		set_temp_variable = {
+			policy_inflation_reference = {
+				value = inflation_rate_var
+				max = inflation_expectations_anchor
+				multiply = 100
+			}
+		}
+		set_temp_variable = {
+			neutral_cb_rate = {
+				value = policy_inflation_reference
+				add = natural_real_interest_rate
+				clamp = { min = 1 max = 30 }
+			}
+		}
+		set_temp_variable = { neutral_cb_rate_lower = { value = neutral_cb_rate subtract = 0.5 } }
+		set_temp_variable = { neutral_cb_rate_upper = { value = neutral_cb_rate add = 0.5 } }
+		# Move faster when far from neutral, or the rate takes years to follow inflation up or down.
+		set_temp_variable = { neutral_cb_rate_far_below = { value = neutral_cb_rate subtract = 5 } }
+		set_temp_variable = { neutral_cb_rate_far_above = { value = neutral_cb_rate add = 5 } }
+		# The AI stops hiking at 20, or the rate's debt interest outweighs the inflation cut. Players can go to 30.
+		if = {
+			limit = {
+				check_variable = { cb_policy_rate < neutral_cb_rate_far_below }
+				check_variable = { cb_policy_rate < 18 }
+			}
+			add_to_variable = { cb_policy_rate = 3 }
+			set_country_flag = { flag = temp_cb_rate_changed value = 1 days = 60 }
+		}
+		else_if = {
+			limit = { check_variable = { cb_policy_rate > neutral_cb_rate_far_above } }
+			subtract_from_variable = { cb_policy_rate = 3 }
+			set_country_flag = { flag = temp_cb_rate_changed value = 1 days = 60 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { cb_policy_rate < neutral_cb_rate_lower }
+				check_variable = { cb_policy_rate < 20 }
+			}
+			add_to_variable = { cb_policy_rate = 1 }
+			set_country_flag = { flag = temp_cb_rate_changed value = 1 days = 60 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { cb_policy_rate > neutral_cb_rate_upper }
+				check_variable = { cb_policy_rate > 1 }
+			}
+			subtract_from_variable = { cb_policy_rate = 1 }
+			set_country_flag = { flag = temp_cb_rate_changed value = 1 days = 60 }
+		}
+	}
+}
+
+calculate_inflation_effects = {
+	set_variable = {
+		inflation_rate_prod_var = {
+			value = inflation_rate_var
+			multiply = 1.25
+		}
+	}
+	set_variable = {
+		inflation_rate_econ_var = {
+			value = inflation_rate_var
+			multiply = 1.25
+		}
+	}
+	set_variable = {
+		inflation_construction_speed_var = {
+			value = inflation_rate_var
+			multiply = 1.70
+		}
+	}
+	set_variable = {
+		inflation_rate_output_var = {
+			value = inflation_rate_var
+			multiply = -1.35
+		}
+	}
+	set_variable = {
+		trade_law_cost_var = {
+			value = inflation_rate_var
+			multiply = 1.5
+		}
+	}
+	set_variable = {
+		inflation_goods_var = {
+			value = inflation_rate_var
+			multiply = -0.4
+		}
+	}
+
+	set_variable = { inflation_corruption_var = inflation_rate_var }
+
+	refresh_currency_inflation_effects = yes
+}

@@ -1,0 +1,4580 @@
+{
+  "status": "concept_only_approval_required",
+  "version": 2,
+  "groups": [
+    {
+      "id": "guerrilla",
+      "label": "Guerrilla Warfare",
+      "x": 52,
+      "y": 13,
+      "gate": "National military lessons. Southern revolutionary support is an optional communist policy; internal security requires actual control and unrest.",
+      "note": "Southern revolutionary warfare, resistance to invasion and postwar reconciliation are separate contexts. No automatic Viet Cong units or universal ethnic rebellion.",
+      "start_available": true
+    },
+    {
+      "id": "cambodia",
+      "label": "Cambodia",
+      "x": 60,
+      "y": 13,
+      "gate": "Cambodia exists. War, intervention and occupation stages require their real campaign conditions.",
+      "note": "Cambodia is CBD. The border option can remain limited. Capital capture does not finish the guerrilla war or award annexation.",
+      "start_available": true
+    },
+    {
+      "id": "china",
+      "label": "China",
+      "x": 68,
+      "y": 13,
+      "gate": "China exists. China begins as a possible aid patron; combat stages require an actual war.",
+      "note": "Preserve cooperation or prepare deterrence. A limited counterstroke is an alternative war plan, not a promise to conquer China.",
+      "start_available": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "COLDWAR_VIE_guerrilla_lessons",
+      "label": "The Long War",
+      "full_title": "The Long War",
+      "group": "guerrilla",
+      "x": 52,
+      "y": 13,
+      "emitted_x": 52,
+      "emitted_y": 13,
+      "anchor": null,
+      "days": 21,
+      "prerequisites": [],
+      "exclusive": [],
+      "description": "Study the relationship between local political organization, irregular forces and the regular army. Doctrine support never selects a doctrine or grants a technology automatically.",
+      "icon": "Generic_Jungle_Insurgency",
+      "effects": [
+        {
+          "type": "doctrine",
+          "uses": 1,
+          "value": 0.15,
+          "category": "land_doctrine"
+        },
+        {
+          "type": "unlock",
+          "label": "Review the war method"
+        }
+      ],
+      "conditions": "Existing army institutions. No specific party or current war required.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.01,
+      "reward_summary": "doctrine; Review the war method",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.01 }\nmodify_treasury_effect = yes\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_guerrilla_lessons category = land_doctrine uses = 1 cost_reduction = 0.15 }\nset_country_flag = COLDWAR_VIE_guerrilla_lessons_actions_unlocked",
+      "availability_code": "Existing army institutions. No specific party or current war required.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_doctrine_review",
+          "label": "A doctrine review",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_lessons",
+          "cash": 0.01,
+          "days": 180,
+          "conditions": "Native doctrine system and earned military institution.",
+          "result": "A single funded military exercise using existing doctrine/training systems.",
+          "cost_risk": "Not a technology grant or automatic switch to guerrilla doctrine.",
+          "target": null,
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_cadres",
+      "label": "Political Liaison",
+      "full_title": "Political Liaison",
+      "group": "guerrilla",
+      "x": 50,
+      "y": 14,
+      "emitted_x": -2,
+      "emitted_y": 1,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_lessons"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Maintain contact with local institutions and southern allies. Communist revolutionary support is distinct from the general army programme.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Political Liaison",
+          "family": "liaison",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.02,
+            "army_org_factor": 0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Southern political support"
+        }
+      ],
+      "conditions": "Domestic liaison is general. Southern party support additionally requires the actual communist governing subparty and a valid native target.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "Political Liaison; Southern political support",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_cadres_policy days = 180 }\nset_country_flag = COLDWAR_VIE_guerrilla_cadres_actions_unlocked",
+      "availability_code": "Domestic liaison is general. Southern party support additionally requires the actual communist governing subparty and a valid native target.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_cadres_policy = {\n  picture = revolutionary_army\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.02\n    army_org_factor = 0.02\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_south_liaison",
+          "label": "Southern political liaison",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_cadres",
+          "cash": null,
+          "days": 180,
+          "conditions": "Actual communist governing subparty and valid southern political target.",
+          "result": "Use the existing native foreign party support campaign.",
+          "cost_risk": "Native support costs and cooldown; political support does not deliver weapons.",
+          "target": "SVN",
+          "family": "liaison"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_training",
+      "label": "Small Unit Schools",
+      "full_title": "Small Unit Schools",
+      "group": "guerrilla",
+      "x": 54,
+      "y": 14,
+      "emitted_x": 2,
+      "emitted_y": 1,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_lessons"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Teach a regular army to operate in a dispersed war without treating militias as free equipment or manpower.",
+      "icon": "Generic_Infantry_Training",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Small Unit Schools",
+          "family": "training",
+          "modifiers": {
+            "land_doctrine_cost_factor": -0.05,
+            "training_time_army_factor": 0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Native doctrine and training systems remain authoritative.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "Small Unit Schools",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_training_policy days = 180 }",
+      "availability_code": "Native doctrine and training systems remain authoritative.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_training_policy = {\n  picture = revolutionary_army\n  modifier = {\n    land_doctrine_cost_factor = -0.05\n    training_time_army_factor = 0.03\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_local",
+      "label": "Local Organization",
+      "full_title": "Local Organization",
+      "group": "guerrilla",
+      "x": 50,
+      "y": 15,
+      "emitted_x": -2,
+      "emitted_y": 2,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_cadres"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Rely on local initiative and political contact while accepting that decentralized command complicates major offensives.",
+      "icon": "Generic_Jungle_Ghost",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Local Organization",
+          "family": "liaison",
+          "modifiers": {
+            "army_org_factor": 0.03,
+            "max_planning_factor": -0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Replaces Political Liaison. No claim to govern unowned southern provinces.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "Local Organization",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_local_policy days = 180 }",
+      "availability_code": "Replaces Political Liaison. No claim to govern unowned southern provinces.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_local_policy = {\n  picture = revolutionary_army\n  modifier = {\n    army_org_factor = 0.03\n    max_planning_factor = -0.03\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_staff",
+      "label": "Regional Staffs",
+      "full_title": "Regional Staffs",
+      "group": "guerrilla",
+      "x": 54,
+      "y": 15,
+      "emitted_x": 2,
+      "emitted_y": 2,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_training"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Connect dispersed formations to a functioning staff and replacement system. The extra organization requires administrators.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Regional Staffs",
+          "family": "training",
+          "modifiers": {
+            "land_doctrine_cost_factor": -0.07,
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Replaces Small Unit Schools.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Regional Staffs",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_staff_policy days = 180 }",
+      "availability_code": "Replaces Small Unit Schools.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_staff_policy = {\n  picture = revolutionary_army\n  modifier = {\n    land_doctrine_cost_factor = -0.07\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_networks",
+      "label": "Army and Movement",
+      "full_title": "Army and Movement",
+      "group": "guerrilla",
+      "x": 52,
+      "y": 16,
+      "emitted_x": 0,
+      "emitted_y": 3,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_local"
+        ],
+        [
+          "COLDWAR_VIE_guerrilla_staff"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Coordinate local political organization and the regular army. Both preparatory lines must be completed.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "xp",
+          "value": 10
+        },
+        {
+          "type": "unlock",
+          "label": "Select a campaign posture"
+        }
+      ],
+      "conditions": "Both Local Organization and Regional Staffs. Assistance uses real native transactions.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "xp; Select a campaign posture",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\narmy_experience = 10\nset_country_flag = COLDWAR_VIE_guerrilla_networks_actions_unlocked",
+      "availability_code": "Both Local Organization and Regional Staffs. Assistance uses real native transactions.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_renew_posture",
+          "label": "Renew a campaign posture",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_networks",
+          "cash": 0.025,
+          "days": 180,
+          "conditions": "Earned current policy, actual war, exact funds and no conflicting posture.",
+          "result": "Renew the selected eligible operational idea once.",
+          "cost_risk": "Full displayed renewal cost; former timed ideas do not return free.",
+          "target": null,
+          "family": "war_method"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_disperse",
+      "label": "Dispersed Warfare",
+      "full_title": "Dispersed Warfare",
+      "group": "guerrilla",
+      "x": 51,
+      "y": 17,
+      "emitted_x": -1,
+      "emitted_y": 4,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_networks"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_guerrilla_concentrate"
+      ],
+      "description": "Make territorial defence and endurance the priority. This is useful during invasion, but gives up planning depth for a decisive offensive.",
+      "icon": "Generic_Jungle_Ghost",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Dispersed Warfare",
+          "family": "war_method",
+          "modifiers": {
+            "army_core_defence_factor": 0.06,
+            "max_planning_factor": -0.05
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive initial doctrine choice. Core defence applies to Vietnamese cores, not insurgents inside another country.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Dispersed Warfare",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_disperse_policy days = 180 }",
+      "availability_code": "Exclusive initial doctrine choice. Core defence applies to Vietnamese cores, not insurgents inside another country.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_disperse_policy = {\n  picture = revolutionary_army\n  modifier = {\n    army_core_defence_factor = 0.06\n    max_planning_factor = -0.05\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_concentrate",
+      "label": "Main Force War",
+      "full_title": "Main Force War",
+      "group": "guerrilla",
+      "x": 53,
+      "y": 17,
+      "emitted_x": 1,
+      "emitted_y": 4,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_networks"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_guerrilla_disperse"
+      ],
+      "description": "Concentrate the regular army for a prepared campaign. Supply demand rises and formations become harder to sustain.",
+      "icon": "artillery",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Main Force War",
+          "family": "war_method",
+          "modifiers": {
+            "max_planning_factor": 0.06,
+            "supply_consumption_factor": 0.05
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive initial doctrine choice. Does not force a conventional offensive.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Main Force War",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_concentrate_policy days = 180 }",
+      "availability_code": "Exclusive initial doctrine choice. Does not force a conventional offensive.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_concentrate_policy = {\n  picture = revolutionary_army\n  modifier = {\n    max_planning_factor = 0.06\n    supply_consumption_factor = 0.05\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_endure",
+      "label": "A War of Endurance",
+      "full_title": "A War of Endurance",
+      "group": "guerrilla",
+      "x": 51,
+      "y": 18,
+      "emitted_x": -1,
+      "emitted_y": 5,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_disperse"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Improve the army’s ability to preserve a territorial defence. The policy is not a damage bonus for an imaginary underground army.",
+      "icon": "Generic_Soldiers_Defense",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "War of Endurance",
+          "family": "war_method",
+          "modifiers": {
+            "army_core_defence_factor": 0.08,
+            "max_planning_factor": -0.06,
+            "industrial_capacity_factory": -0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Renew defensive mobilisation"
+        }
+      ],
+      "conditions": "Dispersed Warfare. Continues only during an actual war.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront"
+      ],
+      "cash": 0.03,
+      "reward_summary": "War of Endurance; Renew defensive mobilisation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.03 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_endure_policy days = 180 }\nset_country_flag = COLDWAR_VIE_guerrilla_endure_actions_unlocked",
+      "availability_code": "Dispersed Warfare. Continues only during an actual war.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_endure_policy = {\n  picture = revolutionary_army\n  modifier = {\n    army_core_defence_factor = 0.08\n    max_planning_factor = -0.06\n    industrial_capacity_factory = -0.02\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_offensive",
+      "label": "Prepared Operations",
+      "full_title": "Prepared Regular Operations",
+      "group": "guerrilla",
+      "x": 53,
+      "y": 18,
+      "emitted_x": 1,
+      "emitted_y": 5,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_concentrate"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Prepare the regular army for the current campaign, whether against South Vietnam or an invading force. Southern revolutionary support remains a separate optional action.",
+      "icon": "border_war",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Prepared Operations",
+          "family": "war_method",
+          "modifiers": {
+            "max_planning_factor": 0.07,
+            "supply_consumption_factor": 0.06
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Renew prepared operations"
+        }
+      ],
+      "conditions": "Main Force War and an actual regular campaign against the current opponent. Not restricted to SVN.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Prepared Operations; Renew prepared operations",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_offensive_policy days = 180 }\nset_country_flag = COLDWAR_VIE_guerrilla_offensive_actions_unlocked",
+      "availability_code": "Main Force War and an actual regular campaign against the current opponent. Not restricted to SVN.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_offensive_policy = {\n  picture = revolutionary_army\n  modifier = {\n    max_planning_factor = 0.07\n    supply_consumption_factor = 0.06\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_review",
+      "label": "Review the Campaign",
+      "full_title": "Review the Campaign",
+      "group": "guerrilla",
+      "x": 52,
+      "y": 19,
+      "emitted_x": 0,
+      "emitted_y": 6,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_endure",
+          "COLDWAR_VIE_guerrilla_offensive"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Turn the actual campaign experience into a doctrine lesson. A failed offensive does not receive a fabricated victory.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "xp",
+          "value": 15
+        },
+        {
+          "type": "doctrine",
+          "uses": 1,
+          "value": 0.1,
+          "category": "land_doctrine"
+        }
+      ],
+      "conditions": "At least one campaign method implemented and a real campaign undertaken. No territorial transfer.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "xp; doctrine",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\narmy_experience = 15\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_guerrilla_review category = land_doctrine uses = 1 cost_reduction = 0.1 }",
+      "availability_code": "At least one campaign method implemented and a real campaign undertaken. No territorial transfer.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_ceasefire",
+          "label": "A ceasefire proposal",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_review",
+          "cash": 0.005,
+          "days": 90,
+          "conditions": "Actual opponent and current conflict; recipient may refuse.",
+          "result": "Open a recipient owned ceasefire discussion through normal diplomacy.",
+          "cost_risk": "Payment only for accepted agreed programme; sending does not end war.",
+          "target": "SVN",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_guarantees",
+      "label": "Local Guarantees",
+      "full_title": "Local Guarantees",
+      "group": "guerrilla",
+      "x": 50,
+      "y": 20,
+      "emitted_x": -2,
+      "emitted_y": 7,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_review"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_guerrilla_security"
+      ],
+      "description": "Use land adjudication, representation and civilian guarantees to address political grievances. FULRO is a conditional highland problem, not a label for all minorities.",
+      "icon": "peace",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Local Guarantees",
+          "family": "internal_policy",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.03,
+            "social_cost_multiplier_modifier": 0.02,
+            "stability_factor": 0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Highland land commission"
+        }
+      ],
+      "conditions": "Fighting has subsided and Vietnam actually governs the affected territory. General safeguards need no fabricated crisis; the highland decision separately requires a real local grievance.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Local Guarantees; Highland land commission",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_guarantees_policy days = 180 }\nset_country_flag = COLDWAR_VIE_guerrilla_guarantees_actions_unlocked",
+      "availability_code": "Fighting has subsided and Vietnam actually governs the affected territory. General safeguards need no fabricated crisis; the highland decision separately requires a real local grievance.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_guarantees_policy = {\n  picture = revolutionary_army\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.03\n    social_cost_multiplier_modifier = 0.02\n    stability_factor = 0.03\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_land_review",
+          "label": "Highland land commission",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_guarantees",
+          "cash": 0.03,
+          "days": 180,
+          "conditions": "Actual control of the Central Highlands and a relevant grievance.",
+          "result": "Fund the local policy idea and a political settlement process.",
+          "cost_risk": "Civilian and administrative costs. No claim that every minority is an insurgent.",
+          "target": null,
+          "family": "internal_policy"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_security",
+      "label": "Security First",
+      "full_title": "Security First",
+      "group": "guerrilla",
+      "x": 54,
+      "y": 20,
+      "emitted_x": 2,
+      "emitted_y": 7,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_review"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_guerrilla_guarantees"
+      ],
+      "description": "Make intensive internal security deployment the first response. It offers organization while prolonging administrative and civilian burdens.",
+      "icon": "generic_counter_insurgency_icon",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Security Deployment",
+          "family": "internal_policy",
+          "modifiers": {
+            "army_org_factor": 0.03,
+            "bureaucracy_cost_multiplier_modifier": 0.04,
+            "country_productivity_growth_modifier": -0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Review security deployment"
+        }
+      ],
+      "conditions": "Exclusive internal policy. Actual local unrest; no automatic ethnic insurgency.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Security Deployment; Review security deployment",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_security_policy days = 180 }\nset_country_flag = COLDWAR_VIE_guerrilla_security_actions_unlocked",
+      "availability_code": "Exclusive internal policy. Actual local unrest; no automatic ethnic insurgency.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_security_policy = {\n  picture = revolutionary_army\n  modifier = {\n    army_org_factor = 0.03\n    bureaucracy_cost_multiplier_modifier = 0.04\n    country_productivity_growth_modifier = -0.03\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_security_review",
+          "label": "Security deployment review",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_security",
+          "cash": 0.03,
+          "days": 180,
+          "conditions": "Actual local unrest and earned security policy.",
+          "result": "Renew or end the chosen internal security policy.",
+          "cost_risk": "Economic strain persists while deployment continues.",
+          "target": null,
+          "family": "internal_policy"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_services",
+      "label": "Services and Land",
+      "full_title": "Services and Land",
+      "group": "guerrilla",
+      "x": 50,
+      "y": 21,
+      "emitted_x": -2,
+      "emitted_y": 8,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_guarantees"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Fund schools, local administration and a credible land settlement. Services take resources before they yield political benefits.",
+      "icon": "aux_medic",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Civilian Settlement",
+          "family": "internal_policy",
+          "modifiers": {
+            "stability_factor": 0.04,
+            "social_cost_multiplier_modifier": 0.04,
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Local Guarantees. Replaces its policy idea. A concession is not instant universal loyalty.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Civilian Settlement",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_services_policy days = 180 }",
+      "availability_code": "Local Guarantees. Replaces its policy idea. A concession is not instant universal loyalty.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_services_policy = {\n  picture = revolutionary_army\n  modifier = {\n    stability_factor = 0.04\n    social_cost_multiplier_modifier = 0.04\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_screening",
+      "label": "Security Screening",
+      "full_title": "Security Screening",
+      "group": "guerrilla",
+      "x": 54,
+      "y": 21,
+      "emitted_x": 2,
+      "emitted_y": 8,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_security"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Keep a forceful security programme under periodic review. More deployment does not remove the social causes of resistance.",
+      "icon": "generic_counter_insurgency_icon",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Extended Security",
+          "family": "internal_policy",
+          "modifiers": {
+            "army_org_factor": 0.04,
+            "bureaucracy_cost_multiplier_modifier": 0.05,
+            "country_productivity_growth_modifier": -0.04
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Security First. Replaces its policy idea; continued costs are explicit.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.035,
+      "reward_summary": "Extended Security",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_screening_policy days = 180 }",
+      "availability_code": "Security First. Replaces its policy idea; continued costs are explicit.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_screening_policy = {\n  picture = revolutionary_army\n  modifier = {\n    army_org_factor = 0.04\n    bureaucracy_cost_multiplier_modifier = 0.05\n    country_productivity_growth_modifier = -0.04\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_settlement",
+      "label": "A Political Settlement",
+      "full_title": "A Political Settlement",
+      "group": "guerrilla",
+      "x": 52,
+      "y": 22,
+      "emitted_x": 0,
+      "emitted_y": 9,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_services",
+          "COLDWAR_VIE_guerrilla_screening"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Review the chosen local policy with representation from the affected population. Security and civilian guarantees remain distinct choices.",
+      "icon": "white_peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Local review conference"
+        },
+        {
+          "type": "xp",
+          "value": 5
+        }
+      ],
+      "conditions": "An actual implemented local policy. FULRO discussions require the relevant highland context.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "Local review conference; xp",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_guerrilla_settlement_actions_unlocked\narmy_experience = 5",
+      "availability_code": "An actual implemented local policy. FULRO discussions require the relevant highland context.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_local_conference",
+          "label": "Local review conference",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_settlement",
+          "cash": 0.02,
+          "days": 180,
+          "conditions": "A current local policy and actual affected territory.",
+          "result": "Replace the policy through an agreed domestic event and keep its earned history.",
+          "cost_risk": "No instant core state compliance reward or scripted universal surrender.",
+          "target": null,
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_reserve",
+      "label": "Keep the Reserve",
+      "full_title": "Keep the Reserve",
+      "group": "guerrilla",
+      "x": 51,
+      "y": 23,
+      "emitted_x": -1,
+      "emitted_y": 10,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_settlement"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_guerrilla_civilian"
+      ],
+      "description": "Retain a trained reserve for renewed danger. Civilian recovery continues to lose labour to defence.",
+      "icon": "Generic_Soldiers_Defense",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Armed Reserve",
+          "family": "demobilisation",
+          "modifiers": {
+            "army_org_factor": 0.03,
+            "country_productivity_growth_modifier": -0.03,
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 365,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive postwar choice. Actual fighting has subsided; reserve is a policy, not free divisions.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Armed Reserve",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_reserve_policy days = 365 }",
+      "availability_code": "Exclusive postwar choice. Actual fighting has subsided; reserve is a policy, not free divisions.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_reserve_policy = {\n  picture = revolutionary_army\n  modifier = {\n    army_org_factor = 0.03\n    country_productivity_growth_modifier = -0.03\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_civilian",
+      "label": "Return to Civil Life",
+      "full_title": "Return to Civil Life",
+      "group": "guerrilla",
+      "x": 53,
+      "y": 23,
+      "emitted_x": 1,
+      "emitted_y": 10,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_settlement"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_guerrilla_reserve"
+      ],
+      "description": "Reduce the exceptional military commitment and direct labour towards production. Readiness grows more slowly.",
+      "icon": "peace",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Civilian Return",
+          "family": "demobilisation",
+          "modifiers": {
+            "country_productivity_growth_modifier": 0.04,
+            "training_time_army_factor": 0.05
+          },
+          "duration": 365,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive postwar choice. No equipment or units are silently deleted.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Civilian Return",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_civilian_policy days = 365 }",
+      "availability_code": "Exclusive postwar choice. No equipment or units are silently deleted.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_civilian_policy = {\n  picture = revolutionary_army\n  modifier = {\n    country_productivity_growth_modifier = 0.04\n    training_time_army_factor = 0.05\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_rotation",
+      "label": "A Rotating Reserve",
+      "full_title": "A Rotating Reserve",
+      "group": "guerrilla",
+      "x": 51,
+      "y": 24,
+      "emitted_x": -1,
+      "emitted_y": 11,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_reserve"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Make retained readiness more sustainable through rotation. The reserve still carries an economic cost.",
+      "icon": "Generic_Infantry_Training",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Rotating Reserve",
+          "family": "demobilisation",
+          "modifiers": {
+            "army_org_factor": 0.04,
+            "country_productivity_growth_modifier": -0.02,
+            "bureaucracy_cost_multiplier_modifier": 0.01
+          },
+          "duration": 365,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Keep the Reserve. Replaces Armed Reserve.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Rotating Reserve",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_rotation_policy days = 365 }",
+      "availability_code": "Keep the Reserve. Replaces Armed Reserve.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_rotation_policy = {\n  picture = revolutionary_army\n  modifier = {\n    army_org_factor = 0.04\n    country_productivity_growth_modifier = -0.02\n    bureaucracy_cost_multiplier_modifier = 0.01\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_veterans",
+      "label": "Veterans in Civil Life",
+      "full_title": "Veterans in Civil Life",
+      "group": "guerrilla",
+      "x": 53,
+      "y": 24,
+      "emitted_x": 1,
+      "emitted_y": 11,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_civilian"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Support demobilized veterans and affected households. Productive recovery requires sustained public spending.",
+      "icon": "aux_medic",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Veteran Reintegration",
+          "family": "demobilisation",
+          "modifiers": {
+            "country_productivity_growth_modifier": 0.05,
+            "social_cost_multiplier_modifier": 0.03,
+            "training_time_army_factor": 0.04
+          },
+          "duration": 365,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Return to Civil Life. Replaces Civilian Return.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.035,
+      "reward_summary": "Veteran Reintegration",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_guerrilla_veterans_policy days = 365 }",
+      "availability_code": "Return to Civil Life. Replaces Civilian Return.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_guerrilla_veterans_policy = {\n  picture = revolutionary_army\n  modifier = {\n    country_productivity_growth_modifier = 0.05\n    social_cost_multiplier_modifier = 0.03\n    training_time_army_factor = 0.04\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_record",
+      "label": "Record the Lessons",
+      "full_title": "Record the Lessons",
+      "group": "guerrilla",
+      "x": 52,
+      "y": 25,
+      "emitted_x": 0,
+      "emitted_y": 12,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_rotation",
+          "COLDWAR_VIE_guerrilla_veterans"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Preserve the doctrinal lessons without maintaining every temporary wartime measure indefinitely.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "doctrine",
+          "uses": 1,
+          "value": 0.15,
+          "category": "land_doctrine"
+        }
+      ],
+      "conditions": "Either reserve or civilian continuation. Programme expiry remains in force.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.01,
+      "reward_summary": "doctrine",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.01 }\nmodify_treasury_effect = yes\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_guerrilla_record category = land_doctrine uses = 1 cost_reduction = 0.15 }",
+      "availability_code": "Either reserve or civilian continuation. Programme expiry remains in force.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_aftermath",
+      "label": "Beyond the Long War",
+      "full_title": "Beyond the Long War",
+      "group": "guerrilla",
+      "x": 52,
+      "y": 26,
+      "emitted_x": 0,
+      "emitted_y": 13,
+      "anchor": "COLDWAR_VIE_guerrilla_lessons",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_guerrilla_record"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Conclude a programme of military learning and political recovery. Renewed war can reopen funded operational decisions without paying focus rewards twice.",
+      "icon": "peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Postwar policy review"
+        },
+        {
+          "type": "xp",
+          "value": 10
+        }
+      ],
+      "conditions": "Peace or a verified cessation. No claim that every armed remnant has surrendered.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "Postwar policy review; xp",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_guerrilla_aftermath_actions_unlocked\narmy_experience = 10",
+      "availability_code": "Peace or a verified cessation. No claim that every armed remnant has surrendered.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_guerrilla_decision_reserve_review",
+          "label": "Reserve policy review",
+          "group": "guerrilla",
+          "focus": "COLDWAR_VIE_guerrilla_aftermath",
+          "cash": 0.025,
+          "days": 365,
+          "conditions": "Peace or verified cessation; choose an earned funded reserve/civilian programme.",
+          "result": "Renew the selected postwar policy once.",
+          "cost_risk": "No free divisions or repeated focus XP.",
+          "target": null,
+          "family": "demobilisation"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_question",
+      "label": "The Cambodian Question",
+      "full_title": "The Cambodian Question",
+      "group": "cambodia",
+      "x": 60,
+      "y": 13,
+      "emitted_x": 60,
+      "emitted_y": 13,
+      "anchor": null,
+      "days": 21,
+      "prerequisites": [],
+      "exclusive": [],
+      "description": "Keep Cambodia’s sovereignty and changing political situation distinct from Vietnam’s own war. Cambodia is not an inevitable starting enemy.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Open a border channel"
+        },
+        {
+          "type": "xp",
+          "value": 5
+        }
+      ],
+      "conditions": "CBD exists. No specific Cambodian regime or war assumed.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.01,
+      "reward_summary": "Open a border channel; xp",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.01 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_question_actions_unlocked\narmy_experience = 5",
+      "availability_code": "CBD exists. No specific Cambodian regime or war assumed.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_frontier",
+      "label": "Protect the Frontier",
+      "full_title": "Protect the Frontier",
+      "group": "cambodia",
+      "x": 58,
+      "y": 14,
+      "emitted_x": -2,
+      "emitted_y": 1,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_question"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Prepare a defined defensive plan for the southwestern frontier. Military preparation draws resources from reconstruction.",
+      "icon": "border_conflict_bunker",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Southwestern Defence",
+          "family": "cambodia_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.02
+          },
+          "duration": 180,
+          "target": "CBD",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.06
+          }
+        }
+      ],
+      "conditions": "CBD exists. Opponent bonus applies against CBD across all fronts.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Southwestern Defence",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_frontier_policy days = 180 }",
+      "availability_code": "CBD exists. Opponent bonus applies against CBD across all fronts.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_frontier_policy = {\n  picture = planning_bonus\n  modifier = {\n    supply_consumption_factor = 0.02\n  }\n  targeted_modifier = {\n    tag = CBD\n    defense_bonus_against = 0.06\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_civilians",
+      "label": "Protect Border Civilians",
+      "full_title": "Protect Border Civilians",
+      "group": "cambodia",
+      "x": 62,
+      "y": 14,
+      "emitted_x": 2,
+      "emitted_y": 1,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_question"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Organize relief and temporary administration for threatened communities. Protection requires public spending.",
+      "icon": "aux_medic",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Border Relief",
+          "family": "civil_relief",
+          "modifiers": {
+            "stability_factor": 0.02,
+            "social_cost_multiplier_modifier": 0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Propose border relief arrangements"
+        }
+      ],
+      "conditions": "Actual border danger or displacement. No automatic refugees or demographic changes.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Border Relief; Propose border relief arrangements",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_civilians_policy days = 180 }\nset_country_flag = COLDWAR_VIE_cambodia_civilians_actions_unlocked",
+      "availability_code": "Actual border danger or displacement. No automatic refugees or demographic changes.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_civilians_policy = {\n  picture = planning_bonus\n  modifier = {\n    stability_factor = 0.02\n    social_cost_multiplier_modifier = 0.03\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_staff",
+      "label": "Southwestern Command",
+      "full_title": "A Southwestern Command",
+      "group": "cambodia",
+      "x": 58,
+      "y": 15,
+      "emitted_x": -2,
+      "emitted_y": 2,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_frontier"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Unify the existing border staff and maintain a limited commitment. This is not an automatic invasion order.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Southwestern Command",
+          "family": "cambodia_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.03
+          },
+          "duration": 180,
+          "target": "CBD",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.1,
+            "attack_bonus_against": 0.04
+          }
+        }
+      ],
+      "conditions": "Protect the Frontier. Replaces its posture.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Southwestern Command",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_staff_policy days = 180 }",
+      "availability_code": "Protect the Frontier. Replaces its posture.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_staff_policy = {\n  picture = planning_bonus\n  modifier = {\n    supply_consumption_factor = 0.03\n  }\n  targeted_modifier = {\n    tag = CBD\n    defense_bonus_against = 0.1\n    attack_bonus_against = 0.04\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_renew_border",
+          "label": "Renew southwestern readiness",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_staff",
+          "cash": 0.025,
+          "days": 180,
+          "conditions": "Current funds and the corresponding earned posture.",
+          "result": "Renew one Cambodia posture.",
+          "cost_risk": "One active Cambodia posture; national supply costs remain real.",
+          "target": "CBD",
+          "family": "cambodia_posture"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_channel",
+      "label": "Mekong Logistics",
+      "full_title": "Mekong Campaign Logistics",
+      "group": "cambodia",
+      "x": 62,
+      "y": 15,
+      "emitted_x": 2,
+      "emitted_y": 2,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_civilians"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Prepare the transport and administrative base for a real southwestern campaign. Keep relief and military logistics functioning without waiting for the opponent to agree to talks.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Mekong Logistics",
+          "family": "campaign_logistics",
+          "modifiers": {
+            "supply_consumption_factor": -0.03,
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Bilateral border commission"
+        }
+      ],
+      "conditions": "Protect Border Civilians. Domestic logistics needs no Cambodian approval; a bilateral commission still does.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.01,
+      "reward_summary": "Mekong Logistics; Bilateral border commission",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.01 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_channel_policy days = 180 }\nset_country_flag = COLDWAR_VIE_cambodia_channel_actions_unlocked",
+      "availability_code": "Protect Border Civilians. Domestic logistics needs no Cambodian approval; a bilateral commission still does.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_channel_policy = {\n  picture = planning_bonus\n  modifier = {\n    supply_consumption_factor = -0.03\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_commission",
+          "label": "Bilateral border commission",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_channel",
+          "cash": 0.01,
+          "days": 90,
+          "conditions": "CBD exists; current proposal and both governments still eligible.",
+          "result": "Recipient accepts or refuses a defined border consultation.",
+          "cost_risk": "Acceptance alone neither transfers territory nor guarantees future peace.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_mandate",
+      "label": "Define the War Aim",
+      "full_title": "Define the War Aim",
+      "group": "cambodia",
+      "x": 60,
+      "y": 16,
+      "emitted_x": 0,
+      "emitted_y": 3,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_staff"
+        ],
+        [
+          "COLDWAR_VIE_cambodia_channel"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Choose whether to limit the commitment or pursue the overthrow of a hostile government. Existing Cambodian cooperation remains an alternative.",
+      "icon": "border_war",
+      "effects": [
+        {
+          "type": "xp",
+          "value": 10
+        },
+        {
+          "type": "unlock",
+          "label": "Review the campaign mandate"
+        }
+      ],
+      "conditions": "Both military and civilian preparations. No declaration or forced treaty on completion.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "xp; Review the campaign mandate",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\narmy_experience = 10\nset_country_flag = COLDWAR_VIE_cambodia_mandate_actions_unlocked",
+      "availability_code": "Both military and civilian preparations. No declaration or forced treaty on completion.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_mandate",
+          "label": "Review the mandate",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_mandate",
+          "cash": 0,
+          "days": 0,
+          "conditions": "A current eligible campaign and appropriate government authority.",
+          "result": "Choose native war goals or a diplomatic limit allowed by the earned focus.",
+          "cost_risk": "No automatic declaration, capital capture or puppet installation.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_limited",
+      "label": "Keep the War Limited",
+      "full_title": "Keep the War Limited",
+      "group": "cambodia",
+      "x": 59,
+      "y": 17,
+      "emitted_x": -1,
+      "emitted_y": 4,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_mandate"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_cambodia_intervene"
+      ],
+      "description": "Limit the military objective to protection of the frontier. It preserves resources but may leave a hostile regime in place.",
+      "icon": "Generic_Soldiers_Defense",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Limited Border War",
+          "family": "cambodia_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.03,
+            "max_planning_factor": -0.03
+          },
+          "duration": 180,
+          "target": "CBD",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.08
+          }
+        },
+        {
+          "type": "unlock",
+          "label": "Offer a limited ceasefire"
+        }
+      ],
+      "conditions": "Exclusive campaign objective. Existing CBD war or an accepted border security arrangement. No free territorial guarantee.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.03,
+      "reward_summary": "Limited Border War; Offer a limited ceasefire",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.03 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_limited_policy days = 180 }\nset_country_flag = COLDWAR_VIE_cambodia_limited_actions_unlocked",
+      "availability_code": "Exclusive campaign objective. Existing CBD war or an accepted border security arrangement. No free territorial guarantee.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_limited_policy = {\n  picture = planning_bonus\n  modifier = {\n    supply_consumption_factor = 0.03\n    max_planning_factor = -0.03\n  }\n  targeted_modifier = {\n    tag = CBD\n    defense_bonus_against = 0.08\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_limited_ceasefire",
+          "label": "A limited ceasefire",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_limited",
+          "cash": 0.005,
+          "days": 90,
+          "conditions": "Actual VIE and CBD conflict and a current limited mandate.",
+          "result": "Offer a reciprocal ceasefire through normal diplomacy.",
+          "cost_risk": "War continues without an actual agreement.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_intervene",
+      "label": "End Hostile Rule",
+      "full_title": "End Hostile Rule",
+      "group": "cambodia",
+      "x": 61,
+      "y": 17,
+      "emitted_x": 1,
+      "emitted_y": 4,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_mandate"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_cambodia_limited"
+      ],
+      "description": "Authorize a regime change war aim against a hostile Cambodian government. The war aim is not a completed victory or puppet state.",
+      "icon": "border_war",
+      "effects": [
+        {
+          "type": "wargoal",
+          "target": "CBD",
+          "goal": "puppet_wargoal_focus"
+        },
+        {
+          "type": "idea",
+          "title": "Intervention Plan",
+          "family": "cambodia_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.04
+          },
+          "duration": 240,
+          "target": "CBD",
+          "targeted_modifiers": {
+            "attack_bonus_against": 0.1,
+            "defense_bonus_against": 0.04
+          }
+        },
+        {
+          "type": "unlock",
+          "label": "Request support for intervention"
+        }
+      ],
+      "conditions": "A hostile CBD government and a verified grave border crisis or current war. This native war goal does not itself declare war.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.04,
+      "reward_summary": "wargoal; Intervention Plan; Request support for intervention",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\ncreate_wargoal = { type = puppet_wargoal_focus target = CBD }\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_intervene_policy days = 240 }\nset_country_flag = COLDWAR_VIE_cambodia_intervene_actions_unlocked",
+      "availability_code": "A hostile CBD government and a verified grave border crisis or current war. This native war goal does not itself declare war.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_intervene_policy = {\n  picture = planning_bonus\n  modifier = {\n    supply_consumption_factor = 0.04\n  }\n  targeted_modifier = {\n    tag = CBD\n    attack_bonus_against = 0.1\n    defense_bonus_against = 0.04\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_monitor",
+      "label": "A Monitored Border",
+      "full_title": "A Monitored Border",
+      "group": "cambodia",
+      "x": 59,
+      "y": 18,
+      "emitted_x": -1,
+      "emitted_y": 5,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_limited"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Seek a verified frontier arrangement and a lower military commitment. Refusal leaves the conflict unresolved.",
+      "icon": "white_peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Monitored border agreement"
+        },
+        {
+          "type": "idea",
+          "title": "Border Monitoring",
+          "family": "cambodia_posture",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": "CBD",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.05
+          }
+        }
+      ],
+      "conditions": "Keep the War Limited. Negotiated benefits require actual acceptance by CBD.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Monitored border agreement; Border Monitoring",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_monitor_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_monitor_policy days = 180 }",
+      "availability_code": "Keep the War Limited. Negotiated benefits require actual acceptance by CBD.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_monitor_policy = {\n  picture = planning_bonus\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n  targeted_modifier = {\n    tag = CBD\n    defense_bonus_against = 0.05\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_capital",
+      "label": "Phnom Penh Objective",
+      "full_title": "The Phnom Penh Objective",
+      "group": "cambodia",
+      "x": 61,
+      "y": 18,
+      "emitted_x": 1,
+      "emitted_y": 5,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_intervene"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Prepare an operation towards the enemy capital. Taking it must be achieved through normal combat and begins a new political problem.",
+      "icon": "artillery",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Cambodian Offensive",
+          "family": "cambodia_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.06,
+            "industrial_capacity_factory": -0.02
+          },
+          "duration": 240,
+          "target": "CBD",
+          "targeted_modifiers": {
+            "attack_bonus_against": 0.14,
+            "defense_bonus_against": 0.06
+          }
+        },
+        {
+          "type": "unlock",
+          "label": "Review achieved campaign objectives"
+        }
+      ],
+      "conditions": "End Hostile Rule and actual war with CBD. Grants no province or automatic surrender.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.05,
+      "reward_summary": "Cambodian Offensive; Review achieved campaign objectives",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.05 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_capital_policy days = 240 }\nset_country_flag = COLDWAR_VIE_cambodia_capital_actions_unlocked",
+      "availability_code": "End Hostile Rule and actual war with CBD. Grants no province or automatic surrender.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_capital_policy = {\n  picture = planning_bonus\n  modifier = {\n    supply_consumption_factor = 0.06\n    industrial_capacity_factory = -0.02\n  }\n  targeted_modifier = {\n    tag = CBD\n    attack_bonus_against = 0.14\n    defense_bonus_against = 0.06\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_aftermath",
+      "label": "Secure the Victory",
+      "full_title": "Secure the Southwestern Victory",
+      "group": "cambodia",
+      "x": 60,
+      "y": 19,
+      "emitted_x": 0,
+      "emitted_y": 6,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_monitor",
+          "COLDWAR_VIE_cambodia_capital"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Convert an actually won campaign into a strategic result. End the hostile border threat, record hard military lessons and open the route to a durable Cambodian security partner.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "xp",
+          "value": 25
+        },
+        {
+          "type": "doctrine",
+          "uses": 2,
+          "value": 0.2,
+          "category": "land_doctrine"
+        },
+        {
+          "type": "unlock",
+          "label": "Verify the secured southwestern frontier"
+        }
+      ],
+      "conditions": "Actual military victory and a normal settlement that ends the hostile border threat. Capital control alone is insufficient; a merely sent ceasefire offer grants nothing.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "xp; doctrine; Verify the secured southwestern frontier",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\narmy_experience = 25\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_cambodia_aftermath category = land_doctrine uses = 2 cost_reduction = 0.2 }\nset_country_flag = COLDWAR_VIE_cambodia_aftermath_actions_unlocked",
+      "availability_code": "Actual military victory and a normal settlement that ends the hostile border threat. Capital control alone is insufficient; a merely sent ceasefire offer grants nothing.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_victory_review",
+          "label": "Verify southwestern victory",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_aftermath",
+          "cash": 0,
+          "days": 0,
+          "conditions": "A real won campaign, lawful result and hostile threat actually removed.",
+          "result": "Record the one time military result and open the friendly partner continuation.",
+          "cost_risk": "Capital capture, occupied territory alone or a sent ultimatum is insufficient.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_partner",
+      "label": "A Friendly Cambodia",
+      "full_title": "A Friendly Cambodian Partner",
+      "group": "cambodia",
+      "x": 58,
+      "y": 20,
+      "emitted_x": -2,
+      "emitted_y": 7,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_aftermath"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_cambodia_direct"
+      ],
+      "description": "Build a durable strategic buffer after a real victory. A friendly Cambodian security partner lets Vietnam recover the southwest while retaining a credible regional position.",
+      "icon": "border_conflict_bunker",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Offer a native training programme"
+        },
+        {
+          "type": "idea",
+          "title": "A Secured Southwest",
+          "family": "security_dividend",
+          "modifiers": {
+            "agricolture_productivity_modifier": 0.06,
+            "supply_consumption_factor": -0.03,
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": null,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Won campaign, lawful friendly CBD government, actual Vietnamese control of the southern provinces and an accepted security arrangement. The dividend remains active only while the southwestern border is genuinely secure.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.03,
+      "reward_summary": "Offer a native training programme; A Secured Southwest",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.03 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_partner_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_ideas = COLDWAR_VIE_cambodia_partner_policy",
+      "availability_code": "Won campaign, lawful friendly CBD government, actual Vietnamese control of the southern provinces and an accepted security arrangement. The dividend remains active only while the southwestern border is genuinely secure.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_partner_policy = {\n  picture = planning_bonus\n  modifier = {\n    agricolture_productivity_modifier = 0.06\n    supply_consumption_factor = -0.03\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_train_partner",
+          "label": "Request a training mission",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_partner",
+          "cash": null,
+          "days": 180,
+          "conditions": "Friendly lawful CBD government and acceptance.",
+          "result": "Use the native paid military assistance programme.",
+          "cost_risk": "Native sender contribution and recurring cost; no free Cambodian formations.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_direct",
+      "label": "Direct Military Rule",
+      "full_title": "Direct Military Rule",
+      "group": "cambodia",
+      "x": 62,
+      "y": 20,
+      "emitted_x": 2,
+      "emitted_y": 7,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_aftermath"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_cambodia_partner"
+      ],
+      "description": "Take a heavier direct security role in occupied territory. Immediate control increases the long term burden on Vietnam.",
+      "icon": "generic_counter_insurgency_icon",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Direct Occupation",
+          "family": "occupation_policy",
+          "modifiers": {
+            "resistance_target": -0.05,
+            "industry_repair_factor": 0.1,
+            "bureaucracy_cost_multiplier_modifier": 0.04,
+            "supply_consumption_factor": 0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Won intervention and actual non core occupation. These country idea benefits affect ALL Vietnamese qualifying occupations, not only Cambodia.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.035,
+      "reward_summary": "Direct Occupation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_direct_policy days = 180 }",
+      "availability_code": "Won intervention and actual non core occupation. These country idea benefits affect ALL Vietnamese qualifying occupations, not only Cambodia.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_direct_policy = {\n  picture = planning_bonus\n  modifier = {\n    resistance_target = -0.05\n    industry_repair_factor = 0.1\n    bureaucracy_cost_multiplier_modifier = 0.04\n    supply_consumption_factor = 0.03\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_train",
+      "label": "Train the Partner",
+      "full_title": "Train the Partner",
+      "group": "cambodia",
+      "x": 58,
+      "y": 21,
+      "emitted_x": -2,
+      "emitted_y": 8,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_partner"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Fund Cambodian military responsibility through native assistance. A trained partner reduces the verified Vietnamese commitment and makes victory sustainable rather than an endless occupation.",
+      "icon": "Generic_Infantry_Training",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Fund native military assistance"
+        },
+        {
+          "type": "idea",
+          "title": "Training Mission",
+          "family": "occupation_policy",
+          "modifiers": {
+            "mdcw_cw_military_programme_cost": -0.05,
+            "bureaucracy_cost_multiplier_modifier": 0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "A Friendly Cambodia and an actual accepted funded assistance programme. This focus unlocks the readiness review; it does not require that review to have happened already. The lighter commitment stage is applied only after the later verification.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Fund native military assistance; Training Mission",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_train_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_train_policy days = 180 }",
+      "availability_code": "A Friendly Cambodia and an actual accepted funded assistance programme. This focus unlocks the readiness review; it does not require that review to have happened already. The lighter commitment stage is applied only after the later verification.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_train_policy = {\n  picture = planning_bonus\n  modifier = {\n    mdcw_cw_military_programme_cost = -0.05\n    bureaucracy_cost_multiplier_modifier = 0.03\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_partner_readiness",
+          "label": "Partner readiness review",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_train",
+          "cash": 0.02,
+          "days": 180,
+          "conditions": "Earned training focus, an accepted funded native programme and the real agreed responsibility milestones. Perform and record the readiness check here; no prior readiness review flag is required.",
+          "result": "Reduce the continuing Vietnamese commitment burden to its lighter supported partner stage.",
+          "cost_risk": "Native assistance still costs money; the partner’s army is not created for free.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_dry",
+      "label": "Dry Season Operations",
+      "full_title": "Dry Season Operations",
+      "group": "cambodia",
+      "x": 62,
+      "y": 21,
+      "emitted_x": 2,
+      "emitted_y": 8,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_direct"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Conduct a defined campaign against armed opposition where the real war or occupation system can represent it. Military pressure is not automatic reconciliation.",
+      "icon": "Generic_Jungle_Insurgency",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Extended Occupation",
+          "family": "occupation_policy",
+          "modifiers": {
+            "resistance_damage_to_garrison": -0.08,
+            "supply_consumption_factor": 0.06,
+            "country_productivity_growth_modifier": -0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Direct Military Rule and real non core occupation. These modifiers do not simulate a core state rebellion. Garrison benefit applies to all qualifying Vietnamese occupations.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Extended Occupation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_dry_policy days = 180 }",
+      "availability_code": "Direct Military Rule and real non core occupation. These modifiers do not simulate a core state rebellion. Garrison benefit applies to all qualifying Vietnamese occupations.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_dry_policy = {\n  picture = planning_bonus\n  modifier = {\n    resistance_damage_to_garrison = -0.08\n    supply_consumption_factor = 0.06\n    country_productivity_growth_modifier = -0.03\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_burden",
+      "label": "The Long Commitment",
+      "full_title": "The Long Commitment",
+      "group": "cambodia",
+      "x": 60,
+      "y": 22,
+      "emitted_x": 0,
+      "emitted_y": 9,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_train",
+          "COLDWAR_VIE_cambodia_dry"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Account for the garrisons, advisers and civilian costs that follow intervention. A capital victory is not an endless national bonus.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Review the occupation"
+        },
+        {
+          "type": "xp",
+          "value": 5
+        }
+      ],
+      "conditions": "A real continuing intervention. Applies the separate commitment burden while it persists.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Review the occupation; xp",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_burden_actions_unlocked\narmy_experience = 5",
+      "availability_code": "A real continuing intervention. Applies the separate commitment burden while it persists.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_occupation_review",
+          "label": "Review the occupation",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_burden",
+          "cash": 0.02,
+          "days": 180,
+          "conditions": "Actual intervention commitment or controlled non core occupation.",
+          "result": "Reassess the current occupation policy idea and its costs.",
+          "cost_risk": "No occupation effects on ordinary Vietnamese cores.",
+          "target": "CBD",
+          "family": "occupation_policy"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_stay",
+      "label": "Stay and Secure",
+      "full_title": "Stay and Secure",
+      "group": "cambodia",
+      "x": 59,
+      "y": 23,
+      "emitted_x": -1,
+      "emitted_y": 10,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_burden"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_cambodia_leave"
+      ],
+      "description": "Retain a larger commitment while pursuing greater security. The northern frontier and civilian recovery compete for the same resources.",
+      "icon": "Generic_Soldiers_Defense",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Retained Commitment",
+          "family": "occupation_exit",
+          "modifiers": {
+            "resistance_damage_to_garrison": -0.06,
+            "supply_consumption_factor": 0.07,
+            "country_productivity_growth_modifier": -0.04
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive exit policy. Only actual occupied non core territory uses garrison modifiers. Garrison benefit applies to all qualifying Vietnamese occupations.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Retained Commitment",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_stay_policy days = 180 }",
+      "availability_code": "Exclusive exit policy. Only actual occupied non core territory uses garrison modifiers. Garrison benefit applies to all qualifying Vietnamese occupations.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_stay_policy = {\n  picture = planning_bonus\n  modifier = {\n    resistance_damage_to_garrison = -0.06\n    supply_consumption_factor = 0.07\n    country_productivity_growth_modifier = -0.04\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_leave",
+      "label": "Prepare to Leave",
+      "full_title": "Prepare to Leave",
+      "group": "cambodia",
+      "x": 61,
+      "y": 23,
+      "emitted_x": 1,
+      "emitted_y": 10,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_burden"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_cambodia_stay"
+      ],
+      "description": "Negotiate a reduction of the Vietnamese commitment and arrangements for the partner government. Withdrawal does not mean Cambodian civil war has ended.",
+      "icon": "white_peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Propose a withdrawal timetable"
+        },
+        {
+          "type": "idea",
+          "title": "Withdrawal Preparation",
+          "family": "occupation_exit",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.03,
+            "army_org_factor": -0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive exit policy. A withdrawal offer requires CBD participation and real verification.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Propose a withdrawal timetable; Withdrawal Preparation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_leave_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_leave_policy days = 180 }",
+      "availability_code": "Exclusive exit policy. A withdrawal offer requires CBD participation and real verification.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_leave_policy = {\n  picture = planning_bonus\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.03\n    army_org_factor = -0.02\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_withdrawal",
+          "label": "A withdrawal timetable",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_leave",
+          "cash": 0.01,
+          "days": 90,
+          "conditions": "Current commitment and a legitimate CBD recipient.",
+          "result": "Offer a reciprocal timetable and verification milestones.",
+          "cost_risk": "Sent proposals do not remove the commitment burden.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_restore",
+      "label": "Rebuild Occupied Land",
+      "full_title": "Rebuild Occupied Land",
+      "group": "cambodia",
+      "x": 59,
+      "y": 24,
+      "emitted_x": -1,
+      "emitted_y": 11,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_stay"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Use the actual MD state investment system for occupied non core recovery. Its cash contribution, political cost and project limits remain real.",
+      "icon": "aux_medic",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Use native rebuilding investment"
+        },
+        {
+          "type": "idea",
+          "title": "Civil Reconstruction",
+          "family": "occupation_exit",
+          "modifiers": {
+            "industry_repair_factor": 0.08,
+            "social_cost_multiplier_modifier": 0.04
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Stay and Secure. Country repair bonus is national; native state projects apply only in their selected state.",
+      "contexts": [
+        "occupation",
+        "twofront"
+      ],
+      "cash": 0.035,
+      "reward_summary": "Use native rebuilding investment; Civil Reconstruction",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_restore_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_restore_policy days = 180 }",
+      "availability_code": "Stay and Secure. Country repair bonus is national; native state projects apply only in their selected state.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_restore_policy = {\n  picture = planning_bonus\n  modifier = {\n    industry_repair_factor = 0.08\n    social_cost_multiplier_modifier = 0.04\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_native_rebuilding",
+          "label": "Native rebuilding investment",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_restore",
+          "cash": null,
+          "days": 180,
+          "conditions": "Select a genuinely occupied non core state controlled by VIE.",
+          "result": "Use the existing MD state rebuilding investment: compliance growth and less resistance activity.",
+          "cost_risk": "Native cash price, 75 political power, state scope and project caps apply.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_verify",
+      "label": "Verify the Drawdown",
+      "full_title": "Verify the Drawdown",
+      "group": "cambodia",
+      "x": 61,
+      "y": 24,
+      "emitted_x": 1,
+      "emitted_y": 11,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_leave"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Check actual troops, military access and the agreed commitments before declaring withdrawal complete. A focus never teleports armies.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Verify an agreed drawdown"
+        },
+        {
+          "type": "idea",
+          "title": "Verified Drawdown",
+          "family": "occupation_exit",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.02,
+            "army_org_factor": -0.01
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Prepare to Leave and a current accepted timetable. Burdens reduce only after verified withdrawal milestones.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Verify an agreed drawdown; Verified Drawdown",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_verify_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_verify_policy days = 180 }",
+      "availability_code": "Prepare to Leave and a current accepted timetable. Burdens reduce only after verified withdrawal milestones.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_verify_policy = {\n  picture = planning_bonus\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.02\n    army_org_factor = -0.01\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_verify_drawdown",
+          "label": "Verify the drawdown",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_verify",
+          "cash": 0.015,
+          "days": 0,
+          "conditions": "Accepted current timetable and actual units/access checked at execution.",
+          "result": "Mark only verified fulfilled withdrawal obligations and reduce their burden.",
+          "cost_risk": "No army teleportation, forced disarmament or peace for third parties.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_talks",
+      "label": "A Regional Process",
+      "full_title": "A Regional Process",
+      "group": "cambodia",
+      "x": 60,
+      "y": 25,
+      "emitted_x": 0,
+      "emitted_y": 12,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_restore",
+          "COLDWAR_VIE_cambodia_verify",
+          "COLDWAR_VIE_cambodia_limited_commitment"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Seek a wider political process with distinct Cambodian actors. Talks with noncommunist opposition are not recognition of Khmer Rouge crimes.",
+      "icon": "peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Request a regional conference"
+        }
+      ],
+      "conditions": "An actual intervention outcome OR a verified limited border settlement. Wider talks remain voluntary; military victory rewards are separate.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Request a regional conference",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_talks_actions_unlocked",
+      "availability_code": "An actual intervention outcome OR a verified limited border settlement. Wider talks remain voluntary; military victory rewards are separate.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_conference",
+          "label": "A regional conference",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_talks",
+          "cash": 0.01,
+          "days": 90,
+          "conditions": "Appropriate Cambodian partners and distinct opposition representatives.",
+          "result": "Invite a political process that can be accepted or refused.",
+          "cost_risk": "Does not compel another player’s ideology, coalition or UN recognition.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_limits",
+      "label": "Southwestern Security",
+      "full_title": "A Sustainable Southwestern Security Order",
+      "group": "cambodia",
+      "x": 60,
+      "y": 26,
+      "emitted_x": 0,
+      "emitted_y": 13,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_talks"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Keep the strategic gains of the chosen outcome. A defeated threat and a friendly Cambodian partner can support a continuing security dividend; limited frontier agreements receive no military victory reward.",
+      "icon": "static_defense",
+      "effects": [
+        {
+          "type": "doctrine",
+          "uses": 1,
+          "value": 0.1,
+          "category": "land_doctrine"
+        },
+        {
+          "type": "unlock",
+          "label": "Review remaining commitments"
+        }
+      ],
+      "conditions": "Actual secured military outcome or verified limited border settlement. The military dividend requires the independent victory and friendly partner conditions.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.01,
+      "reward_summary": "doctrine; Review remaining commitments",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.01 }\nmodify_treasury_effect = yes\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_cambodia_limits category = land_doctrine uses = 1 cost_reduction = 0.1 }\nset_country_flag = COLDWAR_VIE_cambodia_limits_actions_unlocked",
+      "availability_code": "Actual secured military outcome or verified limited border settlement. The military dividend requires the independent victory and friendly partner conditions.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_frontier",
+      "label": "The Northern Frontier",
+      "full_title": "The Northern Frontier",
+      "group": "china",
+      "x": 68,
+      "y": 13,
+      "emitted_x": 68,
+      "emitted_y": 13,
+      "anchor": null,
+      "days": 21,
+      "prerequisites": [],
+      "exclusive": [],
+      "description": "Treat China as an important neighbour whose cooperation and rivalry can both shape Vietnam’s security. A later war is conditional.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Open a frontier channel"
+        },
+        {
+          "type": "xp",
+          "value": 5
+        }
+      ],
+      "conditions": "CHI exists. No assumption of a Chinese invasion.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.01,
+      "reward_summary": "Open a frontier channel; xp",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.01 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_china_frontier_actions_unlocked\narmy_experience = 5",
+      "availability_code": "CHI exists. No assumption of a Chinese invasion.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_talks",
+      "label": "A Border Commission",
+      "full_title": "A Border Commission",
+      "group": "china",
+      "x": 66,
+      "y": 14,
+      "emitted_x": -2,
+      "emitted_y": 1,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_frontier"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Propose a serious boundary channel while retaining sovereignty. China must agree before a bilateral commission exists.",
+      "icon": "peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Propose a Sino Vietnamese commission"
+        }
+      ],
+      "conditions": "No current Chinese war needed. Accepted cooperation does not guarantee future relations.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.01,
+      "reward_summary": "Propose a Sino Vietnamese commission",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.01 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_china_talks_actions_unlocked",
+      "availability_code": "No current Chinese war needed. Accepted cooperation does not guarantee future relations.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_commission",
+          "label": "A frontier commission",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_talks",
+          "cash": 0.01,
+          "days": 90,
+          "conditions": "CHI exists and current eligible proposal.",
+          "result": "Recipient decides whether to open boundary talks.",
+          "cost_risk": "China remains a potential patron; no compulsory confrontation.",
+          "target": "CHI",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_survey",
+      "label": "Survey the Defences",
+      "full_title": "Survey the Defences",
+      "group": "china",
+      "x": 70,
+      "y": 14,
+      "emitted_x": 2,
+      "emitted_y": 1,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_frontier"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Review frontier readiness and the costs of mobilising a damaged economy. This does not construct free fortifications.",
+      "icon": "border_conflict_bunker",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Frontier Readiness",
+          "family": "china_posture",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.04
+          }
+        }
+      ],
+      "conditions": "CHI exists. Defence bonus applies against Chinese forces across all fronts.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Frontier Readiness",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_survey_policy days = 180 }",
+      "availability_code": "CHI exists. Defence bonus applies against Chinese forces across all fronts.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_survey_policy = {\n  picture = national_defenders\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n  targeted_modifier = {\n    tag = CHI\n    defense_bonus_against = 0.04\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_citizens",
+      "label": "Protect Civil Rights",
+      "full_title": "Protect Civil Rights",
+      "group": "china",
+      "x": 66,
+      "y": 15,
+      "emitted_x": -2,
+      "emitted_y": 2,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_talks"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Keep citizenship and property treatment distinct from security disputes with Beijing. Civilians do not become a collective enemy.",
+      "icon": "peace",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Civil Guarantees",
+          "family": "civil_relief",
+          "modifiers": {
+            "stability_factor": 0.03,
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "A fair property review"
+        }
+      ],
+      "conditions": "An administrative safeguard available before or during a frontier crisis. No property dispute is required to defend Vietnam; a targeted review decision still requires an actual local dispute.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Civil Guarantees; A fair property review",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_citizens_policy days = 180 }\nset_country_flag = COLDWAR_VIE_china_citizens_actions_unlocked",
+      "availability_code": "An administrative safeguard available before or during a frontier crisis. No property dispute is required to defend Vietnam; a targeted review decision still requires an actual local dispute.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_citizens_policy = {\n  picture = national_defenders\n  modifier = {\n    stability_factor = 0.03\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_civil_review",
+          "label": "Property and citizenship review",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_citizens",
+          "cash": 0.02,
+          "days": 180,
+          "conditions": "A real local administrative dispute and affected controlled territory.",
+          "result": "Apply funded civil guarantees.",
+          "cost_risk": "No ethnic collective punishment or fabricated demographic transfer.",
+          "target": null,
+          "family": "civil_relief"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_liaison",
+      "label": "A Northern Command",
+      "full_title": "A Northern Command",
+      "group": "china",
+      "x": 70,
+      "y": 15,
+      "emitted_x": 2,
+      "emitted_y": 2,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_survey"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Coordinate existing formations for defence against a larger neighbour. Readiness consumes supplies before major fighting begins.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Northern Command",
+          "family": "china_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.03
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.06
+          }
+        }
+      ],
+      "conditions": "Survey the Defences. Replaces Frontier Readiness.",
+      "contexts": [
+        "divided",
+        "invasion",
+        "occupation",
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Northern Command",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_liaison_policy days = 180 }",
+      "availability_code": "Survey the Defences. Replaces Frontier Readiness.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_liaison_policy = {\n  picture = national_defenders\n  modifier = {\n    supply_consumption_factor = 0.03\n  }\n  targeted_modifier = {\n    tag = CHI\n    defense_bonus_against = 0.06\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_renew_readiness",
+          "label": "Renew northern readiness",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_liaison",
+          "cash": 0.025,
+          "days": 180,
+          "conditions": "Earned eligible posture and exact available funding.",
+          "result": "Renew one China posture for its defined term.",
+          "cost_risk": "Chinese targeted benefit applies across all fronts against CHI.",
+          "target": "CHI",
+          "family": "china_posture"
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_crisis",
+      "label": "The Frontier Crisis",
+      "full_title": "The Frontier Crisis",
+      "group": "china",
+      "x": 68,
+      "y": 16,
+      "emitted_x": 0,
+      "emitted_y": 3,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_citizens"
+        ],
+        [
+          "COLDWAR_VIE_china_liaison"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Choose a limited military purpose if a frontier crisis becomes a real war. Peaceful relations remain possible through the earlier channel.",
+      "icon": "border_war",
+      "effects": [
+        {
+          "type": "xp",
+          "value": 10
+        },
+        {
+          "type": "unlock",
+          "label": "Review the northern mandate"
+        }
+      ],
+      "conditions": "Both civilian and military preparations. Combat continuation requires actual war with CHI.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion"
+      ],
+      "cash": 0.015,
+      "reward_summary": "xp; Review the northern mandate",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\narmy_experience = 10\nset_country_flag = COLDWAR_VIE_china_crisis_actions_unlocked",
+      "availability_code": "Both civilian and military preparations. Combat continuation requires actual war with CHI.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_hold",
+      "label": "Hold the Line",
+      "full_title": "Hold the Line",
+      "group": "china",
+      "x": 67,
+      "y": 17,
+      "emitted_x": -1,
+      "emitted_y": 4,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_crisis"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_china_counter"
+      ],
+      "description": "Prioritize defensive endurance. Keeping the frontier supplied reduces the room for offensive concentration.",
+      "icon": "static_defense",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Northern Defence",
+          "family": "china_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.04,
+            "max_planning_factor": -0.03
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.09
+          }
+        }
+      ],
+      "conditions": "Exclusive war plan. Actual war with CHI.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion"
+      ],
+      "cash": 0.035,
+      "reward_summary": "Northern Defence",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_hold_policy days = 180 }",
+      "availability_code": "Exclusive war plan. Actual war with CHI.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_hold_policy = {\n  picture = national_defenders\n  modifier = {\n    supply_consumption_factor = 0.04\n    max_planning_factor = -0.03\n  }\n  targeted_modifier = {\n    tag = CHI\n    defense_bonus_against = 0.09\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_counter",
+      "label": "A Limited Counterstroke",
+      "full_title": "A Limited Counterstroke",
+      "group": "china",
+      "x": 69,
+      "y": 17,
+      "emitted_x": 1,
+      "emitted_y": 4,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_crisis"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_china_hold"
+      ],
+      "description": "Prepare a defined counteroffensive to relieve pressure or recover positions. It carries greater supply and production costs.",
+      "icon": "artillery",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Limited Counterstroke",
+          "family": "china_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.07,
+            "industrial_capacity_factory": -0.03
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "attack_bonus_against": 0.06,
+            "defense_bonus_against": 0.03
+          }
+        }
+      ],
+      "conditions": "Exclusive war plan. Actual war with CHI; no automatic conquest or border revision.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Limited Counterstroke",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_counter_policy days = 180 }",
+      "availability_code": "Exclusive war plan. Actual war with CHI; no automatic conquest or border revision.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_counter_policy = {\n  picture = national_defenders\n  modifier = {\n    supply_consumption_factor = 0.07\n    industrial_capacity_factory = -0.03\n  }\n  targeted_modifier = {\n    tag = CHI\n    attack_bonus_against = 0.06\n    defense_bonus_against = 0.03\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_depth",
+      "label": "Defence in Depth",
+      "full_title": "Defence in Depth",
+      "group": "china",
+      "x": 67,
+      "y": 18,
+      "emitted_x": -1,
+      "emitted_y": 5,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_hold"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Sustain a defence without assuming a short war. The economic cost lasts as long as the exceptional posture.",
+      "icon": "Generic_Soldiers_Defense",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Defence in Depth",
+          "family": "china_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.05,
+            "industrial_capacity_factory": -0.02
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.11
+          }
+        }
+      ],
+      "conditions": "Hold the Line. Replaces Northern Defence.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Defence in Depth",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_depth_policy days = 180 }",
+      "availability_code": "Hold the Line. Replaces Northern Defence.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_depth_policy = {\n  picture = national_defenders\n  modifier = {\n    supply_consumption_factor = 0.05\n    industrial_capacity_factory = -0.02\n  }\n  targeted_modifier = {\n    tag = CHI\n    defense_bonus_against = 0.11\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_objectives",
+      "label": "Bound the Objectives",
+      "full_title": "Bound the Objectives",
+      "group": "china",
+      "x": 69,
+      "y": 18,
+      "emitted_x": 1,
+      "emitted_y": 5,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_counter"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Keep the counterstroke tied to a defined purpose rather than a permanent march into China. Battlefield success is never scripted.",
+      "icon": "border_war",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Bounded Counterstroke",
+          "family": "china_posture",
+          "modifiers": {
+            "supply_consumption_factor": 0.08,
+            "industrial_capacity_factory": -0.04
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "attack_bonus_against": 0.08,
+            "defense_bonus_against": 0.03
+          }
+        },
+        {
+          "type": "unlock",
+          "label": "Offer a bounded ceasefire"
+        }
+      ],
+      "conditions": "A Limited Counterstroke. Proposed terms require Chinese acceptance.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion"
+      ],
+      "cash": 0.045,
+      "reward_summary": "Bounded Counterstroke; Offer a bounded ceasefire",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.045 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_objectives_policy days = 180 }\nset_country_flag = COLDWAR_VIE_china_objectives_actions_unlocked",
+      "availability_code": "A Limited Counterstroke. Proposed terms require Chinese acceptance.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_objectives_policy = {\n  picture = national_defenders\n  modifier = {\n    supply_consumption_factor = 0.08\n    industrial_capacity_factory = -0.04\n  }\n  targeted_modifier = {\n    tag = CHI\n    attack_bonus_against = 0.08\n    defense_bonus_against = 0.03\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_bounded_ceasefire",
+          "label": "A bounded ceasefire",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_objectives",
+          "cash": 0.005,
+          "days": 90,
+          "conditions": "Actual war with CHI and current bounded mandate.",
+          "result": "Present defined reciprocal terms.",
+          "cost_risk": "No focus enforced Chinese withdrawal or territorial concession.",
+          "target": "CHI",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_long",
+      "label": "Beyond the First Battle",
+      "full_title": "Beyond the First Battle",
+      "group": "china",
+      "x": 68,
+      "y": 19,
+      "emitted_x": 0,
+      "emitted_y": 6,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_depth",
+          "COLDWAR_VIE_china_objectives"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Maintain the frontier after the opening invasion or counteroffensive. The main assault ending does not prove that the frontier war has ended.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "xp",
+          "value": 15
+        },
+        {
+          "type": "unlock",
+          "label": "Review prolonged frontier mobilisation"
+        }
+      ],
+      "conditions": "A real Chinese campaign undertaken. Continuation distinguishes actual war from an accepted frontier stand down.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "xp; Review prolonged frontier mobilisation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\narmy_experience = 15\nset_country_flag = COLDWAR_VIE_china_long_actions_unlocked",
+      "availability_code": "A real Chinese campaign undertaken. Continuation distinguishes actual war from an accepted frontier stand down.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_soviet",
+      "label": "A Soviet Commitment",
+      "full_title": "A Soviet Commitment",
+      "group": "china",
+      "x": 66,
+      "y": 20,
+      "emitted_x": -2,
+      "emitted_y": 7,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_long"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_china_self"
+      ],
+      "description": "Prepare the domestic liaison and training organization needed to seek Soviet support. The request uses existing diplomacy; it does not presume that Moscow accepts.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Request Soviet military assistance"
+        },
+        {
+          "type": "idea",
+          "title": "Foreign Military Liaison",
+          "family": "patron_policy",
+          "modifiers": {
+            "army_org_factor": 0.02,
+            "bureaucracy_cost_multiplier_modifier": 0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "SOV exists and a real Chinese campaign is ongoing or has recently ended. The focus opens the request; its domestic liaison benefit is not a discount on incoming Soviet aid.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion",
+        "peace"
+      ],
+      "cash": 0.03,
+      "reward_summary": "Request Soviet military assistance; Foreign Military Liaison",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.03 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_china_soviet_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_soviet_policy days = 180 }",
+      "availability_code": "SOV exists and a real Chinese campaign is ongoing or has recently ended. The focus opens the request; its domestic liaison benefit is not a discount on incoming Soviet aid.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_soviet_policy = {\n  picture = national_defenders\n  modifier = {\n    army_org_factor = 0.02\n    bureaucracy_cost_multiplier_modifier = 0.03\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_soviet_assistance",
+          "label": "Request Soviet assistance",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_soviet",
+          "cash": null,
+          "days": 180,
+          "conditions": "SOV exists and accepts a current native programme.",
+          "result": "Use existing paid native military assistance.",
+          "cost_risk": "Native donor and recipient rules apply. No free weapons or discount on Soviet donor costs.",
+          "target": "SOV",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_self",
+      "label": "Preserve Autonomy",
+      "full_title": "Preserve Autonomy",
+      "group": "china",
+      "x": 70,
+      "y": 20,
+      "emitted_x": 2,
+      "emitted_y": 7,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_long"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_china_soviet"
+      ],
+      "description": "Rely more heavily on domestic resources and retain freedom of manoeuvre. Training and military output become more expensive to sustain.",
+      "icon": "Generic_Infantry_Training",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Independent Preparation",
+          "family": "patron_policy",
+          "modifiers": {
+            "land_doctrine_cost_factor": -0.05,
+            "industrial_capacity_factory": -0.03
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive patron policy. No invented supplies or free military equipment.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion",
+        "peace"
+      ],
+      "cash": 0.03,
+      "reward_summary": "Independent Preparation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.03 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_self_policy days = 180 }",
+      "availability_code": "Exclusive patron policy. No invented supplies or free military equipment.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_self_policy = {\n  picture = national_defenders\n  modifier = {\n    land_doctrine_cost_factor = -0.05\n    industrial_capacity_factory = -0.03\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_assistance",
+      "label": "Lessons of Assistance",
+      "full_title": "Lessons of Foreign Military Assistance",
+      "group": "china",
+      "x": 66,
+      "y": 21,
+      "emitted_x": -2,
+      "emitted_y": 8,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_soviet"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Review an accepted Soviet mission or the limits exposed by a refusal. Preserving the military lesson does not fabricate deliveries or make Vietnam the payer of Soviet donor costs.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "doctrine",
+          "uses": 1,
+          "value": 0.15,
+          "category": "land_doctrine"
+        },
+        {
+          "type": "xp",
+          "value": 10
+        },
+        {
+          "type": "unlock",
+          "label": "Renew native foreign military assistance"
+        }
+      ],
+      "conditions": "A Soviet approach and a resolved response. Actual programme renewal separately requires acceptance and native funding; a reviewed refusal can still yield the doctrinal lesson.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion",
+        "peace"
+      ],
+      "cash": 0.035,
+      "reward_summary": "doctrine; xp; Renew native foreign military assistance",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_china_assistance category = land_doctrine uses = 1 cost_reduction = 0.15 }\narmy_experience = 10\nset_country_flag = COLDWAR_VIE_china_assistance_actions_unlocked",
+      "availability_code": "A Soviet approach and a resolved response. Actual programme renewal separately requires acceptance and native funding; a reviewed refusal can still yield the doctrinal lesson.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_rotation",
+      "label": "Rotate the Frontier",
+      "full_title": "Rotate the Frontier",
+      "group": "china",
+      "x": 70,
+      "y": 21,
+      "emitted_x": 2,
+      "emitted_y": 8,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_self"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Keep formations trained for a prolonged frontier war. Rotation preserves readiness while competing with civilian recovery.",
+      "icon": "Generic_Infantry_Training",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Frontier Rotation",
+          "family": "patron_policy",
+          "modifiers": {
+            "army_org_factor": 0.03,
+            "country_productivity_growth_modifier": -0.03,
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Preserve Autonomy. Replaces Independent Preparation.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion",
+        "peace"
+      ],
+      "cash": 0.035,
+      "reward_summary": "Frontier Rotation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_rotation_policy days = 180 }",
+      "availability_code": "Preserve Autonomy. Replaces Independent Preparation.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_rotation_policy = {\n  picture = national_defenders\n  modifier = {\n    army_org_factor = 0.03\n    country_productivity_growth_modifier = -0.03\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_twofront",
+      "label": "Account for the Fronts",
+      "full_title": "The Two Front Choice",
+      "group": "china",
+      "x": 68,
+      "y": 22,
+      "emitted_x": 0,
+      "emitted_y": 9,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_assistance",
+          "COLDWAR_VIE_china_rotation"
+        ]
+      ],
+      "exclusive": [],
+      "description": "A Cambodian commitment and a Chinese war cannot be funded as unrelated free bonuses. Define which obligation receives priority.",
+      "icon": "army_logistics",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Set the two front priority"
+        }
+      ],
+      "conditions": "A real northern campaign or its reviewed aftermath. The two front burden applies only if a real Cambodian commitment also exists.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "Set the two front priority",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_china_twofront_actions_unlocked",
+      "availability_code": "A real northern campaign or its reviewed aftermath. The two front burden applies only if a real Cambodian commitment also exists.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_priority",
+          "label": "Review the two front priority",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_twofront",
+          "cash": 0,
+          "days": 0,
+          "conditions": "Actual Chinese war plus real Cambodian war or continuing intervention.",
+          "result": "Choose renewal priorities and military commitments.",
+          "cost_risk": "The two front burden remains until a real obligation ends.",
+          "target": null,
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_mobilise",
+      "label": "Sustain Mobilisation",
+      "full_title": "Sustain Mobilisation",
+      "group": "china",
+      "x": 67,
+      "y": 23,
+      "emitted_x": -1,
+      "emitted_y": 10,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_twofront"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_china_opening"
+      ],
+      "description": "Accept a longer exceptional commitment to preserve frontier readiness. Economic recovery is delayed.",
+      "icon": "Generic_Soldiers_Defense",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Prolonged Mobilisation",
+          "family": "frontier_exit",
+          "modifiers": {
+            "supply_consumption_factor": 0.04,
+            "country_productivity_growth_modifier": -0.04
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.04
+          }
+        }
+      ],
+      "conditions": "Exclusive strategic exit. Actual ongoing war or verified continuing confrontation.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion"
+      ],
+      "cash": 0.035,
+      "reward_summary": "Prolonged Mobilisation",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.035 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_mobilise_policy days = 180 }",
+      "availability_code": "Exclusive strategic exit. Actual ongoing war or verified continuing confrontation.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_mobilise_policy = {\n  picture = national_defenders\n  modifier = {\n    supply_consumption_factor = 0.04\n    country_productivity_growth_modifier = -0.04\n  }\n  targeted_modifier = {\n    tag = CHI\n    defense_bonus_against = 0.04\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_opening",
+      "label": "A Diplomatic Opening",
+      "full_title": "A Diplomatic Opening",
+      "group": "china",
+      "x": 69,
+      "y": 23,
+      "emitted_x": 1,
+      "emitted_y": 10,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_twofront"
+        ]
+      ],
+      "exclusive": [
+        "COLDWAR_VIE_china_mobilise"
+      ],
+      "description": "Propose a verifiable reduction of confrontation. Talks do not impose peace or claim that formal normalization has already occurred.",
+      "icon": "white_peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Propose a frontier stand down"
+        },
+        {
+          "type": "idea",
+          "title": "Opening Talks",
+          "family": "frontier_exit",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.02,
+            "army_org_factor": -0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "Exclusive strategic exit. China may refuse. Preparedness decisions remain available while talks proceed.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Propose a frontier stand down; Opening Talks",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_china_opening_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_opening_policy days = 180 }",
+      "availability_code": "Exclusive strategic exit. China may refuse. Preparedness decisions remain available while talks proceed.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_opening_policy = {\n  picture = national_defenders\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.02\n    army_org_factor = -0.02\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_standdown",
+          "label": "Propose a frontier stand down",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_opening",
+          "cash": 0.01,
+          "days": 90,
+          "conditions": "Current eligible CHI counterpart and real confrontation.",
+          "result": "A recipient owned offer starts verification if accepted.",
+          "cost_risk": "No automatic normalization, recognition or peace.",
+          "target": "CHI",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_hills",
+      "label": "The Long Frontier",
+      "full_title": "The Long Frontier",
+      "group": "china",
+      "x": 67,
+      "y": 24,
+      "emitted_x": -1,
+      "emitted_y": 11,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_mobilise"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Prepare the army for persistent fighting and recurring strain. A larger military commitment still has to be paid for.",
+      "icon": "artillery",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Long Frontier Mobilisation",
+          "family": "frontier_exit",
+          "modifiers": {
+            "supply_consumption_factor": 0.05,
+            "country_productivity_growth_modifier": -0.05
+          },
+          "duration": 180,
+          "target": "CHI",
+          "targeted_modifiers": {
+            "defense_bonus_against": 0.05
+          }
+        },
+        {
+          "type": "doctrine",
+          "uses": 1,
+          "value": 0.1,
+          "category": "land_doctrine"
+        }
+      ],
+      "conditions": "Sustain Mobilisation. Replaces Prolonged Mobilisation; expires or cancels when the confrontation actually ends.",
+      "contexts": [
+        "china",
+        "twofront",
+        "invasion"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Long Frontier Mobilisation; doctrine",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_hills_policy days = 180 }\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_china_hills category = land_doctrine uses = 1 cost_reduction = 0.1 }",
+      "availability_code": "Sustain Mobilisation. Replaces Prolonged Mobilisation; expires or cancels when the confrontation actually ends.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_hills_policy = {\n  picture = national_defenders\n  modifier = {\n    supply_consumption_factor = 0.05\n    country_productivity_growth_modifier = -0.05\n  }\n  targeted_modifier = {\n    tag = CHI\n    defense_bonus_against = 0.05\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_china_standdown",
+      "label": "Verify the Stand down",
+      "full_title": "Verify the Stand down",
+      "group": "china",
+      "x": 69,
+      "y": 24,
+      "emitted_x": 1,
+      "emitted_y": 11,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_opening"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Confirm accepted measures and real withdrawal before reducing the exceptional burden. No focus moves Chinese troops automatically.",
+      "icon": "recon",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Verify frontier measures"
+        },
+        {
+          "type": "idea",
+          "title": "Verified Stand down",
+          "family": "frontier_exit",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.02,
+            "army_org_factor": -0.01
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        }
+      ],
+      "conditions": "A Diplomatic Opening and actual Chinese acceptance. Burdens are not removed on a merely sent proposal.",
+      "contexts": [
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.025,
+      "reward_summary": "Verify frontier measures; Verified Stand down",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.025 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_china_standdown_actions_unlocked\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_standdown_policy days = 180 }",
+      "availability_code": "A Diplomatic Opening and actual Chinese acceptance. Burdens are not removed on a merely sent proposal.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_standdown_policy = {\n  picture = national_defenders\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.02\n    army_org_factor = -0.01\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_verify",
+          "label": "Verify frontier measures",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_standdown",
+          "cash": 0.015,
+          "days": 0,
+          "conditions": "Accepted current proposal and actual reciprocal measures.",
+          "result": "Reduce the exceptional confrontation burden only after execution checks.",
+          "cost_risk": "Stale acceptance cannot debit or reward a different proposal.",
+          "target": "CHI",
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_rebuild",
+      "label": "Rebuild the North",
+      "full_title": "Rebuild the North",
+      "group": "china",
+      "x": 68,
+      "y": 25,
+      "emitted_x": 0,
+      "emitted_y": 12,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 49,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_hills",
+          "COLDWAR_VIE_china_standdown"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Repair real damaged buildings and restore civilian life. Reconstruction requires funding and normal native construction capacity.",
+      "icon": "aux_medic",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Northern Reconstruction",
+          "family": "reconstruction",
+          "modifiers": {
+            "industry_repair_factor": 0.1,
+            "social_cost_multiplier_modifier": 0.04
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Fund native reconstruction projects"
+        }
+      ],
+      "conditions": "Owned and controlled damaged northern states; fighting sufficiently reduced. Country repair bonus is national, not geographically exclusive.",
+      "contexts": [
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.04,
+      "reward_summary": "Northern Reconstruction; Fund native reconstruction projects",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.04 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_china_rebuild_policy days = 180 }\nset_country_flag = COLDWAR_VIE_china_rebuild_actions_unlocked",
+      "availability_code": "Owned and controlled damaged northern states; fighting sufficiently reduced. Country repair bonus is national, not geographically exclusive.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_china_rebuild_policy = {\n  picture = national_defenders\n  modifier = {\n    industry_repair_factor = 0.1\n    social_cost_multiplier_modifier = 0.04\n  }\n}",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_china_decision_reconstruction",
+          "label": "Native northern reconstruction",
+          "group": "china",
+          "focus": "COLDWAR_VIE_china_rebuild",
+          "cash": null,
+          "days": 180,
+          "conditions": "Owned and controlled northern states and available native capacity.",
+          "result": "Use native state investment and ordinary construction to repair and rebuild.",
+          "cost_risk": "Native cash and civilian construction requirements apply.",
+          "target": null,
+          "family": null
+        }
+      ]
+    },
+    {
+      "id": "COLDWAR_VIE_china_security",
+      "label": "A Sustainable Frontier",
+      "full_title": "A Sustainable Frontier",
+      "group": "china",
+      "x": 68,
+      "y": 26,
+      "emitted_x": 0,
+      "emitted_y": 13,
+      "anchor": "COLDWAR_VIE_china_frontier",
+      "days": 21,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_china_rebuild"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Preserve the military lesson and a viable relationship with the neighbour. An armed frontier and negotiated coexistence remain different outcomes.",
+      "icon": "peace",
+      "effects": [
+        {
+          "type": "doctrine",
+          "uses": 1,
+          "value": 0.1,
+          "category": "land_doctrine"
+        },
+        {
+          "type": "unlock",
+          "label": "Review the frontier settlement"
+        }
+      ],
+      "conditions": "An actual sustained or negotiated outcome. No automatic recognition, annexation or permanent attack bonus.",
+      "contexts": [
+        "china",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.015,
+      "reward_summary": "doctrine; Review the frontier settlement",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.015 }\nmodify_treasury_effect = yes\nadd_doctrine_cost_reduction = { name = COLDWAR_VIE_china_security category = land_doctrine uses = 1 cost_reduction = 0.1 }\nset_country_flag = COLDWAR_VIE_china_security_actions_unlocked",
+      "availability_code": "An actual sustained or negotiated outcome. No automatic recognition, annexation or permanent attack bonus.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_border_settlement",
+      "label": "A Sovereign Border",
+      "full_title": "A Sovereign Border",
+      "group": "cambodia",
+      "x": 56,
+      "y": 20,
+      "emitted_x": -4,
+      "emitted_y": 7,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_monitor"
+        ]
+      ],
+      "exclusive": [],
+      "description": "Verify a limited border settlement without replacing the Cambodian government or inventing an occupation.",
+      "icon": "white_peace",
+      "effects": [
+        {
+          "type": "idea",
+          "title": "Limited Border Arrangement",
+          "family": "border_settlement",
+          "modifiers": {
+            "bureaucracy_cost_multiplier_modifier": 0.02
+          },
+          "duration": 180,
+          "target": null,
+          "targeted_modifiers": {}
+        },
+        {
+          "type": "unlock",
+          "label": "Review limited border guarantees"
+        }
+      ],
+      "conditions": "Earned limited mandate, current accepted terms, no war with CBD and no fabricated occupation. Verification does not guarantee that Cambodia will never be hostile again.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Limited Border Arrangement; Review limited border guarantees",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\n# Replace only this policy family; never stack its stages.\nadd_timed_idea = { idea = COLDWAR_VIE_cambodia_border_settlement_policy days = 180 }\nset_country_flag = COLDWAR_VIE_cambodia_border_settlement_actions_unlocked",
+      "availability_code": "Earned limited mandate, current accepted terms, no war with CBD and no fabricated occupation. Verification does not guarantee that Cambodia will never be hostile again.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "COLDWAR_VIE_cambodia_border_settlement_policy = {\n  picture = planning_bonus\n  modifier = {\n    bureaucracy_cost_multiplier_modifier = 0.02\n  }\n}",
+      "decisions": []
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_limited_commitment",
+      "label": "A Limited Commitment",
+      "full_title": "A Limited Commitment",
+      "group": "cambodia",
+      "x": 56,
+      "y": 22,
+      "emitted_x": -4,
+      "emitted_y": 9,
+      "anchor": "COLDWAR_VIE_cambodia_question",
+      "days": 35,
+      "prerequisites": [
+        [
+          "COLDWAR_VIE_cambodia_border_settlement"
+        ]
+      ],
+      "exclusive": [],
+      "description": "End the exceptional military undertaking only if a limited agreement is actually fulfilled. This offers no friendly regime buffer, secured southwest dividend or military victory package.",
+      "icon": "white_peace",
+      "effects": [
+        {
+          "type": "unlock",
+          "label": "Verify the limited settlement"
+        },
+        {
+          "type": "xp",
+          "value": 5
+        }
+      ],
+      "conditions": "Earned limited mandate, current accepted terms, no war with CBD and no fabricated occupation. Verification does not guarantee that Cambodia will never be hostile again.",
+      "contexts": [
+        "occupation",
+        "twofront",
+        "peace"
+      ],
+      "cash": 0.02,
+      "reward_summary": "Verify the limited settlement; xp",
+      "raw_reward_code": "set_temp_variable = { treasury_change = -0.02 }\nmodify_treasury_effect = yes\nset_country_flag = COLDWAR_VIE_cambodia_limited_commitment_actions_unlocked\narmy_experience = 5",
+      "availability_code": "Earned limited mandate, current accepted terms, no war with CBD and no fabricated occupation. Verification does not guarantee that Cambodia will never be hostile again.",
+      "unlock": null,
+      "building": null,
+      "relief": null,
+      "modifiers": {},
+      "idea_definitions": "",
+      "decisions": [
+        {
+          "id": "COLDWAR_VIE_cambodia_decision_limited_review",
+          "label": "Limited settlement review",
+          "group": "cambodia",
+          "focus": "COLDWAR_VIE_cambodia_limited_commitment",
+          "cash": 0.01,
+          "days": 90,
+          "conditions": "A current limited agreement and actual reciprocal measures.",
+          "result": "Verify a limited stand down without entering occupation branches.",
+          "cost_risk": "No friendly regime dividend, military victory package or guarantee against renewed hostility.",
+          "target": "CBD",
+          "family": null
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_south_liaison",
+      "label": "Southern political liaison",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_cadres",
+      "cash": null,
+      "days": 180,
+      "conditions": "Actual communist governing subparty and valid southern political target.",
+      "result": "Use the existing native foreign party support campaign.",
+      "cost_risk": "Native support costs and cooldown; political support does not deliver weapons.",
+      "target": "SVN",
+      "family": "liaison"
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_renew_posture",
+      "label": "Renew a campaign posture",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_networks",
+      "cash": 0.025,
+      "days": 180,
+      "conditions": "Earned current policy, actual war, exact funds and no conflicting posture.",
+      "result": "Renew the selected eligible operational idea once.",
+      "cost_risk": "Full displayed renewal cost; former timed ideas do not return free.",
+      "target": null,
+      "family": "war_method"
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_ceasefire",
+      "label": "A ceasefire proposal",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_review",
+      "cash": 0.005,
+      "days": 90,
+      "conditions": "Actual opponent and current conflict; recipient may refuse.",
+      "result": "Open a recipient owned ceasefire discussion through normal diplomacy.",
+      "cost_risk": "Payment only for accepted agreed programme; sending does not end war.",
+      "target": "SVN",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_land_review",
+      "label": "Highland land commission",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_guarantees",
+      "cash": 0.03,
+      "days": 180,
+      "conditions": "Actual control of the Central Highlands and a relevant grievance.",
+      "result": "Fund the local policy idea and a political settlement process.",
+      "cost_risk": "Civilian and administrative costs. No claim that every minority is an insurgent.",
+      "target": null,
+      "family": "internal_policy"
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_security_review",
+      "label": "Security deployment review",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_security",
+      "cash": 0.03,
+      "days": 180,
+      "conditions": "Actual local unrest and earned security policy.",
+      "result": "Renew or end the chosen internal security policy.",
+      "cost_risk": "Economic strain persists while deployment continues.",
+      "target": null,
+      "family": "internal_policy"
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_local_conference",
+      "label": "Local review conference",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_settlement",
+      "cash": 0.02,
+      "days": 180,
+      "conditions": "A current local policy and actual affected territory.",
+      "result": "Replace the policy through an agreed domestic event and keep its earned history.",
+      "cost_risk": "No instant core state compliance reward or scripted universal surrender.",
+      "target": null,
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_reserve_review",
+      "label": "Reserve policy review",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_aftermath",
+      "cash": 0.025,
+      "days": 365,
+      "conditions": "Peace or verified cessation; choose an earned funded reserve/civilian programme.",
+      "result": "Renew the selected postwar policy once.",
+      "cost_risk": "No free divisions or repeated focus XP.",
+      "target": null,
+      "family": "demobilisation"
+    },
+    {
+      "id": "COLDWAR_VIE_guerrilla_decision_doctrine_review",
+      "label": "A doctrine review",
+      "group": "guerrilla",
+      "focus": "COLDWAR_VIE_guerrilla_lessons",
+      "cash": 0.01,
+      "days": 180,
+      "conditions": "Native doctrine system and earned military institution.",
+      "result": "A single funded military exercise using existing doctrine/training systems.",
+      "cost_risk": "Not a technology grant or automatic switch to guerrilla doctrine.",
+      "target": null,
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_commission",
+      "label": "Bilateral border commission",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_channel",
+      "cash": 0.01,
+      "days": 90,
+      "conditions": "CBD exists; current proposal and both governments still eligible.",
+      "result": "Recipient accepts or refuses a defined border consultation.",
+      "cost_risk": "Acceptance alone neither transfers territory nor guarantees future peace.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_limited_ceasefire",
+      "label": "A limited ceasefire",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_limited",
+      "cash": 0.005,
+      "days": 90,
+      "conditions": "Actual VIE and CBD conflict and a current limited mandate.",
+      "result": "Offer a reciprocal ceasefire through normal diplomacy.",
+      "cost_risk": "War continues without an actual agreement.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_mandate",
+      "label": "Review the mandate",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_mandate",
+      "cash": 0,
+      "days": 0,
+      "conditions": "A current eligible campaign and appropriate government authority.",
+      "result": "Choose native war goals or a diplomatic limit allowed by the earned focus.",
+      "cost_risk": "No automatic declaration, capital capture or puppet installation.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_renew_border",
+      "label": "Renew southwestern readiness",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_staff",
+      "cash": 0.025,
+      "days": 180,
+      "conditions": "Current funds and the corresponding earned posture.",
+      "result": "Renew one Cambodia posture.",
+      "cost_risk": "One active Cambodia posture; national supply costs remain real.",
+      "target": "CBD",
+      "family": "cambodia_posture"
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_train_partner",
+      "label": "Request a training mission",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_partner",
+      "cash": null,
+      "days": 180,
+      "conditions": "Friendly lawful CBD government and acceptance.",
+      "result": "Use the native paid military assistance programme.",
+      "cost_risk": "Native sender contribution and recurring cost; no free Cambodian formations.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_native_rebuilding",
+      "label": "Native rebuilding investment",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_restore",
+      "cash": null,
+      "days": 180,
+      "conditions": "Select a genuinely occupied non core state controlled by VIE.",
+      "result": "Use the existing MD state rebuilding investment: compliance growth and less resistance activity.",
+      "cost_risk": "Native cash price, 75 political power, state scope and project caps apply.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_occupation_review",
+      "label": "Review the occupation",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_burden",
+      "cash": 0.02,
+      "days": 180,
+      "conditions": "Actual intervention commitment or controlled non core occupation.",
+      "result": "Reassess the current occupation policy idea and its costs.",
+      "cost_risk": "No occupation effects on ordinary Vietnamese cores.",
+      "target": "CBD",
+      "family": "occupation_policy"
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_withdrawal",
+      "label": "A withdrawal timetable",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_leave",
+      "cash": 0.01,
+      "days": 90,
+      "conditions": "Current commitment and a legitimate CBD recipient.",
+      "result": "Offer a reciprocal timetable and verification milestones.",
+      "cost_risk": "Sent proposals do not remove the commitment burden.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_verify_drawdown",
+      "label": "Verify the drawdown",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_verify",
+      "cash": 0.015,
+      "days": 0,
+      "conditions": "Accepted current timetable and actual units/access checked at execution.",
+      "result": "Mark only verified fulfilled withdrawal obligations and reduce their burden.",
+      "cost_risk": "No army teleportation, forced disarmament or peace for third parties.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_conference",
+      "label": "A regional conference",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_talks",
+      "cash": 0.01,
+      "days": 90,
+      "conditions": "Appropriate Cambodian partners and distinct opposition representatives.",
+      "result": "Invite a political process that can be accepted or refused.",
+      "cost_risk": "Does not compel another player’s ideology, coalition or UN recognition.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_commission",
+      "label": "A frontier commission",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_talks",
+      "cash": 0.01,
+      "days": 90,
+      "conditions": "CHI exists and current eligible proposal.",
+      "result": "Recipient decides whether to open boundary talks.",
+      "cost_risk": "China remains a potential patron; no compulsory confrontation.",
+      "target": "CHI",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_civil_review",
+      "label": "Property and citizenship review",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_citizens",
+      "cash": 0.02,
+      "days": 180,
+      "conditions": "A real local administrative dispute and affected controlled territory.",
+      "result": "Apply funded civil guarantees.",
+      "cost_risk": "No ethnic collective punishment or fabricated demographic transfer.",
+      "target": null,
+      "family": "civil_relief"
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_renew_readiness",
+      "label": "Renew northern readiness",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_liaison",
+      "cash": 0.025,
+      "days": 180,
+      "conditions": "Earned eligible posture and exact available funding.",
+      "result": "Renew one China posture for its defined term.",
+      "cost_risk": "Chinese targeted benefit applies across all fronts against CHI.",
+      "target": "CHI",
+      "family": "china_posture"
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_bounded_ceasefire",
+      "label": "A bounded ceasefire",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_objectives",
+      "cash": 0.005,
+      "days": 90,
+      "conditions": "Actual war with CHI and current bounded mandate.",
+      "result": "Present defined reciprocal terms.",
+      "cost_risk": "No focus enforced Chinese withdrawal or territorial concession.",
+      "target": "CHI",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_soviet_assistance",
+      "label": "Request Soviet assistance",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_soviet",
+      "cash": null,
+      "days": 180,
+      "conditions": "SOV exists and accepts a current native programme.",
+      "result": "Use existing paid native military assistance.",
+      "cost_risk": "Native donor and recipient rules apply. No free weapons or discount on Soviet donor costs.",
+      "target": "SOV",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_priority",
+      "label": "Review the two front priority",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_twofront",
+      "cash": 0,
+      "days": 0,
+      "conditions": "Actual Chinese war plus real Cambodian war or continuing intervention.",
+      "result": "Choose renewal priorities and military commitments.",
+      "cost_risk": "The two front burden remains until a real obligation ends.",
+      "target": null,
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_standdown",
+      "label": "Propose a frontier stand down",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_opening",
+      "cash": 0.01,
+      "days": 90,
+      "conditions": "Current eligible CHI counterpart and real confrontation.",
+      "result": "A recipient owned offer starts verification if accepted.",
+      "cost_risk": "No automatic normalization, recognition or peace.",
+      "target": "CHI",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_verify",
+      "label": "Verify frontier measures",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_standdown",
+      "cash": 0.015,
+      "days": 0,
+      "conditions": "Accepted current proposal and actual reciprocal measures.",
+      "result": "Reduce the exceptional confrontation burden only after execution checks.",
+      "cost_risk": "Stale acceptance cannot debit or reward a different proposal.",
+      "target": "CHI",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_china_decision_reconstruction",
+      "label": "Native northern reconstruction",
+      "group": "china",
+      "focus": "COLDWAR_VIE_china_rebuild",
+      "cash": null,
+      "days": 180,
+      "conditions": "Owned and controlled northern states and available native capacity.",
+      "result": "Use native state investment and ordinary construction to repair and rebuild.",
+      "cost_risk": "Native cash and civilian construction requirements apply.",
+      "target": null,
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_victory_review",
+      "label": "Verify southwestern victory",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_aftermath",
+      "cash": 0,
+      "days": 0,
+      "conditions": "A real won campaign, lawful result and hostile threat actually removed.",
+      "result": "Record the one time military result and open the friendly partner continuation.",
+      "cost_risk": "Capital capture, occupied territory alone or a sent ultimatum is insufficient.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_partner_readiness",
+      "label": "Partner readiness review",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_train",
+      "cash": 0.02,
+      "days": 180,
+      "conditions": "Earned training focus, an accepted funded native programme and the real agreed responsibility milestones. Perform and record the readiness check here; no prior readiness review flag is required.",
+      "result": "Reduce the continuing Vietnamese commitment burden to its lighter supported partner stage.",
+      "cost_risk": "Native assistance still costs money; the partner’s army is not created for free.",
+      "target": "CBD",
+      "family": null
+    },
+    {
+      "id": "COLDWAR_VIE_cambodia_decision_limited_review",
+      "label": "Limited settlement review",
+      "group": "cambodia",
+      "focus": "COLDWAR_VIE_cambodia_limited_commitment",
+      "cash": 0.01,
+      "days": 90,
+      "conditions": "A current limited agreement and actual reciprocal measures.",
+      "result": "Verify a limited stand down without entering occupation branches.",
+      "cost_risk": "No friendly regime dividend, military victory package or guarantee against renewed hostility.",
+      "target": "CBD",
+      "family": null
+    }
+  ],
+  "burdens": [
+    {
+      "id": "COLDWAR_VIE_burden_two_fronts",
+      "label": "Two Front Commitments",
+      "modifiers": {
+        "supply_consumption_factor": 0.06,
+        "industrial_capacity_factory": -0.03
+      },
+      "when": "Actual war with CHI and either actual war with CBD or a verified continuing Cambodian intervention.",
+      "ends": "Recompute when a real war or verified commitment ends. A sent withdrawal offer does not count.",
+      "kind": "Observed commitment"
+    },
+    {
+      "id": "COLDWAR_VIE_burden_cambodia",
+      "label": "The Cambodian Commitment",
+      "modifiers": {
+        "supply_consumption_factor": 0.04,
+        "bureaucracy_cost_multiplier_modifier": 0.03
+      },
+      "when": "Actual occupied Cambodian non core states or a lawfully recorded continuing military support mission.",
+      "ends": "Verified partner readiness reduces this to 2% supply consumption and 2% bureaucracy expenses. Verified drawdown ends it. A sent proposal or capital capture does neither.",
+      "kind": "Observed commitment"
+    },
+    {
+      "id": "COLDWAR_VIE_burden_frontier",
+      "label": "A Prolonged Frontier",
+      "modifiers": {
+        "country_productivity_growth_modifier": -0.03,
+        "social_cost_multiplier_modifier": 0.02
+      },
+      "when": "Real prolonged Chinese frontier war or an agreed continuing emergency state after the main assault.",
+      "ends": "Actual peace/verified stand down; cannot be an arbitrary permanent penalty.",
+      "kind": "Observed emergency"
+    },
+    {
+      "id": "COLDWAR_VIE_burden_internal",
+      "label": "An Unsettled Peace",
+      "modifiers": {
+        "bureaucracy_cost_multiplier_modifier": 0.03,
+        "training_time_army_factor": 0.03
+      },
+      "when": "A relevant postwar grievance event in actually governed territory. Highland armed resistance is conditional.",
+      "ends": "An earned funded domestic settlement or a reviewed security outcome, not an instant universal surrender.",
+      "kind": "Proposed political crisis"
+    },
+    {
+      "id": "COLDWAR_VIE_burden_southwest_threat",
+      "label": "A Threatened Southwest",
+      "modifiers": {
+        "agricolture_productivity_modifier": -0.06,
+        "supply_consumption_factor": 0.03
+      },
+      "when": "Actual grave Cambodian border hostility and affected Vietnamese controlled southern provinces. This is not a starting hostility in the opening scenario.",
+      "ends": "A genuine military settlement that defeats the threat, or a verified limited agreement for its actual term. A limited agreement gives no secured partner victory dividend.",
+      "kind": "Observed border threat"
+    }
+  ],
+  "labels": {
+    "land_doctrine_cost_factor": "Land doctrine cost",
+    "army_org_factor": "Army organisation",
+    "max_planning_factor": "Maximum planning",
+    "army_core_defence_factor": "Defence on Vietnamese cores",
+    "supply_consumption_factor": "Supply consumption",
+    "training_time_army_factor": "Army training time",
+    "industrial_capacity_factory": "Military factory output",
+    "bureaucracy_cost_multiplier_modifier": "Bureaucracy expenses",
+    "social_cost_multiplier_modifier": "Social expenses",
+    "stability_factor": "Stability contribution",
+    "country_productivity_growth_modifier": "Productivity growth factor",
+    "agricolture_productivity_modifier": "Agricultural productivity",
+    "industry_repair_factor": "Building repair speed",
+    "resistance_target": "Occupation resistance target",
+    "resistance_damage_to_garrison": "Damage to occupation garrisons",
+    "mdcw_cw_military_programme_cost": "Native foreign military programme cost",
+    "attack_bonus_against": "Attack against the named opponent",
+    "defense_bonus_against": "Defence against the named opponent"
+  },
+  "lower_better": [
+    "bureaucracy_cost_multiplier_modifier",
+    "land_doctrine_cost_factor",
+    "mdcw_cw_military_programme_cost",
+    "resistance_damage_to_garrison",
+    "resistance_target",
+    "social_cost_multiplier_modifier",
+    "supply_consumption_factor",
+    "training_time_army_factor"
+  ],
+  "sources": [
+    {
+      "label": "Southern revolutionary diplomacy",
+      "url": "https://history.state.gov/historicaldocuments/frus1969-76v06/d91"
+    },
+    {
+      "label": "Cambodian conflict chronology",
+      "url": "https://timeline.eccc.gov.kh/en/section/the-democratic-kampuchea-regime"
+    },
+    {
+      "label": "Cambodian resistance and a political process",
+      "url": "https://peacekeeping.un.org/sites/default/files/past/unamicbackgr.html"
+    },
+    {
+      "label": "The Sino Vietnamese border dispute",
+      "url": "https://history.state.gov/historicaldocuments/frus1977-80v13/d226"
+    },
+    {
+      "label": "Highland political grievances",
+      "url": "https://www.ecoi.net/en/file/local/1169645/470_1164191054_3c6a48474.pdf"
+    }
+  ],
+  "contexts": [
+    {
+      "id": "divided",
+      "label": "Divided Vietnam"
+    },
+    {
+      "id": "invasion",
+      "label": "A Homeland Invasion"
+    },
+    {
+      "id": "occupation",
+      "label": "Cambodian Intervention"
+    },
+    {
+      "id": "china",
+      "label": "War with China"
+    },
+    {
+      "id": "twofront",
+      "label": "Two Front War"
+    },
+    {
+      "id": "peace",
+      "label": "An Uneasy Peace"
+    }
+  ],
+  "layout": {
+    "grid": [
+      96,
+      130
+    ],
+    "old_focuses": 239,
+    "new_focuses": 68,
+    "continuous_before": [
+      5400,
+      1700
+    ],
+    "continuous_proposed": [
+      50,
+      1750
+    ],
+    "initial_camera_unchanged": "COLDWAR_VIE_duan_root"
+  },
+  "rules": [
+    "Concept only. No loaded mod files changed.",
+    "Native keys are verified, proposed values and event combinations still require implementation and engine tests.",
+    "Every timed policy replaces its current family. Renewals require payment and live eligibility. The secured southwest dividend is conditional on a real victory and continuing friendly border security.",
+    "Opponent bonuses apply against that country across all fronts. National costs affect Vietnam as a whole.",
+    "Occupation resistance/compliance applies only to actual non core occupation. It does not create NLF or FULRO units.",
+    "Offers require the intended current recipient, funds, live conditions, acceptance and cleanup. No forced peace or automatic annexation.",
+    "Future governments and conflicts are conditional; no historical war is forced by a calendar date.",
+    "Productivity growth factors scale the actual signed growth calculation. They are not instant GDP changes or an unconditional penalty/benefit in every economic state."
+  ]
+}

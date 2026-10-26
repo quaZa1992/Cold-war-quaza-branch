@@ -1,0 +1,1061 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			GER = {
+				if = {
+					limit = { is_ai = yes }
+					set_country_flag = GER_open_divide
+				}
+			}
+		}
+	}
+	on_daily_GER = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				# Final Settlement manpower checks
+				if = {
+					limit = {
+						has_country_flag = GER_Final_settlement
+						has_defensive_war = no
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = USoE }
+							has_army_manpower = { size > 240000 }
+						}
+						GER = {
+							country_event = { id = germany.561 days = 5 random_hours = 60 }
+						}
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = USoE }
+							has_army_manpower = { size > 200000 }
+						}
+						GER = {
+							country_event = { id = germany.562 days = 5 random_hours = 60 }
+						}
+					}
+				}
+			}
+		}
+	}
+	on_weekly_GER = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				# Paper army → formidable army
+				if = {
+					limit = {
+						has_idea = GER_idea_paper_army
+						check_variable = { bundeswehr_recovery_status > 99 }
+					}
+					remove_ideas = GER_idea_paper_army
+					add_ideas = GER_idea_formidable_army
+					clr_country_flag = GER_bundeswehr_in_need_of_reform
+					country_event = germany.2343
+				}
+
+				# BfV department tiers: 0 collapsed (permanent), 1 collapsing, 2 unstable, 3 stable
+				if = {
+					limit = { check_variable = { GER_leftwing_department_tier > 0 } }
+					clamp_variable = { var = GER_leftwing_department_status min = 0 max = 50 }
+					set_variable = {
+						GER_leftwing_department_tier = {
+							value = { value = GER_leftwing_department_status greater_than = 0 }
+							add = { value = GER_leftwing_department_status greater_than = 10 }
+							add = { value = GER_leftwing_department_status greater_than = 30 }
+						}
+					}
+					if = {
+						limit = { check_variable = { GER_leftwing_department_tier = 0 } }
+						country_event = { id = germany.234 days = 1 }
+						remove_ideas = GER_idea_bfv_leftwing_low
+						remove_ideas = GER_idea_bfv_leftwing_med
+						remove_ideas = GER_idea_bfv_leftwing_high
+					}
+				}
+				if = {
+					limit = { check_variable = { GER_rightwing_department_tier > 0 } }
+					clamp_variable = { var = GER_rightwing_department_status min = 0 max = 50 }
+					set_variable = {
+						GER_rightwing_department_tier = {
+							value = { value = GER_rightwing_department_status greater_than = 0 }
+							add = { value = GER_rightwing_department_status greater_than = 10 }
+							add = { value = GER_rightwing_department_status greater_than = 30 }
+						}
+					}
+					if = {
+						limit = { check_variable = { GER_rightwing_department_tier = 0 } }
+						country_event = { id = germany.234 days = 1 }
+						remove_ideas = GER_idea_bfv_rightwing_low
+						remove_ideas = GER_idea_bfv_rightwing_med
+						remove_ideas = GER_idea_bfv_rightwing_high
+					}
+				}
+				if = {
+					limit = { check_variable = { GER_islamist_department_tier > 0 } }
+					clamp_variable = { var = GER_islamist_department_status min = 0 max = 50 }
+					set_variable = {
+						GER_islamist_department_tier = {
+							value = { value = GER_islamist_department_status greater_than = 0 }
+							add = { value = GER_islamist_department_status greater_than = 10 }
+							add = { value = GER_islamist_department_status greater_than = 30 }
+						}
+					}
+					if = {
+						limit = { check_variable = { GER_islamist_department_tier = 0 } }
+						country_event = { id = germany.414 days = 30 }
+						remove_ideas = GER_idea_bfv_islamist_low
+						remove_ideas = GER_idea_bfv_islamist_med
+						remove_ideas = GER_idea_bfv_islamist_high
+					}
+				}
+
+				GER_bfv_update_spending_ideas = yes
+
+				# Department warning event: no department collapsed and the weakest is collapsing
+				set_temp_variable = {
+					GER_lowest_department_tier = {
+						value = GER_leftwing_department_tier
+						min = GER_rightwing_department_tier
+						min = GER_islamist_department_tier
+					}
+				}
+				if = {
+					limit = { check_variable = { GER_lowest_department_tier = 1 } }
+					country_event = germany.238
+				}
+
+				GER_update_dirty_variable = yes
+
+				# East & West divide mechanic
+				if = {
+					limit = { NOT = { has_completed_focus = GER_bringing_germany_closer_together } }
+					if = {
+						limit = {
+							check_variable = { GER_east_opinion > 30 }
+							OR = {
+								has_idea = GER_idea_east_german_debuff1
+								has_idea = GER_idea_east_german_debuff2
+								has_idea = GER_idea_east_german_debuff3
+								has_idea = GER_idea_east_german_debuff4
+							}
+						}
+						remove_ideas = GER_idea_east_german_debuff1
+						remove_ideas = GER_idea_east_german_debuff2
+						remove_ideas = GER_idea_east_german_debuff3
+						remove_ideas = GER_idea_east_german_debuff4
+					}
+					else_if = {
+						limit = {
+							check_variable = { GER_east_opinion > 24 }
+							NOT = { has_idea = GER_idea_east_german_debuff1 }
+						}
+						add_ideas = GER_idea_east_german_debuff1
+						remove_ideas = GER_idea_east_german_debuff2
+						remove_ideas = GER_idea_east_german_debuff3
+						remove_ideas = GER_idea_east_german_debuff4
+					}
+					else_if = {
+						limit = {
+							check_variable = { GER_east_opinion > 19 }
+							NOT = { has_idea = GER_idea_east_german_debuff2 }
+						}
+						add_ideas = GER_idea_east_german_debuff2
+						remove_ideas = GER_idea_east_german_debuff1
+						remove_ideas = GER_idea_east_german_debuff3
+						remove_ideas = GER_idea_east_german_debuff4
+					}
+					else_if = {
+						limit = {
+							check_variable = { GER_east_opinion > 14 }
+							NOT = { has_idea = GER_idea_east_german_debuff3 }
+						}
+						add_ideas = GER_idea_east_german_debuff3
+						remove_ideas = GER_idea_east_german_debuff1
+						remove_ideas = GER_idea_east_german_debuff2
+						remove_ideas = GER_idea_east_german_debuff4
+					}
+					else_if = {
+						limit = {
+							check_variable = { GER_east_opinion < 15 }
+							NOT = { has_idea = GER_idea_east_german_debuff4 }
+						}
+						add_ideas = GER_idea_east_german_debuff4
+						remove_ideas = GER_idea_east_german_debuff1
+						remove_ideas = GER_idea_east_german_debuff2
+						remove_ideas = GER_idea_east_german_debuff3
+					}
+				}
+
+				# War on terror idea tiers
+				if = {
+					limit = { has_country_flag = GER_war_on_terror_started }
+					if = {
+						limit = {
+							check_variable = { GER_soldiers_popularity_mideast < 49 }
+							OR = {
+								has_idea = GER_idea_afghan_bonus_1
+								has_idea = GER_idea_afghan_bonus_2
+								has_idea = GER_idea_afghan_bonus_3
+							}
+						}
+						remove_ideas = GER_idea_afghan_bonus_1
+						remove_ideas = GER_idea_afghan_bonus_2
+						remove_ideas = GER_idea_afghan_bonus_3
+					}
+					else_if = {
+						limit = {
+							check_variable = { GER_soldiers_popularity_mideast < 69 }
+							NOT = { has_idea = GER_idea_afghan_bonus_1 }
+						}
+						add_ideas = GER_idea_afghan_bonus_1
+						remove_ideas = GER_idea_afghan_bonus_2
+						remove_ideas = GER_idea_afghan_bonus_3
+					}
+					else_if = {
+						limit = {
+							check_variable = { GER_soldiers_popularity_mideast < 89 }
+							NOT = { has_idea = GER_idea_afghan_bonus_2 }
+						}
+						add_ideas = GER_idea_afghan_bonus_2
+						remove_ideas = GER_idea_afghan_bonus_1
+						remove_ideas = GER_idea_afghan_bonus_3
+					}
+					else_if = {
+						limit = {
+							check_variable = { GER_soldiers_popularity_mideast > 88 }
+							NOT = { has_idea = GER_idea_afghan_bonus_3 }
+						}
+						add_ideas = GER_idea_afghan_bonus_3
+						remove_ideas = GER_idea_afghan_bonus_1
+						remove_ideas = GER_idea_afghan_bonus_2
+					}
+				}
+
+				# Bavaria system
+				if = {
+					limit = {
+						NOT = {
+							OR = {
+								is_ai = yes
+								has_country_flag = GER_bavaria_gone
+							}
+						}
+					}
+					GER_update_bavaria_standing = yes
+				}
+				if = {
+					limit = { check_variable = { GER_bavarian_nationalism_var > 99 } }
+					country_event = bavaria.1
+				}
+				if = {
+					limit = { check_variable = { GER_bavarian_nationalism_var > 100 } }
+					set_variable = { GER_bavarian_nationalism_var = 100 }
+				}
+				if = {
+					limit = { check_variable = { GER_bavarian_nationalism_var < 0 } }
+					set_variable = { GER_bavarian_nationalism_var = 0 }
+				}
+
+				# East opinion events
+				if = {
+					limit = {
+						check_variable = { GER_east_opinion > 40 }
+						NOT = { has_completed_focus = GER_bringing_germany_closer_together }
+					}
+					GER_east_german_events = yes
+				}
+				if = {
+					limit = {
+						check_variable = { GER_east_opinion < 41 }
+						NOT = { has_completed_focus = GER_bringing_germany_closer_together }
+					}
+					GER_die_linke_events = yes
+				}
+				if = {
+					limit = { check_variable = { GER_east_opinion > 50 } }
+					set_variable = { GER_east_opinion = 50 }
+				}
+				if = {
+					limit = { check_variable = { GER_east_opinion < 0 } }
+					set_variable = { GER_east_opinion = 0 }
+				}
+
+				# Agenda 2 events
+				if = {
+					limit = { has_idea = GER_idea_agenda2 }
+					GER = {
+						random_list = {
+							90 = { }
+							20 = { country_event = Germany_Mech.71 }
+							20 = { country_event = Germany_Mech.72 }
+						}
+					}
+				}
+
+				# NATO membership checks
+				if = {
+					limit = {
+						NOT = {
+							OR = {
+								GER = { has_idea = NATO_member }
+								USA = { has_idea = NATO_member }
+							}
+						}
+					}
+					country_event = Germany_Mech.10
+				}
+				if = {
+					limit = {
+						GER = { OR = { has_government = communism has_government = nationalist } }
+						USA = { OR = { has_government = communism has_government = nationalist } }
+					}
+					country_event = Germany_Mech.10
+				}
+				if = {
+					limit = {
+						NOT = {
+							OR = {
+								GER = { has_idea = NATO_member }
+								ENG = { has_idea = NATO_member }
+							}
+						}
+					}
+					country_event = Germany_Mech.9
+				}
+				if = {
+					limit = {
+						GER = { OR = { has_government = communism has_government = nationalist } }
+						ENG = { OR = { has_government = communism has_government = nationalist } }
+					}
+					country_event = Germany_Mech.9
+				}
+
+				# Nationalist party fragmentation — party 20 (decay when > 3%)
+				if = {
+					limit = {
+						check_variable = { party_pop_array^20 > 0.03 }
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+						NOT = { has_global_flag = GER_POPULIST_FOCUS_PATH }
+					}
+					random_list = {
+						3 = { set_temp_variable = { GER_frag_amount = 0.006 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.004 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.002 } }
+						1 = { set_temp_variable = { GER_frag_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_frag_amount > 0 } }
+						set_temp_variable_to_random = { var = GER_frag_split min = 0 max = GER_frag_amount }
+						set_temp_variable = { GER_frag_remainder = GER_frag_amount }
+						subtract_from_temp_variable = { GER_frag_remainder = GER_frag_split }
+						set_temp_variable = { party_index = 20 }
+						multiply_temp_variable = { GER_frag_amount = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_amount }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 21 }
+						set_temp_variable = { party_popularity_increase = GER_frag_split }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 22 }
+						set_temp_variable = { party_popularity_increase = GER_frag_remainder }
+						change_relative_party_popularity = yes
+					}
+				}
+				# Nationalist party fragmentation — party 20 (boost when < 1%)
+				if = {
+					limit = {
+						check_variable = { party_pop_array^20 < 0.01 }
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					random_list = {
+						3 = { set_temp_variable = { GER_frag_amount = 0.006 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.004 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.002 } }
+						1 = { set_temp_variable = { GER_frag_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_frag_amount > 0 } }
+						set_temp_variable_to_random = { var = GER_frag_split min = 0 max = GER_frag_amount }
+						set_temp_variable = { GER_frag_remainder = GER_frag_amount }
+						subtract_from_temp_variable = { GER_frag_remainder = GER_frag_split }
+						set_temp_variable = { party_index = 20 }
+						set_temp_variable = { party_popularity_increase = GER_frag_amount }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 21 }
+						multiply_temp_variable = { GER_frag_split = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_split }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 22 }
+						multiply_temp_variable = { GER_frag_remainder = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_remainder }
+						change_relative_party_popularity = yes
+					}
+				}
+
+				# Nationalist party fragmentation — party 21 (decay when > 3%)
+				if = {
+					limit = {
+						check_variable = { party_pop_array^21 > 0.03 }
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+						NOT = { has_global_flag = GER_NATIONALIST_FOCUS_PATH }
+					}
+					random_list = {
+						3 = { set_temp_variable = { GER_frag_amount = 0.006 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.004 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.002 } }
+						1 = { set_temp_variable = { GER_frag_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_frag_amount > 0 } }
+						set_temp_variable_to_random = { var = GER_frag_split min = 0 max = GER_frag_amount }
+						set_temp_variable = { GER_frag_remainder = GER_frag_amount }
+						subtract_from_temp_variable = { GER_frag_remainder = GER_frag_split }
+						set_temp_variable = { party_index = 21 }
+						multiply_temp_variable = { GER_frag_amount = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_amount }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 20 }
+						set_temp_variable = { party_popularity_increase = GER_frag_split }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 22 }
+						set_temp_variable = { party_popularity_increase = GER_frag_remainder }
+						change_relative_party_popularity = yes
+					}
+				}
+				# Nationalist party fragmentation — party 21 (boost when < 1%)
+				if = {
+					limit = {
+						check_variable = { party_pop_array^21 < 0.01 }
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					random_list = {
+						3 = { set_temp_variable = { GER_frag_amount = 0.006 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.004 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.002 } }
+						1 = { set_temp_variable = { GER_frag_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_frag_amount > 0 } }
+						set_temp_variable_to_random = { var = GER_frag_split min = 0 max = GER_frag_amount }
+						set_temp_variable = { GER_frag_remainder = GER_frag_amount }
+						subtract_from_temp_variable = { GER_frag_remainder = GER_frag_split }
+						set_temp_variable = { party_index = 21 }
+						set_temp_variable = { party_popularity_increase = GER_frag_amount }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 20 }
+						multiply_temp_variable = { GER_frag_split = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_split }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 22 }
+						multiply_temp_variable = { GER_frag_remainder = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_remainder }
+						change_relative_party_popularity = yes
+					}
+				}
+
+				# Nationalist party fragmentation — party 22 (decay when > 3%)
+				if = {
+					limit = {
+						check_variable = { party_pop_array^22 > 0.03 }
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					random_list = {
+						3 = { set_temp_variable = { GER_frag_amount = 0.006 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.004 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.002 } }
+						1 = { set_temp_variable = { GER_frag_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_frag_amount > 0 } }
+						set_temp_variable_to_random = { var = GER_frag_split min = 0 max = GER_frag_amount }
+						set_temp_variable = { GER_frag_remainder = GER_frag_amount }
+						subtract_from_temp_variable = { GER_frag_remainder = GER_frag_split }
+						set_temp_variable = { party_index = 22 }
+						multiply_temp_variable = { GER_frag_amount = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_amount }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 20 }
+						set_temp_variable = { party_popularity_increase = GER_frag_split }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 21 }
+						set_temp_variable = { party_popularity_increase = GER_frag_remainder }
+						change_relative_party_popularity = yes
+					}
+				}
+				# Nationalist party fragmentation — party 22 (boost when < 1%)
+				if = {
+					limit = {
+						check_variable = { party_pop_array^22 < 0.01 }
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					random_list = {
+						3 = { set_temp_variable = { GER_frag_amount = 0.006 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.004 } }
+						3 = { set_temp_variable = { GER_frag_amount = 0.002 } }
+						1 = { set_temp_variable = { GER_frag_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_frag_amount > 0 } }
+						set_temp_variable_to_random = { var = GER_frag_split min = 0 max = GER_frag_amount }
+						set_temp_variable = { GER_frag_remainder = GER_frag_amount }
+						subtract_from_temp_variable = { GER_frag_remainder = GER_frag_split }
+						set_temp_variable = { party_index = 22 }
+						set_temp_variable = { party_popularity_increase = GER_frag_amount }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 20 }
+						multiply_temp_variable = { GER_frag_split = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_split }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 21 }
+						multiply_temp_variable = { GER_frag_remainder = -1 }
+						set_temp_variable = { party_popularity_increase = GER_frag_remainder }
+						change_relative_party_popularity = yes
+					}
+				}
+
+				# Democratic balance mechanics
+				if = {
+					limit = {
+						democratic < 0.40
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					GER = {
+						if = {
+							limit = { NOT = { has_idea = GER_balance_demo_1 } }
+							add_timed_idea = { idea = GER_balance_demo_1 days = 30 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						democratic < 0.50
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					GER = {
+						if = {
+							limit = { NOT = { has_idea = GER_balance_demo_2 } }
+							add_timed_idea = { idea = GER_balance_demo_2 days = 30 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						democratic > 0.80
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					GER = {
+						if = {
+							limit = { NOT = { has_idea = GER_balance_demo_3 } }
+							add_timed_idea = { idea = GER_balance_demo_3 days = 30 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						neutrality < 0.10
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+					}
+					GER = {
+						set_temp_variable = { party_index = 16 }
+						set_temp_variable = { party_popularity_increase = 0.015 }
+						change_relative_party_popularity = yes
+						set_temp_variable = { party_index = 17 }
+						set_temp_variable = { party_popularity_increase = 0.025 }
+						change_relative_party_popularity = yes
+						if = {
+							limit = { NOT = { has_idea = GER_balance_neutral } }
+							add_timed_idea = { idea = GER_balance_neutral days = 30 }
+						}
+					}
+				}
+			}
+		}
+	}
+	on_monthly_GER = {
+		effect = {
+			# IMPERIA CW — Cold War: Scenario lifecycle and country updates.
+			# COLDWAR: MD 2000s content, only for MD start dates
+			if = {
+				limit = { has_start_date > 1999.12.31 }
+				# Yearly checks
+				if = {
+					limit = { check_variable = { global.month = 1 } }
+
+					# Helsing SE founding — yearly date catch-all (per-focus paths fire from the focuses themselves)
+					if = {
+						limit = {
+							has_dlc = "Arms Against Tyranny"
+							NOT = { has_country_flag = ger_helsing_se_founded }
+							OR = {
+								AND = {
+									has_completed_focus = GER_Artificial_Inteligence_integration
+									date > 2016.1.1
+								}
+								AND = {
+									has_completed_focus = GER_future_of_airforce
+									date > 2018.1.1
+								}
+								AND = {
+									has_completed_focus = GER_reseach_requirents_for_airforce
+									date > 2020.1.1
+								}
+								date > 2021.1.1
+							}
+						}
+						country_event = { id = germany.67 days = 1 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_war_on_terror_started }
+					set_temp_variable_to_random = {
+						var = GER_soldiers_popularity_mideast_change
+						min = 0
+						max = 3
+					}
+					multiply_temp_variable = { GER_soldiers_popularity_mideast_change = -1 }
+					random = {
+						chance = 50
+						add_to_variable = { var = GER_soldiers_popularity_mideast value = GER_soldiers_popularity_mideast_change }
+						clamp_variable = { var = GER_soldiers_popularity_mideast min = 0 max = 100 }
+					}
+				}
+
+				# BfV system monthly events
+				if = {
+					limit = {
+						check_variable = { GER_leftwing_department_tier > 0 }
+						check_variable = { GER_islamist_department_tier > 0 }
+						check_variable = { GER_rightwing_department_tier > 0 }
+					}
+					GER_bfv_events = yes
+				}
+				if = {
+					limit = { has_country_flag = GER_war_on_terror_started }
+					GER_wot_random_events = yes
+				}
+
+				# AI BfV spending: LOW on the department its game rule path needs collapsed, the rest HIGH until stable, then MED
+				if = {
+					limit = { is_ai = yes }
+					set_variable = { GER_islamist_spending_level = { value = 2 add = { value = GER_islamist_department_tier less_than = 3 } } }
+					if = {
+						limit = { GER_ai_irredentist_path = yes }
+						set_variable = { GER_rightwing_spending_level = 1 }
+						set_variable = { GER_leftwing_spending_level = 3 }
+					}
+					else_if = {
+						limit = { has_global_flag = GER_SOCIALIST_FOCUS_PATH }
+						set_variable = { GER_leftwing_spending_level = 1 }
+						set_variable = { GER_rightwing_spending_level = 3 }
+					}
+					else = {
+						set_variable = { GER_rightwing_spending_level = { value = 2 add = { value = GER_rightwing_department_tier less_than = 3 } } }
+						set_variable = { GER_leftwing_spending_level = { value = 2 add = { value = GER_leftwing_department_tier less_than = 3 } } }
+					}
+				}
+
+				# BfV spending decay (low spending)
+				if = {
+					limit = { check_variable = { GER_islamist_spending_level = 1 } }
+					random_list = {
+						50 = { }
+						15 = { add_to_variable = { GER_islamist_department_status = -1 } }
+						15 = { add_to_variable = { GER_islamist_department_status = -2 } }
+						10 = { add_to_variable = { GER_islamist_department_status = -3 } }
+						10 = { add_to_variable = { GER_islamist_department_status = -5 } }
+					}
+				}
+				if = {
+					limit = { check_variable = { GER_rightwing_spending_level = 1 } }
+					random_list = {
+						50 = { }
+						15 = { add_to_variable = { GER_rightwing_department_status = -1 } }
+						15 = { add_to_variable = { GER_rightwing_department_status = -2 } }
+						10 = { add_to_variable = { GER_rightwing_department_status = -3 } }
+						10 = { add_to_variable = { GER_rightwing_department_status = -5 } }
+					}
+				}
+				if = {
+					limit = { check_variable = { GER_leftwing_spending_level = 1 } }
+					random_list = {
+						50 = { }
+						15 = { add_to_variable = { GER_leftwing_department_status = -1 } }
+						15 = { add_to_variable = { GER_leftwing_department_status = -2 } }
+						10 = { add_to_variable = { GER_leftwing_department_status = -3 } }
+						10 = { add_to_variable = { GER_leftwing_department_status = -5 } }
+					}
+				}
+
+				# BfV spending growth (high spending)
+				if = {
+					limit = { check_variable = { GER_leftwing_spending_level = 3 } }
+					random_list = {
+						60 = { }
+						20 = { add_to_variable = { GER_leftwing_department_status = 2 } }
+						20 = { add_to_variable = { GER_leftwing_department_status = 3 } }
+					}
+				}
+				if = {
+					limit = { check_variable = { GER_rightwing_spending_level = 3 } }
+					random_list = {
+						60 = { }
+						20 = { add_to_variable = { GER_rightwing_department_status = 2 } }
+						20 = { add_to_variable = { GER_rightwing_department_status = 3 } }
+					}
+				}
+				if = {
+					limit = { check_variable = { GER_islamist_spending_level = 3 } }
+					random_list = {
+						60 = { }
+						20 = { add_to_variable = { GER_islamist_department_status = 2 } }
+						20 = { add_to_variable = { GER_islamist_department_status = 3 } }
+					}
+				}
+
+				# Agrar crisis
+				if = {
+					limit = {
+						NOT = {
+							OR = {
+								has_country_flag = GER_shaggin_goats_is_illegal
+								has_idea = GER_BSE_Crisis_I
+								has_idea = GER_BSE_Crisis_II
+								has_idea = GER_idea_chicken_flu
+								has_idea = GER_idea_swine_flu
+								has_idea = GER_idea_Q_fever
+								has_idea = GER_idea_banned_pesticid_used
+								has_idea = GER_idea_H5N8
+								has_idea = GER_idea_Foot_and_moooouuuhhh
+							}
+						}
+					}
+					random_list = {
+						150 = { }
+						2 = { country_event = { id = GER_agrar.5 days = 800 random_days = 90 } }
+						2 = { country_event = { id = GER_agrar.6 days = 800 random_days = 90 } }
+						2 = { country_event = { id = GER_agrar.9 days = 800 random_days = 90 } }
+						2 = { country_event = { id = GER_agrar.10 days = 800 random_days = 90 } }
+						2 = { country_event = { id = GER_agrar.11 days = 800 random_days = 90 } }
+						2 = { country_event = { id = GER_agrar.12 days = 800 random_days = 90 } }
+					}
+				}
+
+				# BOP migration events
+				if = {
+					limit = { has_country_flag = GER_BOP_Balanced }
+					random_list = {
+						450 = { }
+						6 = { country_event = Germany_Mech.50 }
+						4 = { country_event = Germany_Mech.51 }
+						5 = { country_event = Germany_Mech.52 }
+						5 = { country_event = Germany_Mech.53 }
+						3 = { country_event = Germany_Mech.54 }
+						3 = { country_event = Germany_Mech.55 }
+						3 = { country_event = Germany_Mech.56 }
+						3 = { country_event = Germany_Mech.57 }
+						6 = { country_event = Germany_Mech.58 }
+						4 = { country_event = Germany_Mech.59 }
+						4 = { country_event = Germany_Mech.60 }
+						5 = { country_event = Germany_Mech.61 }
+						3 = { country_event = Germany_Mech.62 }
+						4 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_LEFT_I }
+					random_list = {
+						450 = { }
+						8 = { country_event = Germany_Mech.50 }
+						3 = { country_event = Germany_Mech.51 }
+						2 = { country_event = Germany_Mech.52 }
+						2 = { country_event = Germany_Mech.53 }
+						2 = { country_event = Germany_Mech.54 }
+						2 = { country_event = Germany_Mech.55 }
+						2 = { country_event = Germany_Mech.56 }
+						2 = { country_event = Germany_Mech.57 }
+						8 = { country_event = Germany_Mech.58 }
+						6 = { country_event = Germany_Mech.60 }
+						5 = { country_event = Germany_Mech.61 }
+						2 = { country_event = Germany_Mech.62 }
+						4 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_LEFT_II }
+					random_list = {
+						450 = { }
+						9 = { country_event = Germany_Mech.50 }
+						2 = { country_event = Germany_Mech.51 }
+						2 = { country_event = Germany_Mech.52 }
+						2 = { country_event = Germany_Mech.53 }
+						2 = { country_event = Germany_Mech.54 }
+						2 = { country_event = Germany_Mech.55 }
+						2 = { country_event = Germany_Mech.56 }
+						2 = { country_event = Germany_Mech.57 }
+						8 = { country_event = Germany_Mech.58 }
+						7 = { country_event = Germany_Mech.60 }
+						4 = { country_event = Germany_Mech.61 }
+						2 = { country_event = Germany_Mech.62 }
+						6 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_LEFT_III }
+					random_list = {
+						450 = { }
+						7 = { country_event = Germany_Mech.50 }
+						4 = { country_event = Germany_Mech.51 }
+						3 = { country_event = Germany_Mech.52 }
+						3 = { country_event = Germany_Mech.53 }
+						2 = { country_event = Germany_Mech.54 }
+						2 = { country_event = Germany_Mech.55 }
+						2 = { country_event = Germany_Mech.56 }
+						2 = { country_event = Germany_Mech.57 }
+						6 = { country_event = Germany_Mech.58 }
+						7 = { country_event = Germany_Mech.60 }
+						5 = { country_event = Germany_Mech.61 }
+						2 = { country_event = Germany_Mech.62 }
+						5 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_LEFT_IV }
+					random_list = {
+						450 = { }
+						6 = { country_event = Germany_Mech.50 }
+						4 = { country_event = Germany_Mech.51 }
+						3 = { country_event = Germany_Mech.52 }
+						3 = { country_event = Germany_Mech.53 }
+						2 = { country_event = Germany_Mech.54 }
+						2 = { country_event = Germany_Mech.55 }
+						2 = { country_event = Germany_Mech.56 }
+						2 = { country_event = Germany_Mech.57 }
+						7 = { country_event = Germany_Mech.58 }
+						5 = { country_event = Germany_Mech.60 }
+						4 = { country_event = Germany_Mech.61 }
+						2 = { country_event = Germany_Mech.62 }
+						3 = { country_event = Germany_Mech.63 }
+						5 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_LEFT_V }
+					random_list = {
+						450 = { }
+						8 = { country_event = Germany_Mech.50 }
+						2 = { country_event = Germany_Mech.51 }
+						3 = { country_event = Germany_Mech.52 }
+						3 = { country_event = Germany_Mech.53 }
+						2 = { country_event = Germany_Mech.54 }
+						2 = { country_event = Germany_Mech.55 }
+						2 = { country_event = Germany_Mech.56 }
+						2 = { country_event = Germany_Mech.57 }
+						7 = { country_event = Germany_Mech.58 }
+						5 = { country_event = Germany_Mech.60 }
+						4 = { country_event = Germany_Mech.61 }
+						2 = { country_event = Germany_Mech.62 }
+						3 = { country_event = Germany_Mech.63 }
+						5 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_RIGHT_I }
+					random_list = {
+						450 = { }
+						3 = { country_event = Germany_Mech.50 }
+						7 = { country_event = Germany_Mech.51 }
+						6 = { country_event = Germany_Mech.52 }
+						6 = { country_event = Germany_Mech.53 }
+						4 = { country_event = Germany_Mech.54 }
+						4 = { country_event = Germany_Mech.55 }
+						4 = { country_event = Germany_Mech.56 }
+						4 = { country_event = Germany_Mech.57 }
+						3 = { country_event = Germany_Mech.58 }
+						5 = { country_event = Germany_Mech.59 }
+						6 = { country_event = Germany_Mech.61 }
+						4 = { country_event = Germany_Mech.62 }
+						4 = { country_event = Germany_Mech.63 }
+						6 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_RIGHT_II }
+					random_list = {
+						450 = { }
+						2 = { country_event = Germany_Mech.50 }
+						8 = { country_event = Germany_Mech.51 }
+						7 = { country_event = Germany_Mech.52 }
+						7 = { country_event = Germany_Mech.53 }
+						4 = { country_event = Germany_Mech.54 }
+						4 = { country_event = Germany_Mech.55 }
+						4 = { country_event = Germany_Mech.56 }
+						4 = { country_event = Germany_Mech.57 }
+						2 = { country_event = Germany_Mech.58 }
+						6 = { country_event = Germany_Mech.59 }
+						6 = { country_event = Germany_Mech.61 }
+						4 = { country_event = Germany_Mech.62 }
+						5 = { country_event = Germany_Mech.63 }
+						7 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_RIGHT_III }
+					random_list = {
+						450 = { }
+						3 = { country_event = Germany_Mech.50 }
+						7 = { country_event = Germany_Mech.51 }
+						6 = { country_event = Germany_Mech.52 }
+						6 = { country_event = Germany_Mech.53 }
+						4 = { country_event = Germany_Mech.54 }
+						4 = { country_event = Germany_Mech.55 }
+						4 = { country_event = Germany_Mech.56 }
+						4 = { country_event = Germany_Mech.57 }
+						4 = { country_event = Germany_Mech.58 }
+						5 = { country_event = Germany_Mech.59 }
+						5 = { country_event = Germany_Mech.61 }
+						4 = { country_event = Germany_Mech.62 }
+						4 = { country_event = Germany_Mech.63 }
+						6 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_RIGHT_IV }
+					random_list = {
+						450 = { }
+						1 = { country_event = Germany_Mech.50 }
+						9 = { country_event = Germany_Mech.51 }
+						8 = { country_event = Germany_Mech.52 }
+						8 = { country_event = Germany_Mech.53 }
+						5 = { country_event = Germany_Mech.54 }
+						5 = { country_event = Germany_Mech.55 }
+						5 = { country_event = Germany_Mech.56 }
+						5 = { country_event = Germany_Mech.57 }
+						2 = { country_event = Germany_Mech.58 }
+						7 = { country_event = Germany_Mech.59 }
+						7 = { country_event = Germany_Mech.61 }
+						5 = { country_event = Germany_Mech.62 }
+						6 = { country_event = Germany_Mech.63 }
+						8 = { country_event = Germany_Mech.64 }
+					}
+				}
+				if = {
+					limit = { has_country_flag = GER_BOP_RIGHT_V }
+					random_list = {
+						450 = { }
+						1 = { country_event = Germany_Mech.50 }
+						9 = { country_event = Germany_Mech.51 }
+						8 = { country_event = Germany_Mech.52 }
+						8 = { country_event = Germany_Mech.53 }
+						5 = { country_event = Germany_Mech.54 }
+						5 = { country_event = Germany_Mech.55 }
+						5 = { country_event = Germany_Mech.56 }
+						5 = { country_event = Germany_Mech.57 }
+						2 = { country_event = Germany_Mech.58 }
+						7 = { country_event = Germany_Mech.59 }
+						7 = { country_event = Germany_Mech.61 }
+						5 = { country_event = Germany_Mech.62 }
+						6 = { country_event = Germany_Mech.63 }
+						8 = { country_event = Germany_Mech.64 }
+					}
+				}
+
+				# Neutrals balance (party 16 vs 17)
+				if = {
+					limit = {
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+						check_variable = { party_pop_array^16 < party_pop_array^17 }
+					}
+					random_list = {
+						1 = { set_temp_variable = { GER_bal_amount = 0.005 } }
+						1 = { set_temp_variable = { GER_bal_amount = 0.015 } }
+						1 = { set_temp_variable = { GER_bal_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_bal_amount > 0 } }
+						set_temp_variable = { party_index = 16 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+						multiply_temp_variable = { GER_bal_amount = -1 }
+						set_temp_variable = { party_index = 17 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+					}
+				}
+				if = {
+					limit = {
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+						check_variable = { party_pop_array^16 > party_pop_array^17 }
+					}
+					random_list = {
+						1 = { set_temp_variable = { GER_bal_amount = 0.005 } }
+						1 = { set_temp_variable = { GER_bal_amount = 0.015 } }
+						1 = { set_temp_variable = { GER_bal_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_bal_amount > 0 } }
+						multiply_temp_variable = { GER_bal_amount = -1 }
+						set_temp_variable = { party_index = 16 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+						multiply_temp_variable = { GER_bal_amount = -1 }
+						set_temp_variable = { party_index = 17 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+					}
+				}
+
+				# Western balance (party 1 vs 3)
+				if = {
+					limit = {
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+						check_variable = { party_pop_array^1 < party_pop_array^3 }
+					}
+					random_list = {
+						15 = { set_temp_variable = { GER_bal_amount = 0.005 } }
+						13 = { set_temp_variable = { GER_bal_amount = 0.015 } }
+						90 = { set_temp_variable = { GER_bal_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_bal_amount > 0 } }
+						set_temp_variable = { party_index = 1 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+						multiply_temp_variable = { GER_bal_amount = -1 }
+						set_temp_variable = { party_index = 3 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+					}
+				}
+				if = {
+					limit = {
+						NOT = { OR = { has_government = communism has_government = nationalist } }
+						check_variable = { party_pop_array^1 > party_pop_array^3 }
+					}
+					random_list = {
+						15 = { set_temp_variable = { GER_bal_amount = 0.005 } }
+						12 = { set_temp_variable = { GER_bal_amount = 0.015 } }
+						90 = { set_temp_variable = { GER_bal_amount = 0 } }
+					}
+					if = {
+						limit = { check_variable = { GER_bal_amount > 0 } }
+						multiply_temp_variable = { GER_bal_amount = -1 }
+						set_temp_variable = { party_index = 1 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+						multiply_temp_variable = { GER_bal_amount = -1 }
+						set_temp_variable = { party_index = 3 }
+						set_temp_variable = { party_popularity_increase = GER_bal_amount }
+						change_relative_party_popularity = yes
+					}
+				}
+			}
+		}
+	}
+}

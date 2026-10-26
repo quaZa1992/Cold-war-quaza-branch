@@ -1,0 +1,269 @@
+AZE_economy_decisions = {
+	eat_up_doomsday_fund = {
+		fire_only_once = yes
+		cost = 50
+
+		visible = {
+			has_completed_focus = AZE_aze_prepare_for_worst
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision eat_up_doomsday_fund"
+			# how many days fund lasted?
+			set_temp_variable = { fund_days = num_days }
+			subtract_from_variable = { fund_days = AZE.doomsday_fund_created }
+
+			# I would like to define var in front just in case
+			set_temp_variable = { fund_multiplier = 3 }
+			if = {
+				limit = { check_variable = { fund_days > 3650 } }
+
+				set_temp_variable = { fund_multiplier = 10 }
+			}
+			else_if = {
+				limit = { check_variable = { fund_days > 1825 } }
+
+				set_temp_variable = { fund_multiplier = 7 }
+			}
+			else_if = {
+				limit = { check_variable = { fund_days > 1095 } }
+
+				set_temp_variable = { fund_multiplier = 5 }
+			}
+			else_if = {
+				limit = { check_variable = { fund_days > 720 } }
+
+				set_temp_variable = { fund_multiplier = 4 }
+			}
+
+			set_temp_variable = { initial_fund = 35 }
+			set_temp_variable = { profit = initial_fund }
+
+			# profit = (sum * procent * days / 365) / 100
+			multiply_temp_variable = { profit = fund_multiplier }
+			multiply_temp_variable = { profit = fund_days }
+			# 1 / 365 = 0.0027 we cant do 4 digits
+			multiply_temp_variable = { profit = 0.027 }
+			multiply_temp_variable = { profit = 0.1 }
+
+			set_temp_variable = { treasury_change = initial_fund }
+			add_to_temp_variable = { treasury_change = profit }
+			modify_treasury_effect = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+AZE_aliev_propaganda_category = {
+	AZE_buy_support_PP = {
+		cost = 50
+
+		days_remove = 7
+		days_re_enable = 30
+		fire_only_once = no
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_buy_support_PP"
+			set_temp_variable = { modify_aliev_cult = 3 }
+			modify_aliev_suppport = yes
+		}
+
+		ai_will_do = {
+			base = 1
+
+			modifier = {
+				add = 3
+				OR = {
+					has_idea = AZE_aliev_cult_weak
+					has_idea = AZE_aliev_cult_very_weak
+				}
+			}
+		}
+	}
+
+	AZE_buy_support = {
+		days_remove = 7
+		days_re_enable = 30
+		fire_only_once = no
+
+		custom_cost_trigger = {
+			check_variable = { treasury > 1.9 }
+		}
+
+		custom_cost_text = cost_2_0
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_buy_support"
+			set_temp_variable = { treasury_change = -2 }
+			modify_treasury_effect = yes
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_buy_support"
+			set_temp_variable = { modify_aliev_cult = 5 }
+			modify_aliev_suppport = yes
+		}
+
+		ai_will_do = {
+			base = 1
+
+			modifier = {
+				add = 3
+				OR = {
+					has_idea = AZE_aliev_cult_weak
+					has_idea = AZE_aliev_cult_very_weak
+				}
+			}
+		}
+	}
+
+	AZE_aliev_countdown = {
+		allowed = { always = no }
+		available = { always = no }
+		fire_only_once = no
+		is_good = yes
+		selectable_mission = no
+		days_mission_timeout = 30
+
+		fixed_random_seed = no
+
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_aliev_countdown"
+			custom_effect_tooltip = AZE_aliev_cult_mission_TT
+			hidden_effect = {
+				if = {
+					limit = {
+						OR = {
+							has_idea = AZE_aliev_cult_weak
+							has_idea = AZE_aliev_cult_very_weak
+							has_idea = AZE_aliev_cult_medium
+							has_idea = AZE_aliev_cult_strong
+							has_idea = AZE_aliev_cult_very_strong
+						}
+					}
+
+					activate_mission = AZE_aliev_countdown
+					random_list = {
+						60 = {
+							# nothing happens
+						}
+						30 = {
+							set_temp_variable = { modify_aliev_cult = -5 }
+							modify_aliev_suppport = yes
+						}
+						10 = {
+							set_temp_variable = { modify_aliev_cult = 5 }
+							modify_aliev_suppport = yes
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+AZE_ai_path_category = {
+
+	AZE_rally_the_popular_front = {
+
+		icon = generic_decision
+
+		cost = 25
+
+		days_re_enable = 30
+
+		visible = { has_global_flag = AZE_DEMOCRATIC_FOCUS_PATH }
+
+		available = {
+			has_civil_war = no
+			check_variable = { party_pop_array^2 < 0.55 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_rally_the_popular_front"
+			set_temp_variable = { party_index = 2 }
+			set_temp_variable = { party_popularity_increase = 0.04 }
+			set_temp_variable = { temp_outlook_increase = 0.04 }
+			change_relative_party_popularity = yes
+		}
+
+		ai_will_do = { base = 100 }
+	}
+
+	AZE_popular_front_takes_power = {
+
+		icon = generic_decision
+
+		cost = 150
+
+		days_re_enable = 180
+
+		visible = { has_global_flag = AZE_DEMOCRATIC_FOCUS_PATH }
+
+		available = {
+			has_civil_war = no
+			western_liberals_are_in_power = no
+			check_variable = { party_pop_array^2 > 0.5 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_popular_front_takes_power"
+			set_temp_variable = { rul_party_temp = 2 }
+			change_ruling_party_effect = yes
+		}
+
+		ai_will_do = { base = 100 }
+	}
+
+	AZE_rally_the_generals = {
+
+		icon = generic_decision
+
+		cost = 25
+
+		days_re_enable = 30
+
+		visible = { has_global_flag = AZE_JUNTA_FOCUS_PATH }
+
+		available = {
+			has_civil_war = no
+			check_variable = { party_pop_array^22 < 0.55 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_rally_the_generals"
+			set_temp_variable = { party_index = 22 }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			set_temp_variable = { temp_outlook_increase = 0.05 }
+			change_relative_party_popularity = yes
+		}
+
+		ai_will_do = { base = 100 }
+	}
+
+	AZE_generals_take_power = {
+
+		icon = generic_decision
+
+		cost = 150
+
+		days_re_enable = 180
+
+		visible = { has_global_flag = AZE_JUNTA_FOCUS_PATH }
+
+		available = {
+			has_civil_war = no
+			nationalist_military_junta_are_in_power = no
+			check_variable = { party_pop_array^22 > 0.5 }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision AZE_generals_take_power"
+			set_temp_variable = { rul_party_temp = 22 }
+			set_temp_variable = { disable_elections = 1 }
+			change_ruling_party_effect = yes
+		}
+
+		ai_will_do = { base = 100 }
+	}
+}

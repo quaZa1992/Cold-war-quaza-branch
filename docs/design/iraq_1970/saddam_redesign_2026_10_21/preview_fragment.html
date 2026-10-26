@@ -1,0 +1,124 @@
+<!-- IMPERIA CW — Cold War: interactive Saddam policy concept, outside loaded game files. -->
+<div id="cw-saddam-concept">
+  <div class="sc-head"><span>Millennium Dawn · Cold War</span><strong>Iraq · Saddam's presidency · Concept</strong></div>
+  <div class="sc-tools">
+    <label>Policy choice<select id="sc-policy"></select></label>
+    <label>Inspect a focus<select id="sc-focus"></select></label>
+    <div class="sc-camera"><button type="button" id="sc-branch">Saddam overview</button><button type="button" id="sc-all">Entire Iraq tree</button><button type="button" id="sc-native">100%</button><button type="button" id="sc-minus" aria-label="Zoom out">−</button><button type="button" id="sc-plus" aria-label="Zoom in">+</button><span id="sc-zoom">100%</span></div>
+  </div>
+  <div id="sc-map" role="region" aria-label="Iraqi national focus tree. Drag to move; wheel to scroll; Control and wheel to zoom.">
+    <div id="sc-world"><svg id="sc-links" aria-hidden="true"></svg></div>
+    <canvas id="sc-mini" width="160" height="86" aria-label="Tree minimap. Select a location."></canvas>
+    <div class="sc-key">Drag: any mouse button · Wheel: move · Shift: sideways · Ctrl: zoom</div>
+  </div>
+  <div id="sc-status" aria-live="polite"></div>
+  <section id="sc-detail" aria-live="polite"><h3>Saddam's presidency</h3></section>
+  <section id="sc-compare" aria-label="Exclusive policy comparison"></section>
+  <details class="sc-notes"><summary>Programme conditions and scope</summary><p id="sc-gate"></p><p id="sc-lifecycle"></p><p id="sc-retention"></p><p>25 proposed focuses · Five exclusive policy pairs · 32 complete combinations. All existing neighbouring branches are shown as context. Native artwork and title font; connector routing and selection colours approximate the game.</p></details>
+</div>
+<!-- CONCEPT_DATA -->
+<style>
+#cw-saddam-concept{--sc-bg:#22343c;--sc-panel:#263d46;--sc-deep:#17272f;--sc-text:#e6e6dc;--sc-muted:#c5cfcd;--sc-line:#a4b5b6;--sc-gold:#ddcc8b;--sc-red:#e4a18d;--sc-green:#a7d29d;color:var(--sc-text);background:var(--sc-deep);font:14px/1.5 Arial,sans-serif;width:100%;color-scheme:dark}
+#cw-saddam-concept *{box-sizing:border-box}
+#cw-saddam-concept .sc-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 100px 14px 16px;background:var(--sc-deep)}
+#cw-saddam-concept .sc-head strong{font-weight:400;color:var(--sc-gold)}
+#cw-saddam-concept .sc-tools{display:flex;flex-wrap:wrap;gap:10px;padding:12px 16px;background:var(--sc-panel)}
+#cw-saddam-concept label{flex:1 1 240px;min-width:0;color:var(--sc-muted)}
+#cw-saddam-concept select{display:block;width:100%;margin-top:4px;padding:8px;background:var(--sc-deep);color:var(--sc-text);border:1px solid #788983;font:inherit}
+#cw-saddam-concept button{font:inherit;color:var(--sc-text);background:#3f514c;border:1px solid #89947f;padding:7px 10px;border-radius:2px}
+#cw-saddam-concept button[aria-pressed="true"]{background:#59684f;border-color:var(--sc-gold)}
+#cw-saddam-concept .sc-camera{display:flex;align-items:center;flex-wrap:wrap;gap:7px;flex-basis:100%}
+#cw-saddam-concept #sc-map{height:560px;position:relative;overflow:hidden;background:var(--sc-bg);touch-action:none;user-select:none;cursor:grab;isolation:isolate}
+#cw-saddam-concept #sc-map.dragging{cursor:grabbing}
+#cw-saddam-concept #sc-world{position:absolute;left:0;top:0;transform-origin:0 0}
+#cw-saddam-concept #sc-links{position:absolute;inset:0;overflow:visible;pointer-events:none}
+#cw-saddam-concept #sc-links path{fill:none;stroke:var(--sc-line);stroke-width:2}
+#cw-saddam-concept #sc-links path.sc-exclusive{stroke:var(--sc-red);stroke-dasharray:5 4}
+#cw-saddam-concept .sc-node{position:absolute;width:165px;height:128px;padding:0;border:0;background:transparent;cursor:inherit;border-radius:0}
+#cw-saddam-concept .sc-node[aria-pressed="true"]{background:transparent;border:0}
+#cw-saddam-concept .sc-node img,#cw-saddam-concept .sc-node canvas{position:absolute;pointer-events:none}
+#cw-saddam-concept .sc-icon{left:87.5px;top:20px;transform:translate(-50%,-50%)}
+#cw-saddam-concept .sc-bar{left:5px;top:40px;width:164px;height:50px}
+#cw-saddam-concept .sc-node canvas{left:15px;top:58px;width:147px;height:20px}
+#cw-saddam-concept .sc-node[aria-pressed="true"] .sc-icon{filter:drop-shadow(0 0 6px var(--sc-gold))}
+#cw-saddam-concept .sc-node.sc-chosen .sc-bar{filter:sepia(.65) saturate(.6) brightness(1.55)}
+#cw-saddam-concept .sc-node.sc-rejected{opacity:.48}
+#cw-saddam-concept .sc-node.sc-context{opacity:.66}
+#cw-saddam-concept #sc-mini{position:absolute;right:10px;bottom:34px;width:160px;height:86px;border:1px solid #7f918c;background:var(--sc-deep);touch-action:none;cursor:crosshair}
+#cw-saddam-concept .sc-key{position:absolute;bottom:8px;left:10px;max-width:calc(100% - 20px);background:#17272fe8;color:var(--sc-muted);font-size:12px;pointer-events:none}
+#cw-saddam-concept #sc-status{padding:9px 16px;background:var(--sc-deep);color:var(--sc-muted)}
+#cw-saddam-concept #sc-detail{background:var(--sc-panel);padding:16px;overflow-wrap:anywhere}
+#cw-saddam-concept h3,#cw-saddam-concept h4{font-weight:400;color:var(--sc-gold);margin:0 0 8px}
+#cw-saddam-concept h3{font-size:18px}
+#cw-saddam-concept p{margin:8px 0}
+#cw-saddam-concept .sc-numeric{font-variant-numeric:tabular-nums}
+#cw-saddam-concept .sc-effect-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:4px 24px;margin:10px 0;padding:0;list-style:none}
+#cw-saddam-concept .sc-effect-list li{display:flex;justify-content:space-between;gap:16px;min-width:0}
+#cw-saddam-concept .sc-good{color:var(--sc-green)}
+#cw-saddam-concept .sc-bad{color:var(--sc-red)}
+#cw-saddam-concept .sc-asset{color:var(--sc-gold)}
+#cw-saddam-concept .sc-pair-head{padding:16px 16px 0}
+#cw-saddam-concept .sc-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:12px 16px}
+#cw-saddam-concept .sc-programme{min-width:0;background:var(--sc-panel);padding:14px;overflow-wrap:anywhere;border-top:2px solid #879388}
+#cw-saddam-concept .sc-programme.sc-active{border-top-color:var(--sc-gold)}
+#cw-saddam-concept .sc-programme .sc-effect-list{display:block}
+#cw-saddam-concept .sc-programme li{margin:4px 0}
+#cw-saddam-concept .sc-reason{color:var(--sc-muted);padding:0 16px 16px;margin:0}
+#cw-saddam-concept .sc-choice-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+#cw-saddam-concept .sc-notes{padding:12px 16px;overflow-wrap:anywhere}
+#cw-saddam-concept summary{color:var(--sc-gold)}
+#cw-saddam-concept a{color:var(--sc-gold)}
+#cw-saddam-concept .sc-context-note{color:var(--sc-muted)}
+@media(max-width:560px){#cw-saddam-concept .sc-comparison{grid-template-columns:1fr}#cw-saddam-concept #sc-map{height:470px}#cw-saddam-concept .sc-head{padding-right:85px}#cw-saddam-concept select{font-size:16px}#cw-saddam-concept button:not(.sc-node){min-height:44px}#cw-saddam-concept #sc-mini{width:130px;height:70px}#cw-saddam-concept .sc-key{max-width:calc(100% - 20px)}#cw-saddam-concept #sc-detail{padding:12px}}
+</style>
+<script>
+(async()=>{
+const root=document.getElementById('cw-saddam-concept');
+const packed=document.getElementById('cw-saddam-data').textContent.trim();
+const bytes=Uint8Array.from(atob(packed),c=>c.charCodeAt(0));
+const data=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).json();
+const $=s=>root.querySelector(s),map=$('#sc-map'),world=$('#sc-world'),svg=$('#sc-links'),mini=$('#sc-mini'),detail=$('#sc-detail'),compare=$('#sc-compare'),policy=$('#sc-policy'),focusSelect=$('#sc-focus');
+const nodes=new Map(data.nodes.map(n=>[n.id,n])),prefix='COLDWAR_IRQ_',pairs=new Map(data.pairs.map(p=>[p.id,p]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const atlas=new Image();await new Promise((resolve,reject)=>{atlas.onload=resolve;atlas.onerror=reject;atlas.src=data.font;});
+let selected=prefix+'saddam_personal_state',activePair='government',choices={},camera={x:0,y:0,z:1},drag=null,mode='pair',wheelTimer,blockedUntil=0,lastWidth=0,ready=false;
+function titleCanvas(text){const c=document.createElement('canvas');c.width=147;c.height=20;c.setAttribute('aria-hidden','true');const ctx=c.getContext('2d'),g=data.glyphs,k=data.kern;let w=0,prev=null;for(const ch of text){const cp=ch.codePointAt(0),a=g[cp]||g[63];w+=a[6]+(k[prev+','+cp]||0);prev=cp;}let x=Math.floor((147-w)/2);prev=null;for(const ch of text){const cp=ch.codePointAt(0),a=g[cp]||g[63];x+=k[prev+','+cp]||0;ctx.drawImage(atlas,a[0],a[1],a[2],a[3],x+a[4],2+a[5],a[2],a[3]);x+=a[6];prev=cp;}return c;}
+const pos=n=>({x:n.xy[0]*96,y:n.xy[1]*130});
+function bounds(kind){let ns=data.nodes;if(kind==='branch')ns=ns.filter(n=>n.g==='saddam');else if(kind==='pair')ns=ns.filter(n=>n.pair===activePair);const ps=ns.map(pos);return{left:Math.min(...ps.map(p=>p.x))-50,top:Math.min(...ps.map(p=>p.y))-115,right:Math.max(...ps.map(p=>p.x))+215,bottom:Math.max(...ps.map(p=>p.y))+115};}
+function minimap(){const ctx=mini.getContext('2d'),b=bounds('all'),w=b.right-b.left,h=b.bottom-b.top,s=Math.min(160/w,86/h),ox=(160-w*s)/2,oy=(86-h*s)/2;ctx.clearRect(0,0,160,86);for(const n of data.nodes){const p=pos(n);ctx.fillStyle=n.g==='saddam'?'#ddcc8b':'#8a9a9a';ctx.fillRect(ox+(p.x-b.left)*s,oy+(p.y-b.top)*s,Math.max(1,165*s),Math.max(1,80*s));}ctx.strokeStyle='#e6e6dc';ctx.lineWidth=1;ctx.strokeRect(ox+(-camera.x/camera.z-b.left)*s,oy+(-camera.y/camera.z-b.top)*s,map.clientWidth/camera.z*s,map.clientHeight/camera.z*s);mini._map={b,s,ox,oy};}
+function transform(){world.style.transform=`translate(${camera.x}px,${camera.y}px) scale(${camera.z})`;$('#sc-zoom').textContent=Math.round(camera.z*100)+'%';minimap();}
+function fit(kind='pair'){mode=kind;const b=bounds(kind),w=map.clientWidth,h=map.clientHeight-38;camera.z=Math.min(1,(w-18)/(b.right-b.left),(h-15)/(b.bottom-b.top));camera.x=(w-(b.right-b.left)*camera.z)/2-b.left*camera.z;camera.y=(h-(b.bottom-b.top)*camera.z)/2-b.top*camera.z;transform();}
+function zoom(f,x=map.clientWidth/2,y=map.clientHeight/2){mode='manual';const z=Math.max(.035,Math.min(1.8,camera.z*f));camera.x=x-(x-camera.x)*z/camera.z;camera.y=y-(y-camera.y)*z/camera.z;camera.z=z;transform();}
+function remember(){const value={modelContent:{phase:'Saddam concept; not installed',selectedFocus:nodes.get(selected)?.t,choices:Object.fromEntries(Object.entries(choices).map(([k,v])=>[k,nodes.get(prefix+pairs.get(k)[v==='A'?'left':'right'])?.t]))},privateContent:{version:'saddam-oct21-v1',selected,activePair,choices,camera:{...camera},mode}};window.openai?.setWidgetState?.(value)?.catch?.(()=>{});}
+function modRows(m){return Object.entries(m||{}).map(([key,v])=>{const [label,unit,good]=data.labels[key]||[key.replaceAll('_',' '),'%',1];return{label,value:`${v>=0?'+':''}${+(v*100).toFixed(2)}${unit==='pp'?' pp':'%'}`,kind:v*good>0?'good':'bad'};});}
+function instantRows(rewards){const out=[];for(const r of rewards||[]){if(r.type==='building'){const label={industrial_complex:'Civilian Industry',offices:'Office',arms_factory:'Military Industry',infrastructure:'Infrastructure'}[r.building],place={557:'Baghdad',166:'Nineveh',167:'Salahuddin',171:'Basrah',1124:'Maysan'}[r.state]||r.state;out.push({label:place,value:`Add ${r.levels} ${label}`,kind:'asset'});}else if(r.type==='research'){const cat={CAT_industry:'Industry',CAT_construction:'Construction',CAT_electronics:'Electronics',CAT_infrastructure:'Infrastructure',land_doctrine:'Land doctrine'}[r.category]||r.category;out.push({label:cat+(r.category==='land_doctrine'?' cost reduction':' research bonus'),value:`${Math.round(r.bonus*100)}% × ${r.uses}`,kind:'asset'});}else if(r.type==='army_experience')out.push({label:'Army experience',value:`+${r.value}`,kind:'asset'});else if(r.type==='literacy')out.push({label:'Literacy',value:`+${r.value*100} pp`,kind:'asset'},{label:'Research speed through literacy',value:'+2 pp',kind:'good'},{label:'Office productivity through literacy',value:'+2 pp',kind:'good'},{label:'Education expenditure contribution',value:'−4 pp',kind:'good'},{label:'Agricultural productivity contribution',value:'−2 pp',kind:'bad'});}return out;}
+function list(rows){return `<ul class="sc-effect-list sc-numeric">${rows.map(r=>`<li><span>${esc(r.label)}</span><span class="sc-${r.kind}">${esc(r.value)}</span></li>`).join('')}</ul>`;}
+function bundle(pair,side){return data.nodes.filter(n=>n.pair===pair&&n.side===side);}
+function totals(ns){const m={},instant=[];for(const n of ns){for(const [k,v]of Object.entries(n.m||{}))m[k]=(m[k]||0)+v;instant.push(...(n.instant||[]));}return [...instantRows(instant),...modRows(m)];}
+function paintChoices(){for(const el of world.querySelectorAll('.sc-node')){const n=nodes.get(el.dataset.node);el.setAttribute('aria-pressed',String(n.id===selected));el.classList.toggle('sc-chosen',!!n.pair&&choices[n.pair]===n.side);el.classList.toggle('sc-rejected',!!n.pair&&!!choices[n.pair]&&choices[n.pair]!==n.side);}}
+function choose(pair,side){if(choices[pair]===side)delete choices[pair];else choices[pair]=side;paintChoices();showCompare();status();remember();}
+function status(){const picked=Object.keys(choices).length;$('#sc-status').textContent=`${data.nodes.length} visible focuses · 25 proposed Saddam focuses · ${picked}/5 policy priorities selected · Preview only`+(picked?' · '+(2**(5-picked))+' remaining complete combinations':'');}
+function showCompare(){const p=pairs.get(activePair);if(!p){compare.replaceChildren();return;}compare.innerHTML=`<div class="sc-pair-head"><h3>${esc(p.title)}</h3><p>${esc(p.question)}</p></div><div class="sc-comparison">${['A','B'].map(side=>{const ns=bundle(p.id,side),entry=ns[0],days=ns.reduce((s,n)=>s+n.days,0),cost=ns.reduce((s,n)=>s+n.gdp,0);return `<div class="sc-programme${choices[p.id]===side?' sc-active':''}"><h4>${esc(entry.t)}</h4><p>${esc(ns.map(n=>n.t).join(' → '))}</p><p class="sc-numeric">${days} days · ${cost}% annual GDP · Two-focus total</p>${list(totals(ns))}<div class="sc-choice-actions"><button type="button" class="cursor-interaction" data-choose="${p.id}" data-side="${side}" aria-pressed="${choices[p.id]===side}">${choices[p.id]===side?'Selected':'Select this programme'}</button><button type="button" class="cursor-interaction" data-inspect="${entry.id}">Inspect</button></div></div>`;}).join('')}</div><p class="sc-reason">${esc(p.why)}</p>`;}
+function pick(id){const n=nodes.get(id);if(!n)return;selected=id;if(n.pair)activePair=n.pair;policy.value=activePair;focusSelect.value=n.g==='saddam'?id:'';paintChoices();const rows=[...instantRows(n.instant),...modRows(n.m)];detail.innerHTML=`<h3>${esc(n.t)}</h3>${n.context?'<p class="sc-context-note">Existing neighbouring branch · Current installed design</p>':`<p class="sc-numeric">${n.days} days${n.gdp?' · Cost: '+n.gdp+'% of annual GDP':' · No direct treasury cost'} · Proposed</p><p>Requires Saddam Hussein to lead a Baath Party government.</p>${n.id===prefix+'saddam_industrial_linkages'?'<p>Requires both an industrial programme and an education programme.</p>':''}`}<p>${esc(n.d)}</p>${list(rows)}${n.instant?.some(r=>r.type==='literacy')?'<p class="sc-context-note">Literacy gains stop at 100%. Displayed education effects are the marginal changes before that cap; productivity growth also rises by 0.08 in the native calculation.</p>':''}${!n.context?`<details><summary>Historical basis</summary><p>${esc(n.historical_basis)}</p>${n.notes.map(s=>`<p>${esc(s)}</p>`).join('')}<p>${n.sources.map(key=>`<a href="${esc(data.sources[key].url)}" target="_blank" rel="noopener noreferrer">${esc(data.sources[key].title)}</a>`).join(' · ')}</p></details>`:''}`;showCompare();compare.hidden=!!n.context;status();}
+const b=bounds('all');world.style.width=(b.right+200)+'px';world.style.height=(b.bottom+200)+'px';svg.setAttribute('width',b.right+200);svg.setAttribute('height',b.bottom+200);
+for(const n of data.nodes){const p=pos(n);for(const row of n.p)for(const id of row){const q=nodes.get(id);if(!q)continue;const a=pos(q),mid=(a.y+64+p.y)/2,path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',`M${a.x+80},${a.y+64} V${mid} H${p.x+80} V${p.y}`);svg.append(path);}for(const id of n.e){if(id<n.id)continue;const q=nodes.get(id);if(!q)continue;const a=pos(q),path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','sc-exclusive');path.setAttribute('d',`M${Math.min(p.x,a.x)+172},${p.y+24} H${Math.max(p.x,a.x)+12}`);svg.append(path);}const el=document.createElement('button');el.type='button';el.className='sc-node cursor-interaction'+(n.context?' sc-context':'');el.dataset.node=n.id;el.setAttribute('aria-label',n.t);el.setAttribute('data-tooltip',n.t);el.setAttribute('aria-pressed','false');el.style.left=p.x+'px';el.style.top=p.y+'px';el.innerHTML=`<img class="sc-icon" src="${data.images[data.icons[n.i]]}" alt=""><img class="sc-bar" src="${data.bar}" alt="">`;el.append(titleCanvas(n.t));world.append(el);}
+for(const p of data.pairs){const o=document.createElement('option');o.value=p.id;o.textContent={government:'Government',industry:'Industry',education:'Education',army:'Army',households:'Household policy'}[p.id];policy.append(o);}
+const empty=document.createElement('option');empty.value='';empty.textContent='Select a Saddam focus';focusSelect.append(empty);for(const n of data.nodes.filter(n=>n.g==='saddam')){const o=document.createElement('option');o.value=n.id;o.textContent=n.t;focusSelect.append(o);}
+$('#sc-gate').textContent=data.gate;$('#sc-lifecycle').textContent=data.lifecycle;$('#sc-retention').textContent=data.retention;
+map.addEventListener('contextmenu',e=>e.preventDefault());map.addEventListener('pointerdown',e=>{if(e.target===mini||e.button>2)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,cx:camera.x,cy:camera.y,moved:false,node:e.target.closest('.sc-node')?.dataset.node,button:e.button};map.setPointerCapture(e.pointerId);map.classList.add('dragging');e.preventDefault();});
+map.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)drag.moved=true;if(drag.moved){mode='manual';camera.x=drag.cx+dx;camera.y=drag.cy+dy;transform();}});
+map.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const last=drag;drag=null;map.classList.remove('dragging');if(map.hasPointerCapture(e.pointerId))map.releasePointerCapture(e.pointerId);if(last.moved){blockedUntil=performance.now()+180;remember();}else if(last.node&&last.button===0){pick(last.node);blockedUntil=performance.now()+180;remember();}});
+map.addEventListener('pointercancel',()=>{drag=null;map.classList.remove('dragging');});
+world.addEventListener('click',e=>{if(performance.now()<blockedUntil)return;const el=e.target.closest('.sc-node');if(el){pick(el.dataset.node);remember();}});
+map.addEventListener('wheel',e=>{e.preventDefault();const r=map.getBoundingClientRect(),unit=e.deltaMode===1?16:e.deltaMode===2?map.clientHeight:1,dx=e.deltaX*unit,dy=e.deltaY*unit;if(e.ctrlKey||e.metaKey)zoom(Math.exp(-dy*.0015),e.clientX-r.left,e.clientY-r.top);else{mode='manual';camera.x-=e.shiftKey?dx+dy:dx;camera.y-=e.shiftKey?0:dy;transform();}clearTimeout(wheelTimer);wheelTimer=setTimeout(remember,160);},{passive:false});
+function jump(e){const r=mini.getBoundingClientRect(),m=mini._map;if(!m)return;const x=(e.clientX-r.left)*160/r.width,y=(e.clientY-r.top)*86/r.height,wx=m.b.left+(x-m.ox)/m.s,wy=m.b.top+(y-m.oy)/m.s;mode='manual';camera.x=map.clientWidth/2-wx*camera.z;camera.y=map.clientHeight/2-wy*camera.z;transform();}
+mini.addEventListener('pointerdown',e=>{e.stopPropagation();mini.setPointerCapture(e.pointerId);jump(e);e.preventDefault();});mini.addEventListener('pointermove',e=>{if(mini.hasPointerCapture(e.pointerId))jump(e);});mini.addEventListener('pointerup',e=>{if(mini.hasPointerCapture(e.pointerId))mini.releasePointerCapture(e.pointerId);remember();});
+policy.addEventListener('change',()=>{activePair=policy.value;pick(prefix+pairs.get(activePair).left);fit('pair');remember();});focusSelect.addEventListener('change',()=>{if(!focusSelect.value)return;pick(focusSelect.value);const p=pos(nodes.get(selected));mode='manual';camera={x:map.clientWidth/2-p.x-82,y:map.clientHeight/2-p.y-45,z:Math.min(1,map.clientWidth/230)};transform();remember();});
+compare.addEventListener('click',e=>{const c=e.target.closest('[data-choose]'),i=e.target.closest('[data-inspect]');if(c)choose(c.dataset.choose,c.dataset.side);if(i){pick(i.dataset.inspect);fit('pair');remember();}});
+$('#sc-branch').onclick=()=>{fit('branch');remember();};$('#sc-all').onclick=()=>{fit('all');remember();};$('#sc-native').onclick=()=>{const p=pos(nodes.get(selected));mode='manual';camera={x:map.clientWidth/2-p.x-82,y:map.clientHeight/2-p.y-45,z:1};transform();remember();};$('#sc-minus').onclick=()=>{zoom(.8);remember();};$('#sc-plus').onclick=()=>{zoom(1.25);remember();};
+function restore(value){const p=value?.privateContent;if(p?.version!=='saddam-oct21-v1'||!nodes.has(p.selected))return false;selected=p.selected;activePair=pairs.has(p.activePair)?p.activePair:'government';choices=Object.fromEntries(Object.entries(p.choices||{}).filter(([k,v])=>pairs.has(k)&&['A','B'].includes(v)));pick(selected);if(p.camera&&[p.camera.x,p.camera.y,p.camera.z].every(Number.isFinite)){camera={...p.camera,z:Math.max(.035,Math.min(1.8,p.camera.z))};mode=p.mode||'manual';transform();}else fit('pair');return true;}
+window.addEventListener('openai:set_globals',e=>{if(e.detail?.globals?.widgetState)restore(e.detail.globals.widgetState);});
+if(!restore(window.openai?.widgetState)){pick(selected);fit('pair');}ready=true;lastWidth=map.clientWidth;new ResizeObserver(()=>{if(!ready)return;const w=map.clientWidth;if(mode==='manual'){camera.x+=(w-lastWidth)/2;transform();}else fit(mode);lastWidth=w;}).observe(map);
+root.dataset.ready='true';root._viewer={data,pick,choose,fit,camera:()=>({...camera}),current:()=>({selected,activePair,choices:{...choices}})};
+})().catch(error=>{const root=document.getElementById('cw-saddam-concept');root.querySelector('#sc-detail').innerHTML='<p role="alert">The focus concept could not load.</p>';console.error(error);});
+</script>

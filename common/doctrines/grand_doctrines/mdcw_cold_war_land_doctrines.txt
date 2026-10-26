@@ -1,0 +1,493 @@
+# IMPERIA CW — Cold War: land doctrines — game content.
+# COLDWAR | Cold War land grand doctrines (MD doctrine system: folder land, 6 tracks, 6 milestones in track order).
+# Every doctrine is available to every country from the start date; ai_will_do only flavours AI choices.
+# Mastery synergies use <track>_track_mastery_gain_factor: <subdoctrine>_mastery_gain_factor is not defined yet when grand doctrines load (error.log: Unexpected token).
+
+mdcw_deep_operation = {
+	folder = land
+
+	name = GRAND_DOCTRINE_MDCW_DEEP_OPERATION
+	description = GRAND_DOCTRINE_MDCW_DEEP_OPERATION_DESC
+	icon = GFX_doctrine_mdcw_deep_operation
+	available = {
+		always = yes
+	}
+
+	xp_cost = 100
+	xp_type = army
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 5
+			has_government = communism
+			num_of_military_factories > 25
+		}
+		modifier = {
+			add = 35
+			original_tag = SOV
+		}
+		modifier = {
+			factor = 0
+			is_non_power = yes
+		}
+	}
+
+	tracks = {
+		structure_doctrine
+		operational_theory
+		operational_theory
+		dedicated_doctrine
+		training
+		technology
+	}
+
+	# EFFECTS
+	breakthrough_factor = 0.05
+	army_armor_attack_factor = 0.05
+	initiative_factor = -0.05
+	operational_theory_track_mastery_gain_factor = 0.15 # Deep Battle, Maskirovka
+	dedicated_doctrine_track_mastery_gain_factor = 0.15
+	structure_doctrine_track_mastery_gain_factor = 0.1
+	enable_tactic = tactic_breakthrough
+
+	milestones = {
+		{
+			#1 Operational norms
+			planning_speed = 0.1
+			max_planning_factor = 0.05
+		}
+		{
+			#2 Echeloned advance
+			army_armor_speed_factor = 0.05
+			org_loss_when_moving = -0.1
+		}
+		{
+			#3 Artillery offensive
+			army_artillery_attack_factor = 0.1
+			enable_tactic = tactic_deep_battle_breakthrough
+		}
+		{
+			#4 Operational manoeuvre groups
+			army_attack_speed_factor = 0.1
+			breakthrough_factor = 0.05
+		}
+		{
+			#5 Second-echelon relief
+			land_reinforce_rate = 0.05
+			army_org_regain = 0.05
+		}
+		{
+			#6 Reconnaissance-strike complex
+			recon_factor = 0.1
+			coordination_bonus = 0.05
+		}
+	}
+}
+
+mdcw_active_defense = {
+	folder = land
+
+	name = GRAND_DOCTRINE_MDCW_ACTIVE_DEFENSE
+	description = GRAND_DOCTRINE_MDCW_ACTIVE_DEFENSE_DESC
+	icon = GFX_doctrine_mdcw_active_defense
+	available = {
+		always = yes
+	}
+
+	xp_cost = 100
+	xp_type = army
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 10
+			has_defensive_war = yes
+		}
+		modifier = {
+			add = 5
+			has_government = democratic
+			is_major_power = yes
+		}
+		modifier = {
+			add = 35
+			original_tag = USA
+			date < 1982.1.1
+		}
+		modifier = {
+			add = 35
+			original_tag = GER
+		}
+	}
+
+	tracks = {
+		structure_doctrine
+		operational_theory
+		dedicated_doctrine
+		training
+		leadership
+		technology
+	}
+
+	# EFFECTS
+	army_defence_factor = 0.05
+	dig_in_speed_factor = 0.1
+	operational_theory_track_mastery_gain_factor = 0.1 # Mobile Defense
+	dedicated_doctrine_track_mastery_gain_factor = 0.1
+	enable_tactic = tactic_delay
+
+	milestones = {
+		{
+			#1 Concentrate at the critical point
+			coordination_bonus = 0.1
+		}
+		{
+			#2 Lateral redeployment
+			army_retreat_speed_factor = 0.1
+			org_loss_when_moving = -0.1
+		}
+		{
+			#3 Anti-tank killing zones
+			category_front_line = {
+				hard_attack = 0.1
+			}
+			enable_tactic = tactic_flexible_lines
+		}
+		{
+			#4 Win the first battle
+			experience_gain_army_unit_factor = 0.1
+			experience_loss_factor = -0.1
+		}
+		{
+			#5 Fight outnumbered and win
+			army_leader_start_defense_level = 1
+			army_core_defence_factor = 0.05
+		}
+		{
+			#6 Forward defence
+			cas_damage_reduction = 0.1
+			army_defence_against_major_factor = 0.05
+		}
+	}
+}
+
+mdcw_airland_battle = {
+	folder = land
+
+	name = GRAND_DOCTRINE_MDCW_AIRLAND_BATTLE
+	description = GRAND_DOCTRINE_MDCW_AIRLAND_BATTLE_DESC
+	icon = GFX_doctrine_mdcw_airland_battle
+	available = {
+		always = yes
+	}
+
+	xp_cost = 100
+	xp_type = army
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 5
+			has_government = democratic
+			num_of_military_factories > 30
+		}
+		modifier = {
+			add = 35
+			original_tag = USA
+			date > 1981.12.31
+		}
+		modifier = {
+			factor = 0
+			is_non_power = yes
+		}
+	}
+
+	tracks = {
+		structure_doctrine
+		operational_theory
+		dedicated_doctrine
+		leadership
+		technology
+		technology
+	}
+
+	# EFFECTS
+	initiative_factor = 0.05
+	army_bonus_air_superiority_factor = 0.1
+	army_fuel_consumption_factor = 0.05
+	structure_doctrine_track_mastery_gain_factor = 0.15 # Decentralized Command
+	technology_track_mastery_gain_factor = 0.15
+
+	milestones = {
+		{
+			#1 Synchronisation
+			coordination_bonus = 0.1
+			planning_speed = 0.05
+		}
+		{
+			#2 Agility
+			army_attack_speed_factor = 0.1
+			army_speed_factor = 0.05
+		}
+		{
+			#3 Deep attack on follow-on forces
+			breakthrough_factor = 0.05
+			recon_factor = 0.1
+			enable_tactic = tactic_pincer_recon
+		}
+		{
+			#4 Commander's intent
+			army_leader_start_attack_level = 1
+			army_leader_start_planning_level = 1
+		}
+		{
+			#5 Own the night
+			land_night_attack = 0.1
+			enable_tactic = tactic_mobile_recon
+		}
+		{
+			#6 Joint air-land strike
+			air_superiority_bonus_in_combat = 0.05
+			army_attack_factor = 0.05
+		}
+	}
+}
+
+mdcw_peoples_war = {
+	folder = land
+
+	name = GRAND_DOCTRINE_MDCW_PEOPLES_WAR
+	description = GRAND_DOCTRINE_MDCW_PEOPLES_WAR_DESC
+	icon = GFX_doctrine_mdcw_peoples_war
+	available = {
+		always = yes
+	}
+
+	xp_cost = 100
+	xp_type = army
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 5
+			has_government = communism
+			NOT = { is_major_power = yes }
+		}
+		modifier = {
+			add = 35
+			OR = {
+				original_tag = CHI
+				original_tag = VIE
+			}
+		}
+	}
+
+	tracks = {
+		structure_doctrine
+		operational_theory
+		operational_theory
+		dedicated_doctrine
+		training
+		leadership
+	}
+
+	# EFFECTS
+	recruitable_population_factor = 0.05
+	army_core_defence_factor = 0.05
+	unit_Militia_Bat_design_cost_factor = -0.25
+	unit_Mot_Militia_Bat_design_cost_factor = -0.25
+	operational_theory_track_mastery_gain_factor = 0.15 # Light Infantry Warfare
+	enable_tactic = tactic_mdcw_grab_the_belt
+
+	milestones = {
+		{
+			#1 Porters and the trail
+			supply_consumption_factor = -0.1
+			no_supply_grace = 48
+		}
+		{
+			#2 Lure the enemy in deep
+			army_core_attack_factor = 0.05
+			resistance_growth_on_our_occupied_states = 0.1
+		}
+		{
+			#3 Arm yourself from the enemy
+			terrain_penalty_reduction = 0.1
+			equipment_capture_factor = 0.1
+		}
+		{
+			#4 Protracted war
+			army_defence_against_major_factor = 0.1
+			army_attack_against_major_factor = 0.05
+		}
+		{
+			#5 Militia into regulars
+			minimum_training_level = -0.25
+			training_time_army_factor = -0.1
+		}
+		{
+			#6 Political work in the army
+			army_morale_factor = 0.1
+			land_reinforce_rate = 0.05
+		}
+	}
+}
+
+mdcw_total_defence = {
+	folder = land
+
+	name = GRAND_DOCTRINE_MDCW_TOTAL_DEFENCE
+	description = GRAND_DOCTRINE_MDCW_TOTAL_DEFENCE_DESC
+	icon = GFX_doctrine_mdcw_total_defence
+	available = {
+		always = yes
+	}
+
+	xp_cost = 100
+	xp_type = army
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 5
+			NOT = { has_expansionist_government = yes }
+			NOT = { is_major_power = yes }
+		}
+		modifier = {
+			add = 35
+			OR = {
+				original_tag = SWE
+				original_tag = SWI
+				original_tag = SER # Yugoslavia in 1970
+				original_tag = FIN
+			}
+		}
+		modifier = {
+			factor = 0.2
+			has_expansionist_government = yes
+		}
+	}
+
+	tracks = {
+		structure_doctrine
+		operational_theory
+		dedicated_doctrine
+		training
+		training
+		technology
+	}
+
+	# EFFECTS
+	army_core_defence_factor = 0.1
+	max_dig_in_factor = 0.1
+	army_non_core_attack_factor = -0.05
+	operational_theory_track_mastery_gain_factor = 0.15 # Static Defense
+	enable_tactic = tactic_dedicated_emplacements
+
+	milestones = {
+		{
+			#1 Mobilisation within 72 hours
+			recruitable_population_factor = 0.05
+			land_reinforce_rate = 0.05
+		}
+		{
+			#2 Prepared defensive terrain
+			dig_in_speed_factor = 0.15
+			recon_factor_while_entrenched = 0.1
+		}
+		{
+			#3 National redoubt
+			land_bunker_effectiveness_factor = 0.1
+			production_speed_bunker_factor = 0.15
+			enable_tactic = tactic_spartan_defense
+		}
+		{
+			#4 Reservist refresher courses
+			experience_loss_factor = -0.15
+			training_time_army_factor = -0.05
+		}
+		{
+			#5 Resistance shall continue
+			org_loss_at_low_org_factor = -0.2
+			surrender_limit = 0.05
+		}
+		{
+			#6 Dispersal and hardened shelters
+			cas_damage_reduction = 0.1
+			pocket_penalty = -0.2
+		}
+	}
+}
+
+mdcw_fanatical_struggle = {
+	folder = land
+
+	name = GRAND_DOCTRINE_MDCW_FANATICAL_STRUGGLE
+	description = GRAND_DOCTRINE_MDCW_FANATICAL_STRUGGLE_DESC
+	icon = GFX_doctrine_mdcw_fanatical_struggle
+	available = {
+		always = yes
+	}
+
+	xp_cost = 100
+	xp_type = army
+
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 40
+			original_tag = NKO
+		}
+	}
+
+	tracks = {
+		structure_doctrine
+		operational_theory
+		dedicated_doctrine
+		training
+		leadership
+		leadership
+	}
+
+	# EFFECTS
+	army_morale_factor = 0.1
+	org_loss_at_low_org_factor = -0.2
+	drift_defence_factor = 0.15
+	experience_loss_factor = 0.1
+	coordination_bonus = -0.05
+	enable_tactic = tactic_mdcw_human_wave
+	enable_tactic = tactic_mdcw_fanatical_last_stand
+
+	milestones = {
+		{
+			#1 Cult of the leader
+			war_support_factor = 0.1
+			army_org_factor = 0.05
+		}
+		{
+			#2 Massed assaults
+			army_infantry_attack_factor = 0.1
+			breakthrough_factor = 0.05
+		}
+		{
+			#3 Night infiltration
+			land_night_attack = 0.1
+			initiative_factor = 0.05
+		}
+		{
+			#4 Mass indoctrination
+			minimum_training_level = -0.25
+			recruitable_population_factor = 0.05
+		}
+		{
+			#5 Political officers in every company
+			army_morale_factor = 0.1
+			army_core_defence_factor = 0.1
+		}
+		{
+			#6 Never surrender
+			surrender_limit = 0.5
+			org_loss_at_low_org_factor = -0.15
+		}
+	}
+}

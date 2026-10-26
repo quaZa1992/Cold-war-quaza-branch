@@ -1,0 +1,1062 @@
+# IMPERIA CW — Cold War: Imperia oil prices scripted effects — scripted effects.
+#########################################################################################
+# Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
+#########################################################################################
+
+imp_calculate_oil_producers = {
+    every_country = {
+        set_variable = { imp_oil_export_surplus = resource_exported@oil }
+        subtract_from_variable = { imp_oil_export_surplus = resource_imported@oil }
+
+        # Cold War: update existing saves to the stronger premium asking-price tiers.
+        imp_sync_premium_oil_asking_price = yes
+
+        remove_ideas = imp_major_oil_exporter
+        remove_ideas = imp_minor_oil_exporter
+    }
+
+    clear_array = global.major_oil_exporters
+    clear_array = global.minor_oil_exporters
+
+    for_loop_effect = {
+        end = 15
+        value = i
+
+        set_temp_variable = { oil_exp_amount_t = -1000 }
+
+        every_country = {
+            if = { 
+                limit = { 
+                    check_variable = { imp_oil_export_surplus > oil_exp_amount_t }
+                    NOT = {
+                        OR = {  
+                            is_in_array = { array = global.major_oil_exporters value = THIS } 
+                            is_in_array = { array = global.minor_oil_exporters value = THIS } 
+                        }
+                    }   
+                }
+                
+                set_temp_variable = { oil_exp_nation_t = THIS }
+                set_temp_variable = { oil_exp_amount_t = imp_oil_export_surplus }
+            }
+        }
+
+        if = { 
+            limit = { 
+                check_variable = { oil_exp_amount_t > 0 }
+            }
+
+            if = { 
+                limit = { 
+                    check_variable = { i < 3 } 
+                }
+
+                add_to_array = {
+                    array = global.major_oil_exporters 
+                    value = oil_exp_nation_t
+                }
+            }
+            else = {
+                add_to_array = {
+                    array = global.minor_oil_exporters 
+                    value = oil_exp_nation_t
+                }
+            }
+        }
+    }
+
+    for_each_scope_loop = {
+        array = global.major_oil_exporters 
+        add_ideas = imp_major_oil_exporter
+    }
+
+    for_each_scope_loop = {
+        array = global.minor_oil_exporters 
+        add_ideas = imp_minor_oil_exporter
+    }
+}
+
+imp_sync_premium_oil_asking_price = {
+    if = { limit = { has_idea = imp_oil_prices_ask_11 }
+        set_variable = { imp_oil_export_adjustment = 1.55 }
+    }
+    else_if = { limit = { has_idea = imp_oil_prices_ask_10 }
+        set_variable = { imp_oil_export_adjustment = 1.3 }
+    }
+    else_if = { limit = { has_idea = imp_oil_prices_ask_9 }
+        set_variable = { imp_oil_export_adjustment = 1.05 }
+    }
+    else_if = { limit = { has_idea = imp_oil_prices_ask_8 }
+        set_variable = { imp_oil_export_adjustment = 0.8 }
+    }
+    else_if = { limit = { has_idea = imp_oil_prices_ask_7 }
+        set_variable = { imp_oil_export_adjustment = 0.55 }
+    }
+    else_if = { limit = { has_idea = imp_oil_prices_ask_6 }
+        set_variable = { imp_oil_export_adjustment = 0.3 }
+    }
+}
+
+imp_calculate_oil_dependency = {
+    every_country = {
+        # Determine a nation's dependency on oil. The base is 40%. We can never get lower than that unless we have resistance but the absolute cap is 20%.
+        set_variable = { imp_oil_dependency = 0.4 }
+
+        # Then the next 0.3 is determined by our share of power plants being fossil fuel
+        set_temp_variable = { imp_fossil_p = fossil_pp_energy_generation }
+        divide_temp_variable = { imp_fossil_p = energy_sum }
+        set_temp_variable = { imp_fossil_mod = 0.3 }
+        multiply_temp_variable = { imp_fossil_mod = imp_fossil_p }
+        add_to_variable = { imp_oil_dependency = imp_fossil_mod }
+
+        # Then the next 0.3 is determined by pop fuel usage
+        set_temp_variable = { imp_pop_use_mod = modifier@non_electric_fuel_consumption_modifier }
+        add_to_temp_variable = { imp_pop_use_mod = 1 }
+        multiply_temp_variable = { imp_pop_use_mod = 0.3 }
+        add_to_variable = { imp_oil_dependency = imp_pop_use_mod }
+
+        # Then we add the modifier.
+        subtract_from_variable = { imp_oil_dependency = modifier@imp_oil_price_resistance }
+
+        # clamp it. Add it.
+        clamp_variable = { var = imp_oil_dependency min = 0.2 max = 1 }
+
+        # Let's only count nations with more than 100b gdp for the oil dependency.
+        if = { 
+            limit = { 
+                check_variable = { mdcw_era_gdp > 100 } # COLDWAR era reference (2000 $)
+            }
+            add_to_variable = { global.tot_dep = imp_oil_dependency }
+            add_to_variable = { global.numRelCforOilDep = 1 }
+        }
+    }
+}
+
+imp_calculate_oil_equilibrium = {
+    ### The Oil Price fluctuates towards the base price.
+    ### The base price is decided by the oil policies of the largest oil producers.
+    ### The base oil price is $75
+
+    # First get all the oil exports
+    for_each_scope_loop = {
+        array = global.major_oil_exporters 
+        add_to_temp_variable = { total_oil_exports_t = imp_oil_export_surplus }
+    }
+    for_each_scope_loop = {
+        array = global.minor_oil_exporters 
+        add_to_temp_variable = { total_oil_exports_t = imp_oil_export_surplus }
+    }
+
+    # Set the base price
+    set_variable = { global.imp_global_oil_price_equilibrium = 75 }
+
+    # Then let's get the % of each major and minor exporter
+    for_each_scope_loop = {
+        array = global.major_oil_exporters 
+
+        # Set %
+        set_variable = { imp_oil_export_p = imp_oil_export_surplus }
+        divide_variable = { imp_oil_export_p = total_oil_exports_t }
+        clamp_variable = { var = imp_oil_export_p min = 0.01 max = 1 }
+
+        # Base price
+        set_temp_variable = { price_adjustment_t = 75 }
+        multiply_temp_variable = { price_adjustment_t = imp_oil_export_p }
+        
+        # Adjustment of equilibrium price
+        multiply_temp_variable = { price_adjustment_t = imp_oil_export_adjustment }
+        add_to_variable = { global.imp_global_oil_price_equilibrium = price_adjustment_t }
+    }
+
+    for_each_scope_loop = {
+        array = global.minor_oil_exporters 
+
+        # Set %
+        set_variable = { imp_oil_export_p = imp_oil_export_surplus }
+        divide_variable = { imp_oil_export_p = total_oil_exports_t }
+        clamp_variable = { var = imp_oil_export_p min = 0.001 max = 1 }
+
+        # Base price
+        set_temp_variable = { price_adjustment_t = 75 }
+        multiply_temp_variable = { price_adjustment_t = imp_oil_export_p }
+        
+        # Adjustment of equilibrium price
+        multiply_temp_variable = { price_adjustment_t = imp_oil_export_adjustment }
+        add_to_variable = { global.imp_global_oil_price_equilibrium = price_adjustment_t }
+    }
+
+    # Now multiply it by the global dependence.
+    multiply_variable = { global.imp_global_oil_price_equilibrium = global.tot_dep }
+    
+    # MD Cold War: Cold War Equilibrium risk premium. Cold War Tension above 50 makes buyers
+    # pay for the risk of supply disruption (0.3 USD per tension point above 50).
+    set_variable = { global.mdcw_cw_oil_premium = 0 }
+    if = {
+        limit = {
+            has_global_flag = mdcw_cw_initialized
+            check_variable = { global.mdcw_cw_tension > 50 }
+        }
+        set_variable = { global.mdcw_cw_oil_premium = global.mdcw_cw_tension }
+        subtract_from_variable = { global.mdcw_cw_oil_premium = 50 }
+        multiply_variable = { global.mdcw_cw_oil_premium = 0.3 }
+        add_to_variable = { global.imp_global_oil_price_equilibrium = global.mdcw_cw_oil_premium }
+    }
+    # Clamp it to a reasonable value
+    clamp_variable = { var = global.imp_global_oil_price_equilibrium min = 30 max = 135 }
+}
+
+imp_weekly_oil_price_change = {
+    # Now that we have the equilibrium, move the actual price towards the equilibrium
+    set_temp_variable = { oil_tick_adjustment_t = global.imp_global_oil_price_equilibrium }
+    subtract_from_temp_variable = { oil_tick_adjustment_t = global.imp_global_oil_price }
+    multiply_temp_variable = { oil_tick_adjustment_t = 0.075 }
+
+    # We additionally adjust the price a little depending on the equilibrium
+    if = {
+        limit = {
+            OR = { 
+                AND = { 
+                    check_variable = { oil_tick_adjustment_t < 0 }
+                    check_variable = { global.imp_global_oil_price_equilibrium < 50 }
+                }
+                AND = {
+                    check_variable = { oil_tick_adjustment_t > 0 }
+                    check_variable = { global.imp_global_oil_price_equilibrium > 100 }
+                }
+            }
+        }
+        multiply_temp_variable = { oil_tick_adjustment_t = 1.5 }
+    }
+
+    add_to_variable = { global.imp_global_oil_price = oil_tick_adjustment_t }
+    clamp_variable = { var = global.imp_global_oil_price min = 15 max = 200 }
+
+    # MD Cold War: effective price includes producer level and the cached world embargo premium.
+    set_variable = { global.imp_oil_price_effective = global.imp_global_oil_price }
+    if = {
+        limit = { has_variable = global.mdcw_cw_oil_level }
+        multiply_variable = { global.imp_oil_price_effective = global.mdcw_cw_oil_level }
+    }
+    if = {
+        limit = { has_variable = global.mdcw_cw_oil_embargo_world_multiplier }
+        multiply_variable = { global.imp_oil_price_effective = global.mdcw_cw_oil_embargo_world_multiplier }
+    }
+
+    # Let's assign dynamic modifiers
+    if = { 
+        limit = { check_variable = { global.imp_oil_price_effective > 100 } }
+
+        every_country = { 
+            if = {
+                limit = { 
+                    has_dynamic_modifier = { modifier = imp_oil_prices }
+                }
+                remove_dynamic_modifier = { modifier = imp_oil_prices }
+                add_dynamic_modifier = { modifier = imp_oil_prices_high }
+            }
+            else_if = {
+                limit = {
+                    has_dynamic_modifier = { modifier = imp_oil_prices_low }
+                }
+                remove_dynamic_modifier = { modifier = imp_oil_prices_low }
+                add_dynamic_modifier = { modifier = imp_oil_prices_high }
+            }
+            else_if = {
+                limit = { 
+                    NOT = {  
+                        has_dynamic_modifier = { modifier = imp_oil_prices_high }
+                    }
+                }
+                add_dynamic_modifier = { modifier = imp_oil_prices_high }
+            }
+        }
+    }
+    else_if = {
+        limit = { check_variable = { global.imp_oil_price_effective < 50 } }
+
+        every_country = { 
+            if = { 
+                limit = { 
+                    has_dynamic_modifier = { modifier = imp_oil_prices }
+                }
+                remove_dynamic_modifier = { modifier = imp_oil_prices }
+                add_dynamic_modifier = { modifier = imp_oil_prices_low }
+            }
+            else_if = {
+                limit = {
+                    has_dynamic_modifier = { modifier = imp_oil_prices_high }
+                }
+                remove_dynamic_modifier = { modifier = imp_oil_prices_high }
+                add_dynamic_modifier = { modifier = imp_oil_prices_low }
+            }
+            else_if = {
+                limit = { 
+                    NOT = {  
+                        has_dynamic_modifier = { modifier = imp_oil_prices_low }
+                    }
+                }
+                add_dynamic_modifier = { modifier = imp_oil_prices_low }
+            }
+        }
+    }
+    else = {
+        every_country = { 
+            if = { 
+                limit = { 
+                    has_dynamic_modifier = { modifier = imp_oil_prices_high }
+                }
+                remove_dynamic_modifier = { modifier = imp_oil_prices_high }
+                add_dynamic_modifier = { modifier = imp_oil_prices }
+            }
+            else_if = {
+                limit = {
+                    has_dynamic_modifier = { modifier = imp_oil_prices_low }
+                }
+                remove_dynamic_modifier = { modifier = imp_oil_prices_low }
+                add_dynamic_modifier = { modifier = imp_oil_prices }
+            }
+            else_if = {
+                limit = { 
+                    NOT = {  
+                        has_dynamic_modifier = { modifier = imp_oil_prices }
+                    }
+                }
+                add_dynamic_modifier = { modifier = imp_oil_prices }
+            }
+        }
+    }
+
+    # Let's assign the values for the dynamic modifiers
+    # MD Cold War: decided per country by the price it feels (OPEC price level, embargo shortage).
+    every_country = {
+        set_temp_variable = { imp_oil_factor_t = global.imp_global_oil_price }
+        mdcw_cw_oil_effective_price = yes
+        set_variable = { mdcw_cw_oil_crisis_ratio = imp_oil_factor_t }
+        divide_variable = { mdcw_cw_oil_crisis_ratio = 75 }
+        if = {
+            limit = {
+                check_variable = { imp_oil_factor_t > 75 }
+            }
+            imp_calculate_oil_dynamic_modifiers_high = yes
+        }
+        else = {
+            imp_calculate_oil_dynamic_modifiers_low = yes
+        }
+        # MD Cold War: discrete, dependency-scaled energy-crisis stages supplement Imperia's effects.
+        mdcw_cw_update_oil_crisis_tier = yes
+    }
+
+    # MD Cold War: price shown to the player in the dollars of the scenario year.
+    imp_update_oil_price_display = yes
+}
+
+# MD Cold War: the oil model runs in model dollars (75 = normal price). Displayed price = model price
+# x global.imp_oil_price_unit, which is base unit x OPEC price level x US consumer prices (1970 = 1).
+# Base unit: 1970 game 1.80 / 75 = 0.024 (January 1970 posted price of Arabian Light); other
+# scenarios 1 (OPEC level and consumer prices only exist in the 1970 game).
+imp_update_oil_price_display = {
+    if = {
+        limit = { NOT = { has_variable = global.imp_oil_price_base_unit } }
+        # Savegames from before the display existed
+        if = {
+            limit = { IMP_is_1970_scenario = yes }
+            set_variable = { global.imp_oil_price_base_unit = 0.024 }
+        }
+        else = {
+            set_variable = { global.imp_oil_price_base_unit = 1 }
+        }
+    }
+    set_variable = { global.imp_oil_price_unit = global.imp_oil_price_base_unit }
+    if = {
+        limit = { has_variable = global.mdcw_cw_oil_level }
+        multiply_variable = { global.imp_oil_price_unit = global.mdcw_cw_oil_level }
+    }
+    if = {
+        limit = { has_variable = global.mdcw_cw_oil_embargo_world_multiplier }
+        multiply_variable = { global.imp_oil_price_unit = global.mdcw_cw_oil_embargo_world_multiplier }
+    }
+    # Price in dollars of the base year (1970 dollars in the 1970 game)
+    set_variable = { global.imp_oil_price_real_display = global.imp_global_oil_price }
+    multiply_variable = { global.imp_oil_price_real_display = global.imp_oil_price_unit }
+    if = {
+        limit = { has_variable = global.mdcw_cw_cpi }
+        multiply_variable = { global.imp_oil_price_unit = global.mdcw_cw_cpi }
+    }
+    set_variable = { global.imp_oil_price_display = global.imp_global_oil_price }
+    multiply_variable = { global.imp_oil_price_display = global.imp_oil_price_unit }
+    set_variable = { global.imp_oil_price_equilibrium_display = global.imp_global_oil_price_equilibrium }
+    multiply_variable = { global.imp_oil_price_equilibrium_display = global.imp_oil_price_unit }
+}
+
+imp_calculate_oil_dynamic_modifiers_high = {
+    # Normalize
+    set_temp_variable = { imp_oil_factor_t = global.imp_global_oil_price }
+    # MD Cold War: price this country feels (OPEC price level, embargo shortage)
+    mdcw_cw_oil_effective_price = yes
+    subtract_from_temp_variable = { imp_oil_factor_t = 75 }
+    divide_temp_variable = { imp_oil_factor_t = 125 }
+    # MD Cold War: above 200 the burden flattens; exporters' income stays linear (imp_oil_factor_exp_t)
+    mdcw_cw_oil_consequence_factor = yes
+
+    # At Max Oil Price:
+    # +50% Investment Duration
+    set_variable = { imp_oil_invest = imp_oil_factor_t }
+    multiply_variable = { imp_oil_invest = 0.50 }
+    multiply_variable = { imp_oil_invest = imp_oil_dependency }
+    
+    # -15% Tax Income
+    set_variable = { imp_oil_tax = imp_oil_factor_t }
+    multiply_variable = { imp_oil_tax = -0.15 }
+    multiply_variable = { imp_oil_tax = imp_oil_dependency }
+
+    # +20% Social Cost
+    set_variable = { imp_oil_soc = imp_oil_factor_t }
+    multiply_variable = { imp_oil_soc = 0.2 }
+    multiply_variable = { imp_oil_soc = imp_oil_dependency }
+
+    # -1 Productivity
+    set_variable = { imp_oil_prod = imp_oil_factor_t }
+    multiply_variable = { imp_oil_prod = -1 }
+    multiply_variable = { imp_oil_prod = imp_oil_dependency }
+
+    # +20% Tax Cost
+    set_variable = { imp_oil_cost = imp_oil_factor_t }
+    multiply_variable = { imp_oil_cost = 0.2 }
+    multiply_variable = { imp_oil_cost = imp_oil_dependency }
+
+    # +80% oil import money
+    set_variable = { imp_oil_exp = imp_oil_factor_exp_t }
+    multiply_variable = { imp_oil_exp = 0.8 }
+    multiply_variable = { imp_oil_exp = global.tot_dep }
+}
+
+imp_calculate_oil_dynamic_modifiers_low = {
+     # Normalize
+    # MD Cold War: price this country feels (OPEC price level, embargo shortage)
+    set_temp_variable = { imp_oil_factor_t = global.imp_global_oil_price }
+    mdcw_cw_oil_effective_price = yes
+    set_temp_variable = { imp_oil_eff_t = imp_oil_factor_t }
+    set_temp_variable = { imp_oil_factor_t = 75 }
+    subtract_from_temp_variable = { imp_oil_factor_t = imp_oil_eff_t }
+    divide_temp_variable = { imp_oil_factor_t = 75 }
+
+    # At Min oil Prices:
+    # -40% Investment Duration
+    set_variable = { imp_oil_invest = imp_oil_factor_t }
+    multiply_variable = { imp_oil_invest = -0.4 }
+    multiply_variable = { imp_oil_invest = imp_oil_dependency }
+
+    # +7.5% Tax Income
+    set_variable = { imp_oil_tax = imp_oil_factor_t }
+    multiply_variable = { imp_oil_tax = 0.075 }
+    multiply_variable = { imp_oil_tax = imp_oil_dependency }
+
+    # -10% Social Cost
+    set_variable = { imp_oil_soc = imp_oil_factor_t }
+    multiply_variable = { imp_oil_soc = -0.1 }
+    multiply_variable = { imp_oil_soc = imp_oil_dependency }
+
+    # +1 Productivity
+    set_variable = { imp_oil_prod = imp_oil_factor_t }
+    multiply_variable = { imp_oil_prod = 1 }
+    multiply_variable = { imp_oil_prod = imp_oil_dependency }
+
+    # -15% Tax Cost
+    set_variable = { imp_oil_cost = imp_oil_factor_t }
+    multiply_variable = { imp_oil_cost = -0.15 }
+    multiply_variable = { imp_oil_cost = imp_oil_dependency }
+
+    # -80% oil import money
+    set_variable = { imp_oil_exp = imp_oil_factor_t }
+    multiply_variable = { imp_oil_exp = -0.8 }
+    multiply_variable = { imp_oil_exp = global.tot_dep }
+}
+
+imp_oil_price_demand_raise = {
+    if = { 
+        limit = { has_idea = imp_oil_prices_ask_1 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_1
+            add_idea = imp_oil_prices_ask_2
+        }
+        set_variable = { imp_oil_export_adjustment = -0.8 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_2 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_2
+            add_idea = imp_oil_prices_ask_3
+        }
+        set_variable = { imp_oil_export_adjustment = -0.6 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_3 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_3
+            add_idea = imp_oil_prices_ask_4
+        }
+        set_variable = { imp_oil_export_adjustment = -0.4 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_4 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_4
+            add_idea = imp_oil_prices_ask_5
+        }
+        set_variable = { imp_oil_export_adjustment = -0.2 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_5 }
+        remove_ideas = imp_oil_prices_ask_5
+        clear_variable = imp_oil_export_adjustment
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_6 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_6
+            add_idea = imp_oil_prices_ask_7
+        }
+        set_variable = { imp_oil_export_adjustment = 0.55 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_7 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_7
+            add_idea = imp_oil_prices_ask_8
+        }
+        set_variable = { imp_oil_export_adjustment = 0.8 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_8 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_8
+            add_idea = imp_oil_prices_ask_9
+        }
+        set_variable = { imp_oil_export_adjustment = 1.05 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_9 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_9
+            add_idea = imp_oil_prices_ask_10
+        }
+        set_variable = { imp_oil_export_adjustment = 1.3 }
+    }
+    else_if = {
+        limit = { has_idea = imp_oil_prices_ask_10 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_10
+            add_idea = imp_oil_prices_ask_11
+        }
+        set_variable = { imp_oil_export_adjustment = 1.55 }
+    }
+    else = {
+        add_ideas = imp_oil_prices_ask_6
+        set_variable = { imp_oil_export_adjustment = 0.3 }
+    }
+}
+
+imp_oil_price_demand_lower = {
+    if = {
+        limit = { has_idea = imp_oil_prices_ask_11 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_11
+            add_idea = imp_oil_prices_ask_10
+        }
+        set_variable = { imp_oil_export_adjustment = 1.3 }
+    }
+    else_if = {
+        limit = { has_idea = imp_oil_prices_ask_10 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_10
+            add_idea = imp_oil_prices_ask_9
+        }
+        set_variable = { imp_oil_export_adjustment = 1.05 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_9 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_9
+            add_idea = imp_oil_prices_ask_8
+        }
+        set_variable = { imp_oil_export_adjustment = 0.8 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_8 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_8
+            add_idea = imp_oil_prices_ask_7
+        }
+        set_variable = { imp_oil_export_adjustment = 0.55 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_7 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_7
+            add_idea = imp_oil_prices_ask_6
+        }
+        set_variable = { imp_oil_export_adjustment = 0.3 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_6 }
+        remove_ideas = imp_oil_prices_ask_6
+        clear_variable = imp_oil_export_adjustment
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_5 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_5
+            add_idea = imp_oil_prices_ask_4
+        }
+        set_variable = { imp_oil_export_adjustment = -0.4 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_4 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_4
+            add_idea = imp_oil_prices_ask_3
+        }
+        set_variable = { imp_oil_export_adjustment = -0.6 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_3 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_3
+            add_idea = imp_oil_prices_ask_2
+        }
+        set_variable = { imp_oil_export_adjustment = -0.8 }
+    }
+    else_if = { 
+        limit = { has_idea = imp_oil_prices_ask_2 }
+        swap_ideas = {
+            remove_idea = imp_oil_prices_ask_2
+            add_idea = imp_oil_prices_ask_1
+        }
+        set_variable = { imp_oil_export_adjustment = -1 }
+    }
+    else = {
+        add_ideas = imp_oil_prices_ask_5
+        set_variable = { imp_oil_export_adjustment = -0.2 }
+    }
+}
+
+imp_spike_oil_price = {                                                         
+    ### Set oil_cost_multiplier_t and pass it along.
+    
+    set_temp_variable = { oil_cost_increase_t = 75 }
+    multiply_temp_variable = { oil_cost_increase_t = oil_cost_multiplier_t }
+
+    add_to_variable = { global.imp_global_oil_price = oil_cost_increase_t }
+    clamp_variable = { var = global.imp_global_oil_price min = 15 max = 200 }
+}
+
+imp_oil_war_event = {
+    if = {
+        limit = {
+            NOT = {
+                has_global_flag = imp_global_oil_spike_war
+                has_civil_war = yes
+            }
+        }
+        if = {
+            limit = { 
+                FROM = {
+                    has_idea = imp_major_oil_exporter
+                }
+            }
+
+            set_temp_variable = { oil_cost_multiplier_t = 0.30 }
+            imp_spike_oil_price = yes
+
+            set_global_flag = {
+                flag = imp_global_oil_spike_war
+                days = 60
+                value = 1
+            }
+            set_variable = { global.imp_attacker_t = THIS }
+            set_variable = { global.imp_defender_t = FROM }
+            country_event = imp_oil.2
+        }
+        else_if = { 
+            limit = { 
+                FROM = {
+                    has_idea = imp_minor_oil_exporter
+                }
+            }
+
+            set_temp_variable = { oil_cost_multiplier_t = 0.15 }
+            imp_spike_oil_price = yes
+
+            set_global_flag = {
+                flag = imp_global_oil_spike_war
+                days = 60
+                value = 1
+            }
+            set_variable = { global.imp_attacker_t = THIS }
+            set_variable = { global.imp_defender_t = FROM }
+            country_event = imp_oil.2
+        }
+    }
+    else_if = {
+        limit = {
+            NOT = {
+                has_global_flag = imp_global_oil_spike_war
+                has_civil_war = no
+            }
+        }
+        if = {
+            limit = { 
+                FROM = {
+                    has_idea = imp_major_oil_exporter
+                }
+            }
+
+            set_temp_variable = { oil_cost_multiplier_t = 0.30 }
+            imp_spike_oil_price = yes
+
+            set_global_flag = {
+                flag = imp_global_oil_spike_civil_war
+                days = 60
+                value = 1
+            }
+            set_variable = { global.civil_war_t = FROM }
+            country_event = imp_oil.1
+        }
+        else_if = { 
+            limit = { 
+                FROM = {
+                    has_idea = imp_minor_oil_exporter
+                }
+            }
+
+            set_temp_variable = { oil_cost_multiplier_t = 0.15 }
+            imp_spike_oil_price = yes
+
+            set_global_flag = {
+                flag = imp_global_oil_spike_civil_war
+                days = 60
+                value = 1
+            }
+            set_variable = { global.civil_war_t = FROM }
+            country_event = imp_oil.1
+        }
+    }
+}
+
+imp_random_global_oil_event = {
+    random_list = { 
+        30 = {
+            # Storm
+            random_country = {
+                limit = { 
+                    OR = { 
+                        has_idea = imp_major_oil_exporter
+                        has_idea = imp_minor_oil_exporter
+                    }
+                    any_owned_state = { is_coastal = yes }
+                }
+
+                set_variable = { global.imp_random_oil = THIS }
+                country_event = imp_oil.19
+                set_temp_variable = { oil_cost_multiplier_t = 0.03 }
+                imp_spike_oil_price = yes
+            }
+        }
+        30 = {
+            # Maintainance
+            random_country = {
+                limit = { 
+                    OR = { 
+                        has_idea = imp_major_oil_exporter
+                        has_idea = imp_minor_oil_exporter
+                    }
+                }
+
+                set_variable = { global.imp_random_oil = THIS }
+                country_event = imp_oil.18
+                set_temp_variable = { oil_cost_multiplier_t = 0.03 }
+                imp_spike_oil_price = yes
+            }
+        }
+        15 = {
+            # Pipeline problems
+            random_country = {
+                limit = { 
+                    OR = { 
+                        has_idea = imp_major_oil_exporter
+                        has_idea = imp_minor_oil_exporter
+                    }
+                }
+
+                set_variable = { global.imp_random_oil = THIS }
+                country_event = imp_oil.16
+                set_temp_variable = { oil_cost_multiplier_t = 0.06 }
+                imp_spike_oil_price = yes
+            }
+        }
+        15 = {
+            # Oil Tanker Sinks
+            random_country = {
+                limit = { 
+                    OR = { 
+                        has_idea = imp_major_oil_exporter
+                        has_idea = imp_minor_oil_exporter
+                    }
+                    any_owned_state = { is_coastal = yes }
+                }
+
+                set_variable = { global.imp_random_oil = THIS }
+                country_event = imp_oil.15
+                set_temp_variable = { oil_cost_multiplier_t = 0.08 }
+                imp_spike_oil_price = yes
+            }
+        }
+        10 = {
+            # Deposit too big
+            random_country = {
+                limit = { 
+                    any_owned_state = { 
+                        has_resources_amount = {
+                            resource = oil
+                            amount > 10
+                        }  
+                    }
+                }
+
+                set_variable = { global.imp_random_oil = THIS }
+                country_event = imp_oil.17
+                set_temp_variable = { oil_cost_multiplier_t = 0.1 }
+                imp_spike_oil_price = yes
+            }
+        }
+        30 = {
+            # Mild Winter?
+            country_event = imp_oil.20
+            set_temp_variable = { oil_cost_multiplier_t = -0.03 }
+            imp_spike_oil_price = yes
+        }
+        30 = {
+            # More Oil!
+            country_event = imp_oil.21
+            set_temp_variable = { oil_cost_multiplier_t = -0.05 }
+            imp_spike_oil_price = yes
+        }
+        30 = {
+            # Oil???
+            country_event = imp_oil.22
+            set_temp_variable = { oil_cost_multiplier_t = -0.04 }
+            imp_spike_oil_price = yes
+        }
+        10 = {
+            # Deposit too big
+            random_country = {
+                limit = { 
+                    any_owned_state = { 
+                        has_resources_amount = {
+                            resource = oil
+                            amount > 10
+                        }  
+                    }
+                }
+
+                set_variable = { global.imp_random_oil = THIS }
+                country_event = imp_oil.23
+                set_temp_variable = { oil_cost_multiplier_t = -0.08 }
+                imp_spike_oil_price = yes
+            }
+        }
+    }
+}
+
+imp_random_low_oil_event = {
+    if = { 
+        limit = { has_elections = yes }
+
+        random_list = {
+            50 = {
+                country_event = { id = imp_oil.5 random_days = 45 }
+            }
+	    }
+    }
+    else = {
+        random_list = {
+            50 = {
+                country_event = { id = imp_oil.6 random_days = 45 }
+            }
+	    }
+    }
+}
+
+imp_random_high_oil_event = {
+    if = { 
+        limit = { has_elections = yes }
+
+        random_list = {
+            50 = {
+                country_event = { id = imp_oil.3 random_days = 45 }
+            }
+	    }
+    }
+    else = {
+        random_list = {
+            50 = {
+                country_event = { id = imp_oil.4 random_days = 45 }
+            }
+	    }
+    }
+}
+
+imp_sanction_added_oil_event = {
+    if = {
+        limit = {
+            date > 2000.02.02
+        }
+
+        # Spike 
+        set_temp_variable = { oil_cost_multiplier_t = imp_oil_export_p }
+        imp_spike_oil_price = yes
+
+        save_event_target_as = oil_sanction_c
+        country_event = imp_oil.24
+    }
+}
+
+imp_sanction_lifted_oil_event = {
+    if = { 
+        limit = { 
+            date > 2000.02.02
+        }
+
+        # Dump
+        set_temp_variable = { oil_cost_multiplier_t = 0 }
+        subtract_from_temp_variable = { oil_cost_multiplier_t = imp_oil_export_p }
+        imp_spike_oil_price = yes
+
+        save_event_target_as = oil_sanction_c
+        country_event = imp_oil.25
+    }
+}
+
+imp_set_trade_policy_base = { 
+    if = { 
+        limit = { 
+            has_idea = md_closed_economy
+        }
+        set_variable = { md_oil_export = 0 }
+    }
+    else_if = {
+        limit = { 
+            has_idea = consumption_economy
+        }
+        set_variable = { md_oil_export = 1 }
+    }
+    else_if = {
+        limit = { 
+            has_idea = semi_consumption_economy
+        }
+        set_variable = { md_oil_export = 2 }
+    }
+    else_if = {
+        limit = { 
+            has_idea = mixed_economy
+        }
+        set_variable = { md_oil_export = 3 }
+    }
+    else_if = { 
+        limit = { 
+            has_idea = export_economy
+        }
+        set_variable = { md_oil_export = 4 }
+    }
+    else_if = { 
+        limit = { 
+            has_idea = globalized_trade_economy
+        }
+        set_variable = { md_oil_export = 5 }
+    }
+}
+
+imp_set_trade_policy = {
+    set_temp_variable = { imp_p_t = md_oil_export }
+    imp_set_trade_policy_base = yes
+    subtract_from_temp_variable = { imp_p_t = md_oil_export }
+
+    ## If temp < new -> Increased oil exports
+    ## If temp > new -> Decreased oil exports
+
+    if = { 
+        limit = { 
+            has_idea = imp_major_oil_exporter
+            NOT = { 
+                has_country_flag = imp_recent_oil_export_change
+            }
+        }
+
+        if = { 
+            limit = { check_variable = { imp_p_t > 2 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+
+            set_temp_variable = { oil_cost_multiplier_t = 0.40 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.50
+        }
+        else_if = {
+            limit = { check_variable = { imp_p_t > 0 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+            set_temp_variable = { oil_cost_multiplier_t = 0.20 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.51
+        }
+        else_if = {
+            limit = { check_variable = { imp_p_t < -2 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+            set_temp_variable = { oil_cost_multiplier_t = -0.40 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.52
+        }
+        else_if = {
+            limit = { check_variable = { imp_p_t < 0 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+            set_temp_variable = { oil_cost_multiplier_t = -0.20 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.53
+        }
+    }
+    else_if = { 
+        limit = { 
+            has_idea = imp_minor_oil_exporter
+            NOT = { 
+                has_country_flag = imp_recent_oil_export_change
+            }
+        }
+
+        if = { 
+            limit = { check_variable = { imp_p_t > 2 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+            set_temp_variable = { oil_cost_multiplier_t = 0.20 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.50
+        }
+        else_if = {
+            limit = { check_variable = { imp_p_t > 0 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+            set_temp_variable = { oil_cost_multiplier_t = 0.10 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.51
+        }
+        else_if = {
+            limit = { check_variable = { imp_p_t < -2 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+            set_temp_variable = { oil_cost_multiplier_t = -0.20 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.52
+        }
+        else_if = {
+            limit = { check_variable = { imp_p_t < 0 } }
+            set_country_flag = { flag = imp_recent_oil_export_change days = 720 value = 1 }
+            set_temp_variable = { oil_cost_multiplier_t = -0.10 }
+            imp_spike_oil_price = yes
+            country_event = imp_oil.53
+        }
+    }
+}

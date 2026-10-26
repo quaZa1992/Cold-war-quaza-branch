@@ -1,0 +1,31 @@
+# IMPERIA CW — Cold War: era reference effects — scripted effects.
+# COLDWAR era reference (20.10.2026, revised)
+# Millennium Dawn runs its whole money system (GDP, taxes, law costs, treasury, debt) in year-2000 dollars.
+# The Cold War mod keeps that internal scale: in the 1970 scenario gdp_total / gdp_per_capita are stored in
+# 2000 prices (historical 1970 GDP x 3.4, US GDP deflator 1970->2000), so factories, taxes, debt ratios and all
+# MD thresholds stay consistent. The player-facing GDP and GDP/C are shown in historical 1970 dollars:
+#   mdcw_gdp_display  = gdp_total / 3.4      mdcw_gdpc_display = gdp_per_capita / 3.4
+# Growth is unaffected: the display is a fixed conversion of the internal value.
+# Productivity keeps its own era reference (1970 frontier 800 = MD reference 1000):
+#   mdcw_era_productivity = overall_productivity x 1.25 (shared MD productivity triggers),
+#   mdcw_era_research_productivity_divisor = 2000 (MD 2500), output floor 800 in global.productivity_center.
+# mdcw_era_gdpc / mdcw_era_gdp equal the internal values (kept as names for the threshold code).
+@mdcw_price_level_1970_to_2000 = 3.4
+
+mdcw_era_update_reference = {
+	set_variable = { mdcw_era_gdpc = gdp_per_capita }
+	set_variable = { mdcw_era_gdp = gdp_total }
+	if = {
+		limit = { IMP_is_1970_scenario = yes }
+		set_variable = { mdcw_gdp_display = { value = gdp_total divide = @mdcw_price_level_1970_to_2000 } }
+		set_variable = { mdcw_gdpc_display = { value = gdp_per_capita divide = @mdcw_price_level_1970_to_2000 } }
+		set_variable = { mdcw_era_productivity = { value = overall_productivity multiply = 1.25 } }
+		set_variable = { mdcw_era_research_productivity_divisor = 2000 }
+	}
+	else = {
+		set_variable = { mdcw_gdp_display = gdp_total }
+		set_variable = { mdcw_gdpc_display = gdp_per_capita }
+		set_variable = { mdcw_era_productivity = overall_productivity }
+		set_variable = { mdcw_era_research_productivity_divisor = 2500 }
+	}
+}

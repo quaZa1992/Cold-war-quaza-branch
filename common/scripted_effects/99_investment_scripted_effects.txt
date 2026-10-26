@@ -1,0 +1,918 @@
+# International Investments System
+# Player (GUI) and AI (investments_event.500) both call start_project_two.
+# Slot conventions: ^-1 = staging, ^-2 = snapshot, ^0..14 = active projects.
+# Building types: 1=CIC, 2=MIC, 3=Dockyard, 4=Infra, 5=Offices, 6=SAM, 7=Radar,
+# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+#                 8=Airbase, 9=Fuel, 10=Internet, 11=Renewable, 12=Fossil, 13=Nuclear, 14=Agri, 15=Uranium Mine
+
+# Initialize global building cost arrays at game start.
+# Called once in on_startup - do not trigger more than once.
+init_investment_system = {
+	# Building cost arrays (for array lookup - index = building type 1..14)
+	set_variable = { global.build_cost_array^0 = 0 }
+	set_variable = { global.build_cost_array^1 = 12 } # CIC
+	set_variable = { global.build_cost_array^2 = 12.50 } # MIC
+	set_variable = { global.build_cost_array^3 = 12 } # NIC
+	set_variable = { global.build_cost_array^4 = 5.5 } # INFRA
+	set_variable = { global.build_cost_array^5 = 20 } # OFFICES
+	set_variable = { global.build_cost_array^6 = 5.50 } # AA
+	set_variable = { global.build_cost_array^7 = 4.50 } # RADAR
+	set_variable = { global.build_cost_array^8 = 5.25 } # AIRBASE
+	set_variable = { global.build_cost_array^9 = 5.25 } # FUEL_SILO
+	set_variable = { global.build_cost_array^10 = 4.65 } # INTERNET
+	set_variable = { global.build_cost_array^11 = 13.60 }# REF
+	set_variable = { global.build_cost_array^12 = 5.2 } # FOSSIL
+	set_variable = { global.build_cost_array^13 = 14.4 } # NUCLEAR
+	set_variable = { global.build_cost_array^14 = 5.8 } # AGRICULTURE
+
+	# Building const cost arrays (for construction speed calculation)
+	set_variable = { global.build_const_cost_array^0 = 0 }
+	set_variable = { global.build_const_cost_array^1 = 47500 } # CIC
+	set_variable = { global.build_const_cost_array^2 = 52500 } # MIC
+	set_variable = { global.build_const_cost_array^3 = 47500 } # NIC
+	set_variable = { global.build_const_cost_array^4 = 17000 } # INFRA
+	set_variable = { global.build_const_cost_array^5 = 50000 } # OFFICES
+	set_variable = { global.build_const_cost_array^6 = 15000 } # AA
+	set_variable = { global.build_const_cost_array^7 = 8000 } # RADAR
+	set_variable = { global.build_const_cost_array^8 = 5000 } # AIRBASE
+	set_variable = { global.build_const_cost_array^9 = 18000 } # FUEL_SILO
+	set_variable = { global.build_const_cost_array^10 = 10000 } # INTERNET
+	set_variable = { global.build_const_cost_array^11 = 50000 } # REF
+	set_variable = { global.build_const_cost_array^12 = 16500 } # FOSSIL
+	set_variable = { global.build_const_cost_array^13 = 62500 } # NUCLEAR
+	set_variable = { global.build_const_cost_array^14 = 22500 } # AGRICULTURE
+
+	# Max build amount per building type (for GUI clamp, indexed by type 1..14)
+	set_variable = { global.max_build_amount_array^0 = 0 }
+	set_variable = { global.max_build_amount_array^1 = 10 } # CIC
+	set_variable = { global.max_build_amount_array^2 = 10 } # MIC
+	set_variable = { global.max_build_amount_array^3 = 10 } # NIC
+	set_variable = { global.max_build_amount_array^4 = 5 } # INFRA
+	set_variable = { global.max_build_amount_array^5 = 5 } # OFFICES
+	set_variable = { global.max_build_amount_array^6 = 5 } # AA
+	set_variable = { global.max_build_amount_array^7 = 6 } # RADAR
+	set_variable = { global.max_build_amount_array^8 = 10 } # AIRBASE
+	set_variable = { global.max_build_amount_array^9 = 5 } # FUEL_SILO
+	set_variable = { global.max_build_amount_array^10 = 6 } # INTERNET
+	set_variable = { global.max_build_amount_array^11 = 10 } # REF
+	set_variable = { global.max_build_amount_array^12 = 10 } # FOSSIL
+	set_variable = { global.max_build_amount_array^13 = 10 } # NUCLEAR
+	set_variable = { global.max_build_amount_array^14 = 10 } # AGRICULTURE
+	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+	imp_uranium_init_investment_type = yes
+}
+
+# Idempotent extension used by the new-game initialization paths.
+imp_uranium_init_investment_type = {
+	set_variable = { global.build_cost_array^15 = 6 } # Uranium mine: $6 billion per level
+	set_variable = { global.build_const_cost_array^15 = 32000 }
+	set_variable = { global.max_build_amount_array^15 = 3 }
+}
+
+# Called in the spawning of a new nation in-game
+# Purely used to update the variables of a nation if you are trying to play as a releasable
+ingame_init_investment_system = {
+	set_variable = { project_build_amount^-1 = 1 }
+	set_country_flag = investments_hide_investment_window
+
+	resize_array = { array = project_array value = 0 size = 15 } # Index starts at 0
+}
+
+# Increment GUI refresh counter (avoids per-tick redraws).
+refresh_investment_gui = {
+	if = { limit = { check_variable = { global.refresh_investment_gui = 500000 } }
+		set_variable = { global.refresh_investment_gui = 1 }
+	}
+	else = {
+		add_to_variable = { global.refresh_investment_gui = 1 }
+	}
+}
+
+send_pending_investment_offer = {
+	if = {
+		limit = { has_country_flag = int_auto_accept_investment_flag }
+		country_event = investments_event.12
+	}
+	else = {
+		country_event = investments_event.10
+	}
+}
+
+initialize_pending_investment_offer = {
+	set_variable = { investor_cost = FROM.project_monetary_cost_effect }
+	multiply_variable = { investor_cost = 0.1 }
+	set_variable = { pending_offer_total_cost = FROM.project_monetary_cost^-1 }
+	set_variable = { pending_offer_duration = FROM.project_construction_duration^-1 }
+	set_variable = { pending_offer_amount = FROM.project_build_amount^-1 }
+	set_variable = { pending_offer_type = FROM.project_building_type^-1 }
+	set_variable = { pending_offer_state = FROM.investments_state_target }
+}
+
+accept_pending_investment_offer = {
+	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+	if = {
+		limit = { imp_uranium_pending_offer_valid = yes }
+		FROM = {
+			set_variable = { project_building_type^-1 = PREV.pending_offer_type }
+			set_variable = { project_build_amount^-1 = PREV.pending_offer_amount }
+			set_variable = { project_monetary_cost^-1 = PREV.pending_offer_total_cost }
+			set_variable = { project_construction_duration^-1 = PREV.pending_offer_duration }
+			set_variable = { investments_state_target = PREV.pending_offer_state }
+			set_variable = {
+				project_monetary_cost_effect = {
+					value = PREV.pending_offer_total_cost
+					multiply = -1
+				}
+			}
+
+			start_project_two = yes
+			clr_country_flag = this_investment_offer_pending@PREV
+			clr_country_flag = investments_ai_pending
+		}
+		if = {
+			limit = { NOT = { has_country_flag = influence_gained_@FROM } }
+			set_temp_variable = { percent_change = global.investment_percent_change_value }
+			set_temp_variable = { tag_index = FROM.id }
+			change_influence_percentage = yes
+			newline = yes
+
+			if = { limit = { has_game_rule = { rule = rule_influence_cooldown_limits option = day_14_cooldown } }
+				set_country_flag = { flag = influence_gained_@FROM value = 1 days = 14 }
+				custom_effect_tooltip = cooldown_influence_limit_14_tooltip
+			}
+			else_if = { limit = { has_game_rule = { rule = rule_influence_cooldown_limits option = day_30_cooldown } }
+				set_country_flag = { flag = influence_gained_@FROM value = 1 days = 30 }
+				custom_effect_tooltip = cooldown_influence_limit_30_tooltip
+			}
+		}
+
+		# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+		set_temp_variable = { treasury_change = FROM.project_monetary_cost_effect }
+		multiply_temp_variable = { treasury_change = 0.1 }
+		modify_treasury_effect = yes
+		clear_variable = investor_cost
+		clear_variable = pending_offer_total_cost
+		clear_variable = pending_offer_duration
+		clear_variable = pending_offer_amount
+		clear_variable = pending_offer_type
+		clear_variable = pending_offer_state
+	}
+	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+	else = {
+		# A deposit may disappear or fill while the offer is pending. No charge or influence.
+		FROM = {
+			clr_country_flag = this_investment_offer_pending@PREV
+			clr_country_flag = investments_ai_pending
+		}
+		# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+		clear_variable = investor_cost
+		clear_variable = pending_offer_total_cost
+		clear_variable = pending_offer_duration
+		clear_variable = pending_offer_amount
+		clear_variable = pending_offer_type
+		clear_variable = pending_offer_state
+	}
+}
+
+# Recomputes staging-slot (^-1) cost/duration when player tweaks GUI.
+# Scope: ROOT = investor, PREV = selected state.
+update_gui = {
+	project_monetary_cost_calculation = yes
+
+	set_variable = { project_type = project_building_type^-1 }
+	set_variable = { project = -1 }
+	PREV = { precompute_state_construction_data = yes }
+	calculate_project_duration = yes
+	clear_variable = project_type
+	clear_variable = project
+}
+
+
+# Calculate treasury cost for project (staging slot ^-1).
+project_monetary_cost_calculation = {
+	# Array lookup: project_building_type^-1 (1..14) indexes build_cost_array
+	set_temp_variable = { _cost_idx = project_building_type^-1 }
+	set_variable = { project_monetary_cost^-1 = global.build_cost_array^_cost_idx }
+
+	# AC Build Cost Modifiers
+	set_temp_variable = { investments_cost_modifier = 1 }
+	PREV = {
+		CONTROLLER = {
+			add_to_temp_variable = { investments_cost_modifier = THIS.modifier@receiving_investment_cost_modifier }
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							has_idea = full_isr_boycotte
+							has_idea = econ_isr_boycotte
+						}
+					}
+				}
+				add_to_temp_variable = { investments_cost_modifier = 0.5 }
+			}
+			if = {
+				limit = { has_idea = EU_member }
+				if = {
+					limit = {
+						PREV.PREV = { has_idea = ECB_president }
+					}
+					add_to_temp_variable = { investments_cost_modifier = -0.15 }
+				}
+				if = {
+					limit = {
+						PREV.PREV = { has_idea = EU_finance_minister }
+					}
+					add_to_temp_variable = { investments_cost_modifier = -0.05 }
+				}
+			}
+			if = {
+				limit = {
+					has_idea = FRA_idea_development_investment
+					PREV.PREV = { original_tag = FRA }
+				}
+				add_to_temp_variable = { investments_cost_modifier = -0.05 }
+			}
+			if = {
+				limit = {
+					PREV.PREV = {
+						has_country_flag = mutual_investment_treaty_@ROOT
+					}
+				}
+				add_to_temp_variable = { investments_cost_modifier = -0.05 }
+			}
+		}
+	}
+	add_to_temp_variable = { investments_cost_modifier = ROOT.modifier@investment_cost_modifier }
+
+	# Calculates modified Build Cost
+	set_variable = { displayable_monetary_cost_modifier = investments_cost_modifier }
+	multiply_variable = { var = project_monetary_cost^-1 value = investments_cost_modifier }
+	multiply_variable = { var = project_monetary_cost^-1 value = project_build_amount^-1 }
+	set_variable = { project_monetary_cost_effect = project_monetary_cost^-1 }
+	multiply_variable = { project_monetary_cost_effect = -1 }
+}
+
+# Get construction speed for project_type (1..14). Cost from array; modifiers type-specific.
+get_building_construction_values = {
+	set_temp_variable = { construction_speed = 1 }
+	# Building cost from array (project_type = 1..14 indexes build_const_cost_array)
+	set_temp_variable = { building_cost = global.build_const_cost_array^project_type }
+
+	# Type-specific construction speed modifiers (each building type has unique modifier)
+	if = { limit = { check_variable = { project_type = 1 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_industrial_complex_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 2 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_arms_factory_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 3 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_dockyard_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 4 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_infrastructure_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 5 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_offices_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 6 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_anti_air_building_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 7 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_radar_station_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 8 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_air_base_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 9 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_fuel_silo_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 10 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_internet_station_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 11 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_renewable_energy_infra_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 12 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_fossil_powerplant_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 13 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_nuclear_reactor_factor }
+	}
+	else_if = { limit = { check_variable = { project_type = 14 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_agriculture_district_factor }
+	}
+	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+	else_if = { limit = { check_variable = { project_type = 15 } }
+		add_to_temp_variable = { var = construction_speed value = modifier@production_speed_uranium_mine_factor }
+		add_to_temp_variable = { building_cost = imp_uranium_investment_extra_cost }
+	}
+
+	add_to_temp_variable = { var = construction_speed value = -0.40 }
+	add_to_temp_variable = { var = construction_speed value = modifier@production_speed_buildings_factor }
+	clamp_temp_variable = { var = construction_speed min = 0 }
+}
+
+# Find first available project slot (0..14), set new_project.
+get_available_project = {
+	for_each_loop = {
+		array = project_array
+		if = { limit = { check_variable = { v = 0 } }
+			set_variable = { new_project = i }
+			set_temp_variable = { break = 1 }
+		}
+	}
+}
+
+# Add completed building to state (called by complete_project).
+add_finished_buildings = {
+	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+	if = {
+		limit = { OR = { NOT = { check_variable = { ROOT.project_building_type^ROOT.project = 15 } } imp_uranium_investment_one_level_available = yes } }
+		set_temp_variable = { var_cost = ROOT.project_monetary_cost^ROOT.project }
+		multiply_temp_variable = { var_cost = -1 }
+		set_temp_variable = { _remaining = ROOT.project_build_amount^ROOT.project }
+		clamp_temp_variable = { var = _remaining min = 1 }
+		divide_temp_variable = { var = var_cost value = _remaining }
+
+# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+
+		# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+		# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+		# Existing Imperia recipient bonus, valued at this one delivered segment.
+		set_temp_variable = { mdcw_imp_segment_reward = var_cost }
+		# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+		multiply_temp_variable = { mdcw_imp_segment_reward = -1 }
+		CONTROLLER = {
+			# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+			multiply_temp_variable = { mdcw_imp_segment_reward = modifier@imp_investment_reward }
+		}
+		# IMPERIA CW — Cold War: Imperia investment terms and project limits.
+		add_to_variable = { ROOT.int_investments = mdcw_imp_segment_reward }
+
+		# Buildings to Add
+		if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 1 } }
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 2 } }
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 3 } }
+			add_building_construction = { type = dockyard level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 4 } }
+			add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 5 } }
+			add_building_construction = { type = offices level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 6 } }
+			add_building_construction = { type = anti_air_building level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 7 } }
+			add_building_construction = { type = radar_station level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 8 } }
+			add_building_construction = { type = air_base level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 9 } }
+			add_building_construction = { type = fuel_silo level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 10 } }
+			add_building_construction = { type = internet_station level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 11 } }
+			add_building_construction = { type = renewable_energy_infra level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 12 } }
+			add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 13 } }
+			add_building_construction = { type = nuclear_reactor level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 14 } }
+			add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+		}
+		else_if = { limit = { check_variable = { ROOT.project_building_type^ROOT.project = 15 } }
+			imp_uranium_sync_mine_slots = yes
+			add_building_construction = { type = uranium_mine level = 1 instant_build = yes }
+			imp_uranium_count_mine_levels = yes
+			imp_uranium_sync_mine_output = yes
+		}
+
+		add_to_variable = { ROOT.project_monetary_cost^ROOT.project = var_cost }
+	}
+}
+
+# Precompute state-level construction data. Must be called in STATE scope with
+# PREV = the investing country. Writes temp variables: local_state_modifier and
+# receiving_investment_duration_temp, consumed by calculate_project_duration.
+precompute_state_construction_data = {
+	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+	# Each invested mine level keeps the normal 4000 IC cost increase.
+	set_temp_variable = { imp_uranium_investment_extra_cost = building_level@uranium_mine }
+	multiply_temp_variable = { imp_uranium_investment_extra_cost = 4000 }
+
+	# State-local construction speed bonus (infra + internet + state-flag effects)
+	set_temp_variable = { local_state_modifier = 0 }
+
+	set_temp_variable = { tmp_speed = building_level@infrastructure }
+	multiply_temp_variable = { tmp_speed = 0.15 }
+	add_to_temp_variable = { local_state_modifier = tmp_speed }
+
+	set_temp_variable = { tmp_speed = building_level@internet_station }
+	multiply_temp_variable = { tmp_speed = 0.05 }
+	add_to_temp_variable = { local_state_modifier = tmp_speed }
+
+	if = { limit = { has_state_flag = currently_encouraged_investments }
+		add_to_temp_variable = { local_state_modifier = 0.30 }
+	}
+	if = { limit = { has_state_flag = HOL_autonomy_economic_zone }
+		add_to_temp_variable = { local_state_modifier = 0.15 }
+	}
+
+	# Net duration modifier from target controller.
+	set_temp_variable = { receiving_investment_duration_temp = 0 }
+	CONTROLLER = {
+		if = {
+			limit = {
+				PREV.PREV = {
+					OR = {
+						has_idea = full_isr_boycotte
+						has_idea = econ_isr_boycotte
+					}
+				}
+			}
+			add_to_temp_variable = { receiving_investment_duration_temp = 1 }
+		}
+
+		if = { limit = { has_idea = EU_member }
+			if = {
+				limit = {
+					PREV.PREV = { has_idea = ECB_president }
+				}
+				add_to_temp_variable = { receiving_investment_duration_temp = -0.15 }
+			}
+			if = {
+				limit = {
+					PREV.PREV = { has_idea = EU_finance_minister }
+				}
+				add_to_temp_variable = { receiving_investment_duration_temp = -0.05 }
+			}
+		}
+
+		if = {
+			limit = {
+				has_idea = FRA_idea_development_investment
+				PREV.PREV = { original_tag = FRA }
+			}
+			add_to_temp_variable = { receiving_investment_duration_temp = -0.05 }
+		}
+		if = {
+			limit = {
+				PREV.PREV = {
+					has_country_flag = mutual_investment_treaty_@PREV
+				}
+			}
+			add_to_temp_variable = { receiving_investment_duration_temp = -0.05 }
+		}
+		add_to_temp_variable = { receiving_investment_duration_temp = THIS.modifier@receiving_investment_duration_modifier }
+	}
+}
+
+# Calculate project duration. Caller must call precompute_state_construction_data first.
+# Reads: local_state_modifier, receiving_investment_duration_temp (from precompute)
+# Writes: project_construction_duration^project, project_construction_duration^-2 (snapshot).
+calculate_project_duration = {
+	get_building_construction_values = yes
+
+	# local_state_modifier was pre-computed by precompute_state_construction_data
+	add_to_temp_variable = { construction_speed = local_state_modifier }
+
+	# receiving_investment_duration_temp was pre-computed by precompute_state_construction_data
+	add_to_temp_variable = { receiving_investment_duration_temp = modifier@investment_duration_modifier }
+	clamp_temp_variable = { var = receiving_investment_duration_temp min = -1 }
+	if = { limit = { check_variable = { receiving_investment_duration_temp > 0 } }
+		add_to_temp_variable = { construction_speed = receiving_investment_duration_temp }
+	}
+	else = {
+		subtract_from_temp_variable = { construction_speed = receiving_investment_duration_temp }
+	}
+
+	set_variable = { displayable_construction_modifier = construction_speed }
+
+	# Assume 5 × 15 Civilian Industry devoted to a single construction line
+	multiply_temp_variable = { construction_speed = 75 }
+	if = { limit = { check_variable = { construction_speed > 0 } }
+		divide_temp_variable = { building_cost = construction_speed }
+	}
+	else = {
+		# construction_speed <= 0 means instant or broken; clamp to 1 day to avoid instant completion
+		set_temp_variable = { building_cost = 1 }
+	}
+
+	set_variable = {
+		project_construction_duration^project = {
+			value = building_cost
+			round = yes
+		}
+	}
+
+	set_variable = { project_construction_duration^-2 = project_construction_duration^project }
+
+	# Total queue duration (only meaningful for active slots)
+	if = { limit = { check_variable = { project > -1 } }
+		set_variable = {
+			project_total_construction_duration_display^project = {
+				value = project_construction_duration^project
+				multiply = project_build_amount^project
+			}
+		}
+	}
+
+	# GUI Duration preview variable (staged, ^-1 access for display before project starts)
+	set_variable = {
+		project_total_construction_duration_display^-1 = {
+			value = building_cost
+			multiply = project_build_amount^-1
+			round = yes
+		}
+	}
+}
+
+
+# Start project: allocate slot, deduct treasury, activate decisions.
+# Called from accept_pending_investment_offer inside FROM = { }: THIS = the investor and
+# ROOT = the target country. Investor variables live on THIS/PREV, never ROOT.
+start_project_two = {
+	# Get available project
+	get_available_project = yes
+
+	if = { limit = { is_debug = yes }
+		log = "[GetDateText]: [THIS.GetName]: DEBUG: start_project_two - new_project = [?new_project], state = [?investments_state_target], building_type = [?project_building_type^-1], amount = [?project_build_amount^-1]"
+	}
+
+	# new_project sets the correct index for the new project
+	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
+	if = { limit = { has_variable = new_project imp_uranium_investment_start_allowed = yes }
+
+		# Initializes the Project
+		set_variable = { project = new_project }
+		set_variable = { project_type = project_building_type^-1 }
+
+		# Active Project Variables (must precede calculate_project_duration so it can read build_amount^project)
+		set_variable = { project_build_amount^project = project_build_amount^-1 }
+		set_variable = { project_building_type^project = project_building_type^-1 }
+		set_variable = { project_monetary_cost^project = project_monetary_cost^-1 }
+
+		random_state = {
+			limit = { state = PREV.investments_state_target }
+
+			add_to_array = { projects_in_state = PREV.id } # Should be FROM
+			# Create a new array for this
+			add_to_array = { project_type_in_state = PREV.project_building_type^-1 }
+			set_variable = { project_target_state_@PREV = PREV.project }
+			# Sets the starting nation
+			set_variable = { PREV.project_array^PREV.project = THIS.id }
+			CONTROLLER = {
+				set_variable = { PREV.PREV.project_target_country^PREV.PREV.project = THIS.id }
+			}
+			precompute_state_construction_data = yes
+		}
+
+		calculate_project_duration = yes
+
+		# Activate Project
+		add_to_variable = { treasury = project_monetary_cost_effect } # Project Monetary Cost Effect is -1
+		subtract_from_variable = { int_investments = project_monetary_cost_effect }
+		add_to_variable = { active_projects = 1 }
+
+
+		# Initializes the target decisions for the investment project
+		initialize_start_project_decisions = yes
+
+		if = { limit = { is_debug = yes }
+			log = "[GetDateText]: [THIS.GetName]: DEBUG: start_project_two - project started at slot [?new_project], cost = [?project_monetary_cost^-1], duration = [?project_construction_duration^new_project] days"
+		}
+
+		clear_variable = project
+		clear_variable = project_type
+		clear_variable = new_project
+	}
+	else = {
+		if = { limit = { is_debug = yes }
+			log = "[GetDateText]: [THIS.GetName]: DEBUG: start_project_two - FAILED: no available project slot (all 15 full)"
+		}
+	}
+
+	refresh_investment_gui = yes
+}
+
+# Called when project segment finishes (investments_event.0).
+complete_project = {
+	if = { limit = { is_debug = yes }
+		log = "[GetDateText]: [THIS.GetName]: DEBUG: complete_project - project = [?project], remaining_segments = [?project_build_amount^project]"
+	}
+
+	if = { limit = { check_variable = { project_array^project < 0 } }
+		set_variable = { project_type = project_building_type^project }
+
+		random_state = {
+			limit = { state = PREV.project_array^PREV.project }
+			if = { limit = { investment_building_slot_available = yes }
+				add_finished_buildings = yes
+				CONTROLLER = { add_opinion_modifier = { target = ROOT modifier = investments_construction_opinion } }
+
+				ROOT = {
+					if = {
+						limit = {
+							check_variable = { project_build_amount^project > 1 }
+							PREV = { investment_building_slot_available = yes }
+						}
+						subtract_from_variable = { project_build_amount^project = 1 }
+						PREV = { precompute_state_construction_data = yes }
+						calculate_project_duration = yes
+						initialize_complete_project_decisions = yes
+					}
+					else = { end_project = yes }
+				}
+			}
+			else = { ROOT = { end_project = yes } }
+		}
+	}
+
+	clear_variable = project
+	clear_variable = project_type
+
+	refresh_investment_gui = yes
+}
+
+# Cancel or complete project: refund investor, give 10% to target.
+end_project = {
+	hidden_effect = {
+		if = { limit = { is_debug = yes }
+			log = "[GetDateText]: [THIS.GetName]: DEBUG: end_project - project = [?project], refund = [?project_monetary_cost^project]"
+		}
+
+		# INFO: project_array^project holds the target state id, stored negative (HOI4 encodes state scopes as negative). Empty slots are 0.
+		if = { limit = { check_variable = { project_array^project < 0 } }
+			random_state = {
+				limit = { state = PREV.project_array^PREV.project }
+				clear_variable = project_target_state_@PREV
+				for_each_loop = {
+					value = v
+					index = i
+					array = projects_in_state
+					if = { limit = { check_variable = { v = PREV.id } }
+						remove_from_array = { array = projects_in_state value = PREV.id }
+						remove_from_array = { array = project_type_in_state index = i }
+					}
+				}
+				set_temp_variable = { tag_index = THIS.id }
+			}
+
+			if = { limit = { check_variable = { project_monetary_cost^project > 0 } }
+				# Cap at the account balance so selling investments before cancelling can't pay out twice
+				set_temp_variable = { _refund = { value = project_monetary_cost^project min = int_investments max = 0 } }
+				add_to_variable = { var = treasury value = _refund }
+				subtract_from_variable = { var = int_investments value = _refund }
+				set_temp_variable = { return_to_sender = project_monetary_cost^project }
+				multiply_temp_variable = { return_to_sender = 0.10 }
+				var:project_array^project = {
+					if = { limit = { NOT = { is_controlled_by = PREV } }
+						CONTROLLER = { add_to_variable = { var = treasury value = return_to_sender } }
+					}
+				}
+			}
+
+
+			initialize_end_project_decisions = yes
+
+			clear_variable = project_build_amount^project
+			clear_variable = project_building_type^project
+			clear_variable = project_construction_duration^project
+			clear_variable = project_total_construction_duration_display^project
+			clear_variable = project_target_country^project
+			clear_variable = project_monetary_cost^project
+		}
+
+		clear_variable = project
+
+		refresh_investment_gui = yes
+	}
+}
+
+# Activate investor + target decisions for project slot.
+initialize_start_project_decisions = {
+	meta_effect = {
+		text = {
+			activate_decision = investments_project_[INDEX]_decision
+
+			var:project_target_country^project = {
+				set_variable = { project_target_construction_duration = PREV.project_construction_duration^PREV.project }
+				activate_targeted_decision = { target = PREV decision = investments_project_[INDEX]_target_decision }
+			}
+		}
+		INDEX = "[?project]"
+	}
+}
+
+# Re-activate decisions after segment completes (restarts days_remove timer).
+initialize_complete_project_decisions = {
+	meta_effect = {
+		text = {
+			activate_decision = investments_project_[INDEX]_decision
+
+			PREV = {
+				CONTROLLER = {
+					set_variable = { project_target_construction_duration = ROOT.project_construction_duration^ROOT.project }
+					remove_targeted_decision = { target = ROOT decision = investments_project_[INDEX]_target_decision }
+					activate_targeted_decision = { target = ROOT decision = investments_project_[INDEX]_target_decision }
+				}
+			}
+		}
+		INDEX = "[?ROOT.project]"
+	}
+}
+
+# Remove target decision, mark slot for cleanup, fire event.30.
+initialize_end_project_decisions = {
+	hidden_effect = {
+		var:project_target_country^project = {
+			clear_variable = project_target_construction_duration
+			meta_effect = {
+				text = {
+					remove_targeted_decision = { target = PREV decision = investments_project_[INDEX]_target_decision }
+				}
+				INDEX = "[?PREV.project]"
+			}
+		}
+
+		set_variable = { project_array^project = 0 }
+		country_event = investments_event.30
+	}
+}
+
+# State-owned investment limit: set 120-day flags (max 6 concurrent).
+state_owned_concurrent_investment_limit_implement = {
+	set_temp_variable = { soi_expiry_date = global.date }
+	if = {
+        # IMPERIA CW — Cold War: Imperia investment terms and project limits.
+        limit = { PREV = { check_variable = { mdcw_own_soi_duration = 360 } } }
+        add_to_temp_variable = { soi_expiry_date = 8.64 }
+    }
+    else = { add_to_temp_variable = { soi_expiry_date = 2.88 } }
+
+	set_temp_variable = { max_soi_slots = modifier@internal_investment_slot_number }
+	set_temp_variable = { soi_allocated = 0 }
+
+	if = {
+		limit = {
+			check_variable = { soi_allocated = 0 }
+			check_variable = { max_soi_slots > 0 }
+			NOT = { has_country_flag = soi_slot_1 }
+		}
+		if = {
+            # IMPERIA CW — Cold War: Imperia investment terms and project limits.
+            limit = { PREV = { check_variable = { mdcw_own_soi_duration = 360 } } }
+            set_country_flag = { flag = soi_slot_1 value = 1 days = 360 }
+        }
+        else = { set_country_flag = { flag = soi_slot_1 value = 1 days = 120 } }
+		set_variable = { soi_slot_state^1 = PREV.id }
+		set_variable = { soi_slot_expiry^1 = soi_expiry_date }
+		set_temp_variable = { soi_allocated = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { soi_allocated = 0 }
+			check_variable = { max_soi_slots > 1 }
+			NOT = { has_country_flag = soi_slot_2 }
+		}
+		if = {
+            # IMPERIA CW — Cold War: Imperia investment terms and project limits.
+            limit = { PREV = { check_variable = { mdcw_own_soi_duration = 360 } } }
+            set_country_flag = { flag = soi_slot_2 value = 1 days = 360 }
+        }
+        else = { set_country_flag = { flag = soi_slot_2 value = 1 days = 120 } }
+		set_variable = { soi_slot_state^2 = PREV.id }
+		set_variable = { soi_slot_expiry^2 = soi_expiry_date }
+		set_temp_variable = { soi_allocated = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { soi_allocated = 0 }
+			check_variable = { max_soi_slots > 2 }
+			NOT = { has_country_flag = soi_slot_3 }
+		}
+		if = {
+            # IMPERIA CW — Cold War: Imperia investment terms and project limits.
+            limit = { PREV = { check_variable = { mdcw_own_soi_duration = 360 } } }
+            set_country_flag = { flag = soi_slot_3 value = 1 days = 360 }
+        }
+        else = { set_country_flag = { flag = soi_slot_3 value = 1 days = 120 } }
+		set_variable = { soi_slot_state^3 = PREV.id }
+		set_variable = { soi_slot_expiry^3 = soi_expiry_date }
+		set_temp_variable = { soi_allocated = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { soi_allocated = 0 }
+			check_variable = { max_soi_slots > 3 }
+			NOT = { has_country_flag = soi_slot_4 }
+		}
+		if = {
+            # IMPERIA CW — Cold War: Imperia investment terms and project limits.
+            limit = { PREV = { check_variable = { mdcw_own_soi_duration = 360 } } }
+            set_country_flag = { flag = soi_slot_4 value = 1 days = 360 }
+        }
+        else = { set_country_flag = { flag = soi_slot_4 value = 1 days = 120 } }
+		set_variable = { soi_slot_state^4 = PREV.id }
+		set_variable = { soi_slot_expiry^4 = soi_expiry_date }
+		set_temp_variable = { soi_allocated = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { soi_allocated = 0 }
+			check_variable = { max_soi_slots > 4 }
+			NOT = { has_country_flag = soi_slot_5 }
+		}
+		if = {
+            # IMPERIA CW — Cold War: Imperia investment terms and project limits.
+            limit = { PREV = { check_variable = { mdcw_own_soi_duration = 360 } } }
+            set_country_flag = { flag = soi_slot_5 value = 1 days = 360 }
+        }
+        else = { set_country_flag = { flag = soi_slot_5 value = 1 days = 120 } }
+		set_variable = { soi_slot_state^5 = PREV.id }
+		set_variable = { soi_slot_expiry^5 = soi_expiry_date }
+		set_temp_variable = { soi_allocated = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { soi_allocated = 0 }
+			check_variable = { max_soi_slots > 5 }
+			NOT = { has_country_flag = soi_slot_6 }
+		}
+		if = {
+            # IMPERIA CW — Cold War: Imperia investment terms and project limits.
+            limit = { PREV = { check_variable = { mdcw_own_soi_duration = 360 } } }
+            set_country_flag = { flag = soi_slot_6 value = 1 days = 360 }
+        }
+        else = { set_country_flag = { flag = soi_slot_6 value = 1 days = 120 } }
+		set_variable = { soi_slot_state^6 = PREV.id }
+		set_variable = { soi_slot_expiry^6 = soi_expiry_date }
+		set_temp_variable = { soi_allocated = 1 }
+	}
+}
+
+calculate_internal_investment_costs = {
+	ROOT = {
+		set_temp_variable = {
+			internal_investment_pp_cost = {
+				value = pp_cost_temp
+				multiply = {
+					value = 1
+					add = modifier@internal_investments_pp_cost_modifier
+				}
+				clamp = { min = 25 max = 999999999 }
+			}
+		}
+
+		set_temp_variable = {
+			internal_investment_money_cost = {
+				value = gdp_total
+				multiply = ii_cost
+				multiply = {
+					value = 1
+					add = modifier@internal_investments_money_cost_modifier
+				}
+				max = {
+					value = gdp_total
+					multiply = 0.001
+				}
+			}
+		}
+	}
+}
+
+# Calculate internal investment PP + money cost, set flags.
+calculate_internal_investments_costs = {
+	calculate_internal_investment_costs = yes
+	ROOT = {
+		set_temp_variable = {
+			pp_cost = {
+				value = internal_investment_pp_cost
+				multiply = -1
+			}
+		}
+		add_political_power = pp_cost
+
+		set_temp_variable = {
+			treasury_change = {
+				value = internal_investment_money_cost
+				multiply = -1
+			}
+		}
+		modify_treasury_effect = yes
+		state_owned_concurrent_investment_limit_implement = yes
+	}
+	refresh_investment_gui = yes
+}

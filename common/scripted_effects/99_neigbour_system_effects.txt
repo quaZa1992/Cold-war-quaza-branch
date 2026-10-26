@@ -1,0 +1,59 @@
+# Author(s): Angriest Bird
+update_neighbors_effects = {
+	# Reset neighbor-effect accumulators (read by neighbor_effect_modifiers)
+	set_variable = { stability_factor_neighbor_var = 0 }
+	set_variable = { democratic_drift_neighbor_var = 0 }
+	set_variable = { neutrality_drift_neighbor_var = 0 }
+	set_variable = { nationalist_drift_neighbor_var = 0 }
+	set_variable = { communism_drift_neighbor_var = 0 }
+	set_variable = { fascism_drift_neighbor_var = 0 }
+
+	for_each_scope_loop = {
+		array = neighbors
+
+		# Stability Impact
+		if = {
+			limit = {
+				OR = {
+					has_stability < 0.20 # Lowering Stability Count
+					has_civil_war = yes
+				}
+			}
+			add_to_variable = { PREV.stability_factor_neighbor_var = 1 }
+		}
+		# Neighbour Ideology Drift (major nations count double)
+		set_temp_variable = { weight = 1 }
+		if = { limit = { is_major = yes }
+			set_temp_variable = { weight = 2 }
+		}
+
+		if = { limit = { has_government = democratic }
+			add_to_variable = { PREV.democratic_drift_neighbor_var = weight }
+		}
+		else_if = { limit = { has_government = neutrality }
+			add_to_variable = { PREV.neutrality_drift_neighbor_var = weight }
+		}
+		else_if = { limit = { has_government = nationalist }
+			add_to_variable = { PREV.nationalist_drift_neighbor_var = weight }
+		}
+		else_if = { limit = { has_government = communism }
+			add_to_variable = { PREV.communism_drift_neighbor_var = weight }
+		}
+		else_if = { limit = { has_government = fascism }
+			add_to_variable = { PREV.fascism_drift_neighbor_var = weight }
+		}
+	}
+
+	# Scale counts into modifier magnitudes and clamp
+	set_variable = { stability_factor_neighbor_var = { value = stability_factor_neighbor_var multiply = -0.01 clamp = { min = -0.15 max = 0 } } }
+	set_variable = { democratic_drift_neighbor_var = { value = democratic_drift_neighbor_var multiply = 0.01 clamp = { min = 0 max = 0.15 } } }
+	set_variable = { neutrality_drift_neighbor_var = { value = neutrality_drift_neighbor_var multiply = 0.01 clamp = { min = 0 max = 0.15 } } }
+	set_variable = { nationalist_drift_neighbor_var = { value = nationalist_drift_neighbor_var multiply = 0.01 clamp = { min = 0 max = 0.15 } } }
+	set_variable = { communism_drift_neighbor_var = { value = communism_drift_neighbor_var multiply = 0.01 clamp = { min = 0 max = 0.15 } } }
+	set_variable = { fascism_drift_neighbor_var = { value = fascism_drift_neighbor_var multiply = 0.01 clamp = { min = 0 max = 0.15 } } }
+
+	# Dynamic Modifier for Neighbor Effects
+	if = { limit = { NOT = { has_dynamic_modifier = { modifier = neighbor_effect_modifiers } } }
+		add_dynamic_modifier = { modifier = neighbor_effect_modifiers }
+	}
+}

@@ -1,0 +1,310 @@
+capital = 841
+
+# IMPERIA CW — Cold War: 1970 scenario country history.
+# Authored Cold War 1970 snapshot; native later history retained.
+1970.1.1 = {
+	# IMPERIA CW — Cold War: 1970 scenario country history.
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY BEGIN
+	if = {
+		limit = { IMP_is_1970_scenario = yes }
+		set_country_flag = IMP_1970_historical_politics
+	}
+	set_popularities = { democratic = 68 communism = 10 fascism = 1 neutrality = 16 nationalist = 5 }
+	set_politics = { ruling_party = democratic last_election = "1966.3.6" election_frequency = 48 elections_allowed = yes }
+	clear_array = party_pop_array
+	clear_array = party_pop_elect_array
+	clear_array = pos_array
+	clear_variable = ruling_party
+	clear_array = gov_coalition_array
+	resize_array = { array = party_pop_array size = 24 }
+	resize_array = { array = party_pop_elect_array size = 24 value = -1 }
+	resize_array = { array = pos_array size = 24 }
+	resize_array = { array = party_banned_array size = 24 value = 0 }
+	set_variable = { party_pop_array^1 = 0.12 }
+	set_variable = { party_pop_array^2 = 0.10 }
+	set_variable = { party_pop_array^3 = 0.46 }
+	set_variable = { party_pop_array^10 = 0.01 }
+	set_variable = { party_pop_array^13 = 0.07 }
+	set_variable = { party_pop_array^14 = 0.06 }
+	set_variable = { party_pop_array^18 = 0.11 }
+	set_variable = { party_pop_array^19 = 0.04 }
+	set_variable = { party_pop_array^22 = 0.04 }
+	set_variable = { ruling_party = 3 }
+	add_to_array = { gov_coalition_array = 18 }
+	create_country_leader = {
+		name = "Julio Cesar Mendez Montenegro"
+		picture = "gfx/Leaders/GUA/GUA_Coldwar_Julio_Cesar_Mendez_Montenegro.dds"
+		expire = "1970.7.1"
+		ideology = socialism
+	}
+	# COLDWAR HISTORICAL1970 NATIVE IDENTITY END
+
+	if = {
+		limit = { date < 1985.1.1 }
+		mdcw_apply_1970_infantry_research = yes
+		load_focus_tree = mdcw_1970_generic_focus
+		set_variable = { gdp_per_capita = 0.353 }
+		set_variable = { overall_productivity = 286.461 }
+		if = {
+			limit = { exists = yes }
+			set_oob = "mdcw_1970_empty_land"
+		}
+
+
+
+	}
+
+		# Temporary user decision: starting armies, fleets, air wings and equipment deferred.
+		set_oob = "mdcw_1970_empty_land"
+		set_naval_oob = "mdcw_1970_empty_naval"
+		set_air_oob = "mdcw_1970_empty_air"
+	}
+
+2000.1.1 = {
+	set_variable = { currency_strength = 0.55 }
+	set_cosmetic_tag = GUA
+	set_country_flag = dynamic_flag
+	set_country_flag = dynamic_rebel_flag
+	set_country_flag = is_getting_cdf_subsidies
+	add_to_array = { global.uncdf_recipients = THIS }
+	add_dynamic_modifier = { modifier = un_aid_subsidies_modifier }
+	set_variable = { gdp_per_capita = 6.500 }
+
+	complete_special_project = sp:sp_composite_production
+
+	# Starting tech
+	set_technology = {
+		railway_system_01 = 1
+		railway_system_02 = 1
+		railway_system_03 = 1
+		infantry_mass_assault = 1
+		infantry_weapons_1 = 1
+		cnc_equipment_1 = 1
+		Anti_tank_1 = 1
+		Heavy_Anti_tank_1 = 1
+		util_vehicle_1 = 1
+		body_armor_1 = 1
+		basic_computing = 1
+		integrated_circuit = 1
+		computing_1 = 1
+		radar = 1
+		fuel_silos = 1
+		internet_1 = 1
+	}
+
+	if = {
+		limit = { NOT = { has_dlc = "La Resistance" } }
+		set_technology = {
+			decryption_1 = 1
+			encryption_1 = 1
+		}
+	}
+	complete_special_project = sp:sp_armoured_vehicle_project
+	if = {
+		limit = { has_dlc = "No Step Back" }
+
+		set_oob = "GUA_2000_nsb"
+		set_technology = {
+			nsb_artillery_1 = 1
+			nsb_Anti_Air_0 = 1
+			mbt_tech_ops = 1
+			mbt_tech = 1
+			diesel_engine_tech = 1
+			tank_ammo_1 = 1
+			tank_components_tech = 1
+		}
+
+		else = {
+			set_oob = "GUA_2000_nonnsb"
+			set_technology = {
+				Early_APC = 1
+				APC_1 = 1
+				tech_arty_0 = 1
+				Anti_Air_0 = 1
+			}
+		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_air_oob = "GUA_2000_bba"
+
+		else = {
+			set_air_oob = "GUA_2000_nonbba"
+		}
+	}
+
+	add_ideas = {
+		wto_member
+		partially_privatized_healthcare
+		balanced_protections
+		standard_maintenance
+		us_dollar
+		standard_regulations
+
+		fast_growth
+		corruption_level_08
+		landowners
+		small_medium_business_owners
+		industrial_conglomerates
+		bureau_02
+		defence_01
+		police_02
+		edu_02
+		health_02
+		social_02
+		consumption_economy
+		draft_army
+		volunteer_women
+		officer_military_school
+		christian
+		at_member
+		no_currency_backing
+	}
+
+	create_equipment_variant = {
+		   name = "Armadillo APC"
+		   type = medium_tank_amphibious_chassis_1
+		   parent_version = 0
+		modules = {
+			   main_armament_slot = afv_machine_gun
+			   reload_type_slot = manual_loading
+			   ammunition_load_slot = machine_gun_ammo_1
+				turret_type_slot = tank_no_turret
+				suspension_type_slot = tank_wheeled_suspension_light
+				engine_type_slot = tank_diesel_engine_gen1
+				armor_type_slot = afv_alum_armor_gen1
+				special_type_slot_1 = empty
+				special_type_slot_2 = empty
+				special_type_slot_3 = afv_troop_capacity
+				special_type_slot_4 = tank_battlestation_1
+				special_type_slot_5 = afv_reverse_doors
+				special_type_slot_6 = empty
+		 }
+		   icon = "gfx/interface/technologies/USA/LAND/V150.dds"
+	 }
+
+	# Cartel System
+	set_variable = { cartel_political_influence = 25 }
+	set_variable = { strength_of_cartels = 50 }
+
+	set_variable = { landowners_opinion = 60 }
+	set_variable = { small_medium_business_owners_opinion = 40 }
+	set_variable = { industrial_conglomerates_opinion = 40 }
+
+	add_opinion_modifier = { target = BOL modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = BOL modifier = spanish_speaking }
+	add_opinion_modifier = { target = DOM modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = DOM modifier = spanish_speaking }
+	add_opinion_modifier = { target = HON modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = HON modifier = spanish_speaking }
+	add_opinion_modifier = { target = PAR modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = PAR modifier = spanish_speaking }
+	add_opinion_modifier = { target = ELS modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = ELS modifier = spanish_speaking }
+	add_opinion_modifier = { target = NIC modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = NIC modifier = spanish_speaking }
+	add_opinion_modifier = { target = COS modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = COS modifier = spanish_speaking }
+	add_opinion_modifier = { target = CUB modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = CUB modifier = spanish_speaking }
+	add_opinion_modifier = { target = PAN modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = PAN modifier = spanish_speaking }
+	add_opinion_modifier = { target = URG modifier = spanish_speaking }
+	reverse_add_opinion_modifier = { target = URG modifier = spanish_speaking }
+
+	#Influence system
+	init_influence = yes
+	set_variable = { domestic_influence_amount = 70 }
+	add_to_array = { influence_array = USA.id }
+	add_to_array = { influence_array_val = 60 }
+	add_to_array = { influence_array = MEX.id }
+	add_to_array = { influence_array_val = 21 }
+	add_to_array = { influence_array = TAI.id }
+	add_to_array = { influence_array_val = 20 }
+	add_to_array = { influence_array = CHI.id }
+	add_to_array = { influence_array_val = 4 }
+	add_to_array = { influence_array = CUB.id }
+	add_to_array = { influence_array_val = 3 }
+	sort_influence = yes
+
+	### Economy
+	set_variable = { var = debt value = 12 }
+	set_variable = { var = treasury value = 3 }
+	set_variable = { var = corporate_tax_rate value = 20 }
+	set_variable = { var = population_tax_rate value = 6 }
+	set_variable = { var = int_investments value = 0.1 }
+	set_variable = { inflation_rate_var = 0.05214 }
+	set_variable = { cb_policy_rate = 3 }
+	set_variable = { overall_productivity = 472 }
+
+
+	set_popularities = {
+		democratic = 33.2
+		communism = 13.6
+		fascism = 0.0
+		neutrality = 0.0
+		nationalist = 53.2
+	}
+	set_politics = {
+		ruling_party = nationalist
+		last_election = "1999.11.7"
+		election_frequency = 48
+		elections_allowed = yes
+	}
+
+	start_politics_input = yes
+
+	set_variable = { election_threshold = 0.01 }
+
+	### Party Popularities
+	set_variable = { party_pop_array^1 = 0.332 } #conservatism - PAN
+	set_variable = { party_pop_array^4 = 0.063 } #communist_state - URNG-MAIZ
+	set_variable = { party_pop_array^5 = 0.073 } #anarchist_communism - New Nation Alliance -> Winaq
+	set_variable = { party_pop_array^20 = 0.012 } #Nat_Populism - National Liberation Movement
+	set_variable = { party_pop_array^21 = 0.52 } #Nat_Fascism - Guatemalan Republican Front
+
+	### Ruling Party
+	set_variable = { ruling_party = 21 }
+
+	startup_politics = yes
+
+	create_country_leader = {
+		name = "Alfonso Portillo"
+		picture = "alfonso_portillo.dds"
+		ideology = Nat_Fascism
+		traits = {
+			nationalist_Nat_Fascism
+			career_politician
+			doctor
+		}
+	}
+	set_variable = { term_limit = 1 }
+	set_variable = { current_term = 1 }
+
+	recruit_character = GUA_juan_manuel_perez_ramirez
+	recruit_character = GUA_erick_cano_zamora
+	recruit_character = GUA_julio_cesar_paz_bone
+	recruit_character = GUA_hugo_roberto_urbina_marroquin
+	recruit_character = GUA_genri_estuardo_martinez_fernandez
+	recruit_character = GUA_juan_carlos_pineda_paiz
+	recruit_character = GUA_nelson_guillermo_tun_cortez
+
+
+	# Relation Starting Configuration (moved from on_startup)
+	add_opinion_modifier = { target = HAM modifier = HAM_Not_A_Recognized_country }
+	add_opinion_modifier = { target = CUB modifier = sanctions }
+	add_relation_modifier = { target = USA modifier = USA_World_Economical_Relations }
+	add_relation_modifier = { target = SOV modifier = SOV_World_Economical_Relations }
+	add_relation_modifier = { target = CHI modifier = CHI_World_Economical_Relations }
+	add_relation_modifier = { target = FRA modifier = FRA_World_Economical_Relations }
+	add_relation_modifier = { target = GER modifier = GER_World_Economical_Relations }
+	add_relation_modifier = { target = ENG modifier = ENG_World_Economical_Relations }
+	add_relation_modifier = { target = SPR modifier = SPR_World_Economical_Relations }
+	add_relation_modifier = { target = ITA modifier = ITA_World_Economical_Relations }
+	add_relation_modifier = { target = UKR modifier = UKR_world_economical_relations }
+	add_relation_modifier = { target = ISR modifier = ISR_World_Economical_Relations }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists }
+	add_opinion_modifier = { target = TTP modifier = AlQaida_Are_Terrorists_Trade }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists }
+	add_opinion_modifier = { target = TAL modifier = Taliban_Are_Terrorists_Trade }
+}

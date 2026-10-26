@@ -1,0 +1,80 @@
+# IMPERIA CW — Cold War: imperia mastery ideas — national ideas.
+# Optional Imperia military institution. Native MD doctrine rules remain the baseline.
+# The cost modifiers are consumed by MD's personnel, equipment upkeep and bureaucracy budgets.
+ideas = {
+	imp_national_ideas_3 = {
+		law = yes
+		use_list_view = yes
+
+		# IMPERIA CW — Cold War: Joint training institution, matching the red national-idea badges.
+		mdcw_ni_joint_training_command = {
+			# IMPERIA CW — Cold War: Generated badge matching this selector category.
+			picture = COLDWAR_selector_joint_training_command
+			cost = 500
+			removal_cost = 150
+			allowed_civil_war = { always = yes }
+			visible = { always = yes }
+
+			available = {
+				NOT = { has_idea = no_military }
+				check_variable = { gdp_total > 0 }
+				custom_trigger_tooltip = {
+					tooltip = mdcw_joint_training_command_spending_tt
+					OR = {
+						has_idea = defence_04
+						has_idea = defence_05
+						has_idea = defence_06
+						has_idea = defence_07
+						has_idea = defence_08
+						has_idea = defence_09
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = mdcw_joint_training_command_training_tt
+					OR = {
+						has_idea = officer_advanced_training
+						has_idea = officer_military_school
+						has_idea = officer_military_academy
+						has_idea = officer_international_education
+					}
+				}
+			}
+
+			allowed_to_remove = {
+				custom_trigger_tooltip = {
+					tooltip = flag_ni_tt
+					NOT = { has_country_flag = mdcw_joint_training_command_commitment }
+				}
+			}
+
+			on_add = {
+				custom_effect_tooltip = mdcw_joint_training_command_setup_tt
+				hidden_effect = {
+					set_country_flag = { flag = mdcw_joint_training_command_commitment days = 1440 value = 1 }
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.02 } }
+					modify_treasury_effect = yes
+					ingame_update_setup = yes
+				}
+			}
+			on_remove = {
+				ingame_update_setup = yes
+			}
+
+			modifier = {
+				land_mastery_gain_factor = 1.00
+				equipment_mastery_gain_factor = 1.00
+				air_mastery_gain_factor = 1.00
+				naval_mastery_gain_factor = 1.00
+				special_forces_mastery_gain_factor = 1.00
+				personnel_cost_multiplier_modifier = 1.00
+				equipment_cost_multiplier_modifier = 0.75
+				bureaucracy_cost_multiplier_modifier = 0.25
+			}
+
+			# A costly discretionary institution, like the other Imperia national ideas.
+			ai_will_do = { factor = 0 }
+			# Establishment requirements do not provide an early exit from the four-year commitment.
+			cancel_if_invalid = no
+		}
+	}
+}

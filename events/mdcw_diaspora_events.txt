@@ -1,0 +1,204 @@
+# IMPERIA CW — Cold War: Guest Worker Administration
+add_namespace = mdcw_diaspora
+
+# IMPERIA CW — Cold War: snapshot-safe Ministry consular funding.
+country_event = {
+ id = mdcw_diaspora.86
+ title = gw_ministry_outreach_t
+ desc = gw_ministry_outreach_d
+ picture = GFX_mdcw_guest_workers_arrival
+ is_triggered_only = yes
+ timeout_days = 14
+ option = {
+  name = gw_ministry_outreach_accept
+  trigger = {
+   has_country_flag = gw_dialog_valid has_country_flag = gw_dialog_window
+   NOT = { check_variable = { political_power < 75 } } NOT = { check_variable = { treasury < 0.5 } }
+   var:gw_dialog_host = { mdcw_gw_outreach_target_valid = yes }
+  }
+  ai_chance = { factor = 0 }
+  effect_tooltip = {
+   add_political_power = -75
+   custom_effect_tooltip = gw_ministry_outreach_terms
+  }
+  hidden_effect = { mdcw_gw_ministry_confirm_outreach = yes }
+ }
+ option = {
+  name = gw_cancel ai_chance = { factor = 100 }
+  hidden_effect = { clr_country_flag = gw_dialog_valid clr_country_flag = gw_dialog_window }
+ }
+}
+
+country_event = {
+ id = mdcw_diaspora.11
+ title = mdcw_diaspora.11.t
+ desc = mdcw_diaspora.11.d
+ picture = GFX_mdcw_guest_workers_arrival
+ is_triggered_only = yes
+ timeout_days = 14
+ immediate = { set_variable = { gw_project_choice = 1 } mdcw_gw_open_project_dialog = yes }
+ option = {
+  name = gw_fund_project
+  trigger = { mdcw_gw_project_payment_ready = yes }
+  ai_chance = { factor = 75 }
+  effect_tooltip = { add_political_power = -75 custom_effect_tooltip = gw_project_1_terms_tt }
+  hidden_effect = { set_variable = { gw_project_choice = 1 } mdcw_gw_confirm_project = yes }
+ }
+ option = { name = gw_cancel ai_chance = { factor = 25 } hidden_effect = { clr_country_flag = gw_dialog_window clr_country_flag = gw_dialog_valid } }
+}
+
+country_event = {
+ id = mdcw_diaspora.12
+ title = mdcw_diaspora.12.t
+ desc = mdcw_diaspora.12.d
+ picture = GFX_mdcw_guest_workers_arrival
+ is_triggered_only = yes
+ timeout_days = 14
+ immediate = { set_variable = { gw_project_choice = 2 } mdcw_gw_open_project_dialog = yes }
+ option = {
+  name = gw_fund_project
+  trigger = { mdcw_gw_project_payment_ready = yes }
+  ai_chance = { factor = 75 }
+  effect_tooltip = { add_political_power = -100 custom_effect_tooltip = gw_project_2_terms_tt }
+  hidden_effect = { set_variable = { gw_project_choice = 2 } mdcw_gw_confirm_project = yes }
+ }
+ option = { name = gw_cancel ai_chance = { factor = 25 } hidden_effect = { clr_country_flag = gw_dialog_window clr_country_flag = gw_dialog_valid } }
+}
+
+country_event = {
+ id = mdcw_diaspora.13
+ title = mdcw_diaspora.13.t
+ desc = mdcw_diaspora.13.d
+ picture = GFX_mdcw_guest_workers_arrival
+ is_triggered_only = yes
+ timeout_days = 14
+ immediate = { set_variable = { gw_project_choice = 3 } mdcw_gw_open_project_dialog = yes }
+ option = {
+  name = gw_fund_project
+  trigger = { mdcw_gw_project_payment_ready = yes }
+  ai_chance = { factor = 75 }
+  effect_tooltip = { add_political_power = -100 custom_effect_tooltip = gw_project_3_terms_tt }
+  hidden_effect = { set_variable = { gw_project_choice = 3 } mdcw_gw_confirm_project = yes }
+ }
+ option = { name = gw_cancel ai_chance = { factor = 25 } hidden_effect = { clr_country_flag = gw_dialog_window clr_country_flag = gw_dialog_valid } }
+}
+
+country_event = {
+ id = mdcw_diaspora.20 hidden = yes is_triggered_only = yes
+ immediate = { mdcw_gw_finish_project = yes }
+}
+country_event = {
+ id = mdcw_diaspora.21 title = gw_project_complete_t desc = gw_project_complete_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = { name = gw_acknowledge }
+}
+country_event = {
+ id = mdcw_diaspora.30 title = gw_return_confirm_t desc = gw_return_confirm_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = {
+  name = gw_confirm_return
+  trigger = { has_country_flag = gw_dialog_valid mdcw_gw_can_plan_return = yes check_variable = { gw_return_preview_k > 0 } NOT = { check_variable = { treasury < gw_return_preview_cash } } NOT = { check_variable = { political_power < gw_return_preview_pp } } }
+  ai_chance = { factor = 0 }
+  # IMPERIA CW — Cold War: preview the prepared country values, not unevaluated temporary arithmetic.
+  effect_tooltip = {
+   add_political_power = gw_return_pp_payment
+   custom_effect_tooltip = gw_ministry_return_payment_tt
+   custom_effect_tooltip = gw_return_terms_tt
+  }
+  hidden_effect = { mdcw_gw_confirm_return = yes }
+ }
+ option = { name = gw_cancel ai_chance = { factor = 100 } hidden_effect = { clr_country_flag = gw_dialog_window clr_country_flag = gw_dialog_valid } }
+}
+country_event = {
+ id = mdcw_diaspora.40 hidden = yes is_triggered_only = yes
+ immediate = { mdcw_gw_execute_return = yes }
+}
+country_event = {
+ id = mdcw_diaspora.41 title = gw_return_complete_t desc = gw_return_complete_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = {
+  name = gw_acknowledge
+  effect_tooltip = {
+   event_target:gw_return_state_1 = { add_manpower = ROOT.gw_return_source1_people }
+   if = { limit = { check_variable = { gw_return_source_count = 2 } } event_target:gw_return_state_2 = { add_manpower = ROOT.gw_return_source2_people } }
+   event_target:gw_return_home_state = { add_manpower = ROOT.gw_return_add }
+  }
+ }
+}
+country_event = {
+ id = mdcw_diaspora.42 title = gw_return_arrival_t desc = gw_return_arrival_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = { name = gw_acknowledge effect_tooltip = { event_target:gw_return_home_state = { add_manpower = FROM.gw_return_add } } }
+}
+country_event = {
+ id = mdcw_diaspora.43 title = gw_return_failed_t desc = gw_return_failed_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = { name = gw_acknowledge effect_tooltip = { set_temp_variable = { treasury_change = gw_return_refunded_cash } modify_treasury_effect = yes add_political_power = gw_return_refunded_pp } }
+}
+# IMPERIA CW — Cold War: Old or duplicate review timers cannot advance a fresh migration cycle.
+country_event = { id = mdcw_diaspora.60 hidden = yes is_triggered_only = yes trigger = { has_country_flag = { flag = gw_quarterly_scheduled days > 90 } } immediate = { mdcw_gw_quarterly_review = yes } }
+country_event = {
+ id = mdcw_diaspora.61 title = gw_abuse_t desc = gw_abuse_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = {
+  name = gw_abuse_investigate ai_chance = { factor = 85 }
+  trigger = { NOT = { check_variable = { treasury < 0.5 } } }
+  set_temp_variable = { treasury_change = -0.5 } modify_treasury_effect = yes
+  add_political_power = -25
+  add_stability = 0.005
+  hidden_effect = { clr_country_flag = gw_incident_open ingame_update_setup = yes }
+ }
+ option = {
+  name = gw_abuse_ignore ai_chance = { factor = 15 }
+  add_stability = -0.02
+  hidden_effect = {
+   clr_country_flag = gw_incident_open
+   random_scope_in_array = {
+    array = gw_active_origins
+    limit = { exists = yes }
+    country_event = { id = mdcw_diaspora.62 days = 1 }
+   }
+  }
+ }
+}
+country_event = {
+ id = mdcw_diaspora.62 title = gw_complaint_t desc = gw_complaint_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = {
+  name = gw_complaint_suspend ai_chance = { factor = 65 }
+  add_opinion_modifier = { target = FROM modifier = mdcw_gw_worker_abuse }
+  hidden_effect = { if = { limit = { NOT = { is_in_array = { gw_suspended_hosts = FROM.id } } } add_to_array = { gw_suspended_hosts = FROM.id } } }
+ }
+ option = { name = gw_complaint_protest ai_chance = { factor = 35 } add_opinion_modifier = { target = FROM modifier = mdcw_gw_worker_abuse } }
+}
+country_event = { id = mdcw_diaspora.80 hidden = yes is_triggered_only = yes immediate = { mdcw_gw_finish_outreach = yes } }
+
+country_event = {
+ id = mdcw_diaspora.85 title = gw_overseas_report_t desc = gw_overseas_report_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = { name = gw_acknowledge }
+}
+
+# Recipient-only political reaction. Uses the existing quarterly shared incident cap.
+country_event = {
+ id = mdcw_diaspora.63 title = gw_campaign_t desc = gw_campaign_d
+ picture = GFX_mdcw_guest_workers_arrival is_triggered_only = yes timeout_days = 14
+ option = {
+  name = gw_campaign_mediate ai_chance = { factor = 75 }
+  trigger = { NOT = { check_variable = { treasury < gw_campaign_response_cash } } has_political_power > 24 }
+  set_temp_variable = { treasury_change = gw_campaign_response_cash }
+  multiply_temp_variable = { treasury_change = -1 }
+  modify_treasury_effect = yes
+  add_political_power = -25
+  add_stability = 0.005
+  remove_ideas = mdcw_gw_immigration_backlash
+  hidden_effect = { clr_country_flag = gw_incident_open ingame_update_setup = yes }
+ }
+ option = {
+  name = gw_campaign_ignore ai_chance = { factor = 25 }
+  add_stability = -0.01
+  hidden_effect = { remove_ideas = mdcw_gw_immigration_backlash }
+  add_timed_idea = { idea = mdcw_gw_immigration_backlash days = 180 }
+  hidden_effect = { clr_country_flag = gw_incident_open }
+ }
+}

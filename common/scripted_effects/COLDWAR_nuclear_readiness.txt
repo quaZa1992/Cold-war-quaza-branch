@@ -1,0 +1,985 @@
+# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+COLDWAR_nr_touch = {
+	add_to_variable = { COLDWAR_nr_dirty = 1 }
+}
+COLDWAR_nr_init = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_nr_initialized }
+		}
+		set_country_flag = COLDWAR_nr_initialized
+		set_variable = { COLDWAR_nr_level = 5 }
+		set_variable = { COLDWAR_nr_order = 5 }
+		set_variable = { COLDWAR_nr_build_days = 0 }
+		set_variable = { COLDWAR_nr_fatigue = 0 }
+		set_variable = { COLDWAR_nr_civil_days = 0 }
+	}
+	COLDWAR_nr_refresh = yes
+}
+COLDWAR_nr_refresh = {
+	set_variable = {
+		COLDWAR_nr_arsenal = {
+			value = num_equipment@nuclear_missile_equipment
+			add = num_equipment@nuclear_ballistic_missile_equipment
+			clamp = { min = 0 max = 1000000 }
+		}
+	}
+	set_variable = { COLDWAR_nr_ready_share = 0 }
+	set_variable = { COLDWAR_nr_reserve_share = 0 }
+	set_variable = { COLDWAR_nr_cost_factor = 0 }
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_level = 5 }
+		}
+		set_variable = { COLDWAR_nr_ready_share = 0.15 }
+		set_variable = { COLDWAR_nr_reserve_share = 0.1 }
+		set_variable = { COLDWAR_nr_cost_factor = 1.0 }
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_level = 4 }
+		}
+		set_variable = { COLDWAR_nr_ready_share = 0.3 }
+		set_variable = { COLDWAR_nr_reserve_share = 0.15 }
+		set_variable = { COLDWAR_nr_cost_factor = 1.15 }
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_level = 3 }
+		}
+		set_variable = { COLDWAR_nr_ready_share = 0.5 }
+		set_variable = { COLDWAR_nr_reserve_share = 0.25 }
+		set_variable = { COLDWAR_nr_cost_factor = 1.4 }
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_level = 2 }
+		}
+		set_variable = { COLDWAR_nr_ready_share = 0.75 }
+		set_variable = { COLDWAR_nr_reserve_share = 0.4 }
+		set_variable = { COLDWAR_nr_cost_factor = 1.8 }
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_level = 1 }
+		}
+		set_variable = { COLDWAR_nr_ready_share = 1.0 }
+		set_variable = { COLDWAR_nr_reserve_share = 0.5 }
+		set_variable = { COLDWAR_nr_cost_factor = 2.5 }
+	}
+	set_variable = {
+		COLDWAR_nr_ready_count = { value = COLDWAR_nr_arsenal multiply = COLDWAR_nr_ready_share round = yes }
+	}
+	set_variable = {
+		COLDWAR_nr_protected_count = { value = COLDWAR_nr_arsenal multiply = COLDWAR_nr_reserve_share round = yes }
+	}
+	set_variable = {
+		COLDWAR_nr_fatigue_stability = { value = COLDWAR_nr_fatigue multiply = -0.0005 }
+	}
+	if = {
+		limit = { COLDWAR_nr_nuclear_power = yes }
+		if = {
+			limit = {
+				NOT = {
+					has_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+				}
+			}
+			add_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+		}
+	}
+	else = {
+		set_variable = { COLDWAR_nr_level = 5 }
+		set_variable = { COLDWAR_nr_order = 5 }
+		set_variable = { COLDWAR_nr_build_days = 0 }
+		set_variable = { COLDWAR_nr_ready_count = 0 }
+		set_variable = { COLDWAR_nr_protected_count = 0 }
+		set_variable = { COLDWAR_nr_ready_share = 0 }
+		set_variable = { COLDWAR_nr_reserve_share = 0 }
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+			}
+			remove_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+		}
+	}
+	COLDWAR_nr_calculate_budget = yes
+	COLDWAR_nr_validate_first_use = yes
+	force_update_dynamic_modifier = yes
+	COLDWAR_nr_touch = yes
+}
+COLDWAR_nr_calculate_budget = {
+	set_variable = { COLDWAR_nr_forces_weekly = 0 }
+	set_variable = { COLDWAR_nr_civil_weekly = 0 }
+	set_variable = { COLDWAR_nr_weekly_cost = 0 }
+	if = {
+		limit = { COLDWAR_nr_nuclear_power = yes has_country_flag = COLDWAR_nr_initialized }
+		set_variable = {
+			COLDWAR_nr_forces_weekly = {
+				value = num_equipment@nuclear_missile_equipment
+				add = num_equipment@nuclear_ballistic_missile_equipment
+				multiply = 0.00001
+				add = 0.002
+				multiply = COLDWAR_nr_cost_factor
+				multiply = {
+					value = 1
+					add = { value = COLDWAR_nr_fatigue multiply = 0.005 }
+				}
+				multiply = {
+					value = gdp_per_capita
+					divide = 36
+					clamp = { min = 0.4 max = 1.2 }
+				}
+				multiply = {
+					value = inflation_multiplier
+					clamp = { min = 0.01 max = 100 }
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			OR = {
+				has_country_flag = COLDWAR_nr_civil_active
+				check_variable = { COLDWAR_nr_civil_days > 0 }
+			}
+		}
+		set_variable = {
+			COLDWAR_nr_civil_weekly = {
+				value = gdp_total
+				multiply = 0.00002
+				add = 0.002
+				multiply = {
+					value = inflation_multiplier
+					clamp = { min = 0.01 max = 100 }
+				}
+			}
+		}
+	}
+	set_variable = {
+		COLDWAR_nr_weekly_cost = { value = COLDWAR_nr_forces_weekly add = COLDWAR_nr_civil_weekly }
+	}
+}
+COLDWAR_nr_order_level_1 = {
+	if = {
+		limit = {
+			COLDWAR_nr_can_change = yes
+			NOT = {
+				check_variable = { COLDWAR_nr_level = 1 }
+			}
+		}
+		add_political_power = -25
+		set_variable = { COLDWAR_nr_order = 1 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_level > 1 }
+			}
+			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
+			subtract_from_variable = { COLDWAR_nr_build_days = 1 }
+			multiply_variable = { COLDWAR_nr_build_days = 2 }
+		}
+		else = {
+			set_variable = { COLDWAR_nr_level = 1 }
+			set_variable = { COLDWAR_nr_build_days = 0 }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_order_level_2 = {
+	if = {
+		limit = {
+			COLDWAR_nr_can_change = yes
+			NOT = {
+				check_variable = { COLDWAR_nr_level = 2 }
+			}
+		}
+		add_political_power = -25
+		set_variable = { COLDWAR_nr_order = 2 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_level > 2 }
+			}
+			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
+			subtract_from_variable = { COLDWAR_nr_build_days = 2 }
+			multiply_variable = { COLDWAR_nr_build_days = 2 }
+		}
+		else = {
+			set_variable = { COLDWAR_nr_level = 2 }
+			set_variable = { COLDWAR_nr_build_days = 0 }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_order_level_3 = {
+	if = {
+		limit = {
+			COLDWAR_nr_can_change = yes
+			NOT = {
+				check_variable = { COLDWAR_nr_level = 3 }
+			}
+		}
+		add_political_power = -25
+		set_variable = { COLDWAR_nr_order = 3 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_level > 3 }
+			}
+			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
+			subtract_from_variable = { COLDWAR_nr_build_days = 3 }
+			multiply_variable = { COLDWAR_nr_build_days = 2 }
+		}
+		else = {
+			set_variable = { COLDWAR_nr_level = 3 }
+			set_variable = { COLDWAR_nr_build_days = 0 }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_order_level_4 = {
+	if = {
+		limit = {
+			COLDWAR_nr_can_change = yes
+			NOT = {
+				check_variable = { COLDWAR_nr_level = 4 }
+			}
+		}
+		add_political_power = -25
+		set_variable = { COLDWAR_nr_order = 4 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_level > 4 }
+			}
+			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
+			subtract_from_variable = { COLDWAR_nr_build_days = 4 }
+			multiply_variable = { COLDWAR_nr_build_days = 2 }
+		}
+		else = {
+			set_variable = { COLDWAR_nr_level = 4 }
+			set_variable = { COLDWAR_nr_build_days = 0 }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_order_level_5 = {
+	if = {
+		limit = {
+			COLDWAR_nr_can_change = yes
+			NOT = {
+				check_variable = { COLDWAR_nr_level = 5 }
+			}
+		}
+		add_political_power = -25
+		set_variable = { COLDWAR_nr_order = 5 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_level > 5 }
+			}
+			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
+			subtract_from_variable = { COLDWAR_nr_build_days = 5 }
+			multiply_variable = { COLDWAR_nr_build_days = 2 }
+		}
+		else = {
+			set_variable = { COLDWAR_nr_level = 5 }
+			set_variable = { COLDWAR_nr_build_days = 0 }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_stand_down = {
+	set_variable = { COLDWAR_nr_level = 5 }
+	set_variable = { COLDWAR_nr_order = 5 }
+	set_variable = { COLDWAR_nr_build_days = 0 }
+	COLDWAR_nr_refresh = yes
+}
+COLDWAR_nr_start_civil = {
+	if = {
+		limit = {
+			COLDWAR_nr_enabled = yes
+			is_ai = no
+			has_capitulated = no
+			has_political_power > 24
+			NOT = { has_country_flag = COLDWAR_nr_civil_active }
+			check_variable = { COLDWAR_nr_civil_days = 0 }
+		}
+		COLDWAR_nr_init = yes
+		add_political_power = -25
+		set_variable = { COLDWAR_nr_civil_days = 3 }
+		add_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_end_civil = {
+	clr_country_flag = COLDWAR_nr_civil_active
+	set_variable = { COLDWAR_nr_civil_days = 0 }
+	remove_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+	COLDWAR_nr_refresh = yes
+}
+COLDWAR_nr_daily = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_nr_initialized }
+		}
+		COLDWAR_nr_init = yes
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_build_days > 0 }
+		}
+		if = {
+			limit = {
+				COLDWAR_nr_nuclear_power = yes
+				NOT = { has_country_flag = COLDWAR_nr_standdown }
+			}
+			subtract_from_variable = { COLDWAR_nr_build_days = 1 }
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_build_days = 0 }
+				}
+				set_variable = { COLDWAR_nr_level = COLDWAR_nr_order }
+				if = {
+					limit = { is_ai = no }
+					country_event = { id = cw_nuclear.1 }
+				}
+			}
+		}
+		else = {
+			set_variable = { COLDWAR_nr_build_days = 0 }
+			set_variable = { COLDWAR_nr_order = COLDWAR_nr_level }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_civil_days > 0 }
+		}
+		subtract_from_variable = { COLDWAR_nr_civil_days = 1 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_civil_days = 0 }
+			}
+			set_country_flag = COLDWAR_nr_civil_active
+			if = {
+				limit = { is_ai = no }
+				country_event = { id = cw_nuclear.2 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level = 1 }
+		}
+		add_to_variable = { COLDWAR_nr_fatigue = 2 }
+	}
+	else_if = {
+		limit = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level = 2 }
+		}
+		add_to_variable = { COLDWAR_nr_fatigue = 1 }
+	}
+	else_if = {
+		limit = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level = 3 }
+		}
+		add_to_variable = { COLDWAR_nr_fatigue = 0.25 }
+	}
+	else = {
+		subtract_from_variable = { COLDWAR_nr_fatigue = 2 }
+	}
+	clamp_variable = { var = COLDWAR_nr_fatigue min = 0 max = 100 }
+	if = {
+		limit = { has_capitulated = yes }
+		COLDWAR_nr_stand_down = yes
+		COLDWAR_nr_end_civil = yes
+	}
+	if = {
+		limit = { has_variable = COLDWAR_nr_opponent }
+		if = {
+			limit = {
+				NOT = { COLDWAR_nr_pair_valid = yes }
+			}
+			COLDWAR_nr_clear_local_crisis = yes
+		}
+		else_if = {
+			limit = {
+				check_variable = { COLDWAR_nr_until < global.num_days }
+			}
+			save_event_target_as = COLDWAR_nr_sender
+			var:COLDWAR_nr_opponent = { save_event_target_as = COLDWAR_nr_recipient }
+			COLDWAR_nr_close_pair_minus2 = yes
+			if = {
+				limit = { is_ai = no }
+				country_event = { id = cw_nuclear.9 }
+			}
+			event_target:COLDWAR_nr_recipient = {
+				if = {
+					limit = { is_ai = no }
+					country_event = { id = cw_nuclear.9 }
+				}
+			}
+		}
+	}
+	COLDWAR_nr_refresh = yes
+}
+COLDWAR_nr_tension_5 = {
+	set_temp_variable = { COLDWAR_nr_tension_applied = 0 }
+	if = {
+		limit = { has_global_flag = mdcw_cw_initialized }
+		set_temp_variable = { COLDWAR_nr_tension_before = global.mdcw_cw_tension }
+		set_temp_variable = { mdcw_cw_tension_delta = 5 }
+		mdcw_cw_add_tension = yes
+		set_temp_variable = {
+			COLDWAR_nr_tension_applied = { value = global.mdcw_cw_tension subtract = COLDWAR_nr_tension_before }
+		}
+	}
+}
+COLDWAR_nr_tension_3 = {
+	set_temp_variable = { COLDWAR_nr_tension_applied = 0 }
+	if = {
+		limit = { has_global_flag = mdcw_cw_initialized }
+		set_temp_variable = { COLDWAR_nr_tension_before = global.mdcw_cw_tension }
+		set_temp_variable = { mdcw_cw_tension_delta = 3 }
+		mdcw_cw_add_tension = yes
+		set_temp_variable = {
+			COLDWAR_nr_tension_applied = { value = global.mdcw_cw_tension subtract = COLDWAR_nr_tension_before }
+		}
+	}
+}
+COLDWAR_nr_tension_1 = {
+	set_temp_variable = { COLDWAR_nr_tension_applied = 0 }
+	if = {
+		limit = { has_global_flag = mdcw_cw_initialized }
+		set_temp_variable = { COLDWAR_nr_tension_before = global.mdcw_cw_tension }
+		set_temp_variable = { mdcw_cw_tension_delta = 1 }
+		mdcw_cw_add_tension = yes
+		set_temp_variable = {
+			COLDWAR_nr_tension_applied = { value = global.mdcw_cw_tension subtract = COLDWAR_nr_tension_before }
+		}
+	}
+}
+COLDWAR_nr_tension_minus2 = {
+	set_temp_variable = { COLDWAR_nr_tension_applied = 0 }
+	if = {
+		limit = { has_global_flag = mdcw_cw_initialized }
+		set_temp_variable = { COLDWAR_nr_tension_before = global.mdcw_cw_tension }
+		set_temp_variable = { mdcw_cw_tension_delta = -2 }
+		mdcw_cw_add_tension = yes
+		set_temp_variable = {
+			COLDWAR_nr_tension_applied = { value = global.mdcw_cw_tension subtract = COLDWAR_nr_tension_before }
+		}
+	}
+}
+COLDWAR_nr_tension_relief = {
+	set_temp_variable = { COLDWAR_nr_tension_applied = 0 }
+	if = {
+		limit = { has_global_flag = mdcw_cw_initialized }
+		set_temp_variable = { COLDWAR_nr_tension_before = global.mdcw_cw_tension }
+		set_temp_variable = { mdcw_cw_tension_delta = COLDWAR_nr_relief }
+		mdcw_cw_add_tension = yes
+		set_temp_variable = {
+			COLDWAR_nr_tension_applied = { value = global.mdcw_cw_tension subtract = COLDWAR_nr_tension_before }
+		}
+	}
+}
+COLDWAR_nr_begin_crisis = {
+	if = {
+		limit = { COLDWAR_nr_can_warn_prev = yes }
+		save_event_target_as = COLDWAR_nr_sender
+		PREV = { save_event_target_as = COLDWAR_nr_recipient }
+		COLDWAR_nr_tension_5 = yes
+		add_to_variable = { global.COLDWAR_nr_serial = 1 }
+		set_variable = { COLDWAR_nr_serial = global.COLDWAR_nr_serial }
+		set_variable = { COLDWAR_nr_opponent = event_target:COLDWAR_nr_recipient.id }
+		set_variable = { COLDWAR_nr_initiator = THIS.id }
+		set_variable = {
+			COLDWAR_nr_until = { value = global.num_days add = 90 }
+		}
+		set_variable = { COLDWAR_nr_pressure = COLDWAR_nr_tension_applied }
+		set_country_flag = { flag = COLDWAR_nr_public days = 90 value = 1 }
+		clr_country_flag = COLDWAR_nr_countered
+		clr_country_flag = COLDWAR_nr_hotline
+		event_target:COLDWAR_nr_recipient = {
+			COLDWAR_nr_init = yes
+			set_variable = { COLDWAR_nr_opponent = event_target:COLDWAR_nr_sender.id }
+			set_variable = { COLDWAR_nr_initiator = event_target:COLDWAR_nr_sender.id }
+			set_variable = { COLDWAR_nr_serial = global.COLDWAR_nr_serial }
+			set_variable = {
+				COLDWAR_nr_until = { value = global.num_days add = 90 }
+			}
+			set_variable = { COLDWAR_nr_pressure = event_target:COLDWAR_nr_sender.COLDWAR_nr_pressure }
+			clr_country_flag = COLDWAR_nr_countered
+			clr_country_flag = COLDWAR_nr_hotline
+			COLDWAR_nr_refresh = yes
+			country_event = { id = cw_nuclear.3 }
+		}
+		add_named_threat = { threat = 2 name = COLDWAR_nr_warning_threat }
+		every_country = {
+			limit = {
+				is_ai = no
+				NOT = { tag = event_target:COLDWAR_nr_sender }
+				NOT = { tag = event_target:COLDWAR_nr_recipient }
+			}
+			country_event = { id = cw_nuclear.10 }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_counter_signal = {
+	if = {
+		limit = {
+			COLDWAR_nr_is_opponent_prev = yes
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level < 4 }
+			NOT = { has_country_flag = COLDWAR_nr_countered }
+			NOT = {
+				check_variable = { COLDWAR_nr_initiator = THIS.id }
+			}
+		}
+		set_country_flag = COLDWAR_nr_countered
+		set_country_flag = { flag = COLDWAR_nr_public days = 90 value = 1 }
+		COLDWAR_nr_tension_3 = yes
+		set_variable = { COLDWAR_nr_pressure_delta = COLDWAR_nr_tension_applied }
+		add_to_variable = { COLDWAR_nr_pressure = COLDWAR_nr_pressure_delta }
+		var:COLDWAR_nr_opponent = {
+			add_to_variable = { COLDWAR_nr_pressure = PREV.COLDWAR_nr_pressure_delta }
+		}
+		add_named_threat = { threat = 1 name = COLDWAR_nr_counter_threat }
+		save_event_target_as = COLDWAR_nr_sender
+		var:COLDWAR_nr_opponent = {
+			save_event_target_as = COLDWAR_nr_recipient
+			country_event = { id = cw_nuclear.4 }
+		}
+		COLDWAR_nr_touch = yes
+	}
+}
+COLDWAR_nr_send_offer_1 = {
+	if = {
+		limit = { COLDWAR_nr_can_offer_prev = yes }
+		set_variable = { COLDWAR_nr_offer_kind@PREV = 1 }
+		set_variable = { COLDWAR_nr_offer_serial@PREV = COLDWAR_nr_serial }
+		set_variable = {
+			COLDWAR_nr_offer_until@PREV = { value = global.num_days add = 14 }
+		}
+		set_variable = {
+			COLDWAR_nr_offer_cd@PREV = { value = global.num_days add = 21 }
+		}
+		set_variable = { COLDWAR_nr_offer_own_use@PREV = COLDWAR_nr_strike_revision }
+		set_variable = { COLDWAR_nr_offer_peer_use@PREV = PREV.COLDWAR_nr_strike_revision }
+		COLDWAR_nr_touch = yes
+	}
+}
+COLDWAR_nr_send_offer_2 = {
+	if = {
+		limit = { COLDWAR_nr_can_offer_prev = yes }
+		set_variable = { COLDWAR_nr_offer_kind@PREV = 2 }
+		set_variable = { COLDWAR_nr_offer_serial@PREV = COLDWAR_nr_serial }
+		set_variable = {
+			COLDWAR_nr_offer_until@PREV = { value = global.num_days add = 14 }
+		}
+		set_variable = {
+			COLDWAR_nr_offer_cd@PREV = { value = global.num_days add = 21 }
+		}
+		set_variable = { COLDWAR_nr_offer_own_use@PREV = COLDWAR_nr_strike_revision }
+		set_variable = { COLDWAR_nr_offer_peer_use@PREV = PREV.COLDWAR_nr_strike_revision }
+		COLDWAR_nr_touch = yes
+	}
+}
+COLDWAR_nr_finish_offer_1 = {
+	if = {
+		limit = {
+			COLDWAR_nr_pending_prev = yes
+			check_variable = { COLDWAR_nr_offer_kind@PREV = 1 }
+		}
+		save_event_target_as = COLDWAR_nr_sender
+		PREV = { save_event_target_as = COLDWAR_nr_recipient }
+		clear_variable = COLDWAR_nr_offer_until@PREV
+		clear_variable = COLDWAR_nr_offer_kind@PREV
+		clear_variable = COLDWAR_nr_offer_serial@PREV
+		if = {
+			limit = { COLDWAR_nr_offer_intact_prev = yes }
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_accept_kind = 1 }
+				}
+				COLDWAR_nr_accept_offer_1 = yes
+			}
+			else = { COLDWAR_nr_accept_offer_2 = yes }
+		}
+		else = {
+			country_event = { id = cw_nuclear.13 }
+		}
+	}
+}
+COLDWAR_nr_finish_offer_2 = {
+	if = {
+		limit = {
+			COLDWAR_nr_pending_prev = yes
+			check_variable = { COLDWAR_nr_offer_kind@PREV = 2 }
+		}
+		save_event_target_as = COLDWAR_nr_sender
+		PREV = { save_event_target_as = COLDWAR_nr_recipient }
+		clear_variable = COLDWAR_nr_offer_until@PREV
+		clear_variable = COLDWAR_nr_offer_kind@PREV
+		clear_variable = COLDWAR_nr_offer_serial@PREV
+		if = {
+			limit = { COLDWAR_nr_offer_intact_prev = yes }
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_accept_kind = 1 }
+				}
+				COLDWAR_nr_accept_offer_1 = yes
+			}
+			else = { COLDWAR_nr_accept_offer_2 = yes }
+		}
+		else = {
+			country_event = { id = cw_nuclear.13 }
+		}
+	}
+}
+COLDWAR_nr_accept_offer_1 = {
+	clear_variable = COLDWAR_nr_offer_cd@event_target:COLDWAR_nr_recipient
+	set_country_flag = COLDWAR_nr_hotline
+	var:COLDWAR_nr_opponent = { clear_variable = COLDWAR_nr_offer_cd@PREV set_country_flag = COLDWAR_nr_hotline COLDWAR_nr_touch = yes }
+	country_event = { id = cw_nuclear.5 }
+	var:COLDWAR_nr_opponent = {
+		country_event = { id = cw_nuclear.5 }
+	}
+	COLDWAR_nr_touch = yes
+}
+COLDWAR_nr_accept_offer_2 = {
+	COLDWAR_nr_clear_first_use = yes
+	var:COLDWAR_nr_opponent = { COLDWAR_nr_clear_first_use = yes }
+	set_temp_variable = { COLDWAR_nr_relief = COLDWAR_nr_pressure }
+	multiply_temp_variable = { COLDWAR_nr_relief = -1 }
+	COLDWAR_nr_tension_relief = yes
+	var:COLDWAR_nr_opponent = {
+		COLDWAR_nr_stand_down = yes
+		set_country_flag = { flag = COLDWAR_nr_standdown days = 30 value = 1 }
+		COLDWAR_nr_clear_local_crisis = yes
+	}
+	COLDWAR_nr_stand_down = yes
+	set_country_flag = { flag = COLDWAR_nr_standdown days = 30 value = 1 }
+	COLDWAR_nr_clear_local_crisis = yes
+	country_event = { id = cw_nuclear.6 }
+	event_target:COLDWAR_nr_recipient = {
+		country_event = { id = cw_nuclear.6 }
+	}
+}
+COLDWAR_nr_reject_offer = {
+	if = {
+		limit = { COLDWAR_nr_pending_prev = yes }
+		save_event_target_as = COLDWAR_nr_sender
+		PREV = { save_event_target_as = COLDWAR_nr_recipient }
+		clear_variable = COLDWAR_nr_offer_until@PREV
+		clear_variable = COLDWAR_nr_offer_kind@PREV
+		clear_variable = COLDWAR_nr_offer_serial@PREV
+		country_event = { id = cw_nuclear.7 }
+		COLDWAR_nr_touch = yes
+	}
+}
+COLDWAR_nr_clear_local_crisis = {
+	COLDWAR_nr_clear_first_use = yes
+	if = {
+		limit = { has_variable = COLDWAR_nr_opponent }
+		var:COLDWAR_nr_opponent = { save_event_target_as = COLDWAR_nr_cleanup_partner }
+		set_variable = {
+			COLDWAR_nr_cooldown@event_target:COLDWAR_nr_cleanup_partner = { value = global.num_days add = 90 }
+		}
+		clear_variable = COLDWAR_nr_offer_until@event_target:COLDWAR_nr_cleanup_partner
+		clear_variable = COLDWAR_nr_offer_kind@event_target:COLDWAR_nr_cleanup_partner
+		clear_variable = COLDWAR_nr_offer_serial@event_target:COLDWAR_nr_cleanup_partner
+	}
+	clear_variable = COLDWAR_nr_opponent
+	clear_variable = COLDWAR_nr_initiator
+	clear_variable = COLDWAR_nr_until
+	clear_variable = COLDWAR_nr_pressure
+	clr_country_flag = COLDWAR_nr_hotline
+	clr_country_flag = COLDWAR_nr_countered
+	COLDWAR_nr_touch = yes
+}
+COLDWAR_nr_close_pair_minus2 = {
+	set_temp_variable = {
+		COLDWAR_nr_relief = {
+			value = -2
+			multiply = -1
+			clamp = { min = 0 max = COLDWAR_nr_pressure }
+			multiply = -1
+		}
+	}
+	if = {
+		limit = { COLDWAR_nr_pair_valid = yes }
+		var:COLDWAR_nr_opponent = { COLDWAR_nr_clear_local_crisis = yes }
+	}
+	COLDWAR_nr_clear_local_crisis = yes
+	COLDWAR_nr_tension_relief = yes
+}
+COLDWAR_nr_withdraw = {
+	if = {
+		limit = { COLDWAR_nr_can_withdraw_prev = yes }
+		COLDWAR_nr_clear_first_use = yes
+		var:COLDWAR_nr_opponent = { COLDWAR_nr_clear_first_use = yes }
+		save_event_target_as = COLDWAR_nr_sender
+		PREV = { save_event_target_as = COLDWAR_nr_recipient }
+		COLDWAR_nr_stand_down = yes
+		set_country_flag = { flag = COLDWAR_nr_standdown days = 14 value = 1 }
+		COLDWAR_nr_close_pair_minus2 = yes
+		event_target:COLDWAR_nr_recipient = {
+			country_event = { id = cw_nuclear.8 }
+		}
+	}
+}
+COLDWAR_nr_consult_allies = {
+	if = {
+		limit = {
+			COLDWAR_nr_pair_valid = yes
+			NOT = { has_country_flag = COLDWAR_nr_consulted }
+		}
+		save_event_target_as = COLDWAR_nr_sender
+		var:COLDWAR_nr_opponent = { save_event_target_as = COLDWAR_nr_recipient }
+		set_country_flag = { flag = COLDWAR_nr_consulted days = 30 value = 1 }
+		every_allied_country = {
+			limit = {
+				is_ai = no
+				NOT = { tag = event_target:COLDWAR_nr_recipient }
+			}
+			country_event = { id = cw_nuclear.11 }
+		}
+	}
+}
+COLDWAR_nr_assess_prev = {
+	PREV = { save_event_target_as = COLDWAR_nr_subject }
+	set_variable = { COLDWAR_nr_assessment = 0 }
+	set_variable = { COLDWAR_nr_assessed_level = 0 }
+	if = {
+		limit = {
+			intel_level_over = { target = PREV airforce_intel > 0.65 }
+		}
+		set_variable = { COLDWAR_nr_assessment = 2 }
+		set_variable = { COLDWAR_nr_assessed_level = PREV.COLDWAR_nr_level }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_assessed_level = 0 }
+			}
+			set_variable = { COLDWAR_nr_assessed_level = 5 }
+		}
+		if = {
+			limit = {
+				PREV = {
+					check_variable = { COLDWAR_nr_level < 3 }
+					NOT = { has_country_flag = COLDWAR_nr_public }
+					NOT = { has_country_flag = COLDWAR_nr_exposed_cd }
+				}
+			}
+			COLDWAR_nr_tension_1 = yes
+			PREV = {
+				set_country_flag = { flag = COLDWAR_nr_exposed_cd days = 30 value = 1 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				is_in_faction_with = PREV
+				COLDWAR_nr_is_opponent_prev = yes
+				PREV = { has_country_flag = COLDWAR_nr_public }
+				intel_level_over = { target = PREV airforce_intel > 0.35 }
+			}
+		}
+		set_variable = { COLDWAR_nr_assessment = 1 }
+		if = {
+			limit = {
+				PREV = {
+					check_variable = { COLDWAR_nr_level > 3 }
+				}
+			}
+			set_variable = { COLDWAR_nr_assessed_level = 5 }
+		}
+		else_if = {
+			limit = {
+				PREV = {
+					check_variable = { COLDWAR_nr_level > 1 }
+				}
+			}
+			set_variable = { COLDWAR_nr_assessed_level = 3 }
+		}
+		else_if = {
+			limit = {
+				PREV = {
+					check_variable = { COLDWAR_nr_level = 1 }
+				}
+			}
+			set_variable = { COLDWAR_nr_assessed_level = 1 }
+		}
+	}
+	country_event = { id = cw_nuclear.14 }
+}
+COLDWAR_nr_record_raid_tactical = {
+	COLDWAR_nr_resolve_peacetime_operation = yes
+	var:actor_country = {
+		save_event_target_as = COLDWAR_nr_attacker
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			set_variable = { COLDWAR_nr_last_use_serial = COLDWAR_nr_serial }
+			add_to_variable = { COLDWAR_nr_strike_revision = 1 }
+			set_country_flag = { flag = COLDWAR_nr_public days = 90 value = 1 }
+		}
+	}
+	var:victim_country = {
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			COLDWAR_nr_init = yes
+			add_to_variable = { COLDWAR_nr_strike_revision = 1 }
+			if = {
+				limit = {
+					NOT = {
+						is_in_array = { array = COLDWAR_nr_aggressors value = event_target:COLDWAR_nr_attacker.id }
+					}
+				}
+				add_to_array = { array = COLDWAR_nr_aggressors value = event_target:COLDWAR_nr_attacker.id }
+			}
+			set_variable = { COLDWAR_nr_last_aggressor = event_target:COLDWAR_nr_attacker.id }
+			clr_country_flag = COLDWAR_nr_standdown
+			set_temp_variable = { COLDWAR_nr_counterforce_fraction = 0.05 }
+			COLDWAR_nr_counterforce_loss = yes
+			if = {
+				limit = {
+					COLDWAR_nr_nuclear_power = yes
+					NOT = {
+						check_variable = { COLDWAR_nr_level = 1 }
+					}
+				}
+				set_variable = { COLDWAR_nr_order = 1 }
+				set_variable = { COLDWAR_nr_build_days = 1 }
+				COLDWAR_nr_touch = yes
+			}
+			if = {
+				limit = { is_ai = no }
+				country_event = { id = cw_nuclear.12 }
+			}
+		}
+	}
+}
+COLDWAR_nr_record_raid_state = {
+	COLDWAR_nr_resolve_peacetime_operation = yes
+	var:actor_country = {
+		save_event_target_as = COLDWAR_nr_attacker
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			set_variable = { COLDWAR_nr_last_use_serial = COLDWAR_nr_serial }
+			add_to_variable = { COLDWAR_nr_strike_revision = 1 }
+			set_country_flag = { flag = COLDWAR_nr_public days = 90 value = 1 }
+		}
+	}
+	var:victim_country = {
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			COLDWAR_nr_init = yes
+			add_to_variable = { COLDWAR_nr_strike_revision = 1 }
+			if = {
+				limit = {
+					NOT = {
+						is_in_array = { array = COLDWAR_nr_aggressors value = event_target:COLDWAR_nr_attacker.id }
+					}
+				}
+				add_to_array = { array = COLDWAR_nr_aggressors value = event_target:COLDWAR_nr_attacker.id }
+			}
+			set_variable = { COLDWAR_nr_last_aggressor = event_target:COLDWAR_nr_attacker.id }
+			clr_country_flag = COLDWAR_nr_standdown
+			set_temp_variable = { COLDWAR_nr_counterforce_fraction = 0.15 }
+			COLDWAR_nr_counterforce_loss = yes
+			if = {
+				limit = {
+					COLDWAR_nr_nuclear_power = yes
+					NOT = {
+						check_variable = { COLDWAR_nr_level = 1 }
+					}
+				}
+				set_variable = { COLDWAR_nr_order = 1 }
+				set_variable = { COLDWAR_nr_build_days = 1 }
+				COLDWAR_nr_touch = yes
+			}
+			if = {
+				limit = { is_ai = no }
+				country_event = { id = cw_nuclear.12 }
+			}
+		}
+	}
+}
+COLDWAR_nr_record_raid_strategic = {
+	COLDWAR_nr_resolve_peacetime_operation = yes
+	var:actor_country = {
+		save_event_target_as = COLDWAR_nr_attacker
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			set_variable = { COLDWAR_nr_last_use_serial = COLDWAR_nr_serial }
+			add_to_variable = { COLDWAR_nr_strike_revision = 1 }
+			set_country_flag = { flag = COLDWAR_nr_public days = 90 value = 1 }
+		}
+	}
+	var:victim_country = {
+		if = {
+			limit = { COLDWAR_nr_enabled = yes }
+			COLDWAR_nr_init = yes
+			add_to_variable = { COLDWAR_nr_strike_revision = 1 }
+			if = {
+				limit = {
+					NOT = {
+						is_in_array = { array = COLDWAR_nr_aggressors value = event_target:COLDWAR_nr_attacker.id }
+					}
+				}
+				add_to_array = { array = COLDWAR_nr_aggressors value = event_target:COLDWAR_nr_attacker.id }
+			}
+			set_variable = { COLDWAR_nr_last_aggressor = event_target:COLDWAR_nr_attacker.id }
+			clr_country_flag = COLDWAR_nr_standdown
+			set_temp_variable = { COLDWAR_nr_counterforce_fraction = 0.4 }
+			COLDWAR_nr_counterforce_loss = yes
+			if = {
+				limit = {
+					COLDWAR_nr_nuclear_power = yes
+					NOT = {
+						check_variable = { COLDWAR_nr_level = 1 }
+					}
+				}
+				set_variable = { COLDWAR_nr_order = 1 }
+				set_variable = { COLDWAR_nr_build_days = 1 }
+				COLDWAR_nr_touch = yes
+			}
+			if = {
+				limit = { is_ai = no }
+				country_event = { id = cw_nuclear.12 }
+			}
+		}
+	}
+}
+COLDWAR_nr_counterforce_loss = {
+	set_temp_variable = {
+		COLDWAR_nr_exposed_fraction = { value = 1 subtract = COLDWAR_nr_reserve_share multiply = COLDWAR_nr_counterforce_fraction }
+	}
+	set_temp_variable = {
+		COLDWAR_nr_icbm_loss = { value = num_equipment@nuclear_missile_equipment multiply = COLDWAR_nr_exposed_fraction round = yes multiply = -1 }
+	}
+	set_temp_variable = {
+		COLDWAR_nr_irbm_loss = { value = num_equipment@nuclear_ballistic_missile_equipment multiply = COLDWAR_nr_exposed_fraction round = yes multiply = -1 }
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_icbm_loss < 0 }
+		}
+		add_equipment_to_stockpile = { type = nuclear_missile_equipment amount = COLDWAR_nr_icbm_loss }
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_irbm_loss < 0 }
+		}
+		add_equipment_to_stockpile = { type = nuclear_ballistic_missile_equipment amount = COLDWAR_nr_irbm_loss }
+	}
+	COLDWAR_nr_refresh = yes
+}
+COLDWAR_nr_civilian_protection = {
+	if = {
+		limit = {
+			CONTROLLER = { has_country_flag = COLDWAR_nr_civil_active }
+		}
+		multiply_temp_variable = { casualty_rate = 0.8 }
+	}
+}
