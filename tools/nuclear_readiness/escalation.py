@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: final ultimatums and deliberate nuclear first use.
+# IMPERIA COLD WAR — Cold War: final ultimatums and deliberate nuclear first use.
 """Author the peacetime release procedure; launches remain native nuclear raids."""
 
 TRIGGERS = '''

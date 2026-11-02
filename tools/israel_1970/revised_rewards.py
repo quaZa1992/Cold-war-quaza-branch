@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: israel 1970 — revised rewards.
+# IMPERIA COLD WAR — Israel 1970 authored rewards and policy trade-offs.
 """Authored rewards, including legacy gates removed by direct_access.py.
 
 Reference conventions: MD generic construction/research/interest groups,
@@ -20,8 +20,8 @@ def opinion(group,value=10):return f'set_temp_variable = {{ temp_opinion = {valu
 def tech(category,bonus=.5,uses=1):return f'add_tech_bonus = {{ name = ISR70_research_programme category = CAT_{category} uses = {uses} bonus = {bonus} }}'
 def money(share):return f'set_temp_variable = {{ treasury_change = gdp_total }}\nmultiply_temp_variable = {{ treasury_change = {-share:g} }}\nmodify_treasury_effect = yes'
 def build(state,kind,share=.01,level=1):
-    shared=kind in ('industrial_complex','arms_factory','offices','agriculture_district','dockyard')
-    return f'{state} = {{\n'+(f'\tadd_extra_state_shared_building_slots = {level}\n' if shared else '')+f'\tadd_building_construction = {{ type = {kind} level = {level} instant_build = yes }}\n}}\n'+money(share)
+    # Project contract: even non-shared buildings receive one shared slot per level.
+    return f'{state} = {{\n\tadd_extra_state_shared_building_slots = {level}\n'+f'\tadd_building_construction = {{ type = {kind} level = {level} instant_build = yes }}\n}}\n'+money(share)
 def popularity(slot,value=.03):return f'set_temp_variable = {{ party_index = {slot} }}\nset_temp_variable = {{ party_popularity_increase = {value} }}\nset_temp_variable = {{ temp_outlook_increase = {value} }}\nchange_relative_party_popularity = yes'
 def elections(allowed,outlook):
     # HOI4 1.19's visible set_politics tooltip dereferences the ideology group.
@@ -379,6 +379,8 @@ def apply(data,root):
     data=copy.deepcopy(data)
     from programme_narrative import enrich
     enrich(SPECS)
+    from creative_programmes import enrich as enrich_tradeoffs
+    enrich_tradeoffs(SPECS)
     nodes={n['id'].removeprefix('ISR70_'):n for n in data['nodes']}
     for outlook,ideology,art in [('western','democratic','generic_parliament.png'),('emerging','communism','generic_workers_democracy.png'),('nonaligned','neutrality','foreign_diplomacy.png'),('nationalist','nationalist','generic_stable_government.png')]:
         for stage in ('debate','campaign','mandate'):

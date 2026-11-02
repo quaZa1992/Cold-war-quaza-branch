@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # NKO 1970 concept — mechanics revision v2
 
 This note records source-checked mechanics and concrete concept corrections for the next NKO design revision. It does not edit the concept JSON, generator, or loaded game files. All paths and line numbers refer to the current target checkout unless marked donor.

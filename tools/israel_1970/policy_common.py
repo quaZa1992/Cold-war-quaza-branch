@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Israel 1970 funded development and settlement choices.
 # IMPERIA CW — Cold War: israel 1970 — policy common.
 """Compiler support for the approved 1970 policy expansion.
 
@@ -5,7 +6,10 @@ Focus metadata belongs to the ordinary compiler. Decisions, timers and local
 status effects are emitted separately so rebuilding cannot silently drop them.
 """
 from pathlib import Path
-import copy,json,re
+import copy,json,re,sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from building_grants.grants import rewrite_queries
 
 PREFIX='ISR70_policy_'
 FOCUS_ALIASES={'citizen_review':'arab_citizens','equal_services':'equal_local_services','municipal_self':'local_autonomy'}
@@ -24,7 +28,7 @@ class PolicyCompiler:
         self.design=json.loads((Path(__file__).parent/'policy_design.json').read_text(encoding='utf-8'))
         self.effects={};self.triggers={};self.dynamic={};self.events=[];self.decisions=[];self.localisation={}
         self.tick=[];self.costs=set();self.focus_specs={};self.projects=[]
-        self.opinions={}
+        self.opinions={};self.decision_exports=[]
         self.nodes={n['id']:n for n in data['nodes']}
         self._add_nodes()
 
@@ -108,6 +112,10 @@ class PolicyCompiler:
             'reform_equal_authorized':'The paid reform authorizes the equal-rights focus.',
             'reform_special_authorized':'The paid reform authorizes the unequal-statute focus.'}
         if short in known:return known[short]
+        presence=re.fullmatch(r'presence_(pending|established)_(208|209|213|587)',short)
+        if presence:
+            area={'208':'West Bank','209':'Gaza','213':'Sinai','587':'Golan'}[presence[2]]
+            return ('Israeli settlement funding in '+area+' is active.' if presence[1]=='established' else 'An earlier '+area+' settlement proposal is outstanding.')
         if short.startswith('project_') and short.endswith('_done'):
             project=short[len('project_'):-len('_done')]
             for suffix in ('_208','_209'):project=project.removesuffix(suffix)
@@ -145,7 +153,7 @@ class PolicyCompiler:
         gates=[]
         for token in sorted(set(re.findall(PREFIX+r'pay_(\d+_\d+) = yes',code))):gates.append(PREFIX+'afford_'+token+' = yes')
         amounts=[float(x) for x in re.findall(r'add_political_power = -([\d.]+)',code)]
-        if amounts:gates.append(f'political_power > {sum(amounts)-1:g}')
+        if amounts:gates.append(f'has_political_power > {sum(amounts)-1:g}')
         return '\n'.join(gates)
     def focus(self,key,code,available='',description='',summary=None):
         n=self.nodes[focus_id(key)]
@@ -182,7 +190,10 @@ class PolicyCompiler:
         # Non-project decisions complete immediately; projects have a dedicated
         # reservation and completion event, never days_remove budget races.
         assert not days,('Use project for delayed delivery',key)
-        body=f'{did} = {{\nicon = generic_political_actions\ncost = {cost}\nvisible = {{ {visible} }}\navailable = {{ {self.readable(gate)} }}\ncomplete_effect = {{ {reward} }}\ndays_re_enable = {extra.get("cooldown",90)}\nai_will_do = {{ factor = {extra.get("ai",1)} }}\n}}'
+        runtime='\n'.join(x for x in (visible,gate) if x)
+        executed='effect_tooltip = { '+code+' }\nhidden_effect = { if = { limit = { '+runtime+' } '+reward+' } }'
+        body=f'{did} = {{\nicon = generic_political_actions\ncost = {cost}\nvisible = {{ {visible} }}\navailable = {{ {self.readable(gate)} }}\ncomplete_effect = {{ {executed} }}\ndays_re_enable = {extra.get("cooldown",90)}\nai_will_do = {{ factor = {extra.get("ai",1)} }}\n}}'
+        self.decision_exports.append(dict(id=did,label=label,note=description,unlock=focus_id(unlock) if unlock else '',cost=cost,days=0,repeatable=repeatable,cooldown=extra.get('cooldown',90),reward=code))
         self.decisions.append(body);return did
 
     def project(self,key,target,buildings,share,days,mods=None,after='',available='',political_cost=0,unlock=None,**extra):
@@ -194,17 +205,21 @@ class PolicyCompiler:
         guards=[f'{t} = {{ is_controlled_by = ISR }}' for t in targets]+[available]
         guards += [f'{t} = {{ is_owned_by = ISR }}' for t in targets if t in (204,205,206,207)]
         staff={'industrial_complex':'can_staff_an_industrial_complex','arms_factory':'can_staff_an_arms_industry','offices':'can_staff_an_offices','agriculture_district':'can_staff_an_agriculture_district','dockyard':'can_staff_an_dockyard'}
+        # Every physical building receives its own shared slot before construction,
+        # including infrastructure and province buildings. Explicit slot-only
+        # grants remain additional development land, rather than substitutes.
         commands={t:[] for t in targets}
+        for t in targets:
+            slots=sum(b.get('levels',b.get('level',1)) for b in buildings if int(b.get('state',targets[0]))==t)
+            if slots:commands[t].append(f'add_extra_state_shared_building_slots = {slots}')
         for b in buildings:
             target=int(b.get('state',targets[0]));assert target in targets,(key,target,targets)
             kind=b.get('type',b.get('kind'));levels=b.get('levels',b.get('level',1))
-            if kind=='shared_slots':commands[target].append(f'add_extra_state_shared_building_slots = {levels}');continue
+            if kind=='shared_slots':continue
             if kind in staff:guards.append(staff[kind]+' = yes')
             if kind=='dockyard':guards.append(f'{target} = {{ is_coastal = yes }}')
-            if kind in staff and not any(v.get('type')=='shared_slots' for v in buildings):
-                guards.append(f'{target} = {{ free_building_slots = {{ building = {kind} size > {levels-1} }} }}')
-            elif kind not in ('bunker','naval_base'):
-                guards.append(f'{target} = {{ free_building_slots = {{ building = {kind} size > {levels-1} }} }}')
+            if kind not in staff and kind not in ('bunker','naval_base'):
+                guards.append(rewrite_queries(f'{target} = {{ free_building_slots = {{ building = {kind} size > {levels-1} }} }}', buildings={'infrastructure'}))
             province=b.get('province')
             if kind in ('bunker','naval_base'):
                 assert province,('Province building requires province',key,kind)
@@ -212,10 +227,6 @@ class PolicyCompiler:
                 guards.append(f'{target} = {{ free_building_slots = {{ building = {kind} size > {levels-1} province = {province} }} }}')
             commands[target].append('add_building_construction = { type = '+kind+f' level = {levels} instant_build = yes'+(f' province = {{ id = {province} }}' if province else '')+' }')
         guards=[g for g in guards if g];valid='\n'.join(dict.fromkeys(guards))
-        for t in targets:
-            added=sum(b.get('levels',1) for b in buildings if int(b.get('state',targets[0]))==t and b['type']=='shared_slots')
-            needed=sum(b.get('levels',1) for b in buildings if int(b.get('state',targets[0]))==t and b['type'] in staff)-added
-            if needed>0:valid+=f'\n{t} = {{ free_building_slots = {{ building = industrial_complex size > {needed-1} }} }}'
         success='\n'.join(scope(t,'\n'.join(cmds)) for t,cmds in commands.items())+'\n'+after+'\nset_country_flag = '+done
         if mods:
             iid=self.idea('project_'+key+'_idea',self.nodes[focus_id(unlock)]['label'],'An implemented, funded development programme.',mods)
@@ -229,11 +240,14 @@ class PolicyCompiler:
         callback=f'if = {{ limit = {{ has_country_flag = {active} }} if = {{ limit = {{ {valid} }} {success} }}\nelse = {{ set_temp_variable = {{ treasury_change = {paid} }} modify_treasury_effect = yes }}\nclear_variable = {paid}\nclr_country_flag = {active} }}'
         event=self.event(number,'Development Project Completed','The reserved development project has reached its delivery date. If its requirements no longer hold, its original reservation is returned.',[('Review the project.',callback,'',1)],trigger='always = yes',hidden=True)
         start=f'set_variable = {{ {paid} = {PREFIX}cost_{token} }}\n{self.money(share)}\nset_country_flag = {active}\ncountry_event = {{ id = {event} days = {days} }}'
-        self.effect('start_'+key,start)
+        # Recheck at the transaction boundary, not just decision availability.
+        self.effect('start_'+key,f'if = {{ limit = {{ ISR70_is_scenario = yes NOT = {{ has_country_flag = {done} }} NOT = {{ has_country_flag = {active} }} {PREFIX}afford_{token} = yes {valid} }}\n{start}\n}}')
         self.loc(did,self.nodes[focus_id(unlock)]['label']+': Fund the Project')
         building_names={'shared_slots':'building slots','industrial_complex':'civilian factories','arms_factory':'military factories','offices':'office levels','agriculture_district':'agricultural districts','infrastructure':'infrastructure levels','bunker':'land fort levels','naval_base':'naval base levels','dockyard':'naval dockyards'}
         state_names={204:'Tel Aviv',205:'Haifa',206:'the Negev',208:'the West Bank',209:'Gaza',SINAI:'Sinai',CANAL:'Suez and the Eastern Nile Delta'}
         delivery='; '.join('+'+str(b.get('levels',1))+' '+building_names[b['type']]+' in '+state_names.get(int(b.get('state',targets[0])),str(b.get('state',targets[0]))) for b in buildings) or 'the specified clearance and operating works'
+        slot_total=sum(b.get('levels',b.get('level',1)) for b in buildings)
+        if slot_total:delivery+=f'; +{slot_total} shared building slots'
         from player_rewards import LABELS
         continuing='; '.join(LABELS.get(k,k.replace('_',' ').title())+': '+f'{v*100:+g}%' for k,v in (mods or {}).items())
         local_lines=[]
@@ -244,14 +258,20 @@ class PolicyCompiler:
         for modifier in sorted(set(re.findall(r'add_opinion_modifier\s*=\s*\{[^{}]*?modifier\s*=\s*(\w+)',after))):
             if modifier in self.opinions:local_lines.append('Relations toward Israel: '+f'{self.opinions[modifier][0]:+g}'+' points')
         local_text='; '.join(dict.fromkeys(local_lines))
-        project_text=f'Reserve {share*100:g}% of annual GDP at selection. Delivery after {days} days: {delivery}.'+(' Continuing effects: '+continuing+'.' if continuing else '')+(' Local policy effects: '+local_text+'.' if local_text else '')+' Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.'
+        effect_summary=f'Treasury: -{share*100:g}% of annual GDP. Completion: {days} days. {delivery}.'+(' Continuing effects: '+continuing+'.' if continuing else '')+(' Local effects: '+local_text+'.' if local_text else '')
+        project_text=effect_summary+' Loss of required control or project conditions refunds the reserved sum. The project can be completed only once.'
         self.loc(did+'_desc',project_text)
         delivery_tt=self.loc(did+'_delivery_tt',f'After {days} days: {delivery}.'+(' '+continuing if continuing else '')+(' '+local_text if local_text else ''))
         visible=f'has_completed_focus = {focus_id(unlock)} NOT = {{ has_country_flag = {done} }}'
         gate=f'NOT = {{ has_country_flag = {active} }}\n{PREFIX}afford_{token} = yes\n{valid}'
-        self.decisions.append(f'{did} = {{ icon = generic_construction cost = {political_cost} visible = {{ {visible} }} available = {{ {self.readable(gate)} }} complete_effect = {{ custom_effect_tooltip = {delivery_tt} {effect} = yes }} days_re_enable = 1 ai_will_do = {{ factor = 1 }} }}')
-        self.projects.append({'key':key,'unlock':unlock,'states':targets,'buildings':buildings,'mods':mods or {},'days':days,'share':share,'guard':valid,'callback':event,'paid':paid,'done':done,'delivery_summary':project_text})
-        return 'unlock_decision_tooltip = '+did
+        preview=self.money(share)+'\n'+'\n'.join(scope(t,'\n'.join(cmds)) for t,cmds in commands.items())+'\n'+after
+        if mods:preview+='\nadd_ideas = '+iid
+        # Native numeric preview is unconditional even for a locked project.
+        # The actual assets are delivered only by the guarded timed callback.
+        preview='effect_tooltip = {\n'+preview+'\n}'
+        self.decisions.append(f'{did} = {{ icon = generic_construction cost = {political_cost} visible = {{ {visible} }} available = {{ {self.readable(gate)} }} complete_effect = {{ {preview} hidden_effect = {{ {effect} = yes }} }} days_re_enable = 1 ai_will_do = {{ factor = 1 }} }}')
+        self.projects.append({'key':key,'unlock':unlock,'states':targets,'buildings':buildings,'mods':mods or {},'days':days,'share':share,'guard':valid,'callback':event,'paid':paid,'done':done,'delivery_summary':project_text,'effect_summary':effect_summary,'preview_code':preview,'slot_total':slot_total,'political_cost':political_cost})
+        return 'unlock_decision_tooltip = '+did+'\n'+preview
 
     def emit(self,write,loc):
         from policy_map import apply as apply_canal_map
@@ -271,7 +291,7 @@ class PolicyCompiler:
         self.loc('ISR70_policy_category','Israeli Development and Territorial Policy')
         self.loc('ISR70_policy_category_desc','Fund concrete projects, negotiate with the affected governments, and choose the legal and constitutional rules applied by the Israeli administration.')
         for k,v in self.localisation.items():loc(k,v)
-        header='# IMPERIA CW — Cold War: israel 1970 generated content.\n# Generated from tools/israel_1970/policy_design.json and policy compiler.\n'
+        header='# IMPERIA COLD WAR — Israel 1970 funded policy programmes.\n# Generated from tools/israel_1970/policy_design.json and policy compiler.\n'
         write('common/scripted_effects/ISR70_policy_effects.txt',header+'\n\n'.join(k+' = {\n'+v+'\n}' for k,v in self.effects.items())+'\n')
         write('common/scripted_triggers/ISR70_policy_triggers.txt',header+'\n\n'.join(k+' = {\n'+v+'\n}' for k,v in self.triggers.items())+'\n')
         write('common/dynamic_modifiers/ISR70_policy_dynamic_modifiers.txt',header+'\n\n'.join(k+' = {\nicon = GFX_idea_political_establishment\nenable = { '+gate+' }\n'+'\n'.join(m+' = '+str(v) for m,v in mods.items())+'\n}' for k,(mods,gate) in self.dynamic.items())+'\n')
@@ -280,19 +300,29 @@ class PolicyCompiler:
         if hasattr(self,'egypt_decisions'):
             write('common/decisions/categories/ISR70_policy_egypt_category.txt',header+'ISR70_policy_egypt_canal_category = { icon = generic_political_actions allowed = { original_tag = EGY } visible = { IMP_is_1970_scenario = yes } }\n')
             write('common/decisions/ISR70_policy_egypt_decisions.txt',header+self.egypt_decisions+'\n')
+        if hasattr(self,'presence_responses'):
+            write('common/decisions/categories/ISR70_presence_responses.txt',header+'# Superseded negotiated-presence category.\nISR70_presence_responses = { icon = generic_political_actions allowed = { always = no } visible = { always = no } }\n')
+            write('common/decisions/ISR70_presence_responses.txt',header+self.presence_responses+'\n')
         write('events/ISR70_policy_events.txt',header+'add_namespace = ISR70P\n\n'+'\n\n'.join(self.events)+'\n')
         write('common/on_actions/ISR70_policy_on_actions.txt',header+'on_actions = { on_startup = { effect = { ISR = { if = { limit = { ISR70_is_scenario = yes } ISR70_policy_daily = yes } } } } on_daily = { effect = { if = { limit = { ISR70_is_scenario = yes } ISR70_policy_daily = yes } } } }\n')
         write('common/opinion_modifiers/ISR70_policy_opinion_modifiers.txt',header+'opinion_modifiers = {\n'+'\n'.join(k+' = { value = '+str(v)+' days = '+str(days)+' }' for k,(v,days) in self.opinions.items())+'\n}\n')
         self.data['policy_expansion'].update(projects=self.projects,events=len(self.events),decisions=len(self.decisions),effects=len(self.effects),triggers=len(self.triggers))
+        self.data['policy_decision_exports']=self.decision_exports
 
 def install(data,root,art):
     api=PolicyCompiler(data,root,art)
     from policy_domestic import build as domestic
     from policy_territories import build as territories
     domestic(api);territories(api)
+    from settlement_revision import build as revise_settlements
+    revise_settlements(api)
+    from settlement_presence import build as settlement_presence
+    settlement_presence(api)
+    from palestinian_pressure import build as palestinian_pressure
+    palestinian_pressure(api)
     from policy_world import register as register_world
     register_world(api)
-    for project in api.projects:api.nodes[focus_id(project['unlock'])]['policy_summary'].append(project['delivery_summary'])
+    for project in api.projects:api.nodes[focus_id(project['unlock'])]['policy_summary'].append(project['effect_summary'])
     expected={n['id'] for b in api.design['branches'] for n in b['common']+[v for p in b['paths'] for v in p['nodes']]}
     assert expected==api.focus_specs.keys(),('Missing policy focus implementations',expected-api.focus_specs.keys())
     return api

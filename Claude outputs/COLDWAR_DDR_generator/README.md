@@ -1,3 +1,7 @@
+IMPERIA COLD WAR
+
+IMPERIA COLD WAR
+
 # COLDWAR_DDR_generator - German Democratic Republic 1970
 
 Generates the GDR 1970 focus tree and all of its systems from the approved design (layout v3 of 20.10.2026: every party tree
@@ -20,17 +24,17 @@ index files from `../COLDWAR_EGY_generator` (goal_sprites.json, idea_gfx.txt, re
 | dg_common.py | paths, prefix COLDWAR_DDR_, helpers, English modifier labels |
 | dg_load.py | loads the design (foci, ideas, offers, parties, leaders) |
 | dg_avail.py | English `available` texts -> triggers (no date conditions in foci, house rule) |
-| dg_effects.py | effect dicts -> Clausewitz (MD helpers, dynamic modifiers, ladders, trust, course) |
+| dg_effects.py | effect dicts -> Clausewitz (MD helpers, dynamic modifiers, ladders, course) |
 | dg_focus.py | focus tree file, icons (gfxsel/gfx_pick.json), AI weights |
 | dg_events.py | system and historical events, deaths, succession, Kremlin, accession |
 | dg_offers.py | 69 offers in MD form: the focus sends the event, TT_IF_THEY_ACCEPT/REJECT show the answer; the partner decides |
 | dg_decisions.py | Central Committee, German Question, Moscow, Five-Year Plans, Hard Currency, ... |
-| dg_sys.py | scripted effects/triggers: init, money, factions, trust, First Secretaries, Warsaw Pact |
+| dg_sys.py | scripted effects/triggers: init, money, factions, First Secretaries, Warsaw Pact |
 | dg_misc.py | ideas, dynamic modifiers, balance of power, opinions, traits, on_actions, events file |
 | dg_build.py | writes everything; patches history, fallback list and party names (idempotent, # COLDWAR) |
 
 The opening event `COLDWAR_DDR.1` uses historical narrative without tutorial
-variables or trust-meter explanations. Its dedicated `GFX_COLDWAR_DDR_intro`
+variables or mechanic explanations. Its dedicated `GFX_COLDWAR_DDR_intro`
 sprite is a native217×163 country-event picture with MD's original frame and
 a proportional180×150 photo crop. The shared event GUI is unchanged. Export
 the existing MD photograph with `python tools/event_art/export_ddr_intro.py`

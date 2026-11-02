@@ -1,3 +1,6 @@
+# IMPERIA COLD WAR — Brazil 1970 native party change integration.
+# IMPERIA COLD WAR — Chile 1970 exact-party programme integration.
+# IMPERIA COLD WAR — Cold War: North Korea 1970 national programme.
 # steal_from_party: helper for steal_popularity_from_* effects
 # Parameters: steal_party_index (0-23)
 # Steals 1% popularity from the given party and gives it to the ruling party
@@ -2048,12 +2051,15 @@ change_ruling_party_effect = {
 		# INFO: This is here to offload from the weekly tick and instead call it whenever this is called.
 		IP_idea_configuration = yes
 		mb_refresh_relations_effect = yes
-		# IMPERIA CW — Cold War: North Korea 1970 national programme.
+		# IMPERIA COLD WAR — Cold War: North Korea 1970 national programme.
 		if = { limit = { original_tag = NKO IMP_is_1970_scenario = yes has_country_flag = COLDWAR_NKO_initialized } COLDWAR_NKO_refresh_programmes = yes }
-# IMPERIA CW — Cold War: South Korea1970 national programme.
+# IMPERIA COLD WAR — Cold War: South Korea1970 national programme.
 # COLDWAR KOR EXACT PARTY BEGIN
 		if = { limit = { original_tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_initialized } COLDWAR_KOR_sync_politics = yes }
 # COLDWAR KOR EXACT PARTY END
+# COLDWAR_CHL_PARTY_REFRESH_BEGIN
+if = { limit = { COLDWAR_CHL_is_scenario = yes has_country_flag = COLDWAR_CHL_initialized } COLDWAR_CHL_refresh_all = yes }
+# COLDWAR_CHL_PARTY_REFRESH_END
 		# Subideology swaps keep the same ideology group, so on_government_change cannot carry these.
 		if = { limit = { original_tag = FRA } FRA_update_party_programmes = yes }
 		if = { limit = { original_tag = HOL } HOL_update_party_programmes = yes }
@@ -2077,6 +2083,23 @@ change_ruling_party_effect = {
 	}
 
 	force_update_map_mode = { mapmode = subideology_map_mode }
+
+	# IMPERIA COLD WAR — Brazil actual party change BEGIN
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		COLDWAR_BRA_open_organisation_stages = yes
+		COLDWAR_BRA_reconcile_politics = yes
+		if = {
+			limit = {
+				COLDWAR_BRA_1970_party_leader_route_supported = yes
+			}
+			COLDWAR_BRA_1970_install_party_leader = yes
+		}
+		COLDWAR_BRA_sync_programmes = yes
+	}
+	# IMPERIA COLD WAR — Brazil actual party change END
 }
 
 # Function: update_dirty_politicsview_expanded
@@ -2326,7 +2349,7 @@ IP_idea_configuration = {
 
 	IP_idea_construction_update = yes
 	IP_idea_corruption_update = yes
-# IMPERIA CW — Cold War: South Korea1970 national programme.
+# IMPERIA COLD WAR — Cold War: South Korea1970 national programme.
 # COLDWAR KOR NATIVE LABOUR BEGIN
 	if = { limit = { tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_lawful_labour_bargaining } COLDWAR_KOR_ensure_labour_representation = yes }
 # COLDWAR KOR NATIVE LABOUR END

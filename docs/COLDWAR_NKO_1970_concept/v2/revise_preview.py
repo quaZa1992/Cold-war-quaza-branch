@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: review-only DPRK v2 data and visualization; never installs HOI4 files.
+# IMPERIA COLD WAR — Cold War: review-only DPRK v2 data and visualization; never installs HOI4 files.
 """Reads the v1 proposal and writes only v2 review artifacts / the chat visualization."""
 from pathlib import Path
 import sys, json, re, copy, hashlib, io, base64, importlib

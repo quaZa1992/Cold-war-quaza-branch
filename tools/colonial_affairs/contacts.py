@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Native trigger compatibility integration.
 # IMPERIA CW — Cold War: regional intelligence contacts, domestic organisations and disclosure.
 """Shared foreign contacts; domestic threats never create a military occupation."""
 from runtime import HEADER, block, iff
@@ -39,7 +40,7 @@ network_strength = { state = var:COLDWAR_COL_support_target value > 50 }''')
     trig('COLDWAR_COL_registered_contact', block('OR', '\n'.join(registered)))
     for group, data in GROUPS.items():
         power = data['power']
-        native_gate='\nGER = { has_country_flag = COLDWAR_GER_1970_initialized NOT = { has_country_flag = COLDWAR_GER_1970_raf_dissolved } check_variable = { cwger_raf_gen < 4 } }' if data.get('external') else ''
+        native_gate='\nGER = { COLDWAR_GER_1970_raf_case_active = yes }' if data.get('external') else ''
         trig(f'COLDWAR_COL_group_{group}', f'''COLDWAR_COL_contacts_scenario = yes
 date > {data['start']}
 {power} = {{ exists = yes NOT = {{ has_country_flag = COLDWAR_COL_{group}_settlement }} }}
@@ -73,7 +74,7 @@ var:COLDWAR_COL_support_target = { NOT = { COLDWAR_COL_registered_contact = yes 
     trig('COLDWAR_COL_case_target_available', '''has_variable = COLDWAR_COL_case_target
 var:COLDWAR_COL_case_target = { COLDWAR_COL_group_ira = yes is_controlled_by = PREV }''')
     trig('COLDWAR_COL_can_change_case', '''COLDWAR_COL_case_target_available = yes
-NOT = { political_power < 25 }
+NOT = { has_political_power < 25 }
 var:COLDWAR_COL_case_target = { check_variable = { COLDWAR_COL_case_lock < 1 } }''')
     for policy in range(3):
         trig(f'COLDWAR_COL_can_change_case_{policy}',f'COLDWAR_COL_can_change_case = yes\nvar:COLDWAR_COL_case_target = {{ NOT = {{ check_variable = {{ COLDWAR_COL_case_policy = {policy} }} }} }}')
@@ -92,6 +93,7 @@ var:COLDWAR_COL_case_target = { check_variable = { COLDWAR_COL_case_lock < 1 } }
  if = { limit = { check_variable = { COLDWAR_COL_case_policy = 1 } } set_variable = { PREV.COLDWAR_COL_case_cost = 0.012 } }
  if = { limit = { check_variable = { COLDWAR_COL_case_policy = 2 } } set_variable = { PREV.COLDWAR_COL_case_cost = 0.02 } }
 }''')
+    case_view+='\nCOLDWAR_COL_refresh_measures_view = yes'
     effect('COLDWAR_COL_refresh_case',case_view)
     effect('COLDWAR_COL_refresh_local_aid', '''set_variable = { COLDWAR_COL_local_aid = 0 }
 set_temp_variable = { COLDWAR_COL_counted_state = THIS.id }
@@ -137,7 +139,7 @@ if = {
         gate = f'''COLDWAR_COL_local_target_available = yes
 NOT = {{ has_country_flag = COLDWAR_COL_local_{package}_cooldown }}'''
         if package in ('political', 'arms'):
-            gate += '\nNOT = { political_power < 15 }'
+            gate += '\nNOT = { has_political_power < 15 }'
         if package == 'funding':
             gate += '\nNOT = { has_country_flag = MD_skip_treasury_cost }\ncheck_variable = { var = treasury value = 0.05 compare = greater_than_or_equals }'
         if package in ('funding', 'arms'):
@@ -161,7 +163,7 @@ NOT = {{ has_country_flag = COLDWAR_COL_local_{package}_cooldown }}'''
         if package == 'arms':
             result = iff('COLDWAR_COL_group_raf = yes','GER = { add_to_variable = { cwger_raf_cadre = 1 } clamp_variable = { var = cwger_raf_cadre min = 0 max = 120 } }',iff('COLDWAR_COL_group_ira = yes', 'add_to_variable = { COLDWAR_COL_cells = 3 }', 'add_resistance = 5'))
         pay += block('var:COLDWAR_COL_support_target', result + '\nCOLDWAR_COL_refresh_local_aid = yes')
-        pay += iff('var:COLDWAR_COL_support_target = { COLDWAR_COL_group_raf = yes }','GER = { COLDWAR_COL_refresh_raf_aid = yes }')
+        pay += iff('var:COLDWAR_COL_support_target = { COLDWAR_COL_group_raf = yes }','GER = { COLDWAR_COL_refresh_raf_aid = yes COLDWAR_GER_1970_sec_gui_refresh = yes }')
         pay += f'COLDWAR_COL_disclose_{package} = yes\nCOLDWAR_COL_refresh_support_target = yes\n'
         effect(f'COLDWAR_COL_send_local_{package}', iff('has_variable = COLDWAR_COL_support_target', 'var:COLDWAR_COL_support_target = { COLDWAR_COL_refresh_local_aid = yes }\n'+iff('var:COLDWAR_COL_support_target = { COLDWAR_COL_group_raf = yes }','GER = { COLDWAR_COL_refresh_raf_aid = yes }')) + iff(f'COLDWAR_COL_can_local_{package} = yes', pay))
 
@@ -175,17 +177,19 @@ NOT = {{ has_country_flag = COLDWAR_COL_local_{package}_cooldown }}'''
             init = f'''set_state_flag = COLDWAR_COL_{group}_initialized
 set_variable = {{ COLDWAR_COL_cells = {data['threat']} }}
 set_variable = {{ COLDWAR_COL_case_policy = 0 }}'''
-            step = f'''COLDWAR_COL_refresh_local_aid = yes
+            step = f'''COLDWAR_COL_measures_initialize = yes
+COLDWAR_COL_refresh_local_aid = yes
 set_temp_variable = {{ COLDWAR_COL_case_drift = 1 }}
 if = {{ limit = {{ check_variable = {{ COLDWAR_COL_case_policy = 1 }} }} set_temp_variable = {{ COLDWAR_COL_case_drift = -0.5 }} }}
 if = {{ limit = {{ check_variable = {{ COLDWAR_COL_case_policy = 2 }} }} set_temp_variable = {{ COLDWAR_COL_case_drift = -1 }} }}
+COLDWAR_COL_measures_ira_monthly = yes
 add_to_variable = {{ COLDWAR_COL_cells = COLDWAR_COL_case_drift }}
 set_temp_variable = {{ COLDWAR_COL_aid_drift = COLDWAR_COL_local_aid }}
 multiply_temp_variable = {{ COLDWAR_COL_aid_drift = 0.1 }}
 add_to_variable = {{ COLDWAR_COL_cells = COLDWAR_COL_aid_drift }}
 clamp_variable = {{ var = COLDWAR_COL_cells min = {data['floor']} max = 90 }}
 COLDWAR_COL_apply_domestic = yes
-if = {{ limit = {{ check_variable = {{ COLDWAR_COL_cells > 44 }} controller = {{ NOT = {{ has_country_flag = COLDWAR_COL_incident_recent }} }} }} random_list = {{ 85 = {{ }} 15 = {{ controller = {{ set_country_flag = {{ flag = COLDWAR_COL_incident_recent days = 90 }} country_event = {{ id = COLDWAR_colonial_contacts.3 }} }} }} }} }}'''
+COLDWAR_COL_measures_incident = yes'''
             initialise += block(str(state), iff(f'is_controlled_by = PREV', iff(f'COLDWAR_COL_group_{group} = yes', iff(f'NOT = {{ has_state_flag = COLDWAR_COL_{group}_initialized }}', init) + iff('check_variable = { COLDWAR_COL_case_lock > 0 }', 'subtract_from_variable = { COLDWAR_COL_case_lock = 1 }') + 'COLDWAR_COL_apply_domestic = yes', 'remove_dynamic_modifier = { modifier = COLDWAR_COL_domestic_security }')))
             initialise_only += block(str(state), iff(f'is_controlled_by = PREV\nCOLDWAR_COL_group_{group} = yes', iff(f'NOT = {{ has_state_flag = COLDWAR_COL_{group}_initialized }}', init) + 'COLDWAR_COL_apply_domestic = yes'))
             monthly += block(str(state), iff(f'COLDWAR_COL_group_{group} = yes\nis_controlled_by = PREV', step))
@@ -198,17 +202,14 @@ multiply_variable = { COLDWAR_COL_domestic_resources = -0.0005 }
 set_variable = { COLDWAR_COL_domestic_workforce = COLDWAR_COL_cells }
 multiply_variable = { COLDWAR_COL_domestic_workforce = -0.0005 }
 if = { limit = { check_variable = { COLDWAR_COL_case_policy = 2 } } add_to_variable = { COLDWAR_COL_domestic_construction = -0.05 } add_to_variable = { COLDWAR_COL_domestic_workforce = -0.02 } }
+COLDWAR_COL_measures_local_restrictions = yes
 if = { limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_COL_domestic_security } } } add_dynamic_modifier = { modifier = COLDWAR_COL_domestic_security } }''')
     migration = iff('tag = ENG', 'remove_ideas = ENG_ulster_flashpoint\n' + iff('has_country_flag = ENG_1985_ira_state_initialised', '17 = { force_disable_resistance = { clear = yes occupier = ENG } remove_dynamic_modifier = { modifier = ENG_ira_troubles_state_modifier } remove_dynamic_modifier = { modifier = ENG_ira_static_modifier } }\nclr_country_flag = ENG_1985_ira_state_initialised'))
     effect('COLDWAR_COL_contacts_initialize',iff('COLDWAR_COL_contacts_scenario = yes',migration + initialise_only + '\nCOLDWAR_COL_refresh_case = yes'))
-    effect('COLDWAR_COL_contacts_daily', iff('COLDWAR_COL_contacts_scenario = yes', migration + initialise + '\n' + '\n'.join(iff(f'has_variable = COLDWAR_COL_local_{p}_state', f'var:COLDWAR_COL_local_{p}_state = {{ COLDWAR_COL_refresh_local_aid = yes }}\n' + iff(f'NOT = {{ has_country_flag = COLDWAR_COL_local_{p}_live }}', f'clear_variable = COLDWAR_COL_local_{p}_state')) for p in ('funding', 'arms')) + '\n' + iff('has_variable = COLDWAR_COL_support_target\nCOLDWAR_COL_contact_target_available = no', 'clr_country_flag = COLDWAR_COL_support_panel_open') + '\nCOLDWAR_COL_refresh_support_target = yes\nCOLDWAR_COL_refresh_case = yes'))
-    monthly+=iff('tag = GER\nhas_country_flag = COLDWAR_GER_1970_initialized\nOR = { '+' '.join(f'{s} = {{ COLDWAR_COL_group_raf = yes }}' for s in GROUPS['raf']['states'])+' }', '''COLDWAR_COL_refresh_raf_aid = yes
-set_temp_variable = { COLDWAR_COL_raf_reinforcement = COLDWAR_COL_raf_aid }
-multiply_temp_variable = { COLDWAR_COL_raf_reinforcement = 0.05 }
-add_to_variable = { cwger_raf_cadre = COLDWAR_COL_raf_reinforcement }
-clamp_variable = { var = cwger_raf_cadre min = 0 max = 120 }''')
-    effect('COLDWAR_COL_contacts_monthly', iff('COLDWAR_COL_contacts_scenario = yes', monthly))
-    effect('COLDWAR_COL_domestic_budget', 'set_variable = { COLDWAR_COL_domestic_weekly_cost = 0 }\n' + iff('COLDWAR_COL_contacts_scenario = yes', budget))
+    effect('COLDWAR_COL_contacts_daily', iff('COLDWAR_COL_contacts_scenario = yes', migration + initialise + '\nCOLDWAR_COL_measures_daily = yes\n' + '\n'.join(iff(f'has_variable = COLDWAR_COL_local_{p}_state', f'var:COLDWAR_COL_local_{p}_state = {{ COLDWAR_COL_refresh_local_aid = yes }}\n' + iff(f'NOT = {{ has_country_flag = COLDWAR_COL_local_{p}_live }}', f'clear_variable = COLDWAR_COL_local_{p}_state')) for p in ('funding', 'arms')) + '\n' + iff('has_variable = COLDWAR_COL_support_target\nCOLDWAR_COL_contact_target_available = no', 'clr_country_flag = COLDWAR_COL_support_panel_open') + '\nCOLDWAR_COL_refresh_support_target = yes\nCOLDWAR_COL_refresh_case = yes'))
+    # IMPERIA CW — Cold War: RAF aid and programmes tick only in the German monthly dispatcher.
+    effect('COLDWAR_COL_contacts_monthly', iff('COLDWAR_COL_contacts_scenario = yes', monthly+'\nCOLDWAR_COL_measures_country_monthly = yes'))
+    effect('COLDWAR_COL_domestic_budget', 'set_variable = { COLDWAR_COL_domestic_weekly_cost = 0 }\n' + iff('COLDWAR_COL_contacts_scenario = yes', budget+'\nCOLDWAR_COL_measures_budget = yes'))
     # Selected state data is copied only while that viewer still has access.
     refresh = '''set_variable = { COLDWAR_COL_support_group = 0 }
 if = {
@@ -247,8 +248,8 @@ state_target = yes
 cost = 0
 visible = {{ COLDWAR_COL_contacts_scenario = yes }}
 target_trigger = {{ FROM = {{ COLDWAR_COL_domestic_contact = yes is_controlled_by = ROOT }} }}
-available = {{ NOT = {{ political_power < 25 }} FROM = {{ check_variable = {{ COLDWAR_COL_case_lock < 1 }} }} }}
-complete_effect = {{ if = {{ limit = {{ NOT = {{ political_power < 25 }} FROM = {{ COLDWAR_COL_domestic_contact = yes is_controlled_by = ROOT check_variable = {{ COLDWAR_COL_case_lock < 1 }} }} }} add_political_power = -25 FROM = {{ set_variable = {{ COLDWAR_COL_case_policy = {policy} }} set_variable = {{ COLDWAR_COL_case_lock = 180 }} }} }} }}
+available = {{ NOT = {{ has_political_power < 25 }} FROM = {{ check_variable = {{ COLDWAR_COL_case_lock < 1 }} }} }}
+complete_effect = {{ if = {{ limit = {{ NOT = {{ has_political_power < 25 }} FROM = {{ COLDWAR_COL_domestic_contact = yes is_controlled_by = ROOT check_variable = {{ COLDWAR_COL_case_lock < 1 }} }} }} add_political_power = -25 FROM = {{ set_variable = {{ COLDWAR_COL_case_policy = {policy} }} set_variable = {{ COLDWAR_COL_case_lock = 180 }} }} }} }}
 ai_will_do = {{ factor = 0 }}''')
         local[f'COLDWAR_COL_case_policy_{policy}'] = name + ': [FROM.GetName]'
         local[f'COLDWAR_COL_case_policy_{policy}_desc'] = ['Standing policing: $0.005bn/week; organisation strength +1/month. Costs 25 Political Power; 180-day commitment.', 'Community liaison: $0.012bn/week; organisation strength −0.5/month. Costs 25 Political Power; 180-day commitment.', 'Intensive investigation: $0.020bn/week; organisation strength −1/month. Additional local construction −5% and workforce −2% from security restrictions. Costs 25 Political Power; 180-day commitment.'][policy] + ' Foreign support can offset progress. These are regional security cases, not military occupations.'
@@ -271,7 +272,7 @@ local_manpower = COLDWAR_COL_domestic_workforce'''))
     for name in ('ENG_ira_troubles_state_modifier','ENG_ira_static_modifier'):
         append_file(files,'common/dynamic_modifiers/COLDWAR_colonial_contacts.txt',block(name,'enable = { always = no }'))
     append_file(files, 'common/on_actions/COLDWAR_colonial_contacts.txt', block('on_actions', block('on_startup', block('effect','every_country = { limit = { COLDWAR_COL_contacts_scenario = yes } COLDWAR_COL_contacts_initialize = yes }')) + block('on_daily', block('effect', 'COLDWAR_COL_contacts_daily = yes')) + block('on_monthly', block('effect', 'COLDWAR_COL_contacts_monthly = yes'))))
-    append_file(files, 'events/COLDWAR_colonial_contacts.txt', '''namespace = COLDWAR_colonial_contacts
+    append_file(files, 'events/COLDWAR_colonial_contacts.txt', '''add_namespace = COLDWAR_colonial_contacts
 country_event = {
  id = COLDWAR_colonial_contacts.1
  title = COLDWAR_COL_leak_title

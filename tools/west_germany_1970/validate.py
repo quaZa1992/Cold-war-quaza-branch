@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — West Germany integration from quaZa e45483ff.
 """Static checks for the generated West Germany 1970 files.
 
     python3 validate.py <build_root> <mod_root_for_reference>
@@ -12,6 +12,7 @@ import re
 import sys
 
 from cw_lib import P, check_braces
+from compile_security import parse, first
 
 VANILLA_MODIFIERS = {"mobilization_speed", "monthly_population", 
     "army_core_defence_factor", "army_org_factor", "conscription", "consumer_goods_factor", "drift_defence_factor",
@@ -56,8 +57,19 @@ def read(path):
 
 def main(build, ref):
     REF["root"] = ref
-    files = {os.path.relpath(p, build).replace("\\", "/"): read(p) for p in glob.glob(os.path.join(build, "**", "*.*"), recursive=True)
-             if p.endswith((".txt", ".gfx", ".yml", ".gui")) and "CREDITS" not in p and P in os.path.basename(p)}
+    # IMPERIA COLD WAR — Validate loaded content, excluding source audit snapshots.
+    files = {os.path.relpath(p, build).replace("\\", "/"): read(p)
+             for native in ('common','events','interface','localisation','history')
+             for p in glob.glob(os.path.join(build, native, "**", "*.*"), recursive=True)
+             if p.endswith((".txt", ".gfx", ".yml", ".gui")) and "CREDITS" not in p and (P in os.path.basename(p) or 'COLDWAR_DDR_1970_relations' in os.path.basename(p))}
+    # IMPERIA COLD WAR — Resolve the shared UN display from the build or the loaded mod.
+    for rel in ('common/scripted_localisation/COLDWAR_diplomacy_1970.txt',
+                'localisation/english/COLDWAR_diplomacy_1970_l_english.yml'):
+        candidate = os.path.join(build, rel)
+        if not os.path.isfile(candidate):
+            candidate = os.path.join(ref, rel)
+        if os.path.isfile(candidate):
+            files[rel] = read(candidate)
     script = {k: strip_comments(v) for k, v in files.items() if not k.endswith(".yml")}
     allscript = "\n".join(script.values())
     for k, v in script.items():
@@ -70,6 +82,8 @@ def main(build, ref):
     loc_text = files[f"localisation/english/{P}_l_english.yml"]
     if not loc_text.startswith("l_english:"):
         err("localisation header")
+    loc_text += '\n'+files.get('localisation/english/COLDWAR_DDR_1970_relations_l_english.yml','')
+    loc_text += '\n'+files.get('localisation/english/COLDWAR_diplomacy_1970_l_english.yml','')
     loc = dict(re.findall(r'^ ([^:\s]+):0 "(.*)"$', loc_text, re.M))
 
     def need_loc(key, where):
@@ -77,8 +91,8 @@ def main(build, ref):
             err(f"missing localisation {key} ({where})")
 
     # ---------------------------------------------------------- events
-    ev_text = script[f"events/{P}_events.txt"]
-    ev_defined = set(re.findall(r"^\tid = (\S+)", ev_text, re.M))
+    ev_text = '\n'.join(text for path, text in script.items() if path.startswith('events/'))
+    ev_defined = {first(value, 'id') for key, op, value in parse(ev_text) if key in ('country_event', 'news_event')}
     for ns in set(re.findall(r"^add_namespace = (\S+)", ev_text, re.M)):
         pass
     for ref_id in set(re.findall(r"country_event = \{ id = (\S+)", allscript)) | set(re.findall(r"country_event = (\S+\.\d+)\b", allscript)):
@@ -87,7 +101,7 @@ def main(build, ref):
     unreferenced = {e for e in ev_defined if not re.search(r"id = " + re.escape(e) + r"\b(?! *\n\t(hidden|title))", allscript.replace(f"\tid = {e}\n", ""))}
     for e in sorted(unreferenced):
         warn(f"event {e} is never fired")
-    for key in re.findall(r"(?:title|desc|name|text) = (COLDWAR_(?:GER|GER_DDR)\.\S+)", ev_text):
+    for key in re.findall(r"(?:title|desc|name|text) = (COLDWAR_(?:GER|GER_DDR|GER_BALANCE)\.\S+)", ev_text):
         need_loc(key, "event")
     for pic in set(re.findall(r"picture = (GFX_\S+)", ev_text)):
         if not exists_sprite(pic, "events"):
@@ -164,7 +178,7 @@ def main(build, ref):
         body = re.search(r"completion_reward = \{(.*)\}", f["block"], re.S)
         txt = body.group(1) if body else ""
         meaningful = re.search(r"custom_effect_tooltip|add_ideas|swap_ideas|add_building_construction|add_dynamic_modifier|build_railway|country_event|"
-                               r"change_influence|add_opinion_modifier|change_\w+_opinion|add_tech_bonus|set_country_flag|treasury|power_balance", txt)
+                               r"change_influence|add_opinion_modifier|change_\w+_opinion|add_tech_bonus|set_country_flag|treasury|power_balance|unlock_decision_tooltip", txt)
         if not meaningful:
             warn(f"focus {fid} has no system effect")
     gfx = script[f"interface/{P}_goals.gfx"] + script[f"interface/{P}_goals_shine.gfx"]
@@ -269,6 +283,11 @@ def main(build, ref):
 
     # ---------------------------------------------------------- variables shown in loc
     set_vars = set(re.findall(r"(?:set_variable|add_to_variable|subtract_from_variable) = \{ (\w+) =", allscript))
+    # IMPERIA COLD WAR — Resolve the native recognition count through its loaded providers.
+    for rel in ('common/scripted_effects/COLDWAR_diplomacy_1970.txt', 'common/scripted_effects/01_international_systems_effects.txt'):
+        provider = os.path.join(build, rel)
+        if os.path.isfile(provider):
+            set_vars.update(re.findall(r"(?:set_variable|add_to_variable|subtract_from_variable) = \{ (\w+) =", strip_comments(read(provider))))
     for k, text in loc.items():
         for var in re.findall(r"\[\?(?:(?:DDR|GER|ROOT|FROM)\.)?([\w.]+)\|", text):
             if var not in set_vars and var not in KNOWN_VARS and "global." + var not in KNOWN_VARS:

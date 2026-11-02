@@ -1,0 +1,160 @@
+<!-- IMPERIA COLD WAR — Argentina implemented runtime GDP cost inspector. -->
+<div id="coldwar-argentina">
+ <div class="ar-window">
+  <div class="ar-mast"><span>ARGENTINA <small>JANUARY 1970</small></span><span class="ar-stamp">IMPLEMENTED RUNTIME PREVIEW</span></div>
+  <div class="ar-toolbar">
+   <label>Chapter<select id="ar-chapter" aria-label="Focus tree chapter"></select></label>
+   <label>Government<select id="ar-government" aria-label="Governing party"></select></label><label>Argentina GDP, $bn<input id="ar-gdp" type="number" min="0.00001" step="0.00001" value="107.38543"></label><label><span id="ar-recipient-gdp-label">Recipient GDP, $bn (BRA estimate)</span><input id="ar-recipient-gdp" type="number" min="0.00001" step="0.00001" value="143.91520"></label>
+   <button type="button" id="ar-overview">Full tree</button><button type="button" id="ar-native">Native scale</button>
+   <button type="button" id="ar-spirits">Starting spirits</button><button type="button" id="ar-events">Events</button>
+  </div>
+  <div id="ar-caption" class="ar-caption"></div>
+  <div id="ar-viewport" class="ar-viewport" aria-label="National focus tree">
+   <div id="ar-stage"><div id="ar-canvas"><svg id="ar-edges" aria-hidden="true"></svg><div id="ar-nodes"></div></div><div id="ar-chapters"></div></div>
+  </div>
+  <div class="ar-legend"><span>Solid lines: prerequisites</span><span class="ar-red">Red links: exclusive choices</span><span>Dimmed: another government</span><span>Runtime budget preview. Native font and connector routing approximated. Estimated Argentine native GDP is $107.38543 bn, calibrated from 1970 scripted GDP targets x 3.4 against the $31.58395 bn historical display baseline. Recipient estimates use their scripted targets x 3.4. Live GDP can exceed these targets; treasury amounts use current GDP.</span></div>
+  <div id="ar-inspector" class="ar-inspector" aria-live="polite"></div>
+ </div>
+</div>
+<style>
+#coldwar-argentina{font:14px Arial,sans-serif;color:#e8e6d6;color-scheme:dark;--ar-gold:#d6c28c;--ar-muted:#bdc5b8;--ar-green:#9ed390;--ar-red:#e4988d;--ar-base:#19231e}
+#coldwar-argentina *{box-sizing:border-box}
+#coldwar-argentina .ar-window{width:100%;background:#28342c;border:1px solid #68745f}
+#coldwar-argentina .ar-mast{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#364336;border-bottom:1px solid #8b8765;color:var(--ar-gold);font-weight:500;letter-spacing:1.5px}
+#coldwar-argentina small{margin-left:9px;font-size:12px;letter-spacing:.5px}
+#coldwar-argentina .ar-stamp{font-size:11px;letter-spacing:1px;margin-right:90px}
+#coldwar-argentina .ar-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:end;padding:12px}
+#coldwar-argentina label{display:flex;flex-direction:column;gap:5px;max-width:100%;min-width:0;color:var(--ar-muted);font-size:12px}
+#coldwar-argentina select,#coldwar-argentina .ar-toolbar button{font:13px Arial,sans-serif;padding:7px 9px;color:#e8e6d6;background:#3a483a;border:1px solid #79836b;border-radius:0;max-width:100%;min-width:0}
+#coldwar-argentina select{width:235px}
+#coldwar-argentina input{font:13px Arial,sans-serif;padding:7px 9px;color:#e8e6d6;background:#3a483a;border:1px solid #79836b;border-radius:0;width:165px}
+#coldwar-argentina .ar-caption{padding:0 12px 12px;font-size:12px;color:var(--ar-muted);line-height:1.5}
+#coldwar-argentina .ar-viewport{height:530px;overflow:auto;position:relative;background:radial-gradient(ellipse at 50% 12%,#3d4c3a,#1d2a22 85%);border-top:1px solid #65735d;border-bottom:1px solid #65735d;overscroll-behavior:contain}
+#coldwar-argentina #ar-stage{position:relative;min-height:100%;min-width:100%}
+#coldwar-argentina #ar-canvas{position:absolute;left:0;top:0;transform-origin:0 0}
+#coldwar-argentina #ar-edges{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+#coldwar-argentina .ar-focus{position:absolute;width:165px;height:128px;border:0;padding:0;background:none;color:#e8e6d6;font:14px Arial,sans-serif}
+#coldwar-argentina .ar-art{position:absolute;left:50%;top:0;transform:translateX(-50%);object-fit:contain;width:98px;height:88px}
+#coldwar-argentina .ar-title{position:absolute;left:0;top:65px;width:165px;height:50px;background-size:165px 50px;background-position:center;background-repeat:no-repeat;display:flex;align-items:center;justify-content:center;padding:0 8px;font-size:12px;text-shadow:0 1px 2px #000}
+#coldwar-argentina .ar-title>span{display:block;max-width:147px;white-space:nowrap}
+#coldwar-argentina .ar-focus.inactive .ar-art{filter:grayscale(.85) brightness(.58)}
+#coldwar-argentina .ar-focus.inactive .ar-title{color:#b4bdad}
+#coldwar-argentina .ar-focus.selected .ar-title{outline:1px solid var(--ar-gold);outline-offset:-2px}
+#coldwar-argentina .ar-focus.selected .ar-art{filter:brightness(1.15)}
+#coldwar-argentina .ar-legend{padding:10px 12px;display:flex;gap:7px 17px;flex-wrap:wrap;font-size:11px;line-height:1.5;color:var(--ar-muted)}
+#coldwar-argentina .ar-inspector{padding:18px;background:var(--ar-base);line-height:1.5;overflow-wrap:anywhere;min-height:240px}
+#coldwar-argentina h3{font-size:19px;font-weight:500;color:var(--ar-gold);margin:0 0 7px}
+#coldwar-argentina h4{font-size:14px;font-weight:500;color:var(--ar-gold);margin:16px 0 5px}
+#coldwar-argentina p{margin:5px 0 10px}
+#coldwar-argentina ul{padding-left:21px;margin:4px 0 10px}
+#coldwar-argentina li{margin:3px 0}
+#coldwar-argentina .ar-positive{color:var(--ar-green)}
+#coldwar-argentina .ar-negative,#coldwar-argentina .ar-red{color:var(--ar-red)}
+#coldwar-argentina .ar-note{font-size:12px;color:var(--ar-muted)}
+#coldwar-argentina .ar-terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(245px,100%),1fr));gap:8px 24px}
+#coldwar-argentina .ar-terms h4{margin-top:6px}
+#coldwar-argentina details{margin-top:12px}
+#coldwar-argentina summary{color:var(--ar-gold)}
+#coldwar-argentina pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px monospace;background:#121d17;padding:12px}
+#coldwar-argentina .ar-choice{border-top:1px solid #43513f;padding-top:6px;margin-top:12px}
+#coldwar-argentina .ar-overview-label{position:absolute;transform:translateX(-50%);text-align:center;font-size:11px;color:var(--ar-gold);pointer-events:none}
+#coldwar-argentina #ar-event{width:100%;margin:6px 0 10px}
+@media(max-width:560px){#coldwar-argentina .ar-toolbar label{width:100%}#coldwar-argentina .ar-toolbar select{width:100%}#coldwar-argentina .ar-toolbar button{min-height:44px}#coldwar-argentina .ar-mast{padding:12px}#coldwar-argentina .ar-stamp{width:100%;margin-right:0}#coldwar-argentina .ar-inspector{padding:12px}#coldwar-argentina select{font-size:16px}}
+</style>
+<script>
+(()=>{
+const root=document.getElementById('coldwar-argentina'),data=__DATA__,art=__ART__;
+const $=s=>root.querySelector(s),ids=Object.fromEntries(data.nodes.map(n=>[n.id,n]));
+const spirits=Object.fromEntries([...data.spirits,...data.conditional_spirits].map(s=>[s.id,s]));
+const labels=Object.fromEntries(Object.values(data.stats).map(([k,v])=>[k,v]));
+const chapter=$('#ar-chapter'),government=$('#ar-government'),gdpInput=$('#ar-gdp'),recipientGDPInput=$('#ar-recipient-gdp'),viewport=$('#ar-viewport'),canvas=$('#ar-canvas'),stage=$('#ar-stage'),inspector=$('#ar-inspector');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sign=v=>(v>0?'+':'')+Number(v.toFixed(4));
+const money=v=>'$'+Math.abs(v).toFixed(5)+' bn';
+const annualShare=s=>(Number(s||0)*100).toFixed(3).replace(/0+$/,'').replace(/\.$/,'')+'% annual GDP';
+const oneoffShare=s=>(Number(s||0)*100).toFixed(3).replace(/0+$/,'').replace(/\.$/,'')+'% GDP';
+const argGDP=()=>Math.max(0,Number(gdpInput.value)||0),recipientGDP=()=>Math.max(0,Number(recipientGDPInput.value)||0);
+const budgetAmount=(share,gdp)=>Number(share||0)*gdp,weeklyAmount=(share,gdp)=>Number(share||0)*gdp/52;
+let recipientTag="BRA";const recipientOverrides={};
+function setRecipientTag(tag){if(!tag)return;recipientTag=tag;const estimate=Number(data.preview_gdp_estimates?.values?.[tag]??data.budget_revision.arg_1970_internal_gdp),overridden=Object.prototype.hasOwnProperty.call(recipientOverrides,tag);recipientGDPInput.value=Number(overridden?recipientOverrides[tag]:estimate).toFixed(5);$('#ar-recipient-gdp-label').textContent='Recipient GDP, $bn ('+tag+(overridden?' override':' estimate')+')'}
+const fmt=(k,v)=>k==='interest_rate_multiplier_modifier'?sign(v)+' pp':sign(v*100)+'%';
+const negativeGood=k=>/(cost_multiplier|supply_consumption|training_time|interest_rate)/.test(k);
+const modList=mods=>Object.entries(mods||{}).map(([k,v])=>'<li>'+esc(labels[k]||k)+': <span class="'+((v>0)!==negativeGood(k)?'ar-positive':'ar-negative')+'">'+fmt(k,v)+'</span></li>').join('');
+const buildingNames={industrial_complex:'Civilian Factory',arms_factory:'Military Factory',dockyard:'Naval Dockyard',infrastructure:'Infrastructure',agriculture_district:'Agricultural District',fossil_powerplant:'Fossil Power Plant',radar_station:'Radar Station',uranium_mine:'Uranium Mine'};
+const cats={CAT_industry:'Industry',CAT_computing:'Computing',CAT_aircraft:'Aircraft',CAT_nuclear_reactors:'Civilian Nuclear Reactors',CAT_tanks:'Tanks',CAT_surface_ships:'Surface Ships'};
+const buildingList=bs=>(bs||[]).map(b=>'<li>'+esc(data.states[b.state]||b.state)+': +'+b.slots+' shared building slot'+(b.slots===1?'':'s')+'; +'+b.levels+' '+esc(buildingNames[b.type]||b.type)+'</li>').join('');
+const researchList=rs=>(rs||[]).map(r=>'<li>'+r.uses+' x '+Math.round(r.bonus*100)+'% research bonus: '+esc(cats[r.category]||r.category)+'</li>').join('');
+const spiritFx=(id,remove=false,duration=null)=>{const s=spirits[id];return s?'<li>'+(remove?'Remove':'Add')+' national spirit: '+esc(s.name)+(!remove&&(duration||s.duration)?' ('+(duration||s.duration)+' days)':'')+'<ul>'+modList(Object.fromEntries(Object.entries(s.modifiers).map(([k,v])=>[k,remove?-v:v])))+'</ul></li>':''};
+const moneyFx=(legacy,legacyWeekly=0,credit=0,setupShare=0,annual=0,basis=argGDP())=>{const setup=setupShare?budgetAmount(setupShare,basis):0,week=weeklyAmount(annual,basis);return (setup?'<li>Treasury: <span class="ar-negative">-'+money(setup)+'</span> ('+oneoffShare(setupShare)+')</li>':legacy<0?'<li>Treasury: <span class="ar-positive">+'+money(Math.abs(legacy))+'</span></li>':'')+(week?'<li>Weekly appropriation: <span class="ar-negative">-'+money(week)+'</span> ('+annualShare(annual)+')</li>':'')+(credit?'<li>Weekly credit: <span class="ar-positive">+'+money(weeklyAmount(credit,basis))+'</span> ('+annualShare(credit)+')</li>':'')};
+let state={chapter:'all',government:'22',selected:'COLDWAR_ARG_army_directives',mode:'tree'},scale=1;
+const saved=window.openai?.widgetState;
+if(saved?.modelContent?.selected&&ids[saved.modelContent.selected])state={...state,...saved.privateContent,...saved.modelContent};
+const save=()=>{};
+chapter.add(new Option('Full tree','all'));for(const g of data.groups)chapter.add(new Option(g.title,g.id));
+for(const [key,name]of Object.entries(data.parties))government.add(new Option(name+(key==='PS'?' (provisional)':''),key));
+government.value=state.government;chapter.value=state.chapter;
+function available(n){return n.party===null||String(n.party)===state.government}
+function nodesShown(){return state.chapter==='all'?data.nodes:data.nodes.filter(n=>n.group===state.chapter)}
+function focusCamera(n){const b=[...root.querySelectorAll('.ar-focus')].find(b=>b.dataset.id===n.id);if(!b||scale<.4)return;viewport.scrollLeft=Math.max(0,parseFloat(b.style.left)-viewport.clientWidth/2+82.5);viewport.scrollTop=Math.max(0,parseFloat(b.style.top)+64-viewport.clientHeight+100)}
+function showNode(n,persist=true){state.selected=n.id;state.mode='tree';if(n.agreement){const a=data.agreements.find(x=>x.id===n.agreement);if(a)setRecipientTag(a.partner)}inspect(n);root.querySelectorAll('.ar-focus').forEach(b=>b.classList.toggle('selected',b.dataset.id===n.id));focusCamera(n);if(persist)save()}
+const shortGroups={military:'FFAA',pj:'PJ',ucr:'UCR',mid:'MID',liberal:'PCI',conservative:'PD',pdc:'PDC',pca:'PCA',montoneros:'Montoneros',prt:'PRT',cgta:'CGTA',unions:'62 Org.',catholic:'Ateneo',udelpa:'UDELPA',sra:'SRA',socialist:'PSD*',institutions:'Institutions',economy:'Economy',defence:'Defense',science:'CNEA',diplomacy:'Partners',falklands:'Malvinas'};
+const mobileGroups={military:'FFAA',montoneros:'MON',cgta:'CGT',unions:'62O',catholic:'ATH',udelpa:'UDE',institutions:'Inst',economy:'Econ',defence:'Def',science:'CNEA',diplomacy:'FP',falklands:'Mal'};
+function render(fit=false){
+ state.mode='tree';chapter.value=state.chapter;const nodes=nodesShown();
+ const minX=Math.min(...nodes.map(n=>n.x)),maxX=Math.max(...nodes.map(n=>n.x)),minY=Math.min(...nodes.map(n=>n.y)),maxY=Math.max(...nodes.map(n=>n.y));
+ const box={w:(maxX-minX)*96+205,h:(maxY-minY)*130+180};
+ viewport.style.height=fit?Math.max(260,Math.min(440,(viewport.clientWidth-12)*box.h/box.w+50))+'px':(window.innerWidth<560?'450px':'530px');
+ scale=fit?Math.min((viewport.clientWidth-12)/box.w,(viewport.clientHeight-46)/box.h):1;
+ const px=n=>(n.x-minX)*96+20,py=n=>(n.y-minY)*130+25;
+ canvas.style.width=box.w+'px';canvas.style.height=box.h+'px';canvas.style.transform='scale('+scale+')';canvas.style.top=fit?'35px':'0';
+ stage.style.width=Math.max(viewport.clientWidth,box.w*scale)+'px';stage.style.height=Math.max(viewport.clientHeight,box.h*scale+35)+'px';
+ const shown=new Set(nodes.map(n=>n.id));let paths='';
+ for(const n of nodes)for(const ps of n.prerequisites)for(const pid of ps){if(!shown.has(pid))continue;const p=ids[pid],ax=px(p)+82.5,ay=py(p)+115,bx=px(n)+82.5,by=py(n)+12,mid=(ay+by)/2;paths+='<path data-parent="'+p.id+'" data-child="'+n.id+'" d="M'+ax+','+ay+' V'+mid+' H'+bx+' V'+by+'" fill="none" stroke="#a3ae92" stroke-width="2"/>';}
+ const seen=new Set();for(const n of nodes)for(const oid of n.excludes){if(!shown.has(oid))continue;const pair=[n.id,oid].sort().join('|');if(seen.has(pair))continue;seen.add(pair);const o=ids[oid],between=nodes.some(b=>b.y===n.y&&b.x>Math.min(n.x,o.x)&&b.x<Math.max(n.x,o.x)&&n.excludes.includes(b.id)&&o.excludes.includes(b.id));if(n.y===o.y&&!between){const left=n.x<o.x?n:o,right=n.x<o.x?o:n;paths+='<path data-exclusive="'+pair+'" d="M'+(px(left)+165)+','+(py(left)+40)+' H'+px(right)+'" fill="none" stroke="#d88d80" stroke-width="2" stroke-dasharray="6 5"/>';}}
+ $('#ar-edges').setAttribute('width',box.w);$('#ar-edges').setAttribute('height',box.h);$('#ar-edges').innerHTML=paths;
+ $('#ar-nodes').innerHTML=nodes.map(n=>'<button type="button" class="ar-focus cursor-interaction'+(!available(n)?' inactive':'')+(n.id===state.selected?' selected':'')+'" data-id="'+n.id+'" aria-label="'+esc(n.title)+'" data-tooltip="'+esc(n.title)+'" style="left:'+px(n)+'px;top:'+py(n)+'px"><img class="ar-art" alt="" src="'+(art[n.icon]||art.politics)+'"><span class="ar-title" style="background-image:url('+(!available(n)||n.prerequisites.length||n.requirements.length?art.barlocked:art.bar)+')"><span>'+esc(n.display_title||n.title)+'</span></span></button>').join('');
+ root.querySelectorAll('.ar-focus').forEach(b=>b.addEventListener('click',()=>{const n=ids[b.dataset.id];if(scale<.4){state.chapter=n.group;render(false)}showNode(n)}));
+ $('#ar-chapters').innerHTML=fit?data.groups.map(g=>'<div class="ar-overview-label" style="width:'+Math.max(28,Math.min(90,14*96*scale))+'px;left:'+(((g.x-minX)*96+102.5)*scale)+'px;top:'+(((g.y-minY)*130+5)*scale+14)+'px">'+esc((viewport.clientWidth<560?mobileGroups[g.id]:null)||shortGroups[g.id])+'</div>').join(''):'';
+ $('#ar-caption').textContent=state.chapter==='all'?data.meta.focuses+' focuses · '+data.meta.party_programmes+' political programmes · '+data.meta.exclusive_pairs+' exclusive pairs · Select a chapter or a focus to inspect.':data.groups.find(g=>g.id===state.chapter).title+' · '+nodes.length+' focuses · Native 96 x 130 grid · All governments remain inspectable.';
+ viewport.scrollTop=0;viewport.scrollLeft=0;if(ids[state.selected]){const selected=ids[state.selected];if(selected.agreement){const a=data.agreements.find(x=>x.id===selected.agreement);if(a)setRecipientTag(a.partner)}inspect(selected)}
+}
+function agreementSide(a,side,tag){const t=a[side],basis=tag==='ARG'?argGDP():recipientGDP();let out='<section><h4>'+esc(data.countries[tag])+'</h4><ul>'+moneyFx(t.setup,t.weekly,0,t.setup_gdp_share,t.weekly_own_annual_gdp_share,basis)+(a.transfer&&a.transfer.payer===tag?'<li>Transfer payment: <span class="ar-negative">-'+money(weeklyAmount(a.transfer.annual_arg_gdp_share,argGDP()))+'</span> weekly ('+annualShare(a.transfer.annual_arg_gdp_share)+' of Argentine GDP)</li>':'')+(a.transfer&&a.transfer.recipient===tag?'<li>Transfer income: <span class="ar-positive">+'+money(weeklyAmount(a.transfer.annual_arg_gdp_share,argGDP()))+'</span> weekly ('+annualShare(a.transfer.annual_arg_gdp_share)+' of Argentine GDP)</li>':'')+(t.grant_arg_gdp_share?'<li>Argentine-funded grant: <span class="ar-positive">+'+money(budgetAmount(t.grant_arg_gdp_share,argGDP()))+'</span> ('+oneoffShare(t.grant_arg_gdp_share)+' of Argentine GDP)</li>':'')+'<li>Add national spirit: '+esc(t.spirit)+'<ul>'+modList(t.modifiers)+'</ul></li>'+buildingList(a.buildings.filter(b=>b.country===tag))+researchList(a.research.filter(r=>r.country===tag));if(a.territory)out+='<li>'+esc(data.states[a.territory.state])+': '+(tag===a.territory.to_country?'gain state ownership':'transfer state ownership to '+esc(data.countries[a.territory.to_country]))+'</li>';return out+'</ul></section>'}
+function decisionEffects(d){let out=moneyFx(d.money,d.weekly,0,d.money_gdp_share,d.weekly_annual_gdp_share,argGDP());if(Object.keys(d.modifiers).length)out+='<li>Add national spirit: '+esc(d.modifier_spirit)+(d.duration?' ('+d.duration+' days)':'')+'<ul>'+modList(d.modifiers)+'</ul></li>';if(d.add_spirit)out+=spiritFx(d.add_spirit,false,d.duration);for(const id of d.remove||[])out+=spiritFx(id,true);out+=buildingList(d.buildings);for(const a of d.effect_lines||[])out+='<li>'+esc(a)+'</li>';return out}
+function eventOptions(ev){return ev.options.map(o=>'<div class="ar-choice"><h4>'+esc(o.name)+'</h4>'+(o.require?'<p class="ar-note">'+esc(o.require)+'</p>':'')+'<ul>'+moneyFx(o.money,o.weekly,0,o.money_gdp_share,o.weekly_annual_gdp_share,argGDP())+(Object.keys(o.modifiers).length?'<li>'+esc(ev.title)+(o.duration?' ('+o.duration+' days)':'')+'<ul>'+modList(o.modifiers)+'</ul></li>':'')+(o.add_spirit?spiritFx(o.add_spirit):'')+(o.remove_spirit?spiritFx(o.remove_spirit,true):'')+(o.leader?'<li>'+esc(o.leader)+'</li>':'')+(o.decision?'<li>Unlock decision: '+esc(data.decisions.find(d=>d.key===o.decision)?.title||o.decision)+'</li>':'')+'</ul></div>').join('')}
+function inspect(n){
+ let html='<h3>'+esc(n.title)+'</h3><p>'+esc(n.description)+'</p><div class="ar-note">'+n.days+' days</div>',req=[];
+ if(n.party!==null)req.push((available(n)?'✓ ':'✕ ')+data.parties[n.party]+' is in power.');if(n.leader)req.push(n.leader+' is the national leader.');req.push(...n.requirements);
+ if(req.length)html+='<h4>Requirements</h4><ul>'+req.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ul>';
+ if(n.prerequisites.length)html+='<p class="ar-note">Requires: '+n.prerequisites.map(ps=>'('+ps.map(id=>esc(ids[id].title)).join(' OR ')+')').join(' AND ')+'</p>';
+ if(n.excludes.length)html+='<p class="ar-note">Mutually exclusive with: '+n.excludes.map(id=>esc(ids[id].title)).join('; ')+'</p>';
+ html+='<h4>Effects</h4><ul>'+moneyFx(n.money,n.weekly,0,n.money_gdp_share,n.weekly_annual_gdp_share,argGDP());
+ if(Object.keys(n.modifiers).length)html+='<li>Modify '+esc(n.programme)+(n.temporary==='war'?' (while at war with the United Kingdom)':'')+':<ul>'+modList(n.modifiers)+'</ul></li>';
+ for(const id of n.remove)html+=spiritFx(id,true);
+ if(n.replace){html+=spiritFx('COLDWAR_ARG_'+n.replace[0],true);if(n.replace[1])html+=spiritFx('COLDWAR_ARG_'+n.replace[1]);}
+ html+=buildingList(n.buildings)+researchList(n.research);
+ for(const [k,v]of Object.entries(n.xp||{}))html+='<li>'+esc(k[0].toUpperCase()+k.slice(1))+' Experience: +'+v+'</li>';
+ if(n.doctrine)html+='<li>'+n.doctrine[2]+' x '+(n.doctrine[1]*100)+'% '+esc(n.doctrine[0].replace('_',' '))+' cost reduction</li>';
+ if(n.wargoal)html+='<li>Gain Take State war goal against the '+esc(data.countries[n.wargoal.target])+': '+n.wargoal.states.map(id=>esc(data.states[id])).join(', ')+' ('+n.wargoal.expire+' days)</li>';
+ if(n.event)html+='<li>Event: '+esc(data.events.find(e=>e.key===n.event)?.title||n.event)+'</li>';
+ if(n.decision)html+='<li>Unlock decision: '+esc(data.decisions.find(d=>d.key===n.decision).title)+'</li>';
+ if(n.agreement)html+='<li>Unlock recipient decision: '+esc(data.agreements.find(a=>a.id===n.agreement).decision)+'</li>';
+ html+='</ul>';
+ if(n.agreement){const a=data.agreements.find(a=>a.id===n.agreement);html+='<h4>If they accept</h4><div class="ar-terms">'+agreementSide(a,'argentina','ARG')+agreementSide(a,'recipient',a.partner)+'</div><h4>Agreement requirements</h4><ul>'+[...a.requirements,...a.conditions].map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul>';}
+ if(n.decision){const d=data.decisions.find(d=>d.key===n.decision);html+='<details open><summary>Decision: '+esc(d.title)+'</summary><h4>Requirements</h4><ul>'+d.requirements.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ul><h4>Effects</h4><ul>'+decisionEffects(d)+'</ul></details>';}
+ if(n.event){const ev=data.events.find(e=>e.key===n.event);html+='<details><summary>Event options: '+esc(ev.title)+'</summary>'+eventOptions(ev)+'</details>';}
+
+ inspector.innerHTML=html;
+}
+function showSpirits(persist=true){state.mode='spirits';inspector.innerHTML='<h3>Argentina on 1 January 1970</h3><p>Juan Carlos Ongania · Argentine Armed Forces</p>'+data.spirits.map(s=>'<h4>'+esc(s.name)+'</h4><p>'+esc(s.description)+'</p><ul>'+modList(s.modifiers)+'</ul><p class="ar-note">'+esc(s.remedy)+'</p>').join('')+'<details><summary>Conditional crises and later liabilities</summary>'+data.conditional_spirits.map(s=>'<h4>'+esc(s.name)+'</h4><p>'+esc(s.description)+'</p><ul>'+modList(s.modifiers)+'</ul><p class="ar-note">'+esc(s.activation)+' '+esc(s.remedy)+'</p>').join('')+'</details>';if(persist)save()}
+function showEvents(key=null,persist=true){state.mode='events';inspector.innerHTML='<h3>Events and Political Dilemmas</h3><label>Event<select id="ar-event" aria-label="Event"></select></label><div id="ar-event-detail"></div>';const sel=$('#ar-event');for(const ev of data.events)sel.add(new Option(ev.title,ev.key));if(key)sel.value=key;const draw=()=>{const ev=data.events.find(e=>e.key===sel.value);$('#ar-event-detail').innerHTML='<h4>'+esc(ev.title)+'</h4><p>'+esc(ev.description)+'</p><p class="ar-note">'+esc(ev.trigger)+'</p>'+eventOptions(ev)};sel.addEventListener('change',draw);draw();if(persist)save()}
+function refreshBudgetInspector(){if(state.mode==='tree'&&ids[state.selected])inspect(ids[state.selected]);else if(state.mode==='events')showEvents($('#ar-event')?.value||null,false)}gdpInput.addEventListener('input',refreshBudgetInspector);recipientGDPInput.addEventListener('input',()=>{recipientOverrides[recipientTag]=recipientGDP();$('#ar-recipient-gdp-label').textContent='Recipient GDP, $bn ('+recipientTag+' override)';refreshBudgetInspector()});
+chapter.addEventListener('change',()=>{state.chapter=chapter.value;state.selected=nodesShown()[0].id;render(state.chapter==='all');save()});
+government.addEventListener('change',()=>{state.government=government.value;const mode=state.mode;render(state.chapter==='all');if(mode==='spirits')showSpirits();if(mode==='events')showEvents();save()});
+$('#ar-overview').addEventListener('click',()=>{state.chapter='all';render(true);save()});
+$('#ar-native').addEventListener('click',()=>{if(state.chapter==='all')state.chapter=ids[state.selected].group;render(false);save()});
+$('#ar-spirits').addEventListener('click',()=>showSpirits());$('#ar-events').addEventListener('click',()=>showEvents());
+window.addEventListener('openai:set_globals',event=>{const s=event.detail?.globals?.widgetState;if(s?.modelContent?.selected&&ids[s.modelContent.selected]){state={...state,...s.privateContent,...s.modelContent};government.value=state.government;const mode=state.mode;render(state.chapter==='all');if(mode==='spirits')showSpirits(false);if(mode==='events')showEvents(null,false)}});
+window.COLDWAR_ARG_PREVIEW={data,state,showSpirits,showEvents,select:key=>{const n=ids[key]||data.nodes.find(n=>n.key===key);state.chapter=n.group;state.selected=n.id;render(false);inspect(n);focusCamera(n)},overview:()=>{state.chapter='all';render(true)}};
+const mode=state.mode;render(state.chapter==='all');if(mode==='spirits')showSpirits(false);if(mode==='events')showEvents(null,false);
+})();
+</script>

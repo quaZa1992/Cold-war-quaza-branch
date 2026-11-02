@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Strategic Command instrument-panel presentation.
+# IMPERIA COLD WAR — Cold War: Strategic Command instrument-panel presentation.
 """Native, localised widgets over deterministic machined-metal instrument artwork."""
 from pathlib import Path
 import random
@@ -111,6 +111,7 @@ defined_text = { name = nr_fatigue_value_L
 defined_text = { name = nr_posture_notice_L
     text = { trigger = { has_country_flag = nr_standdown } localization_key = nr_notice_standdown }
     text = { trigger = { check_variable = { nr_build_days > 0 } } localization_key = nr_notice_orders }
+    text = { trigger = { NOT = { nr_nuclear_power = yes } } localization_key = nr_notice_unarmed }
     text = { localization_key = nr_notice_ready }
 }
 '''

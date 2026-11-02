@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Syria 1970 content imported from quaZa.
+# IMPERIA COLD WAR — Native Syrian foreign-decision eligibility integration.
 """Syria 1970: funded operations and recipient-controlled foreign contracts.
 
 Called by the country compiler; this module owns only COLDWAR_SYR_foreign files.
@@ -21,6 +21,12 @@ DOMESTIC = {
 
 def install(root, data):
     root = Path(root)
+    import sys
+    # Shared compatibility code belongs to the source tools, even when the
+    # country output is generated in an isolated staging directory.
+    sys.path.append(str(Path(__file__).resolve().parents[1]))
+    from multiplayer_quality.native_compat import normalize as native_compatibility
+    from building_grants.remaining import repair_syria_output
     loc, effects, triggers, events, decisions, ideas = {}, [], [], [], [], []
     event_bodies = {}
     foreign_outcomes = json.loads((Path(__file__).resolve().parent/'foreign_option_outcomes.json').read_text(encoding='utf-8'))
@@ -29,16 +35,18 @@ def install(root, data):
     spec.loader.exec_module(formatter)
 
     def write(path, text, bom=False):
+        text = native_compatibility(text, path)
         p = root / path
         p.parent.mkdir(parents=True, exist_ok=True)
         # IMPERIA CW — Cold War: Country output markers survive later rebuilds.
-        marker = '# IMPERIA CW \u2014 Cold War: Syria 1970 content imported from quaZa.\n'
-        if p.name.startswith('COLDWAR_SYR') and 'IMPERIA CW' not in text:
+        marker = '# IMPERIA COLD WAR \u2014 Syria 1970 content imported from quaZa.\n'
+        if p.name.startswith('COLDWAR_SYR') and 'IMPERIA COLD WAR' not in text:
             text = text.replace('l_english:\n', 'l_english:\n'+marker, 1) if p.suffix == '.yml' else marker+text
         if p.suffix == ".txt":
             # A completed focus must have implemented its programme before follow-up contracts.
             text = re.sub(r"has_completed_focus\s*=\s*(COLDWAR_SYR_[A-Za-z0-9_]+)", r"has_country_flag = \1_implemented", text)
             text = formatter.format_script(text)
+        text = repair_syria_output(path, text)
         p.write_text(text.rstrip() + "\n", encoding="utf-8-sig" if bom else "utf-8")
 
     def block(name, body):

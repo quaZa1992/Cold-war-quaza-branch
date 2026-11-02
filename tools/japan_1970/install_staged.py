@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan 1970 staged-content installer.
+# IMPERIA COLD WAR — Cold War: Japan 1970 staged-content installer.
 """Install reviewed fragments without touching existing shared scripts.
 
 The caller must separately integrate the 1970 Japan history and fallback tree.

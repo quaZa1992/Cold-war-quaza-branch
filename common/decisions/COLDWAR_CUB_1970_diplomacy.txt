@@ -1,0 +1,515 @@
+# IMPERIA COLD WAR — Cuba 1970 recipient decisions and CUB contract desk.
+COLDWAR_CUB_diplomacy_responses = {
+
+	COLDWAR_CUB_accept_soviet_assistance = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_soviet_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_soviet_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_soviet_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } }
+
+				if = { limit = { NOT = { CUB = { has_country_flag = COLDWAR_CUB_soviet_assistance_receipt } } }
+					set_temp_variable = { treasury_change = -0.30 }
+					modify_treasury_effect = yes
+					CUB = { set_temp_variable = { treasury_change = -0.10 } modify_treasury_effect = yes add_tech_bonus = { name = COLDWAR_CUB_soviet_industry_bonus bonus = 0.25 uses = 1 category = CAT_industry } set_country_flag = COLDWAR_CUB_soviet_assistance_receipt }
+					set_country_flag = COLDWAR_CUB_soviet_assistance_receipt
+				}
+				add_opinion_modifier = { target = CUB modifier = COLDWAR_CUB_opinion_15 }
+				# IMPERIA COLD WAR — record and reconcile the signed Soviet agreement.
+				CUB = { COLDWAR_CUB_start_soviet_assistance = yes }
+
+				clr_country_flag = COLDWAR_CUB_soviet_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_soviet_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_soviet_assistance = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_soviet_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_soviet_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_soviet_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_soviet_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_soviet_assistance_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_soviet_offer_open set_country_flag = { flag = COLDWAR_CUB_soviet_assistance_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_soviet_fuel = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active } CUB = { check_variable = { resource_imported@oil > 0 } NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active } } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active } CUB = { check_variable = { resource_imported@oil > 0 } NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active } } }
+
+				CUB = {
+					set_variable = { COLDWAR_CUB_soviet_oil_import_baseline = resource_imported@oil }
+					set_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active
+					clr_country_flag = COLDWAR_CUB_soviet_fuel_commitment_withdrawn
+					clr_country_flag = COLDWAR_CUB_verified_supply_shortage
+					COLDWAR_CUB_refresh_dependency = yes
+				}
+				set_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active
+				clr_country_flag = COLDWAR_CUB_soviet_fuel_commitment_withdrawn
+
+				clr_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_soviet_fuel_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_soviet_fuel = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending CUB = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_soviet_fuel_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_soviet_fuel_offer_open set_country_flag = { flag = COLDWAR_CUB_soviet_fuel_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_cmea = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_cmea_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_cmea_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cmea_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_idea = COLDWAR_CUB_cmea_member } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_cmea_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cmea_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_idea = COLDWAR_CUB_cmea_member } }
+
+				CUB = {
+					set_temp_variable = { treasury_change = -0.10 }
+					modify_treasury_effect = yes
+					add_ideas = COLDWAR_CUB_cmea_member
+					clr_country_flag = COLDWAR_CUB_cmea_left
+				}
+
+				clr_country_flag = COLDWAR_CUB_cmea_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_cmea_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_cmea = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_cmea_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_cmea_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cmea_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_cmea_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cmea_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_cmea_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_cmea_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_cmea_offer_open set_country_flag = { flag = COLDWAR_CUB_cmea_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_air = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_air_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } CUB = { owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
+	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
+	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
+} } } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } CUB = { owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
+	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
+	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
+} } } }
+
+				set_temp_variable = { treasury_change = -0.15 }
+				modify_treasury_effect = yes
+				CUB = {
+					if = { limit = { owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
+	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
+	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
+} } } }
+					set_temp_variable = { treasury_change = -0.45 }
+					modify_treasury_effect = yes
+					854 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = radar_station level = 1 instant_build = yes } }
+					add_tech_bonus = { name = COLDWAR_CUB_air_defence_radar_bonus bonus = 0.25 uses = 1 technology = radar }
+					set_country_flag = COLDWAR_CUB_air_defence_receipt
+				}
+
+				clr_country_flag = COLDWAR_CUB_air_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_air_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_air = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_air_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_air_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_air_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_air_offer_open set_country_flag = { flag = COLDWAR_CUB_air_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_medical = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_medical_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_medical_offer_pending CUB = { has_country_flag = COLDWAR_CUB_medical_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_medical_mission_signed } COLDWAR_CUB_valid_health_budget = yes COLDWAR_CUB_medical_pair_clear = yes }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_medical_offer_pending CUB = { has_country_flag = COLDWAR_CUB_medical_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_medical_mission_signed } COLDWAR_CUB_valid_health_budget = yes COLDWAR_CUB_medical_pair_clear = yes }
+
+				# IMPERIA COLD WAR — one-time setup cost and indefinite accepted treaty.
+				if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_medical_mission_receipt } }
+					set_temp_variable = { treasury_change = -0.10 }
+					modify_treasury_effect = yes
+					set_country_flag = COLDWAR_CUB_medical_mission_receipt
+					CUB = {
+						set_temp_variable = { treasury_change = -0.15 }
+						modify_treasury_effect = yes
+						add_opinion_modifier = { target = ROOT modifier = COLDWAR_CUB_opinion_15 }
+					}
+				}
+			set_country_flag = COLDWAR_CUB_medical_mission_signed
+			CUB = { set_country_flag = COLDWAR_CUB_medical_mission_signed COLDWAR_CUB_reconcile_medical_mission = yes }
+
+				clr_country_flag = COLDWAR_CUB_medical_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_medical_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_medical = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_medical_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_medical_offer_pending CUB = { has_country_flag = COLDWAR_CUB_medical_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_medical_offer_pending CUB = { has_country_flag = COLDWAR_CUB_medical_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_medical_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_medical_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_medical_offer_open set_country_flag = { flag = COLDWAR_CUB_medical_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_overseas = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_overseas_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_overseas_offer_pending CUB = { has_country_flag = COLDWAR_CUB_overseas_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_overseas_mission_active } COLDWAR_CUB_independent_wartime_partner = yes }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_overseas_offer_pending CUB = { has_country_flag = COLDWAR_CUB_overseas_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_overseas_mission_active } COLDWAR_CUB_independent_wartime_partner = yes }
+
+				set_country_flag = COLDWAR_CUB_overseas_mission_receipt
+				set_country_flag = COLDWAR_CUB_overseas_mission_active
+				CUB = {
+					set_country_flag = COLDWAR_CUB_overseas_mission_active
+				}
+
+				clr_country_flag = COLDWAR_CUB_overseas_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_overseas_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_overseas = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_overseas_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_overseas_offer_pending CUB = { has_country_flag = COLDWAR_CUB_overseas_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_overseas_offer_pending CUB = { has_country_flag = COLDWAR_CUB_overseas_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_overseas_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_overseas_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_overseas_offer_open set_country_flag = { flag = COLDWAR_CUB_overseas_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_us_limited = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_us_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_us_offer_pending CUB = { has_country_flag = COLDWAR_CUB_us_offer_open country_exists = CUB NOT = { has_war_with = ROOT } NOT = { has_country_flag = COLDWAR_CUB_us_easing_limited } NOT = { has_country_flag = COLDWAR_CUB_us_full_settlement } } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = { limit = { has_country_flag = COLDWAR_CUB_us_offer_pending CUB = { has_country_flag = COLDWAR_CUB_us_offer_open country_exists = CUB NOT = { has_war_with = ROOT } NOT = { has_country_flag = COLDWAR_CUB_us_easing_limited } NOT = { has_country_flag = COLDWAR_CUB_us_full_settlement } } }
+				CUB = {
+					if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_us_commission_paid } } set_temp_variable = { treasury_change = -0.10 } modify_treasury_effect = yes set_country_flag = COLDWAR_CUB_us_commission_paid }
+					COLDWAR_CUB_lift_usa_economic_restriction = yes
+					set_country_flag = COLDWAR_CUB_us_easing_limited
+					add_opinion_modifier = { target = USA modifier = COLDWAR_CUB_opinion_10 }
+					COLDWAR_CUB_sync_embargo = yes
+				}
+				add_opinion_modifier = { target = CUB modifier = COLDWAR_CUB_opinion_10 }
+				clr_country_flag = COLDWAR_CUB_us_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_us_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_accept_us_full = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_us_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_us_offer_pending CUB = { has_country_flag = COLDWAR_CUB_us_offer_open country_exists = CUB NOT = { has_war_with = ROOT } NOT = { has_country_flag = COLDWAR_CUB_us_full_settlement } } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = { limit = { has_country_flag = COLDWAR_CUB_us_offer_pending CUB = { has_country_flag = COLDWAR_CUB_us_offer_open country_exists = CUB NOT = { has_war_with = ROOT } NOT = { has_country_flag = COLDWAR_CUB_us_full_settlement } } }
+				CUB = {
+					if = { limit = { has_country_flag = COLDWAR_CUB_us_commission_paid } set_temp_variable = { treasury_change = -0.15 } modify_treasury_effect = yes }
+					else = { set_temp_variable = { treasury_change = -0.25 } modify_treasury_effect = yes set_country_flag = COLDWAR_CUB_us_commission_paid }
+					set_country_flag = COLDWAR_CUB_us_full_settlement
+					clr_country_flag = COLDWAR_CUB_us_easing_limited
+					COLDWAR_CUB_lift_usa_trade_restrictions = yes
+					COLDWAR_CUB_sync_embargo = yes
+					add_opinion_modifier = { target = USA modifier = COLDWAR_CUB_opinion_20 }
+				}
+			add_opinion_modifier = { target = CUB modifier = COLDWAR_CUB_opinion_20 }
+			clr_country_flag = COLDWAR_CUB_us_offer_pending
+			CUB = { clr_country_flag = COLDWAR_CUB_us_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 3 }
+	}
+	COLDWAR_CUB_refuse_us_normalisation = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_us_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_us_offer_pending CUB = { has_country_flag = COLDWAR_CUB_us_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = { if = { limit = { has_country_flag = COLDWAR_CUB_us_offer_pending CUB = { has_country_flag = COLDWAR_CUB_us_offer_open country_exists = CUB } } clr_country_flag = COLDWAR_CUB_us_offer_pending set_country_flag = { flag = COLDWAR_CUB_us_normalisation_refused value = 1 days = 90 } CUB = { clr_country_flag = COLDWAR_CUB_us_offer_open set_country_flag = { flag = COLDWAR_CUB_us_normalisation_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } } } }
+		ai_will_do = { base = 1 }
+	}
+	COLDWAR_CUB_withdraw_soviet_fuel_commitment = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active }
+		available = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_withdrawn } }
+		cost = 0
+		days_re_enable = 1
+		complete_effect = { if = { limit = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_withdrawn } } set_country_flag = COLDWAR_CUB_soviet_fuel_commitment_withdrawn CUB = { COLDWAR_CUB_sync_soviet_fuel_commitment = yes } } }
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_CUB_end_soviet_assistance_as_recipient = {
+		icon = generic_diplomacy
+		visible = { tag = SOV has_country_flag = COLDWAR_CUB_soviet_assistance_signed CUB = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } }
+		available = { tag = SOV has_country_flag = COLDWAR_CUB_soviet_assistance_signed CUB = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } }
+		cost = 0
+		days_re_enable = 1
+		complete_effect = { if = { limit = { tag = SOV has_country_flag = COLDWAR_CUB_soviet_assistance_signed CUB = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } } CUB = { COLDWAR_CUB_end_soviet_assistance = yes } } }
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_CUB_end_symbolic_cooperation_as_recipient = {
+		icon = generic_diplomacy
+		visible = { tag = DDR has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed CUB = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } }
+		available = { tag = DDR has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed CUB = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } }
+		cost = 0
+		days_re_enable = 1
+		complete_effect = { if = { limit = { tag = DDR has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed CUB = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } } CUB = { COLDWAR_CUB_end_symbolic_cooperation = yes } } }
+		ai_will_do = { base = 0 }
+	}
+
+	COLDWAR_CUB_accept_ddr = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_ddr_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_ddr_offer_pending CUB = { has_country_flag = COLDWAR_CUB_ddr_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_ddr_commission_receipt } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_ddr_offer_pending CUB = { has_country_flag = COLDWAR_CUB_ddr_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_ddr_commission_receipt } }
+
+				set_temp_variable = { treasury_change = -0.10 }
+				modify_treasury_effect = yes
+				CUB = {
+					if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_ddr_commission_receipt } }
+						set_temp_variable = { treasury_change = -0.10 }
+						modify_treasury_effect = yes
+						add_tech_bonus = { name = COLDWAR_CUB_ddr_electronics_bonus bonus = 0.25 uses = 1 category = CAT_electronics }
+						set_country_flag = COLDWAR_CUB_ddr_commission_receipt
+					}
+					add_opinion_modifier = { target = DDR modifier = COLDWAR_CUB_opinion_15 }
+				}
+				add_tech_bonus = { name = COLDWAR_CUB_ddr_electronics_bonus bonus = 0.25 uses = 1 category = CAT_electronics }
+				add_opinion_modifier = { target = CUB modifier = COLDWAR_CUB_opinion_15 }
+				set_country_flag = COLDWAR_CUB_ddr_commission_receipt
+
+				clr_country_flag = COLDWAR_CUB_ddr_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_ddr_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_ddr = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_ddr_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_ddr_offer_pending CUB = { has_country_flag = COLDWAR_CUB_ddr_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_ddr_offer_pending CUB = { has_country_flag = COLDWAR_CUB_ddr_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_ddr_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_ddr_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_ddr_offer_open set_country_flag = { flag = COLDWAR_CUB_ddr_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_symbolic = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_symbolic_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_symbolic_offer_pending CUB = { has_country_flag = COLDWAR_CUB_symbolic_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } CUB = { COLDWAR_CUB_pair_ddr_clear = yes owns_state = 1252 controls_state = 1252 NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_symbolic_offer_pending CUB = { has_country_flag = COLDWAR_CUB_symbolic_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } CUB = { COLDWAR_CUB_pair_ddr_clear = yes owns_state = 1252 controls_state = 1252 NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } } }
+
+				# IMPERIA COLD WAR — one-time package reward and re-acceptable treaty signature.
+				if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_receipt } }
+					set_temp_variable = { treasury_change = -0.20 }
+					modify_treasury_effect = yes
+					add_tech_bonus = { name = COLDWAR_CUB_symbolic_electronics_bonus bonus = 0.25 uses = 1 category = CAT_electronics }
+					set_country_flag = COLDWAR_CUB_symbolic_cooperation_receipt
+					CUB = { set_temp_variable = { treasury_change = -0.05 } modify_treasury_effect = yes add_tech_bonus = { name = COLDWAR_CUB_symbolic_electronics_bonus bonus = 0.25 uses = 1 category = CAT_electronics } set_country_flag = COLDWAR_CUB_symbolic_cooperation_receipt }
+				}
+			CUB = { COLDWAR_CUB_start_symbolic_cooperation = yes }
+
+				clr_country_flag = COLDWAR_CUB_symbolic_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_symbolic_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_symbolic = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_symbolic_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_symbolic_offer_pending CUB = { has_country_flag = COLDWAR_CUB_symbolic_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_symbolic_offer_pending CUB = { has_country_flag = COLDWAR_CUB_symbolic_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_symbolic_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_symbolic_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_symbolic_offer_open set_country_flag = { flag = COLDWAR_CUB_symbolic_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+	COLDWAR_CUB_accept_cession = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_cession_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_cession_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cession_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } CUB = { owns_state = 1252 controls_state = 1252 NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } } NOT = { has_war_with = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_cession_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cession_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } CUB = { owns_state = 1252 controls_state = 1252 NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } } NOT = { has_war_with = CUB } }
+
+				set_temp_variable = { treasury_change = -0.40 }
+				modify_treasury_effect = yes
+				CUB = {
+					if = { limit = { owns_state = 1252 controls_state = 1252 NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } }
+						set_temp_variable = { treasury_change = 0.40 }
+						modify_treasury_effect = yes
+						add_stability = -0.03
+						add_tech_bonus = { name = COLDWAR_CUB_island_industry_bonus bonus = 0.50 uses = 1 category = CAT_industry }
+						set_country_flag = COLDWAR_CUB_island_cession_ratified
+					}
+				}
+			transfer_state = 1252
+			1252 = { set_state_name = COLDWAR_CUB_thaelmann_island_name }
+			set_country_flag = COLDWAR_CUB_island_cession_ratified
+
+				clr_country_flag = COLDWAR_CUB_cession_offer_pending
+				CUB = { clr_country_flag = COLDWAR_CUB_cession_offer_open country_event = { id = COLDWAR_CUB_diplomacy.900 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 4 }
+	}
+	COLDWAR_CUB_refuse_cession = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_cession_offer_pending }
+		available = { has_country_flag = COLDWAR_CUB_cession_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cession_offer_open country_exists = CUB } }
+		cost = 0
+		days_remove = 90
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_cession_offer_pending CUB = { has_country_flag = COLDWAR_CUB_cession_offer_open country_exists = CUB } }
+				clr_country_flag = COLDWAR_CUB_cession_offer_pending
+				set_country_flag = { flag = COLDWAR_CUB_cession_refused value = 1 days = 90 }
+				CUB = { clr_country_flag = COLDWAR_CUB_cession_offer_open set_country_flag = { flag = COLDWAR_CUB_cession_refused value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.901 days = 1 } }
+			}
+		}
+		ai_will_do = { base = 1 }
+	}
+
+}
+
+# CUB's diplomacy desk: offers, targeted programmes, and explicit termination.
+COLDWAR_CUB_diplomacy = {
+COLDWAR_CUB_retry_air_defence = { icon = generic_diplomacy visible = { has_completed_focus = COLDWAR_CUB_air_defence } available = { country_exists = SOV NOT = { has_country_flag = COLDWAR_CUB_air_offer_open } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } NOT = { has_country_flag = COLDWAR_CUB_air_refused } owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
+	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
+	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
+} } NOT = { has_war_with = SOV } } cost = 0 days_re_enable = 1 complete_effect = { COLDWAR_CUB_offer_air_defence = yes } ai_will_do = { base = 1 } }
+COLDWAR_CUB_end_overseas_mission_for_partner = {
+		icon = generic_diplomacy
+		visible = { has_country_flag = COLDWAR_CUB_overseas_mission_active }
+		target_array = global.countries
+		target_root_trigger = { COLDWAR_CUB_is_1970 = yes }
+		target_trigger = { FROM = { has_country_flag = COLDWAR_CUB_overseas_mission_active } }
+		available = { FROM = { has_country_flag = COLDWAR_CUB_overseas_mission_active } }
+		cost = 0
+		days_re_enable = 1
+		complete_effect = { if = { limit = { FROM = { has_country_flag = COLDWAR_CUB_overseas_mission_active } } FROM = { clr_country_flag = COLDWAR_CUB_overseas_mission_active } COLDWAR_CUB_refresh_overseas_aggregate = yes } }
+		ai_will_do = { base = 0 }
+	}
+ COLDWAR_CUB_end_soviet_assistance_decision = { icon = generic_diplomacy visible = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } available = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } cost = 0 days_re_enable = 1 complete_effect = { COLDWAR_CUB_end_soviet_assistance = yes } ai_will_do = { base = 0 } }
+ COLDWAR_CUB_end_symbolic_cooperation_decision = { icon = generic_diplomacy visible = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } available = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } cost = 0 days_re_enable = 1 complete_effect = { COLDWAR_CUB_end_symbolic_cooperation = yes } ai_will_do = { base = 0 } }
+	COLDWAR_CUB_leave_cmea_decision = { icon = generic_diplomacy visible = { has_idea = COLDWAR_CUB_cmea_member NOT = { has_country_flag = COLDWAR_CUB_foreign_cmea_signed } } available = { has_idea = COLDWAR_CUB_cmea_member NOT = { has_country_flag = COLDWAR_CUB_foreign_cmea_signed } } cost = 0 days_re_enable = 1 complete_effect = { remove_ideas = COLDWAR_CUB_cmea_member set_country_flag = COLDWAR_CUB_cmea_left } ai_will_do = { base = 0 } }
+	COLDWAR_CUB_end_own_overseas_mission = { icon = generic_diplomacy visible = { has_country_flag = COLDWAR_CUB_overseas_mission_active } available = { has_country_flag = COLDWAR_CUB_overseas_mission_active } cost = 0 days_re_enable = 1 complete_effect = { clr_country_flag = COLDWAR_CUB_overseas_mission_active CUB = { COLDWAR_CUB_refresh_overseas_aggregate = yes } } ai_will_do = { base = 0 } }
+}

@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Mechanics revision v2 addendum
 
 This note tightens the unit scope and GDP amounts in `mechanics_revision_v2.md` against the loaded MD sources. It is a concept audit only; no game scripts or the canonical design were changed.

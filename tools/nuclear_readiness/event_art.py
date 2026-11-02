@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: archival photographs for nuclear readiness events.
+# IMPERIA COLD WAR — Cold War: archival photographs for nuclear readiness events.
 """Package individually colourised archival photographs in the native MD frame."""
 from pathlib import Path
 import argparse

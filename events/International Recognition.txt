@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — German recognition integration in native MD events.
 add_namespace = recognition
 
 ### [FROM.GetName] is Undermining Our Territorial Integrity!
@@ -69,6 +70,11 @@ country_event = {
 		clr_country_flag = recent_un_ascension_attempt
 		remove_stale_ga_membership_votes_for_this = yes
 		international_systems_update = yes
+		# IMPERIA COLD WAR — Admission updates both German dossiers through the native result.
+		if = {
+			limit = { COLDWAR_Germany_recognition_subject = yes }
+			COLDWAR_Germany_un_status_changed = yes
+		}
 	}
 }
 
@@ -130,13 +136,14 @@ country_event = {
 				target = ROOT
 				modifier = recognises_us
 			}
-			recognition_grant_increment = yes
 			ROOT = {
 				if = {
 					limit = { NOT = { is_in_array = { recognised_countries = PREV } } }
 					add_to_array = { recognised_countries = PREV }
 				}
 			}
+			# IMPERIA COLD WAR — Count and notify only after recognition is present in the native ledger.
+			recognition_grant_increment = yes
 		}
 		ai_chance = {
 			base = 1
@@ -513,6 +520,8 @@ country_event = {
 		if = {
 			limit = { NOT = { is_in_array = { recognised_countries = FROM } } }
 			add_to_array = { recognised_countries = FROM }
+			# IMPERIA COLD WAR — Update the German dossier immediately, independently of the later reply event.
+			FROM = { if = { limit = { COLDWAR_Germany_recognition_subject = yes } COLDWAR_Germany_recount_recognition = yes } }
 		}
 		FROM = { country_event = recognition.16 }
 		ai_chance = {
@@ -731,7 +740,9 @@ country_event = {
 
 	option = {
 		name = recognition.18.b
-		log = "[GetDateText]: [This.GetName]: recognition.18.b"
+		# IMPERIA COLD WAR — A pending request never duplicates an existing recognition.
+if = { limit = { NOT = { is_in_array = { recognised_countries = FROM } } }
+log = "[GetDateText]: [This.GetName]: recognition.18.b"
 		add_to_array = { recognised_countries = FROM }
 		random_country = {
 			limit = {
@@ -748,6 +759,8 @@ country_event = {
 			add_opinion_modifier = { target = ROOT modifier = recognises_us }
 			recognition_grant_increment = yes
 		}
+
+}
 		ai_chance = {
 			base = 5
 			modifier = {

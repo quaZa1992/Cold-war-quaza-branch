@@ -9,6 +9,9 @@ sys.path.insert(0,str(ROOT/'tools/israel_1970'))
 from script_format import read
 sys.path.insert(0,str(ROOT/'tools/currency_balance'))
 from balance_manifest import reverse_if_recorded
+# IMPERIA COLD WAR — Preserve the historical presentation proof after the Franc/Lira extension.
+sys.path.insert(0,str(ROOT/'tools/frf_itl_currencies'))
+from extension_manifest import reverse_extension
 
 
 def sha(data):return hashlib.sha256(data).hexdigest()
@@ -56,7 +59,8 @@ def main():
         before[name]=reverse_edits(reverse_if_recorded(name,(ROOT/name).read_bytes()),record)
         check(sha(before[name])==baseline['before'][name],f'Exact reverse-byte proof: {name}')
     for name,digest in baseline['protected'].items():
-        current=(ROOT/name).read_bytes()
+        # IMPERIA COLD WAR — Verify the recorded later additions without replacing old hashes.
+        current=reverse_extension(name,(ROOT/name).read_bytes())
         check(sha(current)==digest,f'Protected asset unchanged: {name}')
     path='common/ideas/AA_law_expanded_economics.txt'
     old=one(one(read(before[path].decode('utf-8-sig')),'ideas'),'reserve_currency')

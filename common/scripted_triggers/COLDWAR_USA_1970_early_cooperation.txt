@@ -1,0 +1,208 @@
+# IMPERIA COLD WAR — USA agreement transaction and lifecycle triggers.
+
+COLDWAR_USA_early_pair_clear_can = {
+	country_exists = CAN
+	NOT = { has_war_with = CAN }
+	NOT = { is_embargoing = CAN }
+	NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = CAN } is_in_array = { array = imp_dip_sanc_by_us value = CAN } is_in_array = { array = imp_fin_sanc_on_us value = CAN } is_in_array = { array = imp_fin_sanc_by_us value = CAN } is_in_array = { array = imp_eco_sanc_on_us value = CAN } is_in_array = { array = imp_eco_sanc_by_us value = CAN } is_in_array = { array = imp_mil_sanc_on_us value = CAN } is_in_array = { array = imp_mil_sanc_by_us value = CAN } } }
+	CAN = {
+	NOT = { has_war_with = USA }
+	NOT = { is_embargoing = USA }
+	NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = USA } is_in_array = { array = imp_dip_sanc_by_us value = USA } is_in_array = { array = imp_fin_sanc_on_us value = USA } is_in_array = { array = imp_fin_sanc_by_us value = USA } is_in_array = { array = imp_eco_sanc_on_us value = USA } is_in_array = { array = imp_eco_sanc_by_us value = USA } is_in_array = { array = imp_mil_sanc_on_us value = USA } is_in_array = { array = imp_mil_sanc_by_us value = USA } } }
+	}
+}
+
+COLDWAR_USA_early_pair_clear_isr = {
+	country_exists = ISR
+	NOT = { has_war_with = ISR }
+	NOT = { is_embargoing = ISR }
+	NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = ISR } is_in_array = { array = imp_dip_sanc_by_us value = ISR } is_in_array = { array = imp_fin_sanc_on_us value = ISR } is_in_array = { array = imp_fin_sanc_by_us value = ISR } is_in_array = { array = imp_eco_sanc_on_us value = ISR } is_in_array = { array = imp_eco_sanc_by_us value = ISR } is_in_array = { array = imp_mil_sanc_on_us value = ISR } is_in_array = { array = imp_mil_sanc_by_us value = ISR } } }
+	ISR = {
+	NOT = { has_war_with = USA }
+	NOT = { is_embargoing = USA }
+	NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = USA } is_in_array = { array = imp_dip_sanc_by_us value = USA } is_in_array = { array = imp_fin_sanc_on_us value = USA } is_in_array = { array = imp_fin_sanc_by_us value = USA } is_in_array = { array = imp_eco_sanc_on_us value = USA } is_in_array = { array = imp_eco_sanc_by_us value = USA } is_in_array = { array = imp_mil_sanc_on_us value = USA } is_in_array = { array = imp_mil_sanc_by_us value = USA } } }
+	}
+}
+
+COLDWAR_USA_early_pair_clear_mex = {
+	country_exists = MEX
+	NOT = { has_war_with = MEX }
+	NOT = { is_embargoing = MEX }
+	NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = MEX } is_in_array = { array = imp_dip_sanc_by_us value = MEX } is_in_array = { array = imp_fin_sanc_on_us value = MEX } is_in_array = { array = imp_fin_sanc_by_us value = MEX } is_in_array = { array = imp_eco_sanc_on_us value = MEX } is_in_array = { array = imp_eco_sanc_by_us value = MEX } is_in_array = { array = imp_mil_sanc_on_us value = MEX } is_in_array = { array = imp_mil_sanc_by_us value = MEX } } }
+	MEX = {
+	NOT = { has_war_with = USA }
+	NOT = { is_embargoing = USA }
+	NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = USA } is_in_array = { array = imp_dip_sanc_by_us value = USA } is_in_array = { array = imp_fin_sanc_on_us value = USA } is_in_array = { array = imp_fin_sanc_by_us value = USA } is_in_array = { array = imp_eco_sanc_on_us value = USA } is_in_array = { array = imp_eco_sanc_by_us value = USA } is_in_array = { array = imp_mil_sanc_on_us value = USA } is_in_array = { array = imp_mil_sanc_by_us value = USA } } }
+	}
+}
+
+COLDWAR_USA_early_ready_israel = {
+	country_exists = USA
+	IMP_is_1970_scenario = yes
+	COLDWAR_USA_early_pair_clear_isr = yes
+}
+
+COLDWAR_USA_early_can_offer_israel = {
+	tag = USA
+	COLDWAR_USA_early_ready_israel = yes
+	NOT = { has_country_flag = COLDWAR_USA_early_israel_signed }
+	NOT = { has_country_flag = COLDWAR_USA_early_israel_offer_open }
+	NOT = { has_country_flag = COLDWAR_USA_early_israel_cooldown }
+	ISR = {
+	NOT = { has_country_flag = COLDWAR_USA_early_israel_signed }
+	}
+}
+
+COLDWAR_USA_early_transaction_valid_israel = {
+	COLDWAR_USA_early_ready_israel = yes
+	has_country_flag = COLDWAR_USA_early_israel_offer_open
+	NOT = { has_country_flag = COLDWAR_USA_early_israel_signed }
+}
+
+COLDWAR_USA_early_accept_valid_israel_isr = {
+	tag = ISR
+	has_country_flag = COLDWAR_USA_early_israel_offer_pending
+	USA = {
+	COLDWAR_USA_early_transaction_valid_israel = yes
+	NOT = { has_country_flag = COLDWAR_USA_early_israel_consent_isr }
+	}
+}
+
+COLDWAR_USA_early_active_israel = {
+	has_country_flag = COLDWAR_USA_early_israel_signed
+	COLDWAR_USA_early_ready_israel = yes
+	has_idea = COLDWAR_USA_early_israel_usa
+	ISR = {
+	has_country_flag = COLDWAR_USA_early_israel_signed
+	has_idea = COLDWAR_USA_early_israel_isr
+	}
+}
+
+COLDWAR_USA_early_ready_canada = {
+	country_exists = USA
+	IMP_is_1970_scenario = yes
+	COLDWAR_USA_early_pair_clear_can = yes
+}
+
+COLDWAR_USA_early_can_offer_canada = {
+	tag = USA
+	COLDWAR_USA_early_ready_canada = yes
+	NOT = { has_country_flag = COLDWAR_USA_early_canada_signed }
+	NOT = { has_country_flag = COLDWAR_USA_early_canada_offer_open }
+	NOT = { has_country_flag = COLDWAR_USA_early_canada_cooldown }
+	CAN = {
+	NOT = { has_country_flag = COLDWAR_USA_early_canada_signed }
+	}
+}
+
+COLDWAR_USA_early_transaction_valid_canada = {
+	COLDWAR_USA_early_ready_canada = yes
+	has_country_flag = COLDWAR_USA_early_canada_offer_open
+	NOT = { has_country_flag = COLDWAR_USA_early_canada_signed }
+}
+
+COLDWAR_USA_early_accept_valid_canada_can = {
+	tag = CAN
+	has_country_flag = COLDWAR_USA_early_canada_offer_pending
+	USA = {
+	COLDWAR_USA_early_transaction_valid_canada = yes
+	NOT = { has_country_flag = COLDWAR_USA_early_canada_consent_can }
+	}
+}
+
+COLDWAR_USA_early_active_canada = {
+	has_country_flag = COLDWAR_USA_early_canada_signed
+	COLDWAR_USA_early_ready_canada = yes
+	has_idea = COLDWAR_USA_early_canada_usa
+	CAN = {
+	has_country_flag = COLDWAR_USA_early_canada_signed
+	has_idea = COLDWAR_USA_early_canada_can
+	}
+}
+
+COLDWAR_USA_early_ready_mexico = {
+	country_exists = USA
+	IMP_is_1970_scenario = yes
+	COLDWAR_USA_early_pair_clear_mex = yes
+}
+
+COLDWAR_USA_early_can_offer_mexico = {
+	tag = USA
+	COLDWAR_USA_early_ready_mexico = yes
+	NOT = { has_country_flag = COLDWAR_USA_early_mexico_signed }
+	NOT = { has_country_flag = COLDWAR_USA_early_mexico_offer_open }
+	NOT = { has_country_flag = COLDWAR_USA_early_mexico_cooldown }
+	MEX = {
+	NOT = { has_country_flag = COLDWAR_USA_early_mexico_signed }
+	}
+}
+
+COLDWAR_USA_early_transaction_valid_mexico = {
+	COLDWAR_USA_early_ready_mexico = yes
+	has_country_flag = COLDWAR_USA_early_mexico_offer_open
+	NOT = { has_country_flag = COLDWAR_USA_early_mexico_signed }
+}
+
+COLDWAR_USA_early_accept_valid_mexico_mex = {
+	tag = MEX
+	has_country_flag = COLDWAR_USA_early_mexico_offer_pending
+	USA = {
+	COLDWAR_USA_early_transaction_valid_mexico = yes
+	NOT = { has_country_flag = COLDWAR_USA_early_mexico_consent_mex }
+	}
+}
+
+COLDWAR_USA_early_active_mexico = {
+	has_country_flag = COLDWAR_USA_early_mexico_signed
+	COLDWAR_USA_early_ready_mexico = yes
+	has_idea = COLDWAR_USA_early_mexico_usa
+	MEX = {
+	has_country_flag = COLDWAR_USA_early_mexico_signed
+	has_idea = COLDWAR_USA_early_mexico_mex
+	}
+}
+
+COLDWAR_USA_early_alliance_relations_clear = {
+	exists = yes
+	NOT = { tag = USA }
+	country_exists = USA
+	IMP_is_1970_scenario = yes
+	NOT = { has_war_with = USA }
+	NOT = { is_embargoing = USA }
+	NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = USA } is_in_array = { array = imp_dip_sanc_by_us value = USA } is_in_array = { array = imp_fin_sanc_on_us value = USA } is_in_array = { array = imp_fin_sanc_by_us value = USA } is_in_array = { array = imp_eco_sanc_on_us value = USA } is_in_array = { array = imp_eco_sanc_by_us value = USA } is_in_array = { array = imp_mil_sanc_on_us value = USA } is_in_array = { array = imp_mil_sanc_by_us value = USA } } }
+	USA = { NOT = { has_war_with = PREV } NOT = { is_embargoing = PREV } NOT = { OR = { is_in_array = { array = imp_dip_sanc_on_us value = PREV } is_in_array = { array = imp_dip_sanc_by_us value = PREV } is_in_array = { array = imp_fin_sanc_on_us value = PREV } is_in_array = { array = imp_fin_sanc_by_us value = PREV } is_in_array = { array = imp_eco_sanc_on_us value = PREV } is_in_array = { array = imp_eco_sanc_by_us value = PREV } is_in_array = { array = imp_mil_sanc_on_us value = PREV } is_in_array = { array = imp_mil_sanc_by_us value = PREV } } } }
+}
+
+COLDWAR_USA_early_alliance_member = {
+	country_exists = USA
+	USA = { has_idea = NATO_member }
+	OR = { has_idea = NATO_member has_idea = Major_Non_NATO_Ally }
+}
+
+COLDWAR_USA_early_alliance_can_offer = {
+	COLDWAR_USA_early_alliance_relations_clear = yes
+	COLDWAR_USA_early_alliance_member = yes
+	USA = { has_country_flag = COLDWAR_USA_early_alliances_authorised }
+	NOT = { has_country_flag = COLDWAR_USA_early_alliance_signed }
+	NOT = { has_country_flag = COLDWAR_USA_early_alliance_pending }
+	NOT = { has_country_flag = COLDWAR_USA_early_alliance_cooldown }
+	NOT = { has_country_flag = COLDWAR_USA_early_alliance_sender_blocked }
+}
+
+COLDWAR_USA_early_alliance_accept_valid = {
+	COLDWAR_USA_early_alliance_relations_clear = yes
+	COLDWAR_USA_early_alliance_member = yes
+	has_country_flag = COLDWAR_USA_early_alliance_pending
+	has_country_flag = COLDWAR_USA_early_alliance_sponsor_authorised
+	NOT = { has_country_flag = COLDWAR_USA_early_alliance_signed }
+	NOT = { has_country_flag = COLDWAR_USA_early_alliance_sender_blocked }
+	USA = { has_country_flag = COLDWAR_USA_early_alliances_authorised }
+}
+
+COLDWAR_USA_early_alliance_active = {
+	COLDWAR_USA_early_alliance_relations_clear = yes
+	COLDWAR_USA_early_alliance_member = yes
+	has_country_flag = COLDWAR_USA_early_alliance_signed
+	has_idea = COLDWAR_USA_early_allied_readiness_partner
+	USA = { has_country_flag = COLDWAR_USA_early_alliances_authorised has_idea = COLDWAR_USA_early_allied_readiness_usa is_in_array = { array = COLDWAR_USA_early_alliance_accepted value = PREV } }
+}

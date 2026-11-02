@@ -1,0 +1,39 @@
+# IMPERIA COLD WAR — GC session-based Security Council seats
+COLDWAR_gc_un_controller = {
+	is_ai = no
+	has_idea = imp_gc_nation
+}
+
+COLDWAR_gc_un_between_votes = {
+	NOT = { has_global_flag = current_ongoing_sc_vote }
+	NOT = {
+		AND = {
+			has_global_flag = current_ongoing_ga_vote
+			check_variable = { global.current_ga_vote_type = 6 }
+		}
+	}
+}
+
+COLDWAR_gc_un_can_edit = {
+	COLDWAR_gc_un_controller = yes
+	has_global_flag = COLDWAR_gc_un_session_seats
+	COLDWAR_gc_un_between_votes = yes
+}
+
+COLDWAR_gc_un_valid_elected_member = {
+	exists = yes
+	is_in_array = { global.UN_general_assembly = THIS }
+	NOT = { is_in_array = { global.p5_sc_members = THIS } }
+	NOT = { has_idea = p5_member }
+	NOT = { has_idea = lacks_international_recognition }
+	NOT = { has_idea = non_state_actor }
+}
+
+COLDWAR_gc_un_valid_target = {
+	has_variable = gc_tool_target_country
+	var:gc_tool_target_country = {
+		COLDWAR_gc_un_valid_elected_member = yes
+		has_capitulated = no
+		NOT = { is_in_array = { global.security_council_members = THIS } }
+	}
+}

@@ -1,4 +1,6 @@
+# IMPERIA COLD WAR — Native diplomatic recognition and UN membership.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Retire Western integration and Moscow backing point mechanics.
 """Player-facing mechanics for West Germany 1970.
 
 Missions (timed decisions), the spy war, abuses of the security state, the flow of
@@ -32,13 +34,14 @@ def _flow_chain():
 
 
 EXTRA_EFFECTS.append(f"""
+# IMPERIA COLD WAR — Remove Western integration score crisis and effects.
 # Monthly, GER scope: the mechanics the player interacts with through missions and decisions.
 {P}_mechanics_tick = {{
 	# --- Übersiedler: people leaving the GDR legally or through the cracks
 	if = {{
 		limit = {{ country_exists = DDR NOT = {{ has_global_flag = {P}_unity_achieved }} }}
 		if = {{
-			limit = {{ has_global_flag = {P}_wall_open NOT = {{ has_global_flag = {P}_confederation }} }}
+			limit = {{ {P}_border_open = yes NOT = {{ has_global_flag = {P}_confederation }} }}
 			{transfer(30000)}
 			if = {{ limit = {{ check_variable = {{ cwger_ue_arrived > 0 }} }} {money_gdp(-0.0004).replace(chr(10), ' ')} }}
 		}}
@@ -70,9 +73,9 @@ EXTRA_EFFECTS.append(f"""
 	if = {{ limit = {{ check_variable = {{ cwger_anti_nuclear > 40 }} }} {protest(0.3).replace(chr(10), ' ')} }}
 	# --- MD corruption: entrenched corruption keeps the scandal machine running
 	if = {{ limit = {{ OR = {{ has_idea = corruption_level_04 has_idea = corruption_level_05 has_idea = corruption_level_06 has_idea = corruption_level_07 }} }} add_to_variable = {{ cwger_scandal = 0.4 }} }}
-	# --- the euro: founded by a focus, introduced through the MD EU system once it exists
+	# IMPERIA CW — Cold War: The chosen currency programme applies through native MD without a calendar veto.
 	if = {{
-		limit = {{ has_completed_focus = {P}_euro_founder date > 1998.12.31 NOT = {{ has_country_flag = EU_joined_the_eurozone }} }}
+		limit = {{ has_completed_focus = {P}_euro_founder NOT = {{ has_country_flag = EU_joined_the_eurozone }} }}
 		joining_the_euro = yes
 	}}
 	# --- the security state overreaches
@@ -96,12 +99,6 @@ EXTRA_EFFECTS.append(f"""
 		modify_treasury_effect = yes
 		add_to_variable = {{ cwger_east_burden = -0.25 }}
 		clamp_variable = {{ var = cwger_east_burden min = 0 max = 100 }}
-	}}
-	# --- drifting away from the West
-	if = {{
-		limit = {{ check_variable = {{ cwger_westbindung < 30 }} NOT = {{ has_country_flag = {P}_westbindung_crisis_seen }} NOT = {{ has_global_flag = {P}_unity_neutral }} }}
-		set_country_flag = {P}_westbindung_crisis_seen
-		country_event = {{ id = {EVG}.79 days = 2 }}
 	}}
 	# --- the Soviet gas deal meets an American embargo
 	if = {{
@@ -144,12 +141,12 @@ E(f"{EVG}.71", "A Mole Unmasked",
   "The Federal Office for the Protection of the Constitution has arrested an official who has passed files to the Ministry for State Security for years. The radio messages, the microdots, the dead drops on the Rhine promenade - all in the arrest report.",
   "GFX_der_Spiegel",
   [O("A quiet trial and a quiet exchange later.", J(v("cwger_stasi_penetration", -8), v("cwger_counterintel", 3), pp(25)), ai=60),
-   O("A public trial. Everyone should know.", J(v("cwger_stasi_penetration", -10), v("cwger_ostpolitik", -4), dv("cwddr_recognition", -3), tension(1)), ai=40)])
+   O("A public trial. Everyone should know.", J(v("cwger_stasi_penetration", -10), v("cwger_ostpolitik", -4), tension(1)), ai=40)])
 
 E(f"{EVG}.72", "NATO Plans in East Berlin",
   "Material from the defence ministry has turned up in the files of the Warsaw Pact: deployment plans, codes, the timetable of the next exercise. Somewhere in Bonn sits a source the services have not found.",
   "GFX_GER_MAD",
-  [O("Damage control in Brussels.", J(pp(-50), v("cwger_westbindung", -3), v("cwger_counterintel", 4),
+  [O("Damage control in Brussels.", J(pp(-50), v("cwger_counterintel", 4),
      "if = { limit = { country_exists = SOV } SOV = { add_tech_bonus = { name = " + P + "_bonus bonus = 0.5 uses = 1 category = CAT_command_and_control_equipment } } }"), ai=60),
    O("Blame the previous government.", J(v("cwger_scandal", 10), party("cdu", -0.003), party("spd", -0.003),
      "if = { limit = { country_exists = SOV } SOV = { add_tech_bonus = { name = " + P + "_bonus bonus = 0.5 uses = 1 category = CAT_command_and_control_equipment } } }"), ai=40)])
@@ -192,25 +189,16 @@ E(f"{EVG}.78", "The Kießling Affair",
   [O("Accept the resignation and rehabilitate the general.", J(v("cwger_scandal", 5), v("cwger_rechtsstaat", 2), "army_experience = -5", pp(-40)), ai=50),
    O("Keep the minister.", J(v("cwger_scandal", 14), v("cwger_rechtsstaat", -3), stab(-0.01)), ai=50)])
 
-E(f"{EVG}.79", "Is Bonn Drifting?",
-  "Washington asks whether the Federal Republic is still an ally. Paris worries about a German Rapallo. In Moscow, analysts write that Bonn can be pried loose from the West.\n\nWestern integration: §Y[?cwger_westbindung|0]§!",
-  "GFX_Ami_go_home",
-  [O("Reassure the allies.", J(v("cwger_westbindung", 15), v("cwger_peace_movement", 5), "USA = { add_opinion_modifier = { target = ROOT modifier = medium_increase } }"), ai=80),
-   O("Equidistance between the blocs.", J(v("cwger_westbindung", -10), tension(-3), "USA = { add_opinion_modifier = { target = ROOT modifier = large_decrease } }",
-     f"if = {{ limit = {{ has_global_flag = mdcw_cw_initialized }} set_temp_variable = {{ mdcw_cw_new_alignment = 0 }} set_temp_variable = {{ mdcw_cw_t_free = 1 }} mdcw_cw_change_alignment = yes }}",
-     "if = { limit = { has_idea = NATO_member } NATO_leave = yes }", europe(-10),
-     tt(f"{P}_tt_equidistance", "The Federal Republic leaves NATO and the Western bloc and becomes §Ynon-aligned§! in the Imperia Cold War system.")), ai=5)])
-
 E(f"{EVG}.86", "The Pipeline Embargo",
   "Washington has banned American firms and their licensees from supplying the Siberian gas pipeline. AEG, Mannesmann and their subcontractors face sanctions in the United States if they deliver the turbines Bonn has promised Moscow.",
   "GFX_oil_refinery",
-  [O("Deliver anyway. Treaties are kept.", J(v("cwger_westbindung", -6), v("cwger_ostpolitik", 4), faction("bdi", 6), "USA = { add_opinion_modifier = { target = ROOT modifier = medium_decrease } }"), ai=60),
-   O("Bow to Washington.", J(v("cwger_westbindung", 5), faction("bdi", -8), money_gdp(-0.002), "SOV = { add_opinion_modifier = { target = ROOT modifier = medium_decrease } }"), ai=40)])
+  [O("Deliver anyway. Treaties are kept.", J(v("cwger_ostpolitik", 4), faction("bdi", 6), "USA = { add_opinion_modifier = { target = ROOT modifier = medium_decrease } }"), ai=60),
+   O("Bow to Washington.", J(faction("bdi", -8), money_gdp(-0.002), "SOV = { add_opinion_modifier = { target = ROOT modifier = medium_decrease } }"), ai=40)])
 
 E(f"{EVG}.98", "Bielefeld",
   "The Greens' special congress on the Kosovo war. Outside, protesters scream 'warmonger'; inside, a paint bomb bursts the foreign minister's eardrum. Bleeding, he speaks anyway: 'Never again war - but also never again Auschwitz.'",
   "GFX_joschka_fischer_event",
-  [O("The Realos carry the vote.", J(party("greens", -0.006), v("cwger_peace_movement", -4), v("cwger_westbindung", 4)), ai=70),
+  [O("The Realos carry the vote.", J(party("greens", -0.006), v("cwger_peace_movement", -4)), ai=70),
    O("The party leaves the coalition.", J(party("greens", 0.004), v("cwger_peace_movement", 6), "set_variable = { cwger_defectors = 8 }", f"{P}_update_bundestag = yes"), ai=30)])
 
 # ============================================================== missions and decisions
@@ -247,7 +235,7 @@ D(PO, "bundesrat_package", "Package Deal with the Länder",
 D(PO, "peace_dialogue", "Dialogue with the Peace Movement",
   "Invite the organisers of the marches to the chancellery. Listen, explain, give a little.",
   "GFX_decision_propaganda", visible="check_variable = { cwger_peace_movement > 40 }", cost=50, re_enable=365,
-  effect=J(v("cwger_peace_movement", -8), v("cwger_westbindung", -2), party("greens", -0.002), protest(-8)), ai=15)
+  effect=J(v("cwger_peace_movement", -8), party("greens", -0.002), protest(-8)), ai=15)
 
 M(SE, "mission_manhunt", "Manhunt",
   "The RAF's underground is growing. Break the commando level before it strikes again.",
@@ -261,7 +249,7 @@ M(SE, "mission_manhunt", "Manhunt",
 M(DP, "mission_reception", "Reception Camps",
   "The GDR is emptying through every crack in the Iron Curtain. Gießen, Marienfelde and Friedland need beds, food and work offices - or the welcome will turn sour.",
   "GFX_decision_germany",
-  activation=f"country_exists = DDR DDR = {{ check_variable = {{ cwddr_wende_stage > 0 }} check_variable = {{ cwddr_wende_stage < 4 }} }} NOT = {{ has_country_flag = {P}_reception_done }}",
+  activation=f"country_exists = DDR DDR = {{ check_variable = {{ cwddr_exit_pressure > 60 }} }} NOT = {{ has_country_flag = {P}_reception_done }}",
   available=f"has_country_flag = {P}_reception_ready", days=180,
   complete=J(f"set_country_flag = {P}_reception_done", stab(0.03), v("cwger_unity", 5)),
   timeout=J(f"set_country_flag = {P}_reception_done", stab(-0.04), party("rep", 0.004), v("cwger_terror_right", 4)), good=True)
@@ -291,5 +279,5 @@ D(EC, "energy_saving", "Energy-Saving Campaign",
   effect=J(f"set_country_flag = {P}_energy_saving", money_gdp(-0.0008)), ai=30)
 D(EC, "nato_summit", "NATO Summit Diplomacy",
   "Host the allies, sign the communiqué, be photographed with the American president.",
-  "GFX_decision_nato", visible="always = yes", available="check_variable = { cwger_westbindung < 80 }", cost=50, re_enable=365,
-  effect=J(v("cwger_westbindung", 6), v("cwger_peace_movement", 2), tension(1)), ai=12)
+  "GFX_decision_nato", visible="always = yes", available="has_idea = NATO_member", cost=50, re_enable=365,
+  effect=J(v("cwger_peace_movement", 2), tension(1)), ai=12)

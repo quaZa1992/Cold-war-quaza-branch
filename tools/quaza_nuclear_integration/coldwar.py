@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: 1970 uranium history, shortage behaviour and compatible art.
+# IMPERIA COLD WAR — 1970 uranium history, shortage behaviour and compatible civilian shelter art.
 from pathlib import Path
 import json,re
 from PIL import Image
@@ -72,12 +72,17 @@ COLDWAR_refresh_enrichment_count = {
     ai='common/ai_strategy/COLDWAR_quaza_imp_nuclear_ai.txt'
     modify(ai,lambda s:s.replace('enable = { NOT = { has_country_flag = imp_ai_wants_nukes } }','enable = { NOT = { has_country_flag = imp_ai_wants_nukes } has_nuclear_reactors = no }').replace('enable = { has_country_flag = imp_ai_wants_nukes }','enable = { OR = { has_country_flag = imp_ai_wants_nukes has_nuclear_reactors = yes } }'))
 
-    # Preserve the shelter icon at frame 39. Append the source mine icon at 40.
+    # Preserve baseline frames 1 to 38, use the current shelter at 39 and append the source mine at 40.
+    shelter_path=ROOT/'tools/civilian_shelter_icon/frame_39.png'
+    shelter=Image.open(shelter_path) if shelter_path.exists() else None
+    if shelter is not None:
+        assert shelter.mode=='RGBA' and shelter.size==(46,46),shelter_path
     for name in ['building_icon_strip.dds','building_icon_without_bg_strip.dds']:
         rel='gfx/interface/buildings/'+name;backup(rel)
         ours=Image.open(ROOT/rel).convert('RGBA');source=Image.open(SOURCE/rel).convert('RGBA')
         assert ours.size==(1794,46) and source.size==(1794,46)
         result=Image.new('RGBA',(1840,46));result.paste(ours,(0,0));result.paste(source.crop((1748,0,1794,46)),(1794,0))
+        if shelter is not None:result.paste(shelter,(1748,0))
         result.save(ROOT/rel)
     modify('interface/countrystateview.gfx',lambda s:s.replace('noOfFrames = 39','\n\t\t'+MARKER+'\n\t\tnoOfFrames = 40'))
     modify('common/buildings/00_buildings.txt',lambda s:s.replace('icon_frame = 39','icon_frame = 40'))

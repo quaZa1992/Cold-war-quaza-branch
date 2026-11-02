@@ -1,0 +1,232 @@
+# IMPERIA COLD WAR — German diplomacy and negotiated settlements
+COLDWAR_GER_1970_recognition_sanction = {
+if = {
+limit = { COLDWAR_GER_1970_recognition_can_sanction = yes }
+add_political_power = -35
+set_variable = { cwgg_special_used = 1 }
+add_to_variable = { cwgg_krise_int = -20 }
+clamp_variable = { var = cwgg_krise_int min = 0 max = 100 }
+add_to_variable = { cwgg_klima = -5 }
+clamp_variable = { var = cwgg_klima min = -100 max = 100 }
+var:cwgg_recognition_country^0 = {
+ IMP_sanctions_add_dip_from_prev = yes
+ if = { limit = { has_global_flag = mdcw_cw_initialized }
+  set_temp_variable = { mdcw_cw_t_sanc_type = 1 }
+  mdcw_cw_on_sanction_imposed = yes
+ }
+ imp_sanctions_calculate = yes
+ country_event = { id = COLDWAR_GER_BALANCE.10 }
+}
+imp_sanctions_calculate = yes
+COLDWAR_GER_1970_rv_sync_views = yes
+
+}
+
+}
+COLDWAR_GER_1970_settlement_clear = {
+for_each_scope_loop = {
+ array = cwgg_settlement_participants
+ clr_country_flag = cwgg_settlement_invited
+}
+clr_country_flag = cwgg_settlement_pending
+clear_array = cwgg_settlement_participants
+clear_array = cwgg_settlement_signatures
+set_variable = { cwgg_settlement_kind = 0 }
+
+}
+COLDWAR_GER_1970_settlement_open = {
+if = {
+limit = { OR = { tag = GER tag = DDR }
+COLDWAR_GER_1970_settlement_war_live = yes }
+country_event = { id = COLDWAR_GER_BALANCE.1 }
+}
+
+}
+COLDWAR_GER_1970_settlement_begin = {
+if = {
+limit = { tag = GER
+COLDWAR_GER_1970_settlement_war_live = yes
+NOT = { has_country_flag = cwgg_settlement_pending }
+ROOT = { OR = { tag = GER tag = DDR } NOT = { has_country_flag = cwgg_settlement_proposal_cd } }
+ }
+COLDWAR_GER_1970_settlement_clear = yes
+set_variable = { cwgg_settlement_kind = cwgg_settlement_new_kind }
+set_country_flag = cwgg_settlement_pending
+ROOT = { set_country_flag = { flag = cwgg_settlement_proposal_cd days = 60 } }
+every_country = {
+ limit = { COLDWAR_GER_1970_settlement_belligerent = yes }
+ GER = { add_to_array = { cwgg_settlement_participants = PREV } }
+}
+add_to_array = { cwgg_settlement_signatures = ROOT }
+for_each_scope_loop = {
+ array = cwgg_settlement_participants
+ set_country_flag = cwgg_settlement_invited
+ if = { limit = { NOT = { tag = ROOT } }
+  if = { limit = { GER = { check_variable = { cwgg_settlement_kind = 1 } } } country_event = { id = COLDWAR_GER_BALANCE.2 } }
+  else_if = { limit = { GER = { check_variable = { cwgg_settlement_kind = 2 } } } country_event = { id = COLDWAR_GER_BALANCE.3 } }
+  else_if = { limit = { GER = { check_variable = { cwgg_settlement_kind = 3 } } } country_event = { id = COLDWAR_GER_BALANCE.4 } }
+ }
+}
+
+}
+
+}
+COLDWAR_GER_1970_settlement_propose_1 = {
+if = {
+limit = { COLDWAR_GER_1970_settlement_can_propose = yes
+ }
+GER = { set_temp_variable = { cwgg_settlement_new_kind = 1 } COLDWAR_GER_1970_settlement_begin = yes }
+}
+
+}
+COLDWAR_GER_1970_settlement_propose_2 = {
+if = {
+limit = { COLDWAR_GER_1970_settlement_can_propose = yes
+GER = { has_capitulated = yes } DDR = { has_capitulated = no } 1251 = { is_owned_by = GER } }
+GER = { set_temp_variable = { cwgg_settlement_new_kind = 2 } COLDWAR_GER_1970_settlement_begin = yes }
+}
+
+}
+COLDWAR_GER_1970_settlement_propose_3 = {
+if = {
+limit = { COLDWAR_GER_1970_settlement_can_propose = yes
+GER = { has_capitulated = no } DDR = { has_capitulated = yes check_variable = { var = treasury compare = greater_than_or_equals value = 0.2 } } }
+GER = { set_temp_variable = { cwgg_settlement_new_kind = 3 } COLDWAR_GER_1970_settlement_begin = yes }
+}
+
+}
+COLDWAR_GER_1970_settlement_validate = {
+set_variable = { cwgg_settlement_invalid = 0 }
+if = { limit = { COLDWAR_GER_1970_settlement_terms_valid = no } set_variable = { cwgg_settlement_invalid = 1 } }
+every_country = {
+ limit = {
+  COLDWAR_GER_1970_settlement_belligerent = yes
+  NOT = { is_in_array = { array = GER.cwgg_settlement_participants value = THIS } }
+ }
+ GER = { set_variable = { cwgg_settlement_invalid = 1 } }
+}
+for_each_scope_loop = {
+ array = cwgg_settlement_participants
+ if = { limit = { OR = { exists = no COLDWAR_GER_1970_settlement_belligerent = no } } GER = { set_variable = { cwgg_settlement_invalid = 1 } } }
+}
+
+}
+COLDWAR_GER_1970_settlement_accept = {
+if = {
+limit = { COLDWAR_GER_1970_settlement_can_sign = yes }
+GER = { COLDWAR_GER_1970_settlement_validate = yes }
+if = { limit = { GER = { check_variable = { cwgg_settlement_invalid = 0 } } }
+ GER = {
+  add_to_array = { cwgg_settlement_signatures = PREV }
+  COLDWAR_GER_1970_settlement_try_apply = yes
+ }
+}
+else = { GER = { COLDWAR_GER_1970_settlement_fail = yes } }
+
+}
+
+}
+COLDWAR_GER_1970_settlement_refuse = {
+if = {
+limit = { COLDWAR_GER_1970_settlement_can_sign = yes }
+GER = { COLDWAR_GER_1970_settlement_fail = yes }
+}
+
+}
+COLDWAR_GER_1970_settlement_cancel = {
+if = {
+limit = { OR = { tag = GER tag = DDR } GER = { has_country_flag = cwgg_settlement_pending } }
+GER = { COLDWAR_GER_1970_settlement_fail = yes }
+}
+
+}
+COLDWAR_GER_1970_settlement_fail = {
+if = { limit = { has_country_flag = cwgg_settlement_pending }
+ for_each_scope_loop = { array = cwgg_settlement_participants country_event = { id = COLDWAR_GER_BALANCE.6 } }
+ COLDWAR_GER_1970_settlement_clear = yes
+}
+
+}
+COLDWAR_GER_1970_settlement_try_apply = {
+COLDWAR_GER_1970_settlement_validate = yes
+set_variable = { cwgg_settlement_unsigned = 0 }
+for_each_scope_loop = {
+ array = cwgg_settlement_participants
+ if = { limit = { NOT = { is_in_array = { array = GER.cwgg_settlement_signatures value = THIS } } }
+  GER = { set_variable = { cwgg_settlement_unsigned = 1 } }
+ }
+}
+if = { limit = { check_variable = { cwgg_settlement_invalid = 0 } check_variable = { cwgg_settlement_unsigned = 0 } has_country_flag = cwgg_settlement_pending }
+ COLDWAR_GER_1970_settlement_apply = yes
+}
+else_if = { limit = { check_variable = { cwgg_settlement_invalid > 0 } } COLDWAR_GER_1970_settlement_fail = yes }
+
+}
+COLDWAR_GER_1970_settlement_apply = {
+COLDWAR_GER_1970_settlement_validate = yes
+set_variable = { cwgg_settlement_unsigned = 0 }
+for_each_scope_loop = {
+ array = cwgg_settlement_participants
+ if = { limit = { NOT = { is_in_array = { array = GER.cwgg_settlement_signatures value = THIS } } }
+  GER = { set_variable = { cwgg_settlement_unsigned = 1 } }
+ }
+}
+if = { limit = {
+ tag = GER
+ has_country_flag = cwgg_settlement_pending
+ check_variable = { cwgg_settlement_participants^num > 1 }
+ COLDWAR_GER_1970_settlement_terms_valid = yes
+ check_variable = { cwgg_settlement_invalid = 0 }
+ check_variable = { cwgg_settlement_unsigned = 0 }
+}
+ if = { limit = { check_variable = { cwgg_settlement_kind = 2 } } DDR = { transfer_state = 1251 } }
+ if = { limit = { check_variable = { cwgg_settlement_kind = 3 } }
+  DDR = { set_temp_variable = { treasury_change = -0.2 } modify_treasury_effect = yes }
+  set_temp_variable = { treasury_change = 0.2 }
+  modify_treasury_effect = yes
+ }
+ # Only expressly consenting belligerents can be released from their wars.
+ # Leave wars between third countries intact, even if both signed this proposal.
+ for_each_scope_loop = {
+  array = cwgg_settlement_participants
+  if = { limit = { has_war_with = GER } white_peace = GER }
+  if = { limit = { has_war_with = DDR } white_peace = DDR }
+ }
+ clr_country_flag = cwgg_war_active
+ clr_country_flag = cwgg_war_victory_ddr
+ clr_global_flag = cwgg_german_war
+ for_each_scope_loop = { array = cwgg_settlement_participants country_event = { id = COLDWAR_GER_BALANCE.5 } }
+ COLDWAR_GER_1970_settlement_clear = yes
+ COLDWAR_GER_1970_rv_cold_peace = yes
+ COLDWAR_GER_1970_rv_sync_views = yes
+}
+
+}
+COLDWAR_GER_1970_settlement_maintenance = {
+if = { limit = { has_country_flag = cwgg_settlement_pending }
+ COLDWAR_GER_1970_settlement_validate = yes
+ if = { limit = { check_variable = { cwgg_settlement_invalid > 0 } } COLDWAR_GER_1970_settlement_fail = yes }
+}
+
+}
+COLDWAR_GER_1970_settlement_preview_1 = {
+effect_tooltip = { every_country = {
+ limit = { COLDWAR_GER_1970_settlement_belligerent = yes }
+ if = { limit = { has_war_with = GER } white_peace = GER }
+ if = { limit = { has_war_with = DDR } white_peace = DDR }
+} }
+}
+COLDWAR_GER_1970_settlement_preview_2 = {
+effect_tooltip = { DDR = { transfer_state = 1251 } every_country = {
+ limit = { COLDWAR_GER_1970_settlement_belligerent = yes }
+ if = { limit = { has_war_with = GER } white_peace = GER }
+ if = { limit = { has_war_with = DDR } white_peace = DDR }
+} }
+}
+COLDWAR_GER_1970_settlement_preview_3 = {
+effect_tooltip = { DDR = { set_temp_variable = { treasury_change = -0.2 } modify_treasury_effect = yes } GER = { set_temp_variable = { treasury_change = 0.2 } modify_treasury_effect = yes } every_country = {
+ limit = { COLDWAR_GER_1970_settlement_belligerent = yes }
+ if = { limit = { has_war_with = GER } white_peace = GER }
+ if = { limit = { has_war_with = DDR } white_peace = DDR }
+} }
+}

@@ -1,4 +1,5 @@
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
+# IMPERIA COLD WAR — DDR offer outcomes retain substantive rewards without trust changes.
 # COLDWAR | The 69 offers of the GDR tree (English texts, MD agreement-event style).
 # Multiplayer rule: the focus only sends the proposal. The other country (player or AI) decides, and every effect - on both sides -
 # happens in its answer, shown there as concrete option effects. THIS = the receiver, FROM = the GDR.
@@ -66,6 +67,11 @@ for k, (n, m, d) in OFFER_IDEAS.items():
 
 
 def offer(key, pic, title, desc, accept, code, decline="We must decline.", ai_base=50, ai_mods="", decline_code=(), from_code=()):
+    # IMPERIA COLD WAR — Accepted diplomatic relations update MD's recognition ledger.
+    if key in ("recognition_india", "paris_and_london", "neutral_capitals", "washington"):
+        code = ["COLDWAR_Germany_recognise_DDR = yes"] + list(code)
+    elif key == "basic_treaty":
+        code = ["COLDWAR_Germany_mutual_recognition = yes"] + list(code)
     k = PFX + "offer_" + key
     from dg_load import OFFERS as DESIGN
     assert k in DESIGN, k
@@ -162,14 +168,14 @@ UNITY_AI = ("modifier = { factor = 0 has_war_with = FROM }\n"
             "modifier = { factor = 0 FROM = { has_war = yes } }\n"
             "modifier = { factor = 1.5 FROM = { NOT = { has_government = communism } } }")
 MOSCOW_AI = ("modifier = { factor = 0 has_war_with = FROM }\n"
-             "modifier = { factor = 1.5 FROM = { check_variable = { COLDWAR_DDR_moscow_trust > 64 } } }\n"
-             "modifier = { factor = 0.5 FROM = { check_variable = { COLDWAR_DDR_moscow_trust < 35 } } }")
+             "modifier = { factor = 1.5 FROM = { has_government = communism } }\n"
+             "modifier = { factor = 0.5 FROM = { has_opinion = { target = ROOT value < -20 } } }")
 RELEASE_AI = ("modifier = { factor = 0 has_war_with = FROM }\n"
               "modifier = { factor = 6 NOT = { has_government = communism } }\n"
               "modifier = { factor = 3 has_country_flag = COLDWAR_SOV_gensec_gor }\n"
               "modifier = { factor = 2 check_variable = { global.mdcw_cw_tension < 30 } }\n"
               "modifier = { factor = 0.3 check_variable = { global.mdcw_cw_tension > 60 } }\n"
-              "modifier = { factor = 1.5 FROM = { check_variable = { COLDWAR_DDR_moscow_trust > 64 } } }")
+              "modifier = { factor = 0.3 has_opinion = { target = FROM value < -20 } }")
 FRIEND_AI = ("modifier = { factor = 0 has_war_with = FROM }\n"
              "modifier = { factor = 1.5 has_government = communism }\n"
              "modifier = { factor = 0.3 has_opinion = { target = FROM value < 0 } }")
@@ -180,25 +186,25 @@ offer("release_west", "flag", "East Berlin Asks to Leave",
       "The Group of Soviet Forces would withdraw over two years.",
       "Let them go.", J("end_puppet = FROM", E.tension(-2), us(f"country_event = {{ id = {NS}.62 days = 1 }}")),
       decline="The answer is no.", ai_base=5, ai_mods=RELEASE_AI,
-      decline_code=us(E.trust(-10), f"set_country_flag = {{ flag = {PFX}release_refused days = 365 }}"))
+      decline_code=us(f"set_country_flag = {{ flag = {PFX}release_refused days = 365 }}"))
 offer("release_neutral", "flag", "Armed Neutrality on the Elbe",
       "East Berlin proposes to leave the Warsaw Pact for armed neutrality: the treaty ties end, the garrison withdraws over two years, and the republic "
       "promises never to join NATO.",
       "Accept a neutral Germany in the East.", J("end_puppet = FROM", E.tension(-1), us(f"country_event = {{ id = {NS}.62 days = 1 }}")),
       decline="Out of the question.", ai_base=5, ai_mods=RELEASE_AI,
-      decline_code=us(E.trust(-10), f"country_event = {{ id = {NS}.32 days = 3 }}"))
+      decline_code=us(f"country_event = {{ id = {NS}.32 days = 3 }}"))
 offer("cdu_garrison_withdrawal", "flag", "A Phased Withdrawal",
       "East Berlin asks for a phased withdrawal of the Group of Soviet Forces in Germany over three years and offers to pay for the housing of the returning officers.",
       "Bring the soldiers home.", J(E.tension(-2), soviet_pay(0.01), garrison_withdrawal(1095)),
-      decline="The garrison stays.", ai_base=15, ai_mods=RELEASE_AI, decline_code=J(E.tension(2), us(E.trust(-10))))
+      decline="The garrison stays.", ai_base=15, ai_mods=RELEASE_AI, decline_code=J(E.tension(2), us()))
 offer("spd_garrison_withdrawal", "flag", "A Treaty of Friendship and Withdrawal",
       "A social-democratic government in East Berlin proposes a treaty of friendship and non-aggression: the Group of Soviet Forces withdraws in stages, "
       "the republic stays in Comecon, and East Berlin pays for barracks and housing in the Soviet Union.",
       "Sign the treaty.", J(E.tension(-2), soviet_pay(0.01), garrison_withdrawal(1095), mutual(f"{PFX}treaty_partner")),
-      decline="The garrison stays.", ai_base=15, ai_mods=RELEASE_AI, decline_code=J(E.tension(1), us(E.trust(-5))))
+      decline="The garrison stays.", ai_base=15, ai_mods=RELEASE_AI, decline_code=J(E.tension(1), us()))
 offer("kis_garrison_withdrawal", "flag", "The Soldiers Go Home",
       "The church government in East Berlin asks the Soviet Union to withdraw its forces within five years. Swords into ploughshares, it says.",
-      "Withdraw within five years.", J(E.tension(-2), garrison_withdrawal(1825), us(E.trust(-10))),
+      "Withdraw within five years.", J(E.tension(-2), garrison_withdrawal(1825), us()),
       decline="The garrison stays.", ai_base=10, ai_mods=RELEASE_AI)
 offer("tws_garrison_withdrawal", "flag", "In Step with the West",
       "East Berlin proposes a neutral Germany on the Austrian model: the Group of Soviet Forces withdraws in step with the Western armies.",
@@ -206,44 +212,44 @@ offer("tws_garrison_withdrawal", "flag", "In Step with the West",
       decline="The garrison stays.", ai_base=10, ai_mods=RELEASE_AI)
 offer("mcn_brotherhood_in_arms", "warsaw", "Brotherhood in Arms",
       "The Military Council of the NVA invites the Soviet Army to a joint exercise on its soil, like 'Brotherhood in Arms 70'.",
-      "Send our divisions.", J("army_experience = 25", us("army_experience = 25", E.trust(5)), E.tension(1)), ai_base=70, ai_mods=MOSCOW_AI)
+      "Send our divisions.", J("army_experience = 25", us("army_experience = 25"), E.tension(1)), ai_base=70, ai_mods=MOSCOW_AI)
 offer("ldk_loyalty_pledge", "flag", "The Kádár Compromise",
       "The new leadership in East Berlin pledges to stay in the Warsaw Pact and in Comecon - and asks Moscow to tolerate its internal reforms.",
-      "Tolerate the reforms.", J(us(E.trust(10))), ai_base=45, ai_mods=MOSCOW_AI)
+      "Tolerate the reforms.", J(us()), ai_base=45, ai_mods=MOSCOW_AI)
 offer("tg_soviet_advisers", "flag", "Advisers in Every Ministry",
       "The Thälmann Guard asks for Soviet advisers in every ministry and every Kombinat.",
-      "Send the advisers.", J(our_idea("soviet_advisers_gdr"), us(E.trust(5))), ai_base=75, ai_mods=MOSCOW_AI)
+      "Send the advisers.", J(our_idea("soviet_advisers_gdr"), us()), ai_base=75, ai_mods=MOSCOW_AI)
 offer("kro_confederation", "flag", "The Closest Union",
       "East Berlin proposes a confederation with the Soviet Union: a joint foreign and defence policy and a joint currency board for the transferable rouble. "
       "The GDR would keep its own government.",
-      "Accept the confederation.", J(our_idea("union_treaty"), us(E.trust(25)), mutual(f"{PFX}friendship_treaty")),
-      decline="A gesture we appreciate - but no.", ai_base=40, ai_mods=MOSCOW_AI, decline_code=us(E.trust(5)))
+      "Accept the confederation.", J(our_idea("union_treaty"), us(), mutual(f"{PFX}friendship_treaty")),
+      decline="A gesture we appreciate - but no.", ai_base=40, ai_mods=MOSCOW_AI, decline_code=us())
 offer("soviet_ship_orders", "navy", "Ships for the Soviet Union",
       "The shipyards of Wismar, Rostock and Stralsund offer a long-term order of trawlers and freighters for the Soviet fleet.",
-      "Place the order.", J(them_idea("gdr_ship_orders"), us(E.trust(5), E.country_dyn("planned_economy", {"industrial_capacity_dockyard": 0.05}))),
+      "Place the order.", J(them_idea("gdr_ship_orders"), us(E.country_dyn("planned_economy", {"industrial_capacity_dockyard": 0.05}))),
       ai_base=70, ai_mods=MOSCOW_AI)
 offer("soyuz_pipeline", "pipe", "The Orenburg Pipeline",
       "East Berlin offers to build its section of the Soyuz pipeline from Orenburg - with its own workers and machines - in return for natural gas.",
       "Accept the builders.", J(them_idea("gdr_pipeline_builders"),
-                                us(E.trust(5), E.country_dyn("planned_economy", {"energy_gain_multiplier": 0.05}), f"set_country_flag = {PFX}soyuz_gas")),
+                                us(E.country_dyn("planned_economy", {"energy_gain_multiplier": 0.05}), f"set_country_flag = {PFX}soyuz_gas")),
       ai_base=80, ai_mods=MOSCOW_AI)
 offer("interkosmos_cosmonaut", "space", "A German in Space",
       "The GDR asks for a seat on a Soyuz mission of the Interkosmos programme for one of its pilots.",
       "Fly the German comrade.", J(their_opinion(f"{PFX}a_cosmonaut_from_berlin"), us(f"country_event = {{ id = {NS}.24 days = 1 }}")),
-      ai_base=80, ai_mods=MOSCOW_AI, decline_code=us(E.trust(-2)))
+      ai_base=80, ai_mods=MOSCOW_AI, decline_code=us())
 offer("friendship_treaty_1975", "sign", "The Treaty of 1975",
       "East Berlin proposes a new Treaty of Friendship, Cooperation and Mutual Assistance for twenty-five years, binding the NVA to the Unified Command.",
-      "Sign the treaty.", J(mutual(f"{PFX}friendship_treaty"), us(E.trust(5))), ai_base=85, ai_mods=MOSCOW_AI)
+      "Sign the treaty.", J(mutual(f"{PFX}friendship_treaty"), us()), ai_base=85, ai_mods=MOSCOW_AI)
 offer("ust_ilimsk", "sign", "The Ust-Ilimsk Combine",
       "The GDR offers to build its share of the pulp combine at Ust-Ilimsk in return for pulp and paper over ten years.",
       "Accept the investment.", J(them_idea("gdr_engineers"), us(E.country_dyn("planned_economy", {"consumer_goods_factor": -0.01}))),
       ai_base=80, ai_mods=MOSCOW_AI)
 offer("fraternal_assistance_poland", "warsaw", "Three Divisions for Poland",
       "East Berlin urges joint action of the Warsaw Pact in Poland and offers three NVA divisions. What happens in Poland remains the Soviet Union's decision.",
-      "Accept the offer.", J(us(E.trust(5), "army_experience = 25")), decline="Not now.", ai_base=50, ai_mods=MOSCOW_AI)
+      "Accept the offer.", J(us("army_experience = 25")), decline="Not now.", ai_base=50, ai_mods=MOSCOW_AI)
 offer("counter_deployment", "missiles", "Missiles on the Elbe",
       "East Berlin offers bases for Soviet operational-tactical missiles on its territory.",
-      "Deploy the missiles.", J(us(E.trust(5)), E.tension(1)), ai_base=60, ai_mods=MOSCOW_AI)
+      "Deploy the missiles.", J(us(), E.tension(1)), ai_base=60, ai_mods=MOSCOW_AI)
 
 # ================================================================ the Federal Republic
 offer("national_confederation", "germany", "A German Confederation",
@@ -252,7 +258,7 @@ offer("national_confederation", "germany", "A German Confederation",
 offer("koko_bavarian_credit", "bank", "A Billion from Bavaria",
       "Commercial Coordination asks for a bank credit of one billion D-Mark guaranteed by the federal government. In return the SM-70 spring guns on the border "
       "would be dismantled and family visits made easier.",
-      "Guarantee the credit.", J(us(E.credit(0.015), E.course(0.10), E.trust(-3), f"set_country_flag = {PFX}sm70_dismantled"), notice("western_credit"),
+      "Guarantee the credit.", J(us(E.credit(0.015), E.course(0.10), f"set_country_flag = {PFX}sm70_dismantled"), notice("western_credit"),
                                  tt("sm70", "The SM-70 spring guns on the inner-German border are dismantled and family visits become easier.")),
       ai_base=55, ai_mods=BONN_AI)
 offer("cdu_accession", "germany", "Accession under Article 23",
@@ -310,7 +316,7 @@ offer("tws_socialist_confederation", "germany", "A Confederation of Two States",
       ai_base=30, ai_mods=BONN_AI)
 offer("hon_billion_credit", "bank", "The Billion from Bavaria",
       "East Berlin asks for a bank credit of one billion D-Mark guaranteed by the federal government. In return the automatic firing devices on the border are dismantled.",
-      "Guarantee the credit.", J(us(E.credit(0.02), E.course(0.10), E.trust(-3), f"set_country_flag = {PFX}sm70_dismantled"), notice("western_credit"),
+      "Guarantee the credit.", J(us(E.credit(0.02), E.course(0.10), f"set_country_flag = {PFX}sm70_dismantled"), notice("western_credit"),
                                  tt("sm70_hon", "The automatic firing devices on the inner-German border are dismantled.")),
       ai_base=55, ai_mods=BONN_AI)
 offer("hon_bonn_visit", "germany", "A State Visit to Bonn",

@@ -1,8 +1,9 @@
-# IMPERIA CW — Cold War: recipient replies and reliable Japan offer dispatch.
+# IMPERIA COLD WAR — Cold War: recipient replies and reliable Japan offer dispatch.
 """Generate sender reports; agreement payments remain in recipient transactions."""
 import json
 from pathlib import Path
 import re
+import sys
 from check_script_grammar import parse
 from presentation import field
 from foreign_presentation import offer_tooltip
@@ -11,6 +12,10 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 OUT=HERE/'staging/foreign'
 PROJECTS={'seoul_industrial_cooperation','asean_infrastructure','mekong_development','indochina_reconstruction'}
+sys.path.insert(0, str(ROOT / 'tools/reward_rework_20261027'))
+from building_technology import state_technology_guard, country_technology_guard
+sys.path.insert(0, str(ROOT / 'tools/vietnam_1970'))
+from script_ast import parse as parse_ast, first, values, emit as emit_ast
 
 
 def quote(value):
@@ -29,11 +34,58 @@ def emit(path,text):
         temporary.replace(target)
 
 
+def repair_project_slots(text):
+    """Include the guaranteed shared slot with every recipient project grant."""
+    for building in ('industrial_complex', 'infrastructure'):
+        construction = f'add_building_construction = {{ type = {building} level = 1 instant_build = yes }}'
+        text = re.sub(r'(?<!add_extra_state_shared_building_slots = 1 )' + re.escape(construction),
+                      f'add_extra_state_shared_building_slots = 1 {construction}', text)
+        # The transaction grants the slot in the same state immediately before
+        # construction, so a pre-existing free-slot requirement would defeat it.
+        text = re.sub(r'free_building_slots = \{ building = ' + re.escape(building) +
+                      r' size > 0(?: include_locked = no)? \} ?', '', text)
+    return text
+
+
+def project_technology_guards(text):
+    """Recipient technology gates both site eligibility and the paid transaction."""
+    rows = parse_ast(text)
+    for category, operator, decisions in rows:
+        if not isinstance(decisions, list):
+            continue
+        for identifier, operator, decision in decisions:
+            if not isinstance(decision, list):
+                continue
+            completion = first(decision, 'complete_effect', [])
+            hidden = first(completion, 'hidden_effect', [])
+            transaction = first(hidden, 'if', [])
+            limit = first(transaction, 'limit', [])
+            grants = first(transaction, 'FROM', [])
+            buildings = values(grants, 'add_building_construction')
+            for building in buildings:
+                kind, level = first(building, 'type'), int(first(building, 'level'))
+                guard = state_technology_guard(kind, level)
+                if not guard:
+                    continue
+                for state in (first(first(decision, 'target_trigger', []), 'FROM', []),
+                              first(limit, 'FROM', [])):
+                    assert state, (identifier, 'Missing guarded recipient state')
+                    for predicate in parse_ast(guard):
+                        if predicate not in state:
+                            state.append(predicate)
+                available = first(decision, 'available', [])
+                assert available, identifier
+                for predicate in parse_ast(country_technology_guard(kind, level)):
+                    if predicate not in available:
+                        available.append(predicate)
+    return '# IMPERIA COLD WAR — Japan recipient-selected projects and recipient technology requirements.\n' + emit_ast(rows) + '\n'
+
+
 def main():
     transactions=[json.loads(l) for l in (OUT/'bilateral_manifest.jsonl').read_text(encoding='utf-8').splitlines() if l.strip()]
     registry={r['focus']:r for r in json.loads((OUT/'foreign_helper_registry.json').read_text(encoding='utf-8'))}
     prefix='COLDWAR_JAP70_'
-    header='# IMPERIA CW — Cold War: Japanese diplomatic response reports.\n'
+    header='# IMPERIA COLD WAR — Cold War: Japanese diplomatic response reports.\n'
     helpers=[header]
     events=[header,'add_namespace = COLDWAR_JAP70_REPORT\n']
     loc=['l_english:',' COLDWAR_JAP70_report_acknowledge: "Acknowledge the report"']
@@ -97,6 +149,11 @@ def main():
     emit(ROOT/'events/COLDWAR_JAP70_diplomatic_reports.txt','\n'.join(events)+'\n')
     emit(ROOT/'localisation/english/COLDWAR_JAP70_diplomatic_reports_l_english.yml','\n'.join(loc)+'\n')
     emit(ROOT/'common/on_actions/COLDWAR_JAP70_diplomatic_recovery.txt',header+'on_actions = {\n\ton_daily_JAP = {\n\t\teffect = { COLDWAR_JAP70_restore_unanswered_offers = yes }\n\t}\n}\n')
+
+    project_path=OUT/'COLDWAR_JAP70_foreign_project_decisions.txt'
+    project_text=project_technology_guards(repair_project_slots(project_path.read_text(encoding='utf-8')))
+    parse(project_text)
+    emit(ROOT/'common/decisions/COLDWAR_JAP70_foreign_project_decisions.txt',project_text)
     (OUT/'diplomatic_reports_manifest.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
 
     # A receipt represents an actual dispatch, rather than an attempted call

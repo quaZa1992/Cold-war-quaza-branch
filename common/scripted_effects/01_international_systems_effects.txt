@@ -245,6 +245,8 @@ on_startup_international = {
 		if = { limit = { country_exists = TUR } TUR = { set_country_flag = original_owner_KUR } }
 		if = { limit = { country_exists = SYR } SYR = { set_country_flag = original_owner_KUR } }
 
+		# IMPERIA COLD WAR — January 1970 UN membership and German recognition
+		if = { limit = { IMP_is_1970_scenario = no }
 		# Pre-seeded recognitions reflecting real-world state at the 2000 game start.
 		# Each block adds the breakaway's tag to recognised_countries on the granter side AND bumps
 		# Granted_Recognition on the breakaway side. recognised_countries is a permanent ledger — only an
@@ -304,6 +306,9 @@ on_startup_international = {
 			SOV = { add_to_array = { recognised_countries = SOO } }
 			SOO = { add_to_variable = { Granted_Recognition = 1 } }
 		}
+
+		}
+		COLDWAR_UN_1970_initialize = yes
 
 		# Stagger initial AI campaign cooldowns so unrecognised states don't all fire on month 1.
 		# random_list spreads each NSA's first action across the opening 9 months.
@@ -375,8 +380,13 @@ set_sel_pmc_units = {
 		subtract_from_variable = { comp_check = 1 }
 	}
 }
+# IMPERIA COLD WAR — January 1970 UN membership and German recognition
 un_recog_setup_check = {
+	# IMPERIA COLD WAR — January 1970 UN membership and German recognition
 	if = {
+		limit = { COLDWAR_Germany_recognition_subject = yes }
+		if = { limit = { NOT = { is_in_array = { global.Unrecognised_States = THIS } } } add_to_array = { global.Unrecognised_States = THIS } }
+	} else_if = {
 		limit = {
 			OR = {
 				has_idea = lacks_international_recognition
@@ -427,6 +437,7 @@ un_recog_setup_check = {
 		limit = {
 			NOT = { original_tag = SWI }
 			NOT = { original_tag = HLS }
+			OR = { IMP_is_1970_scenario = no COLDWAR_UN_1970_start_member = yes }
 		}
 		add_to_array = { global.UN_general_assembly = THIS }
 		add_dynamic_modifier = { modifier = united_nations_member }
@@ -436,6 +447,8 @@ un_recog_setup_check = {
 			international_systems_force_update = yes
 		}
 	}
+# IMPERIA COLD WAR — Newly created recognition subjects enter the picker without a world scan.
+	ICW_register_recognition_candidate = yes
 }
 
 un_check_if_valid_for_sanctions = {
@@ -613,7 +626,10 @@ manipulate_ga_vote_front = {
 	}
 }
 
+# IMPERIA COLD WAR — Elected RP seats bypass General Assembly seat elections.
 update_ga_vote = {
+	if = {
+		limit = { OR = { NOT = { has_global_flag = COLDWAR_gc_un_session_seats } NOT = { check_variable = { ga_new_vote_type = 6 } } } }
 	if = {
 		limit = {
 			OR = {
@@ -662,9 +678,13 @@ update_ga_vote = {
 		recompute_un_2_3_number = yes
 		international_systems_update = yes
 	}
+	}
 }
 
+# IMPERIA COLD WAR — Session appointments suspend calendar-based nominations.
 start_unsc_next_term_voting = {
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_gc_un_session_seats } }
 	set_global_flag = { flag = electing_new_unsc_members days = 200 value = 1 }
 	clear_variable = global.unsc_reroll_count
 	clear_array = global.new_council_members
@@ -795,9 +815,14 @@ start_unsc_next_term_voting = {
 	set_temp_variable = { ga_new_vote_type = 6 }
 	set_temp_variable = { ga_new_vote_nation = global.new_council_members^0 }
 	update_ga_vote = yes
+	}
 }
 
+# IMPERIA COLD WAR — Native German recognition and UN membership
 update_security_council_peeps = {
+# IMPERIA COLD WAR — Keep the five RP appointments across January rotations.
+if = { limit = { NOT = { has_global_flag = COLDWAR_gc_un_session_seats } OR = { IMP_is_1970_scenario = no date > 1970.12.31 } }
+
 	# Confirmed in June but dead or capitulated by January: drop before seating.
 	clear_array = md_valid_confirmed_members
 	for_each_loop = {
@@ -877,9 +902,16 @@ update_security_council_peeps = {
 	clear_array = global.confirmed_new_council_members
 
 	international_systems_update = yes
+	# IMPERIA COLD WAR — Repaint current German mandates after native annual seating.
+	COLDWAR_Germany_un_status_changed = yes
+
+}
 }
 
+# IMPERIA COLD WAR — Stale election callbacks cannot confirm RP seats.
 un_sc_new_members_step_next = {
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_gc_un_session_seats } }
 	set_temp_variable = { md_was_election_candidate = 0 }
 	if = {
 		limit = {
@@ -920,9 +952,13 @@ un_sc_new_members_step_next = {
 			clear_variable = global.unsc_reroll_count
 		}
 	}
+	}
 }
 
+# IMPERIA COLD WAR — RP vacancies are filled by the GC, without random rerolls.
 un_sc_new_members_re_roll = {
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_gc_un_session_seats } }
 	add_to_variable = { global.unsc_reroll_count = 1 }
 
 	# Drop the candidate that just failed its seat vote so it isn't re-voted forever.
@@ -1028,6 +1064,7 @@ un_sc_new_members_re_roll = {
 		clr_global_flag = electing_new_unsc_members
 		clear_variable = global.unsc_reroll_count
 	}
+	}
 }
 
 unsc_clear_permanent_seat_lobbying = {
@@ -1084,7 +1121,8 @@ unsc_promote_permanent_member = {
 
 		set_temp_variable = { md_promotion_can_finish = 1 }
 		if = {
-			limit = { check_variable = { md_promoted_sc_seat > -1 } }
+			# IMPERIA COLD WAR — Permanent admission leaves an RP vacancy for the GC.
+			limit = { check_variable = { md_promoted_sc_seat > -1 } NOT = { has_global_flag = COLDWAR_gc_un_session_seats } }
 			set_temp_variable = { md_promoted_sc_replacement_found = 0 }
 			random_scope_in_array = {
 				array = global.UN_general_assembly
@@ -1131,6 +1169,8 @@ unsc_promote_permanent_member = {
 			news_event = UNSC.13
 			unsc_end_permanent_seat_application = yes
 			international_systems_update = yes
+			# IMPERIA COLD WAR — Permanent admission and its elected replacement update the German dossiers.
+			COLDWAR_Germany_un_status_changed = yes
 		} else = {
 			unsc_fail_permanent_seat_application = yes
 		}
@@ -1827,6 +1867,9 @@ fire_ga_resolution_result_event = {
 }
 
 full_satellite_system_access = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	custom_effect_tooltip = full_sat_system_access_tt
 
 	if = {
@@ -1912,6 +1955,8 @@ full_satellite_system_access = {
 			set_country_flag = { flag = recently_accepted_civ_COM_@ROOT value = 1 days = 180 }
 		}
 	}
+
+}
 }
 
 #This makes it so that receiving money reduces your benefits from the main UN modifier
@@ -2539,15 +2584,21 @@ apply_recognition_pp = {
 # country. Bumps Granted_Recognition, grants political power scaled by the recogniser's power
 # tier, and fires milestone news events when crossing 25 / 50 / 100 recognising states.
 # Equality-on-bump-by-1 is the milestone gate.
+# IMPERIA COLD WAR — German recognition is counted from independent state decisions.
 recognition_grant_increment = {
-	add_to_variable = { Granted_Recognition = 1 }
+ if = { limit = { COLDWAR_Germany_recognition_subject = yes } COLDWAR_Germany_recount_recognition = yes }
+ else = { add_to_variable = { Granted_Recognition = 1 } }
 
-	if = { limit = { PREV = { has_idea = non_power } } add_political_power = 5 }
-	else_if = { limit = { PREV = { has_idea = minor_power } } add_political_power = 10 }
-	else_if = { limit = { PREV = { has_idea = regional_power } } add_political_power = 15 }
-	else_if = { limit = { PREV = { has_idea = large_power } } add_political_power = 25 }
-	else_if = { limit = { PREV = { has_idea = great_power } } add_political_power = 50 }
-	else_if = { limit = { PREV = { has_idea = super_power } } add_political_power = 100 }
+	# IMPERIA COLD WAR — German 1970 recognition pays each distinct recogniser once; all other callers retain native MD tiers.
+	if = { limit = { COLDWAR_Germany_recognition_subject = yes IMP_is_1970_scenario = yes } COLDWAR_Germany_recognition_pp_once = yes }
+	else = {
+		if = { limit = { PREV = { has_idea = non_power } } add_political_power = 5 }
+		else_if = { limit = { PREV = { has_idea = minor_power } } add_political_power = 10 }
+		else_if = { limit = { PREV = { has_idea = regional_power } } add_political_power = 15 }
+		else_if = { limit = { PREV = { has_idea = large_power } } add_political_power = 25 }
+		else_if = { limit = { PREV = { has_idea = great_power } } add_political_power = 50 }
+		else_if = { limit = { PREV = { has_idea = super_power } } add_political_power = 100 }
+	}
 
 	# One-time notification when recognition first reaches the UN-ascension threshold (40% of GA)
 	if = {
@@ -2787,8 +2838,9 @@ clear_united_nations_member_state = {
 	un_remove_dying_nation_queued_votes = yes
 	clr_global_flag = sc_action_against@THIS
 
+	# IMPERIA COLD WAR — Never randomly replace an RP appointee after membership loss.
 	if = {
-		limit = { is_in_array = { global.security_council_members = THIS } }
+		limit = { is_in_array = { global.security_council_members = THIS } NOT = { has_global_flag = COLDWAR_gc_un_session_seats } }
 		# The council array is positional (elected seats 0-9, P5 from 10); removing by value
 		# shifts every later seat and desyncs the January rotation, so fill the slot instead.
 		for_each_loop = {
@@ -2877,6 +2929,10 @@ clear_united_nations_member_state = {
 		limit = { has_dynamic_modifier = { modifier = united_nations_member } }
 		remove_dynamic_modifier = { modifier = united_nations_member }
 	}
+	# IMPERIA COLD WAR — Vacate lost RP mandates after removing actual UN membership.
+	COLDWAR_gc_un_refresh = yes
+	# IMPERIA COLD WAR — Membership loss or a replacement seat invalidates only the two German views.
+	COLDWAR_Germany_un_status_changed = yes
 }
 
 remove_from_bloc_membership_arrays = {

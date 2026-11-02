@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Native ideological defence integration.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
 """National spirits of the Federal Republic 1970-2000 (and two for the GDR)."""
 from cw_lib import P, L
@@ -16,7 +17,7 @@ IDEAS = {
                         "fortification", {"army_core_defence_factor": 0.1, "war_support_factor": 0.05, "conscription": 0.005}),
     "nuclear_sharing": ("Nuclear Participation",
                         "No German bomb - but German aircraft, German missiles and a seat in NATO's Nuclear Planning Group.",
-                        "NATO_member", {"mdcw_cw_ideological_defence": 0.05}),
+                        "NATO_member", {"drift_defence_factor": 0.05}),
     "hallstein_legacy": ("The Hallstein Doctrine's Shadow",
                          "For fifteen years Bonn broke relations with anyone who recognised the GDR. The doctrine is dying, but the reflex remains.",
                          "anti_soviet_pact", {"trade_opinion_factor": -0.1, "political_power_factor": -0.03}),
@@ -71,7 +72,7 @@ IDEAS = {
     "nuclear_buildout": ("Nuclear Build-Out", "Fifty reactors are planned.", "nuclear_energy",
                          {"nuclear_energy_generation_modifier": 0.1, "stability_factor": -0.02}),
     "soviet_gas": ("Siberian Gas", "Pipes for gas, gas for decades.", "oil_profits",
-                   {"fossil_pp_energy_generation_modifier": 0.05, "mdcw_cw_ideological_defence": -0.03}),
+                   {"fossil_pp_energy_generation_modifier": 0.05, "drift_defence_factor": -0.03}),
     "flue_gas_law": ("Flue Gas Desulphurisation", "Filters for every coal power plant.", "eco_factories",
                      {"stability_factor": 0.02, "production_speed_buildings_factor": -0.01}),
     "eco_tax": ("Ecological Tax Reform", "Tax energy, relieve labour.", "eco_factories",
@@ -116,7 +117,7 @@ IDEAS = {
     "new_constitution": ("A Constitution for All Germans", "The Basic Law is replaced by a constitution adopted by the whole people.", "democracy",
                          {"stability_factor": 0.06, "political_power_factor": -0.03}),
     "neutral_germany": ("Neutral Germany", "Unity bought with neutrality between the blocs.", "anti_soviet_pact",
-                        {"mdcw_cw_ideological_defence": -0.05, "trade_opinion_factor": 0.1, "war_support_factor": -0.1}),
+                        {"drift_defence_factor": -0.05, "trade_opinion_factor": 0.1, "war_support_factor": -0.1}),
     "german_confederation": ("German Confederation", "Two states, one nation, common institutions.", "democracy",
                              {"political_power_factor": -0.03, "trade_opinion_factor": 0.05}),
     "second_cold_war": ("The Second Cold War", "The Wall stands again.", "fortification3",
@@ -132,6 +133,8 @@ IDEAS = {
 }
 
 SOV_IDEAS = {}
+# IMPERIA COLD WAR — Inert save-compatibility definitions for retired collapse spirits.
+RETIRED_DDR_SPIRITS = {'ddr_crackdown', 'ddr_round_table'}
 DDR_IDEAS = {
     "ddr_crackdown": ("The Chinese Solution", "The regime has fired on its own people.", "political_violence",
                       {"stability_factor": -0.08, "political_power_factor": -0.05, "police_cost_multiplier_modifier": 0.2}),
@@ -151,11 +154,12 @@ def ideas_file():
             L(iid + "_desc", desc)
             out.append(f"\t\t{iid} = {{")
             out.append(f"\t\t\tpicture = {pic}")
-            out.append(f"\t\t\tallowed = {{ original_tag = {tag} }}")
-            out.append("\t\t\tallowed_civil_war = { always = yes }")
+            retired = k in RETIRED_DDR_SPIRITS
+            out.append("\t\t\tallowed = { always = no }" if retired else f"\t\t\tallowed = {{ original_tag = {tag} }}")
+            out.append("\t\t\tallowed_civil_war = { always = no }" if retired else "\t\t\tallowed_civil_war = { always = yes }")
             out.append("\t\t\tremoval_cost = -1")
             out.append("\t\t\tmodifier = {")
-            for mk, mv in mods.items():
+            for mk, mv in ({} if retired else mods).items():
                 out.append(f"\t\t\t\t{mk} = {mv}")
             out.append("\t\t\t}")
             out.append("\t\t}")

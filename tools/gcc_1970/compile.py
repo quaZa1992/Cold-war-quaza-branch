@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: gcc 1970 — compile.
+# IMPERIA COLD WAR — Native Gulf decision eligibility integration.
 """Generate the additional Cold War GCC shared branch; never replace host trees."""
 from pathlib import Path
 import hashlib
@@ -11,6 +11,8 @@ from legacy import install as install_legacy
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
+sys.path.append(str(ROOT/'tools'))
+from multiplayer_quality.native_compat import normalize as native_compatibility
 sys.path.insert(0, str(ROOT/'tools/vietnam_1970'))
 from script_ast import parse, first, values
 
@@ -152,7 +154,7 @@ def build():
         if n['modifiers']:
             contributions.append(block('if','limit = { has_country_flag = '+done(n['key'])+' }\n'+'\n'.join(f'add_to_variable = {{ {P}{key} = {value:g} }}' for key,value in n['modifiers'].items())))
     active = '\n'.join(contributions)+'\n'+block('if','limit = { NOT = { has_dynamic_modifier = { modifier = '+P+'programme } } }\nadd_dynamic_modifier = { modifier = '+P+'programme }')
-    refresh += [block('if','limit = { '+P+'member = yes }\n'+active),block('else','remove_dynamic_modifier = { modifier = '+P+'programme }')]
+    refresh += [block('if','limit = { '+P+'member = yes }\n'+active),block('else_if','limit = { has_dynamic_modifier = { modifier = '+P+'programme } }\nremove_dynamic_modifier = { modifier = '+P+'programme }')]
     technical = P+'member = yes\nhas_country_flag = '+done('technical_standards')
     refresh.append(block('if',block('limit',technical)+block('if','limit = { NOT = { has_country_flag = '+P+'technical_registered } }\nadd_to_tech_sharing_group = '+GROUP+'\nset_country_flag = '+P+'technical_registered')))
     refresh.append(block('else',block('if','limit = { has_country_flag = '+P+'technical_registered }\nremove_from_tech_sharing_group = '+GROUP+'\nclr_country_flag = '+P+'technical_registered')))
@@ -254,6 +256,7 @@ def install():
     outputs=build()
     changed=install_legacy()
     for relative,text in outputs.items():
+        text=native_compatibility(text,relative)
         target=ROOT/relative
         target.parent.mkdir(parents=True,exist_ok=True)
         payload=text.encode('utf-8-sig' if target.suffix=='.yml' else 'utf-8')

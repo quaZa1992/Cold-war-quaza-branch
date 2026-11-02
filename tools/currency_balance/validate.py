@@ -7,6 +7,9 @@ ROOT=HERE.parents[1]
 sys.path.insert(0,str(ROOT/'tools/israel_1970'))
 from script_format import read
 from balance_manifest import reverse_if_recorded
+# IMPERIA COLD WAR — Keep the earlier balance baseline intact around the Franc/Lira extension.
+sys.path.insert(0,str(ROOT/'tools/frf_itl_currencies'))
+from extension_manifest import reverse_extension
 
 
 def one(block,key):
@@ -37,7 +40,8 @@ def main():
         old[name]=reverse_if_recorded(name,(ROOT/name).read_bytes())
         check(sha(old[name])==record['sha256'],f'Exact authorized reverse-byte proof: {name}')
     for name,digest in baseline['protected'].items():
-        current=(ROOT/name).read_bytes()
+        # IMPERIA COLD WAR — Reverse only the recorded later currency integration.
+        current=reverse_extension(name,(ROOT/name).read_bytes())
         check(sha(current)==digest,f'Protected asset unchanged: {name}')
     path='common/ideas/AA_law_expanded_economics.txt'
     laws=one(one(parse(path),'ideas'),'reserve_currency')

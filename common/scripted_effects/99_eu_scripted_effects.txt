@@ -350,7 +350,13 @@ leaving_EU = {
 	clr_country_flag = EU_candidate
 	set_country_flag = EU_former_member
 	set_country_flag = { flag = EU_rejoin_cooldown days = 1095 value = 1 }
+	# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+	add_to_variable = { ICW_reserve_scripted_depth = 1 }
 	remove_ideas = euro
+	subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+	if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+	# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	custom_effect_tooltip = tooltip_EU_remove_laws_and_offices
 	hidden_effect = {
 		for_each_scope_loop = {
@@ -621,14 +627,32 @@ on_startup_euu_action = {
 		}
 		for_each_scope_loop = {
 			array = global.EU_member
+			# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+			add_to_variable = { ICW_reserve_scripted_depth = 1 }
+			add_to_variable = { ICW_reserve_initializing_depth = 1 }
 			remove_ideas = {
 				euro
 				EU_member
 				foreign_data_kraken
 				asylum_shopping
 			}
+			subtract_from_variable = { ICW_reserve_initializing_depth = 1 }
+			if = { limit = { NOT = { check_variable = { ICW_reserve_initializing_depth > 0 } } } clear_variable = ICW_reserve_initializing_depth }
+			subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+			if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+			# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
 
+
+			# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+			add_to_variable = { ICW_reserve_scripted_depth = 1 }
+			add_to_variable = { ICW_reserve_initializing_depth = 1 }
 			add_ideas = no_foreign_reserve
+			subtract_from_variable = { ICW_reserve_initializing_depth = 1 }
+			if = { limit = { NOT = { check_variable = { ICW_reserve_initializing_depth > 0 } } } clear_variable = ICW_reserve_initializing_depth }
+			subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+			if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+			# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 		}
 		set_global_flag = GAME_RULE_eu_disabled
 	}
@@ -689,15 +713,11 @@ on_startup_euu_action = {
 	}
 
 	# IMPERIA CW — Cold War: Scenario integration.
-	# COLDWAR: 1970 start - European Communities of the Six in the native EU system (COLDWAR_EC_1970_effects.txt).
-	# Sets EU_initialized, so the native 2000 startup block below is skipped.
+	# COLDWAR: 1970 start - the European Communities run in their own system (COLDWAR_EC_1970_*.txt);
+	# COLDWAR: the native MD European Union stays switched off in this scenario.
 	if = {
-		limit = {
-			IMP_is_1970_scenario = yes
-			NOT = { has_global_flag = GAME_RULE_eu_disabled }
-			NOT = { has_global_flag = EU_initialized }
-		}
-		COLDWAR_EC_1970_initialize = yes
+		limit = { IMP_is_1970_scenario = yes } # COLDWAR
+		set_global_flag = GAME_RULE_eu_disabled # COLDWAR
 	}
 
 	# Configure European Union startup values and information
@@ -1653,15 +1673,6 @@ election_EU_Parliament = {
 		set_variable = { global.max_clamp_eu_mep = 99 }
 	}
 
-	# IMPERIA CW — Cold War: Scenario integration.
-	# COLDWAR: EC-era Assembly sizes (COLDWAR_EC_1970_effects.txt)
-	if = {
-		limit = {
-			has_global_flag = COLDWAR_EC_1970_mode
-			NOT = { focus_EU104_accepted = yes }
-		}
-		COLDWAR_EC_1970_set_parliament_size = yes
-	}
 	### Election in member_state
 	for_each_scope_loop = {
 		array = global.EU_member
@@ -1851,96 +1862,201 @@ joining_the_euro = {
 	set_country_flag = EU_joined_the_eurozone
 	if = {
 		limit = { has_idea = us_dollar }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = us_dollar
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = chinese_yuan }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = chinese_yuan
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = chinese_yuan_2 }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = chinese_yuan_2
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = chinese_yuan_3 }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = chinese_yuan_3
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = japanese_yen }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = japanese_yen
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = russia_rouble }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = russia_rouble
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = british_pound }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = british_pound
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = swiss_frank }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = swiss_frank
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = gulden }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = gulden
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = brazilian_real }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = brazilian_real
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = bitcoin }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = bitcoin
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	# IMPERIA CW — Cold War: Scenario integration.
 	# COLDWAR: the Deutsche Mark (Cold War reserve currency) is replaced like the other national reserves
 	if = {
 		limit = { has_idea = deutsche_mark }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = deutsche_mark
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
+	}
+	# IMPERIA COLD WAR — Replace the French and Italian currencies on actual euro adoption.
+	if = {
+		limit = { has_idea = french_franc }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
+		swap_ideas = {
+			remove_idea = french_franc
+			add_idea = euro
+		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
+	}
+	if = {
+		limit = { has_idea = italian_lira }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
+		swap_ideas = {
+			remove_idea = italian_lira
+			add_idea = euro
+		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	if = {
 		limit = { has_idea = no_foreign_reserve }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		swap_ideas = {
 			remove_idea = no_foreign_reserve
 			add_idea = euro
 		}
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 }
 

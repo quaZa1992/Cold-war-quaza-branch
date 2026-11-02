@@ -1,0 +1,1288 @@
+# IMPERIA COLD WAR — January 1970 diplomacy
+COLDWAR_Germany_un_status_changed = {
+if = {
+ limit = { IMP_is_1970_scenario = yes }
+ if = { limit = { country_exists = GER GER = { has_country_flag = cwgg_initialized } }
+  GER = { COLDWAR_GER_1970_rv_sync_views = yes }
+ }
+ else_if = { limit = { country_exists = DDR }
+  DDR = { COLDWAR_GER_1970_east_gui_refresh = yes }
+ }
+}
+}
+COLDWAR_Germany_recount_recognition = {
+if = {
+ limit = { COLDWAR_Germany_recognition_subject = yes }
+ set_variable = { Granted_Recognition = 0 }
+ every_country = {
+  limit = { NOT = { tag = PREV } }
+  if = { limit = { is_in_array = { recognised_countries = PREV } }
+   PREV = { add_to_variable = { Granted_Recognition = 1 } }
+  }
+  # IMPERIA COLD WAR — Observe actual ledger transitions in the existing recount, not a second world scan.
+  if = { limit = { PREV = { tag = DDR } } COLDWAR_Germany_observe_DDR_recognition = yes }
+ }
+ if = { limit = { tag = DDR } set_country_flag = COLDWAR_DDR_recognition_watch_initialized }
+ if = { limit = { country_exists = GER GER = { has_country_flag = cwgg_initialized } }
+  GER = { COLDWAR_GER_1970_rv_sync_views = yes }
+ }
+}
+}
+COLDWAR_Germany_seed_recognition_pp = {
+# IMPERIA COLD WAR — Baseline the live recognition ledger once; old recognitions never generate retroactive political power.
+if = {
+ limit = { COLDWAR_Germany_recognition_subject = yes NOT = { has_country_flag = COLDWAR_Germany_recognition_pp_seeded } }
+ every_country = {
+  limit = { NOT = { tag = PREV } is_in_array = { recognised_countries = PREV } }
+  PREV = { add_to_array = { cwgg_recognition_pp_paid = PREV } }
+ }
+ set_country_flag = COLDWAR_Germany_recognition_pp_seeded
+}
+}
+COLDWAR_Germany_recognition_pp_once = {
+# IMPERIA COLD WAR — A distinct live recogniser pays once per German state, even after withdrawal and restoration.
+if = {
+ limit = { COLDWAR_Germany_recognition_subject = yes IMP_is_1970_scenario = yes }
+ if = { limit = { NOT = { has_country_flag = COLDWAR_Germany_recognition_pp_seeded } }
+  # IMPERIA COLD WAR — A hot-loaded save safely baselines its current ledger before any award.
+  COLDWAR_Germany_seed_recognition_pp = yes
+ }
+ if = { limit = {
+  PREV = { exists = yes NOT = { tag = PREV } is_in_array = { recognised_countries = PREV } }
+  NOT = { is_in_array = { cwgg_recognition_pp_paid = PREV } }
+ }
+  add_to_array = { cwgg_recognition_pp_paid = PREV }
+  if = { limit = { PREV = { has_idea = non_power } } add_political_power = 5 }
+  else_if = { limit = { PREV = { has_idea = minor_power } } add_political_power = 10 }
+  else_if = { limit = { PREV = { has_idea = regional_power } } add_political_power = 15 }
+  else_if = { limit = { PREV = { has_idea = large_power } } add_political_power = 25 }
+  else_if = { limit = { PREV = { has_idea = great_power } } add_political_power = 50 }
+  else_if = { limit = { PREV = { has_idea = super_power } } add_political_power = 100 }
+ }
+}
+}
+COLDWAR_Germany_observe_DDR_recognition = {
+# IMPERIA COLD WAR — THIS is the recognising country; PREV is DDR in the recount.
+if = { limit = { is_in_array = { recognised_countries = DDR } }
+ if = { limit = { NOT = { has_country_flag = COLDWAR_DDR_recognition_observed } }
+  set_country_flag = COLDWAR_DDR_recognition_observed
+  if = { limit = {
+   DDR = { has_country_flag = COLDWAR_DDR_recognition_watch_initialized }
+   NOT = { has_global_flag = COLDWAR_DDR_recognition_seeding }
+  }
+   save_event_target_as = COLDWAR_Germany_recogniser
+   if = { limit = { country_exists = GER }
+    GER = { country_event = { id = COLDWAR_GERMAN_RECOGNITION.1 } }
+    # A withdrawal/regrant still produces a truthful notice, but cannot farm new crises.
+    if = { limit = { NOT = { tag = GER } NOT = { has_country_flag = COLDWAR_DDR_recognition_ever_observed } }
+     GER = {
+      if = { limit = {
+       has_country_flag = cwgg_initialized
+       has_idea = COLDWAR_GER_1970_idea_hallstein_legacy
+       check_variable = { cwgg_vertrag_3 = 0 }
+       check_variable = { cwgg_hebel_recht > 1 }
+       check_variable = { cwgg_krise_typ = 0 }
+       NOT = { has_country_flag = cwgg_crisis_cd }
+       NOT = { has_country_flag = cwgg_strike_ordered }
+       NOT = { DDR = { has_country_flag = cwgg_ddr_countdown_dialogue_open } }
+       NOT = { has_war_with = DDR }
+       NOT = { has_global_flag = COLDWAR_GER_1970_unity_achieved }
+      }
+       # IMPERIA COLD WAR — Preserve the actual recognising state only when a new type-5 crisis starts.
+       clear_array = cwgg_recognition_country
+       event_target:COLDWAR_Germany_recogniser = { GER = { add_to_array = { cwgg_recognition_country = PREV } } }
+       set_temp_variable = { cwgg_t_typ = 5 }
+       COLDWAR_GER_1970_rv_start_crisis = yes
+      }
+     }
+    }
+   }
+  }
+  set_country_flag = COLDWAR_DDR_recognition_ever_observed
+ }
+}
+else_if = { limit = { has_country_flag = COLDWAR_DDR_recognition_observed }
+ clr_country_flag = COLDWAR_DDR_recognition_observed
+ if = { limit = {
+  DDR = { has_country_flag = COLDWAR_DDR_recognition_watch_initialized }
+  NOT = { has_global_flag = COLDWAR_DDR_recognition_seeding }
+  country_exists = GER
+ }
+  save_event_target_as = COLDWAR_Germany_recogniser
+  GER = { country_event = { id = COLDWAR_GERMAN_RECOGNITION.2 } }
+ }
+}
+}
+COLDWAR_Germany_campaign_recognition = {
+custom_effect_tooltip = campaign_attempt_tt
+hidden_effect = { if = {
+ limit = { COLDWAR_Germany_can_campaign = yes }
+ set_country_flag = { flag = recent_global_recog_request_campaign days = 365 }
+ country_event = recognition.17
+ international_systems_force_update = yes
+} }
+}
+COLDWAR_UN_submit_application = {
+if = {
+ limit = { COLDWAR_UN_can_apply = yes }
+ set_country_flag = { flag = recent_un_ascension_attempt days = 365 }
+ set_temp_variable = { sc_new_vote_type = 5 }
+ set_temp_variable = { sc_new_vote_nation = THIS }
+ update_sc_vote = yes
+}
+}
+COLDWAR_Germany_joint_un_applications = {
+custom_effect_tooltip = COLDWAR_Germany_joint_un_applications_tt
+hidden_effect = {
+if = { limit = { IMP_is_1970_scenario = yes tag = GER country_exists = DDR }
+COLDWAR_UN_submit_application = yes
+if = { limit = { country_exists = DDR } DDR = { COLDWAR_UN_submit_application = yes } }
+}
+}
+}
+COLDWAR_Germany_recognise_DDR = {
+custom_effect_tooltip = COLDWAR_Germany_recognise_DDR_tt
+hidden_effect = { if = {
+ limit = { IMP_is_1970_scenario = yes country_exists = DDR NOT = { tag = DDR } NOT = { is_in_array = { recognised_countries = DDR } } }
+ add_to_array = { recognised_countries = DDR }
+ DDR = { recognition_grant_increment = yes }
+ international_systems_force_update = yes
+} }
+}
+COLDWAR_Germany_mutual_recognition = {
+custom_effect_tooltip = COLDWAR_Germany_mutual_recognition_tt
+hidden_effect = { if = {
+ limit = { IMP_is_1970_scenario = yes country_exists = GER country_exists = DDR }
+ GER = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+ DDR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+ GER = { COLDWAR_Germany_recount_recognition = yes }
+ DDR = { COLDWAR_Germany_recount_recognition = yes }
+ international_systems_force_update = yes
+} }
+}
+COLDWAR_Germany_retire_recognition_points = {
+if = {
+ limit = { IMP_is_1970_scenario = yes OR = { tag = GER tag = DDR } }
+ clear_variable = cwddr_recognition
+ clr_country_flag = COLDWAR_GER_1970_un_member
+ remove_ideas = COLDWAR_GER_1970_idea_un_member
+ remove_ideas = COLDWAR_GER_1970_idea_unsc_member
+ COLDWAR_Germany_recount_recognition = yes
+}
+}
+COLDWAR_UN_1970_initialize = {
+if = {
+ limit = { IMP_is_1970_scenario = yes NOT = { has_global_flag = COLDWAR_UN_1970_initialized } }
+ set_global_flag = COLDWAR_UN_1970_initialized
+ set_global_flag = COLDWAR_DDR_recognition_seeding
+ # Remove inherited MD membership before assembling the historical roster.
+ every_country = {
+  if = { limit = { has_idea = p5_member } remove_ideas = p5_member }
+  if = { limit = { has_dynamic_modifier = { modifier = united_nations_member } } remove_dynamic_modifier = { modifier = united_nations_member } }
+ }
+ clear_array = global.UN_general_assembly
+ clear_array = global.security_council_members
+ clear_array = global.p5_sc_members
+ clear_array = global.new_council_members
+ clear_array = global.confirmed_new_council_members
+ if = { limit = { country_exists = TAI } TAI = { remove_ideas = lacks_international_recognition remove_ideas = non_state_actor } }
+ # IMPERIA COLD WAR — An upstream startup may already have removed Taiwan from this ledger.
+ if = { limit = { is_in_array = { global.Unrecognised_States = TAI } } remove_from_array = { global.Unrecognised_States = TAI } }
+if = {
+limit = { country_exists = AFG }
+AFG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ALB }
+ALB = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ALG }
+ALG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ARG }
+ARG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = AST }
+AST = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = AUS }
+AUS = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BAR }
+BAR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BEL }
+BEL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BOL }
+BOL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BOT }
+BOT = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BRA }
+BRA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ENG }
+ENG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BUL }
+BUL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BRM }
+BRM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BUR }
+BUR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BLR }
+BLR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CBD }
+CBD = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CAM }
+CAM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CAN }
+CAN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CAR }
+CAR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SRI }
+SRI = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CHA }
+CHA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CHL }
+CHL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = TAI }
+TAI = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = COL }
+COL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CNG }
+CNG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = DRC }
+DRC = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = COS }
+COS = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CUB }
+CUB = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CYP }
+CYP = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CZE }
+CZE = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BEN }
+BEN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = DEN }
+DEN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = DOM }
+DOM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ECU }
+ECU = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ELS }
+ELS = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = EGU }
+EGU = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ETH }
+ETH = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = FIN }
+FIN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = FRA }
+FRA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = GAB }
+GAB = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = GAM }
+GAM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = GAH }
+GAH = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = GRE }
+GRE = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = GUA }
+GUA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = GUI }
+GUI = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = GUY }
+GUY = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = HAI }
+HAI = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = HON }
+HON = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = HUN }
+HUN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ICE }
+ICE = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = RAJ }
+RAJ = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = IND }
+IND = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = PER }
+PER = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = IRQ }
+IRQ = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = IRE }
+IRE = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ISR }
+ISR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ITA }
+ITA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = CDI }
+CDI = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = JAM }
+JAM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = JAP }
+JAP = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = JOR }
+JOR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = KEN }
+KEN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = KUW }
+KUW = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = LAO }
+LAO = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = LEB }
+LEB = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = LES }
+LES = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = LIB }
+LIB = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = LBA }
+LBA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = LUX }
+LUX = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MAD }
+MAD = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MLW }
+MLW = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MAY }
+MAY = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MLD }
+MLD = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MAL }
+MAL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MLT }
+MLT = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MAU }
+MAU = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MRT }
+MRT = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MEX }
+MEX = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MON }
+MON = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = MOR }
+MOR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = NEP }
+NEP = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = HOL }
+HOL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = NZL }
+NZL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = NIC }
+NIC = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = NGR }
+NGR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = NIG }
+NIG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = NRY }
+NRY = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = PAK }
+PAK = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = PAN }
+PAN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = PAR }
+PAR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = PRU }
+PRU = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = PHI }
+PHI = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = POL }
+POL = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = POR }
+POR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ROM }
+ROM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = RWA }
+RWA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SAU }
+SAU = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SEN }
+SEN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SIE }
+SIE = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SIN }
+SIN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SOM }
+SOM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SAF }
+SAF = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SYE }
+SYE = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SOV }
+SOV = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SPR }
+SPR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SUD }
+SUD = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SWA }
+SWA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SWE }
+SWE = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SYR }
+SYR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = TNZ }
+TNZ = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SIA }
+SIA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = TOG }
+TOG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = TRI }
+TRI = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = TUN }
+TUN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = TUR }
+TUR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = UGA }
+UGA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = UKR }
+UKR = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = EGY }
+EGY = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = USA }
+USA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = BFA }
+BFA = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = URG }
+URG = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = VEN }
+VEN = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = YEM }
+YEM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = SER }
+SER = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+if = {
+limit = { country_exists = ZAM }
+ZAM = { add_to_array = { global.UN_general_assembly = THIS } add_dynamic_modifier = { modifier = united_nations_member } }
+}
+add_to_array = { global.security_council_members = COL }
+add_to_array = { global.security_council_members = FIN }
+add_to_array = { global.security_council_members = NEP }
+add_to_array = { global.security_council_members = SPR }
+add_to_array = { global.security_council_members = ZAM }
+add_to_array = { global.security_council_members = BUR }
+add_to_array = { global.security_council_members = NIC }
+add_to_array = { global.security_council_members = POL }
+add_to_array = { global.security_council_members = SIE }
+add_to_array = { global.security_council_members = SYR }
+add_to_array = { global.security_council_members = TAI }
+add_to_array = { global.security_council_members = FRA }
+add_to_array = { global.security_council_members = SOV }
+add_to_array = { global.security_council_members = USA }
+add_to_array = { global.security_council_members = ENG }
+TAI = { add_ideas = p5_member }
+FRA = { add_ideas = p5_member }
+SOV = { add_ideas = p5_member }
+USA = { add_ideas = p5_member }
+ENG = { add_ideas = p5_member }
+if = {
+limit = { country_exists = DDR country_exists = ALB }
+ALB = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = BUL }
+BUL = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = CHI }
+CHI = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = CUB }
+CUB = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = CZE }
+CZE = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = HUN }
+HUN = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = MON }
+MON = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = NKO }
+NKO = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = POL }
+POL = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = ROM }
+ROM = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = SOV }
+SOV = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = VIE }
+VIE = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = SER }
+SER = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = CBD }
+CBD = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = IRQ }
+IRQ = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = SUD }
+SUD = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = SYR }
+SYR = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = SYE }
+SYE = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = DDR country_exists = EGY }
+EGY = { if = { limit = { NOT = { is_in_array = { recognised_countries = DDR } } } add_to_array = { recognised_countries = DDR } } }
+}
+if = {
+limit = { country_exists = GER country_exists = AFG }
+AFG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ALG }
+ALG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ARG }
+ARG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = AST }
+AST = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = AUS }
+AUS = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BAR }
+BAR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BEL }
+BEL = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BOL }
+BOL = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BOT }
+BOT = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BRA }
+BRA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ENG }
+ENG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BRM }
+BRM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BUR }
+BUR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BLR }
+BLR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CBD }
+CBD = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CAM }
+CAM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CAN }
+CAN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CAR }
+CAR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SRI }
+SRI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CHA }
+CHA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CHL }
+CHL = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = TAI }
+TAI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = COL }
+COL = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CNG }
+CNG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = DRC }
+DRC = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = COS }
+COS = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CYP }
+CYP = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BEN }
+BEN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = DEN }
+DEN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = DOM }
+DOM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ECU }
+ECU = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ELS }
+ELS = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = EGU }
+EGU = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ETH }
+ETH = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = FIN }
+FIN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = FRA }
+FRA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = GAB }
+GAB = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = GAM }
+GAM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = GAH }
+GAH = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = GRE }
+GRE = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = GUA }
+GUA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = GUI }
+GUI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = GUY }
+GUY = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = HAI }
+HAI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = HON }
+HON = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ICE }
+ICE = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = RAJ }
+RAJ = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = IND }
+IND = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = PER }
+PER = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = IRQ }
+IRQ = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = IRE }
+IRE = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ISR }
+ISR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ITA }
+ITA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = CDI }
+CDI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = JAM }
+JAM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = JAP }
+JAP = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = JOR }
+JOR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = KEN }
+KEN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = KUW }
+KUW = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = LAO }
+LAO = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = LEB }
+LEB = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = LES }
+LES = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = LIB }
+LIB = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = LBA }
+LBA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = LUX }
+LUX = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MAD }
+MAD = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MLW }
+MLW = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MAY }
+MAY = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MLD }
+MLD = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MAL }
+MAL = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MLT }
+MLT = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MAU }
+MAU = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MRT }
+MRT = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MEX }
+MEX = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = MOR }
+MOR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = NEP }
+NEP = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = HOL }
+HOL = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = NZL }
+NZL = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = NIC }
+NIC = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = NGR }
+NGR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = NIG }
+NIG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = NRY }
+NRY = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = PAK }
+PAK = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = PAN }
+PAN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = PAR }
+PAR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = PRU }
+PRU = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = PHI }
+PHI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = POR }
+POR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ROM }
+ROM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = RWA }
+RWA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SAU }
+SAU = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SEN }
+SEN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SIE }
+SIE = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SIN }
+SIN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SOM }
+SOM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SAF }
+SAF = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SYE }
+SYE = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SOV }
+SOV = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SPR }
+SPR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SUD }
+SUD = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SWA }
+SWA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SWE }
+SWE = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SYR }
+SYR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = TNZ }
+TNZ = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SIA }
+SIA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = TOG }
+TOG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = TRI }
+TRI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = TUN }
+TUN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = TUR }
+TUR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = UGA }
+UGA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = UKR }
+UKR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = EGY }
+EGY = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = USA }
+USA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = BFA }
+BFA = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = URG }
+URG = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = VEN }
+VEN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = YEM }
+YEM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SER }
+SER = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = ZAM }
+ZAM = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SWI }
+SWI = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = KOR }
+KOR = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = {
+limit = { country_exists = GER country_exists = SVN }
+SVN = { if = { limit = { NOT = { is_in_array = { recognised_countries = GER } } } add_to_array = { recognised_countries = GER } } }
+}
+if = { limit = { country_exists = GER } GER = { COLDWAR_Germany_recount_recognition = yes } }
+if = { limit = { country_exists = DDR } DDR = { COLDWAR_Germany_recount_recognition = yes } }
+if = { limit = { country_exists = GER } GER = { COLDWAR_Germany_seed_recognition_pp = yes } }
+if = { limit = { country_exists = DDR } DDR = { COLDWAR_Germany_seed_recognition_pp = yes } }
+clr_global_flag = COLDWAR_DDR_recognition_seeding
+recompute_un_2_3_number = yes
+recompute_un_sc_required_yes = yes
+international_systems_force_update = yes
+}
+}

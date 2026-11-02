@@ -1,0 +1,9 @@
+IMPERIA COLD WAR: historical airframe role integration provenance
+
+The generated MD_w_COLDWAR_1970_historical_role_frames.txt copies the existing project definitions in mdcw_historical_air_naval_equipment.txt and mdcw_jet_generation_airframes.txt. Their original individual authors and applicable licence or permission are unknown. Existing project attribution and the repository IMPERIA_COLD_WAR_NOTICE.md continue to apply. This notice does not claim ownership or establish third-party permission.
+
+The native frame and role system comes from Millennium Dawn. MD_plane_airframes.txt credits Doolittle. MD_x_plane_airframes.txt credits Doolittle, edited by Kanthier. No native role definitions are copied or replaced: the new names use their exact archetype prefixes so the existing native duplicate_archetypes declarations generate CAS, interceptor, naval and transport derivatives.
+
+Modifications: prefix-correct base IDs, parent references to earlier copies, matching derived names, empty primary weapons on bare frames, and explicit enum registration. Historical years, numerical performance, construction costs, resources, slot definitions and actual design modules remain those of the existing donors. The file loads before native role duplication and requires no forward reference to the later project donor files. Exact operated role hulls are enabled by the January1970 service bundles before variants are created. No new research technology or broad later family is granted.
+
+Native evidence for the correction is the January1970 engine diagnostic: a design's primary weapon add_equipment_type must match its selected native role type. Slot-category compatibility alone is insufficient. Standard MD histories already select small_plane_cas_airframe, medium_plane_fighter_airframe, large_plane_air_transport_airframe and large_plane_maritime_patrol_airframe role types for their corresponding primary modules.

@@ -247,7 +247,7 @@ def box_stamp(text, size, col=RED, alpha=0.5, angle=-7, seed=5):
 
 # ------------------------------------------------------------------ window backgrounds
 def folder_bg(kind, w=780, h=700):
-    base, dark, light = (KHAKI, KHAKI_D, KHAKI_L) if kind == "brd" else (GREEN_FOLDER, GREEN_D, GREEN_L)
+    base, dark, light = (KHAKI, KHAKI_D, KHAKI_L) if kind in ("brd","ddr") else (GREEN_FOLDER, GREEN_D, GREEN_L)
     im = cardboard(w, h, base)
     d = ImageDraw.Draw(im)
     # header band: a shade darker, closed by a printed double rule
@@ -268,7 +268,15 @@ def folder_bg(kind, w=780, h=700):
     sheet = Image.new("RGBA", (5, h - 150), (190, 178, 146, 70))
     im.alpha_composite(sheet, (w - 9, 132))
     # watermark stamps and the classification marking, printed top and bottom centre as on every page
-    if kind == "brd":
+    if kind == 'ddr':
+        # IMPERIA CW — Cold War: the same cabinet-file skin in East Berlin.
+        watermark=emblem_from_file('ddr_staatswappen.png',150) if os.path.exists(os.path.join(EMBLEM_DIR,'ddr_staatswappen.png')) else emblem_ddr(150)
+        watermark.putalpha(watermark.getchannel('A').point(lambda alpha:int(alpha*0.10)))
+        im.alpha_composite(watermark,(w-196,h-214))
+        mark='CONFIDENTIAL'
+        foot_l='File: German Affairs / 1970'
+        foot_r='Council of Ministers · East Berlin'
+    elif kind == "brd":
         im.alpha_composite(seal(150, "BUNDESKANZLERAMT · BONN · ", alpha=0.13), (w - 196, h - 214))
         mark = "VS - NUR FÜR DEN DIENSTGEBRAUCH"
         foot_l = "Az.: II/2 - 30100 - Ge 5/70"

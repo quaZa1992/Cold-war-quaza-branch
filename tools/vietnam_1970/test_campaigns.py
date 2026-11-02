@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: vietnam 1970 — test campaigns.
+# IMPERIA COLD WAR — Vietnam native campaign transaction regressions.
 """Focused, fail-closed execution tests of installed campaign script AST.
 
 Follows test_transactions.py's small-interpreter approach without importing its
@@ -129,7 +129,7 @@ class World:
         if key == 'has_global_flag': return value in self.global_flags
         if key == 'is_in_faction_with': return bool(country.faction) and country.faction == self.countries[value].faction
         if key == 'controls_province': return self.provinces.get(int(value)) == country.tag
-        if key == 'stability': return country.stability < float(value) if op == '<' else country.stability > float(value)
+        if key == 'has_stability': return country.stability < float(value) if op == '<' else country.stability > float(value)
         if key == 'num_divisions': return country.divisions > int(value) if op == '>' else country.divisions == int(value)
         if key == 'num_divisions_in_states':
             states = [int(v) for _, _, v in first(value, 'states')]

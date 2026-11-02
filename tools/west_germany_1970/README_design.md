@@ -1,22 +1,25 @@
-# West Germany 1970 (COLDWAR_GER_1970)
+IMPERIA COLD WAR — West Germany 1970 (COLDWAR_GER_1970)
+
+Current multiplayer balance and two-month crisis rounds are documented in [BALANCE_IMPLEMENTATION.md](BALANCE_IMPLEMENTATION.md).
 
 Content for the Federal Republic in the 1970 scenario:
 
-- a focus tree of 235 focuses in eight pillars, built after MD's Russia and Israel trees;
-- two windows on the top bar, *Inner-German Relations* and *Internal Security*;
-- a monthly simulation of Bonn politics, terrorism and the GDR;
-- 141 events, decisions, national spirits, portraits and Imperia hooks.
+- a focus tree of 417 focuses in eight pillars, built after MD's Russia and Israel trees;
+- two launchers beside faction membership in the politics panel, *Inner-German Relations* and *Internal Security* (DDR: *Domestic Affairs*);
+- an East Berlin perspective on the shared Inner-German Relations file, with DDR policy controls;
+- monthly Bonn institutions, security and bilateral-pressure systems;
+- 360 events, decisions, national spirits, portraits and Imperia hooks.
 
 It only runs when `original_tag = GER` and `IMP_is_1970_scenario = yes`. The 1985 and 2000 content for Germany is untouched.
 
-Nothing in the German question is fixed to a date. Crises, détente, the GDR's collapse, unity and even war come from the numbers and the player's choices.
+The West German focus tree and selectable policies remain player-paced. For a human BRD–DDR game, the old GER-authored Honecker appointment, Wall/Wende and collapse chains, scheduled BRD leadership stories, and unilateral DDR unity annexation are retired. Political alternatives still available through explicit focus or event choices are guarded by current party and leadership conditions. The native DDR tree owns DDR leadership and government choices; its historical mortality events apply only to AI-controlled DDR. Historical dated world flavor, regular elections, and genuine condition-driven crisis consequences remain. The German two-player bridge reads the current native DDR border ladder for border-opening checks; it does not infer a border or government outcome from a historical date or an obsolete proxy.
 
 ## Files
 
 | File | Content |
 |---|---|
 | `common/national_focus/COLDWAR_GER_1970_focus.txt` | the focus tree |
-| `common/scripted_effects/COLDWAR_GER_1970_effects.txt` | setup, monthly tick, Bundestag, terror model, GDR model, unity, Imperia wrappers, leaders, core spirits |
+| `common/scripted_effects/COLDWAR_GER_1970_effects.txt` | setup, monthly tick, Bundestag, security and bilateral-pressure models, negotiated unity, Imperia wrappers, core spirits |
 | `common/scripted_effects/COLDWAR_GER_1970_windows_effects.txt` | the rivalry mini-game, internal security, window refresh |
 | `common/scripted_triggers/COLDWAR_GER_1970_windows_triggers.txt` | availability of every window action |
 | `common/scripted_guis/COLDWAR_GER_1970_windows.txt` | scripted GUIs of both windows and their top-bar buttons |
@@ -33,7 +36,9 @@ Nothing in the German question is fixed to a date. Crises, détente, the GDR's c
 The tree follows the conventions of MD's Russia and Israel trees:
 
 - **Hubs.** A root focus (*The Government Statement*) opens eight hub focuses, one per pillar. Every other focus is placed with `relative_position_id`.
-- **Costs.** 1 for hubs, 2 for quick political steps, 3 as standard, 5 for reforms, 7 for great projects (*Aufbau Ost*). The average cost is about 3.
+- **Focus duration.** The catalogue retains its relative design weights. Weights 1–2 take 35 days; ordinary steps and reforms (weights 3–5) take 70 days; existing weight-7 projects (*Aufbau Ost*) retain 98 days. HOI4's `NFocus.FOCUS_POINT_DAYS = 7` means emitted costs of 5, 10 and 14. The 417 focuses comprise 129 at 35 days, 285 at 70 days and 3 at 98 days.
+- **Player-paced availability.** Focuses have no calendar requirements, calendar alternatives, era locks or date-expiry bypasses. Government, parliamentary, treaty, security, unity and other real gameplay conditions remain. Post-opening branches require actual border opening or unity. Unity talks retain 36 months of achieved détente and their treaty requirements. The euro programme uses the native MD currency effect without waiting for 1999. Nuclear safety, the environment ministry, GSG 9 and a renunciation offer do not wait for historically dated incidents or a scheduled RAF generation. Dated world flavor remains; crisis and foreign-consent outcomes follow live conditions and player choices.
+
 - **Core spirits.** Eight dynamic modifiers grow focus by focus. Each reward shows a *Modifies …* block, as MD's `modifies_dynamic_modifier_tt` does. The variables are `cwfo_<core>_<modifier>`.
 
   | Core spirit | Pillar | Modifiers |
@@ -66,6 +71,12 @@ The tree follows the conventions of MD's Russia and Israel trees:
   - **Bundeswehr:** *Forward Defence* and *Prepare the State of Defence* feed the rivalry window.
 - **AI.** `ai_will_do` follows the historical path. The AI never takes the confrontation branch or the war focuses.
 
+The preventive environmental wording draws on the Federal Republic's [1971 environmental programme](https://dserver.bundestag.de/btd/06/027/0602710.pdf) and its [precaution, polluter-pays and cooperation principles](https://www.bundesumweltministerium.de/meldung/50-jahre-umweltprogramm). Historically the separate environment ministry [followed Chernobyl in 1986](https://www.bundesumweltministerium.de/ministerium/geschichte/umweltpolitische-meilensteine-von-1986-bis-heute), while GSG 9 [was founded after Munich on 26 September 1972](https://www.komm-zur-bundespolizei.de/sechs-meilensteine-in-der-geschichte-der-bundespolizei/). Choosing either institution earlier is an alternate-history policy choice; the existing benefits and trade-offs are retained.
+
+Focus-linked political sources retain their substantive conditions: a Barzel government requires the successful confidence vote and his leadership; a CSU split requires its existing opposition/autonomy conditions and the player's split decision. Refugee-policy branches accept either an existing asylum surge or current `imp_refugee_pressure > 0.15`, matching the existing scheduler's pressure threshold without its year requirement. The Greens' parliamentary entry retains the established-party and last-election threshold checks without waiting for a dated founding event.
+
+Direct decisions and window actions likewise retain their gameplay requirements without year locks: the Federal Reform Commission follows the constitutional focus; East Berlin's socialist opening requires an SED government; the cultural agreement retains treaty progress and climate requirements; the PKK ban retains its current-threat and prior-ban checks. The trust and alignment point mechanics have been removed; see [DDR_RELATIONS.md](DDR_RELATIONS.md). Other calendar weights in AI behaviour, random incident scheduling and passive historical simulation remain.
+
 `python3 preview.py <dir>` renders the tree as PNGs.
 
 ## Bundestag arithmetic
@@ -78,16 +89,16 @@ This is a two-player game between Bonn and East Berlin, built for multiplayer ro
 
 ### Climate and the escalation ladder
 
-**Climate** runs from -100 to +100. It moves 5% a month towards a base, minus 3% of the escalation pressure. The base adds up:
+**Climate** runs from -100 to +100. It moves 5% a month towards a base, minus 3% of the escalation pressure. The base reflects:
 
 - the treaties in force (+4 each);
 - open channels (+2 each);
 - world tension (Imperia);
-- the SED leader;
-- Moscow's line (Soviet 1970 tree);
-- the government in Bonn;
+- enacted Bonn policies and alliance choices;
 - the NATO double-track decision and the zero option;
-- the Deutschlandpolitik course and the focus tree.
+- the focus-tree policy choices.
+
+DDR's native political course, government and leader remain under DDR control and do not directly drive the bilateral climate. The retired Moscow Guarantee and Wende/leader proxy scores are not climate inputs.
 
 **Escalation ladder.** Seven stages, with hysteresis:
 
@@ -109,9 +120,9 @@ Each stage sets stability, war support, consumer goods and factory output in bot
 |---|---|
 | Types | Transit, border incident, spy affair, embassy refugees, recognition, missiles, manoeuvre, dissidents, Elbe border, uprising |
 | How they start | A monthly roll that grows with bad climate and high pressure. Some have fixed causes: the double-track decision, world tension above 80, a GDR exit wave, a second rising after a crackdown |
-| Rounds | Every six months, resolved by the monthly tick (no recurring hidden events). Bonn chooses one of seven stances. East Berlin answers secretly with one of five: a human picks it by event, the AI weighs its leader, its hard-currency need, Moscow's guarantee and Bonn's alert level. A payoff matrix sets the change of intensity. Each type has a best answer and a special action. Crises last 2-4 rounds |
+| Rounds | Every two months, resolved by the monthly tick. Bonn chooses one of seven stances. When DDR is human, it submits its own order; the round remains pending until each human country has submitted. AI behavior is used only for AI-controlled countries and follows current economic, security and force conditions. A payoff matrix sets the change of intensity. Each type has a best answer and a special action. Crises last 2-4 rounds |
 | End | Intensity 0, or running out of rounds below 50, settles the crisis: whoever gave way in the last round loses it, otherwise it ends in a compromise. Above 50 it freezes and may flare up again. Intensity 100 means the brink |
-| The brink | Give way, show resolve (a three-month countdown, one step a month, in which either side may give way), or ask the superpowers to mediate (hotline or NATO membership). If nobody gives way, a human East Berlin decides between Moscow's restraint and war; for an AI East Berlin a human Soviet Union decides, and with both AI Moscow always reins East Berlin in |
+| The brink | Give way, show resolve (a three-month countdown, one step a month, in which either side may give way), or ask the superpowers to mediate (hotline or NATO membership). With two human German players, each country must submit its own readiness/order before a round resolves. A DDR attack requires an explicit DDR order and current Soviet-faction membership; a human Soviet Union is never called into war automatically |
 
 ### Troops at the border
 
@@ -123,24 +134,25 @@ The divisions each side has in its border states are counted with the vanilla tr
 - **Bonn's levers.** Six levers: hard currency, people, media, legal position, alliance, trade. They carry 13 actions, including the Swing, the billion-mark credit, prisoner buy-outs, transit payments, the media offensive, a credit freeze, escape helpers, border exercises, rolling up Stasi networks and alert levels.
 - **East Berlin's levers.** Four levers: transit, compulsory exchange, Stasi, border regime. An AI GDR uses them between crises; a human GDR uses the decisions *Raise the Compulsory Exchange*, *Harass the Transit Routes*, *Strengthen the Border Installations*, *HVA Offensive*, *Win Another Recognition*, *A Gesture of Goodwill*, *Ask Bonn for a Credit* and *Close the Access Routes*.
 - **Channels.** Six channels. The Stasi can tap them; a raid secures them again.
-- **Treaties.** A ladder of nine, from the Erfurt/Kassel meeting to a treaty community. Each is negotiated over months and the Bundestag must ratify the ones that change the legal position. They fire the existing events (Erfurt, the Basic Treaty, the Karlsruhe ruling, Honecker in Bonn).
+- **Treaties.** A ladder of nine, from the Erfurt/Kassel meeting to a treaty community. Either side can initiate each treaty for 25 political power and 2 of the initiator's own initiative, subject to the existing treaty requirements. Both countries must give explicit consent; a ready or deferred offer remains locked until accepted, refused or explicitly lapsed. No timeout signs a treaty for a player. The cooperative confederation flag and idea require valid bilateral Treaty 9 standing and do not make DDR a subject or alter its faction membership.
 
 ### War paths
 
-There are four. Nobody is pulled into the war automatically except an AI Soviet Union that still guarantees the GDR; NATO governments and a human Soviet Union decide for themselves. An AI GDR without Moscow's guarantee leaves the Warsaw Pact faction.
+War is reached only through a valid war path and current country/faction conditions. There is no guarantee-score route and no automatic Soviet call for a human-controlled USSR. Actual Soviet faction membership is checked where the DDR attack path requires it; NATO membership alone does not call NATO governments into the war.
 
 | Path | Trigger |
 |---|---|
 | A | Bonn strikes first. Needs *The Liberation Doctrine*, the countdown, alert level 3 and climate -80 |
-| B | East Berlin attacks at the end of a countdown, only on a human order: a human GDR (Moscow's guarantee 60, NVA alert 2) or, for an AI GDR, a human Soviet Union (NVA alert 2). An AI GDR never starts this war |
+| B | A human East Berlin may order an attack at the end of a countdown when the current crisis, NVA alert and actual Soviet-faction membership requirements are met. The engine does not enlist a human USSR automatically |
 | C | Brotherly help for a rising in the GDR |
-| D | A false alarm during a manoeuvre crisis with both armies on alert 3. The hotline helps. Never between two human players |
+
+A false alarm during a manoeuvre crisis can open a decision event, but it never declares war by itself. Bonn's armistice proposal is routed to DDR through the recipient event `COLDWAR_GGR.260`; DDR decides whether to accept or reject it.
 
 The war brings:
 
 - the state of defence (Art. 115a);
 - a threshold event with a ceasefire offer;
-- unity by force, defeat (West Berlin lost, neutrality) or an armistice.
+- negotiated outcomes or an armistice response from DDR. There is no GER-owned automatic collapse or unity annexation chain.
 
 ### Links and balancing
 
@@ -150,12 +162,7 @@ Links to the old meters:
 - Old effects on it are folded into the climate.
 - The GDR meters serve as levers and shape East Berlin's behaviour.
 
-`python3 simulate_rivalry.py [ai|hawk]` is a Monte Carlo model of the tick:
-
-| Run | Result |
-|---|---|
-| Historical AI | About 2-3 crises up to 1990, mostly ending in compromise; practically no war (0.05%). Treaties 1–6 in 1970–1975, the state visit around 1985 |
-| A player who always holds firm on the confrontation path | About 2-3 brinks in 20 years. Against an AI GDR and AI Soviet Union no war follows unless Bonn strikes first (path A) |
+`python3 simulate_rivalry.py [ai|hawk]` is an exploratory model of selected tick behaviors. Its results are not historical schedules or outcome guarantees and do not validate human consent, HOI4 behavior, multiplayer synchronization or frame time.
 
 ## Internal Security
 
@@ -180,7 +187,7 @@ These connect to the rest of the content:
 |---|---|
 | Imperia | Tension (ladder and events), assistance programmes, PPS, sanctions, refugees, oil shocks, arms demand, alignment, assistance and support modifiers in the core spirits |
 | MD | Elections and coalitions, internal factions, treasury, debt and taxes, counter-terror modifiers, protests, corruption, EU europeanism, NATO, influence, energy modifiers |
-| Soviet 1970 tree | Doctrine focuses move Moscow's guarantee and the climate base; Moscow and Helsinki hooks; the Berlin flag; the gas deal |
+| Soviet 1970 tree | Moscow and Helsinki hooks, the Berlin flag and the gas deal; no retired Moscow Guarantee score feeds the German sandbox |
 
 ## Integration edits to existing files
 
@@ -188,10 +195,18 @@ Unchanged from the first version. `history/countries/GER - Germany.txt` loads th
 
 ## Rebuilding
 
+The runtime performance review and its focused regression commands are recorded in [PERFORMANCE.md](PERFORMANCE.md).
+
+<!-- IMPERIA COLD WAR — Independent DDR politics and shared dossier access -->
+The DDR-facing dossier, shared state ownership, historical policy references and bounded installer are documented in [DDR_RELATIONS.md](DDR_RELATIONS.md). The DDR retains its own national tree and political course. That course no longer feeds the bilateral climate, and the trust/alignment point mechanics are removed.
+
+<!-- IMPERIA CW — Cold War: shared RAF case and bounded security build. -->
+The RAF tree/cabinet/shared-file integration and focused build commands are recorded in [SECURITY_CONTRACT.md](SECURITY_CONTRACT.md). Use `compile_security.py` for a security-only installation into a live checkout with unrelated changes.
+
 ```
 cd tools/west_germany_1970
-python3 compile.py ../..                    # generated files, sprites included
-python3 integration/apply.py ../.. ../..    # integration edits (safe to repeat)
+python3 compile_sandbox.py --dry-run       # review bounded two-player sandbox changes
+python3 compile_sandbox.py                 # apply only bounded sandbox nodes and files
 python3 validate.py ../.. ../..             # references, localisation, sprites, GUI hooks, layout
 python3 preview_gui.py ../.. <png dir> <out dir> [state.json]   # window mock-ups
 python3 preview.py <out dir>                # focus tree PNGs

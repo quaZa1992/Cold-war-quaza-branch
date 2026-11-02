@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — Israel V2 native budget and protected bilateral principal integration.
+# COLDWAR: synced with MD 2.0.3 hotfix (HOI4 1.19.4 UI controls, research-tab tooltips, native agency-upgrade queue)
 # Author(s): Angriest Bird
 # NOTE: This is the general MD on actions consolidate for file cleanliness
 on_actions = {
@@ -151,11 +153,19 @@ on_actions = {
 					if = { limit = { check_variable = { treasury_rate_debt_payment > debt } }
 						set_temp_variable = { treasury_rate_debt_payment = debt }
 					}
+# IMPERIA COLD WAR — Israel V2 money [automatic weekly payment clamp] BEGIN
+set_temp_variable = { ISR2_money_repayment_request = treasury_rate_debt_payment }
+ISR2_money_clamp_repayment = yes
+set_temp_variable = { treasury_rate_debt_payment = ISR2_money_repayment_allowed }
+# IMPERIA COLD WAR — Israel V2 money [automatic weekly payment clamp] END
 					subtract_from_variable = { debt = treasury_rate_debt_payment }
 					subtract_from_temp_variable = { treasury_rate_gain = treasury_rate_debt_payment }
 
 					if = {
-						limit = { check_variable = { debt < 0.001 } }
+# IMPERIA COLD WAR — Israel V2 money [automatic zero cleanup guard] BEGIN
+# ISR2_NATIVE_RESTORE CQkJCQkJbGltaXQgPSB7IGNoZWNrX3ZhcmlhYmxlID0geyBkZWJ0IDwgMC4wMDEgfSB9Cg==
+limit = { check_variable = { debt < 0.001 } NOT = { ISR2_money_has_protected_loan = yes } }
+# IMPERIA COLD WAR — Israel V2 money [automatic zero cleanup guard] END
 						set_variable = { debt = 0 }
 						clr_country_flag = automatically_pay_off_debt_enabled
 					}
@@ -192,8 +202,6 @@ on_actions = {
 					update_operation_ai = yes
 				}
 			}
-
-			MD_auto_agency_weekly_tick = yes
 
 			# Arab Spring
 			if = { limit = { has_country_flag = arab_spring_active }
@@ -1450,21 +1458,39 @@ on_actions = {
 						}
 						NOT = { has_idea = russia_rouble }
 					}
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+					add_to_variable = { ICW_reserve_scripted_depth = 1 }
 					add_ideas = russia_rouble
+					subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+					if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 				}
 				else_if = {
 					limit = {
 						FROM = { tag = JAP }
 						NOT = { has_idea = japanese_yen }
 					}
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+					add_to_variable = { ICW_reserve_scripted_depth = 1 }
 					add_ideas = japanese_yen
+					subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+					if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 				}
 				else_if = {
 					limit = {
 						FROM = { tag = ENG }
 						NOT = { has_idea = british_pound }
 					}
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+					add_to_variable = { ICW_reserve_scripted_depth = 1 }
 					add_ideas = british_pound
+					subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+					if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 				}
 			}
 		}
@@ -1484,7 +1510,13 @@ on_actions = {
 						NOT = { is_in_faction_with = CHI }
 						NOT = { tag = CHI }
 					}
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+					add_to_variable = { ICW_reserve_scripted_depth = 1 }
 					add_ideas = us_dollar
+					subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+					if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 				}
 				else_if = {
 					limit = {
@@ -1494,7 +1526,13 @@ on_actions = {
 						NOT = { tag = SOV }
 						NOT = { tag = RUS }
 					}
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+					add_to_variable = { ICW_reserve_scripted_depth = 1 }
 					add_ideas = us_dollar
+					subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+					if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 				}
 				else_if = {
 					limit = {
@@ -1502,7 +1540,13 @@ on_actions = {
 						NOT = { is_in_faction_with = JAP }
 						NOT = { tag = JAP }
 					}
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+					add_to_variable = { ICW_reserve_scripted_depth = 1 }
 					add_ideas = us_dollar
+					subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+					if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 				}
 				else_if = {
 					limit = {
@@ -1510,7 +1554,13 @@ on_actions = {
 						NOT = { is_in_faction_with = ENG }
 						NOT = { tag = ENG }
 					}
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+					add_to_variable = { ICW_reserve_scripted_depth = 1 }
 					add_ideas = us_dollar
+					subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+					if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+					# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 				}
 			}
 		}

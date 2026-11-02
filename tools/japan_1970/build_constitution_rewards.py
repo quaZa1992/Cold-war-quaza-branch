@@ -1,10 +1,18 @@
-# IMPERIA CW — Cold War: Japan 1970 constitutional focus reward generation.
+# IMPERIA COLD WAR — Cold War: Japan 1970 constitutional focus reward generation.
 """Write reviewable Article Nine rewards to staging; never install them."""
 from pathlib import Path
 
 root = Path(__file__).resolve().parent
 stage = root / 'staging' / 'constitution'
 stage.mkdir(parents=True, exist_ok=True)
+from reward_revision import load_overlay
+
+def quote(value):
+    return '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"'
+
+OVERLAY = load_overlay()
+article_overrides = OVERLAY.get('article9', {})
+terminal_ideas = OVERLAY['terminal_ideas']
 prefix = 'COLDWAR_JAP_1970_article9_'
 records = {
     'debate': (-50, 0, {'stability_factor': -.03}, 730, 'init'),
@@ -21,6 +29,12 @@ records = {
     'abolish': (0, 0, {}, None, 'abolish'),
     'confirm': (0, 0, {}, None, 'confirm'),
 }
+for key, override in article_overrides.items():
+    if key not in records:
+        raise ValueError(f'Unknown Article 9 reward override: {key}')
+    old_pp, old_cost, old_modifiers, old_days, old_action = records[key]
+    records[key] = (override.get('pp', old_pp), override.get('treasury_cost', old_cost),
+                    override.get('modifiers', old_modifiers), override.get('days', old_days), old_action)
 names = {
     'debate': 'The Constitutional Debate', 'commission': 'Revision Commission',
     'coalition': 'Coalition for Revision', 'campaign': 'Constitutional Campaign',
@@ -29,9 +43,9 @@ names = {
     'mission': 'Defence Mission Debate', 'diet': 'The Diet Vote',
 }
 
-ideas = ['# IMPERIA CW — Cold War: Japan constitutional debate modifiers.', 'ideas = {', '\tcountry = {']
-effects = ['# IMPERIA CW — Cold War: Japan constitutional focus rewards.']
-loc = ['l_english:']
+ideas = ['# IMPERIA COLD WAR — Cold War: Japan constitutional debate modifiers.', 'ideas = {', '\tcountry = {']
+effects = ['# IMPERIA COLD WAR — Cold War: Japan constitutional focus rewards.']
+loc = ['l_english:', '# IMPERIA COLD WAR — Japan constitutional reward localization.']
 for key, (pp, cost, modifiers, days, action) in records.items():
     idea = prefix + key + '_climate'
     if modifiers:
@@ -74,4 +88,31 @@ ideas.extend(['\t}', '}'])
 (stage / 'ideas.txt').write_text('\n'.join(ideas) + '\n', encoding='utf-8')
 (stage / 'effects.txt').write_text('\n'.join(effects) + '\n', encoding='utf-8')
 (stage / 'localisation.yml').write_text('\n'.join(loc) + '\n', encoding='utf-8-sig')
-print(f'Staged {len(records)} constitutional rewards; focus availability and display require integration.')
+
+terminal_lines = ['# IMPERIA COLD WAR — Japan constitutional terminal spirits.', 'ideas = {', '\tcountry = {']
+terminal_loc = ['l_english:', '# IMPERIA COLD WAR — Japan constitutional terminal spirit localization.']
+for idea, record in terminal_ideas.items():
+    terminal_lines += [f'\t\t{idea} = {{', '\t\t\tpicture = JAP_imperial_influence_communist',
+                       '\t\t\tallowed_civil_war = { always = yes }', '\t\t\tmodifier = {']
+    terminal_lines.extend(f'\t\t\t\t{key} = {value:g}' for key, value in record['modifiers'].items())
+    terminal_lines += ['\t\t\t}', '\t\t}']
+    terminal_loc += [f' {idea}: {quote(record["name"])}', f' {idea}_desc: {quote(record["description"])}']
+terminal_lines += ['\t}', '}']
+(stage / 'terminal_ideas.txt').write_text('\n'.join(terminal_lines) + '\n', encoding='utf-8')
+(stage / 'terminal_localisation.yml').write_text('\n'.join(terminal_loc) + '\n', encoding='utf-8-sig')
+terminal_effects = [
+    '# IMPERIA COLD WAR — Japan constitutional referendum terminal effects.',
+    'COLDWAR_JAP_1970_article9_abolish = {',
+    '\tset_country_flag = COLDWAR_JAP_1970_article9_abolished',
+    '\tremove_ideas = COLDWAR_JAP_1970_article9_self_defence',
+    '\tadd_ideas = COLDWAR_JAP_1970_revised_defence_constitution',
+    '\tif = { limit = { country_exists = USA } USA = { add_opinion_modifier = { target = JAP modifier = COLDWAR_JAP_1970_revision_concern } country_event = { id = coldwar_jap.2 } } }',
+    '\tif = { limit = { country_exists = SOV } SOV = { add_opinion_modifier = { target = JAP modifier = COLDWAR_JAP_1970_soviet_revision_concern } country_event = { id = coldwar_jap.3 } } }',
+    '}',
+    'COLDWAR_JAP_1970_article9_confirm = {',
+    '\tset_country_flag = COLDWAR_JAP_1970_article9_confirmed',
+    '\tadd_timed_idea = { idea = COLDWAR_JAP_1970_article9_retained_mandate days = 730 }',
+    '}',
+]
+(stage / 'terminal_effects.txt').write_text('\n'.join(terminal_effects) + '\n', encoding='utf-8')
+print(f'Staged {len(records)} constitutional focus rewards and {len(terminal_ideas)} terminal spirits; no runtime files were written.')

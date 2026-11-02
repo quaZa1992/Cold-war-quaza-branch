@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: isolated native Japan mechanics probe.
+# IMPERIA COLD WAR — Cold War: isolated native Japan mechanics probe.
 """Run an addon in a separate user directory; never alter the user's playset."""
 import argparse
 import hashlib
@@ -10,16 +10,16 @@ import ctypes
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
-GAME=Path('C:/Program Files (x86)/Steam/steamapps/common/Hearts of Iron IV')
+GAME=Path('E:/SteamLibrary/steamapps/common/Hearts of Iron IV')
 MARKER='COLDWAR_JAP70_ENGINE_PROBE'
 
 
 def prepare(phase):
-    profile=HERE/'runtime_probe'/phase
+    profile=Path('E:/HOI4_Mod_Tools/mdcoldwar/runtime/quaza_eastasia_20261027/japan')/phase
     addon=profile/'fixture'
     for folder in ('mod','fixture/common/on_actions','fixture/events','fixture/common/scripted_effects'):
         (profile/folder).mkdir(parents=True,exist_ok=True)
-    (HERE/'runtime_probe/.gitignore').write_text('*\n',encoding='utf-8')
+    (profile/'.gitignore').write_text('*\n',encoding='utf-8')
     # Preserve all replace_path directives; otherwise vanilla states and
     # scripted databases merge with MD and fail before any test can run.
     base=(ROOT/'descriptor.mod').read_text(encoding='utf-8-sig')+'\npath="'+ROOT.as_posix()+'"\n'
@@ -48,7 +48,7 @@ def prepare(phase):
             return match.group()+f'\timmediate = {{ log = "COLDWAR_JAP70_ENGINE_PROBE REPORT {data["focus"]} {data["outcome"]} country=[ROOT.GetTag] sender=[FROM.GetTag]" }}\n'
         reports=re.sub(r'\bid = (COLDWAR_JAP70_REPORT\.\d+)\n',instrument_report,reports)
         (addon/'events/COLDWAR_JAP70_diplomatic_reports.txt').write_text(reports,encoding='utf-8')
-    hook='''# IMPERIA CW — Cold War: isolated Japan engine assertions.
+    hook='''# IMPERIA COLD WAR — Cold War: isolated Japan engine assertions.
 on_actions = { on_startup = { effect = {
  log = "COLDWAR_JAP70_ENGINE_PROBE START"
  JAP = {

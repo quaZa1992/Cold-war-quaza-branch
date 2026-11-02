@@ -1,4 +1,5 @@
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
+# IMPERIA COLD WAR — DDR Soviet decisions retain explicit consent and remove the trust meter.
 # COLDWAR | Decision categories and decisions of the GDR 1970 tree: the Central Committee, the German Question, Moscow,
 # the Five-Year Plans, Hard Currency (KoKo), the Housing Programme, the Kombinat contracts, the Military Council,
 # talks with Moscow on leaving the Pact, and the Soviet side ("The German Comrades": endorse a change, Fraternal Assistance).
@@ -98,7 +99,7 @@ dec(C, "demarcation_campaign", "Demarcation Campaign",
     "GFX_decision_generic_political_rally", E.course(-0.10), cost=50, re_enable=90)
 dec(C, "transit_talks", "Transit Talks",
     "State secretaries Kohl and Bahr meet again: transit routes, visitor passes, postal traffic. Every agreement is a small step towards Bonn.",
-    "GFX_decision_generic_political_discourse", E.course(0.10) + E.trust(-2), cost=50, re_enable=90)
+    "GFX_decision_generic_political_discourse", E.course(0.10), cost=50, re_enable=90)
 dec(C, "raise_the_minimum_exchange", "Raise the Minimum Exchange",
     "Every Western visitor must change more D-Marks at one to one. The visits drop; the hard currency rises.",
     "GFX_decision_generic_consumer_goods", E.course(-0.05) + E.receive(0.002), re_enable=180)
@@ -110,18 +111,11 @@ dec(C, "freikauf", "Freikauf",
 # ================================================================ Moscow
 C = f"{PFX}moscow_category"
 cat(C, "Moscow",
-    "Every road from East Berlin leads through Moscow. Reports, delegations and credits keep the Soviet comrades well disposed.\n\n"
-    "Moscow's Trust: §Y[?COLDWAR_DDR_moscow_trust|0]§!",
+    "The republic maintains its treaty relationship with the Soviet Union through consultations, delegations and credit agreements.",
     "GFX_decision_category_union_state", 192, DDR_T, [unlocked("moscow")])
-dec(C, "report_to_the_kremlin", "Report to the Kremlin",
-    "The First Secretary reports in person on plan fulfilment, the Western contacts and the mood in the party.",
-    "GFX_decision_generic_speech", E.trust(3), cost=25, re_enable=90, ai="base = 1")
-dec(C, "host_a_soviet_delegation", "Host a Soviet Delegation",
-    "A Soviet delegation tours the Kombinate, lays a wreath at Treptow and is received at Wandlitz.",
-    "GFX_decision_generic_political_rally", E.pay(0.002) + E.trust(5), re_enable=180, ai="base = 1")
 dec(C, "request_soviet_credit", "Request Soviet Credit",
     "Moscow can help with a credit in transferable roubles - at the price of a little more dependence.",
-    "GFX_decision_generic_factory", E.trust(-5) + E.credit(0.005), re_enable=365)
+    "GFX_decision_generic_factory", E.credit(0.005), re_enable=365)
 
 # ================================================================ talks on leaving the Pact
 C = f"{PFX}pact_talks_category"
@@ -251,19 +245,18 @@ dec(C, "return_to_civilian_rule", "Return to Civilian Rule",
 C = f"{PFX}german_comrades_category"
 SOV_T = ["original_tag = SOV"]
 cat(C, "The German Comrades",
-    "The German Democratic Republic is the Soviet Union's most important ally - and its most stubborn one. Moscow's Trust in East Berlin: "
-    "§Y[?DDR.COLDWAR_DDR_moscow_trust|0]§!",
+    "The Central Committee's decisions remain subject to East Berlin's political and treaty commitments.",
     "GFX_decision_category_power_struggle", 199, SOV_T,
-    ["country_exists = DDR", f"DDR = {{ has_country_flag = {PFX}initialized OR = {{ check_variable = {{ {PFX}moscow_trust < 31 }} has_country_flag = {PFX}fraternal_assistance_open }} }}"])
+    ["country_exists = DDR", f"DDR = {{ has_country_flag = {PFX}initialized }}"])
 dec(C, "endorse_a_change", "Endorse a Change in East Berlin",
     "The ambassador lets it be known that Moscow would welcome a change at the top of the SED. A Moscow loyalist may then stand for First Secretary.",
     "GFX_decision_generic_political_discourse", [f"DDR = {{ country_event = {{ id = {NS}.{EV[PFX + 'soviet_endorses']} days = 1 }} }}"], cost=25,
-    available=[f"DDR = {{ check_variable = {{ {PFX}moscow_trust < 31 }} {SED} NOT = {{ has_country_flag = {PFX}soviet_endorses_change }} }}"])
+    available=[f"DDR = {{ {SED} NOT = {{ has_country_flag = {PFX}soviet_endorses_change }} }}"])
 dec(C, "fraternal_assistance", "Fraternal Assistance",
     "East Berlin has defied the Soviet Union. An ultimatum would give it one night to return to the path of socialism - or to face the Soviet Army.",
     "GFX_decision_generic_military", [f"DDR = {{ country_event = {{ id = {NS}.{EV[PFX + 'fraternal_assistance']} days = 1 }} }}", "add_war_support = 0.03"],
     cost=100, visible=[f"DDR = {{ has_country_flag = {PFX}fraternal_assistance_open }}"], available=["has_war = no", "NOT = { has_war_with = DDR }"],
-    ai="base = 1\nmodifier = { factor = 0 DDR = { check_variable = { COLDWAR_DDR_moscow_trust > 20 } } }\nmodifier = { factor = 0 NOT = { has_government = communism } }")
+    ai="base = 1\nmodifier = { factor = 0 NOT = { has_government = communism } }")
 
 
 # ---------------------------------------------------------------- files

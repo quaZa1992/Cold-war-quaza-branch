@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: cyprus 1970 — test transactions.
+# IMPERIA COLD WAR — Cypriot recipient consent and registered Yugoslav country routing.
 """Focused transaction tests against emitted ASTs, not an HOI4 engine emulator.
 
 Models only the documented native commands reached by these scenarios. Unknown
@@ -38,7 +38,7 @@ class Transactions:
         return all(self.term(k,op,v,s) for k,op,v in tree)
 
     def term(self,k,op,v,s):
-        if k in self.data or k in ('CYP','GRE','TUR','ENG','YUG','SOV','145','146'):return self.test(v,k)
+        if k in self.data or k in ('CYP','GRE','TUR','ENG','SER','SOV','145','146'):return self.test(v,k)
         if k in ('AND','OR','NOT','hidden_trigger'):
             checks=[self.term(a,b,c,s) for a,b,c in v]
             return all(checks) if k in ('AND','hidden_trigger') else any(checks) if k=='OR' else not any(checks)
@@ -71,7 +71,7 @@ class Transactions:
             elif k=='else':
                 if not matched:self.run(v,s)
             elif k in self.effects:self.run(self.effects[k],s)
-            elif k in ('CYP','GRE','TUR','ENG','YUG','SOV','145','146'):self.run(v,k)
+            elif k in ('CYP','GRE','TUR','ENG','SER','SOV','145','146'):self.run(v,k)
             elif k in ('set_country_flag','clr_country_flag'):
                 name=first(v,'flag') if isinstance(v,list) else v
                 (d['f'].add if k=='set_country_flag' else d['f'].discard)(name)
@@ -144,22 +144,22 @@ class TransactionTests(unittest.TestCase):
         return r
 
     def test_duplicate_loan_acceptance_never_duplicates_cash_or_debt(self):
-        r=self.offer_loan();r.data['YUG']['v']['treasury']=1
-        r.decision('accept_YUG_p1_finance_a','YUG');r.decision('accept_YUG_p1_finance_a','YUG')
-        self.assertAlmostEqual(r.data['YUG']['v']['treasury'],.98)
+        r=self.offer_loan();r.data['SER']['v']['treasury']=1
+        r.decision('accept_YUG_p1_finance_a','SER');r.decision('accept_YUG_p1_finance_a','SER')
+        self.assertAlmostEqual(r.data['SER']['v']['treasury'],.98)
         self.assertAlmostEqual(r.data['CYP']['v']['treasury'],1.02)
         self.assertAlmostEqual(r.data['CYP']['v']['debt'],.02)
 
     def test_loan_unaffordable_or_ai_or_stale_cannot_pay(self):
         for reason in ('funds','ai','stale','wrong_actor'):
             with self.subTest(reason=reason):
-                self.r=Transactions();r=self.offer_loan();r.data['YUG']['v']['treasury']=1
-                if reason=='funds':r.data['YUG']['v']['treasury']=.001
-                if reason=='ai':r.data['YUG']['ai']=True
+                self.r=Transactions();r=self.offer_loan();r.data['SER']['v']['treasury']=1
+                if reason=='funds':r.data['SER']['v']['treasury']=.001
+                if reason=='ai':r.data['SER']['ai']=True
                 if reason=='stale':r.data['CYP']['v'][P+'crisis_instance']=5
-                before=r.data['YUG']['v']['treasury']
-                r.decision('accept_YUG_p1_finance_a','GRE' if reason=='wrong_actor' else 'YUG')
-                self.assertEqual(r.data['YUG']['v']['treasury'],before)
+                before=r.data['SER']['v']['treasury']
+                r.decision('accept_YUG_p1_finance_a','GRE' if reason=='wrong_actor' else 'SER')
+                self.assertEqual(r.data['SER']['v']['treasury'],before)
                 self.assertEqual(r.data['CYP']['v']['debt'],0)
 
     def test_renewal_freezes_original_principal(self):

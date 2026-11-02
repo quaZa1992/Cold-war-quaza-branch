@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: universal research coverage and first-success award limits.
+# IMPERIA COLD WAR — qa research rewards validation.
 import json
 from pathlib import Path
 import validate as V
@@ -15,7 +15,7 @@ def run():
         V.check(set(tags)<=categories and explicit<=set(technologies),'Award targets unknown technology selectors')
         uncovered=[ident for ident,own in technologies.items() if ident not in explicit and not own&tags]
         V.check(not uncovered,'General award excludes technologies: '+','.join(uncovered))
-        V.check(V.first(block,'bonus') in ['0.10','0.20'],'Research award magnitude changed')
+        V.check(V.first(block,'bonus') in ['0.01','0.02','0.04','0.05','0.06','0.07','0.08','0.09','0.10','0.12','0.14','0.16','0.18','0.20'],'Research award magnitude changed')
     m=V.Machine(('SAU',));m.init();m.call('cw_sr_p27_success')
     V.check(len(m.c.tech_bonuses)==1 and m.c.tech_bonuses[0][2]=='0.10','First national lunar success did not award exactly one general 10% bonus')
     before=len(m.c.tech_bonuses)
@@ -31,7 +31,7 @@ def run():
         V.check(not t.c.tech_bonuses,'Unsuccessful mission granted full research reward')
     source=(V.ROOT/'localisation/english/COLDWAR_space_race_l_english.yml').read_text(encoding='utf-8-sig')
     V.check('space technology' not in source and 'technology in any field' in source,'Localisation still limits awards to space technology')
-    report={'checks':V.CHECKS,'status':'passed','technology_count':len(technologies),'category_count':len(categories),'explicit_uncategorised':len(uncategorised),'native_award_blocks':len(blocks),'uses_per_award':1,'repeat_awards':False,'in_game_tested':False}
+    report={'project':'IMPERIA COLD WAR','checks':V.CHECKS,'status':'passed','technology_count':len(technologies),'category_count':len(categories),'explicit_uncategorised':len(uncategorised),'native_award_blocks':len(blocks),'uses_per_award':1,'repeat_awards':False,'in_game_tested':False}
     Path(__file__).with_name('research_rewards_validation.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report))
 
 

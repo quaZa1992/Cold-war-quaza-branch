@@ -1,9 +1,35 @@
-# Israel 1970 implementation
+# IMPERIA COLD WAR: Israel 1970 implementation
 
-The generated `ISR70` module contains 389 focuses, 161 decisions, sixty-seven events,
+The generated `ISR70` module contains 399 focuses, 182 decisions, seventy-seven events,
 twenty political families and thirty-seven named party/list variants. New
 localisation is English only, with a UTF-8 BOM. The seven starting spirits are
 applied once for the January 1970 campaign.
+
+The corrected settlement-presence expansion separates unilateral footholds under
+foreign control from actual controlled-state construction. There are no host
+acceptance, refusal or termination decisions, payments or positive host rewards.
+The actual controller receives production, stability and budget penalties.
+West Bank, Gaza, Sinai and Golan start with distinct resistance, garrison and
+Israeli budget profiles. See `docs/israel_1970_design/PRESENCE_AND_OCCUPATION.md`
+and `docs/israel_1970_design/UNILATERAL_SETTLEMENTS.md`. Run
+`validate_presence.py` for the bounded transaction and lifecycle checks.
+
+An existing Palestine now receives bounded institutional and commercial costs
+from actual West Bank and Gaza settlement programmes. Two tiers per area,
+selected funded compensation relief and full prospective numeric terms are
+implemented in `palestinian_pressure.py`. See
+`docs/israel_1970_design/PALESTINIAN_PRESSURE.md` and run
+`validate_palestinian_pressure.py` for its country/state and preview checks.
+
+The 27 October 2026 rework gives six compatible shared programmes +15% available
+workforce in total. The economic route adds strong real civilian-factory and
+office productivity, while diaspora bonds and fundraising supply distinct
+one-time capital sources with explicit debt or service costs. Three paid
+settlement extensions per selected area add real agricultural districts,
+infrastructure, forts, operating benefits and escalating security burdens.
+Ceasefire negotiations are player-initiated and repeatable; civilian territorial
+policy does not require a historical military sequence. See
+`docs/israel_1970_design/REWORK_20261027.md` and `validate_rework.py`.
 
 The focus layout uses compact thematic blocks and MD relative-position anchors.
 Party programmes occupy two compact tiers. All 32 political unlock focuses have
@@ -60,7 +86,7 @@ duration. A project that loses its state or other required conditions refunds
 that exact reservation. One-time completion flags prevent repeated factory grants.
 Debt repayments debit and retire the same capped amount. Bilateral agreements
 require the other country's response, and rejected proposals can be retried.
-Territorial implementation checks both legal owner and controller; it creates
+Controlled-state construction checks both legal owner and controller; it creates
 no automatic ownership or cores from a claim. The new Sinai-integration route
 has its own much stricter consent and time conditions. Starting armies, fleets
 and air wings remain deferred.
@@ -135,6 +161,8 @@ python tools/israel_1970/validate_layout.py
 python tools/israel_1970/validate_rewards.py
 python tools/israel_1970/validate_policy.py
 python tools/israel_1970/validate_policy_map.py
+python tools/israel_1970/validate_presence.py
+python tools/israel_1970/validate_palestinian_pressure.py
 python tools/israel_1970/audit_md_patterns.py
 python tools/israel_1970/check_rebuild.py
 ```

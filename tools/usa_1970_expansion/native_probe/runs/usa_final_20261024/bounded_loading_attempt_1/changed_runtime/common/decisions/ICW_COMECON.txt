@@ -1,0 +1,43 @@
+# IMPERIA COLD WAR — COMECON national consent and explicit site selection
+cc_decisions = {
+cc_invite = { icon = GFX_cc_emblem target_array = global.countries target_root_trigger = { cc_secretariat = yes check_variable = { global.cc_members^num < 32 } } target_trigger = { FROM = { exists = yes NOT = { cc_member_country = yes } NOT = { COLDWAR_SOV_is_union_republic = yes } NOT = { has_country_flag = cc_invited } } } complete_effect = { if = { limit = { cc_secretariat = yes FROM = { exists = yes NOT = { cc_member_country = yes } NOT = { COLDWAR_SOV_is_union_republic = yes } } } FROM = { set_country_flag = cc_invited } cc_touch = yes } } ai_will_do = { factor = 0 } }
+cc_membership_accept = { icon = GFX_cc_emblem visible = { has_country_flag = cc_invited NOT = { cc_member_country = yes } } complete_effect = { if = { limit = { has_country_flag = cc_invited NOT = { cc_member_country = yes } NOT = { COLDWAR_SOV_is_union_republic = yes } SOV = { cc_secretariat = yes } check_variable = { global.cc_members^num < 32 } } add_ideas = cc_member add_to_array = { global.cc_members = THIS } add_to_array = { global.cc_hosts = THIS } capital_scope = { PREV = { set_variable = { cc_1_site1 = PREV.id } set_variable = { cc_2_site1 = PREV.id } set_variable = { cc_3_site1 = PREV.id } set_variable = { cc_4_site1 = PREV.id } } } clr_country_flag = cc_invited cc_touch = yes } } ai_will_do = { factor = 0 } }
+cc_membership_refuse = { icon = GFX_cc_emblem visible = { has_country_flag = cc_invited NOT = { cc_member_country = yes } } complete_effect = { if = { limit = { has_country_flag = cc_invited NOT = { cc_member_country = yes } NOT = { COLDWAR_SOV_is_union_republic = yes } SOV = { cc_secretariat = yes } check_variable = { global.cc_members^num < 32 } }  clr_country_flag = cc_invited cc_touch = yes } } ai_will_do = { factor = 0 } }
+cc_annex = { icon = GFX_decision_generic_factory visible = { cc_member_country = yes NOT = { has_country_flag = cc_military_annex } } complete_effect = { if = { limit = { cc_member_country = yes } set_country_flag = cc_military_annex cc_touch = yes } } ai_will_do = { factor = 0 } }
+cc_1_site = { icon = GFX_decision_generic_factory state_target = yes on_map_mode = map_and_decisions_view
+target_root_trigger = { cc_access = yes check_variable = { cc_view_slot = 1 } check_variable = { global.cc_1_phase < 2 } }
+target_trigger = { FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+complete_effect = { if = { limit = { cc_access = yes check_variable = { global.cc_1_phase < 2 } FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+if = { limit = { check_variable = { cc_pick_site = 2 } } set_variable = { cc_1_site2 = FROM.id } }
+else_if = { limit = { check_variable = { cc_pick_site = 3 } } set_variable = { cc_1_site3 = FROM.id } }
+else = { set_variable = { cc_1_site1 = FROM.id } } cc_1_revise = yes } } ai_will_do = { factor = 0 } }
+cc_1_approve = { icon = GFX_cc_emblem visible = { cc_1_voter = yes check_variable = { global.cc_1_phase < 2 } } complete_effect = { cc_1_preview_all = yes hidden_effect = { if = { limit = { cc_1_voter = yes check_variable = { global.cc_1_phase < 2 } } set_variable = { cc_1_vote_revision = global.cc_1_revision } cc_1_rebuild = yes } } } ai_will_do = { factor = 0 } }
+cc_1_decline = { icon = GFX_cc_emblem visible = { cc_1_voter = yes check_variable = { global.cc_1_phase < 2 } } complete_effect = { cc_1_preview_all = yes hidden_effect = { if = { limit = { cc_1_voter = yes check_variable = { global.cc_1_phase < 2 } } set_variable = { cc_1_vote_revision = -1 } cc_1_rebuild = yes } } } ai_will_do = { factor = 0 } }
+cc_2_site = { icon = GFX_decision_generic_factory state_target = yes on_map_mode = map_and_decisions_view
+target_root_trigger = { cc_access = yes check_variable = { cc_view_slot = 2 } check_variable = { global.cc_2_phase < 2 } }
+target_trigger = { FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+complete_effect = { if = { limit = { cc_access = yes check_variable = { global.cc_2_phase < 2 } FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+if = { limit = { check_variable = { cc_pick_site = 2 } } set_variable = { cc_2_site2 = FROM.id } }
+else_if = { limit = { check_variable = { cc_pick_site = 3 } } set_variable = { cc_2_site3 = FROM.id } }
+else = { set_variable = { cc_2_site1 = FROM.id } } cc_2_revise = yes } } ai_will_do = { factor = 0 } }
+cc_2_approve = { icon = GFX_cc_emblem visible = { cc_2_voter = yes check_variable = { global.cc_2_phase < 2 } } complete_effect = { cc_2_preview_all = yes hidden_effect = { if = { limit = { cc_2_voter = yes check_variable = { global.cc_2_phase < 2 } } set_variable = { cc_2_vote_revision = global.cc_2_revision } cc_2_rebuild = yes } } } ai_will_do = { factor = 0 } }
+cc_2_decline = { icon = GFX_cc_emblem visible = { cc_2_voter = yes check_variable = { global.cc_2_phase < 2 } } complete_effect = { cc_2_preview_all = yes hidden_effect = { if = { limit = { cc_2_voter = yes check_variable = { global.cc_2_phase < 2 } } set_variable = { cc_2_vote_revision = -1 } cc_2_rebuild = yes } } } ai_will_do = { factor = 0 } }
+cc_3_site = { icon = GFX_decision_generic_factory state_target = yes on_map_mode = map_and_decisions_view
+target_root_trigger = { cc_access = yes check_variable = { cc_view_slot = 3 } check_variable = { global.cc_3_phase < 2 } }
+target_trigger = { FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+complete_effect = { if = { limit = { cc_access = yes check_variable = { global.cc_3_phase < 2 } FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+if = { limit = { check_variable = { cc_pick_site = 2 } } set_variable = { cc_3_site2 = FROM.id } }
+else_if = { limit = { check_variable = { cc_pick_site = 3 } } set_variable = { cc_3_site3 = FROM.id } }
+else = { set_variable = { cc_3_site1 = FROM.id } } cc_3_revise = yes } } ai_will_do = { factor = 0 } }
+cc_3_approve = { icon = GFX_cc_emblem visible = { cc_3_voter = yes check_variable = { global.cc_3_phase < 2 } } complete_effect = { cc_3_preview_all = yes hidden_effect = { if = { limit = { cc_3_voter = yes check_variable = { global.cc_3_phase < 2 } } set_variable = { cc_3_vote_revision = global.cc_3_revision } cc_3_rebuild = yes } } } ai_will_do = { factor = 0 } }
+cc_3_decline = { icon = GFX_cc_emblem visible = { cc_3_voter = yes check_variable = { global.cc_3_phase < 2 } } complete_effect = { cc_3_preview_all = yes hidden_effect = { if = { limit = { cc_3_voter = yes check_variable = { global.cc_3_phase < 2 } } set_variable = { cc_3_vote_revision = -1 } cc_3_rebuild = yes } } } ai_will_do = { factor = 0 } }
+cc_4_site = { icon = GFX_decision_generic_factory state_target = yes on_map_mode = map_and_decisions_view
+target_root_trigger = { cc_access = yes check_variable = { cc_view_slot = 4 } check_variable = { global.cc_4_phase < 2 } }
+target_trigger = { FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+complete_effect = { if = { limit = { cc_access = yes check_variable = { global.cc_4_phase < 2 } FROM = { is_owned_by = ROOT is_controlled_by = ROOT } }
+if = { limit = { check_variable = { cc_pick_site = 2 } } set_variable = { cc_4_site2 = FROM.id } }
+else_if = { limit = { check_variable = { cc_pick_site = 3 } } set_variable = { cc_4_site3 = FROM.id } }
+else = { set_variable = { cc_4_site1 = FROM.id } } cc_4_revise = yes } } ai_will_do = { factor = 0 } }
+cc_4_approve = { icon = GFX_cc_emblem visible = { cc_4_voter = yes check_variable = { global.cc_4_phase < 2 } } complete_effect = { cc_4_preview_all = yes hidden_effect = { if = { limit = { cc_4_voter = yes check_variable = { global.cc_4_phase < 2 } } set_variable = { cc_4_vote_revision = global.cc_4_revision } cc_4_rebuild = yes } } } ai_will_do = { factor = 0 } }
+cc_4_decline = { icon = GFX_cc_emblem visible = { cc_4_voter = yes check_variable = { global.cc_4_phase < 2 } } complete_effect = { cc_4_preview_all = yes hidden_effect = { if = { limit = { cc_4_voter = yes check_variable = { global.cc_4_phase < 2 } } set_variable = { cc_4_vote_revision = -1 } cc_4_rebuild = yes } } } ai_will_do = { factor = 0 } }
+}

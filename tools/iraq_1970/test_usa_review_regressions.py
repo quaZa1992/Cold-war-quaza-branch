@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: iraq 1970 — test usa review regressions.
+# IMPERIA COLD WAR — USA Gulf native-value review regressions.
 """Counterexample regressions for post-install US review findings 1 and 2.
 
 Runs emitted AST in memory, including the actual native MD treasury effect.
@@ -163,7 +163,7 @@ def main():
     assert not w.idea(w.c['USA'],P+'northern_air_readiness')
     assert not w.idea(w.c['KUR'],P+'external_guarantee')
     assert not w.idea(w.c['KUR'],'COLDWAR_KUR_coalition_air_cover')
-    assert math.isclose(cash-w.c['USA'].var['treasury'],90*.05/7,abs_tol=1e-10)
+    assert math.isclose(cash-w.c['USA'].var['treasury'],90*.00714,abs_tol=1e-10)
     expired_cash = w.c['USA'].var['treasury']
     w.accept(52);w.tick()
     assert w.c['USA'].var[P+'protection_days'] == 0 and w.c['USA'].var['treasury'] == expired_cash
@@ -208,7 +208,7 @@ def main():
     w.c['IRQ'].flags[P+'northern_emergency']=None
     decide(w,'protection');w.call(P+'start_air');cash=w.c['USA'].var['treasury'];w.tick()
     assert w.c['USA'].var[P+'protection_days'] == 89
-    assert math.isclose(cash-w.c['USA'].var['treasury'],(.025+.05)/7,abs_tol=1e-10)
+    assert math.isclose(cash-w.c['USA'].var['treasury'],.00357+.00714,abs_tol=1e-10)
     w.c['USA'].access.clear();w.tick()
     assert w.c['USA'].var[P+'protection_days'] == 0
     assert w.idea(w.c['USA'],P+'northern_air_readiness')
@@ -220,7 +220,7 @@ def main():
     assert set(w.events)=={first(e,'id') for e in values(installed_events,'country_event')}
     checks.append('all installed event IDs remain registered exactly; new initialisation does not shift event/save identity')
     assert original_hash == hashlib.sha256(loaded.read_bytes()).hexdigest()
-    report={'scope':'Pure emitted-AST regression checks with real native treasury-effect body; no compile/install or engine UI simulation','passed':len(checks),'checks':checks,'loaded_usa_file_unchanged_sha256':original_hash}
+    report={'project':'IMPERIA COLD WAR','scope':'Pure emitted-AST regression checks with real native treasury-effect body and native-observed five-place daily division; no compile/install or engine UI simulation','passed':len(checks),'checks':checks,'loaded_usa_file_unchanged_sha256':original_hash}
     target=ROOT/'docs/design/iraq_1970/audit_2026_10_19/US_REVIEW_REGRESSION_TESTS.json'
     target.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(report,indent=2))

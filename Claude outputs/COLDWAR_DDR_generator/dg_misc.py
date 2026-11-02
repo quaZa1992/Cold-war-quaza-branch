@@ -1,4 +1,6 @@
+# IMPERIA COLD WAR — Native ideological defence integration.
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
+# IMPERIA COLD WAR — DDR legacy trust modifiers are inert startup-cleanup tombstones.
 # COLDWAR | Ideas, dynamic modifiers, the Inner-German balance of power, opinion modifiers, leader traits, on_actions,
 # scripted localisation and the events file of the GDR 1970 tree.
 import re
@@ -8,7 +10,6 @@ from dg_effects import R
 import dg_offers as OF
 import dg_events as EV
 from dg_load import C, PROGS, PARTY, TRIG, TRAITS, OPINION_NAMES, LEADER_NAME, LEADER_KEYS, DYN, PARTY_SECTIONS
-from dg_sys import TRUST_TIERS
 
 IDEA_GFX = set(open(os.path.join(EGY, "idea_gfx.txt")).read().split())
 PICK = json.load(open(os.path.join(HERE, "gfxsel", "gfx_pick.json"), encoding="utf-8"))["ideas"]
@@ -65,14 +66,6 @@ def dyn_file():
         for k in R.dyn.get(mod, []):
             modifier_loc(k)
         LOC[mod] = name
-    for t, name, cond, mods in TRUST_TIERS:
-        iid = f"{PFX}trust_{t}"
-        pic = PICK.get(iid) or ("soviet_german_friendship" if t == "garrison_relief" else None)
-        assert pic in IDEA_GFX, (iid, pic)
-        L += [f"{iid} = {{", f'icon = "GFX_idea_{pic}"', "enable = {", cond, "}", ""] + [f"{k} = {fmt(v)}" for k, v in mods] + ["}", ""]
-        for k, _ in mods:
-            modifier_loc(k)
-        LOC[iid] = name
     for mod, keys in R.dyn.items():
         if not mod.endswith("_programme"):
             continue
@@ -83,6 +76,11 @@ def dyn_file():
         for x in keys:
             modifier_loc(x)
         LOC[mod] = title
+    # IMPERIA COLD WAR — inert IDs let startup cleanup remove trust modifiers from existing saves.
+    for legacy in ("brothers_in_arms", "garrison_relief", "reliable_ally", "displeasure", "brezhnev_doctrine"):
+        mod = f"{PFX}trust_{legacy}"
+        L += [f"{mod} = {{", "enable = { always = no }", "}", ""]
+        LOC[mod] = "Inactive legacy modifier"
     return "\n".join(block(L)) + "\n"
 
 
@@ -92,7 +90,7 @@ def _mods(text):
 
 
 COURSE_RANGES = {
-    "left": [("total_demarcation", "Total Demarcation", -1, -0.6, [("drift_defence_factor", 0.25), ("mdcw_cw_ideological_defence", 0.10), ("stability_factor", 0.03),
+    "left": [("total_demarcation", "Total Demarcation", -1, -0.6, [("drift_defence_factor", 0.35), ("stability_factor", 0.03),
                                                                    ("trade_opinion_factor", -0.15), ("research_speed_factor", -0.03)]),
              ("demarcation", "Demarcation", -0.6, -0.2, [("drift_defence_factor", 0.10), ("trade_opinion_factor", -0.05)])],
     "right": [("rapprochement", "Rapprochement", 0.2, 0.6, [("trade_opinion_factor", 0.10), ("research_speed_factor", 0.02), ("tax_gain_multiplier_modifier", 0.02),

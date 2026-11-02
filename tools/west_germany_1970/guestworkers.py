@@ -1,3 +1,4 @@
+# IMPERIA CW — Cold War: Player-paced focus availability preserves political and treaty conditions.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
 """Historical labour-policy focuses bridged to the current shared guest-worker Ministry.
 Source recruitment flavour and focus geometry are retained. The shared system alone
@@ -104,7 +105,6 @@ F("gw_family_reunification", "gw_yugoslavia", 0, 2, cost=3, pre=[["gw_turkey", "
             pic="GFX_German_migrant"))
 F("gw_recruitment_stop", "gw_family_reunification", -1, 1, cost=2, mutex=["gw_open_doors"], icon="borders", name="The Recruitment Stop",
   desc="November 1973: the oil embargo has begun, short-time work is spreading and the labour minister stops all further recruitment from outside the Community overnight. Nobody new may come. But the millions who are already here now face a choice: go home and never come back - or stay for good. Most of them stay.",
-  avail="date > 1973.1.1",
   reward=J(f"set_country_flag = {P}_recruitment_stop", "set_country_flag = gw_recruitment_suspended", stab(0.02), faction("dgb", 4), faction("bdi", -3), party("npd", -0.002),
            tt(f"{P}_tt_gw_stop", "No further recruitment agreements. The guest workers who are already here stay - and keep sending money home.")))
 F("gw_open_doors", "gw_family_reunification", 1, 1, cost=3, mutex=["gw_recruitment_stop"], icon="guest_workers", name="Keep the Doors Open",

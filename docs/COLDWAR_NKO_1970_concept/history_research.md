@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # DPRK, January 1970–1990: historical research for a Cold War focus-tree concept
 
 This memo records historical constraints and policy precedents for a possible North Korean national programme beginning in January 1970. It separates documented developments from alternate-history branches and does not prescribe implementation or numerical balance. The main evidence base is translated diplomatic records and archival research published by the Wilson Center’s North Korea International Documentation Project (NKIDP), U.S. Foreign Relations (FRUS), declassified CIA assessments, IAEA material, and Korean institutional sources. Intelligence reporting and North Korean official claims are identified as such rather than treated as neutral facts.

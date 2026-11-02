@@ -1,0 +1,3 @@
+IMPERIA COLD WAR — German sandbox interface preview
+
+Approximate rendering from installed project GUI coordinates, English localisation and existing DDS assets. Renderer: tools/west_germany_1970/preview_gui.py; modified source: project contributors. Upstream interface credit is recorded in tools/west_germany_1970/INTEGRATION.md and the project notice; individual texture licences/permissions are unknown. This preview introduces no new game artwork. Sample names and values are fixtures. Fonts approximate native HOI4 text. Native close-button and some scripted-localisation rendering remain incomplete in this preview renderer.

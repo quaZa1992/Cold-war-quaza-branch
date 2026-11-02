@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # NKO 1970 concept mechanics reference
 
 Audit target: current `mdcoldwar-main` checkout, with installed MD donor `2777392649`. This note records source-backed mechanics for a concept tree; it does not implement a tree. Source line anchors below are relative to the current target checkout and should be rechecked if the code changes.

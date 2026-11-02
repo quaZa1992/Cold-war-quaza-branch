@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: source-level fixtures for the emitted Spanish political provider.
+# IMPERIA COLD WAR — Spain political lifecycle with native variable comparisons.
 """Bounded script fixtures; this is not a HOI4 engine simulation."""
 import json
 from pathlib import Path
@@ -40,8 +40,11 @@ class Fixture:
             elif key=='date':
                 wanted=tuple(map(int,v.split('.')));result={'<':self.date<wanted,'>':self.date>wanted}[op]
             elif key=='check_variable':
-                a,o,b=v[0];a=self.value(a);b=self.value(b)
-                result={'=':a==b,'>':a>b,'<':a<b,'>=':a>=b,'<=':a<=b}[o]
+                if first(v,'var') is not None:
+                    a,b=self.value(first(v,'var')),self.value(first(v,'value'))
+                    o={'equals':'=','not_equals':'!=','greater_than':'>','less_than':'<','greater_than_or_equals':'>=','less_than_or_equals':'<='}[first(v,'compare','equals')]
+                else:a,o,b=v[0];a=self.value(a);b=self.value(b)
+                result={'=':a==b,'!=':a!=b,'>':a>b,'<':a<b,'>=':a>=b,'<=':a<=b}[o]
             else:raise AssertionError('Unknown condition '+key)
             if not result:return False
         return True

@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # NKO 1970 implementation integration review
 
 Read-only discovery for the approved 189-focus design. No loaded files were changed. The most relevant local integration precedent is the Syria 1970 party-programme lifecycle, combined with the existing NKO-tagged weekly action and MD’s central party-change effect.

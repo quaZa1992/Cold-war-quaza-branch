@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Native trigger compatibility integration.
 # IMPERIA CW — Cold War: Guest Worker Administration
 """Native HOI4 UI and English presentation for the approved Ministry dossier."""
 from pathlib import Path
@@ -243,7 +244,7 @@ def main():
         # in its own tooltip, rather than saying "Ready" on a disabled button.
         entries=[(c,'gw_ministry_reason_'+str(i)) for i,(c,v) in enumerate(reasons[:-3])]
         entries += [(f'check_variable = {{ treasury < {cash} }}',local(f'gw_tier_cash_{size}',f'This agreement requires $${cash} billion.')),
-                    (f'check_variable = {{ political_power < {pp} }}',local(f'gw_tier_pp_{size}',f'This agreement requires {pp} Political Power.')),
+                    (f'check_variable = {{ has_political_power < {pp} }}',local(f'gw_tier_pp_{size}',f'This agreement requires {pp} Political Power.')),
                     (f'NOT = {{ var:gw_ui_partner = {{ mdcw_gw_ui_has_sending_state_{size} = yes }} }}',local(f'gw_tier_population_{size}',
                       'This agreement needs two regions, each with more than 50,000 residents.' if size==100000 else f'The partner needs a region with more than {size:,} residents.')),
                     (f'NOT = {{ mdcw_gw_ui_request_available_{size} = yes }}',local(f'gw_tier_unavailable_{size}','The agreement cannot proceed under the present conditions.'))]

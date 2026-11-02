@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # North Korea 1970 defence expansion: historical precedents
 
 The added programmes treat the 1970 KPA as a large, politically privileged force whose modernization competed with civilian investment. This is grounded in contemporary published state priorities and archival assessments; the particular ministries, sequencing, costs and alternate-history choices in the tree are design proposals, not claims that these exact programmes existed.

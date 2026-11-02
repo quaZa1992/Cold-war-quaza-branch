@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: current delivery geometry and native-art preview.
+# IMPERIA COLD WAR — Cold War: current delivery geometry and native-art preview.
 """Render the effective revision without mutating icon assignments or old concepts."""
 from PIL import Image
 import COLDWAR_KOR_render as r

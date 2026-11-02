@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: usa 1970 quality — apply.
+# IMPERIA COLD WAR — USA editorial overlay and expansion catalogue compatibility.
 """Maintained editorial overlay for the live USA1970 tree.
 
 Its historical header references a generator absent from this checkout. This
@@ -17,7 +17,8 @@ def atomic(path,text,encoding):
     stage=path.with_name(path.name+'.quality-stage')
     stage.write_text(text,encoding=encoding,newline='\n');stage.replace(path)
 def apply():
-    data=json.loads((Path(__file__).parent/'narrative.json').read_text(encoding='utf-8'))
+    record=json.loads((Path(__file__).parent/'narrative.json').read_text(encoding='utf-8'))
+    data=record.get('descriptions',record)
     target=ROOT/'localisation/english/USA_1970_focus_l_english.yml'
     lines=target.read_text(encoding='utf-8-sig').splitlines();seen=set()
     for i,line in enumerate(lines):

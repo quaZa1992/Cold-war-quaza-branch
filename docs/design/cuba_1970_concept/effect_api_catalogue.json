@@ -1,0 +1,329 @@
+{
+  "audit_scope": "Concept-only Cuba 1970–1990 effect/API inventory; no runtime edits.",
+  "sources": {
+    "target_root": "Current mdcoldwar workspace",
+    "main_md": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649",
+    "party_registry": "tools/party_registry_1970/data/CUB.json",
+    "history": "history/countries/CUB - Cuba.txt"
+  },
+  "political_slots": [
+    {
+      "slot": 0,
+      "name": "Cuban Representation in Exile (RECE)",
+      "role": "exile opposition"
+    },
+    {
+      "slot": 1,
+      "name": "Christian Democratic Movement of Cuba",
+      "role": "exile opposition"
+    },
+    {
+      "slot": 2,
+      "name": "Los Constitucionalistas del 40",
+      "role": "exile opposition"
+    },
+    {
+      "slot": 3,
+      "name": "Partido Revolucionario Cubano (Auténtico)",
+      "role": "exile opposition"
+    },
+    {
+      "slot": 4,
+      "name": "Communist Party of Cuba (PCC)",
+      "role": "historical ruling party"
+    },
+    {
+      "slot": 5,
+      "name": "OSPAAAL",
+      "role": "revolutionary internationalist"
+    },
+    {
+      "slot": 6,
+      "name": "La Microfracción",
+      "role": "Soviet orthodox"
+    },
+    {
+      "slot": 7,
+      "name": "MININT",
+      "role": "security-state"
+    },
+    {
+      "slot": 13,
+      "name": "JUCEPLAN",
+      "role": "technocratic planning"
+    },
+    {
+      "slot": 14,
+      "name": "Catholic Church in Cuba",
+      "role": "institutional"
+    },
+    {
+      "slot": 15,
+      "name": "Hacendados del Exilio",
+      "role": "exile landowners"
+    },
+    {
+      "slot": 16,
+      "name": "CAMACOL",
+      "role": "exile business"
+    },
+    {
+      "slot": 17,
+      "name": "Cuban Academy of Sciences",
+      "role": "scientific"
+    },
+    {
+      "slot": 18,
+      "name": "Vergüenza contra Dinero",
+      "role": "nationalist social-democratic"
+    },
+    {
+      "slot": 19,
+      "name": "El Hombre Nuevo",
+      "role": "Guevarist"
+    },
+    {
+      "slot": 20,
+      "name": "Alpha 66",
+      "role": "militant anti-communist"
+    },
+    {
+      "slot": 21,
+      "name": "Cuban Nationalist Movement",
+      "role": "neo-fascist"
+    },
+    {
+      "slot": 22,
+      "name": "Cuban Revolutionary Armed Forces",
+      "role": "military"
+    },
+    {
+      "slot": 23,
+      "name": "Los Leales de la Capitanía",
+      "role": "Hispanist monarchist"
+    }
+  ],
+  "gate_contract": {
+    "native_ideology_at_start": "communism",
+    "exact_subparty_variable": "ruling_party",
+    "start_value": 4,
+    "recommended_gate_example": "check_variable = { ruling_party = 4 }",
+    "required_guards": [
+      "focus availability",
+      "reward application"
+    ],
+    "reactivation": "Custom Cuba programme refresh required after change_ruling_party_effect; preserve one-time reward markers."
+  },
+  "catalogue": [
+    {
+      "policy": "Basic/cash crop allocation as diversification proxy",
+      "status": "supported with semantic limit",
+      "effects": [
+        "AGRI_allocation_change_effect",
+        "AGRI_shift_crop_allocation",
+        "AGRI_price_change_effect",
+        "AGRI_update_math_variables"
+      ],
+      "provider": "common/scripted_effects/00_agrarian_economy_effects.txt",
+      "consumer": "AGRI_update_math_variables; weekly_harvest_billion enters Imperia weekly income",
+      "scope": "country economy variables",
+      "units": "allocation 0..1; weekly income conversion 0.00019 × yearly harvest value",
+      "cap": "each crop allocation is clamped from 0 to 1",
+      "unsupported": [
+        "sugar-specific tonnage",
+        "ration fulfillment",
+        "food stockpiles",
+        "bilateral sugar exports"
+      ],
+      "custom_glue": "Sugar identity, ration deliveries, or exact trade flow require new variables/readers."
+    },
+    {
+      "policy": "Health and education",
+      "status": "native tier changes supported; new outcomes require care",
+      "effects": [
+        "increase_healthcare_budget",
+        "increase_healthcare_budget_2",
+        "increase_healthcare_budget_3",
+        "increase_healthcare_budget_4",
+        "increase_education_budget",
+        "increase_education_budget_2",
+        "increase_education_budget_3",
+        "increase_education_budget_4"
+      ],
+      "provider": "common/scripted_effects/00_budget_effects.txt",
+      "consumer": "existing health/education budget ideas; EDU_update_education_idea_DYNMOD and annual literacy pulse",
+      "scope": "country",
+      "units": "tier transition; literacy_rate is bounded 0.01..1 and changes through annual simulation",
+      "cap": "tier maximum; helper fallback may grant political power rather than more service",
+      "custom_glue": "Confirm CUB literacy initialization and exact current cost formula before using health/education cost multipliers."
+    },
+    {
+      "policy": "US normalization and Soviet trade dependence",
+      "status": "relation effects native; bilateral commodity accounting absent",
+      "effects": [
+        "set_improved_trade_agreement",
+        "add_opinion_modifier",
+        "reverse_add_opinion_modifier"
+      ],
+      "modifiers": [
+        "trade_opinion_factor",
+        "international_market_income_modifier"
+      ],
+      "providers": [
+        "native diplomatic effect API",
+        "CUB history relation initialization",
+        "COLDWAR dynamic modifiers"
+      ],
+      "consumer": "bilateral relations and international market income calculation",
+      "scope": "bilateral relation for agreement/opinion; country-wide for market income modifier",
+      "units": "relation effects are not commodity volume; verify modifier conversion at consumer",
+      "custom_glue": "Soviet fuel/arms/credit dependence and embargo relief as tracked amounts need bilateral counters/readers."
+    },
+    {
+      "policy": "Public services, scarcity, and limited private-sector activity",
+      "status": "native output/tax modifiers; ownership/council institution absent",
+      "modifier_examples": [
+        "consumer_goods_factor",
+        "civilian_industry_tax_modifier",
+        "agriculture_tax_modifier",
+        "corporate_tax_income_multiplier_modifier",
+        "total_workforce_modifier",
+        "civilian_factories_productivity",
+        "production_speed_buildings_factor"
+      ],
+      "cost_effects": [
+        "modify_treasury_effect"
+      ],
+      "provider": "native MD and Imperia modifier/economy systems",
+      "consumer": "registered economic and building consumers",
+      "scope": "country",
+      "units": "modifier-specific; money expenses must be weekly if recurring",
+      "custom_glue": "Private/cooperative ownership ratios and worker councils need custom institution variables and reconciler."
+    },
+    {
+      "policy": "Repression, censorship, and migration",
+      "status": "partial native systems",
+      "modifier_examples": [
+        "police_cost_multiplier_modifier",
+        "foreign_influence_defense_modifier",
+        "drift_defence_factor",
+        "root_out_resistance_effectiveness_factor",
+        "monthly_population"
+      ],
+      "provider": "native law, intelligence, population and resistance readers",
+      "scope": "country",
+      "units": "law/intelligence modifier-specific; monthly_population is population change",
+      "unsupported": [
+        "political exile total",
+        "political return flow"
+      ],
+      "custom_glue": "Use explicit counters/effects for politically attributed exile, return and amnesty."
+    },
+    {
+      "policy": "Domestic defense vs internationalist deployments",
+      "status": "combat and intelligence APIs native; expeditionary distinction absent",
+      "modifier_examples": [
+        "army_core_defence_factor",
+        "army_defence_factor",
+        "army_attack_factor",
+        "army_org_factor",
+        "training_time_factor",
+        "special_forces_cap",
+        "foreign_subversive_activites"
+      ],
+      "provider": "HOI4/MD modifier consumers; COLDWAR_DDR_1970_dynamic_modifiers.txt and COLDWAR_SOV_1970_dynamic_modifiers.txt",
+      "scope": "country or national army modifiers",
+      "custom_glue": "Mission commitments, overseas manpower and related recurring expenses require project-specific variables/effects."
+    },
+    {
+      "policy": "DDR-Cuba island agreement",
+      "status": "event/transaction APIs available; Cuba agreement absent",
+      "patterns": [
+        "recipient-owned offer and acceptance",
+        "bilateral country event",
+        "joint focus member-specific rewards"
+      ],
+      "provider": "existing MD/IMPERIA country transaction patterns",
+      "scope": "payer and recipient must be explicit",
+      "custom_glue": "Offer, acceptance, cost, delivery, refusal/expiry, revalidation and duplicate prevention."
+    }
+  ],
+  "research_and_reward_api": {
+    "focus_default_example": {
+      "source": "Installed MD common/national_focus/00_generic.txt",
+      "focus": "GENERIC_expand_the_secret_service",
+      "cost": 10,
+      "scope": "national focus completion",
+      "effect": "CAT_night_vision research bonus 0.25 for 1 use, plus named idea and diplomatic-intelligence effects"
+    },
+    "building_example": {
+      "source": "Installed MD common/national_focus/00_generic.txt",
+      "focus": "GENERIC_build_intelligence_stations",
+      "treasury_cost_once": 3.5,
+      "scope": "random owned state with free radar slots",
+      "effect": "instant_build 1 radar level in two states"
+    },
+    "doctrine_example": {
+      "source": "Installed MD common/national_focus/03_china_north_korea_joint.txt",
+      "focus": "CHI_NKO_defense_consultations",
+      "army_xp": 25,
+      "doctrine_category": "land_doctrine",
+      "reduction": 0.5,
+      "uses_originator": 2,
+      "uses_member": 1,
+      "scope": "originator/member conditional on doctrine status"
+    },
+    "research_syntax": "add_tech_bonus = { name = id category = verified_category uses = N bonus = 0.25 }",
+    "doctrine_syntax": "add_doctrine_cost_reduction = { name = id category = land_doctrine cost_reduction = 0.50 uses = N }",
+    "equipment_syntax": "add_equipment_bonus = { name = id bonus = { infantry_weapons_type = { build_cost_ic = -0.04 } } }",
+    "year_appropriate_candidates": [
+      "mdcw_infantry_weapons_1950",
+      "mdcw_infantry_weapons_1955",
+      "mdcw_cnc_equipment_1950",
+      "mdcw_cnc_equipment_1960",
+      "mdcw_support_weapons_1955",
+      "mdcw_util_vehicle_1950",
+      "mdcw_util_vehicle_1960",
+      "mdcw_anti_air_1950",
+      "mdcw_anti_tank_1950",
+      "mdcw_body_armor_1960",
+      "mdcw_special_forces_1950",
+      "mdcw_combat_engineer_vehicles_1968"
+    ],
+    "future_or_inappropriate_candidates": [
+      "mdcw_infantry_weapons_1980",
+      "mdcw_night_vision_goggles_1972",
+      "mdcw_thermal_sights_1980",
+      "drones",
+      "post-2000 digital technologies"
+    ],
+    "initialization_caveat": "CUB 1970 history applies mdcw_apply_1970_infantry_research; confirm research is still available before granting a research use."
+  },
+  "recurring_cost_contract": {
+    "unit": "weekly MD money",
+    "literal_max_fraction_digits": 5,
+    "conversion": "derive from actual source period and reader; do not guess",
+    "separate": "one-time focus deduction, timed idea, and tick-maintained expense"
+  },
+  "custom_glue_required": [
+    "Cuba programme refresh and exact-party dynamic modifiers",
+    "sugar-specific metric or rationing",
+    "bilateral Soviet supply/credit accounting",
+    "political emigration and return accounting",
+    "worker-council/private ownership institution",
+    "expeditionary mission commitment",
+    "DDR agreement event lifecycle"
+  ],
+  "confidence_boundary": "Static source audit only. Engine loading, scopes, numerical balance, previews and multiplayer behavior need later validation.",
+  "final_scope_correction": {
+    "equipment_market": "Equipment sales income; unused in final Cuban focus/starting effects.",
+    "resource_exports": {
+      "key": "resource_export_multiplier_modifier",
+      "provider": "common/modifier_definitions/money_modifier_definitions.txt:114",
+      "consumer": "common/scripted_effects/00_money_system.txt:4572-4640",
+      "calculation": "Actual exported native resource units × market price × (1 + global and resource-specific modifiers) × yearly-to-weekly conversion. Zero actual exports yield zero revenue."
+    },
+    "sugar": "agriculture_district_income_tax_modifier is the verified modeled fiscal proxy, not literal sugar tons or a sugar-price system.",
+    "setup": "edu_02/health_02/corruption_level_04 are proposed missing-category 1970 baselines; CUB1970 history does not currently supply them."
+  }
+}

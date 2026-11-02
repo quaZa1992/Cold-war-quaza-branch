@@ -1,0 +1,1392 @@
+# IMPERIA COLD WAR — France 1970 procurement pressure.
+COLDWAR_FRA2_pressure_start_NGR = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_send_NGR = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+		NGR = { set_country_flag = COLDWAR_FRA2_pressure_pending_NGR }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_cooldown_NGR value = 1 days = 365 }
+		NGR = { country_event = { id = COLDWAR_FRA2_pressure.1 days = 30 } }
+	}
+}
+
+COLDWAR_FRA2_pressure_accept_NGR = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_accept_NGR = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_charter_signed_NGR
+		FRA = { set_country_flag = COLDWAR_FRA2_pressure_charter_signed_NGR clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } } modify_treasury_effect = yes update_money_dirty_variable = yes }
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		update_money_dirty_variable = yes
+		FRA = { COLDWAR_FRA2_pressure_sync_all = yes }
+	}
+}
+
+COLDWAR_FRA2_pressure_refuse_NGR = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_NGR = yes
+		}
+		COLDWAR_FRA2_pressure_register_refusal_NGR = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_cancel_NGR = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+	}
+	FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR update_money_dirty_variable = yes }
+	update_money_dirty_variable = yes
+}
+
+COLDWAR_FRA2_pressure_register_refusal_NGR = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_NGR = yes
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+		FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR }
+		if = {
+			limit = {
+				FRA = { COLDWAR_FRA2_pressure_refusal_qualifies_NGR = yes }
+			}
+			FRA = { set_country_flag = { flag = COLDWAR_FRA2_pressure_aid_freeze_NGR value = 1 days = 180 } set_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_NGR update_money_dirty_variable = yes }
+			add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+			update_money_dirty_variable = yes
+		}
+		FRA = { update_money_dirty_variable = yes }
+		update_money_dirty_variable = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_preview_NGR = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_NGR = { value = NGR.gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_NGR_millions = { value = COLDWAR_FRA2_pressure_quote_preview_NGR multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_income_preview_NGR
+		give_guarantee = NGR
+		add_ideas = COLDWAR_FRA2_pressure_charter_france_NGR
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_NGR
+	NGR = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_NGR = { value = gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_NGR_millions = { value = COLDWAR_FRA2_pressure_levy_preview_NGR multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_expense_preview_NGR
+		add_ideas = COLDWAR_FRA2_pressure_charter_host_NGR
+		give_military_access = FRA
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_if_they_refuse
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		if = {
+			limit = {
+				OR = {
+					COLDWAR_FRA2_offer_active_fp_niger_rights = yes
+					COLDWAR_FRA2_offer_active_fp_niger_processing = yes
+					COLDWAR_FRA2_offer_active_fp_niger_field_services = yes
+					COLDWAR_FRA2_offer_active_fp_niger_rural = yes
+				}
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = 0 }
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_niger_rights = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_niger_processing = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = gdp_total multiply = 0.0003 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_niger_field_services = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_niger_rural = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = gdp_total multiply = 0.00025 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_france_NGR
+		}
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_NGR
+	NGR = {
+		if = {
+			limit = {
+				FRA = { OR = {
+					COLDWAR_FRA2_offer_active_fp_niger_rights = yes
+					COLDWAR_FRA2_offer_active_fp_niger_processing = yes
+					COLDWAR_FRA2_offer_active_fp_niger_field_services = yes
+					COLDWAR_FRA2_offer_active_fp_niger_rural = yes
+				} }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = 0 }
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_niger_rights = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = FRA.gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_niger_processing = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = FRA.gdp_total multiply = 0.0003 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_niger_field_services = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = FRA.gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_niger_rural = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row = { value = FRA.gdp_total multiply = 0.00025 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_NGR_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_NGR multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_host_NGR
+		}
+		add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+	}
+}
+
+COLDWAR_FRA2_pressure_start_GAB = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_send_GAB = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+		GAB = { set_country_flag = COLDWAR_FRA2_pressure_pending_GAB }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_cooldown_GAB value = 1 days = 365 }
+		GAB = { country_event = { id = COLDWAR_FRA2_pressure.2 days = 30 } }
+	}
+}
+
+COLDWAR_FRA2_pressure_accept_GAB = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_accept_GAB = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_charter_signed_GAB
+		FRA = { set_country_flag = COLDWAR_FRA2_pressure_charter_signed_GAB clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } } modify_treasury_effect = yes update_money_dirty_variable = yes }
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		update_money_dirty_variable = yes
+		FRA = { COLDWAR_FRA2_pressure_sync_all = yes }
+	}
+}
+
+COLDWAR_FRA2_pressure_refuse_GAB = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_GAB = yes
+		}
+		COLDWAR_FRA2_pressure_register_refusal_GAB = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_cancel_GAB = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+	}
+	FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB update_money_dirty_variable = yes }
+	update_money_dirty_variable = yes
+}
+
+COLDWAR_FRA2_pressure_register_refusal_GAB = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_GAB = yes
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+		FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB }
+		if = {
+			limit = {
+				FRA = { COLDWAR_FRA2_pressure_refusal_qualifies_GAB = yes }
+			}
+			FRA = { set_country_flag = { flag = COLDWAR_FRA2_pressure_aid_freeze_GAB value = 1 days = 180 } set_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_GAB update_money_dirty_variable = yes }
+			add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+			update_money_dirty_variable = yes
+		}
+		FRA = { update_money_dirty_variable = yes }
+		update_money_dirty_variable = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_preview_GAB = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_GAB = { value = GAB.gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_GAB_millions = { value = COLDWAR_FRA2_pressure_quote_preview_GAB multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_income_preview_GAB
+		give_guarantee = GAB
+		add_ideas = COLDWAR_FRA2_pressure_charter_france_GAB
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_GAB
+	GAB = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_GAB = { value = gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_GAB_millions = { value = COLDWAR_FRA2_pressure_levy_preview_GAB multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_expense_preview_GAB
+		add_ideas = COLDWAR_FRA2_pressure_charter_host_GAB
+		give_military_access = FRA
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_if_they_refuse
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		if = {
+			limit = {
+				OR = {
+					COLDWAR_FRA2_offer_active_fp_gabon_processing = yes
+					COLDWAR_FRA2_offer_active_fp_libreville_station = yes
+					COLDWAR_FRA2_offer_active_fp_gabon_officers = yes
+				}
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = 0 }
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_gabon_processing = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row = { value = gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row }
+			}
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_libreville_station = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row = { value = gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row }
+			}
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_gabon_officers = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row = { value = gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_france_GAB
+		}
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_GAB
+	GAB = {
+		if = {
+			limit = {
+				FRA = { OR = {
+					COLDWAR_FRA2_offer_active_fp_gabon_processing = yes
+					COLDWAR_FRA2_offer_active_fp_libreville_station = yes
+					COLDWAR_FRA2_offer_active_fp_gabon_officers = yes
+				} }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = 0 }
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_gabon_processing = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row = { value = FRA.gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row }
+			}
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_libreville_station = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row = { value = FRA.gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row }
+			}
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_gabon_officers = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row = { value = FRA.gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_GAB_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_GAB multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_host_GAB
+		}
+		add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+	}
+}
+
+COLDWAR_FRA2_pressure_start_SEN = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_send_SEN = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+		SEN = { set_country_flag = COLDWAR_FRA2_pressure_pending_SEN }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_cooldown_SEN value = 1 days = 365 }
+		SEN = { country_event = { id = COLDWAR_FRA2_pressure.3 days = 30 } }
+	}
+}
+
+COLDWAR_FRA2_pressure_accept_SEN = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_accept_SEN = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_charter_signed_SEN
+		FRA = { set_country_flag = COLDWAR_FRA2_pressure_charter_signed_SEN clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } } modify_treasury_effect = yes update_money_dirty_variable = yes }
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		update_money_dirty_variable = yes
+		FRA = { COLDWAR_FRA2_pressure_sync_all = yes }
+	}
+}
+
+COLDWAR_FRA2_pressure_refuse_SEN = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_SEN = yes
+		}
+		COLDWAR_FRA2_pressure_register_refusal_SEN = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_cancel_SEN = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+	}
+	FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN update_money_dirty_variable = yes }
+	update_money_dirty_variable = yes
+}
+
+COLDWAR_FRA2_pressure_register_refusal_SEN = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_SEN = yes
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+		FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN }
+		if = {
+			limit = {
+				FRA = { COLDWAR_FRA2_pressure_refusal_qualifies_SEN = yes }
+			}
+			FRA = { set_country_flag = { flag = COLDWAR_FRA2_pressure_aid_freeze_SEN value = 1 days = 180 } set_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_SEN update_money_dirty_variable = yes }
+			add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+			update_money_dirty_variable = yes
+		}
+		FRA = { update_money_dirty_variable = yes }
+		update_money_dirty_variable = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_preview_SEN = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_SEN = { value = SEN.gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_SEN_millions = { value = COLDWAR_FRA2_pressure_quote_preview_SEN multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_income_preview_SEN
+		give_guarantee = SEN
+		add_ideas = COLDWAR_FRA2_pressure_charter_france_SEN
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_SEN
+	SEN = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_SEN = { value = gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_SEN_millions = { value = COLDWAR_FRA2_pressure_levy_preview_SEN multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_expense_preview_SEN
+		add_ideas = COLDWAR_FRA2_pressure_charter_host_SEN
+		give_military_access = FRA
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_if_they_refuse
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		if = {
+			limit = {
+				OR = {
+					COLDWAR_FRA2_offer_active_fp_senegal_boards = yes
+				}
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN = 0 }
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_senegal_boards = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN_row = { value = gdp_total multiply = 0.00015 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN = COLDWAR_FRA2_pressure_aid_freeze_preview_SEN_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_SEN multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_france_SEN
+		}
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_SEN
+	SEN = {
+		if = {
+			limit = {
+				FRA = { OR = {
+					COLDWAR_FRA2_offer_active_fp_senegal_boards = yes
+				} }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN = 0 }
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_senegal_boards = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN_row = { value = FRA.gdp_total multiply = 0.00015 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN = COLDWAR_FRA2_pressure_aid_freeze_preview_SEN_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_SEN_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_SEN multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_host_SEN
+		}
+		add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+	}
+}
+
+COLDWAR_FRA2_pressure_start_CAM = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_send_CAM = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+		CAM = { set_country_flag = COLDWAR_FRA2_pressure_pending_CAM }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_cooldown_CAM value = 1 days = 365 }
+		CAM = { country_event = { id = COLDWAR_FRA2_pressure.4 days = 30 } }
+	}
+}
+
+COLDWAR_FRA2_pressure_accept_CAM = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_accept_CAM = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_charter_signed_CAM
+		FRA = { set_country_flag = COLDWAR_FRA2_pressure_charter_signed_CAM clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } } modify_treasury_effect = yes update_money_dirty_variable = yes }
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		update_money_dirty_variable = yes
+		FRA = { COLDWAR_FRA2_pressure_sync_all = yes }
+	}
+}
+
+COLDWAR_FRA2_pressure_refuse_CAM = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_CAM = yes
+		}
+		COLDWAR_FRA2_pressure_register_refusal_CAM = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_cancel_CAM = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+	}
+	FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM update_money_dirty_variable = yes }
+	update_money_dirty_variable = yes
+}
+
+COLDWAR_FRA2_pressure_register_refusal_CAM = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_CAM = yes
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+		FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM }
+		if = {
+			limit = {
+				FRA = { COLDWAR_FRA2_pressure_refusal_qualifies_CAM = yes }
+			}
+			FRA = { set_country_flag = { flag = COLDWAR_FRA2_pressure_aid_freeze_CAM value = 1 days = 180 } set_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CAM update_money_dirty_variable = yes }
+			add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+			update_money_dirty_variable = yes
+		}
+		FRA = { update_money_dirty_variable = yes }
+		update_money_dirty_variable = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_preview_CAM = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_CAM = { value = CAM.gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_CAM_millions = { value = COLDWAR_FRA2_pressure_quote_preview_CAM multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_income_preview_CAM
+		give_guarantee = CAM
+		add_ideas = COLDWAR_FRA2_pressure_charter_france_CAM
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_CAM
+	CAM = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_CAM = { value = gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_CAM_millions = { value = COLDWAR_FRA2_pressure_levy_preview_CAM multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_expense_preview_CAM
+		add_ideas = COLDWAR_FRA2_pressure_charter_host_CAM
+		give_military_access = FRA
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_if_they_refuse
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		if = {
+			limit = {
+				OR = {
+					COLDWAR_FRA2_offer_active_fp_cameroon_treasury = yes
+				}
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM = 0 }
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_cameroon_treasury = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM_row = { value = gdp_total multiply = 0.00015 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM = COLDWAR_FRA2_pressure_aid_freeze_preview_CAM_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_CAM multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_france_CAM
+		}
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_CAM
+	CAM = {
+		if = {
+			limit = {
+				FRA = { OR = {
+					COLDWAR_FRA2_offer_active_fp_cameroon_treasury = yes
+				} }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM = 0 }
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_cameroon_treasury = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM_row = { value = FRA.gdp_total multiply = 0.00015 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM = COLDWAR_FRA2_pressure_aid_freeze_preview_CAM_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CAM_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_CAM multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_host_CAM
+		}
+		add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+	}
+}
+
+COLDWAR_FRA2_pressure_start_CDI = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_send_CDI = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+		CDI = { set_country_flag = COLDWAR_FRA2_pressure_pending_CDI }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_cooldown_CDI value = 1 days = 365 }
+		CDI = { country_event = { id = COLDWAR_FRA2_pressure.5 days = 30 } }
+	}
+}
+
+COLDWAR_FRA2_pressure_accept_CDI = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_accept_CDI = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_charter_signed_CDI
+		FRA = { set_country_flag = COLDWAR_FRA2_pressure_charter_signed_CDI clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } } modify_treasury_effect = yes update_money_dirty_variable = yes }
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		update_money_dirty_variable = yes
+		FRA = { COLDWAR_FRA2_pressure_sync_all = yes }
+	}
+}
+
+COLDWAR_FRA2_pressure_refuse_CDI = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_CDI = yes
+		}
+		COLDWAR_FRA2_pressure_register_refusal_CDI = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_cancel_CDI = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+	}
+	FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI update_money_dirty_variable = yes }
+	update_money_dirty_variable = yes
+}
+
+COLDWAR_FRA2_pressure_register_refusal_CDI = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_CDI = yes
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+		FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI }
+		if = {
+			limit = {
+				FRA = { COLDWAR_FRA2_pressure_refusal_qualifies_CDI = yes }
+			}
+			FRA = { set_country_flag = { flag = COLDWAR_FRA2_pressure_aid_freeze_CDI value = 1 days = 180 } set_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CDI update_money_dirty_variable = yes }
+			add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+			update_money_dirty_variable = yes
+		}
+		FRA = { update_money_dirty_variable = yes }
+		update_money_dirty_variable = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_preview_CDI = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_CDI = { value = CDI.gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_CDI_millions = { value = COLDWAR_FRA2_pressure_quote_preview_CDI multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_income_preview_CDI
+		give_guarantee = CDI
+		add_ideas = COLDWAR_FRA2_pressure_charter_france_CDI
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_CDI
+	CDI = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_CDI = { value = gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_CDI_millions = { value = COLDWAR_FRA2_pressure_levy_preview_CDI multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_expense_preview_CDI
+		add_ideas = COLDWAR_FRA2_pressure_charter_host_CDI
+		give_military_access = FRA
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_if_they_refuse
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		if = {
+			limit = {
+				OR = {
+					COLDWAR_FRA2_offer_active_fp_abidjan_transit = yes
+					COLDWAR_FRA2_offer_active_fp_abidjan_port = yes
+				}
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI = 0 }
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_abidjan_transit = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row = { value = gdp_total multiply = 0.00015 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI = COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row }
+			}
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_abidjan_port = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row = { value = gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI = COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_CDI multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_france_CDI
+		}
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_CDI
+	CDI = {
+		if = {
+			limit = {
+				FRA = { OR = {
+					COLDWAR_FRA2_offer_active_fp_abidjan_transit = yes
+					COLDWAR_FRA2_offer_active_fp_abidjan_port = yes
+				} }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI = 0 }
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_abidjan_transit = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row = { value = FRA.gdp_total multiply = 0.00015 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI = COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row }
+			}
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_abidjan_port = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row = { value = FRA.gdp_total multiply = 0.0002 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI = COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CDI_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_CDI multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_host_CDI
+		}
+		add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+	}
+}
+
+COLDWAR_FRA2_pressure_start_CHA = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_send_CHA = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+		CHA = { set_country_flag = COLDWAR_FRA2_pressure_pending_CHA }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_cooldown_CHA value = 1 days = 365 }
+		CHA = { country_event = { id = COLDWAR_FRA2_pressure.6 days = 30 } }
+	}
+}
+
+COLDWAR_FRA2_pressure_accept_CHA = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_accept_CHA = yes
+		}
+		set_country_flag = COLDWAR_FRA2_pressure_charter_signed_CHA
+		FRA = { set_country_flag = COLDWAR_FRA2_pressure_charter_signed_CHA clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } } modify_treasury_effect = yes update_money_dirty_variable = yes }
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		update_money_dirty_variable = yes
+		FRA = { COLDWAR_FRA2_pressure_sync_all = yes }
+	}
+}
+
+COLDWAR_FRA2_pressure_refuse_CHA = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_CHA = yes
+		}
+		COLDWAR_FRA2_pressure_register_refusal_CHA = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_cancel_CHA = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+	}
+	FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA update_money_dirty_variable = yes }
+	update_money_dirty_variable = yes
+}
+
+COLDWAR_FRA2_pressure_register_refusal_CHA = {
+	if = {
+		limit = {
+			COLDWAR_FRA2_pressure_can_resolve_CHA = yes
+		}
+		clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+		FRA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA }
+		if = {
+			limit = {
+				FRA = { COLDWAR_FRA2_pressure_refusal_qualifies_CHA = yes }
+			}
+			FRA = { set_country_flag = { flag = COLDWAR_FRA2_pressure_aid_freeze_CHA value = 1 days = 180 } set_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CHA update_money_dirty_variable = yes }
+			add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+			update_money_dirty_variable = yes
+		}
+		FRA = { update_money_dirty_variable = yes }
+		update_money_dirty_variable = yes
+	}
+}
+
+COLDWAR_FRA2_pressure_preview_CHA = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_CHA = { value = CHA.gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_quote_preview_CHA_millions = { value = COLDWAR_FRA2_pressure_quote_preview_CHA multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_income_preview_CHA
+		give_guarantee = CHA
+		add_ideas = COLDWAR_FRA2_pressure_charter_france_CHA
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_CHA
+	CHA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_CHA = { value = gdp_total multiply = 0.01 divide = 52 } }
+		set_temp_variable = { COLDWAR_FRA2_pressure_levy_preview_CHA_millions = { value = COLDWAR_FRA2_pressure_levy_preview_CHA multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_FRA2_pressure_accept_expense_preview_CHA
+		add_ideas = COLDWAR_FRA2_pressure_charter_host_CHA
+		give_military_access = FRA
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_if_they_refuse
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_france_heading
+	FRA = {
+		if = {
+			limit = {
+				OR = {
+					COLDWAR_FRA2_offer_active_fp_chad_airlift = yes
+					COLDWAR_FRA2_offer_active_fp_chad_cadres = yes
+				}
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA = 0 }
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_chad_airlift = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row = { value = gdp_total multiply = 0.00025 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA = COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row }
+			}
+			if = {
+				limit = {
+					COLDWAR_FRA2_offer_active_fp_chad_cadres = yes
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row = { value = gdp_total multiply = 0.00025 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA = COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_CHA multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_france_CHA
+		}
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_pressure_host_heading_CHA
+	CHA = {
+		if = {
+			limit = {
+				FRA = { OR = {
+					COLDWAR_FRA2_offer_active_fp_chad_airlift = yes
+					COLDWAR_FRA2_offer_active_fp_chad_cadres = yes
+				} }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA = 0 }
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_chad_airlift = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row = { value = FRA.gdp_total multiply = 0.00025 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA = COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row }
+			}
+			if = {
+				limit = {
+					FRA = { COLDWAR_FRA2_offer_active_fp_chad_cadres = yes }
+				}
+				set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row = { value = FRA.gdp_total multiply = 0.00025 divide = 52 } }
+				add_to_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA = COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_row }
+			}
+			set_temp_variable = { COLDWAR_FRA2_pressure_aid_freeze_preview_CHA_millions = { value = COLDWAR_FRA2_pressure_aid_freeze_preview_CHA multiply = 1000 } }
+			custom_effect_tooltip = COLDWAR_FRA2_pressure_refusal_host_CHA
+		}
+		add_timed_idea = { idea = COLDWAR_FRA2_pressure_withdrawal_crisis days = 90 }
+	}
+}
+
+COLDWAR_FRA2_pressure_cache_levy_quote_NGR = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_NGR }
+		}
+		set_variable = { COLDWAR_FRA2_pressure_levy_quote_NGR = { value = NGR.gdp_total multiply = 0.01 divide = 52 } }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_levy_quote_fresh_NGR value = 1 days = 7 }
+	}
+}
+
+COLDWAR_FRA2_pressure_cache_levy_quote_GAB = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_GAB }
+		}
+		set_variable = { COLDWAR_FRA2_pressure_levy_quote_GAB = { value = GAB.gdp_total multiply = 0.01 divide = 52 } }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_levy_quote_fresh_GAB value = 1 days = 7 }
+	}
+}
+
+COLDWAR_FRA2_pressure_cache_levy_quote_SEN = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_SEN }
+		}
+		set_variable = { COLDWAR_FRA2_pressure_levy_quote_SEN = { value = SEN.gdp_total multiply = 0.01 divide = 52 } }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_levy_quote_fresh_SEN value = 1 days = 7 }
+	}
+}
+
+COLDWAR_FRA2_pressure_cache_levy_quote_CAM = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CAM }
+		}
+		set_variable = { COLDWAR_FRA2_pressure_levy_quote_CAM = { value = CAM.gdp_total multiply = 0.01 divide = 52 } }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CAM value = 1 days = 7 }
+	}
+}
+
+COLDWAR_FRA2_pressure_cache_levy_quote_CDI = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CDI }
+		}
+		set_variable = { COLDWAR_FRA2_pressure_levy_quote_CDI = { value = CDI.gdp_total multiply = 0.01 divide = 52 } }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CDI value = 1 days = 7 }
+	}
+}
+
+COLDWAR_FRA2_pressure_cache_levy_quote_CHA = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CHA }
+		}
+		set_variable = { COLDWAR_FRA2_pressure_levy_quote_CHA = { value = CHA.gdp_total multiply = 0.01 divide = 52 } }
+		set_country_flag = { flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CHA value = 1 days = 7 }
+	}
+}
+
+COLDWAR_FRA2_pressure_sync_all = {
+	if = {
+		limit = {
+			tag = FRA
+		}
+		if = {
+			limit = {
+				COLDWAR_FRA2_pressure_active_NGR = yes
+			}
+			if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_france_NGR } } add_ideas = COLDWAR_FRA2_pressure_charter_france_NGR }
+			NGR = { if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_host_NGR } } add_ideas = COLDWAR_FRA2_pressure_charter_host_NGR } }
+			if = { limit = { NOT = { has_guaranteed = NGR } } give_guarantee = NGR set_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_NGR }
+			if = { limit = { NOT = { has_military_access_to = NGR } } NGR = { give_military_access = FRA set_country_flag = COLDWAR_FRA2_pressure_access_owned_NGR } }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_NGR } } set_country_flag = COLDWAR_FRA2_pressure_stream_active_NGR clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_NGR update_money_dirty_variable = yes NGR = { update_money_dirty_variable = yes } }
+		}
+		else = {
+			if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_france_NGR } remove_ideas = COLDWAR_FRA2_pressure_charter_france_NGR }
+			NGR = { if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_host_NGR } remove_ideas = COLDWAR_FRA2_pressure_charter_host_NGR } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_NGR } diplomatic_relation = { country = NGR relation = guarantee active = no } clr_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_NGR }
+			if = { limit = { NGR = { has_country_flag = COLDWAR_FRA2_pressure_access_owned_NGR } } if = { limit = { has_military_access_to = NGR } diplomatic_relation = { country = NGR relation = military_access active = no } } NGR = { clr_country_flag = COLDWAR_FRA2_pressure_access_owned_NGR } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_NGR } clr_country_flag = COLDWAR_FRA2_pressure_stream_active_NGR clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_NGR update_money_dirty_variable = yes NGR = { update_money_dirty_variable = yes } }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_NGR NOT = { has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_NGR }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_NGR
+			update_money_dirty_variable = yes
+			NGR = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_NGR NGR = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_NGR } }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_NGR } NGR = { has_country_flag = COLDWAR_FRA2_pressure_pending_NGR }
+			}
+			NGR = { clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_NGR NGR = { has_country_flag = COLDWAR_FRA2_pressure_pending_NGR } NOT = { COLDWAR_FRA2_pressure_base_active_NGR = yes COLDWAR_FRA2_pair_NGR_clear = yes }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+			NGR = { clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR }
+			update_money_dirty_variable = yes
+			NGR = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_NGR NOT = { country_exists = NGR }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_NGR
+		}
+		if = {
+			limit = {
+				COLDWAR_FRA2_pressure_active_GAB = yes
+			}
+			if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_france_GAB } } add_ideas = COLDWAR_FRA2_pressure_charter_france_GAB }
+			GAB = { if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_host_GAB } } add_ideas = COLDWAR_FRA2_pressure_charter_host_GAB } }
+			if = { limit = { NOT = { has_guaranteed = GAB } } give_guarantee = GAB set_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_GAB }
+			if = { limit = { NOT = { has_military_access_to = GAB } } GAB = { give_military_access = FRA set_country_flag = COLDWAR_FRA2_pressure_access_owned_GAB } }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_GAB } } set_country_flag = COLDWAR_FRA2_pressure_stream_active_GAB clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_GAB update_money_dirty_variable = yes GAB = { update_money_dirty_variable = yes } }
+		}
+		else = {
+			if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_france_GAB } remove_ideas = COLDWAR_FRA2_pressure_charter_france_GAB }
+			GAB = { if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_host_GAB } remove_ideas = COLDWAR_FRA2_pressure_charter_host_GAB } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_GAB } diplomatic_relation = { country = GAB relation = guarantee active = no } clr_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_GAB }
+			if = { limit = { GAB = { has_country_flag = COLDWAR_FRA2_pressure_access_owned_GAB } } if = { limit = { has_military_access_to = GAB } diplomatic_relation = { country = GAB relation = military_access active = no } } GAB = { clr_country_flag = COLDWAR_FRA2_pressure_access_owned_GAB } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_GAB } clr_country_flag = COLDWAR_FRA2_pressure_stream_active_GAB clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_GAB update_money_dirty_variable = yes GAB = { update_money_dirty_variable = yes } }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_GAB NOT = { has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_GAB }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_GAB
+			update_money_dirty_variable = yes
+			GAB = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_GAB GAB = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_GAB } }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_GAB } GAB = { has_country_flag = COLDWAR_FRA2_pressure_pending_GAB }
+			}
+			GAB = { clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_GAB GAB = { has_country_flag = COLDWAR_FRA2_pressure_pending_GAB } NOT = { COLDWAR_FRA2_pressure_base_active_GAB = yes COLDWAR_FRA2_pair_GAB_clear = yes }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+			GAB = { clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB }
+			update_money_dirty_variable = yes
+			GAB = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_GAB NOT = { country_exists = GAB }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_GAB
+		}
+		if = {
+			limit = {
+				COLDWAR_FRA2_pressure_active_SEN = yes
+			}
+			if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_france_SEN } } add_ideas = COLDWAR_FRA2_pressure_charter_france_SEN }
+			SEN = { if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_host_SEN } } add_ideas = COLDWAR_FRA2_pressure_charter_host_SEN } }
+			if = { limit = { NOT = { has_guaranteed = SEN } } give_guarantee = SEN set_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_SEN }
+			if = { limit = { NOT = { has_military_access_to = SEN } } SEN = { give_military_access = FRA set_country_flag = COLDWAR_FRA2_pressure_access_owned_SEN } }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_SEN } } set_country_flag = COLDWAR_FRA2_pressure_stream_active_SEN clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_SEN update_money_dirty_variable = yes SEN = { update_money_dirty_variable = yes } }
+		}
+		else = {
+			if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_france_SEN } remove_ideas = COLDWAR_FRA2_pressure_charter_france_SEN }
+			SEN = { if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_host_SEN } remove_ideas = COLDWAR_FRA2_pressure_charter_host_SEN } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_SEN } diplomatic_relation = { country = SEN relation = guarantee active = no } clr_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_SEN }
+			if = { limit = { SEN = { has_country_flag = COLDWAR_FRA2_pressure_access_owned_SEN } } if = { limit = { has_military_access_to = SEN } diplomatic_relation = { country = SEN relation = military_access active = no } } SEN = { clr_country_flag = COLDWAR_FRA2_pressure_access_owned_SEN } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_SEN } clr_country_flag = COLDWAR_FRA2_pressure_stream_active_SEN clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_SEN update_money_dirty_variable = yes SEN = { update_money_dirty_variable = yes } }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_SEN NOT = { has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_SEN }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_SEN
+			update_money_dirty_variable = yes
+			SEN = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_SEN SEN = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_SEN } }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_SEN } SEN = { has_country_flag = COLDWAR_FRA2_pressure_pending_SEN }
+			}
+			SEN = { clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_SEN SEN = { has_country_flag = COLDWAR_FRA2_pressure_pending_SEN } NOT = { COLDWAR_FRA2_pressure_base_active_SEN = yes COLDWAR_FRA2_pair_SEN_clear = yes }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+			SEN = { clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN }
+			update_money_dirty_variable = yes
+			SEN = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_SEN NOT = { country_exists = SEN }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_SEN
+		}
+		if = {
+			limit = {
+				COLDWAR_FRA2_pressure_active_CAM = yes
+			}
+			if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_france_CAM } } add_ideas = COLDWAR_FRA2_pressure_charter_france_CAM }
+			CAM = { if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_host_CAM } } add_ideas = COLDWAR_FRA2_pressure_charter_host_CAM } }
+			if = { limit = { NOT = { has_guaranteed = CAM } } give_guarantee = CAM set_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CAM }
+			if = { limit = { NOT = { has_military_access_to = CAM } } CAM = { give_military_access = FRA set_country_flag = COLDWAR_FRA2_pressure_access_owned_CAM } }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_CAM } } set_country_flag = COLDWAR_FRA2_pressure_stream_active_CAM clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CAM update_money_dirty_variable = yes CAM = { update_money_dirty_variable = yes } }
+		}
+		else = {
+			if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_france_CAM } remove_ideas = COLDWAR_FRA2_pressure_charter_france_CAM }
+			CAM = { if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_host_CAM } remove_ideas = COLDWAR_FRA2_pressure_charter_host_CAM } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CAM } diplomatic_relation = { country = CAM relation = guarantee active = no } clr_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CAM }
+			if = { limit = { CAM = { has_country_flag = COLDWAR_FRA2_pressure_access_owned_CAM } } if = { limit = { has_military_access_to = CAM } diplomatic_relation = { country = CAM relation = military_access active = no } } CAM = { clr_country_flag = COLDWAR_FRA2_pressure_access_owned_CAM } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_CAM } clr_country_flag = COLDWAR_FRA2_pressure_stream_active_CAM clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CAM update_money_dirty_variable = yes CAM = { update_money_dirty_variable = yes } }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CAM NOT = { has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_CAM }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CAM
+			update_money_dirty_variable = yes
+			CAM = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CAM CAM = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_CAM } }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_CAM } CAM = { has_country_flag = COLDWAR_FRA2_pressure_pending_CAM }
+			}
+			CAM = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CAM CAM = { has_country_flag = COLDWAR_FRA2_pressure_pending_CAM } NOT = { COLDWAR_FRA2_pressure_base_active_CAM = yes COLDWAR_FRA2_pair_CAM_clear = yes }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+			CAM = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM }
+			update_money_dirty_variable = yes
+			CAM = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CAM NOT = { country_exists = CAM }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CAM
+		}
+		if = {
+			limit = {
+				COLDWAR_FRA2_pressure_active_CDI = yes
+			}
+			if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_france_CDI } } add_ideas = COLDWAR_FRA2_pressure_charter_france_CDI }
+			CDI = { if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_host_CDI } } add_ideas = COLDWAR_FRA2_pressure_charter_host_CDI } }
+			if = { limit = { NOT = { has_guaranteed = CDI } } give_guarantee = CDI set_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CDI }
+			if = { limit = { NOT = { has_military_access_to = CDI } } CDI = { give_military_access = FRA set_country_flag = COLDWAR_FRA2_pressure_access_owned_CDI } }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_CDI } } set_country_flag = COLDWAR_FRA2_pressure_stream_active_CDI clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CDI update_money_dirty_variable = yes CDI = { update_money_dirty_variable = yes } }
+		}
+		else = {
+			if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_france_CDI } remove_ideas = COLDWAR_FRA2_pressure_charter_france_CDI }
+			CDI = { if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_host_CDI } remove_ideas = COLDWAR_FRA2_pressure_charter_host_CDI } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CDI } diplomatic_relation = { country = CDI relation = guarantee active = no } clr_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CDI }
+			if = { limit = { CDI = { has_country_flag = COLDWAR_FRA2_pressure_access_owned_CDI } } if = { limit = { has_military_access_to = CDI } diplomatic_relation = { country = CDI relation = military_access active = no } } CDI = { clr_country_flag = COLDWAR_FRA2_pressure_access_owned_CDI } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_CDI } clr_country_flag = COLDWAR_FRA2_pressure_stream_active_CDI clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CDI update_money_dirty_variable = yes CDI = { update_money_dirty_variable = yes } }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CDI NOT = { has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_CDI }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CDI
+			update_money_dirty_variable = yes
+			CDI = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CDI CDI = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_CDI } }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_CDI } CDI = { has_country_flag = COLDWAR_FRA2_pressure_pending_CDI }
+			}
+			CDI = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CDI CDI = { has_country_flag = COLDWAR_FRA2_pressure_pending_CDI } NOT = { COLDWAR_FRA2_pressure_base_active_CDI = yes COLDWAR_FRA2_pair_CDI_clear = yes }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+			CDI = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI }
+			update_money_dirty_variable = yes
+			CDI = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CDI NOT = { country_exists = CDI }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CDI
+		}
+		if = {
+			limit = {
+				COLDWAR_FRA2_pressure_active_CHA = yes
+			}
+			if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_france_CHA } } add_ideas = COLDWAR_FRA2_pressure_charter_france_CHA }
+			CHA = { if = { limit = { NOT = { has_idea = COLDWAR_FRA2_pressure_charter_host_CHA } } add_ideas = COLDWAR_FRA2_pressure_charter_host_CHA } }
+			if = { limit = { NOT = { has_guaranteed = CHA } } give_guarantee = CHA set_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CHA }
+			if = { limit = { NOT = { has_military_access_to = CHA } } CHA = { give_military_access = FRA set_country_flag = COLDWAR_FRA2_pressure_access_owned_CHA } }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_CHA } } set_country_flag = COLDWAR_FRA2_pressure_stream_active_CHA clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CHA update_money_dirty_variable = yes CHA = { update_money_dirty_variable = yes } }
+		}
+		else = {
+			if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_france_CHA } remove_ideas = COLDWAR_FRA2_pressure_charter_france_CHA }
+			CHA = { if = { limit = { has_idea = COLDWAR_FRA2_pressure_charter_host_CHA } remove_ideas = COLDWAR_FRA2_pressure_charter_host_CHA } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CHA } diplomatic_relation = { country = CHA relation = guarantee active = no } clr_country_flag = COLDWAR_FRA2_pressure_guarantee_owned_CHA }
+			if = { limit = { CHA = { has_country_flag = COLDWAR_FRA2_pressure_access_owned_CHA } } if = { limit = { has_military_access_to = CHA } diplomatic_relation = { country = CHA relation = military_access active = no } } CHA = { clr_country_flag = COLDWAR_FRA2_pressure_access_owned_CHA } }
+			if = { limit = { has_country_flag = COLDWAR_FRA2_pressure_stream_active_CHA } clr_country_flag = COLDWAR_FRA2_pressure_stream_active_CHA clr_country_flag = COLDWAR_FRA2_pressure_levy_quote_fresh_CHA update_money_dirty_variable = yes CHA = { update_money_dirty_variable = yes } }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CHA NOT = { has_country_flag = COLDWAR_FRA2_pressure_aid_freeze_CHA }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_aid_freeze_refresh_CHA
+			update_money_dirty_variable = yes
+			CHA = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CHA CHA = { NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_CHA } }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = COLDWAR_FRA2_pressure_pending_CHA } CHA = { has_country_flag = COLDWAR_FRA2_pressure_pending_CHA }
+			}
+			CHA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CHA CHA = { has_country_flag = COLDWAR_FRA2_pressure_pending_CHA } NOT = { COLDWAR_FRA2_pressure_base_active_CHA = yes COLDWAR_FRA2_pair_CHA_clear = yes }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+			CHA = { clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA }
+			update_money_dirty_variable = yes
+			CHA = { update_money_dirty_variable = yes }
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_FRA2_pressure_pending_CHA NOT = { country_exists = CHA }
+			}
+			clr_country_flag = COLDWAR_FRA2_pressure_pending_CHA
+		}
+	}
+}
+
+COLDWAR_FRA2_pressure_add_weekly_expenses = {
+	if = {
+		limit = {
+			tag = NGR FRA = { COLDWAR_FRA2_pressure_active_NGR = yes }
+		}
+		FRA = { COLDWAR_FRA2_pressure_cache_levy_quote_NGR = yes }
+		add_to_variable = { additional_expenses_rate = FRA.COLDWAR_FRA2_pressure_levy_quote_NGR }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_expenses = FRA.COLDWAR_FRA2_pressure_levy_quote_NGR }
+	}
+	if = {
+		limit = {
+			tag = GAB FRA = { COLDWAR_FRA2_pressure_active_GAB = yes }
+		}
+		FRA = { COLDWAR_FRA2_pressure_cache_levy_quote_GAB = yes }
+		add_to_variable = { additional_expenses_rate = FRA.COLDWAR_FRA2_pressure_levy_quote_GAB }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_expenses = FRA.COLDWAR_FRA2_pressure_levy_quote_GAB }
+	}
+	if = {
+		limit = {
+			tag = SEN FRA = { COLDWAR_FRA2_pressure_active_SEN = yes }
+		}
+		FRA = { COLDWAR_FRA2_pressure_cache_levy_quote_SEN = yes }
+		add_to_variable = { additional_expenses_rate = FRA.COLDWAR_FRA2_pressure_levy_quote_SEN }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_expenses = FRA.COLDWAR_FRA2_pressure_levy_quote_SEN }
+	}
+	if = {
+		limit = {
+			tag = CAM FRA = { COLDWAR_FRA2_pressure_active_CAM = yes }
+		}
+		FRA = { COLDWAR_FRA2_pressure_cache_levy_quote_CAM = yes }
+		add_to_variable = { additional_expenses_rate = FRA.COLDWAR_FRA2_pressure_levy_quote_CAM }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_expenses = FRA.COLDWAR_FRA2_pressure_levy_quote_CAM }
+	}
+	if = {
+		limit = {
+			tag = CDI FRA = { COLDWAR_FRA2_pressure_active_CDI = yes }
+		}
+		FRA = { COLDWAR_FRA2_pressure_cache_levy_quote_CDI = yes }
+		add_to_variable = { additional_expenses_rate = FRA.COLDWAR_FRA2_pressure_levy_quote_CDI }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_expenses = FRA.COLDWAR_FRA2_pressure_levy_quote_CDI }
+	}
+	if = {
+		limit = {
+			tag = CHA FRA = { COLDWAR_FRA2_pressure_active_CHA = yes }
+		}
+		FRA = { COLDWAR_FRA2_pressure_cache_levy_quote_CHA = yes }
+		add_to_variable = { additional_expenses_rate = FRA.COLDWAR_FRA2_pressure_levy_quote_CHA }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_expenses = FRA.COLDWAR_FRA2_pressure_levy_quote_CHA }
+	}
+}
+
+COLDWAR_FRA2_pressure_add_weekly_income = {
+	if = {
+		limit = {
+			tag = FRA COLDWAR_FRA2_pressure_active_NGR = yes
+		}
+		COLDWAR_FRA2_pressure_cache_levy_quote_NGR = yes
+		add_to_variable = { additional_income_rate = COLDWAR_FRA2_pressure_levy_quote_NGR }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_income = COLDWAR_FRA2_pressure_levy_quote_NGR }
+	}
+	if = {
+		limit = {
+			tag = FRA COLDWAR_FRA2_pressure_active_GAB = yes
+		}
+		COLDWAR_FRA2_pressure_cache_levy_quote_GAB = yes
+		add_to_variable = { additional_income_rate = COLDWAR_FRA2_pressure_levy_quote_GAB }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_income = COLDWAR_FRA2_pressure_levy_quote_GAB }
+	}
+	if = {
+		limit = {
+			tag = FRA COLDWAR_FRA2_pressure_active_SEN = yes
+		}
+		COLDWAR_FRA2_pressure_cache_levy_quote_SEN = yes
+		add_to_variable = { additional_income_rate = COLDWAR_FRA2_pressure_levy_quote_SEN }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_income = COLDWAR_FRA2_pressure_levy_quote_SEN }
+	}
+	if = {
+		limit = {
+			tag = FRA COLDWAR_FRA2_pressure_active_CAM = yes
+		}
+		COLDWAR_FRA2_pressure_cache_levy_quote_CAM = yes
+		add_to_variable = { additional_income_rate = COLDWAR_FRA2_pressure_levy_quote_CAM }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_income = COLDWAR_FRA2_pressure_levy_quote_CAM }
+	}
+	if = {
+		limit = {
+			tag = FRA COLDWAR_FRA2_pressure_active_CDI = yes
+		}
+		COLDWAR_FRA2_pressure_cache_levy_quote_CDI = yes
+		add_to_variable = { additional_income_rate = COLDWAR_FRA2_pressure_levy_quote_CDI }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_income = COLDWAR_FRA2_pressure_levy_quote_CDI }
+	}
+	if = {
+		limit = {
+			tag = FRA COLDWAR_FRA2_pressure_active_CHA = yes
+		}
+		COLDWAR_FRA2_pressure_cache_levy_quote_CHA = yes
+		add_to_variable = { additional_income_rate = COLDWAR_FRA2_pressure_levy_quote_CHA }
+		add_to_variable = { COLDWAR_FRA2_cooperation_weekly_income = COLDWAR_FRA2_pressure_levy_quote_CHA }
+	}
+}

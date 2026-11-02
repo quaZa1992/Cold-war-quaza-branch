@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan focus sprite reference audit.
+# IMPERIA COLD WAR — Cold War: Japan focus sprite reference audit.
 from pathlib import Path
 import re
 

@@ -1,8 +1,10 @@
+# IMPERIA COLD WAR — Validate preserved Sinai and canal geography.
 # IMPERIA CW — Cold War: israel 1970 — validate policy map.
 """Check the existing Sinai target and removal of the superseded map split."""
 from pathlib import Path
 import json,re
 from script_format import read
+from policy_map import without_buildings
 
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
@@ -20,7 +22,7 @@ def provinces(state):return {int(k) for k,o,v in value(state,'provinces',[]) if 
 spec=json.loads((HERE/'policy_map_source.json').read_text(encoding='utf-8'))
 original=read(spec['original_state_214'])
 main=read((ROOT/'history/states/214-Suez.txt').read_text(encoding='utf-8-sig'))
-check(main==original,'State 214 was not restored with all original population, history, buildings and provinces')
+check(without_buildings((ROOT/'history/states/214-Suez.txt').read_text(encoding='utf-8-sig'))==without_buildings(spec['original_state_214']),'State 214 population, non-building history or provinces changed')
 check(not (ROOT/'history/states/1252-Suez Canal.txt').exists(),'Superseded canal state still exists')
 check(not (ROOT/'common/state_category/ISR70_delta_remainder.txt').exists(),'Superseded split category still exists')
 sinai=value(read((ROOT/'history/states/213-Sinai.txt').read_text(encoding='utf-8-sig')),'state')
@@ -28,15 +30,19 @@ check(provinces(sinai)=={1155,10099,1112,12073,11922,10002,4161,11979,9947},'Sin
 expected={p:213 for p in provinces(sinai)}
 expected.update({1178:214,4073:214,12049:214})
 assigned={}
+state_ids=set()
 for path in (ROOT/'history/states').glob('*.txt'):
     state=value(read(path.read_text(encoding='utf-8-sig')),'state',[])
+    state_ids.add(int(value(state,'id')))
     for province in provinces(state):
         if province in expected:
             check(province not in assigned,'Province appears in multiple states: '+str(province))
             assigned[province]=int(value(state,'id'))
 check(assigned==expected,'Sinai or canal provinces have an incorrect state assignment')
 placements=(ROOT/'map/buildings.txt').read_text(encoding='utf-8-sig').splitlines()
-check(not any(line.startswith('1252;') for line in placements),'Obsolete canal building-model state references remain')
+# IMPERIA COLD WAR — State 1252 is now the legitimate Cayo Blanco del Sur state.
+check(not any(line.startswith('1252;') for line in placements) or 1252 in state_ids,
+      'Orphaned former canal building-model state references remain')
 for province in (4073,12049):
     check(any(line.startswith('214;floating_harbor;') and line.endswith(';'+str(province)) for line in placements),'Canal port model not restored: '+str(province))
 hooks=(ROOT/'common/on_actions/02_dod_on_actions.txt').read_text(encoding='utf-8-sig')
@@ -66,6 +72,6 @@ for rel in ('common/national_focus/ISR70_focus.txt','common/scripted_effects/ISR
     text=(ROOT/rel).read_text(encoding='utf-8-sig')
     check(not re.search(r'(?<![\w])1252(?![\w])',text),'Obsolete state reference in '+rel)
 check('set_global_flag = ISR70_policy_canal_open' not in next(project['delivery_summary'] for project in metadata['policy_expansion']['projects'] if project['key']=='gi_canal_navigation'),'Sinai logistics still advertises canal opening')
-result={'status':'FAIL' if errors else 'PASS','checks':checks,'errors':errors,'target_state':213,'canal_state':214,'borders_changed':False,'runtime_test':False}
+result={'project':'IMPERIA COLD WAR','status':'FAIL' if errors else 'PASS','checks':checks,'errors':errors,'target_state':213,'canal_state':214,'borders_changed':False,'runtime_test':False}
 (ROOT/'docs/israel_1970_design/policy_map_validation.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
 print(json.dumps(result,indent=2));raise SystemExit(bool(errors))

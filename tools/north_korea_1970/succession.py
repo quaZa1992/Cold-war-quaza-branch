@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: North Korea 1994 succession and illustration export.
+# IMPERIA COLD WAR — Cold War: North Korea 1994 succession and illustration export.
 """Deterministic emitter for the NKO 1994 succession scripts and news image.
 
 The main scenario integration owns initialization and calls
@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
+import struct
 
 from PIL import Image
 
@@ -20,69 +21,160 @@ TARGET_SIZE = (410, 164)
 EVENTS_PATH = ROOT / "events/COLDWAR_NKO_1970_succession_events.txt"
 EFFECTS_PATH = ROOT / "common/scripted_effects/COLDWAR_NKO_1970_succession_effects.txt"
 GFX_PATH = ROOT / "interface/COLDWAR_NKO_1970_news.gfx"
+DECISIONS_PATH = ROOT / "common/decisions/COLDWAR_NKO_1970_succession.txt"
+CATEGORY_PATH = ROOT / "common/decisions/categories/COLDWAR_NKO_1970_succession_category.txt"
 SCRIPT_FILES = (
     EVENTS_PATH,
     EFFECTS_PATH,
     GFX_PATH,
+    DECISIONS_PATH,
+    CATEGORY_PATH,
 )
 LOCALIZATION = ROOT / "localisation/english/COLDWAR_NKO_1970_succession_l_english.yml"
 PORTRAIT = ROOT / "gfx/Leaders/NKO/Kim_Jong_il.dds"
+MEMORIAL_PORTRAIT = ROOT / "gfx/Leaders/NKO/COLDWAR_NKO_Kim_Il_Sung_memorial.dds"
 
-EFFECTS = """# IMPERIA CW — Cold War: NKO historical death and succession.
-# The 1970 leader expiry is 9 July so this 8 July event can identify the living incumbent.
+EFFECTS = """# IMPERIA COLD WAR — Cold War: NKO historical death and succession.
+# Catch up on loaded campaigns after 8 July 1994; the recorded death runs once.
 COLDWAR_NKO_succession_daily = {
  if = {
-  limit = { tag = NKO IMP_is_1970_scenario = yes NOT = { date < 1994.7.8 } date < 1994.7.9 NOT = { has_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent } }
+  limit = { tag = NKO IMP_is_1970_scenario = yes NOT = { date < 1994.7.8 } NOT = { has_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent } }
   set_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent
   set_country_flag = COLDWAR_NKO_kim_il_sung_death_recorded
   if = {
-   limit = { check_variable = { ruling_party = 4 } has_country_leader = { name = "Kim Il Sung" ruling_only = yes } }
+   limit = { OR = { has_country_leader = { name = "Kim Il Sung" ruling_only = yes } has_country_leader = { name = "Kim Il-sung" ruling_only = yes } } }
+   set_global_flag = COLDWAR_NKO_1994_kim_il_sung_died_in_office
    kill_country_leader = yes
-   if = {
-    limit = { NOT = { has_country_flag = COLDWAR_NKO_kim_jong_il_unavailable } }
-    create_country_leader = { name = "Kim Jong-il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state }
-    set_country_flag = COLDWAR_NKO_kim_jong_il_succeeded
-    set_global_flag = COLDWAR_NKO_1994_succession_announced
-   }
+   create_country_leader = { name = "Funeral Committee" picture = "gfx/Leaders/NKO/COLDWAR_NKO_Kim_Il_Sung_memorial.dds" ideology = communist_state }
+   set_country_flag = COLDWAR_NKO_succession_pending
   }
   COLDWAR_NKO_refresh_programmes = yes
   news_event = { id = COLDWAR_NKO_succession.1 }
  }
 }
-# Country daily scope. This fallback broadcasts the death even if NKO no longer exists.
+# Called from the shared leader router while succession is pending. It preserves only the
+# caretaker and never repeats the death transaction or its news.
+COLDWAR_NKO_preserve_mourning_government = {
+ if = {
+  limit = {
+   tag = NKO
+   IMP_is_1970_scenario = yes
+   check_variable = { ruling_party = 4 }
+   has_country_flag = COLDWAR_NKO_kim_il_sung_death_recorded
+   has_country_flag = COLDWAR_NKO_succession_pending
+   NOT = { has_country_flag = COLDWAR_NKO_kim_jong_il_succeeded }
+  }
+  if = {
+   limit = { NOT = { has_country_leader = { name = "Funeral Committee" ruling_only = yes } } }
+   create_country_leader = { name = "Funeral Committee" picture = "gfx/Leaders/NKO/COLDWAR_NKO_Kim_Il_Sung_memorial.dds" ideology = communist_state }
+  }
+ }
+}
+# Country daily scope. Catch up on the recorded date even when NKO no longer exists.
 COLDWAR_NKO_world_succession_daily = {
  if = {
-  limit = { IMP_is_1970_scenario = yes NOT = { date < 1994.7.8 } date < 1994.7.9 NOT = { has_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent } }
-  if = { limit = { country_exists = NKO } NKO = { COLDWAR_NKO_succession_daily = yes } }
-  else = { set_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent news_event = { id = COLDWAR_NKO_succession.1 } }
+  limit = { IMP_is_1970_scenario = yes NOT = { date < 1994.7.8 } NOT = { has_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent } }
+  if = {
+   limit = { country_exists = NKO }
+   NKO = { COLDWAR_NKO_succession_daily = yes }
+  }
+  else = {
+   set_global_flag = COLDWAR_NKO_kim_il_sung_death_news_sent
+   news_event = { id = COLDWAR_NKO_succession.1 }
+  }
+ }
+}
+COLDWAR_NKO_install_kim_jong_il = {
+ if = {
+  limit = {
+   tag = NKO
+   IMP_is_1970_scenario = yes
+   check_variable = { ruling_party = 4 }
+   has_country_flag = COLDWAR_NKO_kim_il_sung_death_recorded
+   has_country_flag = COLDWAR_NKO_succession_pending
+   NOT = { has_country_flag = COLDWAR_NKO_kim_jong_il_unavailable }
+   NOT = { has_country_flag = COLDWAR_NKO_kim_jong_il_succeeded }
+  }
+  create_country_leader = { name = "Kim Jong-il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state }
+  clr_country_flag = COLDWAR_NKO_succession_pending
+  set_country_flag = COLDWAR_NKO_kim_jong_il_succeeded
+  set_global_flag = COLDWAR_NKO_1994_succession_announced
+  COLDWAR_NKO_refresh_programmes = yes
+  news_event = { id = COLDWAR_NKO_succession.2 }
  }
 }
 """
 
-EVENTS = """# IMPERIA CW — Cold War: NKO 1994 death and global succession news.
+EVENTS = """# IMPERIA COLD WAR — Cold War: NKO 1994 death and global succession news.
 add_namespace = COLDWAR_NKO_succession
 
-# One major news event, broadcast globally by the daily NKO helper.
+# Death news reports a caretaker only when Kim Il Sung died in office.
 news_event = {
-\tid = COLDWAR_NKO_succession.1
-\ttitle = COLDWAR_NKO_succession.1.t
-\tdesc = {
-\t\ttrigger = { has_global_flag = COLDWAR_NKO_1994_succession_announced }
-\t\ttext = COLDWAR_NKO_succession.1.d_successor
-\t}
-\tdesc = {
-\t\ttrigger = { NOT = { has_global_flag = COLDWAR_NKO_1994_succession_announced } }
-\t\ttext = COLDWAR_NKO_succession.1.d_no_successor
-\t}
-\tpicture = GFX_COLDWAR_NKO_1994_funeral
-\tis_triggered_only = yes
-\tmajor = yes
+	id = COLDWAR_NKO_succession.1
+	title = COLDWAR_NKO_succession.1.t
+	desc = {
+		trigger = { has_global_flag = COLDWAR_NKO_1994_kim_il_sung_died_in_office }
+		text = COLDWAR_NKO_succession.1.d_incumbent
+	}
+	desc = {
+		trigger = { NOT = { has_global_flag = COLDWAR_NKO_1994_kim_il_sung_died_in_office } }
+		text = COLDWAR_NKO_succession.1.d_former
+	}
+	picture = GFX_COLDWAR_NKO_1994_funeral
+	is_triggered_only = yes
+	major = yes
+	option = { name = COLDWAR_NKO_succession.1.a }
+}
 
-\toption = { name = COLDWAR_NKO_succession.1.a }
+news_event = {
+	id = COLDWAR_NKO_succession.2
+	title = COLDWAR_NKO_succession.2.t
+	desc = COLDWAR_NKO_succession.2.d
+	picture = GFX_COLDWAR_NKO_1994_funeral
+	is_triggered_only = yes
+	major = yes
+	option = { name = COLDWAR_NKO_succession.2.a }
 }
 """
 
-NEWS_GFX = """# IMPERIA CW — Cold War: NKO 1994 succession news illustration.
+DECISIONS = """# IMPERIA COLD WAR — Cold War: NKO player-controlled 1994 succession.
+COLDWAR_NKO_succession_category = {
+	COLDWAR_NKO_confirm_kim_jong_il = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 0
+		allowed = { original_tag = NKO }
+		visible = { tag = NKO IMP_is_1970_scenario = yes has_country_flag = COLDWAR_NKO_succession_pending }
+		available = {
+			hidden_trigger = {
+			tag = NKO
+			IMP_is_1970_scenario = yes
+			check_variable = { ruling_party = 4 }
+			has_country_flag = COLDWAR_NKO_kim_il_sung_death_recorded
+			has_country_flag = COLDWAR_NKO_succession_pending
+			NOT = { has_country_flag = COLDWAR_NKO_kim_jong_il_unavailable }
+			NOT = { has_country_flag = COLDWAR_NKO_kim_jong_il_succeeded }
+			}
+			emerging_communist_state_are_in_power = yes
+		}
+		complete_effect = {
+			effect_tooltip = { create_country_leader = { name = "Kim Jong-il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state } }
+			hidden_effect = { COLDWAR_NKO_install_kim_jong_il = yes }
+		}
+		fire_only_once = yes
+		ai_will_do = { base = 1 }
+	}
+}
+"""
+
+CATEGORY = """# IMPERIA COLD WAR — Cold War: NKO succession decision category.
+ COLDWAR_NKO_succession_category = {
+	icon = GFX_decision_category_generic_political_actions
+	allowed = { original_tag = NKO IMP_is_1970_scenario = yes }
+	visible = { has_country_flag = COLDWAR_NKO_succession_pending }
+}
+"""
+
+NEWS_GFX = """# IMPERIA COLD WAR — Cold War: NKO 1994 succession news illustration.
 spriteTypes = {
 \tspriteType = {
 \t\tname = "GFX_COLDWAR_NKO_1994_funeral"
@@ -92,17 +184,24 @@ spriteTypes = {
 """
 
 ENGLISH_LOCALIZATION = """l_english:
-# IMPERIA CW — Cold War: North Korea 1994 succession news.
+# IMPERIA COLD WAR — Cold War: North Korea 1994 succession.
  COLDWAR_NKO_succession.1.t: "Kim Il Sung Has Died"
- COLDWAR_NKO_succession.1.d_successor: "Pyongyang has announced the death of Kim Il Sung at the age of 82. Kim Jong Il has assumed the leadership of North Korea, ending the founder’s forty-six years in power."
- COLDWAR_NKO_succession.1.d_no_successor: "Kim Il Sung, North Korea’s former leader, has died at the age of 82. His death closes the era of the Republic’s founding generation."
+ COLDWAR_NKO_succession.1.d_incumbent: "Kim Il Sung has died at the age of 82 after leading North Korea for nearly half a century. A Funeral Committee has assumed interim duties as the Workers’ Party considers the succession."
+ COLDWAR_NKO_succession.1.d_former: "Kim Il Sung, North Korea’s former leader, has died at the age of 82. His death closes the era of the Republic’s founding generation."
  COLDWAR_NKO_succession.1.a: "The end of an era."
+ COLDWAR_NKO_succession.2.t: "Kim Jong Il Assumes Leadership"
+ COLDWAR_NKO_succession.2.d: "The Workers’ Party has confirmed Kim Jong Il as North Korea’s leader, ending the Funeral Committee’s interim administration."
+ COLDWAR_NKO_succession.2.a: "A new chapter begins."
+ COLDWAR_NKO_confirm_kim_jong_il: "Confirm Kim Jong Il as Leader"
+ COLDWAR_NKO_confirm_kim_jong_il_desc: "The Workers’ Party may confirm Kim Jong Il as leader and end the Funeral Committee’s interim administration."
+ COLDWAR_NKO_succession_category: "The Leadership Succession"
+ COLDWAR_NKO_succession_category_desc: "The Funeral Committee administers the state during the mourning period. The Workers’ Party must settle the succession before a new leadership programme can take effect."
 """
 
 
 def emit_sources() -> None:
     """Deterministically emit the assigned event, effect, gfx and English localization files."""
-    for path, text in ((EVENTS_PATH, EVENTS), (EFFECTS_PATH, EFFECTS), (GFX_PATH, NEWS_GFX)):
+    for path, text in ((EVENTS_PATH, EVENTS), (EFFECTS_PATH, EFFECTS), (GFX_PATH, NEWS_GFX), (DECISIONS_PATH, DECISIONS), (CATEGORY_PATH, CATEGORY)):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(text.replace("\n", "\r\n").encode("utf-8"))
     LOCALIZATION.parent.mkdir(parents=True, exist_ok=True)
@@ -129,7 +228,11 @@ def convert_news_picture() -> Path:
             top = min(max(0, round((height - crop_height) * 0.58)), height - crop_height)
             image = image.crop((0, top, width, top + crop_height))
         image = image.resize(TARGET_SIZE, Image.Resampling.LANCZOS)
-        image.save(TARGET, format="DDS", pixel_format="BC3")
+        image.save(TARGET, format="DDS", pixel_format="DXT5")
+        raw = bytearray(TARGET.read_bytes())
+        struct.pack_into('<I', raw, 20, ((TARGET_SIZE[0]+3)//4)*((TARGET_SIZE[1]+3)//4)*16)
+        struct.pack_into('<I', raw, 28, 1)
+        TARGET.write_bytes(raw)
     with Image.open(TARGET) as result:
         if result.size != TARGET_SIZE:
             raise ValueError(f"Unexpected DDS dimensions: {result.size}")
@@ -176,6 +279,8 @@ def check_script_encoding_and_braces() -> None:
         raise ValueError("English localization must have a UTF-8 BOM")
     if not PORTRAIT.is_file():
         raise FileNotFoundError(f"Expected native leader portrait is absent: {PORTRAIT}")
+    if not MEMORIAL_PORTRAIT.is_file():
+        raise FileNotFoundError(f"Expected Kim Il Sung memorial portrait is absent: {MEMORIAL_PORTRAIT}")
 
 
 if __name__ == "__main__":

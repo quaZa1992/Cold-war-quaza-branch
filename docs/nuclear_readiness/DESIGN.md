@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Nuclear readiness and crisis diplomacy
 
 Historical grounding and balance record for the 1970 multiplayer scenario.

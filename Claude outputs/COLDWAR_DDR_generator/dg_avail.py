@@ -1,4 +1,5 @@
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
+# IMPERIA COLD WAR — DDR focus availability uses institutional conditions and retained Soviet consent.
 # COLDWAR | Converts the `available` conditions of the design (English text, code in backticks) into triggers.
 # House rule (Enes, 17.10.2026, SOV): no focus is locked to a calendar date. Date clauses are dropped, also inside an OR;
 # historical events and AI weights still use dates.
@@ -27,7 +28,6 @@ def le(var, v, step):
     return f"check_variable = {{ {var} < {fmt(round(v + step, 4))} }}"
 
 
-TRUST = f"{PFX}moscow_trust"
 COURSE = f"{PFX}course"           # shadow variable of the balance of power (the BOP value cannot be read)
 
 
@@ -80,13 +80,6 @@ def atom(a, f):
             out += f" NOT = {{ has_country_flag = {PFX}first_sec_{k} }}"
         return out
     # ---- meters
-    m = re.match(r"^Moscow's Trust (at least|below|at most) (\d+)$", a)
-    if m:
-        v = int(m.group(2))
-        return {"at least": ge(TRUST, v, 1), "below": f"check_variable = {{ {TRUST} < {v} }}", "at most": le(TRUST, v, 1)}[m.group(1)]
-    m = re.match(r"^Moscow's Trust between (\d+) and (\d+)$", a)
-    if m:
-        return ge(TRUST, int(m.group(1)), 1) + " " + le(TRUST, int(m.group(2)), 1)
     m = re.match(r"^Inner-German course (at least|at most|below) ([−+-]?[\d.]+)(?: \(.*\))?$", a)
     if m:
         v = num(m.group(2))
@@ -188,13 +181,13 @@ def atom(a, f):
 
 
 SPECIAL = {
-    # parenthesised extra condition: the cadre threshold is 80 if Ulbricht kept the cadre department (Verner)
-    "Moscow's Trust at least 40 OR SED Nomenklatura opinion at least 70 (80 if Ulbricht kept the cadre department, `COLDWAR_DDR_ulb_team_verner`)":
-        f"OR = {{ {ge(TRUST, 40, 1)} AND = {{ NOT = {{ has_country_flag = COLDWAR_DDR_ulb_team_verner }} has_idea = communist_cadres "
+    # The cadre opinion threshold remains higher if Ulbricht kept Verner's department.
+    "SED Nomenklatura opinion at least 70 (80 if Ulbricht kept the cadre department, `COLDWAR_DDR_ulb_team_verner`)":
+        f"OR = {{ AND = {{ NOT = {{ has_country_flag = COLDWAR_DDR_ulb_team_verner }} has_idea = communist_cadres "
         f"{ge('communist_cadres_opinion', 70, 1)} }} AND = {{ has_country_flag = COLDWAR_DDR_ulb_team_verner has_idea = communist_cadres "
         f"{ge('communist_cadres_opinion', 80, 1)} }} }}",
-    "Moscow's Trust at least 65 OR (Moscow's Trust at most 30 AND the Soviet Union endorses a change)":
-        f"OR = {{ {ge(TRUST, 65, 1)} AND = {{ {le(TRUST, 30, 1)} has_country_flag = {PFX}soviet_endorses_change }} }}",
+    "Soviet consent or SED Nomenklatura opinion at least 65 % (`soviet_endorses_change` / `communist_cadres_opinion`)":
+        f"OR = {{ has_country_flag = {PFX}soviet_endorses_change AND = {{ has_idea = communist_cadres {ge('communist_cadres_opinion', 65, 1)} }} }}",
 }
 
 

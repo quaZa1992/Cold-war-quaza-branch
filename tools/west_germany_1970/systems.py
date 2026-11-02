@@ -1,4 +1,6 @@
-# IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Native diplomatic recognition and UN membership.
+# IMPERIA COLD WAR — West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Retire Western integration and Moscow backing point mechanics.
 """Systems for West Germany 1970: startup, monthly simulation, leaders and Imperia hooks."""
 from cw_lib import *
 from roster import requirement
@@ -71,8 +73,8 @@ def set_leader_effect():
 		{chain("cwger_fdp_leader", FDP_LEADERS, "liberalism", "western_liberalism")}
 	}}
 	else_if = {{ limit = {{ check_variable = {{ ruling_party = 17 }} {requirement("greens")} }}
-		if = {{ limit = {{ date < 1990.1.1 }} {leader(*GREEN_LEADERS[1], "Neutral_green")} }}
-		else = {{ {leader(*GREEN_LEADERS[2], "Neutral_green")} }}
+		# IMPERIA COLD WAR — Keep the 1970 Green leadership until the party chooses a successor.
+		{leader(*GREEN_LEADERS[1], "Neutral_green")}
 	}}
 	else_if = {{ limit = {{ check_variable = {{ ruling_party = 20 }} {requirement("rep")} }}
 		{leader("Franz Schönhuber", PORT.format("schoenhuber"), "Nat_Populism")}
@@ -129,7 +131,6 @@ def setup_effects():
 		# inner-German and western policy
 		set_variable = {{ cwger_ostpolitik = 30 }}
 		set_variable = {{ cwger_berlin_access = 45 }}
-		set_variable = {{ cwger_westbindung = 70 }}
 		set_variable = {{ cwger_unity = 0 }}
 		set_variable = {{ cwger_east_burden = 0 }}
 		# internal security
@@ -178,6 +179,7 @@ def setup_effects():
 	# IMPERIA CW: intentional no-op for old queued introduction events.
 }}
 
+# IMPERIA COLD WAR — Initialize DDR economic pressure meters without legacy leader or crisis-stage proxies.
 {P}_initialize_ddr = {{
 	if = {{
 		limit = {{ NOT = {{ has_country_flag = {P}_ddr_initialized }} }}
@@ -188,10 +190,7 @@ def setup_effects():
 		set_variable = {{ cwddr_west_media = 45 }}
 		set_variable = {{ cwddr_opposition = 8 }}
 		set_variable = {{ cwddr_sed_control = 85 }}
-		set_variable = {{ cwddr_moscow_backing = 90 }}
-		set_variable = {{ cwddr_recognition = 15 }}
 		set_variable = {{ cwddr_crisis = 20 }}
-		set_variable = {{ cwddr_wende_stage = 0 }}
 		set_variable = {{ cwddr_min_exchange = 10 }}
 		add_dynamic_modifier = {{ modifier = {P}_ddr_inner_german }}
 	}}
@@ -236,8 +235,10 @@ def bundestag_effect():
 """
 
 
+# IMPERIA COLD WAR — Remove Western integration score-derived modifiers and Moscow backing effects.
 def modifier_effect():
     return f"""
+# IMPERIA COLD WAR — Remove retired point-derived dynamic modifier contributions.
 # Feeds the 'State of the Republic' and GDR dynamic modifiers from the system meters.
 {P}_update_modifiers = {{
 	# security state: order but at the price of liberal credibility
@@ -258,9 +259,6 @@ def modifier_effect():
 	set_variable = {{ cwger_dm_interest = cwger_bundesbank }}
 	subtract_from_variable = {{ cwger_dm_interest = 30 }}
 	multiply_variable = {{ cwger_dm_interest = 0.004 }}
-	set_variable = {{ cwger_dm_ideo = cwger_westbindung }}
-	subtract_from_variable = {{ cwger_dm_ideo = 50 }}
-	multiply_variable = {{ cwger_dm_ideo = 0.002 }}
 	set_variable = {{ cwger_dm_trade = cwger_ostpolitik }}
 	multiply_variable = {{ cwger_dm_trade = 0.002 }}
 	# a hostile Bundesrat costs political capital until a package deal is struck
@@ -324,6 +322,8 @@ def terror_effects():
     return f"""
 # ----------------------------------------------------------------- terrorism
 {P}_terror_tick = {{
+	# IMPERIA CW — Cold War: one lifecycle for the German cabinet and regional RAF file.
+	if = {{ limit = {{ {P}_raf_case_active = yes }}
 	# RAF sympathiser milieu: repression and a weak rule of law feed it, integration drains it
 	if = {{ limit = {{ check_variable = {{ cwger_security > 60 }} }} add_to_variable = {{ cwger_raf_milieu = 0.5 }} }}
 	if = {{ limit = {{ check_variable = {{ cwger_rechtsstaat < 50 }} }} add_to_variable = {{ cwger_raf_milieu = 0.4 }} }}
@@ -354,15 +354,9 @@ def terror_effects():
 		}}
 	}}
 	clamp_variable = {{ var = cwger_raf_cadre min = 0 max = 120 }}
+	}}
 	# threat values
-	set_variable = {{ cwger_terror_left = cwger_raf_cadre }}
-	multiply_variable = {{ cwger_terror_left = 0.9 }}
-	set_temp_variable = {{ cwger_t = cwger_raf_milieu }}
-	multiply_temp_variable = {{ cwger_t = 0.35 }}
-	add_to_variable = {{ cwger_terror_left = cwger_t }}
-	if = {{ limit = {{ NOT = {{ has_country_flag = {P}_j2m_dissolved }} date < 1980.6.2 }} add_to_variable = {{ cwger_terror_left = 5 }} }}
-	if = {{ limit = {{ NOT = {{ has_country_flag = {P}_rz_dissolved }} date > 1973.1.1 date < 1995.1.1 }} add_to_variable = {{ cwger_terror_left = 4 }} }}
-	clamp_variable = {{ var = cwger_terror_left min = 0 max = 100 }}
+	{P}_security_refresh_threat = yes
 	# right-wing threat: far-right vote, refugee arrivals, unemployment-driven anger
 	set_variable = {{ cwger_terror_right = party_pop_array^21 }}
 	multiply_variable = {{ cwger_terror_right = 220 }}
@@ -402,6 +396,7 @@ def terror_effects():
 		}}
 	}}
 	# generation changes of the RAF
+	if = {{ limit = {{ {P}_raf_case_active = yes }}
 	if = {{
 		limit = {{ check_variable = {{ cwger_raf_gen = 1 }} check_variable = {{ cwger_raf_prisoners > 3 }} date > 1972.6.1 }}
 		set_variable = {{ cwger_raf_gen = 2 }}
@@ -416,6 +411,7 @@ def terror_effects():
 		limit = {{ check_variable = {{ cwger_raf_gen = 3 }} check_variable = {{ cwger_raf_milieu < 10 }} check_variable = {{ cwger_raf_cadre < 6 }} date > 1990.1.1 }}
 		set_variable = {{ cwger_raf_gen = 4 }}
 		country_event = {{ id = {EVG}.60 days = 5 }}
+	}}
 	}}
 }}
 
@@ -481,6 +477,7 @@ def terror_effects():
 def inner_german_effects():
     return f"""
 # --------------------------------------------------------- inner-German dynamics
+# IMPERIA COLD WAR — Keep GDR crisis arithmetic independent of the retired Moscow score.
 # Monthly, called in GER scope. Moves the GDR meters and checks the stages of a GDR crisis.
 # Nothing here is dated: the crisis comes when the numbers say so, or never.
 {P}_inner_german_tick = {{
@@ -518,27 +515,10 @@ def inner_german_effects():
 				add_to_variable = {{ cwddr_opposition = t }}
 			}}
 			if = {{ limit = {{ check_variable = {{ cwddr_sed_control > 80 }} }} add_to_variable = {{ cwddr_opposition = -0.05 }} }}
-			# Moscow's guarantee follows the Soviet course
-			if = {{ limit = {{ country_exists = SOV SOV = {{ has_completed_focus = COLDWAR_SOV_gor_the_sinatra_doctrine }} }} add_to_variable = {{ cwddr_moscow_backing = -1.5 }} }}
-			else_if = {{ limit = {{ country_exists = SOV SOV = {{ OR = {{ has_completed_focus = COLDWAR_SOV_gor_new_thinking has_completed_focus = COLDWAR_SOV_gor_glasnost_first }} }} }} add_to_variable = {{ cwddr_moscow_backing = -0.6 }} }}
-			else_if = {{ limit = {{ country_exists = SOV SOV = {{ has_completed_focus = COLDWAR_SOV_the_brezhnev_doctrine }} }} add_to_variable = {{ cwddr_moscow_backing = 0.2 }} }}
-			if = {{ limit = {{ date > 1986.6.1 }} add_to_variable = {{ cwddr_moscow_backing = -0.25 }} }}
-			if = {{ limit = {{ NOT = {{ country_exists = SOV }} }} add_to_variable = {{ cwddr_moscow_backing = -5 }} }}
-			# SED control relaxes towards a level set by Moscow and the opposition
-			set_temp_variable = {{ t = cwddr_moscow_backing }}
-			multiply_temp_variable = {{ t = 0.4 }}
-			add_to_temp_variable = {{ t = 55 }}
-			set_temp_variable = {{ t2 = cwddr_opposition }}
-			multiply_temp_variable = {{ t2 = 0.4 }}
-			subtract_from_temp_variable = {{ t = t2 }}
-			subtract_from_temp_variable = {{ t = cwddr_sed_control }}
-			multiply_temp_variable = {{ t = 0.05 }}
-			add_to_variable = {{ cwddr_sed_control = t }}
 			clamp_variable = {{ var = cwddr_hard_currency min = 0 max = 100 }}
 			clamp_variable = {{ var = cwddr_west_media min = 0 max = 95 }}
 			clamp_variable = {{ var = cwddr_exit_pressure min = 0 max = 100 }}
 			clamp_variable = {{ var = cwddr_opposition min = 0 max = 100 }}
-			clamp_variable = {{ var = cwddr_moscow_backing min = 0 max = 100 }}
 			clamp_variable = {{ var = cwddr_sed_control min = 0 max = 100 }}
 			# crisis index
 			set_variable = {{ cwddr_crisis = cwddr_exit_pressure }}
@@ -556,64 +536,40 @@ def inner_german_effects():
 			subtract_from_temp_variable = {{ t = cwddr_sed_control }}
 			multiply_temp_variable = {{ t = 0.15 }}
 			add_to_variable = {{ cwddr_crisis = t }}
-			if = {{ limit = {{ check_variable = {{ cwddr_moscow_backing < 50 }} }}
-				set_temp_variable = {{ t = 50 }}
-				subtract_from_temp_variable = {{ t = cwddr_moscow_backing }}
-				multiply_temp_variable = {{ t = 0.6 }}
-				add_to_variable = {{ cwddr_crisis = t }}
-			}}
 			clamp_variable = {{ var = cwddr_crisis min = 0 max = 100 }}
 		}}
-		{P}_check_wende = yes
 	}}
 }}
 
-# Stages of a GDR crisis. 0 calm, 1 exit wave, 2 street protests, 3 open border,
-# 4 transition, 5 unity negotiations, 9 crushed (Chinese solution), 10 settled.
-{P}_check_wende = {{
-	if = {{
-		limit = {{ DDR = {{ check_variable = {{ cwddr_wende_stage = 0 }} check_variable = {{ cwddr_crisis > 49 }} }} date > 1974.1.1 }}
-		DDR = {{ set_variable = {{ cwddr_wende_stage = 1 }} }}
-		country_event = {{ id = {EVG}.130 days = 2 }}
-		DDR = {{ country_event = {{ id = {EVD}.30 days = 2 }} }}
-	}}
-	else_if = {{
-		limit = {{ DDR = {{ check_variable = {{ cwddr_wende_stage = 1 }} check_variable = {{ cwddr_crisis > 59 }} }} }}
-		DDR = {{ set_variable = {{ cwddr_wende_stage = 2 }} country_event = {{ id = {EVD}.31 days = 3 }} }}
-	}}
-	else_if = {{
-		limit = {{ DDR = {{ check_variable = {{ cwddr_wende_stage = 9 }} check_variable = {{ cwddr_crisis > 74 }} }} }}
-		DDR = {{ set_variable = {{ cwddr_wende_stage = 2 }} country_event = {{ id = {EVD}.38 days = 3 }} }}
-	}}
-	else_if = {{
-		limit = {{ DDR = {{ check_variable = {{ cwddr_wende_stage = 1 }} check_variable = {{ cwddr_crisis < 35 }} }} }}
-		DDR = {{ set_variable = {{ cwddr_wende_stage = 0 }} }}
-	}}
-}}
+# IMPERIA COLD WAR — Retire GER-owned crisis progression; DDR political control remains in East Berlin.
+# Crisis arithmetic remains available to reports and player-controlled domestic systems.
 
-# Stage 3: the border opens.
-{P}_wall_opens = {{
-	set_global_flag = {P}_wall_open
-	DDR = {{
-		set_variable = {{ cwddr_wende_stage = 3 }}
-		add_to_variable = {{ cwddr_sed_control = -25 }}
-		add_to_variable = {{ cwddr_exit_pressure = 15 }}
-		clamp_variable = {{ var = cwddr_sed_control min = 0 max = 100 }}
-		clamp_variable = {{ var = cwddr_exit_pressure min = 0 max = 100 }}
-		country_event = {{ id = {EVD}.33 days = 1 }}
-	}}
-	GER = {{ country_event = {{ id = {EVG}.133 days = 1 }} }}
-}}
+# IMPERIA COLD WAR — Retire the GER-owned Wall-opening effect; East Berlin owns its political decisions.
 """
 
 
 def unity_effects():
+    # IMPERIA COLD WAR — Unity helpers only execute after the bilateral and Four Power process.
+    ratified_unity_guard = " ".join([
+        "check_variable = { cwgg_u_phase = 5 }",
+        f"has_global_flag = {P}_unity_by_detente",
+        "has_country_flag = cwgg_u_rat_brd",
+        "has_country_flag = cwgg_u_rat_ddr",
+        "country_exists = USA", "country_exists = ENG", "country_exists = FRA", "country_exists = SOV",
+        "check_variable = { cwgg_fp_usa = 2 }", "check_variable = { cwgg_fp_eng = 2 }",
+        "check_variable = { cwgg_fp_fra = 2 }", "check_variable = { cwgg_fp_sov = 2 }",
+        *(f"check_variable = {{ cwgg_u_ch_{chapter} > 0 }}" for chapter in range(1, 6)),
+        f"NOT = {{ has_global_flag = {P}_unity_achieved }}",
+    ])
+    # IMPERIA COLD WAR — Use the recorded victory receipt after warwatch clears its active flag.
+    war_capitulation_guard = "has_global_flag = cwgg_german_war has_country_flag = cwgg_war_victory_ddr has_war_with = DDR DDR = { has_capitulated = yes }"
     return f"""
 # ---------------------------------------------------------------------- unity
 # Transfers the GDR's states and armed forces to the Federal Republic.
+# IMPERIA COLD WAR — Absorption requires negotiated unity or capitulation in the active bilateral war.
 {P}_absorb_ddr = {{
 	if = {{
-		limit = {{ country_exists = DDR }}
+		limit = {{ country_exists = DDR OR = {{ AND = {{ {ratified_unity_guard} }} AND = {{ {war_capitulation_guard} }} }} }}
 		set_global_flag = {P}_unity_achieved
 		annex_country = {{ target = DDR transfer_troops = yes }}
 		every_state = {{
@@ -636,45 +592,31 @@ def unity_effects():
 }}
 
 {P}_unity_art23 = {{
-	{P}_absorb_ddr = yes
-	set_global_flag = {P}_unity_art23
-	add_ideas = {P}_idea_two_plus_four
-	add_stability = 0.05
-	add_political_power = 150
+	if = {{ limit = {{ {ratified_unity_guard} }}
+		{P}_absorb_ddr = yes
+		set_global_flag = {P}_unity_art23
+		add_ideas = {P}_idea_two_plus_four
+		add_stability = 0.05
+		add_political_power = 150
+	}}
 }}
 
 {P}_unity_art146 = {{
-	{P}_absorb_ddr = yes
-	set_global_flag = {P}_unity_art146
-	add_ideas = {P}_idea_new_constitution
-	add_stability = 0.08
-}}
-
-{P}_unity_neutral = {{
-	{P}_absorb_ddr = yes
-	set_global_flag = {P}_unity_neutral
-	add_ideas = {P}_idea_neutral_germany
-	if = {{ limit = {{ has_idea = NATO_member }} NATO_leave = yes }}
-	if = {{ limit = {{ is_in_faction = yes }} leave_faction = yes }}
-	set_temp_variable = {{ modify_europeanism = -10 }}
-	set_temp_variable = {{ modify_europeanism_target = ROOT.id }}
-	europeanism_change = yes
-	if = {{
-		limit = {{ has_global_flag = mdcw_cw_initialized }}
-		set_temp_variable = {{ mdcw_cw_new_alignment = 0 }}
-		set_temp_variable = {{ mdcw_cw_t_free = 1 }}
-		mdcw_cw_change_alignment = yes
+	if = {{ limit = {{ {ratified_unity_guard} }}
+		{P}_absorb_ddr = yes
+		set_global_flag = {P}_unity_art146
+		add_ideas = {P}_idea_new_constitution
+		add_stability = 0.08
 	}}
 }}
 
 # Confederation: the GDR remains a state but becomes bound to the Federal Republic.
+# IMPERIA COLD WAR — Keep confederation status independent of retired Wende-stage proxies.
 {P}_confederation = {{
-	set_global_flag = {P}_confederation
-	every_other_country = {{ limit = {{ DDR = {{ is_subject_of = PREV }} }} end_puppet = DDR }}
-	DDR = {{ if = {{ limit = {{ is_in_faction = yes }} leave_faction = yes }} }}
-	set_autonomy = {{ target = DDR autonomy_state = autonomy_puppet_state }}
-	DDR = {{ set_variable = {{ cwddr_wende_stage = 10 }} }}
-	add_ideas = {P}_idea_german_confederation
+	if = {{ limit = {{ country_exists = DDR check_variable = {{ cwgg_vertrag_9 = 1 }} has_country_flag = {P}_confederation_offered NOT = {{ has_global_flag = {P}_unity_achieved }} }}
+		set_global_flag = {P}_confederation
+		add_ideas = {P}_idea_german_confederation
+	}}
 }}
 """
 
@@ -795,9 +737,6 @@ def imperia_effects():
 			country_event = {{ id = {EVG}.92 days = 3 }}
 		}}
 		# leaving the Western bloc without a plan: estrangement weakens Westbindung
-		if = {{ limit = {{ has_country_flag = mdcw_cw_estranged }} add_to_variable = {{ cwger_westbindung = -0.5 }} }}
-		if = {{ limit = {{ check_variable = {{ mdcw_cw_alignment = 1 }} NOT = {{ has_country_flag = mdcw_cw_estranged }} }} add_to_variable = {{ cwger_westbindung = 0.05 }} }}
-		clamp_variable = {{ var = cwger_westbindung min = 0 max = 100 }}
 	}}
 	# Soviet tree compatibility: the Quadripartite Agreement is one fact for both sides
 	if = {{ limit = {{ has_global_flag = COLDWAR_SOV_berlin_agreement NOT = {{ has_country_flag = {P}_berlin_agreement }} }}
@@ -814,8 +753,16 @@ def monthly_effects():
 {P}_monthly = {{
 	if = {{
 		limit = {{ original_tag = GER IMP_is_1970_scenario = yes has_country_flag = {P}_initialized }}
+		# IMPERIA COLD WAR — Only a pending peace proposal needs live-term maintenance.
+		{P}_settlement_maintenance = yes
 		{P}_update_bundestag = yes
-		log = "[GetDateText]: COLDWAR_GER_1970 Bundestag: ruling party [?ruling_party|0], government [?cwger_seats_gov|0] of [?cwger_seats_total|0] seats, margin [?cwger_margin|0], defectors [?cwger_defectors|0]; last election CDU [?cwger_parliament_shares^1|%1] SPD [?cwger_parliament_shares^3|%1] FDP [?cwger_parliament_shares^2|%1] Greens [?cwger_parliament_shares^17|%1]; coalition partners [?gov_coalition_array^num|0]"
+		# IMPERIA CW — Cold War: Format monthly diagnostics only in native debug mode.
+		if = {{
+			limit = {{ is_debug = yes }}
+			log = "[GetDateText]: COLDWAR_GER_1970 Bundestag: ruling party [?ruling_party|0], government [?cwger_seats_gov|0] of [?cwger_seats_total|0] seats, margin [?cwger_margin|0], defectors [?cwger_defectors|0]; last election CDU [?cwger_parliament_shares^1|%1] SPD [?cwger_parliament_shares^3|%1] FDP [?cwger_parliament_shares^2|%1] Greens [?cwger_parliament_shares^17|%1]; coalition partners [?gov_coalition_array^num|0]"
+		}}
+		{P}_security_reconcile = yes
+		{P}_security_external_monthly = yes
 		{P}_terror_tick = yes
 		{P}_sec_tick = yes
 		{P}_inner_german_tick = yes
@@ -829,6 +776,7 @@ def monthly_effects():
 		{P}_gw_tick = yes
 		{P}_events_tick = yes
 		{P}_mechanics_tick = yes
+		{P}_security_refresh_threat = yes
 		{P}_update_modifiers = yes
 	}}
 }}
@@ -883,50 +831,11 @@ def monthly_effects():
 		set_country_flag = {{ flag = {P}_bundesbank_cooldown days = 540 value = 1 }}
 		country_event = {{ id = {EVG}.85 days = 1 }}
 	}}
-	# party leadership succession in opposition
-	{P}_leadership_tick = yes
+	# IMPERIA COLD WAR — Leadership changes are selected through party and parliamentary decisions.
 }}
 
-{P}_leadership_tick = {{
-	if = {{
-		limit = {{ check_variable = {{ cwger_cdu_leader = 1 }} date > 1973.6.12 NOT = {{ check_variable = {{ ruling_party = 1 }} }} }}
-		set_variable = {{ cwger_cdu_leader = 2 }}
-		country_event = {{ id = {EVG}.30 days = 1 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ check_variable = {{ ruling_party = 3 }} }} check_variable = {{ cwger_spd_leader < 3 }} date > 1982.12.1 }}
-		set_variable = {{ cwger_spd_leader = 3 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ check_variable = {{ ruling_party = 3 }} }} check_variable = {{ cwger_spd_leader = 3 }} date > 1986.8.25 }}
-		set_variable = {{ cwger_spd_leader = 4 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ check_variable = {{ ruling_party = 3 }} }} check_variable = {{ cwger_spd_leader = 4 }} date > 1990.3.19 }}
-		set_variable = {{ cwger_spd_leader = 5 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ check_variable = {{ ruling_party = 3 }} }} check_variable = {{ cwger_spd_leader = 5 }} date > 1991.5.29 date < 1995.11.1 }}
-		set_variable = {{ cwger_spd_leader = 6 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ check_variable = {{ ruling_party = 3 }} }} check_variable = {{ cwger_spd_leader = 6 }} date > 1993.6.25 }}
-		set_variable = {{ cwger_spd_leader = 7 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ check_variable = {{ ruling_party = 3 }} }} check_variable = {{ cwger_spd_leader = 7 }} date > 1995.11.16 }}
-		set_variable = {{ cwger_spd_leader = 5 }}
-		set_country_flag = {P}_lafontaine_mannheim
-	}}
-	if = {{
-		limit = {{ NOT = {{ check_variable = {{ ruling_party = 3 }} }} has_country_flag = {P}_lafontaine_mannheim check_variable = {{ cwger_spd_leader = 5 }} date > 1998.3.2 }}
-		set_variable = {{ cwger_spd_leader = 8 }}
-		country_event = {{ id = {EVG}.36 days = 1 }}
-	}}
-	# FDP chairmanship
-	if = {{ limit = {{ check_variable = {{ cwger_fdp_leader = 1 }} date > 1974.10.1 }} set_variable = {{ cwger_fdp_leader = 2 }} }}
-	if = {{ limit = {{ check_variable = {{ cwger_fdp_leader = 2 }} date > 1992.5.18 }} set_variable = {{ cwger_fdp_leader = 3 }} }}
-}}
+# IMPERIA COLD WAR — Retire date-driven party leadership replacement.
+
 """
 
 
@@ -940,7 +849,10 @@ def core_setup_effect():
 def election_cache_effect():
     elected = "\n".join(f"set_variable = {{ cwger_parliament_shares^{i} = party_pop_elect_array^{i} }}" for i in range(24))
     current = "\n".join(f"set_variable = {{ cwger_parliament_shares^{i} = party_pop_array^{i} }}" for i in range(24))
-    return (P + "_cache_election_shares = {\nresize_array = { array = cwger_parliament_shares size = 24 }\n"
+    return (P + "_cache_election_shares = {\n"
+            "# IMPERIA CW — Cold War: Resize only on first use or an incompatible saved array.\n"
+            "if = { limit = { NOT = { check_variable = { cwger_parliament_shares^num = 24 } } }\n"
+            "resize_array = { array = cwger_parliament_shares size = 24 }\n}\n"
             "if = { limit = { NOT = { check_variable = { party_pop_elect_array^ruling_party < 0 } } }\n"
             + elected + "\n}\nelse = {\n" + current + "\n}\n}\n")
 
@@ -1002,7 +914,6 @@ def dynamic_modifiers():
 	stability_factor = cwger_dm_stab
 	political_power_factor = cwger_dm_pp
 	interest_rate_multiplier_modifier = cwger_dm_interest
-	mdcw_cw_ideological_defence = cwger_dm_ideo
 	trade_opinion_factor = cwger_dm_trade
 	war_support_factor = cwger_dm_ws
 	tax_gain_multiplier_modifier = cwger_dm_tax
@@ -1048,7 +959,6 @@ def bop():
 			min = -1
 			max = -0.6
 			modifier = {{
-				mdcw_cw_ideological_defence = 0.1
 				war_support_factor = 0.05
 				trade_opinion_factor = -0.1
 				stability_factor = -0.02
@@ -1059,7 +969,6 @@ def bop():
 			min = -0.6
 			max = -0.2
 			modifier = {{
-				mdcw_cw_ideological_defence = 0.05
 				drift_defence_factor = 0.1
 			}}
 		}}
@@ -1074,7 +983,7 @@ def bop():
 			modifier = {{
 				trade_opinion_factor = 0.1
 				political_power_factor = 0.03
-				mdcw_cw_ideological_defence = -0.03
+				drift_defence_factor = -0.03
 			}}
 		}}
 		range = {{
@@ -1085,7 +994,7 @@ def bop():
 				trade_opinion_factor = 0.2
 				stability_factor = 0.03
 				war_support_factor = -0.05
-				mdcw_cw_ideological_defence = -0.06
+				drift_defence_factor = -0.06
 			}}
 		}}
 	}}
@@ -1096,7 +1005,7 @@ def bop():
 def localise_systems():
     L(f"{P}_state_of_the_republic", "State of the Bonn Republic")
     L(f"{P}_state_of_the_republic_desc",
-      "The balance of security and liberty, the threat of terrorism, the pressure of scandals, the Bundesbank's patience and the depth of Western integration, all at once.\n"
+      "The balance of security and liberty, the threat of terrorism, the pressure of scandals, and the Bundesbank's patience, all at once.\n"
       "Security state: §Y[?cwger_security|0]§! | Rule of law: §Y[?cwger_rechtsstaat|0]§!\n"
       "Peace movement: §Y[?cwger_peace_movement|0]§! | Burden of the East: §Y[?cwger_east_burden|0]§! | Stasi penetration §Y[?cwger_stasi_penetration|0]§! vs counter-intelligence §Y[?cwger_counterintel|0]§!\n"
       "Terror threat (left/right/foreign): §Y[?cwger_terror_left|0]§! / §Y[?cwger_terror_right|0]§! / §Y[?cwger_terror_foreign|0]§!\n"
@@ -1105,7 +1014,7 @@ def localise_systems():
     L(f"{P}_ddr_inner_german_desc",
       "How deeply the Republic depends on West German money and how much its people want to leave.\n"
       "Crisis index: §Y[?cwddr_crisis|0]§! | Exit pressure: §Y[?cwddr_exit_pressure|0]§! | Hard-currency shortage: §Y[?cwddr_hard_currency|0]§!\n"
-      "SED control: §Y[?cwddr_sed_control|0]§! | Moscow's guarantee: §Y[?cwddr_moscow_backing|0]§! | Opposition: §Y[?cwddr_opposition|0]§!")
+      "SED control: §Y[?cwddr_sed_control|0]§! | Opposition: §Y[?cwddr_opposition|0]§!")
     L(f"{P}_deutschlandpolitik", "Deutschlandpolitik")
     L(f"{P}_bop_abgrenzung", "Legal Position")
     L(f"{P}_bop_annaeherung", "Change through Rapprochement")

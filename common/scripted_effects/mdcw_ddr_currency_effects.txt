@@ -9,7 +9,16 @@ mdcw_initialize_ddr_currency = {
 			date < 1990.7.1
 			NOT = { has_country_flag = mdcw_ddr_mark_initialized }
 		}
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
+		add_to_variable = { ICW_reserve_initializing_depth = 1 }
 		add_ideas = ddr_mark
+		subtract_from_variable = { ICW_reserve_initializing_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_initializing_depth > 0 } } } clear_variable = ICW_reserve_initializing_depth }
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 		# History ideas do not run on_add; initialize the domestic-reserve variables
 		# explicitly as well, without creating an international reserve issuer.
 		set_variable = { no_foreign_reserve = 1 }

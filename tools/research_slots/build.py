@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: one source for GDP research thresholds and displayed prices.
+# IMPERIA COLD WAR — Native startup scope and GDP research thresholds.
 """Apply the GDP balance before native slot initialization and on campaign load.
 
 No country slot counters or ongoing research are reset when loading a save.
@@ -10,8 +10,11 @@ from pathlib import Path
 import argparse
 import json
 import re
+import sys
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT / 'tools'))
+from multiplayer_quality.native_compat import startup_country_once
 HERE = Path(__file__).resolve().parent
 EFFECT = 'COLDWAR_configure_research_slot_thresholds'
 MARKER = '# IMPERIA CW — Cold War: GDP research thresholds follow the displayed currency scale.'
@@ -48,12 +51,14 @@ def render():
             lines.append(f'\t\tset_variable = {{ GLOBAL.{display}^{index} = GLOBAL.{runtime}^{index} }}')
     lines += ['\t}', '\tadd_to_variable = { global.research_screen_ui = 1 }', '}', '']
     outputs = {EFFECT_PATH: '\n'.join(lines)}
-    outputs[HOOK_PATH] = ('# IMPERIA CW — Cold War: existing development thresholds and revised GDP progression.\n'
+    outputs[HOOK_PATH] = ('# IMPERIA COLD WAR — Country-scoped research threshold initialization.\n'
+                          '# IMPERIA CW — Cold War: existing development thresholds and revised GDP progression.\n'
                           'on_actions = {\n\ton_startup = {\n\t\teffect = {\n'
                           '\t\t\tset_variable = { GLOBAL.gdp_c_slot^2 = 10.000 }\n'
                           '\t\t\tset_variable = { GLOBAL.gdp_c_slot^3 = 30.000 }\n'
                           '\t\t\tset_variable = { GLOBAL.gdp_c_slot^4 = 40.000 }\n'
-                          f'\t\t\t{EFFECT} = yes\n\t\t}}\n\t}}\n}}\n')
+                          + startup_country_once(f'{EFFECT} = yes', 'research_thresholds')
+                          + '\t\t}\n\t}\n}\n')
 
     startup = (ROOT / STARTUP_PATH).read_text(encoding='utf-8-sig')
     anchor = '\tset_variable = { GLOBAL.gdp_c_slot^6 = 200.000 }'

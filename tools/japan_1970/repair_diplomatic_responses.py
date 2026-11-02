@@ -1,5 +1,6 @@
+# IMPERIA COLD WAR — quaZa East Asia and strategic-readiness integration.
 #!/usr/bin/env python3
-# IMPERIA CW — Cold War: guarded Japan diplomatic responses and sender notices.
+# IMPERIA COLD WAR — Cold War: guarded Japan diplomatic responses and sender notices.
 """Guard Japan 1970 foreign responses and notify Japan after each transaction.
 
 The staged foreign event/decision files are the source of truth. Running this

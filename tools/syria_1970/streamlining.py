@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: focus-owned Syrian institutions and essential RP choices.
+# IMPERIA COLD WAR — Focus-owned Syrian institutions and native event boundaries.
 """Pure design/output transforms; never writes loaded files."""
 from pathlib import Path
 from copy import deepcopy
@@ -9,7 +9,7 @@ HERE=Path(__file__).resolve().parent
 P='COLDWAR_SYR_'
 REVISION='focus_owned_20261021'
 MIGRATION=P+'migrate_streamlining_20261021'
-HEADER='# IMPERIA CW — Cold War: Syrian focus-owned reforms and essential agreements.\n'
+HEADER='# IMPERIA COLD WAR — Syrian focus-owned reforms and essential agreements.\n'
 AUTO={'soviet_training','development_credit','friendship_treaty','gulf_project','pipeline','federation','golan','joint_plan','lebanon','iran_oil','funded_project','iraq_transit','gulf_finance','war_egypt','war_warning','war_mediation'}
 KEEP={'succession_crisis','kurdish_coalition','drought','unrest_mediation','security_response','national_pact','governing_mandate',
       'choose_conservative_leader','choose_communist_leader','choose_nasserist_leader','choose_brotherhood_leader',
@@ -305,7 +305,13 @@ def transform(outputs,data):
                 else:immediate.extend(action)
                 event.append(('option','=',[('name','=',P+'close_consultations')]))
                 hidden+=1
-        event_asts[path]=inline(ast)
+        # Definitions of retired popups are removed. Only their effect calls
+        # inside a retained event are inlined; a top-level effect never executes.
+        event_asts[path]=[
+            (k,o,inline(v) if isinstance(v,list) else v)
+            for k,o,v in ast
+            if not (k=='country_event' and isinstance(v,list) and first(v,'id') in inline_events)
+        ]
     # Remove every unreachable event after following the retained callback graph.
     all_events={first(v,'id'):v for a in event_asts.values() for v in values(a,'country_event')}
     def refs(rows):return {first(v,'id') for k,_,v in walk(rows) if k=='country_event' and isinstance(v,list) and first(v,'id') in all_events}

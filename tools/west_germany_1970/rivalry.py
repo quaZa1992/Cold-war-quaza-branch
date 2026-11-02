@@ -1,4 +1,6 @@
+# IMPERIA COLD WAR — Native diplomatic recognition and UN membership.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Remove retired Western integration and Moscow backing mechanics.
 """Inner-German rivalry: a two-player mini-game between Bonn and East Berlin.
 
 State lives in variables on GER (prefix cwgg_). East Berlin is played by a human or by a
@@ -9,11 +11,11 @@ scripted AI with the personality of the SED leader. The window in gui.py reads a
   stage        cwgg_stufe    0 modus vivendi .. 5 war danger, 6 war
   initiative   cwgg_init_brd / cwgg_init_ddr   0..6 action points
   alert        cwgg_mob_brd / cwgg_mob_ddr     0..3 (Bundeswehr / NVA; mobilisation speed and war support per level)
-  crisis       cwgg_krise_typ (0 = none), _int, _runde, _max, _monat (months into the current round, one round = 6 months),
+  crisis       cwgg_krise_typ (0 = none), _int, _runde, _max, _monat (months into the current round, one round = 2 months),
                cwgg_haltung (Bonn's stance), cwgg_ddr_wahl (East Berlin's answer when the GDR is played by a human)
 
 Built for multiplayer roleplay: no hidden 'standing' or 'backing' scores, both sides can be human, rounds
-are resolved by the monthly tick every six months (no recurring hidden events).
+are resolved by the monthly tick every two months (no recurring hidden events).
   treaties     cwgg_vertrag_n (0 locked/none, 1 done, 2 suspended), cwgg_verh (treaty in negotiation), cwgg_verh_prog
   channels     cwgg_kanal_<k> 0 closed, 1 open, 2 strained; unlock flags cwgg_kanal_<k>_unlocked
   levers       cwgg_hebel_<k> 0..3 (Bonn); cwgg_dhebel_<k> 0..3 (East Berlin)
@@ -21,6 +23,7 @@ are resolved by the monthly tick every six months (no recurring hidden events).
 from cw_lib import *
 from roster import requirement
 from events_lib import E, O, fire, EXTRA_EFFECTS
+import balance_patch
 
 EVR = "COLDWAR_GGR"
 R = P + "_rv"          # effect prefix
@@ -42,7 +45,7 @@ ANSWERS = [  # id, key, name
     (4, "moscow", "Calls on Moscow"),
     (5, "counter", "Makes a Counter-Offer"),
 ]
-# change of crisis intensity for Bonn's stance x East Berlin's answer (one round = six months)
+# change of crisis intensity for Bonn's stance x East Berlin's answer (one round = two months)
 MATRIX = {
     1: {1: -8, 2: 0, 3: 15, 4: 15, 5: 0},
     2: {1: -30, 2: -15, 3: 8, 4: 0, 5: -22},
@@ -79,7 +82,7 @@ CRISES = [  # id, key, name, start intensity, best stance, max rounds, lever use
     (2, "border", "Border Incident", 35, 3, 3, "medien", "GFX_Polizeiabsperrung", "Take It to the UN"),
     (3, "spy", "Spy Affair", 45, 6, 3, "recht", "GFX_GER_MAD", "Exchange on the Glienicke Bridge"),
     (4, "embassy", "Embassy Refugees", 50, 6, 3, "devisen", "GFX_german_emmigration", "Negotiate Special Trains"),
-    (5, "recognition", "Recognition Crisis", 30, 3, 3, "recht", "GFX_treaty", "Break Off Relations"),
+    (5, "recognition", "Recognition Crisis", 30, 3, 3, "recht", "GFX_political_deal", "Diplomatic Sanctions"),
     (6, "missiles", "Missile Crisis", 45, 5, 4, "allianz", "GFX_missiles_on_road", "Propose the Zero Option"),
     (7, "manoeuvre", "Manoeuvre Crisis", 55, 2, 2, "allianz", "GFX_GER_Panzer_strasse", "Cancel the Exercise"),
     (8, "dissident", "Dissident Crisis", 30, 4, 3, "medien", "GFX_politics_protest", "Offer Asylum"),
@@ -129,8 +132,8 @@ TREATIES = [
     (3, "basic", "Basic Treaty",
      "The Grundlagenvertrag of December 1972: two German states, equal rights, good-neighbourly relations - and Bonn's letter on German unity, so that nothing is given up for ever.",
      0, [1, 2], "has_country_flag = cwgg_unlock_vertrag_3", "Needs the focus §YThe Basic Treaty§!.", True),
-    (4, "un", "Both States in the United Nations",
-     "In September 1973 the United Nations admitted the Federal Republic and the GDR on the same day.",
+    (4, "un", "Joint UN Membership Applications",
+     "Coordinate applications for UN membership. Admission requires approval through the Security Council and General Assembly.",
      0, [3], "always = yes", "", False),
     (5, "missions", "Permanent Representations",
      "Missions, not embassies: Günter Gaus moved into Hannoversche Straße in East Berlin in 1974, Michael Kohl into Godesberger Allee in Bonn.",
@@ -138,16 +141,17 @@ TREATIES = [
     (6, "traffic", "Traffic, Post and Travel Agreements",
      "Telephone lines, new autobahn crossings, visits for pensioners and urgent family matters: the small steps of the 1970s and 1980s.",
      20, [3], "always = yes", "", False),
+    # IMPERIA CW — Cold War: Cultural cooperation follows treaty progress and climate, without a year lock.
     (7, "culture", "Cultural Agreement and Town Twinning",
      "After thirteen years of talks the cultural agreement was signed in May 1986; Saarlouis and Eisenhüttenstadt became the first twinned towns.",
-     30, [5], "date > 1979.12.31", "Available from 1980.", False),
+     30, [5], "always = yes", "", False),
     (8, "visit", "State Visit of the SED Leader",
      "In September 1987 Erich Honecker was received in Bonn with flags and anthems - and spoke of a border that would one day 'unite rather than divide'.",
      40, [5, 6], "has_country_flag = cwgg_unlock_vertrag_8", "Needs the focus §YCoalition of Reason§!.", False),
     (9, "confederation", "Treaty Community and Confederation",
      "A treaty community between the two German states, with joint commissions, a common market and, one day, confederal institutions.",
-     70, [3, 5], f"OR = {{ DDR = {{ check_variable = {{ cwddr_wende_stage > 2 }} }} DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}",
-     "Needs an open border or a reform government in East Berlin.", True),
+     70, [3, 5], f"{P}_border_open = yes",
+     "Requires an open border.", True),
 ]
 
 LOGS = {}   # key -> (code, text)
@@ -219,15 +223,19 @@ def A(key, name, desc, row, init, pp, cd, trig, eff, once=False):
     ACTIONS.append(dict(key=key, name=name, desc=desc, row=row, init=init, pp=pp, cd=cd, trig=trig, eff=eff, once=once))
 
 
+# IMPERIA COLD WAR — Offers book only proposal cost and a pending receipt; concessions resolve on acceptance.
 A("swing", "Raise the Swing", "Offer a larger interest-free overdraft in inner-German trade, delivered as an Imperia §YConsumer Supply Credits§! programme if East Berlin accepts.",
   "devisen", 1, 25, 1095,
-  f"OR = {{ has_country_flag = {P}_swing_unlocked check_variable = {{ cwgg_hebel_devisen > 0 }} }} {ddr_has('check_variable = { cwddr_wende_stage < 3 }')}",
-  J(f"DDR = {{ country_event = {{ id = COLDWAR_GER_DDR.2 days = 3 }} }}", kl(5), lever("devisen", 1), log("swing", "Bonn offers a larger Swing.")))
+  f"OR = {{ has_country_flag = {P}_swing_unlocked check_variable = {{ cwgg_hebel_devisen > 0 }} }} country_exists = DDR has_global_flag = mdcw_cw_initialized has_country_flag = mdcw_cw_initialized check_variable = {{ mdcw_cw_cap_free > 1 }} check_variable = {{ mdcw_cw_p5_size@DDR = 0 }} DDR = {{ has_country_flag = mdcw_cw_initialized }} NOT = {{ has_country_flag = {balance_patch.SWING_PENDING} }}",
+  J(f"clr_country_flag = {balance_patch.SWING_ACCEPTED}", f"set_country_flag = {{ flag = {balance_patch.SWING_PENDING} days = 30 value = 1 }}",
+    f"DDR = {{ country_event = {{ id = COLDWAR_GER_DDR.2 days = 3 }} }}", log("swing", "Bonn offers a larger Swing.")))
+# Preserve the legacy log index and text; the entry now appears only when East Berlin accepts.
+CREDIT_ACCEPT_LOG = log("credit", "A billion-mark credit for East Berlin. The spring guns come down.")
 A("credit", "The Milliardenkredit", "A state-guaranteed bank loan of one billion marks for a GDR close to insolvency - in exchange for gestures at the border.",
   "devisen", 2, 50, 0,
-  f"OR = {{ check_variable = {{ ruling_party = 1 }} check_variable = {{ cwgg_kanal_koko = 1 }} }} {ddr_has('check_variable = { cwddr_hard_currency > 40 }')}",
-  J(f"DDR = {{ country_event = {{ id = COLDWAR_GER_DDR.3 days = 3 }} }}", kl(10), lever("grenze", -1, ddr=True), lever("devisen", 1),
-    v("cwger_csu_autonomy", 5), log("credit", "A billion-mark credit for East Berlin. The spring guns come down.")), once=True)
+  f"OR = {{ check_variable = {{ ruling_party = 1 }} check_variable = {{ cwgg_kanal_koko = 1 }} }} {ddr_has('check_variable = { cwddr_hard_currency > 40 }')} NOT = {{ has_country_flag = {balance_patch.CREDIT_PENDING} }}",
+  J(f"set_country_flag = {{ flag = {balance_patch.CREDIT_PENDING} days = 30 value = 1 }}",
+    f"DDR = {{ country_event = {{ id = COLDWAR_GER_DDR.3 days = 3 }} }}"), once=True)
 A("freikauf", "Buy Prisoners Free", "Pay for the release of political prisoners through the lawyers' channel.",
   "menschen", 1, 0, 365, "check_variable = { cwgg_kanal_vogel = 1 } country_exists = DDR",
   J(money_gdp(-0.0004), "DDR = { country_event = { id = COLDWAR_GER_DDR.4 days = 5 } }", kl(2), lever("menschen", 1), stab(0.01),
@@ -244,7 +252,7 @@ A("church", "Aid for the Church Groups", "Money, paper and photocopiers for the 
   J(dv("cwddr_opposition", 4), dv("cwddr_sed_control", -2), kl(-3), log("church", "Bonn quietly supports the church groups in the GDR.")))
 A("mandate", "Reassert the Sole Mandate", "Remind the world that only the Federal Republic speaks for Germany. Third states that recognise the GDR will hear from Bonn.",
   "recht", 1, 25, 365, "NOT = { check_variable = { cwgg_vertrag_3 = 1 } } country_exists = DDR",
-  J(dv("cwddr_recognition", -5), kl(-8), bop(-0.1), log("mandate", "Bonn reasserts its claim to speak for all Germans.")))
+  J(kl(-8), bop(-0.1), log("mandate", "Bonn reasserts its claim to speak for all Germans.")))
 A("freeze", "Freeze Credits and Deliveries", "Suspend credits and slow deliveries in inner-German trade until East Berlin moves.",
   "handel", 2, 25, 730, "check_variable = { cwgg_hebel_handel > 0 } country_exists = DDR",
   J(dv("cwddr_hard_currency", 10), dv("cwddr_west_dependency", -5), kl(-15), dr(10), log("freeze", "Bonn freezes credits to the GDR.")))
@@ -258,7 +266,7 @@ A("manoeuvre", "Exercises Near the Border", "Large Bundeswehr and NATO exercises
     log("manoeuvre", "Bundeswehr exercises near the border.")))
 A("raid", "Roll Up Stasi Networks", "A coordinated strike by the Federal Office for the Protection of the Constitution and the Federal Prosecutor against the HVA's networks.",
   "recht", 2, 50, 365, "country_exists = DDR",
-  J(v("cwger_stasi_penetration", -10), v("cwger_counterintel", 5), kl(-5),
+  J(v("cwger_stasi_penetration", -10), v("cwger_counterintel", 3), kl(-5),
     *[f"if = {{ limit = {{ check_variable = {{ cwgg_kanal_{k} = 2 }} }} set_variable = {{ cwgg_kanal_{k} = 1 }} }}" for k, _, _ in CHANNELS],
     tt(f"{P}_tt_raid_channels", "Strained channels are §Gsecure§! again."),
     f"if = {{ limit = {{ has_global_flag = cwgg_raf_in_ddr NOT = {{ has_global_flag = cwgg_raf_in_ddr_found }} }} random_list = {{ 70 = {{ }} 30 = {{ set_global_flag = cwgg_raf_in_ddr_found country_event = {{ id = {EVR}.70 days = 5 }} }} }} }}",
@@ -274,9 +282,16 @@ A("alert_down", "Lower Alert Level", "Stand the forces down by one level.",
   "allianz", 0, 0, 0, "check_variable = { cwgg_mob_brd > 0 }",
   J("add_to_variable = { cwgg_mob_brd = -1 }", f"{R}_set_stage_modifiers = yes", kl(2), log("alert_down", "The Bundeswehr lowers its alert level.")))
 
+# IMPERIA COLD WAR — Consent receipts resolve the existing proposal logs at acceptance.
+EXTRA_EFFECTS.append(balance_patch.effects(
+    log("swing", "Bonn offers a larger Swing."),
+    CREDIT_ACCEPT_LOG,
+))
+
 
 def trigger_file():
     out = ["## Generated by tools/west_germany_1970/compile.py. Edit the generator, not this file.\n"]
+    out.extend(balance_patch.triggers().splitlines())
     for a in ACTIONS:
         conds = [a["trig"]]
         if a["init"]:
@@ -287,6 +302,11 @@ def trigger_file():
             conds.append(f"NOT = {{ has_country_flag = cwgg_cd_{a['key']} }}")
         if a["once"]:
             conds.append(f"NOT = {{ has_country_flag = cwgg_done_{a['key']} }}")
+        if a["key"] in balance_patch.INTEL_OPERATIONS:
+            conds.append(f"{P}_balance_intel_operation_ready = yes")
+        if a["key"] in balance_patch.OFFENSIVE_ACTIONS:
+            conds.append(f"{P}_balance_offensive_ready = yes")
+            conds.append(f"custom_trigger_tooltip = {{ tooltip = {P}_balance_offensive_ready NOT = {{ has_country_flag = {balance_patch.OFFENSIVE_COOLDOWN} }} }}")
         conds.append("NOT = { has_global_flag = " + P + "_unity_achieved }")
         out.append(f"{R}_can_{a['key']} = {{\n\t" + "\n\t".join(conds) + "\n}\n")
     for s in STANCES:
@@ -305,15 +325,20 @@ def trigger_file():
         out.append(f"{R}_can_stance_{key} = {{\n\t" + "\n\t".join(conds) + "\n}\n")
     for t in TREATIES:
         n, key, name, desc, mink, pre, extra, _u, _rat = t
-        conds = [f"check_variable = {{ cwgg_vertrag_{n} = 0 }}", "check_variable = { cwgg_verh = 0 }", f"check_variable = {{ cwgg_klima > {mink - 1} }}",
-                 "check_variable = { cwgg_stufe < 3 }", "check_variable = { cwgg_init_brd > 1 }", "country_exists = DDR",
+        conds = [f"check_variable = {{ cwgg_vertrag_{n} = 0 }}", "check_variable = { cwgg_verh = 0 }", "check_variable = { cwgg_tr_pending = 0 }", "check_variable = { cwgg_tr_ready = 0 }", f"check_variable = {{ cwgg_klima > {mink - 1} }}",
+                 "check_variable = { cwgg_stufe < 3 }", "check_variable = { cwgg_init_brd > 1 }", "has_political_power > 24", "country_exists = DDR",
                  f"NOT = {{ has_global_flag = {P}_unity_achieved }}", extra]
         conds += [f"check_variable = {{ cwgg_vertrag_{p} = 1 }}" for p in pre]
         out.append(f"{R}_can_treaty_{n} = {{\n\t" + "\n\t".join(conds) + "\n}\n")
+        ddr_conds = ["original_tag = DDR", "is_ai = no", "has_political_power > 24", "country_exists = GER", "GER = { check_variable = { cwgg_init_ddr > 1 } }", f"GER = {{ {extra} }}",
+                     f"GER = {{ check_variable = {{ cwgg_vertrag_{n} = 0 }} check_variable = {{ cwgg_verh = 0 }} check_variable = {{ cwgg_tr_pending = 0 }} check_variable = {{ cwgg_tr_ready = 0 }} check_variable = {{ cwgg_klima > {mink - 1} }} check_variable = {{ cwgg_stufe < 3 }} country_exists = DDR NOT = {{ has_global_flag = {P}_unity_achieved }} }}"]
+        ddr_conds += [f"GER = {{ check_variable = {{ cwgg_vertrag_{p} = 1 }} }}" for p in pre]
+        out.append(f"{P}_east_can_treaty_{n} = {{\n\t" + "\n\t".join(ddr_conds) + "\n}\n")
         out.append(f"{R}_shown_treaty_{n} = {{\n\t" + "\n\t".join([extra] + [f"check_variable = {{ cwgg_vertrag_{p} > 0 }}" for p in pre]) + "\n}\n")
     for k, name, _d in CHANNELS:
         out.append(f"{R}_can_open_{k} = {{\n\thas_country_flag = cwgg_kanal_{k}_unlocked\n\tcheck_variable = {{ cwgg_kanal_{k} = 0 }}\n\tcheck_variable = {{ cwgg_init_brd > 0 }}\n\tcountry_exists = DDR\n}}\n")
-    out.append(f"{R}_hardline_moscow = {{\n\tOR = {{\n\t\thas_global_flag = {P}_moscow_coup_succeeded\n\t\tAND = {{ country_exists = SOV SOV = {{ has_completed_focus = COLDWAR_SOV_the_brezhnev_doctrine }} }}\n\t}}\n}}\n")
+    out.append(f"{R}_can_review_treaty = {{\n\tcheck_variable = {{ cwgg_tr_ready > 0 }}\n\tcheck_variable = {{ cwgg_tr_pending = 0 }}\n\tNOT = {{ has_country_flag = cwgg_tr_brd_dialogue_open }}\n}}\n")
+    out.append(f"{P}_east_can_review_treaty = {{\n\tis_ai = no\n\tNOT = {{ has_country_flag = cwgg_tr_ddr_dialogue_open }}\n\tGER = {{ check_variable = {{ cwgg_tr_pending > 0 }} }}\n}}\n")
     out.append(f"{R}_active = {{\n\toriginal_tag = GER\n\tIMP_is_1970_scenario = yes\n\thas_country_flag = cwgg_initialized\n}}\n")
     return "\n".join(out)
 
@@ -342,13 +367,20 @@ def setup():
 	set_variable = {{ cwgg_krise_typ = 0 }}
 	set_variable = {{ cwgg_krise_int = 0 }}
 	set_variable = {{ cwgg_krise_monat = 0 }}
+	clr_country_flag = cwgg_orders_waiting
 	set_variable = {{ cwgg_ddr_wahl = 0 }}
+	set_variable = {{ cwgg_brd_order_ready = 0 }}
+	set_variable = {{ cwgg_ddr_order_ready = 0 }}
 	set_variable = {{ cwgg_haltung = 1 }}
 	set_variable = {{ cwgg_last_h = 0 }}
 	set_variable = {{ cwgg_last_a = 0 }}
 	set_variable = {{ cwgg_countdown = 0 }}
 	set_variable = {{ cwgg_verh = 0 }}
 	set_variable = {{ cwgg_verh_prog = 0 }}
+	set_variable = {{ cwgg_tr_pending = 0 }}
+	set_variable = {{ cwgg_tr_ready = 0 }}
+	set_variable = {{ cwgg_tr_invalid = 0 }}
+	set_variable = {{ cwgg_tr_sender = 0 }}
 	set_variable = {{ cwgg_months = 0 }}
 	set_variable = {{ cwgg_year = 1970 }}
 	set_variable = {{ cwgg_crises_total = 0 }}
@@ -519,6 +551,12 @@ def monthly():
 	if = {{ limit = {{ NOT = {{ country_exists = DDR }} }}
 		set_variable = {{ cwgg_krise_typ = 0 }}
 		set_variable = {{ cwgg_krise_int = 0 }}
+		set_variable = {{ cwgg_verh = 0 }}
+		set_variable = {{ cwgg_verh_prog = 0 }}
+		set_variable = {{ cwgg_tr_pending = 0 }}
+		set_variable = {{ cwgg_tr_ready = 0 }}
+		set_variable = {{ cwgg_tr_invalid = 0 }}
+		set_variable = {{ cwgg_tr_sender = 0 }}
 		if = {{ limit = {{ NOT = {{ check_variable = {{ cwgg_stufe = 6 }} }} }} set_variable = {{ cwgg_stufe = 0 }} }}
 	}}
 	if = {{ limit = {{ country_exists = DDR NOT = {{ has_global_flag = {P}_unity_achieved }} }}
@@ -562,8 +600,7 @@ def monthly():
 	clamp_variable = {{ var = cwgg_init_ddr min = 0 max = 6 }}
 }}
 
-# Climate drifts towards a base set by treaties, world tension, the SED leader, Moscow,
-# the Deutschlandpolitik balance, the government in Bonn and the open channels.
+# IMPERIA COLD WAR — Bilateral climate follows agreements, pressure and enacted policy.
 {R}_climate = {{
 	set_temp_variable = {{ cwgg_t_b = 0 }}
 {basis_tr}
@@ -574,16 +611,6 @@ def monthly():
 		divide_temp_variable = {{ cwgg_t = 4 }}
 		subtract_from_temp_variable = {{ cwgg_t_b = cwgg_t }}
 	}}
-	if = {{ limit = {{ DDR = {{ check_variable = {{ cwddr_leader = 0 }} }} }} add_to_temp_variable = {{ cwgg_t_b = -5 }} }}
-	else_if = {{ limit = {{ DDR = {{ check_variable = {{ cwddr_leader = 1 }} }} date > 1979.12.31 date < 1983.1.1 }} add_to_temp_variable = {{ cwgg_t_b = -5 }} }}
-	else_if = {{ limit = {{ DDR = {{ check_variable = {{ cwddr_leader = 1 }} }} date > 1982.12.31 }} add_to_temp_variable = {{ cwgg_t_b = 5 }} }}
-	else_if = {{ limit = {{ DDR = {{ check_variable = {{ cwddr_leader = 2 }} }} }} add_to_temp_variable = {{ cwgg_t_b = -5 }} }}
-	else_if = {{ limit = {{ DDR = {{ check_variable = {{ cwddr_leader = 3 }} }} }} add_to_temp_variable = {{ cwgg_t_b = 15 }} }}
-	else_if = {{ limit = {{ DDR = {{ check_variable = {{ cwddr_leader > 3 }} }} }} add_to_temp_variable = {{ cwgg_t_b = 20 }} }}
-	if = {{ limit = {{ has_global_flag = {P}_moscow_coup_succeeded }} add_to_temp_variable = {{ cwgg_t_b = -25 }} }}
-	else_if = {{ limit = {{ country_exists = SOV SOV = {{ has_completed_focus = COLDWAR_SOV_gor_the_sinatra_doctrine }} }} add_to_temp_variable = {{ cwgg_t_b = 15 }} }}
-	else_if = {{ limit = {{ country_exists = SOV SOV = {{ OR = {{ has_completed_focus = COLDWAR_SOV_gor_new_thinking has_completed_focus = COLDWAR_SOV_gor_glasnost_first }} }} }} add_to_temp_variable = {{ cwgg_t_b = 10 }} }}
-	else_if = {{ limit = {{ country_exists = SOV SOV = {{ has_completed_focus = COLDWAR_SOV_the_brezhnev_doctrine }} }} add_to_temp_variable = {{ cwgg_t_b = -10 }} }}
 	if = {{ limit = {{ check_variable = {{ ruling_party = 1 }} }} add_to_temp_variable = {{ cwgg_t_b = -5 }} }}
 	if = {{ limit = {{ OR = {{ check_variable = {{ ruling_party = 17 }} is_in_array = {{ gov_coalition_array = 17 }} }} {requirement("greens")} }} add_to_temp_variable = {{ cwgg_t_b = 3 }} }}
 	if = {{ limit = {{ has_country_flag = {P}_double_track }} add_to_temp_variable = {{ cwgg_t_b = -5 }} }}
@@ -591,6 +618,7 @@ def monthly():
 	if = {{ limit = {{ has_country_flag = cwgg_policy_strength }} add_to_temp_variable = {{ cwgg_t_b = -10 }} }}
 	if = {{ limit = {{ has_country_flag = cwgg_policy_rapprochement }} add_to_temp_variable = {{ cwgg_t_b = 5 }} }}
 	add_to_temp_variable = {{ cwgg_t_b = cwgg_basis_bonus }}
+	# IMPERIA COLD WAR — Bilateral climate is independent of the DDR national course.
 	clamp_temp_variable = {{ var = cwgg_t_b min = -100 max = 100 }}
 	set_variable = {{ cwgg_basis = cwgg_t_b }}
 	# drift 5 % towards the base, minus a share of the escalation pressure
@@ -611,13 +639,27 @@ def monthly():
 
 def border_watch():
     def count(side, states):
+        # IMPERIA CW — Cold War: Preserve the exact stepped count with a bounded decision tree.
+        # Empty border states need one native division query; populated states need at most five,
+        # instead of testing all thirteen thresholds independently on every refresh.
+        def query(state, threshold):
+            condition = f"divisions_in_state = {{ state = {state} size > {threshold - 1} }}"
+            return "DDR = { " + condition + " }" if side == "ddr" else condition
+
+        def branch(state, low, high):
+            if low == high:
+                total = sum(add for _threshold, add in BORDER_STEPS[:low])
+                return f"add_to_variable = {{ cwgg_aufm_{side}_div = {total} }}"
+            middle = (low + high + 1) // 2
+            threshold = BORDER_STEPS[middle - 1][0]
+            return (f"if = {{ limit = {{ {query(state, threshold)} }} "
+                    + branch(state, middle, high) + " } else = { " + branch(state, low, middle - 1) + " }")
+
         lines = [f"\tset_variable = {{ cwgg_aufm_{side}_div = 0 }}"]
         for st in states:
-            for n, add in BORDER_STEPS:
-                cond = f"divisions_in_state = {{ state = {st} size > {n - 1} }}"
-                if side == "ddr":
-                    cond = f"DDR = {{ {cond} }}"
-                lines.append(f"\tif = {{ limit = {{ {cond} }} add_to_variable = {{ cwgg_aufm_{side}_div = {add} }} }}")
+            body = (f"if = {{ limit = {{ {query(st, 1)} }} "
+                    + branch(st, 1, len(BORDER_STEPS)) + " }")
+            lines.append("\t" + body)
         lines.append(f"\tset_variable = {{ cwgg_aufm_{side} = 0 }}")
         for lvl, n in enumerate(BORDER_LEVELS, start=1):
             lines.append(f"\tif = {{ limit = {{ check_variable = {{ cwgg_aufm_{side}_div > {n - 1} }} }} set_variable = {{ cwgg_aufm_{side} = {lvl} }} }}")
@@ -674,26 +716,78 @@ def border_watch():
 
 
 def negotiation():
-    starts, ends = [], []
+    starts, ddr_starts = [], []
     for t in TREATIES:
         n, key, name, desc, mink, pre, extra, _u, rat = t
         starts.append(f"""{R}_start_treaty_{n} = {{
-	add_to_variable = {{ cwgg_init_brd = -2 }}
-	add_political_power = -25
-	set_variable = {{ cwgg_verh = {n} }}
-	set_variable = {{ cwgg_verh_prog = 0 }}
-	{log(f"nego_{n}", f"Negotiations open: {name}.")}
-	{R}_gui_refresh = yes
+	if = {{ limit = {{ {R}_can_treaty_{n} = yes }}
+		add_to_variable = {{ cwgg_init_brd = -2 }}
+		add_political_power = -25
+		set_variable = {{ cwgg_verh = {n} }}
+		set_variable = {{ cwgg_verh_prog = 0 }}
+		set_variable = {{ cwgg_tr_invalid = 0 }}
+		set_variable = {{ cwgg_tr_sender = 1 }}
+		{log(f"nego_{n}", f"Negotiations open: {name}.")}
+		{R}_gui_refresh = yes
+	}}
+}}""")
+        ddr_starts.append(f"""{P}_east_act_treaty_{n} = {{
+	if = {{ limit = {{ {P}_east_can_treaty_{n} = yes }}
+		add_political_power = -25
+		GER = {{
+			add_to_variable = {{ cwgg_init_ddr = -2 }}
+			set_variable = {{ cwgg_verh = {n} }}
+			set_variable = {{ cwgg_verh_prog = 0 }}
+			set_variable = {{ cwgg_tr_sender = 2 }}
+			set_variable = {{ cwgg_tr_invalid = 0 }}
+        {log(f"nego_ddr_{n}", f"East Berlin opens negotiations: {name}.")}
+			{R}_gui_refresh = yes
+		}}
+	}}
 }}""")
     return f"""
 # ---------------------------------------------------------------- treaty negotiations
 {chr(10).join(starts)}
 
+# IMPERIA COLD WAR — East Berlin can initiate the existing treaty process at the same prices.
+{chr(10).join(ddr_starts)}
+
+# IMPERIA COLD WAR — Rejection releases the pending preparation without replaying or refunding it.
+{R}_decline_treaty = {{
+	if = {{ limit = {{ check_variable = {{ cwgg_tr_ready > 0 }} check_variable = {{ cwgg_tr_pending = 0 }} }}
+		set_variable = {{ cwgg_verh = 0 }}
+		set_variable = {{ cwgg_verh_prog = 0 }}
+		set_variable = {{ cwgg_tr_ready = 0 }}
+		set_variable = {{ cwgg_tr_pending = 0 }}
+		set_variable = {{ cwgg_tr_invalid = 0 }}
+		set_variable = {{ cwgg_tr_sender = 0 }}
+		clr_country_flag = cwgg_tr_brd_dialogue_open
+		if = {{ limit = {{ country_exists = DDR }} DDR = {{ clr_country_flag = cwgg_tr_ddr_dialogue_open }} }}
+		{R}_sync_views = yes
+	}}
+}}
+
+# IMPERIA COLD WAR — Treaty review reopens the existing pending event and applies no new cost.
+{R}_review_treaty = {{
+	if = {{ limit = {{ {R}_can_review_treaty = yes }}
+		set_country_flag = cwgg_tr_brd_dialogue_open
+		country_event = {{ id = {EVR}.50 days = 1 }}
+	}}
+}}
+{P}_east_review_treaty = {{
+	if = {{ limit = {{ {P}_east_can_review_treaty = yes }}
+{chr(10).join(f"\t\tif = {{ limit = {{ GER = {{ check_variable = {{ cwgg_tr_pending = {t[0]} }} }} }} set_country_flag = cwgg_tr_ddr_dialogue_open country_event = {{ id = {EVR}.{250 + t[0]} days = 1 }} }}" for t in TREATIES)}
+	}}
+}}
+
 {R}_negotiation_tick = {{
 	if = {{ limit = {{ check_variable = {{ cwgg_verh > 0 }} }}
-		if = {{ limit = {{ check_variable = {{ cwgg_stufe > 3 }} }}
+		if = {{ limit = {{ OR = {{ check_variable = {{ cwgg_stufe > 3 }} NOT = {{ country_exists = DDR }} has_global_flag = {P}_unity_achieved }} }}
 			set_variable = {{ cwgg_verh = 0 }}
 			set_variable = {{ cwgg_verh_prog = 0 }}
+			# IMPERIA COLD WAR — Preserve an outstanding recipient event as an invalid, locked offer until it is answered.
+			if = {{ limit = {{ OR = {{ check_variable = {{ cwgg_tr_pending > 0 }} check_variable = {{ cwgg_tr_ready > 0 }} }} }} set_variable = {{ cwgg_tr_invalid = 1 }} }}
+			else = {{ set_variable = {{ cwgg_tr_sender = 0 }} }}
 			{log("nego_broken", "The crisis has broken off the negotiations.")}
 		}}
 		else_if = {{ limit = {{ check_variable = {{ cwgg_stufe < 3 }} }}
@@ -708,12 +802,16 @@ def negotiation():
 			multiply_temp_variable = {{ cwgg_t2 = 2 }}
 			add_to_temp_variable = {{ cwgg_t = cwgg_t2 }}
 			if = {{ limit = {{ has_country_flag = cwgg_policy_rapprochement }} multiply_temp_variable = {{ cwgg_t = 1.25 }} }}
-			if = {{ limit = {{ DDR = {{ check_variable = {{ cwddr_leader = 0 }} }} check_variable = {{ cwgg_verh > 2 }} }} multiply_temp_variable = {{ cwgg_t = 0.5 }} }}
 			clamp_temp_variable = {{ var = cwgg_t min = 2 max = 30 }}
 			add_to_variable = {{ cwgg_verh_prog = cwgg_t }}
 			if = {{ limit = {{ check_variable = {{ cwgg_verh_prog > 99 }} }}
 				set_variable = {{ cwgg_verh_prog = 100 }}
-				country_event = {{ id = {EVR}.50 days = 1 }}
+				if = {{ limit = {{ check_variable = {{ cwgg_tr_ready = 0 }} }}
+					set_variable = {{ cwgg_tr_ready = cwgg_verh }}
+					set_variable = {{ cwgg_tr_invalid = 0 }}
+					set_country_flag = cwgg_tr_brd_dialogue_open
+					country_event = {{ id = {EVR}.50 days = 1 }}
+				}}
 			}}
 		}}
 	}}
@@ -728,25 +826,43 @@ def treaty_effects():
         2: J(f"set_country_flag = {P}_berlin_agreement", "set_global_flag = COLDWAR_SOV_berlin_agreement", v("cwger_berlin_access", 20),
              lever("transit", -1, ddr=True), lever("handel", 1), kl(8), tension(-2), channel_unlock("draht"),
              log("t2", "The Berlin settlement is signed. Transit becomes routine.")),
-        3: J(dv("cwddr_recognition", 15), kl(10), f"if = {{ limit = {{ has_idea = {P}_idea_hallstein_legacy }} remove_ideas = {P}_idea_hallstein_legacy }}",
+        3: J("COLDWAR_Germany_mutual_recognition = yes", kl(10), f"if = {{ limit = {{ has_idea = {P}_idea_hallstein_legacy }} remove_ideas = {P}_idea_hallstein_legacy }}",
              f"set_country_flag = {P}_basic_treaty", bop(0.15), f"set_country_flag = {P}_treaties_ratified",
              "if = { limit = { country_exists = DDR } DDR = { country_event = { id = COLDWAR_GER_DDR.11 days = 3 } } }",
              "country_event = { id = COLDWAR_GER.40 days = 200 }", log("t3", "The Basic Treaty is ratified. Two states, one nation.")),
-        4: J(dv("cwddr_recognition", 10), tension(-2), kl(4), f"set_country_flag = {P}_un_member", f"add_ideas = {P}_idea_un_member",
-             log("t4", "Both German states take their seats in the United Nations.")),
+        4: J("COLDWAR_Germany_joint_un_applications = yes", kl(4),
+             log("t4", "Both German governments submit UN membership applications.")),
         5: J(channel_unlock("sv", True), kl(6), log("t5", "Permanent Representations open in Bonn and East Berlin.")),
         6: J(dv("cwddr_west_media", 5), dv("cwddr_exit_pressure", 3), kl(6), stab(0.01),
              log("t6", "New crossings, telephone lines and visits for pensioners.")),
         7: J(dv("cwddr_opposition", 3), kl(6), channel_unlock("kirche"), log("t7", "Cultural agreement signed; the first towns are twinned.")),
         8: J(dv("cwddr_sed_control", -5), kl(8), "if = { limit = { country_exists = DDR } DDR = { country_event = { id = COLDWAR_GER_DDR.8 days = 2 } } }", v("cwger_csu_autonomy", 5), party("cdu", -0.003),
              log("t8", "The SED leader is received in Bonn with flags and anthems.")),
-        9: J(f"set_country_flag = {P}_confederation_offered", v("cwger_unity", 15), kl(10),
+        9: J(f"set_country_flag = {P}_confederation_offered", f"{P}_confederation = yes", v("cwger_unity", 15), kl(10),
              log("t9", "A treaty community between the two German states is agreed.")),
     }
     out = []
     for t in TREATIES:
         n = t[0]
-        out.append(f"{R}_treaty_{n} = {{\n\tset_variable = {{ cwgg_vertrag_{n} = 1 }}\n{fmt(hide_vars_local(eff[n]), 1)}\n}}")
+        mink, pre, extra = t[4], t[5], t[6]
+        live = " ".join([f"check_variable = {{ cwgg_verh = {n} }}", f"check_variable = {{ cwgg_vertrag_{n} = 0 }}",
+                         "check_variable = { cwgg_verh_prog > 99 }", f"check_variable = {{ cwgg_klima > {mink - 1} }}",
+                         "check_variable = { cwgg_stufe < 3 }", "check_variable = { cwgg_tr_invalid = 0 }", "country_exists = DDR",
+                         f"NOT = {{ has_global_flag = {P}_unity_achieved }}", extra] +
+                        [f"check_variable = {{ cwgg_vertrag_{p} = 1 }}" for p in pre])
+        out.append(f"{R}_treaty_{n} = {{\n\tif = {{ limit = {{ {R}_can_ratify_{n} = yes }}\n\t\tset_variable = {{ cwgg_vertrag_{n} = 1 }}\n{fmt(hide_vars_local(eff[n]), 2)}\n\t}}\n}}")
+        out.append(f"""{R}_ratify_{n} = {{
+	if = {{ limit = {{ {R}_can_ratify_{n} = yes check_variable = {{ cwgg_tr_pending = {n} }} }}
+		{R}_treaty_{n} = yes
+		set_variable = {{ cwgg_verh = 0 }}
+		set_variable = {{ cwgg_verh_prog = 0 }}
+		set_variable = {{ cwgg_tr_pending = 0 }}
+			set_variable = {{ cwgg_tr_ready = 0 }}
+		set_variable = {{ cwgg_tr_invalid = 0 }}
+		set_variable = {{ cwgg_tr_sender = 0 }}
+		{R}_gui_refresh = yes
+	}}
+}}""")
     return "\n# ---------------------------------------------------------------- treaty effects\n" + "\n\n".join(out) + "\n"
 
 
@@ -773,7 +889,7 @@ def ddr_ai():
 					10 = {{
 						modifier = {{ add = 15 DDR = {{ check_variable = {{ cwddr_hard_currency > 50 }} }} }}
 						modifier = {{ factor = 0 check_variable = {{ cwgg_dhebel_zwang > 2 }} }}
-						modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
+						modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
 						{lever("zwang", 1, ddr=True, show=False)}
 						{kl(-6, False)}
 						DDR = {{ {dv_self("cwddr_hard_currency", -3, show=False)} {dv_self("cwddr_exit_pressure", 1, show=False)} }}
@@ -782,7 +898,7 @@ def ddr_ai():
 					10 = {{
 						modifier = {{ factor = 0.2 check_variable = {{ cwgg_vertrag_2 = 1 }} }}
 						modifier = {{ factor = 0 check_variable = {{ cwgg_dhebel_transit = 0 }} }}
-						modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
+						modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
 						{kl(-5, False)}
 						{dr(12, False)}
 						{v("cwger_berlin_access", -5, show=False)}
@@ -795,18 +911,16 @@ def ddr_ai():
 					}}
 					10 = {{
 						modifier = {{ factor = 0 check_variable = {{ cwgg_vertrag_3 = 1 }} }}
-						modifier = {{ factor = 0 DDR = {{ check_variable = {{ cwddr_recognition > 79 }} }} }}
-						DDR = {{ {dv_self("cwddr_recognition", 4, show=False)} }}
+						modifier = {{ factor = 0 DDR = {{ OR = {{ COLDWAR_Germany_can_campaign = no has_political_power < 200 }} }} }}
+						DDR = {{ add_political_power = -200 COLDWAR_Germany_campaign_recognition = yes }}
 						{kl(-3, False)}
-						{log("ddr_recog", "Another state in the Third World recognises the GDR.")}
-						if = {{ limit = {{ check_variable = {{ cwgg_hebel_recht > 1 }} }}
-							random_list = {{ 70 = {{ }} 30 = {{ set_temp_variable = {{ cwgg_t_typ = 5 }} {R}_start_crisis = yes }} }}
-						}}
+						{log("ddr_recog", "East Berlin requests diplomatic recognition.")}
+						# IMPERIA COLD WAR — An actual recognition, not sending a request, can trigger the recognition crisis.
 					}}
 					8 = {{
 						modifier = {{ add = 15 DDR = {{ check_variable = {{ cwddr_exit_pressure > 50 }} }} }}
 						modifier = {{ factor = 0 check_variable = {{ cwgg_dhebel_grenze > 2 }} }}
-						modifier = {{ factor = 0.2 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
+						modifier = {{ factor = 0.2 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
 						{lever("grenze", 1, ddr=True, show=False)}
 						{dr(8, False)}
 						DDR = {{ {dv_self("cwddr_exit_pressure", -3, show=False)} }}
@@ -819,9 +933,9 @@ def ddr_ai():
 						country_event = {{ id = {EVR}.60 days = 2 }}
 					}}
 					5 = {{
-						modifier = {{ add = 10 DDR = {{ check_variable = {{ cwddr_leader = 1 }} }} }}
-						modifier = {{ add = 10 DDR = {{ check_variable = {{ cwddr_leader = 1 }} }} date > 1982.12.31 }}
-						modifier = {{ add = 25 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
+						modifier = {{ add = 10 DDR = {{ check_variable = {{ cwddr_sed_control > 40 }} check_variable = {{ cwddr_sed_control < 71 }} }} }}
+
+						modifier = {{ add = 25 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
 						modifier = {{ add = 10 check_variable = {{ cwgg_klima > 0 }} }}
 						{kl(6, False)}
 						if = {{ limit = {{ check_variable = {{ cwgg_dhebel_grenze > 0 }} }} {lever("grenze", -1, ddr=True, show=False)} }}
@@ -875,7 +989,17 @@ def actions_effects():
             pre.append(f"set_country_flag = {{ flag = cwgg_cd_{a['key']} days = {a['cd']} value = 1 }}")
         if a["once"]:
             pre.append(f"set_country_flag = cwgg_done_{a['key']}")
+        if a["key"] in balance_patch.INTEL_OPERATIONS:
+            pre.append(balance_patch.mark_intel_operation())
+        if a["key"] in balance_patch.OFFENSIVE_ACTIONS:
+            pre.append(balance_patch.mark_offensive_action())
         body = J(*pre, a["eff"], f"{R}_gui_refresh = yes")
+        if a["key"] in balance_patch.OFFENSIVE_ACTIONS:
+            body = f"if = {{ limit = {{ {R}_can_{a['key']} = yes {P}_balance_offensive_ready = yes }}\n{fmt(hide_vars_local(body), 1)}\n}}"
+        elif a["key"] in balance_patch.INTEL_OPERATIONS:
+            body = f"if = {{ limit = {{ {R}_can_{a['key']} = yes {P}_balance_intel_operation_ready = yes }}\n{fmt(hide_vars_local(body), 1)}\n}}"
+        elif a["key"] in {"swing", "credit"}:
+            body = f"if = {{ limit = {{ {R}_can_{a['key']} = yes }}\n{fmt(hide_vars_local(body), 1)}\n}}"
         out.append(f"{R}_act_{a['key']} = {{\n{fmt(hide_vars_local(body), 1)}\n}}")
     for k, name, _d in CHANNELS:
         out.append(f"""{R}_open_{k} = {{
@@ -914,16 +1038,23 @@ def crisis_effects():
         + (f"if = {{ limit = {{ {R}_can_stance_{s[1]} = yes }} " + (f"add_to_variable = {{ cwgg_init_brd = -{s[3]} }} " if s[3] else "")
            + (f"add_political_power = -{s[4]} " if s[4] else "") + "} else = { set_temp_variable = { cwgg_h = 1 } } }" if s[0] != 1 else "}")
         for s in STANCES)
+    human_brd_valid = "OR = { " + " ".join(f"AND = {{ check_variable = {{ cwgg_haltung = {sid} }} {R}_can_stance_{key} = yes }}" for sid, key, *_rest in STANCES) + " }"
+    human_ddr_valid = "OR = { " + " ".join(
+        f"AND = {{ check_variable = {{ cwgg_ddr_wahl = {a} }}" + (" check_variable = { cwgg_init_ddr > 0 }" if a > 2 else "") + (" country_exists = SOV" if a == 4 else "") + " }"
+        for a, _key, _name in ANSWERS) + " }"
     return f"""
 # ---------------------------------------------------------------- crises
 # Starts a crisis of type temp cwgg_t_typ unless one is running.
 {R}_start_crisis = {{
-	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} country_exists = DDR NOT = {{ has_global_flag = {P}_unity_achieved }} }}
+	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} country_exists = DDR NOT = {{ has_global_flag = {P}_unity_achieved }} NOT = {{ has_country_flag = cwgg_strike_ordered }} NOT = {{ DDR = {{ has_country_flag = cwgg_ddr_countdown_dialogue_open }} }} }}
 		set_variable = {{ cwgg_krise_typ = cwgg_t_typ }}
 		set_variable = {{ cwgg_krise_runde = 0 }}
 		set_variable = {{ cwgg_krise_monat = 0 }}
+		clr_country_flag = cwgg_orders_waiting
 		set_variable = {{ cwgg_haltung = 1 }}
 		set_variable = {{ cwgg_ddr_wahl = 0 }}
+		set_variable = {{ cwgg_brd_order_ready = 0 }}
+		set_variable = {{ cwgg_ddr_order_ready = 0 }}
 		set_variable = {{ cwgg_last_h = 0 }}
 		set_variable = {{ cwgg_last_a = 0 }}
 		set_variable = {{ cwgg_special_used = 0 }}
@@ -944,7 +1075,8 @@ def crisis_effects():
 	}}
 }}
 
-# Monthly: a round is resolved every six months; a countdown advances every month.
+# IMPERIA COLD WAR — Inner-German crisis instructions resolve after two months, holding month one for human orders.
+# Monthly: a round is resolved every two months; a countdown advances every month.
 {R}_crisis_clock = {{
 	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ > 0 }} }}
 		if = {{ limit = {{ check_variable = {{ cwgg_countdown > 0 }} }}
@@ -952,9 +1084,17 @@ def crisis_effects():
 		}}
 		else = {{
 			add_to_variable = {{ cwgg_krise_monat = 1 }}
-			if = {{ limit = {{ check_variable = {{ cwgg_krise_monat > 5 }} }}
-				set_variable = {{ cwgg_krise_monat = 0 }}
-				{R}_round = yes
+			if = {{ limit = {{ check_variable = {{ cwgg_krise_monat > 1 }} }}
+				if = {{ limit = {{ OR = {{ AND = {{ is_ai = no check_variable = {{ cwgg_brd_order_ready = 0 }} }} AND = {{ DDR = {{ is_ai = no }} check_variable = {{ cwgg_ddr_order_ready = 0 }} }} }} }}
+					# IMPERIA COLD WAR — Keep the round pending until each human country has submitted its order.
+					set_variable = {{ cwgg_krise_monat = 1 }}
+					set_country_flag = cwgg_orders_waiting
+				}}
+				else = {{
+					set_variable = {{ cwgg_krise_monat = 0 }}
+					clr_country_flag = cwgg_orders_waiting
+					{R}_round = yes
+				}}
 			}}
 		}}
 	}}
@@ -962,7 +1102,7 @@ def crisis_effects():
 
 # Monthly chance of a new crisis: 1 % plus more for a bad climate and high pressure.
 {R}_crisis_roll = {{
-	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} NOT = {{ has_country_flag = cwgg_crisis_cd }} DDR = {{ check_variable = {{ cwddr_wende_stage < 3 }} }} }}
+	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} NOT = {{ has_country_flag = cwgg_crisis_cd }} NOT = {{ has_country_flag = cwgg_strike_ordered }} NOT = {{ DDR = {{ has_country_flag = cwgg_ddr_countdown_dialogue_open }} }} country_exists = DDR }}
 		random_list = {{
 			1000 = {{ }}
 			18 = {{
@@ -986,20 +1126,21 @@ def crisis_effects():
 		{R}_start_crisis = yes
 		{log("relapse", "The frozen crisis flares up again.")}
 	}}
+	# IMPERIA COLD WAR — Crisis opportunities follow current world tension and bilateral conditions.
 	# crises with fixed causes
 	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} has_country_flag = {P}_double_track NOT = {{ has_country_flag = cwgg_missiles_done }} }}
 		set_country_flag = cwgg_missiles_done
 		set_temp_variable = {{ cwgg_t_typ = 6 }} {R}_start_crisis = yes
 	}}
-	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} has_global_flag = mdcw_cw_initialized check_variable = {{ global.mdcw_cw_tension > 79 }} date > 1975.1.1 NOT = {{ has_country_flag = cwgg_manoeuvre_cd }} }}
+	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} has_global_flag = mdcw_cw_initialized check_variable = {{ global.mdcw_cw_tension > 79 }} NOT = {{ has_country_flag = cwgg_manoeuvre_cd }} }}
 		set_country_flag = {{ flag = cwgg_manoeuvre_cd days = 3650 value = 1 }}
 		set_temp_variable = {{ cwgg_t_typ = 7 }} {R}_start_crisis = yes
 	}}
-	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} DDR = {{ check_variable = {{ cwddr_wende_stage > 0 }} check_variable = {{ cwddr_wende_stage < 3 }} }} NOT = {{ has_country_flag = cwgg_embassy_done }} }}
+	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} DDR = {{ check_variable = {{ cwddr_exit_pressure > 60 }} }} NOT = {{ has_country_flag = cwgg_embassy_done }} }}
 		set_country_flag = cwgg_embassy_done
 		set_temp_variable = {{ cwgg_t_typ = 4 }} {R}_start_crisis = yes
 	}}
-	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} DDR = {{ check_variable = {{ cwddr_wende_stage = 9 }} check_variable = {{ cwddr_crisis > 74 }} }} NOT = {{ has_country_flag = cwgg_uprising_done }} }}
+	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ = 0 }} DDR = {{ check_variable = {{ cwddr_crisis > 74 }} }} NOT = {{ has_country_flag = cwgg_uprising_done }} }}
 		set_country_flag = cwgg_uprising_done
 		set_temp_variable = {{ cwgg_t_typ = 10 }} {R}_start_crisis = yes
 	}}
@@ -1010,17 +1151,23 @@ def crisis_effects():
 		20 = {{ modifier = {{ factor = 0.15 check_variable = {{ cwgg_vertrag_2 = 1 }} }} modifier = {{ factor = 2 check_variable = {{ cwgg_dhebel_transit > 1 }} }} set_temp_variable = {{ cwgg_t_typ = 1 }} }}
 		20 = {{ modifier = {{ factor = 1.5 check_variable = {{ cwgg_dhebel_grenze > 2 }} }} modifier = {{ factor = 2 has_country_flag = cwgg_escape_helpers }} set_temp_variable = {{ cwgg_t_typ = 2 }} }}
 		10 = {{ modifier = {{ factor = 2 check_variable = {{ cwger_stasi_penetration > 50 }} }} set_temp_variable = {{ cwgg_t_typ = 3 }} }}
-		8 = {{ modifier = {{ factor = 0 check_variable = {{ cwgg_vertrag_3 = 1 }} }} modifier = {{ factor = 0 check_variable = {{ cwgg_hebel_recht < 2 }} }} set_temp_variable = {{ cwgg_t_typ = 5 }} }}
-		10 = {{ modifier = {{ factor = 0 date < 1976.1.1 }} modifier = {{ factor = 0 date > 1989.12.31 }} set_temp_variable = {{ cwgg_t_typ = 8 }} }}
-		8 = {{ modifier = {{ factor = 0 date > 1989.12.31 }} set_temp_variable = {{ cwgg_t_typ = 9 }} }}
+		# IMPERIA COLD WAR — Recognition crises are observed from the real recognition ledger.
+		10 = {{ set_temp_variable = {{ cwgg_t_typ = 8 }} }}
+		8 = {{ set_temp_variable = {{ cwgg_t_typ = 9 }} }}
 	}}
 	{R}_start_crisis = yes
 }}
 
-# One round of a crisis (every six months). Bonn's course is cwgg_haltung, East Berlin's is chosen now
+# One round of a crisis (every two months). Bonn's course is cwgg_haltung, East Berlin's is chosen now
 # (by its AI, or by the human player through event {EVR}.200).
 {R}_round = {{
-	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ > 0 }} check_variable = {{ cwgg_countdown = 0 }} }}
+	clr_country_flag = cwgg_orders_waiting
+	# IMPERIA COLD WAR — Revalidate each human order immediately before charging or resolving it.
+	if = {{ limit = {{ is_ai = no check_variable = {{ cwgg_brd_order_ready > 0 }} NOT = {{ {human_brd_valid} }} }} set_variable = {{ cwgg_brd_order_ready = 0 }} }}
+	if = {{ limit = {{ DDR = {{ is_ai = no }} check_variable = {{ cwgg_ddr_order_ready > 0 }} NOT = {{ {human_ddr_valid} }} }} set_variable = {{ cwgg_ddr_order_ready = 0 }} set_variable = {{ cwgg_ddr_wahl = 0 }} }}
+	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ > 0 }} check_variable = {{ cwgg_countdown = 0 }}
+		OR = {{ NOT = {{ is_ai = no }} check_variable = {{ cwgg_brd_order_ready > 0 }} }}
+		OR = {{ NOT = {{ DDR = {{ is_ai = no }} }} check_variable = {{ cwgg_ddr_order_ready > 0 }} }} }}
 		if = {{ limit = {{ is_ai = yes }} {R}_bonn_stance_ai = yes }}
 		set_temp_variable = {{ cwgg_h = cwgg_haltung }}
 {stance_cost}
@@ -1059,18 +1206,11 @@ def crisis_effects():
 				}}
 			}}
 		}}
-		# Moscow's guarantee hardens East Berlin's escalation
-		if = {{ limit = {{ OR = {{ check_variable = {{ cwgg_a = 3 }} check_variable = {{ cwgg_a = 4 }} }} }}
-			set_temp_variable = {{ cwgg_t = DDR.cwddr_moscow_backing }}
-			subtract_from_temp_variable = {{ cwgg_t = 50 }}
-			divide_temp_variable = {{ cwgg_t = 7 }}
-			add_to_temp_variable = {{ cwgg_d_int = cwgg_t }}
-		}}
 		# deterrence: readiness and exercises blunt escalation
 		if = {{ limit = {{ check_variable = {{ cwgg_a = 3 }} OR = {{ check_variable = {{ cwgg_mob_brd > 1 }} has_country_flag = cwgg_manoeuvre }} }} add_to_temp_variable = {{ cwgg_d_int = -8 }} }}
 		if = {{ limit = {{ check_variable = {{ cwgg_a = 3 }} check_variable = {{ cwgg_mob_brd > 2 }} }} add_to_temp_variable = {{ cwgg_d_int = -8 }} }}
-		# an AI East Berlin mobilises when it escalates hard with Soviet backing, or when Bonn mobilises against Moscow
-		if = {{ limit = {{ DDR = {{ is_ai = yes }} OR = {{ AND = {{ check_variable = {{ cwgg_a = 3 }} check_variable = {{ cwgg_krise_int > 59 }} DDR = {{ check_variable = {{ cwddr_moscow_backing > 59 }} }} }} AND = {{ check_variable = {{ cwgg_h = 7 }} check_variable = {{ cwgg_a = 4 }} }} }} check_variable = {{ cwgg_mob_ddr < 3 }} }}
+		# an AI East Berlin mobilises in a hard crisis, or when Bonn mobilises against Moscow
+		if = {{ limit = {{ DDR = {{ is_ai = yes }} OR = {{ AND = {{ check_variable = {{ cwgg_a = 3 }} check_variable = {{ cwgg_krise_int > 59 }} }} AND = {{ check_variable = {{ cwgg_h = 7 }} check_variable = {{ cwgg_a = 4 }} }} }} check_variable = {{ cwgg_mob_ddr < 3 }} }}
 			add_to_variable = {{ cwgg_mob_ddr = 1 }}
 			{log("ddr_alert", "The National People's Army raises its alert level.")}
 		}}
@@ -1097,6 +1237,8 @@ def crisis_effects():
 		set_variable = {{ cwgg_last_dint = cwgg_d_int }}
 		add_to_variable = {{ cwgg_krise_runde = 1 }}
 		set_variable = {{ cwgg_haltung = 1 }}
+		set_variable = {{ cwgg_brd_order_ready = 0 }}
+		set_variable = {{ cwgg_ddr_order_ready = 0 }}
 		set_temp_variable = {{ cwgg_t_log = 900 }}
 		add_to_temp_variable = {{ cwgg_t_log = cwgg_a }}
 		{R}_log = yes
@@ -1135,50 +1277,43 @@ def crisis_effects():
 # East Berlin's answer: the human player's choice, or the AI weighted by the SED leader,
 # money, Moscow and the balance of force.
 {R}_ddr_answer = {{
-	set_temp_variable = {{ cwgg_a = 2 }}
 	if = {{ limit = {{ country_exists = DDR DDR = {{ is_ai = no }} }}
-		if = {{ limit = {{ check_variable = {{ cwgg_ddr_wahl > 0 }} }} set_temp_variable = {{ cwgg_a = cwgg_ddr_wahl }} }}
+		set_temp_variable = {{ cwgg_a = cwgg_ddr_wahl }}
 		if = {{ limit = {{ check_variable = {{ cwgg_a > 2 }} check_variable = {{ cwgg_init_ddr < 1 }} }} set_temp_variable = {{ cwgg_a = 2 }} }}
 	}}
 	else = {{
+		set_temp_variable = {{ cwgg_a = 2 }}
 		random_list = {{
 			10 = {{
-				modifier = {{ factor = 3 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
-				modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_moscow_backing < 40 }} }} }}
+				modifier = {{ factor = 3 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
 				modifier = {{ factor = 2 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
-				modifier = {{ factor = 0.5 DDR = {{ check_variable = {{ cwddr_leader = 0 }} }} }}
+				modifier = {{ factor = 0.5 DDR = {{ check_variable = {{ cwddr_sed_control > 70 }} }} }}
 				set_temp_variable = {{ cwgg_a = 1 }}
 			}}
 			30 = {{
-				modifier = {{ factor = 1.5 DDR = {{ OR = {{ check_variable = {{ cwddr_leader = 1 }} check_variable = {{ cwddr_leader = 2 }} }} }} }}
+				modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_sed_control > 40 }} check_variable = {{ cwddr_sed_control < 71 }} }} }}
 				set_temp_variable = {{ cwgg_a = 2 }}
 			}}
 			20 = {{
 				modifier = {{ factor = 0 check_variable = {{ cwgg_init_ddr < 1 }} }}
-				modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_leader = 0 }} }} }}
-				modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
-				modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_moscow_backing > 69 }} }} }}
-				modifier = {{ factor = 0.5 DDR = {{ check_variable = {{ cwddr_moscow_backing < 40 }} }} }}
+				modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_sed_control > 70 }} }} }}
+				modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
 				modifier = {{ factor = 0.6 check_variable = {{ cwgg_mob_brd > 1 }} }}
 				modifier = {{ factor = 0.5 check_variable = {{ cwgg_mob_brd > 2 }} }}
-				modifier = {{ factor = 1.3 {R}_hardline_moscow = yes }}
 				set_temp_variable = {{ cwgg_a = 3 }}
 			}}
 			10 = {{
 				modifier = {{ factor = 0 check_variable = {{ cwgg_init_ddr < 1 }} }}
 				modifier = {{ factor = 0 NOT = {{ country_exists = SOV }} }}
-				modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_moscow_backing > 69 }} }} }}
-				modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_moscow_backing < 40 }} }} }}
-				modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
+				modifier = {{ factor = 0.3 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
 				modifier = {{ factor = 2 check_variable = {{ cwgg_last_h = 5 }} }}
 				set_temp_variable = {{ cwgg_a = 4 }}
 			}}
 			10 = {{
 				modifier = {{ factor = 0 check_variable = {{ cwgg_init_ddr < 1 }} }}
 				modifier = {{ factor = 2 DDR = {{ check_variable = {{ cwddr_hard_currency > 60 }} }} }}
-				modifier = {{ factor = 2 DDR = {{ check_variable = {{ cwddr_leader = 1 }} }} date > 1980.12.31 }}
-				modifier = {{ factor = 2 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
-				modifier = {{ factor = 0.5 DDR = {{ check_variable = {{ cwddr_leader = 0 }} }} }}
+				modifier = {{ factor = 2 DDR = {{ check_variable = {{ cwddr_sed_control < 40 }} }} }}
+				modifier = {{ factor = 0.5 DDR = {{ check_variable = {{ cwddr_sed_control > 70 }} }} }}
 				set_temp_variable = {{ cwgg_a = 5 }}
 			}}
 		}}
@@ -1203,18 +1338,19 @@ def crisis_effects():
 # Ends the crisis with outcome temp cwgg_t_out: 1 Bonn has its way, 2 East Berlin has its way, 3 frozen,
 # 4 Bonn gives way at the brink, 5 East Berlin gives way at the brink, 6 Moscow reins East Berlin in, 7 compromise.
 {R}_end_crisis = {{
+	clr_country_flag = cwgg_orders_waiting
 	set_variable = {{ cwgg_last_out = cwgg_t_out }}
 	set_variable = {{ cwgg_last_typ = cwgg_krise_typ }}
 	if = {{ limit = {{ OR = {{ check_variable = {{ cwgg_t_out = 1 }} check_variable = {{ cwgg_t_out = 5 }} check_variable = {{ cwgg_t_out = 6 }} }} }}
 		add_to_variable = {{ cwgg_crises_won = 1 }}
 		add_stability = 0.02
-		DDR = {{ {dv_self("cwddr_sed_control", -3, show=False)} {dv_self("cwddr_recognition", -2, show=False)} add_stability = -0.02 }}
+		DDR = {{ {dv_self("cwddr_sed_control", -3, show=False)} add_stability = -0.02 }}
 		{log("won", "Bonn comes out of the crisis stronger.")}
 	}}
 	if = {{ limit = {{ OR = {{ check_variable = {{ cwgg_t_out = 2 }} check_variable = {{ cwgg_t_out = 4 }} }} }}
 		add_to_variable = {{ cwgg_crises_lost = 1 }}
 		add_stability = -0.02
-		DDR = {{ {dv_self("cwddr_sed_control", 3, show=False)} {dv_self("cwddr_recognition", 4, show=False)} add_stability = 0.02 }}
+		DDR = {{ {dv_self("cwddr_sed_control", 3, show=False)} add_stability = 0.02 }}
 		{log("lost", "East Berlin has had its way. The opposition attacks the government.")}
 	}}
 	if = {{ limit = {{ check_variable = {{ cwgg_t_out = 7 }} }}
@@ -1233,6 +1369,8 @@ def crisis_effects():
 	set_variable = {{ cwgg_krise_int = 0 }}
 	set_variable = {{ cwgg_countdown = 0 }}
 	set_variable = {{ cwgg_haltung = 1 }}
+	set_variable = {{ cwgg_brd_order_ready = 0 }}
+	set_variable = {{ cwgg_ddr_order_ready = 0 }}
 	set_country_flag = {{ flag = cwgg_crisis_cd days = 365 value = 1 }}
 	clamp_variable = {{ var = cwgg_klima min = -100 max = 100 }}
 	country_event = {{ id = {EVR}.10 days = 1 }}
@@ -1243,7 +1381,9 @@ def crisis_effects():
 
 # Choose a stance from the window (temp cwgg_t_h).
 {R}_set_stance = {{
-	set_variable = {{ cwgg_haltung = cwgg_t_h }}
+	if = {{ limit = {{ check_variable = {{ cwgg_krise_typ > 0 }} NOT = {{ has_global_flag = {P}_unity_achieved }} }}
+{chr(10).join(f"\t\t{'if' if s[0] == 1 else 'else_if'} = {{ limit = {{ check_variable = {{ cwgg_t_h = {s[0]} }} {R}_can_stance_{s[1]} = yes }} set_variable = {{ cwgg_haltung = cwgg_t_h }} set_variable = {{ cwgg_brd_order_ready = 1 }} }}" for s in STANCES)}
+	}}
 	{R}_gui_refresh = yes
 }}
 """
@@ -1255,17 +1395,17 @@ def special_effects():
         1: (J(money_gdp(-0.001), "add_to_variable = { cwgg_krise_int = -25 }", tension(1),
               log("sp_airlift", "Bonn and the Allies prepare an airlift. East Berlin reconsiders.")),
             "check_variable = { cwgg_hebel_allianz > 0 }", "Costs money. Crisis intensity §G-25§!, Cold War world tension §R+1§!."),
-        2: (J("add_to_variable = { cwgg_krise_int = -10 }", kl(-3), dv("cwddr_recognition", -4),
+        2: (J("add_to_variable = { cwgg_krise_int = -10 }", kl(-3),
               log("sp_un", "Bonn raises the shootings at the border before the UN Commission on Human Rights.")),
-            "check_variable = { cwgg_vertrag_4 = 1 }", "Needs UN membership. Intensity §G-10§!, GDR recognition §G-4§!, climate §R-3§!."),
+            "has_dynamic_modifier = { modifier = united_nations_member }", "Needs UN membership. Intensity §G-10§!, climate §R-3§!."),
         3: ("add_to_variable = { cwgg_krise_int = -30 }\n" + log("sp_exchange", "Agents are exchanged on the Glienicke Bridge at dawn."),
             "check_variable = { cwgg_kanal_vogel = 1 }", "Needs the Vogel channel. Intensity §G-30§!."),
         4: (J(money_gdp(-0.0008), "add_to_variable = { cwgg_krise_int = -35 }", dv("cwddr_exit_pressure", 6),
               log("sp_trains", "Special trains carry the embassy refugees west - through the GDR.")),
             "check_variable = { cwgg_init_brd > 0 }", "Costs money. Intensity §G-35§!, GDR exit pressure §R+6§!."),
-        5: (J("add_to_variable = { cwgg_krise_int = -20 }", kl(-5), dv("cwddr_recognition", -3),
-              log("sp_hallstein", "Bonn breaks off relations with a state that recognised the GDR.")),
-            "NOT = { check_variable = { cwgg_vertrag_3 = 1 } }", "Intensity §G-20§!, climate §R-5§!. Only before the Basic Treaty."),
+        5: (J(f"if = {{ limit = {{ {P}_recognition_can_sanction = yes }} {P}_recognition_sanction = yes",
+              log("sp_hallstein", "Bonn imposes diplomatic sanctions on a state that recognised the GDR."), "}"),
+            f"{P}_recognition_can_sanction = yes", "35 PP. Diplomatic sanctions against the recognising country. Intensity -20; climate -5."),
         6: (J("add_to_variable = { cwgg_krise_int = -25 }", "set_country_flag = cwgg_zero_option", tension(-3), v("cwger_peace_movement", -6),
               log("sp_zero", "Bonn backs the zero option: no Pershings if there are no SS-20s.")),
             "has_idea = NATO_member", "Needs NATO membership. Intensity §G-25§!, peace movement §G-6§!, a permanently better climate base."),
@@ -1283,7 +1423,9 @@ def special_effects():
     out = ["\n# ---------------------------------------------------------------- special actions in a crisis"]
     trig = ["\n"]
     for cid, (eff, cond, _tt) in sp.items():
-        out.append(f"{R}_special_{cid} = {{\n\tset_variable = {{ cwgg_special_used = 1 }}\n\tclamp_variable = {{ var = cwgg_krise_int min = 0 max = 100 }}\n{fmt(hide_vars_local(eff), 1)}\n\tclamp_variable = {{ var = cwgg_krise_int min = 0 max = 100 }}\n\t{R}_gui_refresh = yes\n}}")
+        # The targeted provider rechecks the unused receipt before setting it itself.
+        receipt = '' if cid == 5 else '\tset_variable = { cwgg_special_used = 1 }\n'
+        out.append(f"{R}_special_{cid} = {{\n{receipt}\tclamp_variable = {{ var = cwgg_krise_int min = 0 max = 100 }}\n{fmt(hide_vars_local(eff), 1)}\n\tclamp_variable = {{ var = cwgg_krise_int min = 0 max = 100 }}\n\t{R}_gui_refresh = yes\n}}")
         trig.append(f"{R}_can_special_{cid} = {{\n\tcheck_variable = {{ cwgg_krise_typ = {cid} }}\n\tcheck_variable = {{ cwgg_special_used = 0 }}\n\tcheck_variable = {{ cwgg_countdown = 0 }}\n\t{cond}\n}}\n")
         L(f"cwgg_special_tt_{cid}", _tt)
     return "\n\n".join(out) + "\n", "\n".join(trig)
@@ -1292,6 +1434,12 @@ def special_effects():
 def war_effects():
     return f"""
 # ---------------------------------------------------------------- the brink and war
+# IMPERIA COLD WAR — Armistice requests belong to the current war only.
+{R}_clear_armistice = {{
+	clr_country_flag = cwgg_armistice_request
+	if = {{ limit = {{ country_exists = DDR }} DDR = {{ clr_country_flag = cwgg_armistice_request }} }}
+}}
+
 # Countdown after 'Show resolve' at the peak of a crisis: three monthly steps, driven by the monthly tick.
 # A human East Berlin decides itself (event {EVR}.210); an AI East Berlin may blink.
 {R}_countdown_step = {{
@@ -1300,15 +1448,10 @@ def war_effects():
 		if = {{ limit = {{ DDR = {{ is_ai = yes }} }}
 			random_list = {{
 				70 = {{
-					modifier = {{ factor = 1.3 DDR = {{ check_variable = {{ cwddr_moscow_backing > 69 }} }} }}
-					modifier = {{ factor = 1.5 {R}_hardline_moscow = yes }}
 					modifier = {{ factor = 0.7 check_variable = {{ cwgg_mob_brd > 2 }} }}
 					modifier = {{ factor = 1.2 check_variable = {{ cwgg_mob_ddr > 2 }} }}
 				}}
 				30 = {{
-					modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_moscow_backing < 50 }} }} }}
-					modifier = {{ factor = 1.5 DDR = {{ check_variable = {{ cwddr_leader > 0 }} }} date > 1980.12.31 }}
-					modifier = {{ factor = 3 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
 					set_variable = {{ cwgg_countdown = 0 }}
 					set_country_flag = {{ flag = cwgg_east_blinked days = 30 value = 1 }}
 					country_event = {{ id = {EVR}.14 days = 1 }}
@@ -1326,29 +1469,34 @@ def war_effects():
 	}}
 }}
 
-# The countdown has run out and nobody gave way. Only a human may order the attack on West Berlin:
-# Bonn's signed strike order, a human East Berlin (event {EVR}.211) or, for an AI East Berlin,
-# a human Soviet Union (event {EVR}.212). Otherwise Moscow always reins East Berlin in.
+# The countdown has run out and nobody gave way. Only a player-controlled government can order war.
 {R}_final_resolution = {{
-	if = {{ limit = {{ has_country_flag = cwgg_strike_ordered }}
-		clr_country_flag = cwgg_strike_ordered
+	if = {{ limit = {{ has_country_flag = cwgg_strike_ordered check_variable = {{ cwgg_krise_typ > 0 }} }}
 		set_temp_variable = {{ cwgg_t_path = 1 }}
 		{R}_war_start = yes
 	}}
-	else_if = {{ limit = {{ DDR = {{ is_ai = no }} }}
-		DDR = {{ country_event = {{ id = {EVR}.211 days = 1 }} }}
+	else_if = {{ limit = {{ check_variable = {{ cwgg_krise_typ > 0 }} DDR = {{ is_ai = no }} }}
+		if = {{ limit = {{ DDR = {{ NOT = {{ has_country_flag = cwgg_ddr_countdown_dialogue_open }} }} }}
+			DDR = {{ set_country_flag = cwgg_ddr_countdown_dialogue_open country_event = {{ id = {EVR}.211 days = 1 }} }}
+		}}
 	}}
-	else_if = {{ limit = {{ country_exists = SOV SOV = {{ is_ai = no }} }}
-		SOV = {{ country_event = {{ id = {EVR}.212 days = 1 }} }}
-	}}
-	else = {{
+	else_if = {{ limit = {{ check_variable = {{ cwgg_krise_typ > 0 }} }}
 		set_temp_variable = {{ cwgg_t_out = 6 }}
 		{R}_end_crisis = yes
 	}}
 }}
 
-# War: temp cwgg_t_path 1 Bonn strikes first, 2 East Berlin attacks, 3 brotherly help for an uprising, 4 false alarm.
+# War: temp cwgg_t_path 1 Bonn strikes first, 2 East Berlin attacks, 3 player-ordered help for an uprising.
 {R}_war_start = {{
+	if = {{ limit = {{ OR = {{
+		AND = {{ check_variable = {{ cwgg_t_path = 1 }} has_country_flag = cwgg_strike_ordered check_variable = {{ cwgg_krise_typ > 0 }} }}
+		AND = {{ check_variable = {{ cwgg_t_path = 2 }} check_variable = {{ cwgg_krise_typ > 0 }} check_variable = {{ cwgg_mob_ddr > 1 }} check_variable = {{ cwgg_aufm_ddr > 0 }} DDR = {{ is_ai = no is_in_faction_with = SOV }} }}
+		AND = {{ check_variable = {{ cwgg_t_path = 3 }} check_variable = {{ cwgg_krise_typ = 10 }} check_variable = {{ cwgg_aufm_brd > 0 }} }}
+	}} }}
+	{R}_clear_armistice = yes
+	{P}_settlement_clear = yes
+	clr_country_flag = cwgg_strike_ordered
+	clr_country_flag = cwgg_war_victory_ddr
 	set_variable = {{ cwgg_stufe = 6 }}
 	set_variable = {{ cwgg_war_path = cwgg_t_path }}
 	set_country_flag = cwgg_war_active
@@ -1365,18 +1513,14 @@ def war_effects():
 	}}
 	{log("war", "War between the two German states.")}
 	if = {{ limit = {{ OR = {{ check_variable = {{ cwgg_t_path = 1 }} check_variable = {{ cwgg_t_path = 3 }} }} }}
-		# an AI GDR without Moscow's guarantee leaves the Warsaw Pact faction; a human GDR decides that itself
-		if = {{ limit = {{ DDR = {{ is_ai = yes is_in_faction = yes check_variable = {{ cwddr_moscow_backing < 40 }} }} }}
-			DDR = {{ leave_faction = yes }}
-		}}
+		# IMPERIA COLD WAR — Preserve real GDR faction membership through the crisis.
 		declare_war_on = {{ target = DDR type = annex_everything }}
 		# no automatic call to the alliance: NATO governments decide for themselves
 	}}
-	else = {{
+	else_if = {{ limit = {{ check_variable = {{ cwgg_t_path = 2 }} }}
 		DDR = {{ declare_war_on = {{ target = GER type = take_state_focus generator = {{ 1251 }} }} }}
-		# a Soviet Union that ordered the attack, or an AI one that still guarantees the GDR, joins; a human one otherwise decides itself
-		if = {{ limit = {{ country_exists = SOV SOV = {{ NOT = {{ has_war_with = GER }} }}
-				OR = {{ has_global_flag = cwgg_sov_ordered_attack AND = {{ SOV = {{ is_ai = yes }} DDR = {{ check_variable = {{ cwddr_moscow_backing > 39 }} }} }} }} }}
+		# IMPERIA COLD WAR — Soviet entry requires an explicit order or shared AI faction membership.
+		if = {{ limit = {{ country_exists = SOV SOV = {{ is_ai = yes NOT = {{ has_war_with = GER }} is_in_faction_with = DDR }} }}
 			SOV = {{ add_to_war = {{ targeted_alliance = DDR enemy = GER hostility_reason = asked_to_join }} }}
 		}}
 	}}
@@ -1385,32 +1529,35 @@ def war_effects():
 	country_event = {{ id = {EVR}.31 days = 45 }}
 	{R}_set_stage_modifiers = yes
 	{R}_gui_refresh = yes
+	}}
 }}
 
 # Watches a running crisis on the brink (false alarm, only if one side is AI) and a running war.
 {R}_war_watch = {{
-	# path D: a false alarm while both armies are on the highest alert and no line is open
+# IMPERIA COLD WAR — Peace ends an outstanding request even before its event is answered.
+	if = {{ limit = {{ NOT = {{ has_war_with = DDR }} }} {R}_clear_armistice = yes }}
+# IMPERIA COLD WAR — A false alarm creates a decision event; it never starts war by itself.
+# A false alarm while both armies are on the highest alert and no line is open.
 	if = {{ limit = {{
 			check_variable = {{ cwgg_stufe = 5 }} check_variable = {{ cwgg_krise_typ = 7 }}
 			check_variable = {{ cwgg_mob_brd > 2 }} check_variable = {{ cwgg_mob_ddr > 2 }}
 			NOT = {{ has_country_flag = cwgg_war_active }} NOT = {{ has_country_flag = cwgg_false_alarm_cd }}
 		}}
-		random_list = {{
-			82 = {{ }}
-			18 = {{
-				modifier = {{ factor = 0.25 check_variable = {{ cwgg_kanal_draht = 1 }} }}
-				modifier = {{ factor = 0.5 check_variable = {{ cwgg_kanal_bahr = 1 }} }}
-				set_country_flag = {{ flag = cwgg_false_alarm_cd days = 180 value = 1 }}
-				country_event = {{ id = {EVR}.21 days = 1 }}
-			}}
-		}}
+		set_country_flag = {{ flag = cwgg_false_alarm_cd days = 180 value = 1 }}
+		country_event = {{ id = {EVR}.21 days = 1 }}
 	}}
 	if = {{ limit = {{ has_country_flag = cwgg_war_active }}
+		# IMPERIA COLD WAR — An engine settlement that removes DDR ends this bilateral war record.
+		# It grants no annexation, territorial transfer or duplicate victory reward.
 		if = {{ limit = {{ NOT = {{ country_exists = DDR }} }}
 			clr_country_flag = cwgg_war_active
-			country_event = {{ id = {EVR}.40 days = 1 }}
+			clr_country_flag = cwgg_war_victory_ddr
+			clr_global_flag = cwgg_german_war
+			set_variable = {{ cwgg_stufe = 0 }}
+			{R}_set_stage_modifiers = yes
 		}}
 		else_if = {{ limit = {{ DDR = {{ has_capitulated = yes }} has_war_with = DDR }}
+			set_country_flag = cwgg_war_victory_ddr
 			clr_country_flag = cwgg_war_active
 			country_event = {{ id = {EVR}.40 days = 1 }}
 		}}
@@ -1427,6 +1574,7 @@ def war_effects():
 
 # Cold peace after a war or a stand-off that nobody won.
 {R}_cold_peace = {{
+	{R}_clear_armistice = yes
 	set_variable = {{ cwgg_stufe = 4 }}
 	set_variable = {{ cwgg_klima = -60 }}
 	set_variable = {{ cwgg_mob_brd = 1 }}
@@ -1450,7 +1598,15 @@ def all_effects():
 
 def triggers_all():
     _, sp_trig = special_effects()
-    return trigger_file() + sp_trig
+    ratify = []
+    for n, key, name, desc, mink, pre, extra, unlock, reward in TREATIES:
+        live = [f"check_variable = {{ cwgg_verh = {n} }}", f"check_variable = {{ cwgg_vertrag_{n} = 0 }}",
+                "check_variable = { cwgg_verh_prog > 99 }", f"check_variable = {{ cwgg_klima > {mink - 1} }}",
+                "check_variable = { cwgg_stufe < 3 }", "check_variable = { cwgg_tr_invalid = 0 }", "country_exists = DDR",
+                f"NOT = {{ has_global_flag = {P}_unity_achieved }}", extra]
+        live += [f"check_variable = {{ cwgg_vertrag_{p} = 1 }}" for p in pre]
+        ratify.append(f"{R}_can_ratify_{n} = {{\n\t" + "\n\t".join(live) + "\n}\n")
+    return trigger_file() + sp_trig + "\n".join(ratify)
 
 
 def dynamic_modifiers():
@@ -1505,7 +1661,8 @@ def localise():
         L(f"cwgg_channel_{k}_desc", d)
     for t in TREATIES:
         L(f"cwgg_treaty_{t[0]}", t[2])
-        L(f"cwgg_treaty_{t[0]}_desc", t[3])
+        # IMPERIA COLD WAR — The dossier reads the native membership and current-seat ledgers.
+        L(f"cwgg_treaty_{t[0]}_desc", t[3]+("\n\nFederal Republic: [COLDWAR_GER_UN_status]\nGerman Democratic Republic: [COLDWAR_DDR_UN_status]" if t[0] == 4 else ""))
         if t[7]:
             L(f"cwgg_treaty_{t[0]}_unlock", t[7])
     for a in ACTIONS:

@@ -11,6 +11,7 @@ import math
 import random
 import re
 import struct
+from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
@@ -71,11 +72,10 @@ def paper(w, h, masthead, sub):
 
 
 def dossier_art():
-    im = paper(510, 740, "COLONIAL AFFAIRS", "PRESIDENCY  /  OVERSEAS ADMINISTRATION")
+    im = paper(510, 740, "SECURITY AFFAIRS", "CABINET SECRETARIAT  /  TERRITORIES AND INTERNAL SECURITY")
     d = ImageDraw.Draw(im)
-    txt(d, (20, 76), "SERIES IV  /  TERRITORIAL REGISTER", 10, LABEL)
-    d.rectangle((381, 72, 489, 91), outline=RUST, width=2)
-    txt(d, (389, 75), "CONFIDENTIAL", 11, RUST, "label")
+    d.rectangle((381, 103, 489, 122), outline=RUST, width=2)
+    txt(d, (389, 106), "CONFIDENTIAL", 11, RUST, "label")
     txt(d, (20, 108), "TERRITORIAL BRIEFING", 10, LABEL, "label")
     d.rectangle((20,171,113,288),fill="#f3e9d3",outline="#9e8765")
     txt(d,(28,280),"STATE AUTHORITY",9,LABEL,"label")
@@ -104,7 +104,7 @@ def dossier_art():
 
 
 def support_art():
-    im=paper(420,420,"REGIONAL CONTACTS","INTELLIGENCE SERVICE  /  RESTRICTED FILE")
+    im=paper(420,420,"CLANDESTINE CONTACTS","INTELLIGENCE SERVICE  /  RESTRICTED FILE")
     d=ImageDraw.Draw(im)
     txt(d,(18,76),"SELECTED TERRITORY",10,LABEL,"label")
     for y,title,desc in [(164,"POLITICAL BACKING","Public diplomatic support"),(235,"FINANCE THE MOVEMENT","Financial aid / 180 days"),(306,"SUPPLY ARMS","Equipment shipment / 180 days")]:
@@ -139,10 +139,14 @@ def meter_art(n,kind):
 
 def save_asset(name,im,frames=1):
     ART.mkdir(parents=True,exist_ok=True); PREVIEW.mkdir(parents=True,exist_ok=True)
-    im.save(PREVIEW/(name+".png"))
+    # IMPERIA CW — Cold War: do not reopen unchanged native textures for writing.
+    png=BytesIO();im.save(png,format='PNG')
+    preview_path=PREVIEW/(name+".png")
+    if not preview_path.exists() or preview_path.read_bytes()!=png.getvalue():preview_path.write_bytes(png.getvalue())
     rgba=im.convert("RGBA"); w,h=rgba.size; r,g,b,a=rgba.split()
     header=struct.pack("<4sIIIIIII44sIIIIIIIIIIIII",b"DDS ",124,0x1|0x2|0x4|0x1000|0x8,h,w,w*4,0,1,b"\0"*44,32,0x41,0,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000,0x1000,0,0,0,0)
-    (ART/(name+".dds")).write_bytes(header+Image.merge("RGBA",(b,g,r,a)).tobytes())
+    payload=header+Image.merge("RGBA",(b,g,r,a)).tobytes();asset_path=ART/(name+".dds")
+    if not asset_path.exists() or asset_path.read_bytes()!=payload:asset_path.write_bytes(payload)
     ASSETS[name]=(w//frames,h,frames)
 
 
@@ -484,7 +488,11 @@ def build():
         sprites+=' }\n'
     write(Path("interface/COLDWAR_colonial_affairs.gfx"),sprites+'}\n')
     gui();script_gui();scripted_loc();localisation()
-    print(json.dumps({"assets":len(ASSETS),"previews":preview()},indent=2))
+    # IMPERIA CW — Cold War: one cabinet register for territories and organisations.
+    import security
+    from types import SimpleNamespace
+    security.build_ui(SimpleNamespace(**globals()))
+    print(json.dumps({"assets":len(ASSETS),"previews":security.preview()},indent=2))
 
 
 if __name__=="__main__":build()

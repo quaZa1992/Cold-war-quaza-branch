@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: shared Colonial Affairs compilation and bounded integration.
+# IMPERIA COLD WAR — Native Colonial Affairs compilation and compatibility.
 """Rebuild only this feature; preserve unrelated country, economy and UI edits."""
 from pathlib import Path
 import argparse
@@ -9,6 +9,9 @@ import re
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
+import sys
+sys.path.append(str(ROOT/'tools'))
+from multiplayer_quality.native_compat import normalize as native_compatibility
 BEGIN = '\t# COLDWAR COLONIAL EXPENSE BEGIN'
 END = '\t# COLDWAR COLONIAL EXPENSE END'
 
@@ -99,6 +102,8 @@ def main():
         raise RuntimeError('Build the dossier art once before using --no-art')
     files = module('runtime').build(ROOT, registry)
     contacts_localisation = module('contacts').build(files, registry['administrations'])
+    contacts_localisation = module('security').integrate_runtime(files, contacts_localisation)
+    contacts_localisation = module('measures').build(files, contacts_localisation)
     loc = 'localisation/english/COLDWAR_colonial_affairs_l_english.yml'
     files[loc] = merge_localisation(files[loc])
     # New shared contact mechanics own their numeric tooltips.
@@ -111,6 +116,7 @@ def main():
             files[loc] += line + '\n'
     hashes = {}
     for rel, text in files.items():
+        text = native_compatibility(text, rel)
         if Path(rel).is_absolute() or '..' in Path(rel).parts:
             raise RuntimeError('Invalid output path: ' + rel)
         blob = text.encode('utf-8-sig' if rel.endswith('.yml') else 'utf-8')
@@ -118,7 +124,8 @@ def main():
             raise RuntimeError('Script BOM: ' + rel)
         path = ROOT / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(blob)
+        if not path.exists() or path.read_bytes() != blob:
+            path.write_bytes(blob)
         hashes[rel] = hashlib.sha256(blob).hexdigest()
     integrate_money()
     integrate_sahara()
@@ -134,7 +141,7 @@ def main():
     for path in sorted((ROOT / 'gfx/interface/coldwar_colonial').glob('*.dds')):
         hashes[path.relative_to(ROOT).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
     manifest = dict(
-        schema_version=1, administrations=len(registry['administrations']),
+        project='IMPERIA COLD WAR', schema_version=1, administrations=len(registry['administrations']),
         powers=sorted({r['power'] for r in registry['administrations']}),
         generated=hashes,
         bounded_shared_integrations=['common/scripted_effects/00_money_system.txt', 'common/dynamic_modifiers/COLDWAR_SAHARA_1970.txt'],

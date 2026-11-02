@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Native trigger compatibility integration.
 # IMPERIA CW — Cold War: approved Spanish succession and native cabinet integration.
 """Political provider for the immutable Spain v2 design; emits only owned files.
 
@@ -160,8 +161,8 @@ COLDWAR_SPR_sync_health = yes''')
     effect('COLDWAR_SPR_franco_departure', '''if = { limit = { NOT = { has_country_flag = COLDWAR_SPR_franco_departed } }
  set_country_flag = COLDWAR_SPR_franco_departed
  clr_country_flag = COLDWAR_SPR_delegation_active
- if = { limit = { check_variable = { COLDWAR_SPR_preparedness >= 80 } } add_stability = -0.05 }
- else_if = { limit = { check_variable = { COLDWAR_SPR_preparedness >= 50 } } add_stability = -0.10 }
+ if = { limit = { check_variable = { var = COLDWAR_SPR_preparedness value = 80 compare = greater_than_or_equals } } add_stability = -0.05 }
+ else_if = { limit = { check_variable = { var = COLDWAR_SPR_preparedness value = 50 compare = greater_than_or_equals } } add_stability = -0.10 }
  else = { add_stability = -0.20 add_timed_idea = { idea = COLDWAR_SPR_succession_disruption days = 180 } }
  COLDWAR_SPR_sync_health = yes
  if = { limit = { check_variable = { ruling_party = 21 } has_elections = no }
@@ -472,7 +473,7 @@ def _leaders(roster,effect,trigger):
         choices=[]
         for index,row in reversed(list(enumerate(rows,1))):
             # Evaluate newest due first, never regress the persistent ordinal.
-            gate='OR = { date > '+row['from']+' check_variable = { '+ordinal+' >= '+str(index)+' } } check_variable = { '+ordinal+' <= '+str(index)+' } date < '+row.get('death','2100.1.1')
+            gate='OR = { date > '+row['from']+' check_variable = { var = '+ordinal+' value = '+str(index)+' compare = greater_than_or_equals } } check_variable = { var = '+ordinal+' value = '+str(index)+' compare = less_than_or_equals } date < '+row.get('death','2100.1.1')
             picture=(' picture = "'+row['picture']+'"') if row.get('picture') else ''
             create='create_country_leader = { name = "'+row['name']+'"'+picture+' ideology = '+row['ideology']+' expire = "'+row.get('death','2100.1.1')+'" }'
             choices.append(('if' if not choices else 'else_if')+' = { limit = { '+gate+' }\n'+create+'\nset_variable = { '+ordinal+' = '+str(index)+' }\n}')

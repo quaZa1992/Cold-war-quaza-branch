@@ -1,8 +1,9 @@
-# IMPERIA CW — Cold War: bilateral delivery and the Korean-American programme.
+# IMPERIA COLD WAR — Cold War: bilateral delivery and the Korean-American programme.
 """User-requested gameplay revision; keep the original 298 IDs and the 300 cap."""
 from copy import deepcopy
 from pathlib import Path
 import json
+from COLDWAR_KOR_reward_revision import apply_reward_revision
 
 HERE=Path(__file__).parent
 DOC=HERE.parents[1]/'docs/design/COLDWAR_KOR_1970'
@@ -48,7 +49,7 @@ def new_focus(template,key,label,description,xy,icon='diplomacy'):
     n['proposed_trigger']=P+'can_'+key
     return n
 
-def load_design():
+def load_design(apply_rewards=True):
     d=json.loads((DOC/'COLDWAR_KOR_design.json').read_text(encoding='utf-8'))
     assert len(d['nodes'])==298
     by={n['key']:n for n in d['nodes']}
@@ -187,7 +188,10 @@ def load_design():
             n['xy'][1]-=3;n['offset'][1]-=3
     d['groups'][-1]['anchor']=[63,13]
     assert len(d['nodes'])==300 and len({n['id'] for n in d['nodes']})==300
-    return d
+    # Apply the deliberate reward overlay only after the alliance revision has
+    # finished constructing the effective 300-focus design. The approved baseline
+    # JSON remains immutable and is compared through the explicit overlay contract.
+    return apply_reward_revision(d) if apply_rewards else d
 
 def write_snapshot(data):
     (DOC/'COLDWAR_KOR_runtime_design.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

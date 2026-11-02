@@ -1,4 +1,5 @@
-version="2.0.2"
+# IMPERIA COLD WAR — MD 2.0.3 base metadata and version display.
+version="2.0.3"
 name="MD Cold War"
 tags={
 	"Alternative History"

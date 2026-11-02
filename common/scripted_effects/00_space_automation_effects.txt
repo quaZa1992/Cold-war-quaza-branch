@@ -13,6 +13,9 @@
 @round_half = 0.49999
 
 space_auto_classify = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_fam = 99 }
 	if = {
 		limit = {
@@ -63,14 +66,24 @@ space_auto_classify = {
 		set_temp_variable = { temp_idx = 0 }
 		set_temp_variable = { temp_massidx = 0 }
 	}
+
+}
 }
 
 space_auto_push_slot = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_auto_newest_id = yes
 	add_to_array = { space_auto_source_array = temp_newest_id }
+
+}
 }
 
 space_auto_pick_oldest_family = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_GNSS_local_idx = yes
 	set_COM_local_idx = yes
 	set_SPY_local_idx = yes
@@ -126,9 +139,14 @@ space_auto_pick_oldest_family = {
 		set_temp_variable = { temp_auto_fam = 2 }
 	}
 	set_variable = { var_space_auto_focus = temp_auto_fam }
+
+}
 }
 
 space_auto_preset_slots = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { check_variable = { var_space_auto_preset = 1 } }
 		set_temp_variable = { temp_fam = 0 } space_auto_push_slot = yes
@@ -177,9 +195,14 @@ space_auto_preset_slots = {
 		set_temp_variable = { temp_fam = 1 } space_auto_push_slot = yes
 		set_temp_variable = { temp_fam = 2 } space_auto_push_slot = yes
 	}
+
+}
 }
 
 space_auto_resolve_source = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = space_auto_source_array
 	set_variable = { var_space_auto_focus = 99 }
 	if = {
@@ -206,9 +229,14 @@ space_auto_resolve_source = {
 	else = {
 		space_auto_preset_slots = yes
 	}
+
+}
 }
 
 space_auto_newest_id = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_newest_id = 1 }
 	if = {
 		limit = { check_variable = { space_auto_newest_array^temp_fam > 0 } }
@@ -221,9 +249,14 @@ space_auto_newest_id = {
 			}
 		}
 	}
+
+}
 }
 
 space_auto_refresh_targets = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = space_auto_newest_array
 	clear_array = space_auto_orbit_array
 	clear_array = space_auto_target_array
@@ -233,10 +266,15 @@ space_auto_refresh_targets = {
 	space_auto_refresh_comsat = yes
 	space_auto_refresh_spysat = yes
 	space_auto_refresh_olv = yes
+
+}
 }
 
 # Appends the temp_tier / temp_cur / temp_max triple resolved by a space_auto_refresh_* effect onto the parallel per-family arrays
 space_auto_push_family_state = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	add_to_array = { space_auto_newest_array = temp_tier }
 	add_to_array = { space_auto_orbit_array = temp_cur }
 	add_to_array = { space_auto_target_array = temp_max }
@@ -248,9 +286,14 @@ space_auto_push_family_state = {
 		}
 	}
 	add_to_array = { space_auto_short_array = temp_short }
+
+}
 }
 
 space_auto_refresh_gnss = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_tier = 0 }
 	if = { limit = { always = no } set_temp_variable = { temp_tier = 12 } }
 	else_if = { limit = { always = no } set_temp_variable = { temp_tier = 11 } }
@@ -274,9 +317,14 @@ space_auto_refresh_gnss = {
 		set_temp_variable = { temp_max = global.GNSS_sat_system_max_array^temp_idx }
 	}
 	space_auto_push_family_state = yes
+
+}
 }
 
 space_auto_refresh_comsat = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_tier = 0 }
 	if = { limit = { always = no } set_temp_variable = { temp_tier = 12 } }
 	else_if = { limit = { always = no } set_temp_variable = { temp_tier = 11 } }
@@ -300,9 +348,14 @@ space_auto_refresh_comsat = {
 		set_temp_variable = { temp_max = global.COM_sat_system_max_array^temp_idx }
 	}
 	space_auto_push_family_state = yes
+
+}
 }
 
 space_auto_refresh_spysat = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_tier = 0 }
 	if = { limit = { always = no } set_temp_variable = { temp_tier = 12 } }
 	else_if = { limit = { always = no } set_temp_variable = { temp_tier = 11 } }
@@ -326,9 +379,14 @@ space_auto_refresh_spysat = {
 		set_temp_variable = { temp_max = global.SPY_sat_system_max_array^temp_idx }
 	}
 	space_auto_push_family_state = yes
+
+}
 }
 
 space_auto_refresh_olv = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_space_auto_newest_olv = 0 }
 	if = { limit = { always = no } set_variable = { var_space_auto_newest_olv = 112 } }
 	else_if = { limit = { always = no } set_variable = { var_space_auto_newest_olv = 111 } }
@@ -342,9 +400,14 @@ space_auto_refresh_olv = {
 	else_if = { limit = { has_tech = OLV3 } set_variable = { var_space_auto_newest_olv = 103 } }
 	else_if = { limit = { has_tech = OLV2 } set_variable = { var_space_auto_newest_olv = 102 } }
 	else_if = { limit = { has_tech = OLV1 } set_variable = { var_space_auto_newest_olv = 101 } }
+
+}
 }
 
 space_auto_manifest_mass = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_mass = 0 }
 	set_temp_variable = { temp_scan = 0 }
 	while_loop_effect = {
@@ -360,9 +423,14 @@ space_auto_manifest_mass = {
 		}
 		add_to_temp_variable = { temp_scan = 1 }
 	}
+
+}
 }
 
 space_auto_usable_rocket_stock = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_rocket_stock = 0 }
 	if = {
 		limit = { has_country_flag = space_auto_latest_olv_only }
@@ -381,9 +449,14 @@ space_auto_usable_rocket_stock = {
 		}
 	}
 	clamp_temp_variable = { var = temp_rocket_stock min = 0 max = @space_count_max }
+
+}
 }
 
 space_auto_fit_slot_tiers = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_fit_scan = 0 }
 	while_loop_effect = {
 		limit = { check_variable = { temp_fit_scan < space_auto_effective_array^num } }
@@ -422,9 +495,14 @@ space_auto_fit_slot_tiers = {
 		}
 		add_to_temp_variable = { temp_fit_scan = 1 }
 	}
+
+}
 }
 
 space_auto_drop_heaviest_slot = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_heavy_idx = 999 }
 	set_temp_variable = { temp_heavy_mass = 0 }
 	set_temp_variable = { temp_scan = 0 }
@@ -449,9 +527,14 @@ space_auto_drop_heaviest_slot = {
 		limit = { check_variable = { temp_heavy_idx < 900 } }
 		set_variable = { space_auto_effective_array^temp_heavy_idx = 1 }
 	}
+
+}
 }
 
 space_auto_build_effective_manifest = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = space_auto_effective_array
 	set_temp_variable = { temp_best_fam = 99 }
 	set_temp_variable = { temp_best_short = 0 }
@@ -609,9 +692,14 @@ space_auto_build_effective_manifest = {
 	}
 
 	space_auto_build_order_list = yes
+
+}
 }
 
 space_auto_build_order_list = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = space_auto_order_type_array
 	clear_array = space_auto_order_count_array
 
@@ -642,9 +730,14 @@ space_auto_build_order_list = {
 		}
 		add_to_temp_variable = { temp_scan = 1 }
 	}
+
+}
 }
 
 space_auto_start_sat_batch = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			check_variable = { temp_fam = 0 }
@@ -753,9 +846,14 @@ space_auto_start_sat_batch = {
 			calculate_production_vars_13 = yes
 		}
 	}
+
+}
 }
 
 space_auto_compute_budget = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_prod_weekly_expense = yes
 
 	set_temp_variable = { temp_committed = 0 }
@@ -905,9 +1003,14 @@ space_auto_compute_budget = {
 			add = var_space_auto_bld_spy
 		}
 	}
+
+}
 }
 
 space_auto_fit_multiplier_10 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { prod_10_multiplier = temp_need }
 	space_auto_price_10 = yes
 	set_temp_variable = { temp_fit_guard = 0 }
@@ -932,15 +1035,25 @@ space_auto_fit_multiplier_10 = {
 		set_variable = { var_gui_prod_10_amount = { value = var_gui_prod_10_amount divide = 2 round = yes } }
 		space_auto_price_10 = yes
 	}
+
+}
 }
 space_auto_price_10 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	calculate_production_vars_10 = yes
 	set_temp_variable = { temp_cost = var_gui_prod_10_price_total }
 	set_temp_variable = { temp_days = var_gui_prod_10_days }
 	space_auto_weekly_cost = yes
+
+}
 }
 
 space_auto_fit_multiplier_11 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { prod_11_multiplier = temp_need }
 	space_auto_price_11 = yes
 	set_temp_variable = { temp_fit_guard = 0 }
@@ -965,15 +1078,25 @@ space_auto_fit_multiplier_11 = {
 		set_variable = { var_gui_prod_11_amount = { value = var_gui_prod_11_amount divide = 2 round = yes } }
 		space_auto_price_11 = yes
 	}
+
+}
 }
 space_auto_price_11 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	calculate_production_vars_11 = yes
 	set_temp_variable = { temp_cost = var_gui_prod_11_price_total }
 	set_temp_variable = { temp_days = var_gui_prod_11_days }
 	space_auto_weekly_cost = yes
+
+}
 }
 
 space_auto_fit_multiplier_12 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { prod_12_multiplier = temp_need }
 	space_auto_price_12 = yes
 	set_temp_variable = { temp_fit_guard = 0 }
@@ -998,15 +1121,25 @@ space_auto_fit_multiplier_12 = {
 		set_variable = { var_gui_prod_12_amount = { value = var_gui_prod_12_amount divide = 2 round = yes } }
 		space_auto_price_12 = yes
 	}
+
+}
 }
 space_auto_price_12 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	calculate_production_vars_12 = yes
 	set_temp_variable = { temp_cost = var_gui_prod_12_price_total }
 	set_temp_variable = { temp_days = var_gui_prod_12_days }
 	space_auto_weekly_cost = yes
+
+}
 }
 
 space_auto_fit_multiplier_13 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { prod_13_multiplier = temp_need }
 	space_auto_price_13 = yes
 	set_temp_variable = { temp_fit_guard = 0 }
@@ -1031,15 +1164,25 @@ space_auto_fit_multiplier_13 = {
 		set_variable = { var_gui_prod_13_amount = { value = var_gui_prod_13_amount divide = 2 round = yes } }
 		space_auto_price_13 = yes
 	}
+
+}
 }
 space_auto_price_13 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	calculate_production_vars_13 = yes
 	set_temp_variable = { temp_cost = var_gui_prod_13_price_total }
 	set_temp_variable = { temp_days = var_gui_prod_13_days }
 	space_auto_weekly_cost = yes
+
+}
 }
 
 space_auto_weekly_cost = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = {
 		temp_weekly = {
 			value = temp_cost
@@ -1050,9 +1193,14 @@ space_auto_weekly_cost = {
 			}
 		}
 	}
+
+}
 }
 
 space_auto_order_production = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			OR = {
@@ -1066,9 +1214,14 @@ space_auto_order_production = {
 	else = {
 		space_auto_order_production_inner = yes
 	}
+
+}
 }
 
 space_auto_order_production_inner = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_space_auto_starved = 0 }
 	set_temp_variable = { temp_budget_free = var_space_auto_budget }
 
@@ -1139,9 +1292,14 @@ space_auto_order_production_inner = {
 		}
 		add_to_temp_variable = { temp_order = 1 }
 	}
+
+}
 }
 
 space_auto_start_olv_batch = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = {
 		temp_idx = {
 			value = var_space_auto_newest_olv
@@ -1180,9 +1338,14 @@ space_auto_start_olv_batch = {
 		set_variable = { prod_10_multiplier = temp_sv_mult }
 		calculate_production_vars_10 = yes
 	}
+
+}
 }
 
 space_auto_run_launch = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			NOT = { has_country_flag = space_auto_launched_today }
@@ -1233,9 +1396,14 @@ space_auto_run_launch = {
 	else = {
 		set_variable = { var_space_auto_waiting = 0 }
 	}
+
+}
 }
 
 space_auto_execute_launch = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_saved_type = var_OLV_type }
 	set_temp_variable = { temp_saved_rel = var_OLV_reliability }
 	set_temp_variable = { temp_saved_mass = var_OLV_payload_mass }
@@ -1311,15 +1479,25 @@ space_auto_execute_launch = {
 		limit = { is_debug = yes }
 		log = "[GetDateText]: [Root.GetName]: space automation launched [?sat_launch_completed] flights"
 	}
+
+}
 }
 
 space_auto_raise_system_tiers = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_auto_raise_gnss = yes
 	space_auto_raise_comsat = yes
 	space_auto_raise_spysat = yes
+
+}
 }
 
 space_auto_raise_gnss = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_GNSS_local_idx = yes
 	if = {
 		limit = { check_variable = { space_auto_newest_array^0 > 0 } }
@@ -1357,9 +1535,14 @@ space_auto_raise_gnss = {
 		}
 		store_GNSS_local_idx = yes
 	}
+
+}
 }
 
 space_auto_raise_comsat = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_COM_local_idx = yes
 	if = {
 		limit = { check_variable = { space_auto_newest_array^1 > 0 } }
@@ -1396,9 +1579,14 @@ space_auto_raise_comsat = {
 		}
 		store_COM_local_idx = yes
 	}
+
+}
 }
 
 space_auto_raise_spysat = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_SPY_local_idx = yes
 	if = {
 		limit = { check_variable = { space_auto_newest_array^2 > 0 } }
@@ -1458,22 +1646,47 @@ space_auto_raise_spysat = {
 			store_SPY_local_idx = yes
 		}
 	}
+
+}
 }
 
 space_auto_clear_line_10 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clr_country_flag = space_auto_line_10
+
+}
 }
 space_auto_clear_line_11 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clr_country_flag = space_auto_line_11
+
+}
 }
 space_auto_clear_line_12 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clr_country_flag = space_auto_line_12
+
+}
 }
 space_auto_clear_line_13 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clr_country_flag = space_auto_line_13
+
+}
 }
 
 space_auto_reconcile_lines = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			has_country_flag = space_auto_line_10
@@ -1502,19 +1715,36 @@ space_auto_reconcile_lines = {
 		}
 		space_auto_clear_line_13 = yes
 	}
+
+}
 }
 
 space_prod_weekly_expense = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_accrue = 0 }
 	space_prod_weekly_calc = yes
+
+}
+else = { set_variable = { space_prod_expense = 0 } }
 }
 
 space_prod_weekly_bill = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_accrue = 1 }
 	space_prod_weekly_calc = yes
+
+}
+else = { set_variable = { space_prod_expense = 0 } }
 }
 
 space_prod_weekly_calc = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { space_prod_expense = 0 }
 	if = {
 		limit = { has_active_mission = missile_construction_10 }
@@ -1611,9 +1841,15 @@ space_prod_weekly_calc = {
 			add_to_variable = { var_space_paid_14 = temp_weekly }
 		}
 	}
+
+}
+else = { set_variable = { space_prod_expense = 0 } }
 }
 
 space_prod_settle_balance = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_outstanding = { value = temp_settle_price subtract = temp_settle_paid } }
 	if = {
 		limit = {
@@ -1622,44 +1858,74 @@ space_prod_settle_balance = {
 		}
 		subtract_from_variable = { treasury = temp_outstanding }
 	}
+
+}
 }
 
 space_prod_settle_10 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_settle_price = var_gui_prod_10_price_total }
 	set_temp_variable = { temp_settle_paid = var_space_paid_10 }
 	space_prod_settle_balance = yes
 	set_variable = { var_space_paid_10 = 0 }
+
+}
 }
 
 space_prod_settle_11 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_settle_price = var_gui_prod_11_price_total }
 	set_temp_variable = { temp_settle_paid = var_space_paid_11 }
 	space_prod_settle_balance = yes
 	set_variable = { var_space_paid_11 = 0 }
+
+}
 }
 
 space_prod_settle_12 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_settle_price = var_gui_prod_12_price_total }
 	set_temp_variable = { temp_settle_paid = var_space_paid_12 }
 	space_prod_settle_balance = yes
 	set_variable = { var_space_paid_12 = 0 }
+
+}
 }
 
 space_prod_settle_13 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_settle_price = var_gui_prod_13_price_total }
 	set_temp_variable = { temp_settle_paid = var_space_paid_13 }
 	space_prod_settle_balance = yes
 	set_variable = { var_space_paid_13 = 0 }
+
+}
 }
 
 space_prod_settle_14 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_settle_price = var_gui_prod_14_price_total }
 	set_temp_variable = { temp_settle_paid = var_space_paid_14 }
 	space_prod_settle_balance = yes
 	set_variable = { var_space_paid_14 = 0 }
+
+}
 }
 
 space_automation_weekly = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_auto_reconcile_lines = yes
 	if = {
 		limit = {
@@ -1677,9 +1943,14 @@ space_automation_weekly = {
 			space_auto_run_launch = yes
 		}
 	}
+
+}
 }
 
 space_auto_tech_watch = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			has_country_flag = space_auto_active
@@ -1703,14 +1974,24 @@ space_auto_tech_watch = {
 			space_auto_upgrade_all = yes
 		}
 	}
+
+}
 }
 
 space_automation_monthly = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_automation_weekly = yes
 	space_auto_tech_watch = yes
+
+}
 }
 
 space_auto_ai_monthly = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			has_completed_space_program = yes
@@ -1728,9 +2009,14 @@ space_auto_ai_monthly = {
 		space_automation_weekly = yes
 		space_auto_tech_watch = yes
 	}
+
+}
 }
 
 space_auto_refresh_ui = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { has_completed_space_program = yes }
 		space_auto_preview = yes
@@ -1739,9 +2025,14 @@ space_auto_refresh_ui = {
 			space_auto_order_production = yes
 		}
 	}
+
+}
 }
 
 space_auto_save_template = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = space_auto_manifest_array
 	set_temp_variable = { temp_scan = 0 }
 	while_loop_effect = {
@@ -1766,9 +2057,14 @@ space_auto_save_template = {
 		limit = { is_debug = yes }
 		log = "[GetDateText]: [Root.GetName]: space automation custom layout saved"
 	}
+
+}
 }
 
 space_auto_upgrade_all = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_auto_refresh_targets = yes
 	set_temp_variable = { temp_scan = 0 }
 	while_loop_effect = {
@@ -1790,9 +2086,14 @@ space_auto_upgrade_all = {
 		limit = { is_debug = yes }
 		log = "[GetDateText]: [Root.GetName]: space automation upgraded to newest generation"
 	}
+
+}
 }
 
 space_auto_toggle = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { has_country_flag = space_auto_active }
 		clr_country_flag = space_auto_active
@@ -1805,9 +2106,14 @@ space_auto_toggle = {
 		space_auto_order_production = yes
 		log = "[GetDateText]: [Root.GetName]: space automation enabled"
 	}
+
+}
 }
 
 space_auto_preview = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_auto_sync_switches = yes
 	if = {
 		limit = { NOT = { has_variable = var_space_auto_flights } }
@@ -1818,9 +2124,14 @@ space_auto_preview = {
 	space_auto_resolve_source = yes
 	space_auto_build_effective_manifest = yes
 	space_auto_compute_budget = yes
+
+}
 }
 
 space_auto_toggle_deficit = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { has_country_flag = space_auto_allow_deficit }
 		clr_country_flag = space_auto_allow_deficit
@@ -1830,17 +2141,27 @@ space_auto_toggle_deficit = {
 	}
 	space_auto_sync_switches = yes
 	space_auto_apply_now = yes
+
+}
 }
 
 space_auto_apply_now = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	space_auto_preview = yes
 	if = {
 		limit = { has_country_flag = space_auto_active }
 		space_auto_order_production = yes
 	}
+
+}
 }
 
 space_auto_sync_switches = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { has_country_flag = space_auto_active }
 		set_variable = { var_space_auto_on = 2 }
@@ -1869,9 +2190,14 @@ space_auto_sync_switches = {
 	else = {
 		set_variable = { var_space_auto_latest_olv_on = 1 }
 	}
+
+}
 }
 
 space_auto_toggle_stockpile = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { has_country_flag = space_auto_stockpile }
 		clr_country_flag = space_auto_stockpile
@@ -1881,9 +2207,14 @@ space_auto_toggle_stockpile = {
 	}
 	space_auto_sync_switches = yes
 	space_auto_apply_now = yes
+
+}
 }
 
 space_auto_toggle_latest_olv = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { has_country_flag = space_auto_latest_olv_only }
 		clr_country_flag = space_auto_latest_olv_only
@@ -1893,9 +2224,14 @@ space_auto_toggle_latest_olv = {
 	}
 	space_auto_sync_switches = yes
 	space_auto_apply_now = yes
+
+}
 }
 
 space_auto_cycle_preset = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	add_to_variable = { var_space_auto_preset = 1 }
 	if = {
 		limit = {
@@ -1909,9 +2245,14 @@ space_auto_cycle_preset = {
 		set_variable = { var_space_auto_preset = 0 }
 	}
 	space_auto_preview = yes
+
+}
 }
 
 space_auto_cycle_preset_back = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	subtract_from_variable = { var_space_auto_preset = 1 }
 	if = {
 		limit = { check_variable = { var_space_auto_preset < 0 } }
@@ -1925,4 +2266,6 @@ space_auto_cycle_preset_back = {
 		set_variable = { var_space_auto_preset = 7 }
 	}
 	space_auto_preview = yes
+
+}
 }

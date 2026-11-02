@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Israel V2 native budget and protected bilateral principal integration.
 # Written by HansNery
 # Rewritten and improved byBird on 03/30/2021
 #INDEX:
@@ -1497,6 +1498,13 @@ modify_treasury_effect = {
 # Required Input: debt_change
 # Purpose: Adds the debt_change value to the nation's current debt
 modify_debt_effect = {
+# IMPERIA COLD WAR — Israel V2 money [guard anonymous writeoff] BEGIN
+if = { limit = { ISR2_money_has_protected_loan = yes NOT = { has_country_flag = ISR2_bilateral_authorized_principal } check_variable = { debt_change < 0 } }
+ ISR2_money_quote_unprotected_debt = yes
+ set_temp_variable = { ISR2_money_lowest_debt_change = { value = ISR2_money_unprotected_debt multiply = -1 } }
+ if = { limit = { check_variable = { debt_change < ISR2_money_lowest_debt_change } } set_temp_variable = { debt_change = ISR2_money_lowest_debt_change } }
+}
+# IMPERIA COLD WAR — Israel V2 money [guard anonymous writeoff] END
 	custom_effect_tooltip = modify_debt_effect_tt
 	add_to_variable = { debt = debt_change }
 	clamp_variable = { var = debt min = 0 }

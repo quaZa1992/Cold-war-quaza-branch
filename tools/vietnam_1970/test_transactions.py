@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: vietnam 1970 — test transactions.
+# IMPERIA COLD WAR — Vietnam emitted transaction regression model.
 """Targeted execution tests of the emitted script AST, not an HOI4 emulator.
 
 Exercises transactional money/queue effects, exact actor responses, programme
@@ -7,11 +7,14 @@ formulas are outside this interpreter's scope and are reported separately.
 """
 from pathlib import Path
 from dataclasses import dataclass,field
-import json,copy
+import json,copy,sys
 from script_ast import parse,first,values
 from runtime_design import load_design
 
 ROOT=Path(__file__).resolve().parents[2];HERE=Path(__file__).resolve().parent
+sys.path.insert(0,str(ROOT/'tools'))
+from building_grants.grants import building_definitions
+CAPS={kind:int(building_definitions()[kind]['state_max']) for kind in ('infrastructure','anti_air_building')}
 P='COLDWAR_VIE_';D=load_design()
 def read(rel):return parse((ROOT/rel).read_text(encoding='utf-8-sig'))
 E={k:v for k,o,v in read('common/scripted_effects/COLDWAR_VIE_1970_effects.txt')}
@@ -34,12 +37,15 @@ class Country:
     flags:dict=field(default_factory=dict);ideas:dict=field(default_factory=dict);dynamic:set=field(default_factory=set)
     wars:set=field(default_factory=set);xp:float=0;tree:str='COLDWAR_VIE_1970_focus'
     research:list=field(default_factory=list);doctrines:list=field(default_factory=list)
+    construction_entitlements:dict=field(default_factory=lambda:{'infrastructure':6,'anti_air_building':5})
+    technologies:set=field(default_factory=set)
     # External campaign predicate truth; real land/division/access checks have a
     # separate interpreter in test_campaigns.py, not a fabricated troop model here.
     cambodia_land_drawdown:bool=True
 @dataclass
 class State:
     id:int;owner:str='VIE';controller:str='VIE';slots:dict=field(default_factory=dict)
+    levels:dict=field(default_factory=dict);extra_slots:int=0
 
 class World:
     def __init__(self):
@@ -50,6 +56,9 @@ class World:
     @property
     def vie(self):return self.countries['VIE']
     def number(self,v,c):
+        if str(v).startswith('building_level@'):
+            assert isinstance(c,State)
+            return c.levels.get(v.split('@',1)[1],0)
         try:return float(v)
         except (ValueError,TypeError):return c.variables.get(v,0.)
     def flag(self,c,k):return k in c.flags and (c.flags[k] is None or c.flags[k]>self.day)
@@ -68,6 +77,7 @@ class World:
         if k=='NOT':return not self.test(v,c,root)
         if k=='custom_trigger_tooltip':return self.test([r for r in v if r[0]!='tooltip'],c,root)
         scoped=self.scope(k)
+        if k=='ROOT':return self.test(v,root,root)
         if scoped is not None:return self.test(v,scoped,root)
         if k in T:return self.test(T[k],c,root)==(v=='yes')
         if k=='COLDWAR_VIE_campaign_cbd_land_drawdown':return c.cambodia_land_drawdown==(v=='yes')
@@ -86,7 +96,15 @@ class World:
         if k=='is_owned_and_controlled_by':
             tag=root.tag if v=='ROOT' else v
             return c.owner==tag and c.controller==tag
-        if k=='free_building_slots':return c.slots.get(first(v,'building'),0)>0
+        if k=='free_building_slots':
+            kind=first(v,'building');size=int(first(v,'size','0'))
+            if kind in CAPS:
+                country=self.countries[c.owner]
+                # Native retry04 proved this trigger does not subtract queued
+                # reservations. Never teach the fixture a stronger guarantee.
+                room=min(CAPS[kind],country.construction_entitlements[kind])-c.levels.get(kind,0)
+                return c.slots.get(kind,0)>0 and room>size
+            return c.slots.get(kind,0)>size
         if k=='has_variable':return v in c.variables
         if k=='date':return self.datevalue(self.date)>self.datevalue(v) if o=='>' else self.datevalue(self.date)<self.datevalue(v)
         if k=='check_variable':
@@ -112,6 +130,7 @@ class World:
                 chain=False;continue
             chain=False
             scoped=self.scope(k)
+            if k=='ROOT':self.run(v,root,root);continue
             if scoped is not None:self.run(v,scoped,root);continue
             if k in ('COLDWAR_VIE_1970_initialize_politics','COLDWAR_VIE_1970_update_politics'):
                 self.calls.append(k);continue # Political provider has separate independent checks.
@@ -137,7 +156,11 @@ class World:
             if k=='add_doctrine_cost_reduction':c.doctrines.append(copy.deepcopy(v));continue
             if k=='country_event':self.events.append((c.tag,first(v,'id')));continue
             if k=='add_building_construction':
-                b=first(v,'type');c.slots[b]-=1;self.queue.append((c.id,b,first(v,'instant_build')));continue
+                b=first(v,'type');instant=first(v,'instant_build')
+                if b not in CAPS:c.slots[b]-=1
+                if instant=='yes':c.levels[b]=c.levels.get(b,0)+int(first(v,'level'))
+                self.queue.extend((c.id,b,instant) for _ in range(int(first(v,'level'))));continue
+            if k=='add_extra_state_shared_building_slots':c.extra_slots+=int(v);continue
             if k=='load_focus_tree':c.tree=v;continue
             raise AssertionError('Unhandled effect '+str((k,o,v)))
     def ready(self,focus):
@@ -313,5 +336,6 @@ def capital_priority():
 case('Both capital policies accept continued Party rule, but the same investment priority cannot be awarded twice',capital_priority)
 
 report=dict(status='pass',tests=results,count=len(results),limits='A focused AST interpreter, not an engine emulator. Native UI, queue timing, economic formulas and political roster execution are not simulated. Independent provider and asset checks accompany this test.',engine_tested=False)
-(HERE/'transaction_tests.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
-print(json.dumps(report,indent=2))
+if __name__=='__main__':
+    (HERE/'transaction_tests.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps(report,indent=2))

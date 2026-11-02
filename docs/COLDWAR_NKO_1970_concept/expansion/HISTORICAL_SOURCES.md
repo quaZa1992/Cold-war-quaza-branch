@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # DPRK Patron Branches: historical precedents and design notes
 
 Research note for the proposed 1970–1990 NKO expansion. It distinguishes recorded precedents from branch ideas that would be alternate-history player choices. Treaty clauses and diplomatic ties establish a basis for negotiation; they do not establish that every proposed shipment, exercise, or programme actually happened.

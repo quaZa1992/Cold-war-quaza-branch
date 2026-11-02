@@ -1,0 +1,106 @@
+{
+  "project": "IMPERIA COLD WAR",
+  "revision": "User-requested legacy reward upgrade",
+  "focuses": {
+    "USA_1970_F7": {
+      "id": "USA_1970_F7",
+      "name": "Israeli Security Aid",
+      "description": "A standing security-assistance programme gives both governments a practical relationship in training and defence supply. Industrial expansion remains a separate agreement requiring renewed Israeli consent.",
+      "available": "hidden_trigger = { tag = USA IMP_is_1970_scenario = yes }\ncustom_trigger_tooltip = { tooltip = COLDWAR_USA_early_israel_counterparts_tt OR = { COLDWAR_USA_early_can_offer_israel = yes } }",
+      "replace_legacy_available": true,
+      "completion_reward": "COLDWAR_USA_early_complete_root_israel = yes",
+      "completion_preview": "COLDWAR_USA_early_preview_root_israel = yes",
+      "icon": "align_to_israel",
+      "replace_legacy_completion": true
+    },
+    "USA_1970_E9": {
+      "id": "USA_1970_E9",
+      "name": "North American Trade",
+      "description": "Canada and Mexico each receive an independent proposal for industrial and commercial cooperation. Each government can accept or decline its own terms. Later supplier and border-industry investment remains a separate negotiation.",
+      "available": "hidden_trigger = { tag = USA IMP_is_1970_scenario = yes }\ncustom_trigger_tooltip = { tooltip = COLDWAR_USA_early_trade_counterparts_tt OR = { COLDWAR_USA_early_can_offer_canada = yes COLDWAR_USA_early_can_offer_mexico = yes } }",
+      "replace_legacy_available": true,
+      "completion_reward": "COLDWAR_USA_early_complete_root_trade = yes",
+      "completion_preview": "COLDWAR_USA_early_preview_root_trade = yes",
+      "icon": "diplomacy",
+      "replace_legacy_completion": true
+    },
+    "USA_1970_NIX_F3": {
+      "id": "USA_1970_NIX_F3",
+      "name": "Reassure the Alliances",
+      "description": "Washington offers an allied-readiness programme to countries holding recognised NATO membership or major non-NATO ally status. Each government decides independently. American coordination remains one national institution, with additional weekly funding for every participating partner.",
+      "available": "hidden_trigger = { tag = USA IMP_is_1970_scenario = yes }\nhas_idea = NATO_member\ncustom_trigger_tooltip = { tooltip = COLDWAR_USA_early_nixon_in_office_tt has_country_flag = USA_1970_nixon_presidency }",
+      "replace_legacy_available": true,
+      "completion_reward": "COLDWAR_USA_early_complete_root_alliances = yes",
+      "completion_preview": "COLDWAR_USA_early_preview_root_alliances = yes",
+      "icon": "blr_nato_cooperation",
+      "replace_legacy_completion": true
+    }
+  },
+  "followups": {
+    "USA_X_israel": {
+      "prerequisites": [
+        [
+          "USA_1970_F7"
+        ]
+      ],
+      "runtime_guard": "COLDWAR_USA_early_active_israel = yes",
+      "public_guard": "has_idea = COLDWAR_USA_early_israel_usa\nISR = { has_idea = COLDWAR_USA_early_israel_isr }",
+      "parent_ideas": {
+        "USA": "COLDWAR_USA_early_israel_usa",
+        "ISR": "COLDWAR_USA_early_israel_isr"
+      }
+    },
+    "USA_X_canada": {
+      "prerequisites": [
+        [
+          "USA_1970_E9"
+        ]
+      ],
+      "runtime_guard": "COLDWAR_USA_early_active_canada = yes",
+      "public_guard": "has_idea = COLDWAR_USA_early_canada_usa\nCAN = { has_idea = COLDWAR_USA_early_canada_can }",
+      "parent_ideas": {
+        "USA": "COLDWAR_USA_early_canada_usa",
+        "CAN": "COLDWAR_USA_early_canada_can"
+      }
+    },
+    "USA_X_mexico": {
+      "prerequisites": [
+        [
+          "USA_1970_E9"
+        ]
+      ],
+      "runtime_guard": "COLDWAR_USA_early_active_mexico = yes",
+      "public_guard": "has_idea = COLDWAR_USA_early_mexico_usa\nMEX = { has_idea = COLDWAR_USA_early_mexico_mex }",
+      "parent_ideas": {
+        "USA": "COLDWAR_USA_early_mexico_usa",
+        "MEX": "COLDWAR_USA_early_mexico_mex"
+      }
+    }
+  },
+  "hooks": {
+    "initialize": "COLDWAR_USA_early_initialize",
+    "reconcile": "COLDWAR_USA_early_reconcile_all",
+    "streams": "COLDWAR_USA_early_calculate_weekly_streams",
+    "income_variable": "COLDWAR_USA_early_weekly_income",
+    "expense_variable": "COLDWAR_USA_early_weekly_expense",
+    "alliance_only_expense_variable": "COLDWAR_USA_early_alliance_weekly_expense",
+    "membership_changed": "COLDWAR_USA_early_membership_changed",
+    "membership_hook_scope": "Country after native NATO/MNNA admission or removal; USA readmission performs a one-off dispatch"
+  },
+  "legacy_replaced": [
+    "USA_1970_F7",
+    "USA_1970_E9",
+    "USA_1970_NIX_F3"
+  ],
+  "new_focus_count": 0,
+  "base_contracts": 3,
+  "alliance_partner_pool": "Any existing country holding NATO_member or Major_Non_NATO_Ally; no static tag whitelist",
+  "alliance_cost_per_partner": "0.005",
+  "alliance_usa_spirit": "COLDWAR_USA_early_allied_readiness_usa",
+  "migration": "Completed old roots authorise actual offers without setup fees or automatic spirits. Parent must retire their old legacy execution/retry bundles and remove old recurring helper deltas once, preserving historical payments.",
+  "implementation_notes": [
+    "No sender offer selector. Offers originate in their distinct roots; recipient decisions can reopen authorised terms.",
+    "No new status, faction, military access, territorial transfer, equipment or building is granted.",
+    "Advanced existing agreements retain their own accepted terms and costs; attach the published parent guards in offer availability, acceptance and ongoing readiness."
+  ]
+}

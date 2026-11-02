@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Coastal predecessor building-slot correction.
 # IMPERIA CW — Cold War: uae 1970 — diplomacy.
 """Approved UAE 1970 decisions and recipient-owned agreements.
 
@@ -630,7 +631,7 @@ if = {{
             if key == "charity_oversight":
                 L(P + "charity_reform_tt", "Reduce the Charitable Network's bureaucracy burden by 3 percentage points, once.")
                 preview += f"\ncustom_effect_tooltip = {P}charity_reform_tt"
-            if key == "port_project": preview += "\n179 = { add_building_construction = { type = naval_base province = 3725 level = 1 instant_build = no } }"
+            if key == "port_project": preview += "\n179 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = naval_base province = 3725 level = 1 instant_build = no } }"
             action += "\n" + b("effect_tooltip", preview)
             remove = b("if", b("limit", f"has_country_flag = {running}\n" + funded(price) + "\n" + gate + ("\n" + domestic_extra[key] if key in domestic_extra else "")) + f"\nclr_country_flag = {running}\n" + debit(price) + "\n" + domestic_apply[key] + "\n" + refresh)
             remove += f"\nclr_country_flag = {running}"

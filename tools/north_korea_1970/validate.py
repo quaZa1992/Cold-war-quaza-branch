@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: source-level validation of the installed DPRK programme.
+# IMPERIA COLD WAR — Cold War: source-level validation of the installed DPRK programme.
 """Exercise emitted scripts and native helper interfaces; this is not the HOI4 engine."""
 from pathlib import Path
 from copy import deepcopy
@@ -6,6 +6,9 @@ import sys,json,re,hashlib,subprocess
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'tools/vietnam_1970'))
 from script_ast import parse,first,values,walk
+from reward_revision import REVISIONS,FOREIGN_REVISIONS
+from agreements import _building_candidates,_building_grant,_building_preview,_building_site_check
+from focus_art import icon_for
 D=json.loads((ROOT/'tools/north_korea_1970/current_design.json').read_text(encoding='utf-8'))
 FILES=[*ROOT.glob('common/**/COLDWAR_NKO_1970*.txt'),*ROOT.glob('events/COLDWAR_NKO_1970*.txt'),*ROOT.glob('interface/COLDWAR_NKO_1970*.gfx')]
 E={};T={};DM={}
@@ -14,17 +17,37 @@ for folder,target in [('scripted_effects',E),('scripted_triggers',T),('dynamic_m
         for k,_,v in parse(path.read_text(encoding='utf-8')):
             assert k not in target,('duplicate definition',k)
             target[k]=v
+# The NKO ledger crosses the Korean Demilitarized Zone through this real KOR
+# provider trigger. Import that one definition instead of treating it as true
+# or silently skipping it in the bounded NKO model.
+KOR_CHANNEL_TRIGGER=ROOT/'common/scripted_triggers/COLDWAR_KOR_1970_focus.txt'
+for k,_,v in parse(KOR_CHANNEL_TRIGGER.read_text(encoding='utf-8')):
+    if k=='COLDWAR_KOR_shared_channel_active':
+        assert k not in T,('duplicate KOR boundary trigger',k)
+        T[k]=v
+KOR_EFFECTS={}
+for p in (ROOT/'common/scripted_effects/COLDWAR_KOR_1970_foreign.txt',):
+    for k,_,v in parse(p.read_text(encoding='utf-8')):
+        if k.startswith('COLDWAR_KOR_'):
+            KOR_EFFECTS[k]=v
 
 class Model:
     def __init__(self):
-        self.c={tag:dict(flags={},v={'gdp_total':100.,'treasury':0.,'debt':0.,'ruling_party':4},tmp={},dm=set(),completed=set(),arrays={},leader='Kim Il Sung',tree='COLDWAR_NKO_1970_focus',subject=False) for tag in D['country_names']}
+        self.c={tag:dict(flags={},v={'gdp_total':100.,'treasury':0.,'debt':0.,'ruling_party':4},tmp={},dm=set(),completed=set(),arrays={},equipment_bonuses=[],leader='Kim Il Sung',tree='COLDWAR_NKO_1970_focus',subject=False) for tag in D['country_names']}
         self.s={int(k):dict(owner='NKO',controller='NKO',slots=0,build={},coast=int(k)!=1201) for k in D['state_names']}
-        self.globalflags=set();self.wars=set();self.day=0;self.date=(1986,1,1);self.events=[];self.goals=[];self.kills=[]
+        self.globalflags=set();self.wars=set();self.day=0;self.date=(1986,1,1);self.events=[];self.goals=[];self.kills=[];self.external_calls=[]
+        # These unlocks are present in the installed 1970 history. Keep them
+        # explicit so a missing technology is modeled as false, not bypassed.
+        for country in self.c.values():
+            country['ideas']=set()
+            country['techs']={'radar','fuel_silos'}
         self.c['NKO']['flags']['COLDWAR_NKO_initialized']=None
     def scope(self,name,ctx):return {'ROOT':ctx[2],'THIS':ctx[0],'PREV':ctx[1],'FROM':ctx[3]}.get(name,name)
     def value(self,x,ctx):
         try:return float(x)
         except (ValueError,TypeError):pass
+        if x.startswith('building_level@') and ctx[0].isdigit():
+            return self.s[int(ctx[0])]['build'].get(x.split('@',1)[1],0)
         if '.' in x:
             prefix,name=x.split('.',1)
             tag=self.scope(prefix,ctx)
@@ -54,9 +77,11 @@ class Model:
             elif k=='has_country_flag':result=v in c['flags'] and (c['flags'][v] is None or c['flags'][v]>self.day)
             elif k=='has_global_flag':result=v in self.globalflags
             elif k=='has_dynamic_modifier':result=first(v,'modifier') in c['dm']
+            elif k=='has_idea':result=(v in c['ideas']) or (v in c['dm'])
             elif k=='has_country_leader':result=c['leader']==first(v,'name').strip('"')
             elif k=='has_focus_tree':result=c['tree']==v
             elif k=='has_completed_focus':result=v in c['completed']
+            elif k=='has_tech':result=v in c['techs']
             elif k=='has_variable':result=v in c['v']
             elif k=='check_variable':
                 a,comparison,b=v[0];left=self.value(a,ctx);right=self.value(b,ctx)
@@ -81,6 +106,16 @@ class Model:
             c=self.c.get(ctx[0]);state=self.s.get(int(ctx[0])) if ctx[0].isdigit() else None
             if k=='effect_tooltip':continue
             if k in E:self.run(E[k],ctx)
+            elif k in KOR_EFFECTS:
+                # Execute KOR's actual one-time NKO-framework grandfathering
+                # effect from the loaded provider. Its general KOR ledger
+                # refresh runs in the real game, but is recorded as an external
+                # provider call here because that entire KOR ledger is outside
+                # this NKO harness's modeled state machine.
+                if k=='COLDWAR_KOR_foreign_refresh':
+                    self.external_calls.append((ctx[0],k))
+                else:
+                    self.run(KOR_EFFECTS[k],ctx)
             elif k in self.c or k in ('ROOT','PREV','THIS','FROM'):
                 self.run(v,(self.scope(k,ctx),ctx[0],ctx[2],ctx[3]))
             elif k.isdigit():self.run(v,(k,ctx[0],ctx[2],ctx[3]))
@@ -121,7 +156,9 @@ class Model:
             elif k=='create_wargoal':self.goals.append((ctx[0],first(v,'target'),first(v,'type')))
             elif k=='kill_country_leader':self.kills.append((ctx[0],c['leader']));c['leader']=None
             elif k=='create_country_leader':c['leader']=first(v,'name').strip('"')
+            elif k=='add_ideas':c['ideas'].add(v)
             elif k=='add_tech_bonus':c.setdefault('research',[]).append(tuple(v))
+            elif k=='add_equipment_bonus':c.setdefault('equipment_bonuses',[]).append(deepcopy(v))
             elif k=='change_permanent_investment_target':
                 self.c[c['tmp']['target_nation']]['arrays'].setdefault('permanent_investment_targets',set()).add(c['tmp']['adding_nation'])
             else:raise AssertionError(('Unsupported source effect',k,op,v))
@@ -155,7 +192,7 @@ def structural():
         node=nodes[n['id']];assert xy(n['id'])==(n['x'],n['y'])
         assert [values(pg,'focus') for pg in values(node,'prerequisite')]==n['prerequisites']
         assert set(values(first(node,'mutually_exclusive',[]),'focus'))==set(n['mutex'])
-        assert first(node,'icon')==n['icon'] and float(first(node,'cost'))==n['cost']
+        assert first(node,'icon')==icon_for('NKO',n['id'],n['icon']) and float(first(node,'cost'))==n['cost']
         assert n['id'] in loc and n['id']+'_desc' in loc
         if n['modifiers']:
             got={k:float(v) for k,_,v in DM[n['id']+'_programme'] if k not in ('icon','enable')}
@@ -197,19 +234,58 @@ def structural():
     current={n['id']:n for n in D['nodes']}
     for old in approved['nodes']:
         new=current[old['id']]
-        for field in ('x','dx','dy','anchor','cost','prerequisites','mutex','modifiers','slot','icon'):
+        for field in ('x','dx','dy','anchor','cost','prerequisites','mutex','slot','icon'):
             assert new[field]==old[field],('unrequested original graph change',old['id'],field)
+        expected_modifiers=dict(old['modifiers'])
+        expected_modifiers.update(REVISIONS.get(old['key'],{}).get('modifiers',{}))
+        assert new['modifiers']==expected_modifiers,('baseline modifiers plus authorized overlay',old['id'])
         roots={g['id']:g['y'] for g in D['groups']};oldroots={g['id']:g['y'] for g in approved['groups']}
         assert new['y']==old['y']+roots[old['group']]-oldroots[old['group']]
-        assert abs(new['cost_gdp_share']-old['cost_gdp_share']*1.25)<.000006
-    fnt=Path(r'C:/Program Files (x86)/Steam/steamapps/common/Hearts of Iron IV/gfx/fonts/hoi_16mbs.fnt').read_text(encoding='utf-8')
+        revision=REVISIONS.get(old['key'],{})
+        from design import raised
+        expected_cost=round(raised(old['cost_gdp_share'])+revision.get('cost_add',0),5)
+        assert abs(new['cost_gdp_share']-expected_cost)<.000006,('approved base cost plus explicit reward overlay',old['id'])
+        # Keep every approved extra reward while permitting only the explicit
+        # authorized additions listed in the canonical reward overlay.
+        for old_extra in old['extra']:
+            expected_extra=deepcopy(old_extra)
+            if expected_extra['kind']=='debt':
+                expected_extra['principal_gdp_share']=raised(expected_extra['principal_gdp_share'])
+            assert expected_extra in new['extra'],('approved original reward removed',old['id'],expected_extra)
+        for kind in ('building','research','equipment'):
+            if kind in revision:
+                assert {'kind':kind,**revision[kind]} in new['extra'],('missing authorized overlay reward',old['id'],kind)
+    current_agreements={a['key']:a for a in D['agreements']}
+    # Compare contract authority against the existing, explicitly amended
+    # integration, including its earlier 1.25 price conversion and prose fixes.
+    # The frozen approval graph/numeric policy checks above remain separate.
+    from design import load
+    for old in load(apply_rewards=False)['agreements']:
+        new=current_agreements[old['key']];revision=FOREIGN_REVISIONS.get(old['key'],{})
+        for field in ('partner','receipts','upgrades','nko','recipient','title'):
+            if field in ('nko','recipient'):
+                old_side,new_side=old[field],new[field]
+                for contract in ('spirit','setup_gdp_share','annual_commitment_gdp_share','weekly_formula'):
+                    assert new_side[contract]==old_side[contract],('agreement term changed',old['key'],field,contract)
+                expected_mods=dict(old_side['modifiers']);expected_mods.update(revision.get(field,{}))
+                assert new_side['modifiers']==expected_mods,('agreement modifier overlay',old['key'],field)
+            elif field in old:
+                assert new[field]==old[field],('agreement authority changed',old['key'],field)
+        for old_building in old.get('buildings',[]):
+            assert old_building in new.get('buildings',[]),('approved agreement asset removed',old['key'])
+        if 'building' in revision:
+            assert revision['building'] in new.get('buildings',[]),('missing agreement asset overlay',old['key'])
+    fnt=Path('E:/SteamLibrary/steamapps/common/Hearts of Iron IV/gfx/fonts/hoi_16mbs.fnt').read_text(encoding='utf-8')
     advances={int(cid):int(advance) for cid,advance in re.findall(r'char id=(\d+).*?xadvance=(-?\d+)',fnt)}
     for n in D['nodes']:
         assert all(ord(c) in advances for c in n['title']),('unsupported title glyph',n['id'])
         assert sum(advances[ord(c)] for c in n['title'])<=147,('title too wide',n['id'],n['title'])
     assert not any('Expenditure:' in text for text in loc.values()),'Duplicate GDP expenditure prose'
     for key,text in loc.items():
-        if key.endswith('_building_tt'):assert text.count('§G')==2,(key,text)
+        if key.endswith('_building_tt'):
+            agreement=next((a for a in D['agreements'] if key=='COLDWAR_NKO_foreign_'+a['key']+'_building_tt'),None)
+            fields=len(agreement.get('buildings',[]))+1 if agreement else 2
+            assert text.count('§G')==fields,(key,text)
         if key.startswith('COLDWAR_NKO_foreign_offer_') and key.endswith('_terms'):
             assert len(text)<250 and '% of' not in text and 'effects:' not in text,('verbose proposal prose',key)
     for p in FILES:
@@ -233,6 +309,12 @@ def structural():
             for k,_,v in walk(body):
                 if k in ('title','desc','text','name') and isinstance(v,str) and v.startswith('COLDWAR_NKO_'):assert v in loc,(eid,k,v)
     assert sum(x.startswith('COLDWAR_NKO_foreign.') for x in event_ids)==4*sum(1+len(a['upgrades']) for a in D['agreements'])
+    # The integrated inter-Korean ledger legitimately dispatches a KOR-owned
+    # bridge event. Resolve its real loaded definition rather than treating
+    # this deliberately country-bounded harness as the entire provider universe.
+    for p in (ROOT/'events').glob('COLDWAR_KOR_1970*.txt'):
+        for kind,_,body in parse(p.read_text(encoding='utf-8')):
+            if kind in ('country_event','news_event'):event_ids.add(first(body,'id'))
     for p in FILES:
         for k,_,v in walk(parse(p.read_text(encoding='utf-8'))):
             if k in ('country_event','news_event') and isinstance(v,list):assert first(v,'id') in event_ids,(p,first(v,'id'))
@@ -316,12 +398,15 @@ def domestic_and_succession():
     m=Model();m.call('COLDWAR_NKO_open_machinery_credit');assert m.c['NKO']['v']['treasury']==0 and m.c['NKO']['v']['debt']==principal
     m.c['NKO']['v']['gdp_total']=200;m.c['NKO']['flags']['COLDWAR_NKO_machinery_review_pending']=None;m.call('COLDWAR_NKO_settle_machinery_account');assert m.c['NKO']['v']['treasury']==-principal and m.c['NKO']['v']['debt']==0
     before=m.state();m.call('COLDWAR_NKO_settle_machinery_account');assert m.state()==before
-    for party,leader,expected in [(4,'Kim Il Sung',True),(5,'Another Leader',False),(4,'Another Leader',False)]:
-        m=Model();m.date=(1994,7,8);m.c['NKO']['v']['ruling_party']=party;m.c['NKO']['leader']=leader;m.call('COLDWAR_NKO_world_succession_daily','SOV')
-        assert (m.c['NKO']['leader']=='Kim Jong-il')==expected;assert len(m.events)==1
+    for party,leader,expected in [(4,'Kim Il Sung','Funeral Committee'),(5,'Another Leader','Another Leader'),(4,'Another Leader','Another Leader'),(5,'Kim Il Sung','Funeral Committee')]:
+        m=Model();m.date=(1995,1,1);m.c['NKO']['v']['ruling_party']=party;m.c['NKO']['leader']=leader;m.call('COLDWAR_NKO_world_succession_daily','SOV')
+        assert m.c['NKO']['leader']==expected
+        assert 'COLDWAR_NKO_kim_il_sung_death_recorded' in m.c['NKO']['flags'] and len(m.events)==1
+        assert 'COLDWAR_NKO_kim_jong_il_succeeded' not in m.c['NKO']['flags']
+        assert (('COLDWAR_NKO_succession_pending' in m.c['NKO']['flags'])==(expected=='Funeral Committee'))
         before=m.state();m.call('COLDWAR_NKO_world_succession_daily','CHI');assert m.state()==before and len(m.events)==1
     m=Model();m.date=(1994,7,8);del m.c['NKO'];m.call('COLDWAR_NKO_world_succession_daily','SOV');assert len(m.events)==1
-    return 10
+    return 11
 
 def additional_lifecycles():
     cases=0
@@ -355,18 +440,31 @@ def additional_lifecycles():
     # Every authored construction grant is paired in the same actual state and
     # cannot repeat. Invalid primary sites must choose the documented fallback.
     for n in D['nodes']:
-        for b in [e for e in n['extra'] if e['kind']=='building']:
+        buildings=[e for e in n['extra'] if e['kind']=='building']
+        if not buildings:continue
+        expected_levels={}
+        for b in buildings:expected_levels[b['type']]=expected_levels.get(b['type'],0)+b['levels']
+        expected_slots=sum(b['levels'] for b in buildings)
+        def construction_fixture():
             m=Model();m.date=(1995,1,1);m.c['NKO']['v']['ruling_party']=n['slot'] if n['slot'] is not None else 4
+            if n.get('leader_bound'):m.c['NKO']['leader']='Kim Jong-il'
             for pg in n['prerequisites']:m.c['NKO']['completed'].update(pg)
+            return m
+        m=construction_fixture();m.call('COLDWAR_NKO_complete_'+n['key'])
+        assert sum(state['slots'] for state in m.s.values())==expected_slots,('aggregate slots',n['key'])
+        for kind,levels in expected_levels.items():
+            assert sum(state['build'].get(kind,0) for state in m.s.values())==levels,('aggregate construction',n['key'],kind)
+        before=m.state();m.call('COLDWAR_NKO_complete_'+n['key']);assert m.state()==before;cases+=1
+        # Invalidating the first site must deliver the entire aggregate through
+        # the remaining real site, without leaving partial grants or invoices.
+        for b in buildings:
+            if len(b['state_ids'])<2:continue
+            m=construction_fixture();m.s[b['state_ids'][0]]['controller']='KOR'
             m.call('COLDWAR_NKO_complete_'+n['key'])
-            added=[s for s in m.s.values() if s['slots']]
-            assert len(added)==1 and added[0]['slots']==b['slots'] and added[0]['build'][b['type']]==b['levels'],n['key']
-            before=m.state();m.call('COLDWAR_NKO_complete_'+n['key']);assert m.state()==before;cases+=1
-            if len(b['state_ids'])>1:
-                m=Model();m.date=(1995,1,1);m.c['NKO']['v']['ruling_party']=n['slot'] if n['slot'] is not None else 4
-                for pg in n['prerequisites']:m.c['NKO']['completed'].update(pg)
-                m.s[b['state_ids'][0]]['controller']='KOR';m.call('COLDWAR_NKO_complete_'+n['key'])
-                assert m.s[b['state_ids'][0]]['slots']==0 and sum(s['slots'] for s in m.s.values())==b['slots'],n['key'];cases+=1
+            assert m.s[b['state_ids'][0]]['slots']==0 and sum(state['slots'] for state in m.s.values())==expected_slots,n['key']
+            for kind,levels in expected_levels.items():
+                assert sum(state['build'].get(kind,0) for state in m.s.values())==levels,(n['key'],kind)
+            cases+=1
     m=Model();m.s[602]['build']['industrial_complex']=50;m.call('COLDWAR_NKO_offer_soviet_industry_base');m.call('COLDWAR_NKO_foreign_accept_soviet_industry_base','SOV')
     assert m.s[602]['slots']==0 and m.s[1200]['slots']==1 and m.s[1200]['build']['industrial_complex']==1;cases+=1
     m=Model();m.s[602]['build']['industrial_complex']=50;m.s[1200]['build']['industrial_complex']=50;m.call('COLDWAR_NKO_offer_soviet_industry_base');before=m.state();m.call('COLDWAR_NKO_foreign_accept_soviet_industry_base','SOV');assert m.state()==before;cases+=1
@@ -397,8 +495,11 @@ def additional_lifecycles():
         m.c['NKO']['flags'][n['id']+'_earned']=None;m.c['NKO']['v']['ruling_party']=group['slot'];m.call('COLDWAR_NKO_refresh_programmes');mid=n['id']+'_programme';assert mid in m.c['NKO']['dm']
         m.c['NKO']['v']['ruling_party']=99;m.call('COLDWAR_NKO_refresh_programmes');assert mid not in m.c['NKO']['dm']
         money=m.c['NKO']['v']['treasury'];states=deepcopy(m.s);m.c['NKO']['v']['ruling_party']=group['slot'];m.call('COLDWAR_NKO_refresh_programmes');assert mid in m.c['NKO']['dm'] and m.c['NKO']['v']['treasury']==money and m.s==states;cases+=1
-    for date in [(1994,7,7),(1994,7,9)]:
-        m=Model();m.date=date;m.call('COLDWAR_NKO_world_succession_daily','SOV');assert not m.events and m.c['NKO']['leader']=='Kim Il Sung';cases+=1
+    for date,expected_leader,expected_event in [((1994,7,7),'Kim Il Sung',False),((1994,7,9),'Funeral Committee',True)]:
+        m=Model();m.date=date;m.call('COLDWAR_NKO_world_succession_daily','SOV')
+        assert m.c['NKO']['leader']==expected_leader and bool(m.events)==expected_event
+        assert ('COLDWAR_NKO_kim_il_sung_death_recorded' in m.c['NKO']['flags'])==expected_event
+        assert 'COLDWAR_NKO_kim_jong_il_succeeded' not in m.c['NKO']['flags'];cases+=1
     return cases
 
 def screenshot_regressions():
@@ -465,6 +566,46 @@ def screenshot_regressions():
         cases+=1
     return cases
 
+def foreign_preview_fallbacks():
+    """Compare the prospective site with the acceptance selector on fallback states."""
+    from design import load
+    agreements={a['key']:a for a in load()['agreements']}
+    cases=0
+    for key in ('china_farm_supply','soviet_energy_projects','japan_fisheries'):
+        agreement=agreements[key];states=_building_candidates(agreement)
+        assert len(states)>=2,(key,states)
+        primary,fallback=states[0],states[1]
+        check=parse(_building_site_check(agreement,primary))
+        preview=parse(_building_preview(agreement))
+        accepted=parse(_building_grant(agreement))
+
+        # Make the primary site invalid while leaving the next candidate valid.
+        preview_model=Model();accept_model=Model()
+        for model in (preview_model,accept_model):
+            model.s[primary]['owner']='SOV'
+            model.s[fallback]['owner']='NKO';model.s[fallback]['controller']='NKO'
+            assert not model.trigger(check,('NKO','NKO','NKO','NKO'))
+            assert model.trigger(parse(_building_site_check(agreement,fallback)),('NKO','NKO','NKO','NKO'))
+        preview_model.run(preview,('NKO','NKO','NKO','NKO'))
+        accept_model.run(accepted,('NKO','NKO','NKO','NKO'))
+        assert preview_model.s==accept_model.s,('preview/accept fallback mismatch',key)
+        assert preview_model.s[fallback]['slots']==sum(x['slots'] for x in agreement['buildings'])
+        assert preview_model.s[primary]['slots']==0
+        for building in agreement['buildings']:
+            assert preview_model.s[fallback]['build'][building['type']]==building['levels']
+        cases+=1
+
+        # With no present candidate, the locked prospective preview still
+        # displays the full package at the primary listed alternative.
+        locked=Model()
+        for state_id in states:locked.s[state_id]['owner']='SOV'
+        locked.run(preview,('NKO','NKO','NKO','NKO'))
+        assert locked.s[primary]['slots']==sum(x['slots'] for x in agreement['buildings'])
+        for building in agreement['buildings']:
+            assert locked.s[primary]['build'][building['type']]==building['levels']
+        cases+=1
+    return cases
+
 def expansion_lifecycles():
     # Exercise every new executor, including party departure, actual membership
     # spirits, recipient consent and suspension of dependent domestic benefits.
@@ -487,7 +628,7 @@ def expansion_lifecycles():
         m.c['NKO']['v']['treasury']=-5.
         return m
     def resources(m):
-        return deepcopy(([(tag,c['v']['treasury'],c.get('research',[])) for tag,c in m.c.items()],m.s,m.events))
+        return deepcopy(([(tag,c['v']['treasury'],c.get('research',[]),c.get('equipment_bonuses',[])) for tag,c in m.c.items()],m.s,m.events))
     for n in additions:
         key=n['key'];complete='COLDWAR_NKO_complete_'+key;can='COLDWAR_NKO_can_'+key
         receipt=n['id']+'_earned';mid=n['id']+'_programme';m=fixture(n)
@@ -545,6 +686,17 @@ def expansion_lifecycles():
                 assert abs(m.c[tag]['v']['treasury']-beforemoney[tag]+100*a[side]['setup_gdp_share'])<1e-8,('accepted proposal price',key,tag)
             snapshot=resources(m);m.call('COLDWAR_NKO_foreign_accept_'+a['key']+'_base',partner)
             assert resources(m)==snapshot,('new agreement acceptance replay',key);cases+=1
+            if a.get('buildings'):
+                fresh=Model();fresh.call('COLDWAR_NKO_offer_'+a['key']+'_base');fresh.call('COLDWAR_NKO_foreign_accept_'+a['key']+'_base',partner)
+                candidates=set(a['buildings'][0]['state_ids'])
+                for building in a['buildings'][1:]:candidates.intersection_update(building['state_ids'])
+                built=[(sid,fresh.s[sid]) for sid in candidates if fresh.s[sid]['slots']]
+                expected_slots=sum(building['slots'] for building in a['buildings'])
+                assert len(built)==1 and built[0][1]['slots']==expected_slots,('foreign grant shared slots',a['key'])
+                for building in a['buildings']:
+                    assert built[0][1]['build'][building['type']]==building['levels'],('foreign grant construction',a['key'],building['type'])
+                before=fresh.state();fresh.call('COLDWAR_NKO_foreign_accept_'+a['key']+'_base',partner)
+                assert fresh.state()==before,('foreign building replay',a['key']);cases+=1
     return cases
 
 if __name__=='__main__':
@@ -554,12 +706,13 @@ if __name__=='__main__':
         before=json.loads(manifest.read_text(encoding='utf-8'))
         expected={rel:hashlib.sha256((ROOT/rel).read_bytes()).hexdigest() for rel in before['root_outputs']}
         assert expected==before['output_sha256'],'Manifest does not match installed content'
-        subprocess.run([sys.executable,str(ROOT/'tools/north_korea_1970/compile.py')],cwd=ROOT,check=True,capture_output=True,text=True)
+        rebuild_tool = ('tools/quaza_eastasia_integration/regenerate.py' if before.get('integration_owner') else 'tools/north_korea_1970/compile.py')
+        subprocess.run([sys.executable,'-B',str(ROOT/rebuild_tool)],cwd=ROOT,check=True,capture_output=True,text=True)
         after=json.loads(manifest.read_text(encoding='utf-8'))
         assert before==after,'Rebuild changed installed output'
         assert expected=={rel:hashlib.sha256((ROOT/rel).read_bytes()).hexdigest() for rel in after['root_outputs']}
         rebuild='byte-identical'
-    keys=structural();count=transactions()+domestic_and_succession()+additional_lifecycles()+screenshot_regressions()+expansion_lifecycles()
+    keys=structural();count=transactions()+domestic_and_succession()+additional_lifecycles()+screenshot_regressions()+foreign_preview_fallbacks()+expansion_lifecycles()
     report={'focuses':len(D['nodes']),'script_files':len(FILES),'localized_keys':keys,'source_transaction_cases':count,'structural':'pass','encoding':'pass','engine_tested':False}
     if rebuild:report['rebuild']=rebuild
     (ROOT/'docs/COLDWAR_NKO_1970_concept/implementation_validation.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

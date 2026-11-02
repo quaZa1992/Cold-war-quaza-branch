@@ -1,3 +1,4 @@
+# IMPERIA CW — Cold War: Player-paced focus availability preserves political and treaty conditions.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
 """Domestic policy expansion of the West Germany 1970 tree (multiplayer roleplay).
 
@@ -20,7 +21,6 @@ UNION = "check_variable = { ruling_party = 1 }"
 FDP_GOV = "is_in_array = { gov_coalition_array = 2 }"
 from roster import requirement
 GREEN_GOV = 'AND = { ' + requirement('greens') + ' OR = { check_variable = { ruling_party = 17 } is_in_array = { gov_coalition_array = 17 } } }'
-ERA2 = f"OR = {{ date > 1981.12.31 has_country_flag = {P}_era2 }}"
 SH, NDS, NRW, RLP, HES, BW, BAY, SAAR, HH = 37, 38, 39, 40, 41, 42, 43, 967, 1080
 
 L(f"{P}_tt_two_thirds", "The government holds §Ytwo thirds§! of the Bundestag seats won at the last election")
@@ -123,7 +123,7 @@ F("first_past_the_post", "constitutional_reform", 3, 1, cost=3, mutex=["three_pe
              O("Withdraw it. The price is too high.", J(pp(-25), party("fdp", 0.003)), ai=50)])[0])
 F("three_percent", "constitutional_reform", 5, 1, cost=2, mutex=["first_past_the_post"], icon="greens", name="Three Percent Is Enough",
   desc="The five-percent hurdle keeps Weimar's splinter parties out - and new movements too. Lower it, and the Bundestag becomes more colourful. Some colours are welcome, others not.",
-  avail=f"OR = {{ {FDP_GOV} {GREEN_GOV} date > 1979.1.1 }}", ai=2,
+  avail=f"OR = {{ {FDP_GOV} {GREEN_GOV} }}", ai=2,
   reward=J("set_variable = { election_threshold = 0.03 }", party("greens", 0.004), party("npd", 0.003), party("dkp", 0.002), core("bonn", drift=-0.03),
            v("cwger_rechtsstaat", 2), tt(f"{P}_tt_3pct", "From the next election, parties need only §Y3%§! to enter the Bundestag.")))
 
@@ -143,7 +143,7 @@ _k218, _k218_id = ev("Karlsruhe on Paragraph 218",
                      pic="GFX_german_parliament_bundestag", days=180)
 F("paragraph_218", "changing_society", -2, 1, cost=3, icon="civil_rights", name="Paragraph 218",
   desc="'My belly belongs to me': in 1971, 374 women declare in Stern that they have had abortions. The criminal law of 1871 is now the most hotly debated paragraph in the country.",
-  avail=f"date > 1971.6.1 OR = {{ {SPD} {FDP_GOV} {UNION} }}",
+  avail=f"OR = {{ {SPD} {FDP_GOV} {UNION} }}",
   reward=ev("The Abortion Law",
             "The Bundestag must choose between a period solution (no punishment in the first twelve weeks) and an indications solution (only for medical, ethical or social reasons). The churches, the women's movement and the Union all mobilise.",
             [O("The period solution.", J(party("spd", 0.004), party("fdp", 0.002), party("cdu", -0.003), protest(4), _k218), trig=f"OR = {{ {SPD} {FDP_GOV} {GREEN_GOV} }}", ai=60,
@@ -153,7 +153,6 @@ F("paragraph_218", "changing_society", -2, 1, cost=3, icon="civil_rights", name=
             pic="GFX_Demo_Generic")[0])
 F("equal_rights", "paragraph_218", 0, 1, cost=2, icon="unions", name="Equal Pay, Equal Work",
   desc="The 1980 law on equal treatment at work, written because Brussels demanded it: the first time a German statute says that women and men must be paid the same.",
-  avail="date > 1977.1.1",
   reward=J("add_manpower = 10000", core("modell", prod=0.01), faction("dgb", 4), party("spd", 0.002), party("greens", 0.001)))
 F("comprehensive_schools", "changing_society", 0, 1, cost=3, mutex=["tripartite_schools"], icon="education", name="The Comprehensive School",
   desc="One school for all children until sixteen, instead of sorting them at ten into Gymnasium, Realschule and Hauptschule. Hesse and North Rhine-Westphalia try it; parents' associations collect millions of signatures against it.",
@@ -163,11 +162,9 @@ F("tripartite_schools", "changing_society", 2, 1, cost=3, mutex=["comprehensive_
   reward=J(core("modell", prod=0.02), core("bonn", stab=0.01), party("cdu", 0.003), faction("mittelstand", 4), state_build(BAY, "offices")))
 F("university_framework", "comprehensive_schools", 1, 1, cost=3, pre=[["comprehensive_schools", "tripartite_schools"]], icon="research", name="The Universities Framework Act",
   desc="1976: one federal law for all universities - group universities with student votes, or professors in charge again, as the Constitutional Court demands.",
-  avail="date > 1975.6.1",
   reward=J(core("west", research=0.03), v("cwger_raf_milieu", -2), tech("CAT_computing", 0.25, 1), state_build(BW, "offices")))
 F("census", "university_framework", 0, 1, cost=2, icon="cryptography", name="The Census",
   desc="1983: every household is to answer the state's questions. A grassroots movement calls for a boycott - 'Only sheep let themselves be counted' - and the Constitutional Court is asked to stop it.",
-  avail="date > 1982.6.1",
   reward=ev("The Census Boycott",
             "December 1983: the Constitutional Court halts the census and invents a new basic right, 'informational self-determination'. The government must decide how to count its citizens - and how much to know about them.",
             [O("A new census law with strict data protection.", J(v("cwger_rechtsstaat", 6), v("cwger_security", -2), core("wehrhaft", detect=-0.02), party("greens", -0.002),
@@ -176,15 +173,13 @@ F("census", "university_framework", 0, 1, cost=2, icon="cryptography", name="The
             pic="GFX_politics_protest")[0])
 F("private_television", "changing_society", 4, 1, cost=3, mutex=["public_broadcasting"], icon="television", name="Cable and Satellite",
   desc="1984: the cable pilot project in Ludwigshafen launches the first private channel. The Union wants an end to 'red radio'; the SPD fears Berlusconi's Italy.",
-  avail="date > 1982.1.1",
   reward=J(core("modell", cg=-0.01, prod=0.01), faction("bdi", 6), party("cdu", 0.003), core("bonn", drift=-0.02), state_build(RLP, "offices")))
 F("public_broadcasting", "changing_society", 6, 1, cost=3, mutex=["private_television"], icon="television", name="Public Service Broadcasting",
   desc="ARD and ZDF remain the only channels: independent of the state, financed by fees, controlled by councils in which churches, unions and parties sit.",
-  avail="date > 1982.1.1",
   reward=J(core("bonn", drift=0.03, stab=0.01), party("spd", 0.002), faction("dgb", 3), v("cwger_rechtsstaat", 2)))
 F("citizenship_reform", "private_television", 1, 1, cost=3, pre=[["private_television", "public_broadcasting"]], mutex=[], icon="migration", name="Citizens by Birth",
   desc="Millions of children of guest workers were born in Germany and are not German. Citizenship by birthplace - and perhaps a second passport - would change that.",
-  avail=f"OR = {{ date > 1990.1.1 has_completed_focus = {P}_guest_worker_policy }}",
+  avail=f"OR = {{ has_completed_focus = {P}_guest_worker_policy }}",
   reward=ev("Two Passports?",
             "The government's citizenship reform reaches the Bundestag. In Hesse the Union collects signatures 'against dual citizenship' - and wins an election with them.",
             [O("Citizenship by birth and dual citizenship.", J("add_manpower = 30000", core("modell", fac=0.01), party("greens", 0.003), party("cdu", 0.004), party("rep", 0.003),
@@ -195,7 +190,7 @@ F("citizenship_reform", "private_television", 1, 1, cost=3, pre=[["private_telev
 # --- the donations affair (event-gated, its own block)
 F("flick_affair", "chancellery", 16, 12, cost=2, pre=[], icon="dangerous_deal", name="The Flick Affair",
   desc="The tax inspectors have found the Flick group's ledger: 'cultivating the political landscape', and next to it the names of almost every party treasurer in Bonn - and of two economics ministers.",
-  avail=f"date > 1981.10.1 check_variable = {{ cwger_scandal > 15 }}",
+  avail=f"check_variable = {{ cwger_scandal > 15 }}",
   reward=ev("Cultivating the Political Landscape",
             "Prosecutors want to charge Otto Graf Lambsdorff and Hans Friderichs with corruption. The parties' leaders have prepared a quiet way out: an amnesty for all illegal party donations of the past.",
             [O("Pass the amnesty law.", J(v("cwger_scandal", 15), v("cwger_rechtsstaat", -6), party("fdp", -0.006), party("greens", 0.004), protest(6),
@@ -210,15 +205,12 @@ F("party_finance_law", "flick_affair", 0, 1, cost=3, icon="parliament", name="Th
 # =========================================================================== MODELL DEUTSCHLAND: WORK
 F("job_creation", "housing_programme", 0, 1, cost=3, icon="unions", name="Job Creation Measures",
   desc="Two million unemployed: the Federal Labour Office pays local authorities to hire them for a year - to plant trees, renovate schools, sort archives.",
-  avail="date > 1975.1.1",
   reward=J(money_gdp(-0.002), core("bonn", stab=0.02), core("modell", social=0.02), faction("dgb", 5), party("spd", 0.002)))
 F("early_retirement", "job_creation", 0, 1, cost=3, mutex=["working_longer"], icon="strike", name="Early Retirement",
   desc="1984: workers can retire at 58 if their employer hires a young unemployed person instead. The unions call it solidarity between generations.",
-  avail="date > 1983.1.1",
   reward=J(core("modell", social=0.03, prod=-0.01), core("bonn", stab=0.02), "add_manpower = -10000", faction("dgb", 6)))
 F("working_longer", "job_creation", 2, 1, cost=3, mutex=["early_retirement"], icon="market", name="The Pension Reform of 1992",
   desc="Fewer children, longer lives: the pension age is to rise and pensions to follow net wages, not gross ones. The first reform that the opposition helps to write.",
-  avail="date > 1988.1.1",
   reward=J(core("modell", social=-0.04), money_gdp(0.002), faction("dgb", -4), faction("bdi", 4), stab(-0.01)))
 
 # =========================================================================== DECISIONS
@@ -235,8 +227,9 @@ E(f"{EVD_}.90", "The People Say Yes",
 E(f"{EVD_}.91", "The People Say No",
   "The referendum is lost. Commentators ask whether a chancellor who loses a vote on his own question can still govern.",
   "GFX_election_day", [O("We accept the verdict.", J(pp(-50), stab(-0.03), f"if = {{ limit = {{ {SPD} }} {party('spd', -0.006)} }} else = {{ {party('cdu', -0.006)} }}"))])
+# IMPERIA CW — Cold War: Federal reform follows the chosen constitutional programme without a year lock.
 dec.D(dec.PO, "federal_reform_commission", "Federal Reform Commission",
       "A joint commission of Bundestag and Bundesrat untangles who pays for what: fewer joint tasks, fewer vetoes.",
       "GFX_decision_negotiate_icon", visible=f"has_completed_focus = {P}_constitutional_reform",
-      available="date > 1985.1.1", cost=60, re_enable=1460,
+      cost=60, re_enable=1460,
       effect=J(core("bonn", bureau=-0.03), v("cwger_bundesrat_union", -3), pp(30)), ai=8)

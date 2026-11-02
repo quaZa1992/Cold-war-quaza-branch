@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Native building grants and naval adaptation in the retained country generator.
 # IMPERIA CW — Cold War: Soviet Union 1970 content generator.
 # COLDWAR | Writes the focus tree file (layout of the design visualisation, MD 2000 focus style).
 import re
@@ -8,6 +9,15 @@ import cw_avail as A
 import cw_effects as E
 import cw_manual as M
 from cw_layout import REPUBLICS
+
+# IMPERIA COLD WAR — Native generic naval adaptation integration.
+from pathlib import Path as _NavalPath
+import sys as _naval_sys
+_naval_sys.path.insert(0, str(_NavalPath(__file__).resolve().parents[2] / "tools"))
+from naval_adaptation_1970.naval_adapter import integrate_tree as _naval_tree, runtime_outputs as _naval_runtime
+from building_grants import grants as _grant_api
+_grant_runtime = _grant_api.runtime_outputs
+_GRANT_MARK = '# IMPERIA COLD WAR — Physical capacity for national building grants.\n'
 
 for n, (fid, lean) in enumerate(REPUBLICS.RESOLUTIONS, start=1):
     M.RES_INDEX[fid] = n
@@ -242,7 +252,7 @@ CFP = _continuous_pocket()
 
 def focus_file():
     pol = L.SEC_ORIGIN["pol"]
-    parts = [HEADER, "focus_tree = {", f"\tid = {TREE_ID}", "\tcountry = {", "\t\tfactor = 0", "\t\tmodifier = {",
+    parts = [_GRANT_MARK, HEADER, "focus_tree = {", f"\tid = {TREE_ID}", "\tcountry = {", "\t\tfactor = 0", "\t\tmodifier = {",
              "\t\t\tadd = 30", "\t\t\toriginal_tag = SOV", "\t\t\tIMP_is_1970_scenario = yes", "\t\t}", "\t}",
              "\tdefault = no", "\treset_on_civilwar = no",
              f"\tcontinuous_focus_position = {{ x = {CFP[0] * 96} y = {CFP[1] * 130} }}",
@@ -261,4 +271,4 @@ def focus_file():
                 LOC[f["id"]] = f["name"]
                 LOC[f["id"] + "_desc"] = DESC[f["id"]].replace('"', "'")
     parts.append("}")
-    return "\n".join(parts) + "\n"
+    return _naval_tree("SOV", _grant_api.repair_focus_tree("SOV", "\n".join(parts) + "\n"))

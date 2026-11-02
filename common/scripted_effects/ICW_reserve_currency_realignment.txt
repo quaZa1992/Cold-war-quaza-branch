@@ -1,0 +1,34 @@
+# IMPERIA COLD WAR — Reserve-currency realignment payment and presidential reporting.
+ICW_charge_reserve_realignment = {
+	if = {
+		limit = {
+			exists = yes
+			NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } }
+		}
+		# Recalculate from the live raw balances, never the capped native debt ratio.
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				max = 0
+				multiply = 0.1
+				add = { value = debt max = 0 multiply = 0.1 }
+				multiply = -1
+			}
+		}
+		modify_treasury_effect = yes
+	}
+}
+
+# IMPERIA COLD WAR — Notify the United States with an event-local country sender.
+ICW_report_dollar_departure = {
+	if = {
+		limit = {
+			exists = yes
+			NOT = { tag = USA }
+			country_exists = USA
+			NOT = { check_variable = { ICW_reserve_initializing_depth > 0 } }
+		}
+		# Dispatch from this country's own event context after the replacement settles.
+		country_event = { id = ICW_reserve_currency.2 hours = 1 }
+	}
+}

@@ -1,8 +1,49 @@
-# IMPERIA CW — Cold War: Korea 1970 domestic politics runtime.
+# IMPERIA COLD WAR — Cold War: Korea 1970 domestic politics runtime.
 """Generate native political handlers, transition decisions/events and ideas."""
 
 P = "COLDWAR_KOR_"
-HEADER = "# IMPERIA CW — Cold War: South Korea 1970 political institutions."
+HEADER = "# IMPERIA COLD WAR — Cold War: South Korea 1970 political institutions."
+HISTORICAL_EVENTS = [
+    ("labour_1970","1970.11.13","labour_crisis_open"),
+    ("transition_1971","1971.4.27","1971_contest_pending"),
+    ("yh_1979","1979.8.11","yh_case_open"),
+    ("buma_1979","1979.10.16","buma_crisis_open"),
+    ("martial_law_may17","1980.5.17","officer_control_crisis"),
+    ("transition_gwangju","1980.5.18","nationwide_martial_law"),
+    ("transition_1985","1985.2.12","opposition_reorganization_pending"),
+    ("park_jongcheol_1987","1987.1.14","torture_disclosure_crisis"),
+    ("april13_1987","1987.4.13","opposition_constitutional_demand"),
+    ("june_movement_1987","1987.6.10","constitutional_mobilization"),
+    ("workers_1987","1987.7.1","post_june_labor_wave"),
+    ("eight_member_talks","1987.8.31","charter_mandate"),
+    ("court_1988","1988.9.1","court_commissioning_delay"),
+    ("transition_1990","1990.1.22","merger_talks_pending"),
+]
+EARLY_HISTORICAL_TRIGGER = ('tag = KOR IMP_is_1970_scenario = yes date > 1979.10.25 '
+    'date < 1979.10.28 has_country_leader = { name = "Park Chung Hee" ruling_only = yes } '
+    'has_country_flag = COLDWAR_KOR_park_succession_unresolved')
+
+
+def historical_event_trigger(ident,date,receipt):
+    year=date.split('.')[0]
+    recorded='COLDWAR_KOR_'+ident+'_recorded'
+    return (f'original_tag = KOR IMP_is_1970_scenario = yes date > {date} date < {year}.12.31 '
+        f'has_country_flag = COLDWAR_KOR_{receipt} NOT = {{ has_country_flag = {recorded} }}')
+
+
+def historical_dispatch_effects():
+    """Bounded scheduler: evaluate exact auto-event trigger, then queue once for tomorrow."""
+    rows=[]
+    early_queue='COLDWAR_KOR_transition_100_dispatch_queued'
+    early_delivered='COLDWAR_KOR_transition_100_delivered'
+    rows.append((early_queue,early_delivered,EARLY_HISTORICAL_TRIGGER,'COLDWAR_KOR_transition.100'))
+    for index,(ident,date,receipt) in enumerate(HISTORICAL_EVENTS,start=101):
+        queue='COLDWAR_KOR_transition_'+str(index)+'_dispatch_queued'
+        delivered='COLDWAR_KOR_transition_'+str(index)+'_delivered'
+        rows.append((queue,delivered,historical_event_trigger(ident,date,receipt),'COLDWAR_KOR_transition.'+str(index)))
+    return '\n'.join(f'if = {{ limit = {{ {trigger} NOT = {{ has_country_flag = {queue} }} '
+        f'NOT = {{ has_country_flag = {delivered} }} }} set_country_flag = {{ flag = {queue} days = 2 }} '
+        f'country_event = {{ id = {event} days = 1 }} }}' for queue,delivered,trigger,event in rows)
 
 
 def block(name, body):
@@ -143,6 +184,7 @@ else_if = { limit = { check_variable = { ruling_party = 22 } } hidden_effect = {
     for conditions, receipt in pulses:
         daily += f"if = {{ limit = {{ original_tag = KOR IMP_is_1970_scenario = yes {conditions} NOT = {{ has_country_flag = COLDWAR_KOR_{receipt} }} }} set_country_flag = COLDWAR_KOR_{receipt} }}\n"
     daily += "if = { limit = { original_tag = KOR IMP_is_1970_scenario = yes date > 1990.1.21 check_variable = { party_pop_array^0 > 0 } NOT = { has_country_flag = COLDWAR_KOR_ndrp_formed } } set_country_flag = COLDWAR_KOR_ndrp_formed }\n"
+    daily += historical_dispatch_effects()+"\n"
     out.append(block("COLDWAR_KOR_politics_daily", daily))
     out.append(block("COLDWAR_KOR_politics_maintenance", "COLDWAR_KOR_politics_sync = yes"))
     out.append(block("COLDWAR_KOR_politics_initialize", "if = { limit = { original_tag = KOR IMP_is_1970_scenario = yes has_country_leader = { name = \"Park Chung Hee\" ruling_only = yes } NOT = { has_country_flag = COLDWAR_KOR_park_succession_unresolved } } set_country_flag = COLDWAR_KOR_park_succession_unresolved }\nCOLDWAR_KOR_politics_sync = yes"))
@@ -348,11 +390,12 @@ country_event = {
  id = COLDWAR_KOR_transition.100
  title = COLDWAR_KOR_historical.1979.t
  desc = COLDWAR_KOR_historical.1979.d
- trigger = { tag = KOR IMP_is_1970_scenario = yes date > 1979.10.25 date < 1979.10.28 has_country_leader = { name = "Park Chung Hee" ruling_only = yes } has_country_flag = COLDWAR_KOR_park_succession_unresolved }
- mean_time_to_happen = { days = 1 }
+ is_triggered_only = yes
+ trigger = { '''+EARLY_HISTORICAL_TRIGGER+''' }
+ immediate = { set_country_flag = COLDWAR_KOR_transition_100_delivered }
  fire_only_once = yes
- option = { name = COLDWAR_KOR_historical.1979.option_a clr_country_flag = COLDWAR_KOR_park_succession_unresolved set_country_flag = COLDWAR_KOR_select_interim_choi set_temp_variable = { rul_party_temp = 0 } set_temp_variable = { disable_elections = 1 } change_ruling_party_effect = yes set_country_flag = COLDWAR_KOR_transition_open set_country_flag = COLDWAR_KOR_civilian_succession_open add_timed_idea = { idea = COLDWAR_KOR_interim_government days = 180 } }
- option = { name = COLDWAR_KOR_historical.1979.option_b clr_country_flag = COLDWAR_KOR_park_succession_unresolved set_country_flag = COLDWAR_KOR_select_interim_choi set_temp_variable = { rul_party_temp = 0 } set_temp_variable = { disable_elections = 1 } change_ruling_party_effect = yes set_country_flag = COLDWAR_KOR_officer_council_contest add_timed_idea = { idea = COLDWAR_KOR_contested_command days = 90 } }
+ option = { name = COLDWAR_KOR_historical.1979.option_a clr_country_flag = COLDWAR_KOR_transition_100_dispatch_queued clr_country_flag = COLDWAR_KOR_transition_100_delivered clr_country_flag = COLDWAR_KOR_park_succession_unresolved set_country_flag = COLDWAR_KOR_select_interim_choi set_temp_variable = { rul_party_temp = 0 } set_temp_variable = { disable_elections = 1 } change_ruling_party_effect = yes set_country_flag = COLDWAR_KOR_transition_open set_country_flag = COLDWAR_KOR_civilian_succession_open add_timed_idea = { idea = COLDWAR_KOR_interim_government days = 180 } }
+ option = { name = COLDWAR_KOR_historical.1979.option_b clr_country_flag = COLDWAR_KOR_transition_100_dispatch_queued clr_country_flag = COLDWAR_KOR_transition_100_delivered clr_country_flag = COLDWAR_KOR_park_succession_unresolved set_country_flag = COLDWAR_KOR_select_interim_choi set_temp_variable = { rul_party_temp = 0 } set_temp_variable = { disable_elections = 1 } change_ruling_party_effect = yes set_country_flag = COLDWAR_KOR_officer_council_contest add_timed_idea = { idea = COLDWAR_KOR_contested_command days = 90 } }
 }
 ''')
     # Each organization receives an explicit RP response before its unique
@@ -389,7 +432,7 @@ country_event = {
 ''')
     # Dated histories only appear when their named crisis has actually been
     # established by the native government or player, once per receipt.
-    events = [("labour_1970","1970.11.13","labour_crisis_open"),("transition_1971","1971.4.27","1971_contest_pending"),("yh_1979","1979.8.11","yh_case_open"),("buma_1979","1979.10.16","buma_crisis_open"),("martial_law_may17","1980.5.17","officer_control_crisis"),("transition_gwangju","1980.5.18","nationwide_martial_law"),("transition_1985","1985.2.12","opposition_reorganization_pending"),("park_jongcheol_1987","1987.1.14","torture_disclosure_crisis"),("april13_1987","1987.4.13","opposition_constitutional_demand"),("june_movement_1987","1987.6.10","constitutional_mobilization"),("workers_1987","1987.7.1","post_june_labor_wave"),("eight_member_talks","1987.8.31","charter_mandate"),("court_1988","1988.9.1","court_commissioning_delay"),("transition_1990","1990.1.22","merger_talks_pending")]
+    events = HISTORICAL_EVENTS
     outcomes = {
         "labour_1970": ("set_country_flag = COLDWAR_KOR_labour_1970_recorded\nset_country_flag = COLDWAR_KOR_labour_inspection_authorized", "set_country_flag = COLDWAR_KOR_labour_1970_recorded\nadd_timed_idea = { idea = COLDWAR_KOR_wage_discipline days = 180 }"),
         "transition_1971": ("add_political_power = -50\nadd_stability = 0.03\nset_country_flag = COLDWAR_KOR_constitutional_crisis\nset_country_flag = COLDWAR_KOR_electoral_opening", "add_political_power = 50\nadd_stability = -0.05\nset_country_flag = COLDWAR_KOR_constitutional_crisis\nset_country_flag = COLDWAR_KOR_executive_emergency_proposed"),
@@ -411,14 +454,17 @@ country_event = {
         eid = "COLDWAR_KOR_transition." + str(index)
         locid = "COLDWAR_KOR_" + ident
         recorded = "COLDWAR_KOR_" + ident + "_recorded"
+        queue = "COLDWAR_KOR_transition_" + str(index) + "_dispatch_queued"
+        delivered = "COLDWAR_KOR_transition_" + str(index) + "_delivered"
         out.append(f'''country_event = {{
  id = {eid}
  title = {locid}.t
  desc = {locid}.d
- trigger = {{ original_tag = KOR IMP_is_1970_scenario = yes date > {date} date < {year}.12.31 has_country_flag = COLDWAR_KOR_{receipt} NOT = {{ has_country_flag = {recorded} }} }}
- mean_time_to_happen = {{ days = 1 }}
- option = {{ name = {locid}.option_a {outcomes[ident][0]} set_country_flag = {recorded} }}
- option = {{ name = {locid}.option_b {outcomes[ident][1]} set_country_flag = {recorded} }}
+ is_triggered_only = yes
+ trigger = {{ {historical_event_trigger(ident,date,receipt)} }}
+ immediate = {{ set_country_flag = {delivered} }}
+ option = {{ name = {locid}.option_a clr_country_flag = {queue} clr_country_flag = {delivered} {outcomes[ident][0]} set_country_flag = {recorded} }}
+ option = {{ name = {locid}.option_b clr_country_flag = {queue} clr_country_flag = {delivered} {outcomes[ident][1]} set_country_flag = {recorded} }}
 }}
 ''')
     return "\n".join(out)

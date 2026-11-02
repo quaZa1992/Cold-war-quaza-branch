@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # South Korea 1970–1990: Democratic Transition Research Expansion
 
 ## Purpose and evidence labels

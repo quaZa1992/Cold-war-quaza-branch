@@ -35,9 +35,14 @@ investment project cost. It does not directly confiscate investment income.
 interest clamp. The current debt system still has a single national-debt balance.
 Removing a currency removes its static modifiers through normal law replacement.
 
-Existing reserve calculations, issuer/adopter counts, currency-strength/inflation
-formulas, migration flags, date gates, AI conditions, icons and country history
-are preserved. New games and existing currency holders use the updated law
+Existing reserve calculations, adopter counts, currency-strength/inflation
+formulas, migration flags, AI conditions, icons and country history
+are preserved. A later authorized correction removes the Deutsche Mark's 1999
+expiry from visibility, adoption, startup and issuer routing. Its issuer remains
+active while the issuing country has not adopted the euro; euro issuance uses
+an actual euro holder. The currencies can coexist without a calendar switchover.
+The older exact-file preservation manifests predate this follow-up. New games
+and existing currency holders use the updated law
 definitions after restarting HOI4 and loading. No new campaign is necessary.
 
 ## Validation

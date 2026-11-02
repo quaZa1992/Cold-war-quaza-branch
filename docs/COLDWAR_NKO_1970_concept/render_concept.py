@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Native MD art preview of an approval-only North Korean concept.
+# IMPERIA COLD WAR — Cold War: Native MD art preview of an approval-only North Korean concept.
 from build_concept import *
 
 def art_library():
@@ -42,7 +42,7 @@ def effects(v):
     return rows
 
 def code(v):
-    lines=['# IMPERIA CW — Cold War: proposed '+v['title'], '# Review recipe: NEW country adapters and state reservation are not implemented.', 'available = {','  hidden_trigger = {']
+    lines=['# IMPERIA COLD WAR — Cold War: proposed '+v['title'], '# Review recipe: NEW country adapters and state reservation are not implemented.', 'available = {','  hidden_trigger = {']
     lines += ['    '+s for s in v['runtime_guards'] if not s.startswith('check_variable = { ruling_party')]
     lines+=['  }']
     if v['slot'] is not None:
@@ -128,7 +128,7 @@ def preview(data,images):
 
 def proposed_localization():
     # This review copy is outside localisation/; only localisation YAML uses a BOM.
-    lines=['# IMPERIA CW — Cold War: North Korean 1970 CONCEPT, not installed.', 'l_english:']
+    lines=['# IMPERIA COLD WAR — Cold War: North Korean 1970 CONCEPT, not installed.', 'l_english:']
     for v in NODES:
         lines += [' '+v['id']+':0 '+json.dumps(v['title'],ensure_ascii=False),
                   ' '+v['id']+'_desc:0 '+json.dumps(v['description'],ensure_ascii=False)]

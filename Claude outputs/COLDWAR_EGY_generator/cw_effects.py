@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Egypt 1970 content generator.
+# IMPERIA COLD WAR — Native doctrine rewards in Egypt's approved focus content.
 # COLDWAR | Compiles the German design effect lines into Clausewitz code (MD 2000 style).
 import re
 from cw_common import *
@@ -291,6 +291,8 @@ def compile_line(e, f):
         return opinion(m.group(1), int(m.group(2)))
     m = re.match(r"^Forschungsbonus (\w+) \+(\d+) % ×(\d) `add_tech_bonus`$", e)
     if m:
+        if m.group(1) in ('land_doctrine', 'naval_doctrine', 'air_doctrine'):
+            return [f"add_doctrine_cost_reduction = {{ name = {fid.replace('EGY_1970_', PFX)} cost_reduction = {fmt(int(m.group(2)) / 100)} uses = {m.group(3)} category = {m.group(1)} }}"]
         return [f"add_tech_bonus = {{ name = {fid.replace('EGY_1970_', PFX)} bonus = {fmt(int(m.group(2)) / 100)} uses = {m.group(3)} category = {m.group(1)} }}"]
     m = re.match(r"^Gebäude: \+(\d) (.+?) in (.+?) `([\w /]+?)`", e)
     if m:

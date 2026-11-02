@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uae 1970 — revision.
+# IMPERIA COLD WAR — UAE 1970 user-approved design revisions.
 """Explicit user revisions layered over the immutable original UAE approval.
 
 The October 19 correction separates independence, constitutional preparation,
@@ -10,6 +10,7 @@ from pathlib import Path
 from development import apply_revision
 from streamline import apply_revision as streamline_revision
 from focus_only import apply_revision as focus_only_revision
+from specialists import apply_revision as specialists_revision
 
 HERE = Path(__file__).resolve().parent
 P = 'COLDWAR_UAE_'
@@ -67,4 +68,4 @@ def current_design():
     # earlier development overlays cannot restore their former durations.
     for focus in data['nodes']:
         focus.update(days=70, cost=10.0)
-    return focus_only_revision(streamline_revision(data))
+    return specialists_revision(focus_only_revision(streamline_revision(data)))

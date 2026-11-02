@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
+# IMPERIA COLD WAR — Native modifier compatibility for approved DDR content.
 # COLDWAR | Loads the approved GDR design (v2, 18.10.2026): ddr_tree.json (foci, positions, effects), ddr_concept.json (systems,
 # registries), page_data.json (English names and descriptions). The layout is final in the design: x/y are grid cells,
 # `rel` is the anchor of relative_position_id (MD 2000 style).
@@ -8,6 +8,27 @@ T = json.load(open(os.path.join(DESIGN, "ddr_tree.json"), encoding="utf-8"))
 C = None
 P = json.load(open(os.path.join(DESIGN, "page_data.json"), encoding="utf-8"))
 C = P["concept"]                                 # concept + registries (ideas with modifier lines, offers, uses)
+
+
+def native_modifiers(value):
+    """Resolve the retired alias at emission while preserving approval files."""
+    if isinstance(value, list):
+        return [native_modifiers(item) for item in value]
+    if isinstance(value, dict):
+        result = {}
+        for key, item in value.items():
+            native = 'drift_defence_factor' if key == 'mdcw_cw_ideological_defence' else key
+            mapped = native_modifiers(item)
+            if native in result and isinstance(mapped, (int, float)):
+                result[native] += mapped
+            else:
+                result[native] = mapped
+        return result
+    return value
+
+
+T = native_modifiers(T)
+C = native_modifiers(C)
 
 FOCI = T["foci"]
 BYID = {f["id"]: f for f in FOCI}

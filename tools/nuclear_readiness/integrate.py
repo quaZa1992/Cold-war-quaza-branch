@@ -1,10 +1,10 @@
-# IMPERIA CW — Cold War: narrow integration into native MD consumers.
+# IMPERIA COLD WAR — Cold War: narrow integration into native MD consumers.
 from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-MARK = '# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.'
+MARK = '# IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.'
 
 def edit(rel, transform, loc=False):
     path = ROOT / rel
@@ -54,7 +54,7 @@ def raids(s):
         s=s[:start]+body+s[end:]
     return escalation_raids(s)
 
-# IMPERIA CW — Cold War: retain native targeting and outcomes while adding release authority.
+# IMPERIA COLD WAR — Cold War: retain native targeting and outcomes while adding release authority.
 def escalation_raids(s):
     for name,kind in [('tactical_nuclear_strike','tactical'),('state_nuclear_strike','state'),('strategic_nuclear_strike','strategic')]:
         start=re.search(r'\b'+name+r'\s*=\s*{',s).start()

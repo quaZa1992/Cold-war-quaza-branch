@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Universal SSR focus programme integration.
 # IMPERIA CW — Cold War: Soviet Union 1970 content generator.
 # COLDWAR | The Union Plan (Enes, 18.10.2026): missions of the Union republics, Moscow's judgement, the shortfall Moscow
 # suffers for every failure, the rewards, the January settlement, and the joint Union tree (Saadabad style).
@@ -1183,6 +1184,8 @@ def joint_file():
             L += [f"x = {FO.UNION_ROOT[0]}", f"y = {FO.UNION_ROOT[1]}",
                   "offset = {", f"x = {FO.UNION_GENERIC[0] - FO.UNION_ROOT[0]}", f"y = {FO.UNION_GENERIC[1] - FO.UNION_ROOT[1]}",
                   "trigger = { has_focus_tree = mdcw_1970_generic_focus }", "}"]
+            # IMPERIA COLD WAR: SSR joint-tree host offset
+            L += ["# IMPERIA COLD WAR — SSR Union Plan position BEGIN", "offset = {", "x = -285", "y = -8", "trigger = { has_focus_tree = COLDWAR_SSR_1970_focus }", "}", "# IMPERIA COLD WAR — SSR Union Plan position END"]
         else:
             L += [f"x = {f['x']}", f"y = {f['y']}", f"relative_position_id = {ROOT}"]
         L += [f"cost = {f['cost']}"]
@@ -1221,6 +1224,19 @@ TRAITS_TXT = traits_file()
 SLOC_TXT = scripted_loc_file()
 EFFECTS_TXT = HEADER_U + "\n" + "\n".join(block(EFF)) + "\n"
 TRIGGERS_TXT = "\n".join(block(TRG)) + "\n"
+# IMPERIA COLD WAR — Annual order adapter BEGIN
+# Apply the same narrow guards whenever the retained Soviet generator is run.
+from pathlib import Path as _OrderPath
+sys.path.insert(0, str(_OrderPath(__file__).resolve().parents[2] / "tools/union_orders_1970"))
+import coldwar_order_legacy as _OrderLegacy
+EFFECTS_TXT = _OrderLegacy.effects(EFFECTS_TXT)
+EVENTS_TXT = _OrderLegacy.events(EVENTS_TXT)
+DEC_CAT_TXT = _OrderLegacy.categories(DEC_CAT_TXT)
+TRIGGERS_TXT = _OrderLegacy.triggers(TRIGGERS_TXT)
+JOINT_TXT = _OrderLegacy.joint(JOINT_TXT)
+LOC.update(_OrderLegacy.LOC_UPDATES)
+# IMPERIA COLD WAR — Annual order adapter END
+
 FILES = {
     "common/national_focus/COLDWAR_UNI_1970_union_joint.txt": JOINT_TXT,
     "common/decisions/COLDWAR_UNI_1970_decisions.txt": DEC_TXT,

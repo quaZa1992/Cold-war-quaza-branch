@@ -1,24 +1,76 @@
-# IMPERIA CW — Cold War: 1970 focus tree effects — scripted effects.
+# IMPERIA COLD WAR — Brazil 1970 national programmes integration.
+# IMPERIA COLD WAR — Argentina 1970 custom integration.
+# IMPERIA COLD WAR — France 1970 national programme integration.
+# IMPERIA COLD WAR — France retired-tree fallback cleanup.
+# IMPERIA COLD WAR — Universal SSR focus programme integration.
+# IMPERIA COLD WAR — 1970 focus tree effects — scripted effects.
 # Old events must not replace an authored 1970 tree or erase its progress.
 # 1970: countries without an authored tree get the generic 1970 tree (mdcw_1970_generic_focus);
 # a country that already runs it keeps its progress. Other start dates keep the empty tree.
 mdcw_load_1970_fallback_tree = {
+	# IMPERIA COLD WAR — Brazil fallback routing BEGIN
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+			NOT = { has_focus_tree = COLDWAR_BRA_1970_focus }
+		}
+		load_focus_tree = COLDWAR_BRA_1970_focus
+		COLDWAR_BRA_initialize = yes
+	}
+	# IMPERIA COLD WAR — Brazil fallback routing END
+
+
+
+# IMPERIA COLD WAR — ARG AUTHORED FALLBACK BEGIN
+if = { limit = { tag = ARG IMP_is_1970_scenario = yes } COLDWAR_ARG_initialize = yes }
+# IMPERIA COLD WAR — ARG AUTHORED FALLBACK END
+
+	# IMPERIA COLD WAR — France replacement routing BEGIN
+	if = {
+		limit = { tag = FRA IMP_is_1970_scenario = yes NOT = { has_focus_tree = COLDWAR_FRA2_1970_focus } }
+		load_focus_tree = COLDWAR_FRA2_1970_focus
+		COLDWAR_FRA2_initialize = yes
+	}
+	# IMPERIA COLD WAR — France replacement routing END
+
+	# IMPERIA COLD WAR — Cuba authored 1970 tree fallback routing.
+	if = {
+		limit = {
+			tag = CUB
+			IMP_is_1970_scenario = yes
+			NOT = { has_focus_tree = COLDWAR_CUB_1970_focus }
+		}
+		load_focus_tree = COLDWAR_CUB_1970_focus
+		COLDWAR_CUB_initialize = yes
+	}
 	if = {
 		limit = {
 			NOT = {
 				OR = {
-					# IMPERIA CW — Cold War: retain Japan's authored 1970 focus tree.
-					AND = { original_tag = JAP IMP_is_1970_scenario = yes }
+
+
+# IMPERIA COLD WAR — ARG FALLBACK EXEMPTION BEGIN
+AND = { tag = ARG IMP_is_1970_scenario = yes }
+# IMPERIA COLD WAR — ARG FALLBACK EXEMPTION END
+
+					# IMPERIA COLD WAR — SSR authored-tree exemption BEGIN
+					AND = { IMP_is_1970_scenario = yes has_focus_tree = COLDWAR_SSR_1970_focus }
+					# IMPERIA COLD WAR — SSR authored-tree exemption END
 # COLDWAR UAE FALLBACK EXEMPTION BEGIN
 					COLDWAR_UAE_1970_campaign = yes
 # COLDWAR UAE FALLBACK EXEMPTION END
 
-					# IMPERIA CW — Cold War: North Korea 1970 national programme.
+					AND = { tag = BRA IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Brazil authored tree
+					AND = { tag = FRA IMP_is_1970_scenario = yes } # COLDWAR_FRA2 authored tree
+					AND = { tag = CUB IMP_is_1970_scenario = yes } # COLDWAR | own 1970 tree
+					# IMPERIA COLD WAR — Cold War: North Korea 1970 national programme.
 					AND = { original_tag = NKO IMP_is_1970_scenario = yes } # COLDWAR NKO authored tree
-# IMPERIA CW — Cold War: South Korea1970 national programme.
+# IMPERIA COLD WAR — Cold War: South Korea1970 national programme.
 # COLDWAR KOR FALLBACK BEGIN
 					AND = { original_tag = KOR IMP_is_1970_scenario = yes }
 # COLDWAR KOR FALLBACK END
+					# IMPERIA COLD WAR — quaZa East Asia and strategic-readiness integration.
+					AND = { original_tag = JAP IMP_is_1970_scenario = yes }
 					original_tag = USA
 					original_tag = SPR
 					original_tag = LBA

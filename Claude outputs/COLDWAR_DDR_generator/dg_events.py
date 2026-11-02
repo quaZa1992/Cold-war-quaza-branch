@@ -1,6 +1,7 @@
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
+# IMPERIA COLD WAR — DDR events retain substantive outcomes without the retired trust mechanic.
 # COLDWAR | Events of the GDR 1970 tree: the 16 focus events of the design, the system events (deaths, succession,
-# Moscow's Trust, the Inner-German course, the Kremlin's say, accession, the garrison) and the historical events.
+# the Inner-German course, the Kremlin's say, accession, the garrison) and the historical events.
 # Namespace COLDWAR_DDR. Offers (100-199) are in dg_offers.py; 900/901 are the answers to our offers.
 import json
 from dg_common import *
@@ -55,26 +56,25 @@ ev(2, f"{PFX}erfurt_summit", "The Erfurt Summit",
    "and call 'Willy Brandt to the window!'. The Chancellor raises his hands to calm them. The Politburo watches the pictures in silence.",
    "COLDWAR_DDR_erfurt_summit",
    [o("Let the cameras roll: the world sees two German states.", E.course(0.05), "add_stability = -0.02", ai=30),
-    o("Clear the square and send in the cheering cadres.", E.course(-0.05), E.trust(2), E.faction("intelligence_community", 5), ai=70)])
+    o("Clear the square and send in the cheering cadres.", E.course(-0.05), E.faction("intelligence_community", 5), ai=70)])
 ev(3, f"{PFX}kassel_meeting", "The Kassel Meeting",
    "21 May 1970. In Kassel protesters tear down the flag of the republic, Brandt offers twenty points and Stoph insists on recognition under international law. "
    "Both sides agree on a 'pause for reflection'. Moscow and Bonn will continue without East Berlin.",
    "COLDWAR_DDR_kassel_meeting",
-   [o("Recognition first - there is nothing else to discuss.", E.course(-0.05), E.trust(2), ai=70),
-    o("Keep the channel to Bonn open.", E.course(0.05), E.trust(-2), ai=30)])
+   [o("Recognition first - there is nothing else to discuss.", E.course(-0.05), ai=70),
+    o("Keep the channel to Bonn open.", E.course(0.05), ai=30)])
 ev(4, f"{PFX}ulbricht_resigns", "Ulbricht Resigns",
    "3 May 1971. 'For reasons of age' Walter Ulbricht asks the Central Committee to relieve him of his duties as First Secretary. "
    "The plenum elects Erich Honecker unanimously; the old man becomes Chairman of the Party - an honorary title without power.",
    "ulbricht_resigns",
    [o("Long live Comrade Honecker.", f"{PFX}install_first_sec_hon = yes")],
-   ttrigger=[f"has_country_flag = {PFX}first_sec_ulb", f"NOT = {{ has_country_flag = {PFX}ulb_stays }}", SED,
-             f"check_variable = {{ {PFX}moscow_trust > 39 }}"])
+   ttrigger=[f"has_country_flag = {PFX}first_sec_ulb", f"NOT = {{ has_country_flag = {PFX}ulb_stays }}", SED])
 ev(5, f"{PFX}ulb_the_old_man_stays", "The Old Man Stays",
    "Ambassador Abrasimov delivers a letter from Brezhnev: Moscow is 'concerned' about the First Secretary's lectures on economics and his private German policy. "
    "In the Politburo the thirteen signatories of the letter look at the floor.",
    "COLDWAR_DDR_ulb_the_old_man_stays",
    [o("The signatories recant at the next plenum.", "add_stability = 0.02", ai=60),
-    o("Dismiss the ringleaders.", "add_political_power = 50", E.faction("communist_cadres", -5), E.trust(-5), ai=40)])
+    o("Dismiss the ringleaders.", "add_political_power = 50", E.faction("communist_cadres", -5), ai=40)])
 ev(6, f"{PFX}ulb_heart_attack", "A Heart Attack",
    "Spring 1973. Walter Ulbricht suffers a heart attack. The Kremlin doctors flown in from Moscow save him, but the old man must rest at Lake Döllnsee "
    "for months. The Politburo runs the republic without him.",
@@ -113,31 +113,30 @@ ev(11, f"{PFX}helsinki_exit_applications", "The Exit Applications",
    "Most lose their jobs; some are bought free by Bonn. The MfS opens a file on every applicant.",
    "COLDWAR_DDR_helsinki_exit_applications",
    [o("Process the applications quietly.", "add_stability = -0.02", E.course(0.05), ai=40),
-    o("A file on every applicant.", "add_stability = 0.01", E.faction("intelligence_community", 5), E.course(-0.05), E.trust(2), ai=60)])
+    o("A file on every applicant.", "add_stability = 0.01", E.faction("intelligence_community", 5), E.course(-0.05), ai=60)])
 ev(12, f"{PFX}bucharest_formula", "The Bucharest Formula",
    "From now on Comecon prices follow a moving average of world prices. Soviet crude gets dearer every year, and the republic pays in machines and ships "
    "it would rather sell for hard currency.",
    "COLDWAR_DDR_bucharest_formula",
-   [o("Pay with machines and ships.", E.country_dyn("planned_economy", {"civilian_industry_tax_modifier": -0.02}), E.trust(3), ai=60),
-    o("Sell more crude products to the West.", E.pay(0.005), E.trust(-2), ai=40)])
+   [o("Pay with machines and ships.", E.country_dyn("planned_economy", {"civilian_industry_tax_modifier": -0.02}), ai=60),
+    o("Sell more crude products to the West.", E.pay(0.005), ai=40)])
 ev(13, f"{PFX}polish_crisis", "The Polish Crisis",
    "Solidarity counts ten million members; the Polish United Workers' Party has lost the workers. The Politburo fears the Polish disease more than the "
    "West German television.",
    "COLDWAR_DDR_polish_crisis",
-   [o("Stand by the Polish comrades.", E.trust(3), E.faction("communist_cadres", 5), ai=70),
+   [o("Stand by the Polish comrades.", E.faction("communist_cadres", 5), ai=70),
     o("Watch and wait.", "add_stability = 0.01", ai=30)])
 ev(14, f"{PFX}euromissiles", "The Euromissile Crisis",
    "The Bundestag has approved the Pershing II, the Soviet delegation has left Geneva, and Moscow announces new missiles for the GDR. "
    "Erich Honecker speaks of 'damage limitation' and a 'coalition of reason'.",
    "COLDWAR_DDR_euromissiles",
-   [o("Welcome the counter-deployment.", E.trust(5), E.tension(1), "add_stability = -0.02", ai=60),
-    o("A coalition of reason with Bonn.", E.course(0.05), E.trust(-3), ai=40)])
+   [o("Welcome the counter-deployment.", E.tension(1), "add_stability = -0.02", ai=60),
+    o("A coalition of reason with Bonn.", E.course(0.05), ai=40)])
 ev(15, f"{PFX}ldk_warsaw_pact_manoeuvres", "Manoeuvres on the Border",
    "Soviet, Polish and Czechoslovak divisions exercise along our borders. The commanders speak of a routine exercise; everyone in Berlin remembers Prague 1968.",
    "COLDWAR_DDR_ldk_warsaw_pact_manoeuvres",
-   [o("Concede: the reforms will be slowed.", E.trust(10), "add_stability = -0.05", ai=60),
-    o("Stand firm.", "add_war_support = 0.05", E.tension(3),
-      f"if = {{ limit = {{ check_variable = {{ {PFX}moscow_trust < 20 }} }} {PFX}open_fraternal_assistance = yes }}", ai=40)])
+   [o("Concede: the reforms will be slowed.", "add_stability = -0.05", ai=60),
+    o("Stand firm.", "add_war_support = 0.05", E.tension(3), ai=40)])
 ev(16, f"{PFX}ssp_the_world_condemns", "The World Condemns",
    "Western capitals recall their ambassadors, the Non-Aligned protest in New York. The Ministry calls it an internal matter of a sovereign state.",
    "COLDWAR_DDR_ssp_the_world_condemns",
@@ -156,15 +155,15 @@ ev(20, f"{PFX}moscow_treaty", "The Moscow Treaty",
    "12 August 1970. In the Kremlin Brandt and Kosygin sign a treaty renouncing force and recognising the borders of Europe, the inner-German border included. "
    "East Berlin was informed - not asked.",
    "moscow_treaty",
-   [o("Moscow knows best.", E.trust(3), E.course(0.05), ai=60),
-    o("Protest - in private.", E.trust(-3), E.course(-0.05), E.faction("communist_cadres", 5), ai=40)],
+   [o("Moscow knows best.", E.course(0.05), ai=60),
+    o("Protest - in private.", E.course(-0.05), E.faction("communist_cadres", 5), ai=40)],
    trigger=DDR_T + ["date > 1970.8.11", "is_subject_of = SOV"], mtth=1, once=True)
 ev(21, f"{PFX}biermann_affair", "The Biermann Affair",
    "16 November 1976. After a concert in Cologne the singer Wolf Biermann is told he may not return. A dozen writers and actors sign a protest letter; "
    "West German television broadcasts the whole concert.",
    "biermann_affair",
    [o("Expatriated - and good riddance.", "add_stability = -0.02", E.course(-0.05), E.faction("intelligence_community", 5), ai=70),
-    o("Let him come home.", E.course(0.05), E.trust(-3), E.faction("communist_cadres", -5), "add_stability = 0.01", ai=30)],
+    o("Let him come home.", E.course(0.05), E.faction("communist_cadres", -5), "add_stability = 0.01", ai=30)],
    trigger=DDR_T + ["date > 1976.11.15", "has_government = communism"], mtth=1, once=True)
 ev(22, f"{PFX}coffee_crisis", "The Coffee Crisis",
    "1977. Frost in Brazil and the world market prices explode: the republic spends three hundred million hard-currency marks on coffee a year. "
@@ -179,35 +178,34 @@ ev(23, f"{PFX}oil_cut", "The Oil Cut",
    "oil_cut",
    [o("Coal instead of oil.", f"if = {{ limit = {{ {PFX}ladder_lignite_active = yes }} {PFX}ladder_lignite_clear = yes add_ideas = {PFX}energy_coal_instead_of_oil }}",
       "add_stability = -0.02", ai=60),
-    o("Buy the missing oil on the world market.", E.pay(0.01), E.trust(-2), ai=40)],
+    o("Buy the missing oil on the world market.", E.pay(0.01), ai=40)],
    trigger=DDR_T + ["date > 1981.10.1", "is_subject_of = SOV"], mtth=1, once=True, immediate=[f"set_country_flag = {PFX}oil_cut"])
 ev(24, f"{PFX}man_in_space", "Our Man in Space",
    "26 August 1978. Sigmund Jähn, a lieutenant colonel of the air force from the Vogtland, lifts off from Baikonur on Soyuz 31: the first German in space "
    "is a citizen of the republic.",
    "man_in_space",
-   [o("The first German in space!", "add_stability = 0.03", E.party_pop(4, 0.02, 0.02), E.trust(3))])
+   [o("The first German in space!", "add_stability = 0.03", E.party_pop(4, 0.02, 0.02))])
 
-# ================================================================ Moscow's Trust and the Inner-German course
+# ================================================================ the Inner-German course
 ev(30, f"{PFX}bonns_embrace", "Bonn's Embrace",
    "Credits, visits, town twinnings, a hotline between the chancelleries: the two German states have never been closer. In Moscow they read the reports "
    "of the embassy with growing alarm.",
    "bonns_embrace",
-   [o("The embrace is good for us.", E.trust(-5), "add_stability = 0.02", ai=40),
-    o("Step back from Bonn.", E.course(-0.15), E.trust(3), ai=60)])
+   [o("The embrace is good for us.", "add_stability = 0.02", ai=40),
+    o("Step back from Bonn.", E.course(-0.15), ai=60)])
 ev(31, f"{PFX}ambassador_calls", "The Ambassador Calls",
    "The Soviet ambassador asks for an appointment - tonight. He brings a letter from the General Secretary and a list of 'questions of concern'. "
    "In Wünsdorf the Group of Soviet Forces has cancelled all leave.",
    "ambassador_calls",
-   [o("Submit to Moscow.", E.trust(15), E.course(-0.10), "add_political_power = -50", ai=80),
+   [o("Submit to Moscow.", E.course(-0.10), "add_political_power = -50", ai=80),
     o("Defy the ambassador.", "add_war_support = 0.05", f"{PFX}open_fraternal_assistance = yes", ai=20)],
    immediate=[f"set_country_flag = {PFX}ambassador_called"])
 ev(32, f"{PFX}fraternal_concern", "Fraternal Concern",
    "Moscow has rejected our request. A Soviet delegation arrives without notice and speaks of the 'common responsibility of the fraternal parties'. "
    "The Group of Soviet Forces holds an alert exercise.",
    "fraternal_concern",
-   [o("Reassure Moscow.", E.trust(5), E.course(-0.05), ai=70),
-    o("Hold our course.", "add_war_support = 0.03",
-      f"if = {{ limit = {{ check_variable = {{ {PFX}moscow_trust < 20 }} }} {PFX}open_fraternal_assistance = yes }}", ai=30)])
+   [o("Reassure Moscow.", E.course(-0.05), ai=70),
+    o("Hold our course.", "add_war_support = 0.03", ai=30)])
 ev(33, f"{PFX}fraternal_assistance", "Fraternal Assistance",
    "The Soviet Union demands that the republic return to the path of socialism - at once. Soviet divisions are moving out of their garrisons; "
    "the ultimatum expires at dawn.",
@@ -218,6 +216,7 @@ ev(34, f"{PFX}fraternal_assistance_answer", "East Berlin Bows",
    "[FROM.GetNameDefCap] has accepted our ultimatum. The comrades in East Berlin return to the path of socialism.",
    "fraternal_assistance", [o("We will see.")])
 
+# IMPERIA COLD WAR — AI-only calendar mortality for DDR First Secretaries.
 # ================================================================ First Secretaries: deaths, succession, the Kremlin
 DEATH = {"ulb": ("Walter Ulbricht", "death_ulbricht",
                  "Walter Ulbricht, founder of the republic, has died at the government guest house at Lake Döllnsee. The state funeral is held in Berlin; "
@@ -232,8 +231,8 @@ DEATH = {"ulb": ("Walter Ulbricht", "death_ulbricht",
                  "the Grand Tattoo plays for him in Strausberg.", ["date > 1985.12.1"])}
 for n, (k, (name, pic, desc, cond)) in enumerate(DEATH.items(), start=40):
     ev(n, f"{PFX}death_{k}", f"Death of {name}", desc, pic,
-       [o("The republic mourns.", f"{PFX}leader_dies_{k} = yes")],
-       trigger=DDR_T + [f"NOT = {{ has_country_flag = {PFX}dead_{k} }}"] + cond, mtth=1, once=True)
+       [o("The republic mourns.", f"{PFX}leader_dies_{k} = yes", trigger=["is_ai = yes"])],
+       trigger=DDR_T + ["is_ai = yes", f"NOT = {{ has_country_flag = {PFX}dead_{k} }}"] + cond, mtth=1, once=True)
 
 # the Central Committee chooses a successor (no designated heir): every living candidate the party would accept
 SUCC = ["hon", "sto", "mit", "hag", "kre", "kro", "mod", "lam", "hof", "ulb"]
@@ -272,9 +271,9 @@ for n, (k, what) in enumerate([("first_sec", "has a new First Secretary, §Y[DDR
        [o("Endorse the step.", f"DDR = {{ {PFX}kremlin_endorses = yes }}", ai=60),
         o("Object to it.", f"DDR = {{ {PFX}kremlin_objects = yes }}", ai=40)])
 ev(51, f"{PFX}kremlin_endorsed", "Moscow Approves",
-   "The Soviet leadership has let us know that it approves of our latest step. Moscow's Trust rises.", "kremlin_notice", [o("Good.")])
+   "The Soviet leadership has let us know that it approves of our latest step.", "kremlin_notice", [o("Good.")])
 ev(53, f"{PFX}kremlin_objected", "Moscow Objects",
-   "The Soviet leadership has let us know that it does not approve of our latest step. Moscow's Trust falls.", "kremlin_notice", [o("We will remember.")])
+   "The Soviet leadership has let us know that it does not approve of our latest step.", "kremlin_notice", [o("We will remember.")])
 ev(52, f"{PFX}soviet_endorses", "Moscow Courts a Rival",
    "The Soviet ambassador has been seen at the dacha of Werner Krolikowski. Moscow lets it be known that it would welcome 'a change of generations' in East Berlin.",
    "kremlin_notice", [o("The Central Committee takes note.")],
@@ -295,7 +294,8 @@ ev(64, f"{PFX}two_plus_four", "Two Plus Four",
    "accession",
    [o("Let Germany unite.", "end_puppet = DDR", E.tension(-2), f"DDR = {{ {PFX}begin_transition = yes }}",
       ai="base = 10\nmodifier = { factor = 6 NOT = { has_government = communism } }\nmodifier = { factor = 3 has_country_flag = COLDWAR_SOV_gensec_gor }"),
-    o("Never.", f"DDR = {{ add_stability = -0.03 {' '.join(E.trust(-10))} country_event = {{ id = {NS}.65 days = 1 }} }}", ai=90)])
+    # IMPERIA COLD WAR — refusal retains its stability consequence without retired trust loss.
+    o("Never.", f"DDR = {{ add_stability = -0.03 country_event = {{ id = {NS}.65 days = 1 }} }}", ai=90)])
 ev(65, f"{PFX}accession_blocked", "Moscow Says No to Unity",
    "The Soviet Union has refused to release the republic. Bonn's yes is worth nothing while the Group of Soviet Forces stands in Wünsdorf.",
    "accession", [o("Unity must wait.")])

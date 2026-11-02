@@ -1,0 +1,245 @@
+<!-- IMPERIA COLD WAR — USA source comparison and expansion concept. -->
+<div id="usa-tree-review">
+  <style>
+    #usa-tree-review { color:var(--foreground); }
+    #usa-tree-review .us-toolbar { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin-block:14px; }
+    #usa-tree-review .us-toolbar label { flex:1 1 160px; }
+    #usa-tree-review .us-toolbar select { width:100%; }
+    #usa-tree-review .us-key { display:flex; flex-wrap:wrap; gap:14px; margin-block:8px; }
+    #usa-tree-review .us-dot { display:inline-block; width:9px; height:9px; margin-right:5px; background:var(--viz-series-1); border-radius:50%; }
+    #usa-tree-review .us-dot.rework { background:var(--viz-series-2); }
+    #usa-tree-review .us-dot.existing { background:var(--muted-foreground); }
+    #usa-tree-review .us-diagram { display:block; width:100%; touch-action:none; user-select:none; }
+    #usa-tree-review .us-diagram text { fill:var(--foreground); }
+    #usa-tree-review .us-link { fill:none; stroke:var(--border); stroke-width:1.4; }
+    #usa-tree-review .us-exclusive { fill:none; stroke:var(--viz-series-2); stroke-width:1.3; stroke-dasharray:4 4; }
+    #usa-tree-review .us-node circle { stroke:var(--border); fill:var(--muted); stroke-width:1; }
+    #usa-tree-review .us-node[data-status="New"] circle { fill:color-mix(in srgb,var(--viz-series-1) 17%,transparent); }
+    #usa-tree-review .us-node[data-status="Rework"] circle, #usa-tree-review .us-node[data-status="Rewired"] circle { fill:color-mix(in srgb,var(--viz-series-2) 17%,transparent); }
+    #usa-tree-review .us-node.selected circle { stroke:var(--foreground); stroke-width:2; }
+    #usa-tree-review .us-node text { pointer-events:none; font-size:12px; }
+    #usa-tree-review .us-node image { pointer-events:none; }
+    #usa-tree-review .us-inspector { margin-block:14px; }
+    #usa-tree-review .us-inspector h3 { margin-block:8px; }
+    #usa-tree-review .us-inspector p { margin-block:8px; }
+    #usa-tree-review .us-inspector ul { margin-block:8px; padding-left:21px; }
+    #usa-tree-review .us-inspector li { margin-block:3px; overflow-wrap:anywhere; }
+    #usa-tree-review .us-terms { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:16px; }
+    #usa-tree-review .us-terms section { min-width:0; }
+    #usa-tree-review pre { white-space:pre-wrap; overflow-wrap:anywhere; }
+    #usa-tree-review .us-state { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    #usa-tree-review .us-stages { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-block:16px; }
+    #usa-tree-review .us-stage { padding-block:8px; border-top:2px solid var(--border); }
+    #usa-tree-review .us-stage.active { border-color:var(--viz-series-1); }
+    #usa-tree-review .us-changes { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:18px; }
+    #usa-tree-review .us-choice-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-block:8px; }
+    #usa-tree-review .us-choice-row button { white-space:normal; }
+    #usa-tree-review .us-statbar { display:grid; grid-template-columns:100px 1fr 40px; align-items:center; gap:12px; margin-block:14px; }
+    #usa-tree-review .us-bar-track { height:14px; background:var(--muted); }
+    #usa-tree-review .us-bar { height:100%; background:var(--viz-series-1); }
+    #usa-tree-review .us-statbar[data-kind="original"] .us-bar { background:var(--muted-foreground); }
+    #usa-tree-review .us-statbar[data-kind="concept"] .us-bar { background:var(--viz-series-2); }
+    @media (max-width:480px) { #usa-tree-review .us-choice-row { grid-template-columns:1fr; } }
+  </style>
+  <h2>IMPERIA COLD WAR: USA</h2>
+  <div class="text-small text-muted">Quellenstand 24.10.2026 · Original MD 2.0.2 · Entwurf, kein Spielstand</div>
+  <div class="nav nav-pills" role="tablist" aria-label="US tree review">
+    <button type="button" class="nav-link active" id="us-compare-tab" role="tab" aria-controls="us-compare-panel" aria-selected="true">Vergleich</button>
+    <button type="button" class="nav-link" id="us-tree-tab" role="tab" aria-controls="us-tree-panel" aria-selected="false">Fokusbaum</button>
+    <button type="button" class="nav-link" id="us-choice-tab" role="tab" aria-controls="us-choice-panel" aria-selected="false">Wahlwege</button>
+    <button type="button" class="nav-link" id="us-deal-tab" role="tab" aria-controls="us-deal-panel" aria-selected="false">Abkommen</button>
+  </div>
+  <div id="us-compare-panel" role="tabpanel" aria-labelledby="us-compare-tab">
+    <h3>Umfang und Schwerpunkt</h3>
+    <div class="us-statbar" data-kind="original"><span>Original MD</span><div class="us-bar-track"><div class="us-bar" style="width:100%"></div></div><span>776</span></div>
+    <div class="us-statbar"><span>Aktuell</span><div class="us-bar-track"><div class="us-bar" style="width:29.5%"></div></div><span>229</span></div>
+    <div class="us-statbar" data-kind="concept"><span>Entwurf</span><div class="us-bar-track"><div class="us-bar" style="width:36.2%"></div></div><span>281</span></div>
+    <table class="table table-sm"><thead><tr><th>Quellenbefund</th><th>Aktuell</th><th>Original MD</th></tr></thead><tbody>
+      <tr><td>Ausschlusspaare</td><td>28</td><td>28</td></tr>
+      <tr><td>Allgemeine Verteidigung</td><td>9</td><td>79</td></tr>
+      <tr><td>Allgemeine Außenpolitik</td><td>12</td><td>66</td></tr>
+      <tr><td>Zusätzliches Golfmodul</td><td>15</td><td>Kein 1970-Modul</td></tr>
+      <tr><td>Fokusse mit direktem Gebäudebau</td><td>51</td><td>62</td></tr>
+      <tr><td>Alternative Parteiprogramme</td><td>In Wahlperioden integriert</td><td>442</td></tr>
+    </tbody></table>
+    <div class="us-changes">
+      <div><h3>Bestehende Basis</h3><ul><li>50 Nixon-Fokusse und 113 spätere Wahlfokusse</li><li>Kongress, Wall Street und native US-Haushalte</li><li>Echte diplomatische Empfängerantworten</li></ul></div>
+      <div><h3>Gezielte Vertiefung</h3><ul><li>13 Belohnungspakete überarbeiten</li><li>52 neue Folge- und Wahlfokusse</li><li>16 konkrete Abkommen und Folgeprogramme</li></ul></div>
+    </div>
+    <div class="text-small text-muted">Direkte Codebefehle sind gezählt, indirekte Helfereffekte separat geprüft. 48 der 51 Gebäude-Fokusse benötigen zusätzliche gemeinsame Bauplätze.</div>
+  </div>
+  <div id="us-tree-panel" role="tabpanel" aria-labelledby="us-tree-tab" hidden>
+    <div class="us-toolbar">
+      <label class="form-label">Quelle<select id="us-source" class="form-select"><option value="concept">Ausbauentwurf: 281</option><option value="current">Aktueller Baum: 229</option><option value="original">Original MD: 776</option></select></label>
+      <label class="form-label">Bereich<select id="us-module" class="form-select"></select></label>
+    </div>
+    <div class="us-key text-small"><span><i class="us-dot existing"></i>Bestehend</span><span><i class="us-dot rework"></i>Überarbeiten</span><span><i class="us-dot"></i>Neu</span><span>Gestrichelt: gegenseitiger Ausschluss</span></div>
+    <div class="viz-row"><button type="button" class="btn" id="us-out" aria-label="Zoom out">-</button><button type="button" class="btn" id="us-in" aria-label="Zoom in">+</button><button type="button" class="btn" id="us-fit">Einpassen</button><span id="us-visible" class="text-small text-muted"></span></div>
+    <svg id="us-diagram" class="us-diagram" role="img" aria-label="Clickable national focus tree with source coordinates and approximate connectors"></svg>
+    <label class="form-label">Fokus auswählen<select id="us-focus" class="form-select"></select></label>
+    <div id="us-tree-inspector" class="us-inspector" aria-live="polite"></div>
+    <div class="text-small text-muted">Bestehende Koordinaten und englische Titel aus den Quelldateien. Verbindungen, kleine Vorschauicons und Schrift sind Annäherungen an MD. Kein HOI4-Screenshot.</div>
+  </div>
+  <div id="us-choice-panel" role="tabpanel" aria-labelledby="us-choice-tab" hidden>
+    <div class="us-toolbar"><label class="form-label">Programm<select id="us-choice-programme" class="form-select"></select></label></div>
+    <div id="us-choice-pair" class="us-choice-row"></div>
+    <div id="us-choice-inspector" class="us-inspector" aria-live="polite"></div>
+  </div>
+  <div id="us-deal-panel" role="tabpanel" aria-labelledby="us-deal-tab" hidden>
+    <div class="us-toolbar"><label class="form-label">Angebot<select id="us-deal" class="form-select"></select></label><label class="form-label">Vertragszustand im Konzept<select id="us-contract-state" class="form-select"><option value="unsigned">Unsigned</option><option value="pending">Pending</option><option value="refused">Refused</option><option value="active">Active</option><option value="suspended">Suspended</option><option value="restored">Restored</option><option value="expired">Expired / terminated</option></select></label></div>
+    <div id="us-life" class="us-stages" aria-label="Agreement lifecycle"></div>
+    <div id="us-state-summary" class="text-small" aria-live="polite"></div>
+    <div id="us-deal-inspector" class="us-inspector" aria-live="polite"></div>
+  </div>
+  <script type="application/octet-stream" id="us-review-data">__USA_DATA__</script>
+  <script>
+  (async () => {
+    const root=document.getElementById('usa-tree-review');
+    const $=s=>root.querySelector(s);
+    const bytes=Uint8Array.from(atob($('#us-review-data').textContent.trim()),c=>c.charCodeAt(0));
+    const D=JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text());
+    const P=D.proposal;
+    P.nodes=D.overlays.filter(n=>n.status==='New'||n.status==='Rework');
+    const overlay=new Map(D.overlays.map(n=>[n.id,n]));
+    D.sets.concept=D.sets.current.map(n=>({...n,...(overlay.get(n.id)||{}),source:'concept'}));
+    const seen=new Set(D.sets.concept.map(n=>n.id));
+    D.sets.concept.push(...D.overlays.filter(n=>!seen.has(n.id)));
+    const proposalById=new Map(P.nodes.map(n=>[n.id,n]));
+    const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const getName=id=>D.sets.concept.find(n=>n.id===id)?.name||id;
+    const tagName={USA:'United States',GER:'West Germany',CAN:'Canada',ENG:'United Kingdom',JAP:'Japan',SVN:'South Vietnam',CHI:'People\'s Republic of China',SOV:'Soviet Union',BHR:'Bahrain',ISR:'Israel',SAU:'Saudi Arabia',MEX:'Mexico',EGY:'Egypt'};
+    const list=rows=>'<ul>'+rows.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>';
+    function details(n){
+      let html='<h3>'+esc(n.name)+'</h3><div class="text-small text-muted">'+esc(n.status||'Proposal')+' · '+esc(n.days)+' days'+(n.lifetime?' · '+esc(n.lifetime):'')+'</div>';
+      html+='<p>'+esc(n.description)+'</p>';
+      if(n.prerequisites?.length)html+='<div class="text-small">Prerequisites: '+n.prerequisites.map(row=>'('+row.map(getName).map(esc).join(' OR ')+')').join(' AND ')+'</div>';
+      if(n.mutually_exclusive?.length)html+='<div class="text-small">Mutually exclusive: '+n.mutually_exclusive.map(getName).map(esc).join('; ')+'</div>';
+      if(n.requirements?.length)html+='<details><summary>Requirements</summary>'+list(n.requirements)+'</details>';
+      if(n.offer){
+        html+='<h3>If they accept</h3><div class="us-terms">';
+        for(const [tag,t]of Object.entries(n.offer))html+='<section><strong>'+esc(tagName[tag]||tag)+'</strong><div>'+esc(t.spirit)+'</div>'+list(t.effects)+'</section>';
+        html+='</div>';
+        html+='<details><summary>Agreement requirements</summary>'+list(n.common_requirements||[])+'</details>';
+      }else if(n.effects?.length)html+='<h3>Effects</h3>'+list(n.effects);
+      if(n.rewiring)html+='<details><summary>Graph review</summary><p>'+esc(n.rewiring)+'</p></details>';
+      if(n.source_effects)html+='<details><summary>Source excerpt: completion reward'+(n.line?' · line '+n.line:'')+'</summary><pre><code>'+esc(n.source_effects)+'</code></pre></details>';
+      if(n.source==='original')html+='<div class="text-small text-muted">Original MD/common/national_focus/05_usa.txt · line '+esc(n.line)+'. Full source record: original_inventory.json.</div>';
+      if(n.technical||n.history)html+='<details><summary>Design evidence and integration notes</summary>'+(n.history?'<p>'+esc(n.history)+'</p>':'')+(n.technical?'<p>'+esc(n.technical)+'</p>':'')+'</details>';
+      return html;
+    }
+    let state={source:'concept',module:'Atlantic',selected:'USA_X_germany_forward',choice:0,deal:'USA_X_germany_forward',contract:'unsigned'};
+    function applySaved(raw){
+      const s=raw?.privateContent;
+      if(s&&typeof s==='object')state={...state,...s};
+      if(!D.sets[state.source])state.source='concept';
+    }
+    applySaved(window.openai?.widgetState);
+    function save(){window.openai?.setWidgetState({modelContent:{selectedUSAProgramme:state.selected,selectedUSAAgreement:state.deal,contractState:state.contract},privateContent:state})?.catch(()=>{});}
+    window.addEventListener('openai:set_globals',e=>{const saved=e.detail?.globals?.widgetState;const incoming=saved?.privateContent;if(incoming&&Object.keys(state).some(key=>incoming[key]!==undefined&&incoming[key]!==state[key])){applySaved(saved);sync();}});
+    const labels={'All':'Gesamtübersicht','Nixon':'Nixon 1970 bis 1973','Elections':'Wahlperioden 1972 bis 1996','Economy':'Bestehende Wirtschaft','Energy':'Energie','Foreign policy':'Bestehende Außenpolitik','Society':'Gesellschaft','Defence':'Verteidigung','Gulf':'Golfmodul','Industry':'Industrielle Mittelvergabe','Civil priorities':'Technologie und Strukturwandel','Civil rights':'Bürgerrechte','Force structure':'Rekrutierung und Reserve','Intelligence':'Geheimdienstaufsicht','Army doctrine':'Heer und Einsatzkonzept','Naval priorities':'Marineprioritäten','Election priorities':'Neue Prioritäten nach den Wahlen','Foreign doctrine':'Außenpolitische Doktrin','Atlantic':'Atlantische Partnerschaften','Pacific':'Pazifische Partnerschaften','Rival diplomacy':'China und Sowjetunion','Middle East':'Naher Osten','Americas':'Amerikanische Nachbarn','Administrations':'Präsidenten und Wirtschaft','Military':'Streitkräfte','Regional economy':'Regionale Wirtschaft','Space':'Raumfahrt','Media':'Medien','Drugs':'Drogenpolitik','Crisis':'Krisen','Constitution':'Verfassung','Alternative parties':'Alternative Parteien'};
+    let shown=[],camera={x:0,y:0,scale:1},W=736,H=530,drag=null,dragged=false;
+    const svg=$('#us-diagram'),NS='http://www.w3.org/2000/svg';
+    function el(name,attrs,parent=svg){const e=document.createElementNS(NS,name);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);parent.append(e);return e;}
+    function options(select,items,current){select.innerHTML=items.map(([v,l])=>'<option value="'+esc(v)+'">'+esc(l)+'</option>').join('');if(items.some(([v])=>v===current))select.value=current;}
+    function moduleOptions(){
+      const modules=[...new Set(D.sets[state.source].map(n=>n.module))];
+      options($('#us-module'),[['All',labels.All],...modules.map(m=>[m,labels[m]||m])],state.module);
+      state.module=$('#us-module').value;
+    }
+    function selectNodes(){
+      const all=D.sets[state.source],map=new Map(all.map(n=>[n.id,n]));
+      let ids=new Set(all.filter(n=>state.module==='All'||n.module===state.module).map(n=>n.id));
+      if(state.module!=='All'){
+        const primary=all.filter(n=>ids.has(n.id));
+        const minX=Math.min(...primary.map(n=>n.xy[0]))-4,maxX=Math.max(...primary.map(n=>n.xy[0]))+4,minY=Math.min(...primary.map(n=>n.xy[1]))-4,maxY=Math.max(...primary.map(n=>n.xy[1]))+2;
+        for(const id of [...ids])for(const row of map.get(id).prerequisites||[])for(const p of row){const q=map.get(p);if(q&&q.xy[0]>=minX&&q.xy[0]<=maxX&&q.xy[1]>=minY&&q.xy[1]<=maxY)ids.add(p);}
+      }
+      shown=all.filter(n=>ids.has(n.id));
+      options($('#us-focus'),shown.map(n=>[n.id,n.name]).sort((a,b)=>a[1].localeCompare(b[1])),state.selected);
+      if(!ids.has(state.selected))state.selected=$('#us-focus').value;
+      $('#us-visible').textContent=shown.length+' / '+all.length+' Fokusse';
+      inspectTree();
+    }
+    function inspectTree(){const n=shown.find(n=>n.id===state.selected);$('#us-tree-inspector').innerHTML=n?details(n):'';$('#us-focus').value=state.selected;}
+    function fit(){
+      if(!shown.length)return;
+      W=Math.max(280,svg.getBoundingClientRect().width||root.clientWidth||736);H=W<480?500:540;
+      const xs=shown.map(n=>n.xy[0]*96),ys=shown.map(n=>n.xy[1]*130);
+      const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+      camera.scale=Math.min(1.05,(W-176)/Math.max(100,maxX-minX),(H-135)/Math.max(100,maxY-minY));
+      camera.x=W/2-(minX+maxX)/2*camera.scale;camera.y=H/2-(minY+maxY)/2*camera.scale;
+      draw();
+    }
+    function draw(){
+      svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.style.height=H+'px';svg.replaceChildren();
+      const title=el('title',{});title.textContent=(labels[state.module]||state.module)+': '+shown.length+' selectable focuses';
+      const m=new Map(shown.map(n=>[n.id,n]));
+      const pt=n=>[n.xy[0]*96*camera.scale+camera.x,n.xy[1]*130*camera.scale+camera.y];
+      for(const n of shown){const [x,y]=pt(n);for(const row of n.prerequisites||[])for(const p of row){if(!m.has(p))continue;const [px,py]=pt(m.get(p));const mid=(py+y)/2;el('path',{d:`M${px},${py+19} V${mid} H${x} V${y-19}`,class:'us-link'});}}
+      const pairs=new Set();
+      for(const n of shown)for(const other of n.mutually_exclusive||[]){if(!m.has(other))continue;const pair=[n.id,other].sort().join('|');if(pairs.has(pair))continue;pairs.add(pair);const [x,y]=pt(n),[x2,y2]=pt(m.get(other));el('path',{d:`M${x+18},${y} L${x2-18},${y2}`,class:'us-exclusive'});}
+      const detailScale=camera.scale>.38;
+      for(const n of shown){
+        const [x,y]=pt(n);if(x<-90||x>W+90||y<-60||y>H+60)continue;
+        const g=el('g',{class:'us-node cursor-interaction'+(n.id===state.selected?' selected':''),'data-status':n.status,'data-id':n.id,transform:`translate(${x},${y})`});
+        const t=el('title',{},g);t.textContent=n.name+' · '+n.days+' days';
+        el('circle',{r:detailScale?20:Math.max(3,Math.min(9,camera.scale*20))},g);
+        if(detailScale&&n.icon&&D.icons[n.icon])el('image',{href:D.icons[n.icon],x:-16,y:-16,width:32,height:32},g);
+        if(detailScale){
+          const max=23,words=n.name.split(' ');let lines=[''];
+          for(const word of words){const i=lines.length-1;if((lines[i]+' '+word).trim().length>max&&lines[i])lines.push(word);else lines[i]=(lines[i]+' '+word).trim();}
+          const txt=el('text',{'text-anchor':'middle',y:37},g);
+          for(let i=0;i<Math.min(lines.length,3);i++){const span=el('tspan',{x:0,dy:i?14:0},txt);span.textContent=lines[i]+(i===2&&lines.length>3?'...':'');}
+        }
+      }
+      if(detailScale){
+        const boxes=[...svg.querySelectorAll('.us-node circle')].map(c=>({id:c.parentElement.dataset.id,box:c.getBoundingClientRect()}));
+        const titles=[...svg.querySelectorAll('.us-node text')].sort((a,b)=>Number(b.parentElement.dataset.id===state.selected)-Number(a.parentElement.dataset.id===state.selected));
+        const kept=[];
+        const intersects=(a,b,pad=3)=>a.left<b.right+pad&&a.right>b.left-pad&&a.top<b.bottom+pad&&a.bottom>b.top-pad;
+        for(const title of titles){const b=title.getBoundingClientRect(),id=title.parentElement.dataset.id;if(boxes.some(other=>other.id!==id&&intersects(b,other.box))||kept.some(other=>intersects(b,other))){title.remove();}else kept.push(b);}
+      }
+      if(!detailScale){const t=el('text',{x:12,y:H-12,'font-size':12});t.textContent='Gesamtstruktur: für Titel vergrößern oder einen Fokus auswählen.';}
+    }
+    function zoom(factor){camera.x=W/2+(camera.x-W/2)*factor;camera.y=H/2+(camera.y-H/2)*factor;camera.scale=Math.max(.025,Math.min(2,camera.scale*factor));draw();}
+    svg.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,cx:camera.x,cy:camera.y,hit:e.target.closest('[data-id]')?.dataset.id};dragged=false;svg.setPointerCapture(e.pointerId);});
+    svg.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)dragged=true;if(dragged){camera.x=drag.cx+dx;camera.y=drag.cy+dy;draw();}});
+    svg.addEventListener('pointerup',e=>{if(svg.hasPointerCapture(e.pointerId))svg.releasePointerCapture(e.pointerId);const hit=drag?.hit;drag=null;if(!dragged&&hit){state.selected=hit;inspectTree();draw();save();}});
+    svg.addEventListener('pointercancel',()=>{drag=null;dragged=false;});
+    svg.addEventListener('click',e=>{if(dragged){dragged=false;return;}const hit=e.target.closest('[data-id]');if(hit){state.selected=hit.dataset.id;inspectTree();draw();save();}});
+    $('#us-in').onclick=()=>zoom(1.3);$('#us-out').onclick=()=>zoom(1/1.3);$('#us-fit').onclick=fit;
+    $('#us-source').onchange=e=>{state.source=e.target.value;state.module='All';moduleOptions();selectNodes();fit();save();};
+    $('#us-module').onchange=e=>{state.module=e.target.value;selectNodes();fit();save();};
+    $('#us-focus').onchange=e=>{state.selected=e.target.value;inspectTree();const n=shown.find(n=>n.id===state.selected);camera.scale=1;camera.x=W/2-n.xy[0]*96;camera.y=H/2-n.xy[1]*130;draw();save();};
+    const pairs=[],pairSeen=new Set();
+    for(const n of P.nodes)for(const other of n.mutually_exclusive||[]){const op=proposalById.get(other);if(!op)continue;const key=[n.id,other].sort().join('|');if(pairSeen.has(key))continue;pairSeen.add(key);pairs.push([n,op]);}
+    options($('#us-choice-programme'),pairs.map((p,i)=>[String(i),(labels[p[0].module]||p[0].module)+': '+p.map(n=>n.name).join(' / ')]),String(state.choice));
+    function renderChoice(){
+      const pair=pairs[Number(state.choice)]||pairs[0];
+      $('#us-choice-pair').innerHTML=pair.map(n=>'<button type="button" class="btn" data-choice="'+esc(n.id)+'">'+esc(n.name)+'</button>').join('');
+      const selected=pair.find(n=>n.id===state.selected)||pair[0];
+      $('#us-choice-inspector').innerHTML=details(selected);
+      for(const b of $('#us-choice-pair').querySelectorAll('button')){b.setAttribute('aria-pressed',String(b.dataset.choice===selected.id));b.onclick=()=>{state.selected=b.dataset.choice;renderChoice();save();};}
+    }
+    $('#us-choice-programme').onchange=e=>{state.choice=Number(e.target.value);renderChoice();save();};
+    const offers=P.nodes.filter(n=>n.offer);
+    options($('#us-deal'),offers.map(n=>[n.id,n.name]),state.deal);
+    const descriptions={unsigned:'No agreement spirits. No setup transaction.',pending:'Recipient decision open for 90 days. No agreement spirits or setup transaction.',refused:'No agreement spirits. No setup transaction. Reopening after 90 days.',active:'All required consents received. Setup once. Paired spirits and weekly terms active.',suspended:'Paired programme spirits and their weekly flows suspended. Signatures and one-time receipts retained.',restored:'Paired spirits and weekly terms restored. No repeat setup, buildings, XP or research grants.',expired:'Both programme spirits end. One-time assets remain. Temporary deadlines never reset.'};
+    function renderDeal(){
+      const n=offers.find(n=>n.id===state.deal)||offers[0];state.deal=n.id;
+      $('#us-contract-state').value=state.contract;
+      const stages=[['unsigned','Offer'],['pending','Recipient choice'],['active','All accept'],['suspended','Suspend'],['restored','Restore'],['expired',n.lifetime.includes('Standing')?'Terminate':'Expire']];
+      $('#us-life').innerHTML=stages.map(([s,l])=>'<div class="us-stage'+(s===state.contract?' active':'')+'">'+esc(l)+'</div>').join('');
+      $('#us-state-summary').textContent=descriptions[state.contract]||descriptions.unsigned;
+      $('#us-deal-inspector').innerHTML=details(n);
+    }
+    $('#us-deal').onchange=e=>{state.deal=e.target.value;renderDeal();save();};
+    $('#us-contract-state').onchange=e=>{state.contract=e.target.value;renderDeal();save();};
+    function sync(){$('#us-source').value=state.source;moduleOptions();selectNodes();fit();$('#us-choice-programme').value=String(state.choice);renderChoice();$('#us-deal').value=state.deal;renderDeal();}
+    let observedWidth=root.clientWidth;
+    new ResizeObserver(()=>{const width=root.clientWidth;if(Math.abs(width-observedWidth)>1){observedWidth=width;if(!$('#us-tree-panel').hidden)fit();}}).observe(root);
+    for(const b of root.querySelectorAll('[role="tab"]'))b.addEventListener('click',()=>setTimeout(()=>{if(b.id==='us-tree-tab')fit();},30));
+    sync();
+  })().catch(error=>{const alert=document.createElement('div');alert.setAttribute('role','alert');alert.textContent='Vorschaufehler: '+error.message;document.getElementById('usa-tree-review').append(alert);});
+  </script>
+</div>

@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — GDR validation with the retained generic naval adaptation.
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
 # COLDWAR | Static validation of the generated GDR 1970 files. Run after dg_build.py: python3 validate_ddr.py
 import re, os, json, collections, glob
@@ -76,10 +77,12 @@ for line in open(os.path.join(OUT, SHARED_TT_FILE), encoding="utf-8-sig").read()
     m = re.match(r'^ ([^\s:]+): "(.*)"$', line)
     if m:
         SHARED[m.group(1)] = m.group(2)
+naval_loc = F("localisation/english/COLDWAR_NAVY_1970_l_english.yml")
+LOC.update(dict(re.findall(r'^ ([^\s:]+):0 "(.*)"$', naval_loc, re.M)))
 ALLLOC = set(LOC) | MDLOC | set(SHARED) | MD_TT | {"modifies_dynamic_modifier_tt"}
 focus = F("common/national_focus/COLDWAR_DDR_1970_focus.txt")
 ids = re.findall(r"^\t\tid = (\w+)", focus, re.M)
-if not (len(ids) == len(set(ids)) == 821):
+if not (len(ids) == len(set(ids)) == 836):
     err("focus count", len(ids), len(set(ids)))
 for i in ids:
     for k in (i, i + "_desc"):
@@ -210,8 +213,9 @@ for i in own_ideas:
         err("idea loc", i)
     if not WORDS_NO_IDEAS[i]:
         warn("idea never used", i)
+# IMPERIA COLD WAR — validate inert legacy DDR trust modifier tombstones alongside active modifiers.
 dyndef = set(re.findall(r"^(COLDWAR_DDR_\w+) = \{", dyn, re.M))
-for d in set(re.findall(r"\b(?:modifier|MODIFIER) = (COLDWAR_DDR_\w+_(?:modifier|programme))\b", code)) | set(re.findall(r"modifier = (COLDWAR_DDR_trust_\w+)", code)):
+for d in set(re.findall(r"\b(?:modifier|MODIFIER) = (COLDWAR_DDR_\w+_(?:modifier|programme))\b", code)):
     if d not in dyndef:
         err("unknown dynamic modifier", d)
 for d in dyndef:
@@ -271,7 +275,7 @@ for m in re.finditer(r"(?:country_event|news_event) = \{\n\tid = (\S+)(.*?)\n\}"
 # 8 opinion modifiers, traits, tech categories
 opdef = set(re.findall(r"^\t(COLDWAR_DDR_\w+) = \{", F("common/opinion_modifiers/COLDWAR_DDR_1970_opinion_modifiers.txt"), re.M))
 for o in set(re.findall(r"modifier = (COLDWAR_DDR_\w+) \}", code)):
-    if o not in opdef and not re.search(r"_(modifier|programme)$|^COLDWAR_DDR_trust_", o):
+    if o not in opdef and o not in dyndef and not re.search(r"_(modifier|programme)$", o):
         err("unknown opinion modifier", o)
 trdef = set(re.findall(r"^\t(COLDWAR_DDR_\w+) = \{", F("common/country_leader/COLDWAR_DDR_1970_traits.txt"), re.M))
 for blk in re.findall(r"\btraits = \{([^}]*)\}", code.replace(F("common/country_leader/COLDWAR_DDR_1970_traits.txt"), "")):

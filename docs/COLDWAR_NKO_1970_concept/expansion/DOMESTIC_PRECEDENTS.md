@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Domestic expansion: precedents and historical boundaries
 
 This note covers the later economic, party-administration, diplomatic-service and successor-policy additions in `tools/north_korea_1970/expansion.py`. It records institutions and constraints that make the proposals credible; the focuses are alternate-history choices, and their modifier values are gameplay abstractions. Existing party, defence and patron precedents are covered in [PARTY_PRECEDENTS.md](PARTY_PRECEDENTS.md), [DEFENCE_PRECEDENTS.md](DEFENCE_PRECEDENTS.md) and [HISTORICAL_SOURCES.md](HISTORICAL_SOURCES.md).

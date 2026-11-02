@@ -1,0 +1,69 @@
+# IMPERIA COLD WAR — German diplomacy and negotiated settlements
+COLDWAR_GER_1970_recognition_can_sanction = {
+tag = GER
+IMP_is_1970_scenario = yes
+country_exists = DDR
+check_variable = { cwgg_krise_typ = 5 }
+check_variable = { cwgg_special_used = 0 }
+check_variable = { cwgg_countdown = 0 }
+has_idea = COLDWAR_GER_1970_idea_hallstein_legacy
+check_variable = { cwgg_vertrag_3 = 0 }
+check_variable = { cwgg_recognition_country^num = 1 }
+var:cwgg_recognition_country^0 = {
+ exists = yes
+ NOT = { tag = GER }
+ NOT = { tag = DDR }
+ is_in_array = { recognised_countries = DDR }
+ NOT = { is_in_array = { array = imp_dip_sanc_on_us value = GER } }
+}
+has_political_power > 34
+
+}
+COLDWAR_GER_1970_settlement_belligerent = {
+OR = {
+ tag = GER
+ tag = DDR
+ has_war_with = GER
+ has_war_with = DDR
+}
+}
+COLDWAR_GER_1970_settlement_war_live = {
+IMP_is_1970_scenario = yes
+country_exists = GER
+country_exists = DDR
+has_global_flag = cwgg_german_war
+GER = { has_war_with = DDR }
+
+}
+COLDWAR_GER_1970_settlement_can_propose = {
+COLDWAR_GER_1970_settlement_war_live = yes
+OR = { tag = GER tag = DDR }
+NOT = { has_country_flag = cwgg_settlement_proposal_cd }
+GER = { NOT = { has_country_flag = cwgg_settlement_pending } }
+
+}
+COLDWAR_GER_1970_settlement_can_sign = {
+COLDWAR_GER_1970_settlement_war_live = yes
+has_country_flag = cwgg_settlement_invited
+COLDWAR_GER_1970_settlement_belligerent = yes
+GER = { has_country_flag = cwgg_settlement_pending }
+is_in_array = { array = GER.cwgg_settlement_participants value = THIS }
+NOT = { is_in_array = { array = GER.cwgg_settlement_signatures value = THIS } }
+
+}
+COLDWAR_GER_1970_settlement_terms_valid = {
+COLDWAR_GER_1970_settlement_war_live = yes
+OR = {
+ GER = { check_variable = { cwgg_settlement_kind = 1 } }
+ AND = {
+  GER = { check_variable = { cwgg_settlement_kind = 2 } has_capitulated = yes }
+  DDR = { has_capitulated = no }
+  1251 = { is_owned_by = GER }
+ }
+ AND = {
+  GER = { check_variable = { cwgg_settlement_kind = 3 } has_capitulated = no }
+  DDR = { has_capitulated = yes check_variable = { var = treasury compare = greater_than_or_equals value = 0.2 } }
+ }
+}
+
+}

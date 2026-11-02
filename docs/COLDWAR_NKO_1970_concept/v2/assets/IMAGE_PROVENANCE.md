@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # COLDWAR — 1994 news illustration
 
 This is a concept asset, outside the game's loaded graphics folders.

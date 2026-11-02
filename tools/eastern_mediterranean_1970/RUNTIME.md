@@ -1,4 +1,6 @@
-# Regional1970 runtime
+IMPERIA COLD WAR: Regional 1970 runtime.
+
+Greek override, 30 October 2026: `tools/greece_1970_leaders/build.py` owns the current Greek output and `tools/greece_1970_leaders/validate.py` checks its undated candidate contract. All Greek political candidates are always selectable within their party. Greek political advisers have no date windows; military service windows are separate. The Greek roster uses startup and a local monthly reconciliation, with no daily observer. The earlier dated regional validator describes the former Greek contract and is not the validation command for this override. Turkish and Cypriot ownership is unchanged.
 
 `compile.py` consumes the completed `assets.json` in each country directory.
 Every character requires both an existing large and small portrait. A missing

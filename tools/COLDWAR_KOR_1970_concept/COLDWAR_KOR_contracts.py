@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: explicit approval-stage Korean diplomatic contracts.
+# IMPERIA COLD WAR — Cold War: explicit approval-stage Korean diplomatic contracts.
 """New content contracts, built on existing MD primitives; not installed events."""
 
 def policy(slot,**kwargs):return {'slot':slot,'modifiers':kwargs}

@@ -1,0 +1,293 @@
+# IMPERIA COLD WAR — enrichment and weapons intelligence without world-state sweeps.
+# Rates are percentages per observer/month. One roll, weapons take priority when unresolved.
+# A pair's two independent successes must occur in different monthly sweeps.
+
+COLDWAR_NI_refresh_observer_cache = {
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_NI_observer_cache_current } }
+		set_global_flag = { flag = COLDWAR_NI_observer_cache_current days = 1 value = 1 }
+		clear_array = global.COLDWAR_NI_observers
+		every_country = {
+			limit = {
+				exists = yes
+				NOT = { has_idea = non_state_actor }
+				OR = { COLDWAR_NI_great_power = yes has_intelligence_agency = yes }
+			}
+			add_to_array = { global.COLDWAR_NI_observers = THIS.id }
+		}
+	}
+}
+
+COLDWAR_NI_initialize_country = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_NI_initialized } }
+		set_country_flag = COLDWAR_NI_initialized
+		every_owned_state = {
+			set_variable = { COLDWAR_NI_last_owner = OWNER.id }
+			set_variable = { COLDWAR_NI_last_level = building_level@enrichment_facility }
+		}
+	}
+}
+
+# Called in the programme country when a genuinely new enrichment project appears.
+COLDWAR_NI_mark_enrichment_expansion = {
+	add_to_variable = { COLDWAR_NI_enrichment_revision = 1 }
+	set_country_flag = { flag = COLDWAR_NI_expansion_trace days = 180 value = 1 }
+}
+
+# Only nuclear countries' owned states, once/month. Raw levels ignore damage/repair.
+# Native free_building_slots excludes queued levels; can_construct_building includes them.
+# For this one-level, non-shared building, an empty unlocked slot that cannot be queued
+# again is already under construction. No decision replaces the native building screen.
+COLDWAR_NI_update_enrichment = {
+	set_variable = { COLDWAR_NI_facilities = 0 }
+	clr_country_flag = COLDWAR_NI_expansion_active
+	every_owned_state = {
+		limit = { is_controlled_by = ROOT }
+		if = {
+			limit = { NOT = { check_variable = { COLDWAR_NI_last_owner = ROOT.id } } }
+			# Captured/transferred infrastructure is a baseline, not a construction receipt.
+			set_variable = { COLDWAR_NI_last_owner = ROOT.id }
+			set_variable = { COLDWAR_NI_last_level = building_level@enrichment_facility }
+			clr_state_flag = COLDWAR_NI_queue_seen
+		}
+		if = {
+			limit = { enrichment_facility > 0 }
+			ROOT = { add_to_variable = { COLDWAR_NI_facilities = 1 } }
+			if = {
+				limit = { check_variable = { COLDWAR_NI_last_level < 1 } }
+				if = {
+					limit = { NOT = { has_state_flag = COLDWAR_NI_queue_seen } }
+					ROOT = { COLDWAR_NI_mark_enrichment_expansion = yes }
+				}
+				ROOT = { set_country_flag = { flag = COLDWAR_NI_expansion_trace days = 180 value = 1 } }
+			}
+			clr_state_flag = COLDWAR_NI_queue_seen
+		}
+		else_if = {
+			limit = {
+				ROOT = { has_tech = nuclear_technology }
+				free_building_slots = { building = enrichment_facility size > 0 }
+				NOT = { can_construct_building = enrichment_facility }
+			}
+			if = {
+				limit = { NOT = { has_state_flag = COLDWAR_NI_queue_seen } }
+				set_state_flag = COLDWAR_NI_queue_seen
+				ROOT = { COLDWAR_NI_mark_enrichment_expansion = yes }
+			}
+			ROOT = {
+				set_country_flag = COLDWAR_NI_expansion_active
+				set_country_flag = { flag = COLDWAR_NI_expansion_trace days = 180 value = 1 }
+			}
+		}
+		else = { clr_state_flag = COLDWAR_NI_queue_seen }
+		set_variable = { COLDWAR_NI_last_level = building_level@enrichment_facility }
+	}
+}
+
+COLDWAR_NI_record_weapons_work = {
+	set_country_flag = COLDWAR_NI_weapons_record
+	set_country_flag = { flag = COLDWAR_NI_weapons_trace days = 365 value = 1 }
+}
+
+COLDWAR_NI_calculate_defense = {
+	set_variable = { COLDWAR_NI_defense = modifier@intelligence_agency_defense }
+	# Completed branch recognition also seeds old saves; partial new levels are recorded
+	# by the existing upgrade completion effects, without counting queued purchases.
+	if = {
+		limit = { has_done_agency_upgrade = upgrade_passive_defense }
+		set_variable = { COLDWAR_NI_passive_defense_level = 4 }
+	}
+	set_variable = { COLDWAR_NI_enrichment_defense_factor = 1 }
+	set_variable = { COLDWAR_NI_weapons_defense_factor = 1 }
+	if = {
+		limit = {
+			OR = {
+				check_variable = { COLDWAR_NI_defense > 2.499 }
+				check_variable = { COLDWAR_NI_passive_defense_level > 3 }
+			}
+		}
+		set_variable = { COLDWAR_NI_enrichment_defense_factor = 0.75 }
+		set_variable = { COLDWAR_NI_weapons_defense_factor = 0.60 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				check_variable = { COLDWAR_NI_defense > 1.249 }
+				check_variable = { COLDWAR_NI_passive_defense_level > 1 }
+			}
+		}
+		set_variable = { COLDWAR_NI_enrichment_defense_factor = 0.85 }
+		set_variable = { COLDWAR_NI_weapons_defense_factor = 0.80 }
+	}
+}
+
+COLDWAR_NI_monthly_country = {
+	COLDWAR_NI_initialize_country = yes
+	COLDWAR_NI_update_enrichment = yes
+	if = {
+		limit = { COLDWAR_NI_live_weapons_project = yes }
+		COLDWAR_NI_record_weapons_work = yes
+	}
+	# Older saves have no project-completion receipt. Keep their completed work discoverable.
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_NI_weapons_record }
+			OR = {
+				is_special_project_completed = sp:sp_nuclear_bomb
+				is_special_project_completed = sp:sp_nuclear_warhead_program
+			}
+		}
+		COLDWAR_NI_record_weapons_work = yes
+	}
+	if = {
+		limit = {
+			OR = {
+				check_variable = { COLDWAR_NI_facilities > 0 }
+				has_country_flag = COLDWAR_NI_expansion_trace
+				has_country_flag = COLDWAR_NI_weapons_record
+			}
+		}
+		COLDWAR_NI_calculate_defense = yes
+		# Cache holds all great powers and agency countries; only high networks qualify below.
+		for_each_scope_loop = {
+			array = global.COLDWAR_NI_observers
+			if = {
+				limit = { exists = yes NOT = { tag = ROOT } }
+				COLDWAR_NI_observe_programme = yes
+			}
+		}
+		# Neighbours without agencies are absent from the shared list. No duplicate rolls.
+		every_neighbor_country = {
+			limit = {
+				exists = yes
+				NOT = { has_idea = non_state_actor }
+				NOT = { is_in_array = { array = global.COLDWAR_NI_observers value = THIS.id } }
+			}
+			COLDWAR_NI_observe_programme = yes
+		}
+	}
+}
+
+# THIS = observer; ROOT = programme. Max category wins; categories are never added.
+COLDWAR_NI_observer_rates = {
+	set_temp_variable = { COLDWAR_NI_enrichment_chance = 0 }
+	set_temp_variable = { COLDWAR_NI_weapons_chance = 0 }
+	if = {
+		limit = { is_neighbor_of = ROOT }
+		set_temp_variable = { COLDWAR_NI_enrichment_chance = 15 }
+		set_temp_variable = { COLDWAR_NI_weapons_chance = 10 }
+	}
+	if = {
+		limit = { COLDWAR_NI_great_power = yes }
+		set_temp_variable = { COLDWAR_NI_enrichment_chance = 25 }
+		set_temp_variable = { COLDWAR_NI_weapons_chance = 20 }
+	}
+	if = {
+		limit = { has_intelligence_agency = yes }
+		if = {
+			limit = { network_strength = { target = ROOT value > 89.999 } }
+			set_temp_variable = { COLDWAR_NI_enrichment_chance = 55 }
+			set_temp_variable = { COLDWAR_NI_weapons_chance = 55 }
+		}
+		else_if = {
+			limit = { network_strength = { target = ROOT value > 69.999 } }
+			set_temp_variable = { COLDWAR_NI_enrichment_chance = 40 }
+			set_temp_variable = { COLDWAR_NI_weapons_chance = 40 }
+		}
+		else_if = {
+			limit = { network_strength = { target = ROOT value > 49.999 } }
+			set_temp_variable = { COLDWAR_NI_enrichment_chance = 30 }
+			set_temp_variable = { COLDWAR_NI_weapons_chance = 25 }
+		}
+	}
+	multiply_temp_variable = { COLDWAR_NI_enrichment_chance = ROOT.COLDWAR_NI_enrichment_defense_factor }
+	multiply_temp_variable = { COLDWAR_NI_weapons_chance = ROOT.COLDWAR_NI_weapons_defense_factor }
+}
+
+COLDWAR_NI_observe_programme = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_NI_checked@ROOT } }
+		COLDWAR_NI_observer_rates = yes
+		if = {
+			limit = { check_variable = { COLDWAR_NI_enrichment_chance > 0 } }
+			set_country_flag = { flag = COLDWAR_NI_checked@ROOT days = 20 value = 1 }
+			if = {
+				limit = { COLDWAR_NI_unresolved_weapons = yes }
+				if = {
+					limit = { ROOT = { NOT = { COLDWAR_NI_live_weapons_project = yes } } }
+					if = {
+						limit = { ROOT = { has_country_flag = COLDWAR_NI_weapons_trace } }
+						multiply_temp_variable = { COLDWAR_NI_weapons_chance = 0.5 }
+					}
+					else = { multiply_temp_variable = { COLDWAR_NI_weapons_chance = 0.25 } }
+				}
+				set_temp_variable = { COLDWAR_NI_chance = COLDWAR_NI_weapons_chance }
+				COLDWAR_NI_roll = yes
+				if = {
+					limit = { check_variable = { COLDWAR_NI_roll_value < COLDWAR_NI_chance } }
+					COLDWAR_NI_weapons_success = yes
+				}
+			}
+			else_if = {
+				limit = {
+					ROOT = {
+						OR = { check_variable = { COLDWAR_NI_facilities > 0 } has_country_flag = COLDWAR_NI_expansion_trace }
+					}
+					OR = {
+						check_variable = { COLDWAR_NI_enrichment_knowledge@ROOT < 2 }
+						NOT = { check_variable = { COLDWAR_NI_enrichment_revision@ROOT = ROOT.COLDWAR_NI_enrichment_revision } }
+					}
+				}
+				if = {
+					limit = { NOT = { check_variable = { COLDWAR_NI_enrichment_revision@ROOT = ROOT.COLDWAR_NI_enrichment_revision } } }
+					set_variable = { COLDWAR_NI_enrichment_revision@ROOT = ROOT.COLDWAR_NI_enrichment_revision }
+					set_variable = { COLDWAR_NI_enrichment_knowledge@ROOT = 0 }
+				}
+				if = {
+					limit = { ROOT = { NOT = { has_country_flag = COLDWAR_NI_expansion_trace } } }
+					multiply_temp_variable = { COLDWAR_NI_enrichment_chance = 0.25 }
+				}
+				set_temp_variable = { COLDWAR_NI_chance = COLDWAR_NI_enrichment_chance }
+				COLDWAR_NI_roll = yes
+				if = {
+					limit = { check_variable = { COLDWAR_NI_roll_value < COLDWAR_NI_chance } }
+					COLDWAR_NI_enrichment_success = yes
+				}
+			}
+		}
+	}
+}
+
+# Integer roll in hundredths of one percent; precise fractions, no rounded random_list weights.
+COLDWAR_NI_roll = {
+	set_temp_variable_to_random = { var = COLDWAR_NI_roll_value min = 0 max = 9999 integer = yes }
+	divide_temp_variable = { COLDWAR_NI_roll_value = 100 }
+}
+
+COLDWAR_NI_enrichment_success = {
+	if = {
+		limit = { check_variable = { COLDWAR_NI_enrichment_knowledge@ROOT < 1 } }
+		set_variable = { COLDWAR_NI_enrichment_knowledge@ROOT = 1 }
+		country_event = { id = COLDWAR_NI.1 }
+	}
+	else = {
+		set_variable = { COLDWAR_NI_enrichment_knowledge@ROOT = 2 }
+		set_country_flag = COLDWAR_NI_enrichment_known@ROOT
+		country_event = { id = COLDWAR_NI.2 }
+	}
+}
+
+COLDWAR_NI_weapons_success = {
+	if = {
+		limit = { check_variable = { COLDWAR_NI_weapons_knowledge@ROOT < 1 } }
+		set_variable = { COLDWAR_NI_weapons_knowledge@ROOT = 1 }
+		set_country_flag = COLDWAR_NI_weapons_suspected@ROOT
+		country_event = { id = COLDWAR_NI.3 }
+	}
+	else = {
+		set_variable = { COLDWAR_NI_weapons_knowledge@ROOT = 2 }
+		set_country_flag = COLDWAR_NI_weapons_confirmed@ROOT
+		country_event = { id = COLDWAR_NI.4 }
+	}
+}

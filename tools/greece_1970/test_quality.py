@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: greece 1970 — test quality.
+# IMPERIA COLD WAR — Greece 1970 radar transaction regressions.
 """Execute the emitted air-project transaction, not a mirrored implementation."""
 import unittest
 from validate import World, P
@@ -34,7 +34,7 @@ class QualityTests(unittest.TestCase):
             w=self.world(1)
             for state in w.states.values():
                 if reason=='occupation':state['controller']='TUR'
-                else:state['slots']=False
+                else:state['levels']['radar_station']=6
             w.call('complete_air_1')
             self.assertEqual(self.builds(w),0)
             self.assertEqual(w.countries['GRE']['variables']['treasury'],1)
@@ -42,10 +42,10 @@ class QualityTests(unittest.TestCase):
 
     def test_retry_rechecks_control_and_capacity(self):
         w=self.world(0);w.call('complete_air_1');w.countries['GRE']['variables']['treasury']=1
-        for state in w.states.values():state['slots']=False
+        for state in w.states.values():state['levels']['radar_station']=6
         w.call('complete_air_1');self.assertEqual(self.builds(w),0)
         self.assertEqual(w.countries['GRE']['variables']['treasury'],1)
-        w.states['139']['slots']=True;w.call('complete_air_1')
+        w.states['139']['levels']['radar_station']=5;w.call('complete_air_1')
         self.assertEqual(self.builds(w),1)
         self.assertAlmostEqual(w.countries['GRE']['variables']['treasury'],.75)
 

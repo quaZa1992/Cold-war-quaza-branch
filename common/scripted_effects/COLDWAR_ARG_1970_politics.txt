@@ -1,0 +1,913 @@
+# IMPERIA COLD WAR — Argentina1970 political integration
+COLDWAR_ARG_initialize_politics = {
+	if = {
+		limit = { original_tag = ARG IMP_is_1970_scenario = yes }
+		if = {
+			limit = {
+				NOT = { has_country_flag = COLDWAR_ARG_politics_initialized }
+			}
+			set_country_flag = COLDWAR_ARG_politics_initialized
+			set_variable = { COLDWAR_ARG_current_junta_leader = 0 }
+			set_variable = { COLDWAR_ARG_leader_routed_party = ruling_party }
+		}
+		COLDWAR_ARG_refresh_politics = yes
+	}
+}
+COLDWAR_ARG_refresh_politics = {
+	if = {
+		limit = { original_tag = ARG IMP_is_1970_scenario = yes }
+		COLDWAR_ARG_resolve_native_election = yes
+		update_set_politics = yes
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { ruling_party = 18 }
+				}
+			}
+			clr_country_flag = COLDWAR_ARG_incumbent_psd
+			clr_country_flag = COLDWAR_ARG_incumbent_cgta
+		}
+		else_if = {
+			limit = { has_country_flag = COLDWAR_ARG_incumbent_psd }
+			clr_country_flag = COLDWAR_ARG_incumbent_cgta
+		}
+		else_if = {
+			limit = { has_country_flag = COLDWAR_ARG_incumbent_cgta }
+			clr_country_flag = COLDWAR_ARG_incumbent_psd
+		}
+		else = { set_country_flag = COLDWAR_ARG_incumbent_cgta }
+		if = {
+			limit = { COLDWAR_ARG_is_psd_incumbent = yes }
+			set_party_name = { ideology = neutrality name = COLDWAR_ARG_party_18_psd long_name = COLDWAR_ARG_party_18_psd }
+		}
+		else_if = {
+			limit = { COLDWAR_ARG_is_cgta_incumbent = yes }
+			set_party_name = { ideology = neutrality name = COLDWAR_ARG_party_18_cgta long_name = COLDWAR_ARG_party_18_cgta }
+		}
+		if = {
+			limit = { COLDWAR_ARG_is_ucede_incumbent = yes }
+			set_party_name = { ideology = neutrality name = COLDWAR_ARG_party_16_ucede long_name = COLDWAR_ARG_party_16_ucede }
+		}
+	}
+}
+COLDWAR_ARG_form_ucede_identity = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			date > 1982.1.1
+			check_variable = { ruling_party = 16 }
+			has_elections = yes
+			NOT = { has_country_flag = COLDWAR_ARG_ucede_formed }
+		}
+		set_country_flag = COLDWAR_ARG_ucede_formed
+		set_party_name = { ideology = neutrality name = COLDWAR_ARG_party_16_ucede long_name = COLDWAR_ARG_party_16_ucede }
+	}
+}
+COLDWAR_ARG_mark_psd_incumbent = {
+	if = {
+		limit = {
+			original_tag = ARG
+			check_variable = { ruling_party = 18 }
+		}
+		clr_country_flag = COLDWAR_ARG_incumbent_cgta
+		set_country_flag = COLDWAR_ARG_incumbent_psd
+		set_country_flag = COLDWAR_ARG_slot18_psd_candidate
+		clr_country_flag = COLDWAR_ARG_slot18_cgta_candidate
+		set_party_name = { ideology = neutrality name = COLDWAR_ARG_party_18_psd long_name = COLDWAR_ARG_party_18_psd }
+	}
+}
+COLDWAR_ARG_mark_cgta_incumbent = {
+	if = {
+		limit = {
+			original_tag = ARG
+			check_variable = { ruling_party = 18 }
+		}
+		clr_country_flag = COLDWAR_ARG_incumbent_psd
+		set_country_flag = COLDWAR_ARG_incumbent_cgta
+		set_country_flag = COLDWAR_ARG_slot18_cgta_candidate
+		clr_country_flag = COLDWAR_ARG_slot18_psd_candidate
+		set_party_name = { ideology = neutrality name = COLDWAR_ARG_party_18_cgta long_name = COLDWAR_ARG_party_18_cgta }
+	}
+}
+COLDWAR_ARG_check_lanusse_succession = {
+	if = {
+		limit = {
+			COLDWAR_ARG_lanusse_succession_due = yes
+			NOT = { has_country_flag = COLDWAR_ARG_lanusse_succession_pending }
+		}
+		set_country_flag = COLDWAR_ARG_lanusse_succession_pending
+		country_event = { id = COLDWAR_ARG_politics.2 }
+	}
+}
+COLDWAR_ARG_install_ongania = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			check_variable = { ruling_party = 22 }
+			COLDWAR_ARG_is_leader_ongania = yes
+			has_country_flag = COLDWAR_ARG_event_commanders_seen
+		}
+		set_variable = { COLDWAR_ARG_current_junta_leader = 0 }
+		set_variable = { Nat_Autocracy_leader = 0 }
+		set_country_flag = COLDWAR_ARG_command_crisis_resolved
+	}
+}
+COLDWAR_ARG_install_levingston = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			check_variable = { ruling_party = 22 }
+			COLDWAR_ARG_is_leader_ongania = yes
+			has_country_flag = COLDWAR_ARG_event_commanders_seen
+			NOT = { has_country_flag = COLDWAR_ARG_command_crisis_resolved }
+		}
+		hidden_effect = { retire_country_leader = yes }
+		create_country_leader = {
+			name = "Roberto Marcelo Levingston"
+			picture = "gfx/leaders/mdcw_historical_pool/ARG_roberto_marcelo_levingston.dds"
+			ideology = Nat_Autocracy
+			traits = {  }
+		}
+		set_variable = { COLDWAR_ARG_current_junta_leader = 1 }
+		set_variable = { Nat_Autocracy_leader = 1 }
+		set_variable = { COLDWAR_ARG_leader_routed_party = 22 }
+		set_country_flag = COLDWAR_ARG_command_crisis_resolved
+		COLDWAR_ARG_refresh_politics = yes
+	}
+}
+COLDWAR_ARG_authorize_early_lanusse = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			check_variable = { ruling_party = 22 }
+			COLDWAR_ARG_is_leader_ongania = yes
+			has_country_flag = COLDWAR_ARG_event_commanders_seen
+			NOT = { has_country_flag = COLDWAR_ARG_command_crisis_resolved }
+		}
+		set_country_flag = COLDWAR_ARG_early_lanusse_authorized
+	}
+}
+COLDWAR_ARG_install_lanusse = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			check_variable = { ruling_party = 22 }
+			OR = {
+				AND = {
+					COLDWAR_ARG_is_leader_ongania = yes
+					has_country_flag = COLDWAR_ARG_event_commanders_seen
+					has_country_flag = COLDWAR_ARG_early_lanusse_authorized
+					NOT = { has_country_flag = COLDWAR_ARG_command_crisis_resolved }
+				}
+				AND = { COLDWAR_ARG_is_leader_levingston = yes date > 1971.3.21 }
+			}
+		}
+		hidden_effect = { retire_country_leader = yes }
+		create_country_leader = {
+			name = "Alejandro Agustín Lanusse"
+			picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+			ideology = Nat_Autocracy
+			traits = {  }
+		}
+		set_variable = { COLDWAR_ARG_current_junta_leader = 2 }
+		set_variable = { Nat_Autocracy_leader = 2 }
+		set_variable = { COLDWAR_ARG_leader_routed_party = 22 }
+		set_country_flag = COLDWAR_ARG_command_crisis_resolved
+		set_country_flag = COLDWAR_ARG_lanusse_appointed
+		set_country_flag = COLDWAR_ARG_lanusse_succession_resolved
+		clr_country_flag = COLDWAR_ARG_early_lanusse_authorized
+		COLDWAR_ARG_refresh_politics = yes
+	}
+}
+COLDWAR_ARG_open_constitutional_election = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_ARG_party_organization_legalized
+			has_country_flag = COLDWAR_ARG_electoral_timetable_published
+			has_country_flag = COLDWAR_ARG_election_framework_ready
+			NOT = { has_country_flag = COLDWAR_ARG_native_election_pending }
+			has_elections = no
+		}
+		set_temp_variable = { election_year_param = global.year }
+		set_temp_variable = { election_month_param = global.month }
+		set_temp_variable = { election_freq = 48 }
+		set_elections_with_frequency = yes
+		set_country_flag = COLDWAR_ARG_native_election_pending
+		set_country_flag = elections_in_progress
+		clr_country_flag = COLDWAR_ARG_native_government_resolved
+		clr_country_flag = COLDWAR_ARG_decision_civilian_handover_done
+		clr_country_flag = COLDWAR_ARG_elected_handover_completed
+		clr_country_flag = COLDWAR_ARG_elected_incumbent_installed
+		clear_variable = COLDWAR_ARG_last_election_winner
+		country_event = { id = MD4_election.0 }
+	}
+}
+COLDWAR_ARG_record_native_election = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_ARG_party_organization_legalized
+			has_country_flag = COLDWAR_ARG_electoral_timetable_published
+			has_country_flag = COLDWAR_ARG_election_framework_ready
+			has_elections = yes
+		}
+		set_country_flag = COLDWAR_ARG_real_election_held
+		set_country_flag = COLDWAR_ARG_native_election_pending
+		clr_country_flag = COLDWAR_ARG_native_government_resolved
+		clr_country_flag = COLDWAR_ARG_slot18_identity_event_pending
+		clr_country_flag = COLDWAR_ARG_decision_civilian_handover_done
+		clr_country_flag = COLDWAR_ARG_elected_handover_completed
+		clr_country_flag = COLDWAR_ARG_elected_incumbent_installed
+		clear_variable = COLDWAR_ARG_last_election_winner
+	}
+}
+COLDWAR_ARG_resolve_native_election = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_ARG_native_election_pending
+			NOT = { has_country_flag = COLDWAR_ARG_native_government_resolved }
+			NOT = { has_country_flag = elections_in_progress }
+			NOT = { has_country_flag = coalition_forming }
+		}
+		set_variable = { COLDWAR_ARG_last_election_winner = ruling_party }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_ARG_last_election_winner > -1 }
+				check_variable = { COLDWAR_ARG_last_election_winner < 24 }
+			}
+			set_country_flag = COLDWAR_ARG_native_government_resolved
+			if = {
+				limit = {
+					check_variable = { COLDWAR_ARG_last_election_winner = 18 }
+					NOT = { has_country_flag = COLDWAR_ARG_slot18_identity_selected }
+				}
+				set_country_flag = COLDWAR_ARG_slot18_identity_event_pending
+				country_event = { id = COLDWAR_ARG_politics.1 }
+			}
+		}
+	}
+}
+COLDWAR_ARG_transfer_to_elected_government = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_ARG_native_election_pending
+			has_country_flag = COLDWAR_ARG_native_government_resolved
+			NOT = { has_country_flag = COLDWAR_ARG_elected_handover_completed }
+			check_variable = { COLDWAR_ARG_last_election_winner = ruling_party }
+			check_variable = { COLDWAR_ARG_last_election_winner > -1 }
+			check_variable = { COLDWAR_ARG_last_election_winner < 24 }
+			OR = {
+				NOT = {
+					check_variable = { COLDWAR_ARG_last_election_winner = 18 }
+				}
+				has_country_flag = COLDWAR_ARG_slot18_identity_selected
+			}
+		}
+		set_country_flag = COLDWAR_ARG_elected_handover_completed
+		if = {
+			limit = {
+				check_variable = { ruling_party = 18 }
+				has_country_flag = COLDWAR_ARG_slot18_psd_candidate
+			}
+			COLDWAR_ARG_mark_psd_incumbent = yes
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 18 }
+			}
+			COLDWAR_ARG_mark_cgta_incumbent = yes
+		}
+		COLDWAR_ARG_install_elected_incumbent = yes
+		COLDWAR_ARG_refresh_politics = yes
+		clr_country_flag = COLDWAR_ARG_native_election_pending
+	}
+}
+COLDWAR_ARG_install_elected_incumbent = {
+	if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_ARG_elected_handover_completed
+			NOT = { has_country_flag = COLDWAR_ARG_elected_incumbent_installed }
+		}
+		set_country_flag = COLDWAR_ARG_leader_transition_authorized
+		COLDWAR_ARG_select_leader_for_current_party = yes
+		set_country_flag = COLDWAR_ARG_elected_incumbent_installed
+	}
+}
+COLDWAR_ARG_select_leader_for_current_party = {
+	if = {
+		limit = { original_tag = ARG IMP_is_1970_scenario = yes has_country_flag = COLDWAR_ARG_leader_transition_authorized }
+		if = {
+			limit = {
+				check_variable = { ruling_party = 0 }
+				date < 1970.6.1
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_pedro_eugenio_aramburu = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Pedro Eugenio Aramburu"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Western_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 0 }
+				date > 1970.5.31
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_udelpa_national_executive = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "UDELPA National Executive"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Western_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 1 }
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_francisco_gabrielli = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Francisco Gabrielli"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = conservatism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 2 }
+				date < 1983.4.18
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_arturo_frondizi = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Arturo Frondizi"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = liberalism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 2 }
+				date > 1983.4.17
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_rogelio_frigerio = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Rogelio Frigerio"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = liberalism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 3 }
+				date < 1981.9.10
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_ricardo_balbin = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Ricardo Balbín"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = socialism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 3 }
+				date > 1981.9.9
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_raul_alfonsin = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Raúl Alfonsín"
+					picture = "gfx/leaders/ARG/raul_alfonsin.dds"
+					ideology = socialism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 4 }
+				date < 1970.4.15
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_victorio_codovilla = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Victorio Codovilla"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = communist_state
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 4 }
+				date < 1980.6.12
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_geronimo_arnedo_alvarez = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Gerónimo Arnedo Álvarez"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = communist_state
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 4 }
+				date > 1980.6.11
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_communist_party_central_committee = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Communist Party Central Committee"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = communist_state
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 5 }
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_mario_firmenich = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Mario Firmenich"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = anarchist_communism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 6 }
+				date < 1983.3.19
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_mario_amadeo = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Mario Amadeo"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Conservative
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 6 }
+				date > 1983.3.18
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_ateneo_republican_council = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Ateneo Republican Council"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Conservative
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 13 }
+				date < 1974.7.1
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_juan_peron = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Juan Perón"
+					picture = "gfx/leaders/mdcw_historical_pool/ARG_juan_peron.dds"
+					ideology = Neutral_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 13 }
+				date < 1976.3.24
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_isabel_peron = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Isabel Perón"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Neutral_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 13 }
+				date < 1989.7.8
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_italo_luder = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Ítalo Luder"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Neutral_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 13 }
+				date > 1989.7.7
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_carlos_menem = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Carlos Menem"
+					picture = "gfx/leaders/mdcw_historical_pool/ARG_carlos_menem.dds"
+					ideology = Neutral_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 14 }
+				date < 1983.12.10
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_horacio_sueldo = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Horacio Sueldo"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Neutral_conservatism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 14 }
+				date > 1983.12.9
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_carlos_auyero = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Carlos Auyero"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Neutral_conservatism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 15 }
+				date < 1978.1.1
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_celedonio_pereda = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Celedonio Pereda"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = oligarchism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 15 }
+				date > 1977.12.31
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_jorge_zorreguieta = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Jorge Zorreguieta"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = oligarchism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 16 }
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_alvaro_alsogaray = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Álvaro Alsogaray"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Neutral_Libertarian
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 18 }
+				has_country_flag = COLDWAR_ARG_slot18_psd_candidate
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_alfredo_bravo = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Alfredo Bravo"
+					picture = "gfx/leaders/ARG/alfredo_bravo.dds"
+					ideology = neutral_Social
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+			COLDWAR_ARG_mark_psd_incumbent = yes
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 18 }
+				NOT = { has_country_flag = COLDWAR_ARG_slot18_psd_candidate }
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_raimundo_ongaro = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Raimundo Ongaro"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = neutral_Social
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+			COLDWAR_ARG_mark_cgta_incumbent = yes
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 19 }
+				date < 1976.7.19
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_mario_roberto_santucho = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Mario Roberto Santucho"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Neutral_Communism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 19 }
+				date > 1976.7.18
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_enrique_gorriaran_merlo = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Enrique Gorriarán Merlo"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Neutral_Communism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 20 }
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_lorenzo_miguel = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Lorenzo Miguel"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Nat_Populism
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 22 }
+				date < 1970.6.9
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_juan_carlos_ongania = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Juan Carlos Ongania"
+					picture = "gfx/leaders/ARG/ARG_Coldwar_Juan_Carlos_Ongania.dds"
+					ideology = Nat_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 22 }
+				date < 1971.3.26
+				has_country_flag = COLDWAR_ARG_command_crisis_resolved
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_roberto_marcelo_levingston = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Roberto Marcelo Levingston"
+					picture = "gfx/leaders/mdcw_historical_pool/ARG_roberto_marcelo_levingston.dds"
+					ideology = Nat_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 22 }
+				date < 1973.5.25
+				has_country_flag = COLDWAR_ARG_lanusse_appointed
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_alejandro_agustin_lanusse = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "Alejandro Agustín Lanusse"
+					picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+					ideology = Nat_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ruling_party = 22 }
+				date > 1973.5.24
+			}
+			if = {
+				limit = {
+					NOT = { COLDWAR_ARG_leader_general_staff_of_the_argentine_armed_forces = yes }
+				}
+				hidden_effect = { retire_country_leader = yes }
+				create_country_leader = {
+					name = "General Staff of the Argentine Armed Forces"
+					picture = "gfx/leaders/ARG/argentinian_armed_forces.dds"
+					ideology = Nat_Autocracy
+					traits = {  }
+				}
+				set_correct_ideology_trait = yes
+			}
+		}
+		set_variable = { COLDWAR_ARG_leader_routed_party = ruling_party }
+		clr_country_flag = COLDWAR_ARG_leader_transition_authorized
+	}
+	else_if = {
+		limit = {
+			original_tag = ARG
+			IMP_is_1970_scenario = yes
+			NOT = { has_variable = COLDWAR_ARG_leader_routed_party }
+		}
+		set_variable = { COLDWAR_ARG_leader_routed_party = ruling_party }
+	}
+}

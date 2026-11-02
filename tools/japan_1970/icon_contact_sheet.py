@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: review existing MD focus artwork.
+# IMPERIA COLD WAR — Cold War: review existing MD focus artwork.
 from pathlib import Path
 import re
 from PIL import Image, ImageDraw, ImageFont

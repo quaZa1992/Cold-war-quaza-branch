@@ -1,13 +1,14 @@
-# IMPERIA CW — Cold War: Japan 1970 emitted graph verification.
+# IMPERIA COLD WAR — Cold War: Japan 1970 emitted graph verification.
 """Compare staged focus blocks to the approved positions and prerequisite groups."""
 from pathlib import Path
 import json
 import re
 from layout import apply_layout
 from presentation import read_focuses
+from reward_revision import effective_design
 
 root = Path(__file__).resolve().parent
-design = apply_layout(json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design'])
+design = apply_layout(effective_design(json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design']))
 nodes = [n for section in design['sections'] for n in section['nodes']]
 text = (root / 'staging' / 'graph' / 'focus_tree.txt').read_text(encoding='utf-8')
 prefix = 'COLDWAR_JAP_1970_'

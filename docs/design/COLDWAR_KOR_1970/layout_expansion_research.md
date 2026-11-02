@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # South Korea 1970 focus-tree expansion: layout research
 
 Read-only spatial proposal for expanding the current 206-focus concept toward the 300-focus ceiling. This report does not edit the design or its generator. The current `COLDWAR_KOR_design.json` remains the position source for previews; the builder’s `enrich → refine → declare` pipeline intentionally resolves authored positions through review fixes.

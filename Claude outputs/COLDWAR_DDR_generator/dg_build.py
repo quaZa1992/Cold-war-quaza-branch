@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — Naval adaptation integrated with retained country generator.
+# IMPERIA COLD WAR — Retain physical building-grant providers in East German build output.
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
 # COLDWAR | Writes every mod file of the German Democratic Republic 1970 tree. Run: python3 dg_build.py
 import os, re, glob, shutil
@@ -131,7 +133,8 @@ HIST_SRC = os.path.join(MOD, "history/countries/DDR - East Germany.txt")
 hist = open(HIST_SRC, encoding="utf-8-sig").read()
 HIST_ORIG = hist
 TREE_LINE = "\t\tload_focus_tree = COLDWAR_DDR_1970_focus # COLDWAR | German Democratic Republic 1970 tree\n"
-INIT_LINE = "\t\tCOLDWAR_DDR_initialize_1970 = yes # COLDWAR | laws, factions, start spirits, parties, Moscow's Trust, the Inner-German course\n"
+# IMPERIA COLD WAR — DDR initialization no longer starts the retired Soviet-trust meter.
+INIT_LINE = "\t\tCOLDWAR_DDR_initialize_1970 = yes # COLDWAR | laws, factions, start spirits, parties, Inner-German course\n"
 if TREE_LINE not in hist:
     assert "\t\tload_focus_tree = mdcw_1970_generic_focus\n" in hist
     hist = hist.replace("\t\tload_focus_tree = mdcw_1970_generic_focus\n", TREE_LINE, 1)
@@ -225,6 +228,10 @@ FILES = {
 # Script files are UTF-8 without BOM. Only localisation below uses a BOM.
 from dg_quality import runtime_files
 FILES.update(runtime_files())
+# IMPERIA COLD WAR — Include the independently owned naval providers.
+FILES.update(FO._naval_runtime())
+# Keep shared grant effects, triggers and English requirements after local formatting.
+FILES.update(FO._grant_runtime())
 
 if __name__ == "__main__":
     PATCHED = {"history/countries/DDR - East Germany.txt", "common/scripted_effects/mdcw_1970_focus_tree_effects.txt",

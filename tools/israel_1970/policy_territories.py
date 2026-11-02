@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Israel 1970 settlement investment and territorial choices.
 # IMPERIA CW — Cold War: israel 1970 — policy territories.
 """Territorial projects, negotiated status and explicitly optional radical policy."""
 from policy_common import SINAI,focus_id,ident,flag,has,scope
@@ -9,7 +10,7 @@ def build(api):
     def call(key):return ident(key)+' = yes'
     def local(name,mods,state,gate='always = yes'):
         mid=api.state_modifier(name,name.replace('_',' ').title(),'An explicitly scoped territorial policy. It applies only under the stated controller and policy conditions.',mods,
-            enable='is_controlled_by = ISR\nISR = { ISR70_is_scenario = yes '+gate+' }')
+            enable='is_controlled_by = ISR\n'+('is_owned_by = PAL\n' if state in (208,209) else '')+'ISR = { ISR70_is_scenario = yes '+gate+' }')
         return scope(state,'add_dynamic_modifier = { modifier = '+mid+' }')
     def nation(key,mods,code='',available='',text=''):
         iid=api.idea(key+'_idea',api.nodes[focus_id(key)]['label'],text or 'A distinct national policy programme with ongoing budget consequences.',mods)
@@ -63,17 +64,18 @@ def build(api):
     api.decision('implement_land_compact','Fund the Accepted Administrative Compact','Transfer 0.3% of GDP for Palestinian civilian services. Only implementation grants the administrative benefits.','land_compact',
         has('land_compact_agreed')+'\nPAL = { exists = yes }',api.money(.003)+'\n'+transfer+'\nadd_ideas = '+compact_idea+'\n'+for_target(lambda s:local('compact_garrison_'+str(s),{'required_garrison_factor':-.20},s)+'\n'+resistance(s,-5,198000+s,'PAL')))
     project_target('designated_sites',[{'type':'shared_slots','levels':1},{'type':'agriculture_district','levels':1}],.008,240,
-        mods={'bureaucracy_cost_multiplier_modifier':.02},after=lambda s:'PAL = { '+api.opinion('designated_sites',-10,'ISR')+' }')
+        mods={'agricolture_productivity_modifier':.06,'bureaucracy_cost_multiplier_modifier':.02},after=lambda s:'PAL = { '+api.opinion('designated_sites',-10,'ISR')+' }')
     project_target('settlement_services',[{'type':'infrastructure','levels':1}],.006,180,
         after=lambda s:local('limited_supply_'+str(s),{'local_supplies_for_controller':.15},s)+'\n'+resistance(s,5,199000+s,'PAL'),available=target_project_done('designated_sites'))
     project_target('settlement_ceiling',[{'type':'bunker','levels':1}],.004,180,
+        mods={'industry_repair_factor':.05,'police_cost_multiplier_modifier':.01},
         after=lambda s:local('limited_garrison_'+str(s),{'required_garrison_factor':.05},s)+'\n'+flag('binding_settlement_ceiling'),available=target_project_done('settlement_services'))
     project_target('authorize_expansion',[{'type':'shared_slots','levels':3}],.003,90,
         mods={'bureaucracy_cost_multiplier_modifier':.02},after=lambda s:local('settlement_infra_'+str(s),{'state_production_speed_infrastructure_factor':.15},s)+'\nPAL = { '+api.opinion('settlement_expansion',-25,'ISR')+' }')
     project_target('settlement_package',[{'type':'agriculture_district','levels':1},{'type':'industrial_complex','levels':1}],.023,300,
-        mods={'social_cost_multiplier_modifier':.03},available=target_project_done('authorize_expansion'))
+        mods={'agricolture_productivity_modifier':.10,'industrial_capacity_factory':.03,'social_cost_multiplier_modifier':.04},available=target_project_done('authorize_expansion'))
     project_target('entrench_network',[{'type':'infrastructure','levels':2},{'type':'bunker','levels':2}],.009,240,
-        mods={'bureaucracy_cost_multiplier_modifier':.03},after=lambda s:local('network_supply_'+str(s),{'local_supplies_for_controller':.25},s),available=target_project_done('settlement_package'))
+        mods={'industry_repair_factor':.10,'bureaucracy_cost_multiplier_modifier':.03,'police_cost_multiplier_modifier':.02},after=lambda s:local('network_supply_'+str(s),{'local_supplies_for_controller':.25},s),available=target_project_done('settlement_package'))
     compensation=api.event(403,'Settlement Limits and Compensation','Israel offers a binding limit on new settlement expansion and a funded compensation arrangement. It cannot impose Palestinian agreement.',[
         ('Accept the limited compensation arrangement.','ISR = { '+flag('settlement_compensation_accepted')+' }','',2),
         ('Reject the proposed limit and compensation.','ISR = { '+flag('settlement_compensation_rejected')+' }','',3)],trigger=pal_gate)
@@ -92,7 +94,7 @@ def build(api):
 
     # A shared mandate is paid once across the territorial and Herut branches.
     mandate=api.effect('secure_greater_mandate','if = { limit = { NOT = { '+has('greater_mandate')+' } } add_political_power = -100 '+flag('greater_mandate')+' }')
-    mandate_gate='OR = { '+has('greater_mandate')+' political_power > 99 }'
+    mandate_gate='OR = { '+has('greater_mandate')+' has_political_power > 99 }'
     hardliner='OR = { western_conservative_are_in_power = yes western_autocrats_are_in_power = yes nationalist_right_wing_populists_are_in_power = yes nationalist_monarchists_are_in_power = yes }'
     # Exact party APIs are taken from existing groups rather than invented names.
     parties={g['party']:g['trigger'] for g in api.data['groups'] if g['party'] is not None}
@@ -236,7 +238,7 @@ def build_status(api,nation,local,resistance,parties):
         has('equal_civil')+'\nEGY = { exists = yes } NOT = { '+has('property_claims_agreed')+' }',f'EGY = {{ country_event = {{ id = {property_event} days = 30 }} }}',cost=25,repeatable=True,cooldown=360)
     # A province's native compliance percentage never substitutes for a vote.
     long_gate=api.trigger('core_long_conditions',f'''{c} = {{ is_owned_by = ISR is_controlled_by = ISR compliance > 69 resistance < 10.001 }}
-stability > 0.5999
+has_stability > 0.5999
 has_country_flag = {{ flag = ISR70_policy_owned_since days > 3649 }}
 has_country_flag = {{ flag = ISR70_policy_equal_since days > 1824 }}
 has_country_flag = {{ flag = ISR70_policy_low_resistance_since days > 729 }}

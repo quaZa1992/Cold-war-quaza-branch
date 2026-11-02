@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # South Korea 1970–1990: mechanics research for concept expansion
 
 **Research only.** This report maps the current 206-node design to installed MD/Imperia mechanics and recommends areas for a substantial design expansion. It does not change the design, implement providers, or authorize loaded-mod edits. Source anchors refer to the current checkout and should be rechecked when implementation begins.

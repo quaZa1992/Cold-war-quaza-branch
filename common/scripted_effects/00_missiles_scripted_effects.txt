@@ -21,6 +21,9 @@
 ### effects for gui / buttons / trigger / loc ###
 #################################################
 set_prod_display_arrays = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = { limit = { has_tech = GNSS1 }
 		add_to_array = { prod_11_display_array = global.prod_11_array^0 }
 	}
@@ -195,15 +198,22 @@ set_prod_display_arrays = {
 	if = { limit = { always = no }
 		add_to_array = { prod_10_display_array = global.prod_10_array^11 }
 	}
+
+}
 }
 
 clear_prod_display_arrays = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_variable = missile_production_type
 	clear_array = prod_10_display_array
 	clear_array = prod_11_display_array
 	clear_array = prod_12_display_array
 	clear_array = prod_13_display_array
 	clear_array = prod_14_display_array
+
+}
 }
 
 # function: calculate_production_vars_10
@@ -228,6 +238,9 @@ clear_prod_display_arrays = {
 # TODO: If you have the gumption the arrays need to be culled because there's about three dozen or so of them that aren't needed
 ### OLV
 calculate_production_vars_10 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clamp_variable = { var = var_gui_prod_10_amount min = 1 max = 5000 }
 	clamp_variable = { var = prod_10_multiplier min = 1 max = var_gui_prod_10_amount }
 	# Initial Price of Production
@@ -271,9 +284,14 @@ calculate_production_vars_10 = {
 			}
 		}
 	}
+
+}
 }
 ### GNSS
 calculate_production_vars_11 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clamp_variable = { var = var_gui_prod_11_amount min = 1 max = 5000 }
 	clamp_variable = { var = prod_11_multiplier min = 1 max = var_gui_prod_11_amount }
 	# Initial Price of Production
@@ -317,9 +335,14 @@ calculate_production_vars_11 = {
 			}
 		}
 	}
+
+}
 }
 ### COMSAT
 calculate_production_vars_12 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clamp_variable = { var = var_gui_prod_12_amount min = 1 max = 5000 }
 	clamp_variable = { var = prod_12_multiplier min = 1 max = var_gui_prod_12_amount }
 	# Initial Price of Production
@@ -363,9 +386,14 @@ calculate_production_vars_12 = {
 			}
 		}
 	}
+
+}
 }
 ### SPYSAT
 calculate_production_vars_13 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clamp_variable = { var = var_gui_prod_13_amount min = 1 max = 5000 }
 	clamp_variable = { var = prod_13_multiplier min = 1 max = var_gui_prod_13_amount }
 	# Initial Price of Production
@@ -409,9 +437,14 @@ calculate_production_vars_13 = {
 			}
 		}
 	}
+
+}
 }
 ### KILLSAT
 calculate_production_vars_14 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clamp_variable = { var = var_gui_prod_14_amount min = 1 max = 5000 }
 	clamp_variable = { var = prod_14_multiplier min = 1 max = var_gui_prod_14_amount }
 	# Initial Price of Production
@@ -455,6 +488,8 @@ calculate_production_vars_14 = {
 			}
 		}
 	}
+
+}
 }
 
 ######################
@@ -462,13 +497,21 @@ calculate_production_vars_14 = {
 ######################
 
 set_satellites_gui = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_GNSS_satellites = yes
 	set_COM_satellites = yes
 	set_SPY_satellites = yes
 	set_KILL_satellites = yes
+
+}
 }
 
 update_satellite_owner = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			OR = {
@@ -491,17 +534,27 @@ update_satellite_owner = {
 		}
 	}
 	else = { remove_satellite_owner = yes }
+
+}
 }
 
 remove_satellite_owner = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { is_in_array = { global.MD_satellite_owners = THIS.id } }
 		remove_from_array = { global.MD_satellite_owners = THIS.id }
 		refresh_satellite_owner_views = yes
 	}
+
+}
 }
 
 refresh_satellite_owner_views = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	every_country = {
 		limit = { is_ai = no }
 		if = {
@@ -520,9 +573,14 @@ refresh_satellite_owner_views = {
 			international_systems_update = yes
 		}
 	}
+
+}
 }
 
 set_GNSS_satellites = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { tot = 0 }
 	for_each_loop = {
 		array = GNSS_satellite_array
@@ -530,9 +588,14 @@ set_GNSS_satellites = {
 		add_to_temp_variable = { tot = v }
 	}
 	set_variable = { var_GNSS_sat_total = tot }
+
+}
 }
 
 set_COM_satellites = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { tot = 0 }
 	for_each_loop = {
 		array = COM_satellite_array
@@ -540,9 +603,14 @@ set_COM_satellites = {
 		add_to_temp_variable = { tot = v }
 	}
 	set_variable = { var_COM_sat_total = tot }
+
+}
 }
 
 set_SPY_satellites = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { tot = 0 }
 	for_each_loop = {
 		array = SPY_satellite_array
@@ -550,9 +618,14 @@ set_SPY_satellites = {
 		add_to_temp_variable = { tot = v }
 	}
 	set_variable = { var_SPY_sat_total = tot }
+
+}
 }
 
 set_KILL_satellites = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { tot = 0 }
 	for_each_loop = {
 		array = KILL_satellite_array
@@ -560,11 +633,16 @@ set_KILL_satellites = {
 		add_to_temp_variable = { tot = v }
 	}
 	set_variable = { var_KILL_sat_total = tot }
+
+}
 }
 
 ### satellite systems
 
 set_GNSS_mil_systems = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = GNSS_mil_systems_array
 	add_to_array = { GNSS_mil_systems_array = 121 }
 	add_to_array = { GNSS_mil_systems_array = 122 }
@@ -578,8 +656,13 @@ set_GNSS_mil_systems = {
 	add_to_array = { GNSS_mil_systems_array = 130 }
 	add_to_array = { GNSS_mil_systems_array = 131 }
 	add_to_array = { GNSS_mil_systems_array = 132 }
+
+}
 }
 set_GNSS_civ_systems = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = GNSS_civ_systems_array
 	add_to_array = { GNSS_civ_systems_array = 121 }
 	add_to_array = { GNSS_civ_systems_array = 122 }
@@ -593,8 +676,13 @@ set_GNSS_civ_systems = {
 	add_to_array = { GNSS_civ_systems_array = 130 }
 	add_to_array = { GNSS_civ_systems_array = 131 }
 	add_to_array = { GNSS_civ_systems_array = 132 }
+
+}
 }
 set_COM_mil_systems = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = COM_mil_systems_array
 	add_to_array = { COM_mil_systems_array = 141 }
 	add_to_array = { COM_mil_systems_array = 142 }
@@ -608,8 +696,13 @@ set_COM_mil_systems = {
 	add_to_array = { COM_mil_systems_array = 150 }
 	add_to_array = { COM_mil_systems_array = 151 }
 	add_to_array = { COM_mil_systems_array = 152 }
+
+}
 }
 set_COM_civ_systems = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = COM_civ_systems_array
 	add_to_array = { COM_civ_systems_array = 141 }
 	add_to_array = { COM_civ_systems_array = 142 }
@@ -623,8 +716,13 @@ set_COM_civ_systems = {
 	add_to_array = { COM_civ_systems_array = 150 }
 	add_to_array = { COM_civ_systems_array = 151 }
 	add_to_array = { COM_civ_systems_array = 152 }
+
+}
 }
 set_SPY_mil_systems = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = SPY_mil_systems_array
 	add_to_array = { SPY_mil_systems_array = 161 }
 	add_to_array = { SPY_mil_systems_array = 162 }
@@ -638,8 +736,13 @@ set_SPY_mil_systems = {
 	add_to_array = { SPY_mil_systems_array = 170 }
 	add_to_array = { SPY_mil_systems_array = 171 }
 	add_to_array = { SPY_mil_systems_array = 172 }
+
+}
 }
 set_SPY_civ_systems = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = SPY_civ_systems_array
 	add_to_array = { SPY_civ_systems_array = 161 }
 	add_to_array = { SPY_civ_systems_array = 162 }
@@ -653,9 +756,14 @@ set_SPY_civ_systems = {
 	add_to_array = { SPY_civ_systems_array = 170 }
 	add_to_array = { SPY_civ_systems_array = 171 }
 	add_to_array = { SPY_civ_systems_array = 172 }
+
+}
 }
 
 set_COM_sat_receiver_tech_array = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	add_to_array = { COM_sat_receiver_tech_array = 10 }
 	add_to_array = { COM_sat_receiver_tech_array = 20 }
 	add_to_array = { COM_sat_receiver_tech_array = 30 }
@@ -668,9 +776,14 @@ set_COM_sat_receiver_tech_array = {
 	add_to_array = { COM_sat_receiver_tech_array = 100 }
 	add_to_array = { COM_sat_receiver_tech_array = 110 }
 	add_to_array = { COM_sat_receiver_tech_array = 120 }
+
+}
 }
 
 update_sat_systems_stats = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	check_sat_systems_min_sat_num = yes
 	set_satellites_gui = yes
 	update_GNSS_system_stats = yes
@@ -688,36 +801,71 @@ update_sat_systems_stats = {
 	add_access_COM_civ_vars = yes
 	add_access_SPY_mil_vars = yes
 	add_access_SPY_civ_vars = yes
+
+}
 }
 
 # Model-index space (var_*_system_idx) to tier space (0-11) and back.
 # Clamped because tags created after on_startup never ran the seeding pass and read 0.
 set_GNSS_local_idx = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_GNSS_mil_idx = { value = var_GNSS_mil_system_idx subtract = @GNSS_sat_idx_base clamp = { min = 0 max = @sat_system_tier_top } } }
 	set_temp_variable = { temp_GNSS_civ_idx = { value = var_GNSS_civ_system_idx subtract = @GNSS_sat_idx_base clamp = { min = 0 max = @sat_system_tier_top } } }
+
+}
 }
 store_GNSS_local_idx = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_GNSS_mil_system_idx = { value = temp_GNSS_mil_idx add = @GNSS_sat_idx_base } }
 	set_variable = { var_GNSS_civ_system_idx = { value = temp_GNSS_civ_idx add = @GNSS_sat_idx_base } }
+
+}
 }
 set_COM_local_idx = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_COM_mil_idx = { value = var_COM_mil_system_idx subtract = @COM_sat_idx_base clamp = { min = 0 max = @sat_system_tier_top } } }
 	set_temp_variable = { temp_COM_civ_idx = { value = var_COM_civ_system_idx subtract = @COM_sat_idx_base clamp = { min = 0 max = @sat_system_tier_top } } }
+
+}
 }
 store_COM_local_idx = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_COM_mil_system_idx = { value = temp_COM_mil_idx add = @COM_sat_idx_base } }
 	set_variable = { var_COM_civ_system_idx = { value = temp_COM_civ_idx add = @COM_sat_idx_base } }
+
+}
 }
 set_SPY_local_idx = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_SPY_mil_idx = { value = var_SPY_mil_system_idx subtract = @SPY_sat_idx_base clamp = { min = 0 max = @sat_system_tier_top } } }
 	set_temp_variable = { temp_SPY_civ_idx = { value = var_SPY_civ_system_idx subtract = @SPY_sat_idx_base clamp = { min = 0 max = @sat_system_tier_top } } }
+
+}
 }
 store_SPY_local_idx = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_SPY_mil_system_idx = { value = temp_SPY_mil_idx add = @SPY_sat_idx_base } }
 	set_variable = { var_SPY_civ_system_idx = { value = temp_SPY_civ_idx add = @SPY_sat_idx_base } }
+
+}
 }
 
 check_sat_systems_min_sat_num = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_GNSS_local_idx = yes
 	set_COM_local_idx = yes
 	set_SPY_local_idx = yes
@@ -780,9 +928,14 @@ check_sat_systems_min_sat_num = {
 		subtract_from_variable = { var_SPY_civ_system_idx = 1 }
 		ROOT = { news_event = satellites.7 }
 	}
+
+}
 }
 
 update_GNSS_system_stats = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_GNSS_local_idx = yes
 	### GNSS mil system
 	set_variable = {
@@ -841,9 +994,14 @@ update_GNSS_system_stats = {
 			clamp = { min = 0 max = @prod_math_max }
 		}
 	}
+
+}
 }
 
 update_GNSS_SBAS = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	### GNSS mil
 	set_variable = {
 		var_GNSS_mil_SBAS_num = {
@@ -878,9 +1036,14 @@ update_GNSS_SBAS = {
 			}
 		}
 	}
+
+}
 }
 
 update_COM_system_stats = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_COM_local_idx = yes
 	set_variable = { var_COM_mil_sat_system_num = 0 }
 	set_variable = { var_COM_mil_receiver_cap = 0 }
@@ -1042,10 +1205,15 @@ update_COM_system_stats = {
 			clamp = { min = 0 max = @prod_math_max }
 		}
 	}
+
+}
 }
 
 ### receiver from treaties (access granted)
 add_treaty_COM_mil_receiver_num = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_treaty_COM_mil_receiver_num = 0 }
 	for_each_scope_loop = {
 		array = COM_mil_treaty_array
@@ -1059,8 +1227,13 @@ add_treaty_COM_mil_receiver_num = {
 		}
 	}
 	add_to_variable = { var_COM_mil_receiver_num = var_treaty_COM_mil_receiver_num }
+
+}
 }
 add_treaty_COM_civ_receiver_num = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_treaty_COM_civ_receiver_num = 0 }
 	for_each_scope_loop = {
 		array = COM_civ_treaty_array
@@ -1073,11 +1246,16 @@ add_treaty_COM_civ_receiver_num = {
 		}
 	}
 	add_to_variable = { var_COM_civ_receiver_num = var_treaty_COM_civ_receiver_num }
+
+}
 }
 
 # Effect: update_SPY_system_stats
 # Purpose: Updates the Reconnaissance Satellite System variables and values
 update_SPY_system_stats = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_SPY_local_idx = yes
 	### SPY mil system
 	set_variable = {
@@ -1123,9 +1301,14 @@ update_SPY_system_stats = {
 		}
 	}
 	update_SPY_mission_num = yes
+
+}
 }
 
 update_SPY_mission_num = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_SPY_mission_active_sat = 0 }
 	for_each_loop = {
 		array = ROOT.spy_mission_sat_num_array
@@ -1150,14 +1333,24 @@ update_SPY_mission_num = {
 		}
 	}
 	update_SPY_mission_start_button = yes
+
+}
 }
 
 update_SPY_mission_start_button = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	# refresh the coverage ratio the same way the +/- buttons do
 	update_SPY_mission_plus_minus_button = yes
+
+}
 }
 
 update_SPY_mission_plus_minus_button = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { check_variable = { orbit_selected_TAG > 0 } }
 		var:orbit_selected_TAG = {
@@ -1184,9 +1377,14 @@ update_SPY_mission_plus_minus_button = {
 			multiply = 30
 		}
 	}
+
+}
 }
 
 calculate_GNSS_mil_gui_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_GNSS_local_idx = yes
 	set_variable = {
 		var_GNSS_mil_army_speed_factor_base = {
@@ -1253,8 +1451,13 @@ calculate_GNSS_mil_gui_vars = {
 			}
 		}
 	}
+
+}
 }
 calculate_GNSS_civ_gui_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_GNSS_local_idx = yes
 	set_variable = {
 		var_GNSS_civ_production_speed_buildings_factor_base = {
@@ -1278,18 +1481,15 @@ calculate_GNSS_civ_gui_vars = {
 		}
 	}
 	#local_resources_factor
-	set_variable = {
-		var_GNSS_civ_local_resources_factor_base = {
-			value = global.GNSS_civ_local_resources_factor_max_array^temp_GNSS_civ_idx
-			multiply = var_GNSS_civ_sat_system_bonus
-			clamp = {
-				min = global.GNSS_civ_local_resources_factor_min_array^temp_GNSS_civ_idx
-				max = @prod_math_max
-			}
-		}
-	}
+	# IMPERIA CW — Cold War: integrated space research without satellite resource production.
+	set_variable = { var_GNSS_civ_local_resources_factor_base = 0 }
+
+}
 }
 calculate_COM_mil_gui_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_COM_local_idx = yes
 	# Command Power
 	set_variable = {
@@ -1357,8 +1557,13 @@ calculate_COM_mil_gui_vars = {
 			}
 		}
 	}
+
+}
 }
 calculate_COM_civ_gui_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_COM_local_idx = yes
 	#political_power_factor
 	set_variable = {
@@ -1415,8 +1620,13 @@ calculate_COM_civ_gui_vars = {
 			}
 		}
 	}
+
+}
 }
 calculate_SPY_mil_gui_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_SPY_local_idx = yes
 	### SPY mil
 	#max_planning_factor
@@ -1485,8 +1695,13 @@ calculate_SPY_mil_gui_vars = {
 			}
 		}
 	}
+
+}
 }
 calculate_SPY_civ_gui_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_SPY_local_idx = yes
 	### SPY civ
 	#research_speed_factor
@@ -1556,9 +1771,14 @@ calculate_SPY_civ_gui_vars = {
 		}
 	}
 	###
+
+}
 }
 
 add_access_GNSS_mil_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	# Rebuild access arrays so stale country scopes cannot survive into scope loops.
 	clear_array = temp_GNSS_mil_access_array
 	for_each_loop = {
@@ -1655,9 +1875,14 @@ add_access_GNSS_mil_vars = {
 			clamp_variable = { var = ROOT.var_GNSS_mil_naval_hit_chance max = global.GNSS_mil_naval_hit_chance_max_array^temp_GNSS_mil_access_system_highest_idx }
 		}
 	}
+
+}
 }
 
 add_access_GNSS_civ_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	# Rebuild access arrays so stale country scopes cannot survive into scope loops.
 	clear_array = temp_GNSS_civ_access_array
 	for_each_loop = {
@@ -1686,7 +1911,7 @@ add_access_GNSS_civ_vars = {
 	set_temp_variable = { temp_GNSS_civ_access_system_highest_idx = 0 }
 	set_variable = { var_GNSS_civ_production_speed_buildings_factor = var_GNSS_civ_production_speed_buildings_factor_base }
 	set_variable = { var_GNSS_civ_production_speed_infrastructure_factor = var_GNSS_civ_production_speed_infrastructure_factor_base }
-	set_variable = { var_GNSS_civ_local_resources_factor = var_GNSS_civ_local_resources_factor_base }
+	set_variable = { var_GNSS_civ_local_resources_factor = 0 }
 	for_each_loop = {
 		array = GNSS_civ_access_system_idx_array
 		if = {
@@ -1720,7 +1945,7 @@ add_access_GNSS_civ_vars = {
 				}
 				add_to_variable = { ROOT.var_GNSS_civ_production_speed_buildings_factor = THIS.var_GNSS_civ_production_speed_buildings_factor_base }
 				add_to_variable = { ROOT.var_GNSS_civ_production_speed_infrastructure_factor = THIS.var_GNSS_civ_production_speed_infrastructure_factor_base }
-				add_to_variable = { ROOT.var_GNSS_civ_local_resources_factor = THIS.var_GNSS_civ_local_resources_factor_base }
+				# IMPERIA CW — Cold War: integrated space research without satellite resource production.
 			}
 		}
 
@@ -1732,11 +1957,16 @@ add_access_GNSS_civ_vars = {
 			#production_speed_infrastructure_factor
 			clamp_variable = { var = ROOT.var_GNSS_civ_production_speed_infrastructure_factor max = global.GNSS_civ_production_speed_infrastructure_factor_max_array^temp_GNSS_civ_access_system_highest_idx }
 			#local_resources_factor
-			clamp_variable = { var = ROOT.var_GNSS_civ_local_resources_factor max = global.GNSS_civ_local_resources_factor_max_array^temp_GNSS_civ_access_system_highest_idx }
+			# IMPERIA CW — Cold War: integrated space research without satellite resource production.
 		}
 	}
+
+}
 }
 add_access_COM_mil_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_COM_mil_access_system_highest_idx = 0 }
 	set_variable = { var_COM_mil_max_command_power = var_COM_mil_max_command_power_base }
 	set_variable = { var_COM_mil_army_org_factor = var_COM_mil_army_org_factor_base }
@@ -1803,8 +2033,13 @@ add_access_COM_mil_vars = {
 			clamp_variable = { var = ROOT.var_COM_mil_naval_coordination max = global.COM_mil_naval_coordination_max_array^temp_COM_mil_access_system_highest_idx }
 		}
 	}
+
+}
 }
 add_access_COM_civ_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_COM_civ_access_system_highest_idx = 0 }
 	set_variable = { var_COM_civ_political_power_factor = var_COM_civ_political_power_factor_base }
 	set_variable = { var_COM_civ_decryption_factor = var_COM_civ_decryption_factor_base }
@@ -1872,8 +2107,13 @@ add_access_COM_civ_vars = {
 			clamp_variable = { var = ROOT.var_COM_civ_operation_outcome max = global.COM_civ_operation_outcome_max_array^temp_COM_civ_access_system_highest_idx }
 		}
 	}
+
+}
 }
 add_access_SPY_mil_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_SPY_mil_access_system_highest_idx = 0 }
 	set_variable = { var_SPY_mil_max_planning_factor = var_SPY_mil_max_planning_factor_base }
 	set_variable = { var_SPY_mil_recon_factor = var_SPY_mil_recon_factor_base }
@@ -1945,8 +2185,13 @@ add_access_SPY_mil_vars = {
 			clamp_variable = { var = ROOT.var_SPY_mil_convoy_escort_efficiency max = global.SPY_mil_convoy_escort_efficiency_max_array^temp_SPY_mil_access_system_highest_idx }
 		}
 	}
+
+}
 }
 add_access_SPY_civ_vars = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp_SPY_civ_access_system_highest_idx = 0 }
 	set_variable = { var_SPY_civ_research_speed_factor = var_SPY_civ_research_speed_factor_base }
 	set_variable = { var_SPY_civ_civilian_intel_factor = var_SPY_civ_civilian_intel_factor_base }
@@ -2014,6 +2259,8 @@ add_access_SPY_civ_vars = {
 			clamp_variable = { var = ROOT.var_SPY_civ_root_out_resistance_effectiveness_factor max = global.SPY_civ_root_out_resistance_effectiveness_factor_max_array^temp_SPY_civ_access_system_highest_idx }
 		}
 	}
+
+}
 }
 
 ########################
@@ -2021,6 +2268,9 @@ add_access_SPY_civ_vars = {
 ########################
 
 clear_spy_sat_mission_arrays = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	for_each_loop = {
 		array = ROOT.spy_mission_array
 		var:ROOT.spy_mission_array^i = {
@@ -2039,12 +2289,17 @@ clear_spy_sat_mission_arrays = {
 			}
 		}
 	}
+
+}
 }
 
 #####################
 ### space launch ###
 ####################
 set_OLV_display_array = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	resize_array = { OLV_display_array = 0 }
 	resize_array = { sat_payload_display_array = 0 }
 	resize_array = { spp_payload_display_array = 0 }
@@ -2075,9 +2330,14 @@ set_OLV_display_array = {
 	add_to_array = { OLV_display_array = 111 }
 	### OLV12
 	add_to_array = { OLV_display_array = 112 }
+
+}
 }
 
 set_sat_payload_display_array = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	resize_array = { OLV_display_array = 0 }
 	resize_array = { sat_payload_display_array = 0 }
 	resize_array = { spp_payload_display_array = 0 }
@@ -2179,9 +2439,14 @@ set_sat_payload_display_array = {
 	add_to_array = { sat_payload_display_array = 189 }
 	### KILLSAT10
 	add_to_array = { sat_payload_display_array = 190 }
+
+}
 }
 
 set_spp_payload_display_array = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	resize_array = { OLV_display_array = 0 }
 	resize_array = { sat_payload_display_array = 0 }
 	resize_array = { spp_payload_display_array = 0 }
@@ -2194,17 +2459,27 @@ set_spp_payload_display_array = {
 	add_to_array = { spp_payload_display_array = 1001 }
 	### SPP2
 	add_to_array = { spp_payload_display_array = 1002 }
+
+}
 }
 
 set_ASAT_display_array = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	resize_array = { OLV_display_array = 0 }
 	resize_array = { sat_payload_display_array = 0 }
 	resize_array = { spp_payload_display_array = 0 }
 	resize_array = { ASAT_display_array = 0 }
 	resize_array = { KILLSAT_display_array = 0 }
+
+}
 }
 
 set_KILLSAT_display_array = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	resize_array = { OLV_display_array = 0 }
 	resize_array = { sat_payload_display_array = 0 }
 	resize_array = { spp_payload_display_array = 0 }
@@ -2231,9 +2506,14 @@ set_KILLSAT_display_array = {
 	add_to_array = { KILLSAT_display_array = 189 }
 	### KILLSAT10
 	add_to_array = { KILLSAT_display_array = 190 }
+
+}
 }
 
 clear_payload_types = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	ROOT = {
 		clear_variable = var_launch_mass
 		clear_array = payload_types_array
@@ -2242,6 +2522,8 @@ clear_payload_types = {
 		add_to_array = { payload_types_array = 1 }
 		add_to_array = { payload_types_array = 1 }
 	}
+
+}
 }
 
 ##################
@@ -2249,6 +2531,9 @@ clear_payload_types = {
 ##################
 
 launch_OLV = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { sat_launch_completed = 0 }
 	set_temp_variable = { sat_launch_blocked = 0 }
 	clear_array = payload_array
@@ -2357,9 +2642,14 @@ launch_OLV = {
 		limit = { check_variable = { var_OLV_flights = 0 } }
 		clear_payload_types = yes
 	}
+
+}
 }
 
 set_satellite_capacity_counts = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_temp_array = sat_capacity_counts
 	resize_temp_array = { sat_capacity_counts = 191 }
 	set_temp_variable = { sat_capacity_total = 0 }
@@ -2401,9 +2691,14 @@ set_satellite_capacity_counts = {
 		value = sat_mission_count
 		add_to_temp_variable = { sat_capacity_spy_missions = sat_mission_count }
 	}
+
+}
 }
 
 check_satellite_flight_capacity = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_satellite_capacity_counts = yes
 	clear_temp_array = sat_launch_stock_used
 	resize_temp_array = { sat_launch_stock_used = 191 }
@@ -2424,9 +2719,14 @@ check_satellite_flight_capacity = {
 			}
 		}
 	}
+
+}
 }
 
 reserve_satellite_capacity = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { sat_family_base = 0 }
 	set_temp_variable = { sat_replacement_model = -1 }
 	if = {
@@ -2512,6 +2812,8 @@ reserve_satellite_capacity = {
 			add_to_temp_variable = { sat_capacity_counts^payload_id = 1 }
 		}
 	}
+
+}
 }
 
 
@@ -2520,6 +2822,9 @@ reserve_satellite_capacity = {
 ########################
 
 add_satellite_from_payload = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	resize_array = { GNSS_satellite_array = 12 }
 	resize_array = { COM_satellite_array = 12 }
 	resize_array = { SPY_satellite_array = 12 }
@@ -2566,9 +2871,14 @@ add_satellite_from_payload = {
 	update_satellite_owner = yes
 	clear_array = payload_array
 	refresh_bulk_deorbit_state = yes
+
+}
 }
 
 replace_older_satellite = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { sat_replacement_slot = -1 }
 	for_loop_effect = {
 		start = 0
@@ -2604,6 +2914,8 @@ replace_older_satellite = {
 	remove_satellite_from_system = yes
 	set_variable = { orbit_array^sat_replacement_slot = payload_id }
 	add_to_temp_array = { sat_replaced_slots = sat_replacement_slot }
+
+}
 }
 
 ###################################
@@ -2611,6 +2923,9 @@ replace_older_satellite = {
 ###################################
 
 register_satellite_in_orbit = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	find_lowest_in_array = { array = orbit_array value = sat_slot_model index = sat_slot_index }
 	if = {
 		limit = {
@@ -2625,9 +2940,14 @@ register_satellite_in_orbit = {
 		set_variable = { var_orbit_display_ID = { value = orbit_array^num subtract = 1 } }
 	}
 	add_new_satellite_to_orbit = yes
+
+}
 }
 
 set_sat_orbit_startup = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { temp1 = 0 }
 	while_loop_effect = {
 		limit = { check_variable = { temp1 < 180 } }
@@ -2658,9 +2978,14 @@ set_sat_orbit_startup = {
 		add_to_array = { sat_5_array = -1 }
 		add_to_temp_variable = { temp5 = 1 }
 	}
+
+}
 }
 
 add_new_satellite_to_orbit = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { OR = { check_variable = { var_orbit = 3 } check_variable = { var_orbit = 0 } } }
 		if = {
@@ -2741,9 +3066,14 @@ add_new_satellite_to_orbit = {
 		}
 		set_variable = { var_orbit = 3 }
 	}
+
+}
 }
 
 add_new_satellite_to_orbit_1 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			check_variable = {
@@ -2763,8 +3093,13 @@ add_new_satellite_to_orbit_1 = {
 		find_lowest_in_array = { array = sat_1_array value = sat_display_model index = temp1 }
 	}
 	set_variable = { sat_1_array^temp1 = var_orbit_display_ID }
+
+}
 }
 add_new_satellite_to_orbit_2 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			check_variable = {
@@ -2784,8 +3119,13 @@ add_new_satellite_to_orbit_2 = {
 		find_lowest_in_array = { array = sat_2_array value = sat_display_model index = temp2 }
 	}
 	set_variable = { sat_2_array^temp2 = var_orbit_display_ID }
+
+}
 }
 add_new_satellite_to_orbit_3 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			check_variable = {
@@ -2805,8 +3145,13 @@ add_new_satellite_to_orbit_3 = {
 		find_lowest_in_array = { array = sat_3_array value = sat_display_model index = temp3 }
 	}
 	set_variable = { sat_3_array^temp3 = var_orbit_display_ID }
+
+}
 }
 add_new_satellite_to_orbit_4 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			check_variable = {
@@ -2826,8 +3171,13 @@ add_new_satellite_to_orbit_4 = {
 		find_lowest_in_array = { array = sat_4_array value = sat_display_model index = temp4 }
 	}
 	set_variable = { sat_4_array^temp4 = var_orbit_display_ID }
+
+}
 }
 add_new_satellite_to_orbit_5 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			check_variable = {
@@ -2847,9 +3197,14 @@ add_new_satellite_to_orbit_5 = {
 		find_lowest_in_array = { array = sat_5_array value = sat_display_model index = temp5 }
 	}
 	set_variable = { sat_5_array^temp5 = var_orbit_display_ID }
+
+}
 }
 
 add_new_satellite_to_orbit_6 = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	find_lowest_in_array = { array = sat_6_array value = sat_display_model index = sat_display_slot }
 	if = {
 		limit = {
@@ -2861,6 +3216,8 @@ add_new_satellite_to_orbit_6 = {
 	else = {
 		add_to_array = { sat_6_array = var_orbit_display_ID }
 	}
+
+}
 }
 
 ##############################
@@ -2868,6 +3225,9 @@ add_new_satellite_to_orbit_6 = {
 ##############################
 
 remove_satellite_from_orbit = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	for_each_loop = {
 		array = THIS.sat_1_array
 		if = {
@@ -2929,9 +3289,14 @@ remove_satellite_from_orbit = {
 		}
 	}
 	update_satellite_owner = yes
+
+}
 }
 
 remove_satellite_from_system = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	var:tempTAG = {
 		set_temp_variable = { sat_id = orbit_array^var_sat_ID }
 		if = {
@@ -2971,9 +3336,14 @@ remove_satellite_from_system = {
 			subtract_from_variable = { var_KILL_sat_total = 1 }
 		}
 	}
+
+}
 }
 
 remove_deorbited_satellite_target_references = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	for_each_loop = {
 		array = global.countries
 		value = targeting_country
@@ -3012,43 +3382,78 @@ remove_deorbited_satellite_target_references = {
 			}
 		}
 	}
+
+}
 }
 
 remove_deorbited_satellite_target_reference = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { MD_remove_all_zeroed_deorbit_targets = 0 }
 	remove_deorbited_satellite_target_references = yes
+
+}
 }
 
 remove_bulk_deorbited_satellite_target_references = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_temp_variable = { MD_remove_all_zeroed_deorbit_targets = 1 }
 	remove_deorbited_satellite_target_references = yes
+
+}
 }
 
 clear_bulk_deorbit_state = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_variable = MD_bulk_deorbit_model
 	clear_variable = MD_bulk_deorbit_count
 	clr_country_flag = MD_confirm_bulk_deorbit_satellites
+
+}
 }
 
 clear_satellite_deorbit_state = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_variable = var_deorbit_sat_ID
 	clr_country_flag = MD_confirm_deorbit_satellite
 	clear_bulk_deorbit_state = yes
 	clr_country_flag = MD_satellite_orbit_selection_active
+
+}
 }
 
 start_satellite_deorbit_selection = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_satellite_deorbit_state = yes
 	set_country_flag = MD_satellite_orbit_selection_active
+
+}
 }
 
 finish_satellite_deorbit = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_variable = var_selected_sat
 	clear_satellite_deorbit_state = yes
 	country_event = satellites.9
+
+}
 }
 
 refresh_bulk_deorbit_state = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = { has_country_flag = MD_confirm_bulk_deorbit_satellites }
 		set_variable = { MD_bulk_deorbit_count = 0 }
@@ -3068,25 +3473,40 @@ refresh_bulk_deorbit_state = {
 		}
 		international_systems_update = yes
 	}
+
+}
 }
 
 deorbit_selected_satellite = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { tempTAG = ROOT.id }
 	set_variable = { var_sat_ID = var_deorbit_sat_ID }
 	remove_satellite_from_system = yes
 	remove_satellite_from_orbit = yes
 	remove_deorbited_satellite_target_reference = yes
 	finish_satellite_deorbit = yes
+
+}
 }
 
 stage_bulk_deorbit_selected_model = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { MD_bulk_deorbit_model = orbit_array^var_selected_sat }
 	set_country_flag = MD_confirm_bulk_deorbit_satellites
 	clr_country_flag = MD_confirm_deorbit_satellite
 	refresh_bulk_deorbit_state = yes
+
+}
 }
 
 bulk_deorbit_selected_model = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	refresh_bulk_deorbit_state = yes
 	if = {
 		limit = {
@@ -3117,9 +3537,14 @@ bulk_deorbit_selected_model = {
 		remove_bulk_deorbited_satellite_target_references = yes
 	}
 	finish_satellite_deorbit = yes
+
+}
 }
 
 advanced_filter_effect = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	if = {
 		limit = {
 			check_variable = { sat_disp_num = 1 }
@@ -3177,9 +3602,14 @@ advanced_filter_effect = {
 			}
 		}
 	}
+
+}
 }
 
 target_all_filtered_sats = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	var:orbit_selected_TAG = {
 		if = {
 			limit = {
@@ -3212,9 +3642,14 @@ target_all_filtered_sats = {
 			target_sat_type = yes
 		}
 	}
+
+}
 }
 
 target_sat_type = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	for_each_loop = {
 		array = sat_1_array
 		value = v
@@ -3365,9 +3800,14 @@ target_sat_type = {
 			}
 		}
 	}
+
+}
 }
 
 target_all_sats = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	for_each_loop = {
 		array = sat_1_array
 		value = v
@@ -3446,9 +3886,14 @@ target_all_sats = {
 			add_to_array = { ROOT.sat_target_TAG_array = orbit_selected_TAG }
 		}
 	}
+
+}
 }
 
 anti_satellite_weapon_use = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	for_each_loop = {
 		array = sat_target_array
 		set_variable = { ROOT.var_sat_orbit = 0 }
@@ -3494,10 +3939,15 @@ anti_satellite_weapon_use = {
 		add_to_variable = { ROOT.var_sat_miss = ROOT.var_anti_satellite_weapon_num }
 		set_variable = { ROOT.var_anti_satellite_weapon_num = 0 }
 	}
+
+}
 }
 
 #remove used killer satellites
 remove_killsat_used = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	while_loop_effect = {
 		limit = {
 			check_variable = { ROOT.var_KILLSAT_salvo > 0 }
@@ -3522,11 +3972,16 @@ remove_killsat_used = {
 	set_satellites_gui = yes
 	set_variable = { var_KILLSAT_orbit = KILL_satellite_array^var_KILLSAT_type }
 	refresh_bulk_deorbit_state = yes
+
+}
 }
 
 ### right container # sat access arrays
 
 set_sat_access_arrays_selected_TAG = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	clear_array = selected_TAG_GNSS_mil_access_array
 	clear_array = selected_TAG_GNSS_civ_access_array
 	clear_array = selected_TAG_COM_mil_access_array
@@ -3559,6 +4014,8 @@ set_sat_access_arrays_selected_TAG = {
 			add_to_array = { ROOT.selected_TAG_SPY_civ_access_array = v }
 		}
 	}
+
+}
 }
 
 # set_temp_variable = { tag_to_grab = TAG.id }
@@ -3674,7 +4131,8 @@ setup_missile_configuration_effect = {
 		set_variable = { orbit_selected_TAG = THIS.id }
 		set_variable = { total_nuclear_reactor_fuel_production = 0 }
 		resize_array = { missile_inventory_array = 191 }
-		add_dynamic_modifier = { modifier = satellite_system }
+		# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } } add_dynamic_modifier = { modifier = satellite_system } }
 		set_sat_orbit_startup = yes
 
 		# Configuration for Starting Payload Types
@@ -3709,6 +4167,9 @@ setup_missile_configuration_effect = {
 }
 
 GNSS_mil_button_update = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_GNSS_mil_system_idx = GNSS_mil_systems_array^i }
 	set_variable = { var_GNSS_mil_sat_system_max = global.GNSS_sat_system_max_array^i }
 	set_variable = { var_GNSS_mil_army_speed_factor = GNSS_mil_army_speed_factor_array^i }
@@ -3720,20 +4181,31 @@ GNSS_mil_button_update = {
 	update_GNSS_system_stats = yes
 	calculate_GNSS_mil_gui_vars = yes
 	clear_array = GNSS_mil_systems_array
+
+}
 }
 
 GNSS_civ_button_update = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
+	# IMPERIA CW — Cold War: integrated space research without satellite resource production.
 	set_variable = { var_GNSS_civ_system_idx = GNSS_civ_systems_array^i }
 	set_variable = { var_GNSS_civ_sat_system_max = global.GNSS_sat_system_max_array^i }
 	set_variable = { var_GNSS_civ_production_speed_buildings_factor = GNSS_civ_production_speed_buildings_factor_array^i }
 	set_variable = { var_GNSS_civ_production_speed_infrastructure_factor = GNSS_civ_production_speed_infrastructure_factor_array^i }
-	set_variable = { var_GNSS_civ_local_resources_factor = GNSS_civ_local_resources_factor_array^i }
+	set_variable = { var_GNSS_civ_local_resources_factor = 0 }
 	update_GNSS_system_stats = yes
 	calculate_GNSS_civ_gui_vars = yes
 	clear_array = GNSS_civ_systems_array
+
+}
 }
 
 COM_mil_button_update = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_COM_mil_system_idx = COM_mil_systems_array^i }
 	set_variable = { var_COM_mil_sat_system_max = global.COM_sat_system_max_array^i }
 	set_variable = { var_COM_mil_max_command_power = COM_mil_max_command_power_array^i }
@@ -3745,9 +4217,14 @@ COM_mil_button_update = {
 	update_COM_system_stats = yes
 	calculate_COM_mil_gui_vars = yes
 	clear_array = COM_mil_systems_array
+
+}
 }
 
 COM_civ_button_update = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_COM_civ_system_idx = COM_civ_systems_array^i }
 	set_variable = { var_COM_civ_sat_system_max = global.COM_sat_system_max_array^i }
 	set_variable = { var_COM_civ_political_power_factor = COM_civ_political_power_factor_array^i }
@@ -3758,9 +4235,14 @@ COM_civ_button_update = {
 	update_COM_system_stats = yes
 	calculate_COM_civ_gui_vars = yes
 	clear_array = COM_civ_systems_array
+
+}
 }
 
 SPY_mil_button_update = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_SPY_mil_system_idx = SPY_mil_systems_array^i }
 	set_variable = { var_SPY_mil_sat_system_max = global.SPY_sat_system_max_array^i }
 	set_variable = { var_SPY_mil_max_planning_factor = SPY_mil_max_planning_factor_array^i }
@@ -3772,9 +4254,14 @@ SPY_mil_button_update = {
 	update_SPY_system_stats = yes
 	calculate_SPY_mil_gui_vars = yes
 	clear_array = SPY_mil_systems_array
+
+}
 }
 
 SPY_civ_button_update = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	set_variable = { var_SPY_civ_system_idx = SPY_civ_systems_array^i }
 	set_variable = { var_SPY_civ_sat_system_max = global.SPY_sat_system_max_array^i }
 	set_variable = { var_SPY_civ_research_speed_factor = SPY_civ_research_speed_factor_array^i }
@@ -3786,12 +4273,19 @@ SPY_civ_button_update = {
 	update_SPY_system_stats = yes
 	calculate_SPY_civ_gui_vars = yes
 	clear_array = SPY_civ_systems_array
+
+}
 }
 
 
 update_space_system_values = {
+# IMPERIA COLD WAR — GC emergency space quarantine.
+if = { limit = { NOT = { has_global_flag = cw_sr_emergency_disabled } }
+
 	update_sat_systems_stats = yes
 	clear_spy_sat_mission_arrays = yes
 	update_SPY_mission_num = yes
 	international_systems_update = yes
+
+}
 }

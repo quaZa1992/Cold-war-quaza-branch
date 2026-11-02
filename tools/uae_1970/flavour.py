@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uae 1970 — flavour.
+# IMPERIA COLD WAR — UAE 1970 English institutional narrative.
 """Finished English narrative for the approved UAE 1970 focus programme.
 
 Effects, values, titles and geometry remain in the immutable approved design.
@@ -71,7 +71,8 @@ _OVERRIDES = {
     ),
     "citizen_ballot": (
         "Citizens need a durable stake in the new constitutional order. "
-        "Reserving a larger share of employment and residency opportunities for them can strengthen support for reform while reducing the labour available to the trading cities."
+        "Building representative institutions can strengthen support for reform, "
+        "while drawing scarce administrative and technical expertise away from research."
     ),
     "municipal_compact": (
         "Long-term residents have helped build the coast's commercial economy. "
@@ -155,8 +156,8 @@ SPIRIT_DESCRIPTIONS = {
         "Unequal access to roads, public services and finance makes the distribution of development a political question."
     ),
     "COLDWAR_UAE_scarce_specialists": (
-        "The coast has too few trained teachers, doctors, technicians and administrators for its ambitions. "
-        "Foreign expertise can relieve immediate shortages, while building a local pool of specialists requires years of education and practical training."
+        "The coast has few laboratories and advanced teaching institutions to support research. "
+        "Foreign specialists can bring knowledge and practical experience, while training citizens and developing technical institutes builds a lasting scientific base."
     ),
     "COLDWAR_UAE_water_power": (
         "Expanding coastal towns depend on costly water distribution, desalination and reliable electricity. "

@@ -1,8 +1,9 @@
+# IMPERIA COLD WAR — Native ideological defence integration.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
 """The West Germany 1970 focus tree, built after MD's Russia and Israel trees.
 
 * one root and a hub focus per pillar; every other focus is placed with relative_position_id
-* short costs (1 hub, 2 quick, 3 standard, 5 reform, 7 major project)
+* player-paced costs (35 days for hubs/quick steps, normally 70 days, 98 for major projects)
 * eight core spirits (dynamic modifiers) that focuses grow step by step, shown as
   "Modifies <core>" blocks in the reward tooltip
 * concrete effects: buildings and modifiers in named states, railways, MD influence,
@@ -39,8 +40,8 @@ CORES = {
     "energie": ("The Energy Mix", "GFX_idea_coal",
                 "Coal from the Ruhr, oil from the Gulf, gas from Siberia, power from the reactors - and the bill for each.",
                 {"gain": ("energy_gain_multiplier", "pct", True, "Energy production"),
-                 "fossil": ("fossil_fuel_consumption", "pct", False, "Fossil fuel consumption"),
-                 "nuclear": ("nuclear_energy_gain", "pct", True, "Nuclear energy"),
+                 "fossil": ("fossil_pp_fuel_consumption_modifier", "pct", False, "Fossil fuel consumption"),
+                 "nuclear": ("nuclear_energy_generation_modifier", "pct", True, "Nuclear energy"),
                  "renew": ("renewable_energy_gain_multiplier", "pct", True, "Renewable energy"),
                  "use": ("energy_use_multiplier", "pct", False, "Energy consumption")}),
     "wehrhaft": ("Militant Democracy", "GFX_idea_spy_intel",
@@ -62,7 +63,7 @@ CORES = {
              {"trade": ("trade_opinion_factor", "pct", True, "Trade opinion"),
               "research": ("research_speed_factor", "pct", True, "Research speed"),
               "europe": ("europeanism_drift", "flat", True, "Europeanism drift"),
-              "ideo": ("mdcw_cw_ideological_defence", "pct", True, "Ideological defence (Cold War)"),
+              "ideo": ("drift_defence_factor", "pct", True, "Ideological defence (Cold War)"),
               "opinion": ("opinion_gain_monthly_factor", "pct", True, "Monthly opinion gain")}),
     "ost": ("Deutschlandpolitik", "GFX_idea_anti_soviet_pact",
             "Bonn's policy towards the other German state - and the price it pays for it at home.",
@@ -280,13 +281,18 @@ def F(key, rel, dx, dy, cost=3, name=None, desc=None, icon=None, pre=None, mutex
     return key
 
 
-# All focuses take longer: the costs in the modules are relative weights, the game sees cost x factor
-# (one cost unit = 7 days). Factor 2 puts the typical focus at 42 days.
-FOCUS_TIME_FACTOR = 2
+# IMPERIA CW — Cold War: Minimum 35 days, normally 70, with existing longer projects preserved.
+# Module costs are design weights. HOI4 NFocus.FOCUS_POINT_DAYS = 7;
+# the installed MD/Cold War defines do not override that value.
+FOCUS_POINT_DAYS = 7
+MIN_FOCUS_COST = 35 // FOCUS_POINT_DAYS
+STANDARD_FOCUS_COST = 70 // FOCUS_POINT_DAYS
 
 
 def focus_cost(c):
-    return max(1, int(round(c * FOCUS_TIME_FACTOR)))
+    if c <= 2:
+        return MIN_FOCUS_COST
+    return max(STANDARD_FOCUS_COST, int(round(c * 2)))
 
 
 def check_layout():

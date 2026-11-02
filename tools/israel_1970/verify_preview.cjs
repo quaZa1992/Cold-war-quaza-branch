@@ -1,3 +1,4 @@
+// IMPERIA COLD WAR — Israel 1970 full focus-inspector browser verification.
 const { chromium } = require('C:/Users/Enes/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const fs = require('fs');
 const path = require('path');
@@ -42,9 +43,10 @@ const { pathToFileURL } = require('url');
   await settle();
   await frame.locator('[data-value="ISR70_p3_ea"]').click();
   await settle();
-  if(!(await frame.locator('#isr70-selected').innerText()).includes('Modernize the Histadrut'))errors.push('selection failed');
+  const labour=design.nodes.find(n=>n.id==='ISR70_p3_ea');
+  if(!(await frame.locator('#isr70-selected').innerText()).includes(labour.label))errors.push('selection failed');
   const rewardText=await frame.locator('#isr70-selected').innerText();
-  if(!rewardText.includes('Production Efficiency Cap: +5%')||!rewardText.includes('Labor Unions Opinion: +15'))errors.push('readable focus rewards missing');
+  if(!labour.reward_summary.every(line=>rewardText.includes(line)))errors.push('readable focus rewards missing');
   await page.screenshot({path:path.resolve('docs/israel_1970_design/preview_alignment.png'),fullPage:true});
   const before=await frame.locator('#isr70-world').evaluate(e=>({transform:e.style.transform,nodeX:e.querySelector('[data-value="ISR70_p3_ea"]').style.left}));
   await frame.locator('#isr70-plus').click();
@@ -58,9 +60,78 @@ const { pathToFileURL } = require('url');
   await settle();
   await page.screenshot({path:path.resolve('docs/israel_1970_design/preview_defense.png'),fullPage:true});
   await frame.locator('#isr70-overview').click();
+  await settle();
+  if(!(await frame.locator('#isr70-selected h3').innerText()).includes('Entire Focus Tree'))errors.push('overview not active');
   await page.screenshot({path:path.resolve('docs/israel_1970_design/preview_overview.png'),fullPage:true});
-  fs.writeFileSync(path.resolve('docs/israel_1970_design/preview_validation.json'),JSON.stringify({errors,views:results.length,results},null,2));
-  console.log(JSON.stringify({errors,views:results.length}));
+  const clicks=[];
+  for(const group of design.groups){
+    const node=design.nodes.find(n=>n.group===group.id);
+    await frame.locator('#isr70-branch').selectOption(group.id);await settle();
+    const card=frame.locator(`[data-value="${node.id}"]`);
+    await card.focus();
+    const beforeClick=await frame.locator('#isr70-world').evaluate(e=>e.style.transform);
+    await card.click();await settle();
+    if(await frame.locator('#isr70-selected h3').innerText()!==node.label)errors.push('pointer inspection '+node.id);
+    if(await frame.locator('#isr70-world').evaluate(e=>e.style.transform)!==beforeClick)errors.push('click moved camera '+node.id);
+    clicks.push(node.id);
+  }
+  const allInspected=await frame.locator('#isr70-tree').evaluate(root=>{
+    let count=0;
+    for(const node of root.querySelectorAll('[data-action="focus"]')){node.click();if(root.querySelector('#isr70-selected h3').textContent===node.getAttribute('aria-label'))count++;}
+    return count;
+  });
+  if(allInspected!==design.nodes.length)errors.push('some locked/alternative focuses cannot be inspected');
+  await page.setViewportSize({width:1680,height:1400});
+  await frame.locator('#isr70-branch').selectOption('policy_settlements');await settle();
+  await frame.locator('[data-value="ISR70_settlement_unilateral"]').focus();
+  await frame.locator('[data-value="ISR70_settlement_unilateral"]').click();await settle();
+  await page.screenshot({path:path.resolve('docs/israel_1970_design/preview_settlements.png'),fullPage:true});
+  await frame.locator('#isr70-branch').selectOption('policy_presence');await settle();
+  for(const slug of ['west_bank','gaza','sinai','golan']){
+    const card=frame.locator(`[data-value="ISR70_presence_${slug}"]`);
+    await card.focus();await card.click();await settle();
+    const text=await frame.locator('#isr70-selected').innerText();
+    for(const term of ['Office Productivity +4%','Agricultural Productivity +3%','Agricultural Productivity -3%','Bureaucracy Cost +2.5%','Police Cost +2%','Stability -1%','Local Infrastructure Construction Speed -10%','Local Factory Access -5%','Local Supplies -5%','Israel Treasury: -1%']){
+      if(!text.includes(term))errors.push('unilateral settlement terms missing '+slug+'/'+term);
+    }
+    if(/If accepted|transferred to the host|Civilian Holdings Compact|Negotiate a/.test(text))errors.push('obsolete host agreement shown '+slug);
+    const palTerms=['Stability -2%','Political Power Gain -2.5%','Office Productivity -4%','Bureaucracy Cost +4%','Social Costs +3%'];
+    if(['west_bank','gaza'].includes(slug)){
+      for(const term of palTerms)if(!text.includes(term))errors.push('Palestinian foreign terms missing '+slug+'/'+term);
+    }else if(text.includes('Territorial and Settlement Pressures'))errors.push('Palestinian burden on unrelated state '+slug);
+  }
+  for(const slug of ['west_bank','gaza']){
+    const card=frame.locator(`[data-value="ISR70_develop_${slug}"]`);
+    await card.focus();await card.click();await settle();
+    const text=await frame.locator('#isr70-selected').innerText();
+    for(const term of ['Stability -2%','Political Power Gain -2.5%','Office Productivity -4%','Bureaucracy Cost +4%','Social Costs +3%','Stability -4%','Political Power Gain -5%','Office Productivity -8%','Bureaucracy Cost +8%','Social Costs +6%']){
+      if(!text.includes(term))errors.push('Palestinian controlled-project terms missing '+slug+'/'+term);
+    }
+  }
+  await frame.locator('#isr70-branch').selectOption('policy_settlements');await settle();
+  await frame.locator('[data-value="ISR70_settlement_compensation"]').focus();
+  await frame.locator('[data-value="ISR70_settlement_compensation"]').click();await settle();
+  const compensationText=await frame.locator('#isr70-selected').innerText();
+  for(const term of ['West Bank: Territorial and Settlement Pressures','Gaza: Territorial and Settlement Pressures','Stability -2%','Office Productivity -4%']){
+    if(!compensationText.includes(term))errors.push('compensation Palestinian terms missing '+term);
+  }
+  await frame.locator('#isr70-branch').selectOption('policy_presence');await settle();
+  await frame.locator('[data-value="ISR70_presence_west_bank"]').focus();
+  await frame.locator('[data-value="ISR70_presence_west_bank"]').click();await settle();
+  await page.screenshot({path:path.resolve('docs/israel_1970_design/preview_presence.png'),fullPage:true});
+  await frame.locator('#isr70-spirits').click();await settle();
+  if(await frame.locator('.occupation-profile').count()!==4)errors.push('occupation profiles missing');
+  const occupationText=await frame.locator('#isr70-selected').innerText();
+  if(!occupationText.includes('Local Garrison Requirement: +60%')||!occupationText.includes('Israel: Personnel Cost: +8%'))errors.push('occupation costs missing');
+  await frame.locator('.occupation-profile').first().scrollIntoViewIfNeeded();await settle();
+  await page.screenshot({path:path.resolve('docs/israel_1970_design/preview_occupation.png'),fullPage:true});
+  await frame.locator('#isr70-overview').click();await settle();
+  await page.screenshot({path:path.resolve('docs/israel_1970_design/preview_overview.png'),fullPage:true});
+  console.log(JSON.stringify({errors,views:results.length,pointerClicks:clicks.length,allInspected}));
+  const reportPath=path.resolve('docs/israel_1970_design/preview_validation.json');
+  const tempPath=reportPath+'.tmp';
+  fs.writeFileSync(tempPath,JSON.stringify({project:'IMPERIA COLD WAR',errors,views:results.length,pointerClicks:clicks.length,allInspected,results},null,2));
+  fs.renameSync(tempPath,reportPath);
   await browser.close();
   if(errors.length)process.exitCode=1;
 })();

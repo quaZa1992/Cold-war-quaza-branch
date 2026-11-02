@@ -1,4 +1,4 @@
-# Staged effects implementation review
+# IMPERIA COLD WAR — Japan staged effects implementation review
 
 Generated from 212 National life/Economy records.
 
@@ -10,13 +10,13 @@ Emitted 212 per-focus helpers and native display previews.
 
 - Every focus preview is an unconditional native `effect_tooltip` sibling to the independently guarded `hidden_effect` payout. Preview bodies contain the same treasury changes, modifier-variable deltas, research bonuses, shared slots, and buildings as the payout without receipt or availability guards.
 - `national_economy_focus_effect_previews.json` is the machine-readable mapping for root focus-graph integration; its `effect_tooltip` value is the inner body keyed by design focus ID.
-- Treasury deductions use MD's `treasury_change` temporary variable and `modify_treasury_effect`; there is no cash-on-hand gate or direct debt manipulation.
+- Treasury deductions use MD's `treasury_change` temporary variable and `modify_treasury_effect`; new domestic programme prices use a GDP share, a positive-GDP guard, and a computed numeric preview. No cash-on-hand affordability gate or direct debt manipulation is added.
 - Research bonuses use Japan's native `add_tech_bonus` shape for one `CAT_industry` or `CAT_agriculture` technology.
 - Four pollution focus improvements adjust the initialized persistent pollution modifier, which starts at stability −5% and health spending +8%.
 - The initialized energy modifier starts at civilian factory energy use +10% and civilian productivity −3%. The `efficient_factories` focus's −5% energy-use special modifies this same modifier variable.
 - Building caps and `shares_slots` behavior are transcribed from `common/buildings/00_buildings.txt`. All 14 inventory building types are state-level and use `state_max`; none use `province_max`.
-- Every building helper and availability fragment requires current state ownership/control. `building_level@type` checks the building's current level against remaining `state_max`; the installed `free_building_slots` trigger checks available construction levels. Shared-slot buildings use `include_locked = no` only when a slot is still needed; non-shared buildings omit this option. A focus-awarded shared slot supplies its own required capacity.
-- The `fuel_silo` grant of two levels requires `building_level@fuel_silo < 4` and `free_building_slots = { building = fuel_silo size > 1 }` (max 5). Energy and industrial grid buildings both enforce their shared `infrastructure_keystone` group limit of one.
+- Every granted building level adds one state shared building slot in the same state before construction, including infrastructure and other non-shared building types. This appears in both the display preview and guarded executor.
+- Every building helper and availability fragment separately checks current state ownership/control, the native `state_max` level cap, and any shared infrastructure keystone cap. `free_building_slots` is needed only for levels not covered by the slot grant; `include_locked = no` appears only for shared-slot building types.
 - Licensed Production requires `has_idea = COLDWAR_ni_licensed_armaments_programme`; Expand Microelectronics Capacity requires `has_tech = microchip_production_1`. Both requirements appear in availability and helper reward guards.
 - Technical `original_tag = JAP` and `IMP_is_1970_scenario = yes` checks are hidden in focus availability and retained in reward guards. Receipt flags are set after all scenario, focus-specific, ownership/control, and capacity guards pass.
 - Source audits reconciled all 353 percent tokens against 350 mapped modifiers and 3 tech bonuses; the four percentage-point pollution specials are mapped separately. All 37 building entries match their state names and quantities in the effect text.

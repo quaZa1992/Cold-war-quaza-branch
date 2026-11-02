@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Guest Worker Administration
+# IMPERIA COLD WAR — Guest-worker integration and current native artwork checks.
 """Validate guest-worker integration and execute its real script arithmetic.
 
 Run from any directory with Python 3.12+. No game files are changed. The small
@@ -887,6 +887,10 @@ def validate_assets_and_structure(effect_ast, trigger_ast, decision_ast, categor
 def validate_guestworker_art(ideas, art_ast):
     sprites = {str(first(body, "name", "")).strip('"'): str(first(body, "texturefile", "")).strip('"')
                for body in values(first(art_ast, "spriteTypes", []), "spriteType")}
+    # Selector badges now live in the shared selector registry.
+    selector_art = read_script('interface/COLDWAR_IMPERIA_selector_icons.gfx')
+    sprites.update({str(first(body, 'name', '')).strip('"'): str(first(body, 'texturefile', '')).strip('"')
+                    for body in values(first(selector_art, 'spriteTypes', []), 'spriteType')})
     for idea, body in ideas.items():
         picture = first(body, "picture", "")
         name = "GFX_idea_" + picture

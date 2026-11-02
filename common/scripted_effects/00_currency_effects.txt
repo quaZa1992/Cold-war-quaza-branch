@@ -64,9 +64,18 @@ currency_startup = {
 	update_currency_issuers = yes
 	# IMPERIA CW — Cold War: Scenario integration.
 	mdcw_initialize_ddr_currency = yes
-	# User-authorized 1970 own-reserve initialization; no EU/euro special bonuses.
-	if = { limit = { date < 1999.1.1 tag = GER NOT = { has_idea = deutsche_mark } }
+	# IMPERIA CW — Cold War: No expiry year; preserve an actual German euro adoption.
+	if = { limit = { tag = GER NOT = { has_idea = deutsche_mark } NOT = { has_idea = euro } NOT = { has_country_flag = EU_joined_the_eurozone } }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
+		add_to_variable = { ICW_reserve_initializing_depth = 1 }
 		add_ideas = deutsche_mark
+		subtract_from_variable = { ICW_reserve_initializing_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_initializing_depth > 0 } } } clear_variable = ICW_reserve_initializing_depth }
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 }
 
@@ -83,42 +92,35 @@ update_currency_issuers = {
 		set_country_flag = is_usd_issuer
 	} }
 
-	# DEM: Bonn/Cologne, not DDR-owned Berlin. Native issuer ownership follows conquest.
-	# IMPERIA CW — Cold War: Scenario integration.
+	# IMPERIA CW — Cold War: DEM issuer follows Bonn/Cologne and actual currency policy, not a year.
 	if = { limit = { check_variable = { global.dem_issuer > 0 } }
 		var:global.dem_issuer = { clr_country_flag = is_dem_issuer }
 	}
 	set_variable = { global.dem_issuer = 0 }
-	if = { limit = { date < 1999.1.1 }
-		966 = { owner = {
+	966 = { owner = {
+		if = { limit = { NOT = { has_idea = euro } NOT = { has_country_flag = EU_joined_the_eurozone } }
 			set_variable = { global.dem_issuer = THIS }
 			set_country_flag = is_dem_issuer
-		} }
-		# IMPERIA CW — Cold War: Scenario integration.
-		# Euro has no issuer in the historical Cold War period.
-		if = { limit = { check_variable = { global.eur_issuer > 0 } }
-			var:global.eur_issuer = { clr_country_flag = is_eur_issuer }
 		}
-		set_variable = { global.eur_issuer = 0 }
+	} }
+	# IMPERIA CW — Cold War: Euro issuance requires an actual euro holder; DEM can continue alongside it.
+	if = { limit = { check_variable = { global.eur_issuer > 0 } }
+		var:global.eur_issuer = { clr_country_flag = is_eur_issuer }
+	}
+	set_variable = { global.eur_issuer = 0 }
+	if = { limit = { country_exists = EUU EUU = { has_idea = euro } }
+		EUU = {
+			set_variable = { global.eur_issuer = THIS }
+			set_country_flag = is_eur_issuer
+		}
 	}
 	else = {
-		# EUR: EUU if it exists, otherwise Berlin (state 45)
-		if = { limit = { check_variable = { global.eur_issuer > 0 } }
-			var:global.eur_issuer = { clr_country_flag = is_eur_issuer }
-		}
-		if = { limit = { country_exists = EUU }
-			EUU = {
+		45 = { owner = {
+			if = { limit = { has_idea = euro }
 				set_variable = { global.eur_issuer = THIS }
 				set_country_flag = is_eur_issuer
 			}
-		}
-		else = {
-			45 = { owner = {
-				set_variable = { global.eur_issuer = THIS }
-				set_country_flag = is_eur_issuer
-			} }
-		}
-
+		} }
 	}
 
 	# CNY: Beijing (state 547)
@@ -702,14 +704,32 @@ calculate_reserve_roi_bonus = {
 adopt_chinese_yuan_reserve = {
 	if = {
 		limit = { CHI = { has_completed_focus = CHI_yuan_internationalisation } }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		add_ideas = chinese_yuan_3
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	else_if = {
 		limit = { CHI = { has_completed_focus = CHI_Renminbi_Internationalization } }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		add_ideas = chinese_yuan_2
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 	else = {
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. BEGIN
+		add_to_variable = { ICW_reserve_scripted_depth = 1 }
 		add_ideas = chinese_yuan
+		subtract_from_variable = { ICW_reserve_scripted_depth = 1 }
+		if = { limit = { NOT = { check_variable = { ICW_reserve_scripted_depth > 0 } } } clear_variable = ICW_reserve_scripted_depth }
+		# IMPERIA COLD WAR — Reserve-currency realignment: authored conversion. END
+
 	}
 }
 

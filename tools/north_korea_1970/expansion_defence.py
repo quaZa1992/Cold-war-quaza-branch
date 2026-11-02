@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: North Korea 1970 defence and atomic expansion.
+# IMPERIA COLD WAR — Cold War: North Korea 1970 defence and atomic expansion.
 """Add the bounded 28-focus defence and atomic expansion to the NKO design."""
 
 

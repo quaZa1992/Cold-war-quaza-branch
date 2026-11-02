@@ -1,0 +1,128 @@
+{
+  "project": "IMPERIA COLD WAR",
+  "feature": "Current Space Race architecture and launch-infrastructure gap review",
+  "review_date": "2026-10-23",
+  "scope": "Review of the Space Race compiler, catalogue, mission rules, technology adapter, crew contracts, risk rules and existing MD buildings. The separate flag presentation work adds no physical infrastructure layer. One verified native-pilot receipt defect was corrected during this review.",
+  "current_flow": [
+    "Only human countries initialise playable programmes in the 1970 scenario. Sixteen named national profiles plus the universal entry profile supply historical institutions and qualifications.",
+    "A nation authorises development within its three active development places. Weekly treasury allocations pay for engineering; qualification requires both the paid work and elapsed development calendar.",
+    "Actual OLV/payload research, national capabilities, successful predecessor missions, mission funds, cleared arrears, completed accident investigations and any launch window are enforced at departure. Development may proceed alongside research and precursor flights.",
+    "Mission appropriation is paid at departure. Departure and objective/recovery are separate chance draws. Their probabilities are fixed for that flight; a contained anomaly may delay flight and add an invoice without adding a hidden full-failure draw.",
+    "Outcomes are full success, partial results, failure, catastrophe or safe launch abort. Investigations require paid corrective work. The astronaut's nationality determines personnel losses in the seventeen new operator/guest crew programmes.",
+    "Accepted programmes grant capped, once-only national rewards and operational capabilities. World firsts have a separate once-only global receipt. Historical Sputnik, Gagarin and Apollo firsts are already awarded at the 1970 start.",
+    "Qualifying first successes grant one general technology research bonus; world firsts grant a separate stronger award. Each native award has one use over the complete technology scope. Guest shares divide the original award's magnitude.",
+    "Seven satellite pilot campaigns feed one successful first payload into MD's existing orbital system, with native capacity limits. The Space Race does not grant full constellations or resource-production bonuses.",
+    "The top three begin with USA 100, SOV 90 and FRA 15 as balance values. Human achievements alter prestige. A unique human leader gets +2 percentage points objective chance and -5% weekly programme operating costs; ties grant no leadership bonus. AI countries have static historical entries only."
+  ],
+  "launch_sites_today": {
+    "atlas_label": "Launch sites & labs is a navigation region, not a list of physical spaceports.",
+    "infrastructure": "The sounding range, ground-tracking network, small launcher, heavy launcher and engine-test centre establish national capabilities. The catalogue describes pads and assembly facilities as part of programme expenditure, but no specific state or ramp object is allocated.",
+    "own_orbital_entry": "The indigenous-small-launcher programme requires administration, sounding rockets, satellite engineering and ground tracking. The current standard campaign is 72 months and $6.5bn development; its original maintenance value becomes approximately $4.81m per week. It grants launch-basic and orbital-flight national receipts.",
+    "geography": "Space Race departure guards do not choose or check an owned/controlled launch state, latitude, orbital inclination, territorial loss, launch corridor or pad damage.",
+    "capacity": "cw_sr_flights counts current flights but is not a launch-capacity limit. Each programme can have one flight active; different programmes can launch concurrently when their individual requirements and funds are satisfied.",
+    "native_building": "MD already defines rocket_site as Missile Launch Sites with rocket_launch_capacity = 2 in common/buildings/00_buildings.txt. These military launch sites are not currently checked by Space Race and are not automatically equivalent to orbital or crewed launch complexes."
+  },
+  "findings": [
+    {
+      "id": "SPACE-INFRA-001",
+      "priority": "P1",
+      "classification": "Missing simulation layer",
+      "finding": "Physical launch complexes, operational readiness and pad throughput are not modelled. Existing engineering dates and costs do not themselves create a ramp bottleneck.",
+      "consequence": "A country with the appropriate national receipts and funds can launch different programmes without reserving a particular operational site.",
+      "evidence": [
+        "tools/space_race_1970/compile.py: make_triggers, make_core, programme_effects",
+        "tools/space_race_1970/catalogue.json: indigenous-small-launcher, heavy-lift",
+        "common/buildings/00_buildings.txt: rocket_site"
+      ],
+      "proposal_not_implemented": "State-based research ranges and orbital/heavy/crewed-certified launch complexes, with ownership or a signed access agreement, weekly operation, damage and a preparation/recovery queue. A pad should be occupied during preparation and launch, not for a 34-month Mars flight."
+    },
+    {
+      "id": "SPACE-HARDWARE-002",
+      "priority": "P1",
+      "classification": "Current abstraction",
+      "finding": "Space Race gates check the researched launcher generation, but do not reserve or consume an OLV inventory unit. Hardware and flight procurement are represented by mission appropriations.",
+      "consequence": "The research tree is integrated, while production throughput and expendable launcher stock are not yet part of the Space Race departure transaction.",
+      "evidence": [
+        "tools/space_race_1970/technology_integration.py: requirement_parts, build",
+        "tools/space_race_1970/compile.py: programme_effects launch"
+      ],
+      "proposal_not_implemented": "Introduce an explicitly financed launcher procurement/stock or production-order layer. Reconcile hardware already included in missionCostB before also charging native production, to avoid double payment."
+    },
+    {
+      "id": "SPACE-PARTNER-003",
+      "priority": "P1",
+      "classification": "Signed provider integrated; legacy foreign pilot and physical infrastructure remain",
+      "finding": "Named scientific, tracking, operations and launch-service agreements now require actual human consent, capabilities, funded interface qualification and actual treasury transfers. Designated foreign-carriage programmes require domestic launcher research or a qualified named provider; the purchased Foreign Launch Partnership always requires a provider. A generic old access capability no longer substitutes by itself.",
+      "consequence": "The launch-provider relation is real, but the older Interkosmos research-cosmonaut foreign pilot still uses the legacy casualty/roster model. Physical launchpads, queues and launcher inventories remain abstract.",
+      "evidence": [
+        "tools/space_race_1970/catalogue.json: foreign-launch-partnership, interkosmos-cosmonaut",
+        "tools/space_race_1970/technology_integration.py: PARTNER, SUBORBITAL, requirement_parts",
+        "tools/space_race_1970/crew.py: eligible",
+        "tools/space_race_1970/cooperation.py: provider qualification, consent, funded work and two outbound orders"
+      ],
+      "proposal_not_implemented": "Add physical state-based pads and launcher stock. Reconcile the legacy research-cosmonaut foreign pilot with explicit astronaut nationality assignments.",
+      "update_2026_10_23": "Four operational work packages, two concurrent outbound contracts, prepaid support, conserved award shares and real-provider OLV qualification are implemented. Native launchpad and hardware-stock implementation remains separate."
+    },
+    {
+      "id": "SPACE-OPERATIONS-004",
+      "priority": "P2",
+      "classification": "Knowledge and operational readiness are not fully separated",
+      "finding": "Suspending deployed operations removes the programme's operating flag and charges but retains its earned national capability. Supporting bonuses depend on active deployment; general capability gates remain permanent.",
+      "consequence": "Preserving engineering knowledge is appropriate, but a future physical launch complex must also have a separate operational requirement. A retained national receipt alone cannot describe whether an actual pad, control centre or production facility is staffed and usable.",
+      "evidence": [
+        "tools/space_race_1970/compile.py: gates, programme_effects pause/upkeep/odds, outcomes grants"
+      ],
+      "proposal_not_implemented": "Retain earned engineering and research, while requiring maintained physical facilities for activities that need them. Seed real historical sites separately from historical qualifications."
+    },
+    {
+      "id": "SPACE-LIFECYCLE-005",
+      "priority": "P2",
+      "classification": "Programme simulation rather than complete asset simulation",
+      "finding": "Most Space Race missions are a timed programme record with capability receipts. Stations, habitats and their crew rotations are not all independent tracked assets with their own endurance, resupply and retirement. The seven pilot satellites are a separate native-MD integration case.",
+      "consequence": "Long-duration space presence is less detailed than the catalogue's programme variety suggests. Operating charges attach to deployed programmes rather than to a complete inventory of individual vehicles.",
+      "evidence": [
+        "tools/space_race_1970/compile.py: flight, upkeep, outcomes",
+        "tools/space_race_1970/technology_integration.py: PILOTS"
+      ],
+      "proposal_not_implemented": "Add persistent station assets, finite endurance, supply/rotation missions and retirement after the launch-site and procurement layers are stable. Check programme versus native-network maintenance to keep cost categories distinct."
+    },
+    {
+      "id": "SPACE-VALIDATION-006",
+      "priority": "P1",
+      "classification": "Validation boundary",
+      "finding": "Automated checks execute generated script ASTs, financial edge cases, mission gates and read-only UI paths. They do not run the actual HOI4 multiplayer engine or a complete economically natural 1970-1995 campaign.",
+      "consequence": "Passing these checks is not proof that a small nation can afford and finish a specific path within 25 years, or that a long live multiplayer campaign is free of engine/OOS or performance issues.",
+      "evidence": [
+        "tools/space_race_1970/validate.py",
+        "tools/space_race_1970/qa_technology.py",
+        "tools/space_race_1970/qa_readiness.py",
+        "tools/space_race_1970/qa_crew.py",
+        "tools/space_race_1970/*_validation.json"
+      ],
+      "proposal_not_implemented": "Run bounded live campaigns for a leading power, a secondary launcher state and a guest nation, including funding shortages, provider loss, save/load, hotjoin and near-simultaneous firsts. Calibrate total time, weekly expense and general research stacking against those results."
+    },
+    {
+      "id": "SPACE-PILOT-007",
+      "priority": "P2",
+      "classification": "Verified defect corrected in this change",
+      "finding": "The adapter previously set the native-commissioned receipt even when the MD capacity API rejected the payload. Its call was also limited to the programme first-award branch, leaving no delivery retry on later accepted flights.",
+      "fix": "Snapshot the selected native model counter and set the commissioned receipt only after an actual increment. Dispatch the guarded handover on accepted flights while leaving prestige/research awards under their original once-only receipts. Existing completed receipts are not cleared or retroactively respawned.",
+      "evidence": [
+        "tools/space_race_1970/technology_integration.py: native_pilot adapter",
+        "tools/space_race_1970/compile.py: outcomes",
+        "tools/space_race_1970/qa_technology.py: rejection, retry, preserved queue and no-duplicate assertions"
+      ],
+      "regression_test": "The added rejection assertion failed against the previous generated runtime. The corrected adapter is validated through the existing modeled MD API contract; a live engine check is still required."
+    }
+  ],
+  "recommended_order": [
+    "Physical launch infrastructure and pad queues",
+    "Launcher procurement with reconciled mission costs",
+    "Unified human-provider and crew agreements",
+    "Long-duration asset logistics",
+    "Live campaign and multiplayer balance checks"
+  ],
+  "in_game_tested": false,
+  "subsequent_full_review": "docs/design/space_race_1970/full-system-audit.json",
+  "audit_update": "Native localisation/widget errors, deficit bounds, exact preflight contract billing, remaining-reward previews and annexed-operator delegation lifecycle corrected. Physical infrastructure and stock abstractions remain."
+}

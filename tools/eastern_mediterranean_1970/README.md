@@ -1,4 +1,6 @@
-# Eastern Mediterranean 1970 portrait build
+IMPERIA COLD WAR: Eastern Mediterranean portrait build.
+
+Greek leadership update, 30 October 2026: `tools/greece_1970_leaders/` now owns the Greek candidates and portraits. It adds twenty photo restorations, removes all political calendar gates, replaces the Greek dossier with Sheep-style party candidate categories, and uses a local monthly reconciliation. Its build and validation commands supersede the historical Greek date-window assertions below. The regional compiler delegates Greek output to that owner. The earlier regional counts below describe the previous baseline, not the expanded Greek roster.
 
 Completed:41 new photo-based restorations (TUR20, GRE16, CYP5). The complete
 Cyprus review sheet also includes the five previously approved restorations,

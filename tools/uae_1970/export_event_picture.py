@@ -1,5 +1,5 @@
-# IMPERIA CW — Cold War: uae 1970 — export event picture.
-"""Package the ImageGen colourisation as native217x163 RGBA DDS.
+# IMPERIA COLD WAR — Export the UAE event picture in native BGRA DDS format.
+"""Package the ImageGen colourisation as native217x163 BGRA DDS.
 
 FFmpeg owns proportional resizing/padding; this writes only a lossless DDS
 container around that PNG's existing pixels. It does not generate artwork.
@@ -23,11 +23,12 @@ def main():
     image = Image.open(OUTPUT).convert('RGBA')
     assert image.size == (217,163)
     assert image.getchannel('A').getextrema() == (255,255)
-    header = [124,4111,163,217,217*4,0,0]+[0]*11+[32,65,0,32,255,65280,16711680,4278190080,4096,0,0,0,0]
+    # IMPERIA COLD WAR — Preserve the colourisation with native MD channel order.
+    header = [124,4111,163,217,217*4,0,0]+[0]*11+[32,65,0,32,16711680,65280,255,4278190080,4096,0,0,0,0]
     dds = OUTPUT.with_suffix('.dds')
-    dds.write_bytes(b'DDS '+struct.pack('<31I',*header)+image.tobytes())
+    dds.write_bytes(b'DDS '+struct.pack('<31I',*header)+image.tobytes('raw', 'BGRA'))
     assert Image.open(dds).convert('RGBA').tobytes() == image.tobytes()
-    result = {'size':list(image.size),'format':'DDS uncompressed RGBA32','opaque':True,
+    result = {'size':list(image.size),'format':'DDS uncompressed BGRA8 (A8R8G8B8)','opaque':True,
               'decoded_dds_matches_png':True,'all_seven_people_retained':True,
               'fit':'Proportional full-width fit with top/bottom black matte; no crop or stretch',
               'master_sha256':hashlib.sha256(MASTER.read_bytes()).hexdigest(),

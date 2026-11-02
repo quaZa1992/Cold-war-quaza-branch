@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Nuclear first use during a diplomatic confrontation
 
 The 1970 multiplayer scenario can now reach nuclear hostilities without a preceding declaration of conventional war. An existing confrontation, national employment policy and an explicit military order remain necessary.

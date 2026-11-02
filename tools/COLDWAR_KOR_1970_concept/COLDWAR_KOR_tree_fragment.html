@@ -1,4 +1,4 @@
-<!-- IMPERIA CW — Cold War: South Korea approval-stage focus concept. -->
+<!-- IMPERIA COLD WAR — South Korea 1970 focus concept preview. -->
 <div id="coldwar-kor-concept">
   <section class="kor-window" aria-label="South Korea national focus concept">
     <header class="kor-header"><div><span>SOUTH KOREA · 1 JANUARY 1970</span><h2>National Focus</h2></div><span class="kor-status">CONCEPT · AWAITING APPROVAL</span></header>
@@ -167,10 +167,21 @@
     const n=byId.get(id);if(!n)return;selection=id;for(const [k,b] of buttons)b.setAttribute('aria-pressed',String(k===id));
     let effects='';const e=n.effects;
     if(e.cost)effects+='<li class="kor-bad">Treasury: −$'+e.cost+'bn once</li>';
+    if(e.gdp_share_cost_fraction)effects+='<li class="kor-bad">Project funding: '+(e.gdp_share_cost_fraction*100)+'% of current GDP, once; charged only when GDP is positive</li>';
     if(e.weekly)effects+='<li class="kor-bad">Active programme: $'+e.weekly.toFixed(5)+'bn/week; replaces prior slot commitment</li>';
     effects+=e.policies.map(policyHTML).join('');
-    for(const b of e.buildings)effects+='<li class="kor-good">State '+b.state+': +'+b.level+' '+escape(b.type.replaceAll('_',' '))+'; once, requires ownership and capacity</li>';
+    for(const b of e.buildings)effects+='<li class="kor-good">State '+b.state+': +'+b.level+' shared building slots, then +'+b.level+' '+escape(b.type.replaceAll('_',' '))+'; once, requires ownership, control, and capacity</li>';
     for(const [k,v] of Object.entries(e.one_time))effects+='<li>'+escape(k.replaceAll('_',' '))+': '+(v>=0?'+':'')+v+'; once</li>';
+    for(const bonus of (e.equipment_bonuses||[]))for(const [type,values] of Object.entries(bonus.types||{}))for(const [modifier,value] of Object.entries(values)){
+      const typeLabel=({infantry_weapons_type:'Infantry weapons',artillery_equipment:'Artillery equipment',fighter:'Fighter aircraft',frigate:'Frigates',medium_tank_chassis:'Medium tank chassis'})[type]||type.replaceAll('_',' ');
+      const modifierLabel=({build_cost_ic:'production cost'})[modifier]||modifier.replaceAll('_',' ');
+      effects+='<li class="kor-good">'+escape(typeLabel+' '+modifierLabel)+': '+(value>=0?'+':'')+(value*100)+'%</li>';
+    }
+    for(const bonus of (e.tech_bonuses||[])){
+      const category=({CAT_industry:'Industry technology',CAT_small_arms:'Small arms technology',CAT_artillery:'Artillery technology',CAT_aircraft:'Aircraft technology',CAT_naval:'Naval technology',CAT_armored_fighting_vehicles:'Armored fighting vehicle technology'})[bonus.category]||bonus.category.replaceAll('_',' ');
+      effects+='<li class="kor-good">Research bonus: '+escape(category)+' '+(bonus.bonus*100>=0?'+':'')+(bonus.bonus*100)+'%, '+bonus.uses+' use</li>';
+    }
+    for(const bonus of (e.doctrine_bonuses||[]))effects+='<li class="kor-good">'+escape(bonus.category.replaceAll('_',' '))+' cost reduction: '+(bonus.cost_reduction*100)+'%, '+bonus.uses+' use</li>';
     for(const a of e.actions)if(!['condition','leader','note','offer'].includes(a.type))effects+='<li>'+escape(a.type.replaceAll('_',' '))+': '+escape(a.value.replaceAll('_',' '))+'</li>';
     if(n.start_replacements)effects+='<li>Replace starting problem: '+escape(n.start_replacements.join(', '))+'</li>';
     const pres=n.prerequisites.map(row=>'('+row.map(id=>byId.get(id).label).join(' OR ')+')').join(' AND ')||'Independent programme entry';
@@ -203,3 +214,4 @@
   window.addEventListener('openai:set_globals',e=>restore(e.detail?.globals?.widgetState));
 })();
 </script>
+

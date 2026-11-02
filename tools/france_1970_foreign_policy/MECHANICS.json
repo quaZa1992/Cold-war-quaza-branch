@@ -1,0 +1,205 @@
+{
+  "project": "IMPERIA COLD WAR",
+  "feature": "France 1970 foreign-policy mechanics reference",
+  "scope": "Read-only source audit. Findings are source-supported, not game-tested.",
+  "effects": [
+    {
+      "key": "give_military_access",
+      "status": "verified_source",
+      "scope": "country grants access to named country tag",
+      "lifecycle": "recipient's diplomatic_relation military_access active=yes/no can activate or revoke; track the signed agreement and apply idempotently",
+      "use": "named access agreement or foreign base access",
+      "limitation": "grant direction matters; access is a meaningful war/logistics commitment",
+      "sources": [
+        {"path": "common/scripted_effects/LBA_1970_scripted_effects.txt", "lines": "282-298"},
+        {"path": "common/scripted_effects/LBA_1970_scripted_effects.txt", "lines": "300-326"},
+        {"path": "events/05_united_kingdom.txt", "lines": "5666-5671"}
+      ]
+    },
+    {
+      "key": "diplomatic_relation: docking_rights",
+      "status": "verified_source",
+      "scope": "country relation with named country",
+      "lifecycle": "active=yes/no; pair with a treaty receipt and suspend/restore with the agreement",
+      "use": "port access for naval visits and logistics",
+      "limitation": "not a convoy-cost discount",
+      "sources": [
+        {"path": "events/05_united_kingdom.txt", "lines": "5666-5671"},
+        {"path": "events/05_united_kingdom.txt", "lines": "5727-5732"}
+      ]
+    },
+    {
+      "key": "give_guarantee",
+      "status": "verified_source",
+      "scope": "country guarantees named country",
+      "lifecycle": "real military obligation; agreement recipient must accept; termination needs separate lifecycle review",
+      "use": "only for a true defense commitment",
+      "limitation": "can involve France in a war; not an influence bonus",
+      "sources": [
+        {"path": "common/national_focus/05_afghanistan.txt", "lines": "2854-2855"}
+      ]
+    },
+    {
+      "key": "modify_treasury_effect paired with additional_expense_rate/additional_income_rate",
+      "status": "verified_source",
+      "scope": "payer and recipient country ledgers; weekly aggregation is country-scoped",
+      "lifecycle": "signed receipt gates matched streams; suspend both together; same nominal amount on both sides",
+      "use": "cash transfer, development grant, recurring support",
+      "limitation": "separate aggregators do not automatically link the transaction; append the matched expense stream after common expense multipliers and apply the same nominal amount to the recipient income stream",
+      "sources": [
+        {"path": "events/05_united_kingdom.txt", "lines": "5638-5680"},
+        {"path": "common/scripted_effects/00_money_system.txt", "lines": "823-850"},
+        {"path": "common/scripted_effects/00_money_system.txt", "lines": "3732-3750"},
+        {"path": "common/scripted_effects/00_money_system.txt", "lines": "4568-4622"},
+        {"path": "common/scripted_effects/00_currency_effects.txt", "lines": "460-483"},
+        {"path": "common/scripted_effects/00_money_system.txt", "lines": "4619-4622"},
+        {"path": "common/scripted_effects/COLDWAR_USA_1970_agreements.txt", "lines": "2891-2916"}
+      ]
+    },
+    {
+      "key": "set_improved_trade_agreement",
+      "status": "verified_source",
+      "scope": "sender_nation and receiver_nation",
+      "lifecycle": "paired opinion modifiers, counters and flags; can be removed by helper",
+      "use": "market relationship and opinion",
+      "limitation": "does not set quantity, price, import priority or delivery",
+      "sources": [
+        {"path": "common/scripted_effects/00_economic_effects.txt", "lines": "89-150"}
+      ]
+    },
+    {
+      "key": "resource_export_multiplier_modifier/oil_export_multiplier_modifier",
+      "status": "verified_source",
+      "scope": "country's actual exported resource volumes at global market prices",
+      "lifecycle": "modifier-based; global and per-resource factors enter weekly sale-rate calculation",
+      "use": "export-earnings programme, described as market receipts",
+      "limitation": "not bilateral offtake, price guarantee or reserved imports",
+      "sources": [
+        {"path": "common/scripted_effects/00_money_system.txt", "lines": "4688-4744"},
+        {"path": "common/scripted_effects/LBA_1970_scripted_effects.txt", "lines": "282-296"},
+        {"path": "common/ideas/LBA_1970_ideas.txt", "lines": "94-148"}
+      ]
+    },
+    {
+      "key": "give_resource_rights/has_resources_rights",
+      "status": "verified_source",
+      "scope": "resource-rights holder, target state, optional resource list",
+      "lifecycle": "recipient accepts rights; separate cancellation and owner revocation exist",
+      "use": "mineral concession and access to existing resource-investment interface",
+      "limitation": "rights do not guarantee extraction volume, a buyer or shipment to France",
+      "sources": [
+        {"path": "events/imp_resources_events.txt", "lines": "8-88"},
+        {"path": "events/imp_resources_events.txt", "lines": "90-160"},
+        {"path": "common/scripted_guis/imp_resource_scripted_gui.txt", "lines": "10-106"},
+        {"path": "common/decisions/05_ENG_decisions.txt", "lines": "1208-1215"}
+      ]
+    },
+    {
+      "key": "uranium_mine investment",
+      "status": "verified_source",
+      "scope": "state-level deposit, slots, rights, construction and output",
+      "lifecycle": "investment project type 15 applies uranium-mine cost/speed, syncs slots, constructs a level and syncs output",
+      "use": "funded mineral development after deposit/right/capacity checks",
+      "limitation": "uranium output is zero before working mines; do not grant raw history output or promise offtake",
+      "sources": [
+        {"path": "common/scripted_effects/99_investment_scripted_effects.txt", "lines": "308-309"},
+        {"path": "common/scripted_effects/99_investment_scripted_effects.txt", "lines": "399-415"},
+        {"path": "common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt", "lines": "1-47"},
+        {"path": "common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt", "lines": "79-80"},
+        {"path": "common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt", "lines": "185-186"}
+      ]
+    },
+    {
+      "key": "add_tech_bonus/add_doctrine_cost_reduction",
+      "status": "verified_source",
+      "scope": "country receiving the finite named bonus",
+      "lifecycle": "finite use count and real category required",
+      "use": "distinct short bilateral technical or doctrine package",
+      "limitation": "not direct transfer of researched technology",
+      "sources": [
+        {"path": "tools/france_1970_runtime/diplomacy.py", "lines": "256-263,346-352"},
+        {"path": "common/scripted_effects/COLDWAR_USA_1970_agreements.txt", "lines": "1-40"}
+      ]
+    },
+    {
+      "key": "add_to_tech_sharing_group/remove_from_tech_sharing_group",
+      "status": "verified_source",
+      "scope": "named group, possibly containing multiple unrelated countries",
+      "lifecycle": "requires explicit group membership/removal and suspension logic",
+      "use": "only for deliberately multilateral research sharing",
+      "limitation": "not a private bilateral licence; group exposure can be wider than two signatories",
+      "sources": [
+        {"path": "common/national_focus/05_united_kingdom.txt", "lines": "2279-2281"},
+        {"path": "events/05_united_kingdom.txt", "lines": "1178-1196"},
+        {"path": "common/technology_sharing/00_tech_sharing_groups.txt", "lines": "382-396"}
+      ]
+    },
+    {
+      "key": "license_production_speed",
+      "status": "modifier_verified_effect_unverified",
+      "scope": "licensed production lines in recipient country",
+      "lifecycle": "modifier applies while idea/dynamic modifier is active",
+      "use": "limited speed benefit for licences already held",
+      "limitation": "does not create or transfer a production license; no general scripted license-issuance effect was verified",
+      "sources": [
+        {"path": "common/ideas/COLDWAR_IMPERIA_licensed_armaments.txt", "lines": "26-30"},
+        {"path": "common/ideas/05_china.txt", "lines": "364-415"},
+        {"path": "common/scripted_effects/COLDWAR_IRQ_1970_programmes.txt", "lines": "1696-1700"}
+      ]
+    },
+    {
+      "key": "add_equipment_to_stockpile",
+      "status": "verified_source",
+      "scope": "specific country's equipment stockpile and producer tag",
+      "lifecycle": "one-time transfer requires preflight on donor stock and atomic paired removal/addition",
+      "use": "finite 1970-compatible arms or vehicle shipment",
+      "limitation": "negative amount is source-used, but transaction should be engine-tested; must not exceed verified stockpile",
+      "sources": [
+        {"path": "common/scripted_effects/USA_1985_foreign_policy_effects.txt", "lines": "15-23"},
+        {"path": "common/scripted_effects/USA_1985_foreign_policy_effects.txt", "lines": "94-97"},
+        {"path": "common/decisions/00_political_decisions.txt", "lines": "677-693"}
+      ]
+    },
+    {
+      "key": "recipient-state building grant plus extra shared slots",
+      "status": "verified_source",
+      "scope": "named target state, owned/controlled by partner",
+      "lifecycle": "preflight owner/control/full control/capacity, add one shared slot per level before building, then guard one-time transaction",
+      "use": "local public works, extraction support or port facilities",
+      "limitation": "no generic market effect can substitute for a named-state project",
+      "sources": [
+        {"path": "tools/france_1970_runtime/core.py", "lines": "asset helpers; verify current source when design freezes"},
+        {"path": "common/scripted_effects/99_investment_scripted_effects.txt", "lines": "project construction blocks"}
+      ]
+    },
+    {
+      "key": "military access/docking plus matched funding",
+      "status": "source-supported native contract pattern",
+      "scope": "country pair, acceptance event, separate country ledgers",
+      "lifecycle": "paired acceptance preview and consent, idempotent relation + payment receipts",
+      "use": "France funds port/logistics improvements in return for explicitly named access rights",
+      "limitation": "access should not be implied by a generic cooperation spirit",
+      "sources": [
+        {"path": "events/05_united_kingdom.txt", "lines": "5638-5680"}
+      ]
+    }
+  ],
+  "verified_asset_and_resource_data": [
+    {"state": 329, "name": "Zinder", "tag": "NGR", "uranium_deposit_kt": 439.4, "mine_levels": 3, "uranium_per_level": 12, "source": "common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt:79-80; history/states/329-Zinder.txt"},
+    {"state": 1004, "name": "Gabon Highlands", "tag": "GAB", "uranium_deposit_kt": 5.8, "mine_levels": 1, "uranium_per_level": 3, "source": "common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt:185-186; history/states/1004-Gabon Highlands.txt"},
+    {"state": 171, "name": "Basrah", "tag": "IRQ", "oil_history": 39, "source": "history/states/171-Basrah.txt"},
+    {"state": 165, "name": "Kirkuk", "tag": "IRQ", "oil_history": 4, "source": "history/states/165-Kirkuk.txt"}
+  ],
+  "current_generator_partner_allowlist": {
+    "source": "tools/france_1970_runtime/diplomacy.py:PAIR_TAGS",
+    "currently_included": ["GER", "ENG", "USA", "SOV", "ALG", "PER", "SEN", "ITA", "SER", "AUS", "ARG"],
+    "not_currently_included_for_suggested_deals": ["NGR", "GAB", "IRQ", "LBA", "SAU"]
+  },
+  "unsupported_promises": [
+    "fixed bilateral commodity quantities or guaranteed delivery",
+    "import priority or fixed commodity price",
+    "bilateral convoy/trade-cost discount",
+    "scripted issuance of a production license via license_production_speed",
+    "uranium production before a working mine exists"
+  ]
+}

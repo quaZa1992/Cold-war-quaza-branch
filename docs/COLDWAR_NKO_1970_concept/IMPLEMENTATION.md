@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # North Korea 1970 — implemented programme
 
 Implemented after the user's instruction to code the approved v2 design, the screenshot corrections and the substantial national expansion. The user explicitly waived the previous focus-count limit. The original v2 approval documents retain their original concept-stage wording; this document records the installed result.

@@ -1,4 +1,5 @@
-# IMPERIA CW — Cold War: ISR70 policy events — game content.
+# IMPERIA COLD WAR — Israel V2 legacy event isolation and reservation refunds.
+# IMPERIA COLD WAR — Israel 1970 funded policy programmes.
 # Generated from tools/israel_1970/policy_design.json and policy compiler.
 add_namespace = ISR70P
 country_event = {
@@ -7,31 +8,44 @@ country_event = {
 	desc = ISR70P.1000.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_equal_services_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					205 = { is_controlled_by = ISR }
-					205 = { is_owned_by = ISR }
-					205 = {
-						free_building_slots = { building = infrastructure size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_equal_services_active }
+				if = {
+					limit = {
+						205 = { is_controlled_by = ISR }
+						205 = { is_owned_by = ISR }
+						205 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
+					205 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+					}
+					set_country_flag = ISR70_policy_project_equal_services_done
+					add_ideas = ISR70_policy_project_equal_services_idea
 				}
-				205 = {
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_equal_services_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_equal_services_done
-				add_ideas = ISR70_policy_project_equal_services_idea
+				clear_variable = ISR70_policy_project_equal_services_paid
+				clr_country_flag = ISR70_policy_project_equal_services_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_equal_services_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_equal_services_paid
-			clr_country_flag = ISR70_policy_project_equal_services_active
 		}
 	}
 }
@@ -41,36 +55,40 @@ country_event = {
 	desc = ISR70P.1001.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_equal_access_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					205 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_project_equal_services_done
-					205 = { is_owned_by = ISR }
-					can_staff_an_industrial_complex = yes
-					205 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_equal_access_active }
+				if = {
+					limit = {
+						205 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_project_equal_services_done
+						205 = { is_owned_by = ISR }
+						can_staff_an_industrial_complex = yes
 					}
 					205 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_equal_access_done
+					add_ideas = ISR70_policy_project_equal_access_idea
 				}
-				205 = {
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_equal_access_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_equal_access_done
-				add_ideas = ISR70_policy_project_equal_access_idea
+				clear_variable = ISR70_policy_project_equal_access_paid
+				clr_country_flag = ISR70_policy_project_equal_access_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_equal_access_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_equal_access_paid
-			clr_country_flag = ISR70_policy_project_equal_access_active
 		}
 	}
 }
@@ -80,40 +98,57 @@ country_event = {
 	desc = ISR70P.1002.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_municipal_pacts_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					205 = { is_controlled_by = ISR }
-					206 = { is_controlled_by = ISR }
-					has_idea = ISR70_policy_municipal_autonomy_idea
-					205 = { is_owned_by = ISR }
-					206 = { is_owned_by = ISR }
+				limit = { has_country_flag = ISR70_policy_project_municipal_pacts_active }
+				if = {
+					limit = {
+						205 = { is_controlled_by = ISR }
+						206 = { is_controlled_by = ISR }
+						has_idea = ISR70_policy_municipal_autonomy_idea
+						205 = { is_owned_by = ISR }
+						206 = { is_owned_by = ISR }
+						205 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						206 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+					}
 					205 = {
-						free_building_slots = { building = infrastructure size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 					}
 					206 = {
-						free_building_slots = { building = infrastructure size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_municipal_pacts_done
+					add_ideas = ISR70_policy_project_municipal_pacts_idea
 				}
-				205 = {
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_municipal_pacts_paid }
+					modify_treasury_effect = yes
 				}
-				206 = {
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
-				}
-				set_country_flag = ISR70_policy_project_municipal_pacts_done
-				add_ideas = ISR70_policy_project_municipal_pacts_idea
+				clear_variable = ISR70_policy_project_municipal_pacts_paid
+				clr_country_flag = ISR70_policy_project_municipal_pacts_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_municipal_pacts_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_municipal_pacts_paid
-			clr_country_flag = ISR70_policy_project_municipal_pacts_active
 		}
 	}
 }
@@ -123,32 +158,44 @@ country_event = {
 	desc = ISR70P.1003.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_preferential_allocations_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					206 = { is_controlled_by = ISR }
-					206 = { is_owned_by = ISR }
-					206 = {
-						free_building_slots = { building = infrastructure size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_preferential_allocations_active }
+				if = {
+					limit = {
+						206 = { is_controlled_by = ISR }
+						206 = { is_owned_by = ISR }
+						206 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
+					206 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+					}
+					set_country_flag = ISR70_policy_project_preferential_allocations_done
+					add_ideas = ISR70_policy_project_preferential_allocations_idea
 				}
-				206 = {
-					add_extra_state_shared_building_slots = 2
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_preferential_allocations_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_preferential_allocations_done
-				add_ideas = ISR70_policy_project_preferential_allocations_idea
+				clear_variable = ISR70_policy_project_preferential_allocations_paid
+				clr_country_flag = ISR70_policy_project_preferential_allocations_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_preferential_allocations_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_preferential_allocations_paid
-			clr_country_flag = ISR70_policy_project_preferential_allocations_active
 		}
 	}
 }
@@ -158,38 +205,42 @@ country_event = {
 	desc = ISR70P.1004.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_restricted_employment_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					206 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_project_preferential_allocations_done
-					206 = { is_owned_by = ISR }
-					can_staff_an_industrial_complex = yes
-					206 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_restricted_employment_active }
+				if = {
+					limit = {
+						206 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_project_preferential_allocations_done
+						206 = { is_owned_by = ISR }
+						can_staff_an_industrial_complex = yes
 					}
 					206 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 					}
+					set_temp_variable = { temp_opinion = 10 }
+					change_industrial_conglomerates_opinion = yes
+					set_country_flag = ISR70_policy_project_restricted_employment_done
+					add_ideas = ISR70_policy_project_restricted_employment_idea
 				}
-				206 = {
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_restricted_employment_paid }
+					modify_treasury_effect = yes
 				}
-				set_temp_variable = { temp_opinion = 10 }
-				change_industrial_conglomerates_opinion = yes
-				set_country_flag = ISR70_policy_project_restricted_employment_done
-				add_ideas = ISR70_policy_project_restricted_employment_idea
+				clear_variable = ISR70_policy_project_restricted_employment_paid
+				clr_country_flag = ISR70_policy_project_restricted_employment_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_restricted_employment_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_restricted_employment_paid
-			clr_country_flag = ISR70_policy_project_restricted_employment_active
 		}
 	}
 }
@@ -199,35 +250,39 @@ country_event = {
 	desc = ISR70P.1005.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_development_offices_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					206 = { is_controlled_by = ISR }
-					206 = { is_owned_by = ISR }
-					can_staff_an_offices = yes
-					206 = {
-						free_building_slots = { building = offices size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_development_offices_active }
+				if = {
+					limit = {
+						206 = { is_controlled_by = ISR }
+						206 = { is_owned_by = ISR }
+						can_staff_an_offices = yes
 					}
 					206 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = offices level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_development_offices_done
+					add_ideas = ISR70_policy_project_development_offices_idea
 				}
-				206 = {
-					add_building_construction = { type = offices level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_development_offices_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_development_offices_done
-				add_ideas = ISR70_policy_project_development_offices_idea
+				clear_variable = ISR70_policy_project_development_offices_paid
+				clr_country_flag = ISR70_policy_project_development_offices_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_development_offices_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_development_offices_paid
-			clr_country_flag = ISR70_policy_project_development_offices_active
 		}
 	}
 }
@@ -237,35 +292,39 @@ country_event = {
 	desc = ISR70P.1006.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_industrial_credit_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					204 = { is_controlled_by = ISR }
-					204 = { is_owned_by = ISR }
-					can_staff_an_offices = yes
-					204 = {
-						free_building_slots = { building = offices size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_industrial_credit_active }
+				if = {
+					limit = {
+						204 = { is_controlled_by = ISR }
+						204 = { is_owned_by = ISR }
+						can_staff_an_offices = yes
 					}
 					204 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = offices level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_industrial_credit_done
+					add_ideas = ISR70_policy_project_industrial_credit_idea
 				}
-				204 = {
-					add_building_construction = { type = offices level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_industrial_credit_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_industrial_credit_done
-				add_ideas = ISR70_policy_project_industrial_credit_idea
+				clear_variable = ISR70_policy_project_industrial_credit_paid
+				clr_country_flag = ISR70_policy_project_industrial_credit_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_industrial_credit_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_industrial_credit_paid
-			clr_country_flag = ISR70_policy_project_industrial_credit_active
 		}
 	}
 }
@@ -279,26 +338,56 @@ country_event = {
 		original_tag = USA
 		IMP_is_1970_scenario = yes
 		ISR = { ISR70_is_scenario = yes has_country_flag = ISR70_policy_export_credit_pending }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.300.a
 		ai_chance = { base = 3 }
 		trigger = {
 			NOT = { has_war_with = ISR }
+		
+			# IMPERIA COLD WAR — Retired Israel callback guard.
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 		}
-		ISR = {
-			clr_country_flag = ISR70_policy_export_credit_pending
-			set_country_flag = ISR70_policy_export_credit_accepted
-			add_ideas = ISR70_policy_export_credit_accepted
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = {
+				clr_country_flag = ISR70_policy_export_credit_pending
+				set_country_flag = ISR70_policy_export_credit_accepted
+				add_ideas = ISR70_policy_export_credit_accepted
+			}
 		}
 	}
 	option = {
 		name = ISR70P.300.b
 		ai_chance = { base = 1 }
-		ISR = {
-			clr_country_flag = ISR70_policy_export_credit_pending
-			set_country_flag = ISR70_policy_export_credit_declined
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = {
+				clr_country_flag = ISR70_policy_export_credit_pending
+				set_country_flag = ISR70_policy_export_credit_declined
+			}
 		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -307,36 +396,40 @@ country_event = {
 	desc = ISR70P.1007.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_export_services_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					205 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_export_credit_accepted
-					205 = { is_owned_by = ISR }
-					can_staff_an_offices = yes
-					205 = {
-						free_building_slots = { building = offices size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_export_services_active }
+				if = {
+					limit = {
+						205 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_export_credit_accepted
+						205 = { is_owned_by = ISR }
+						can_staff_an_offices = yes
 					}
 					205 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = offices level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_export_services_done
+					add_ideas = ISR70_policy_project_export_services_idea
 				}
-				205 = {
-					add_building_construction = { type = offices level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_export_services_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_export_services_done
-				add_ideas = ISR70_policy_project_export_services_idea
+				clear_variable = ISR70_policy_project_export_services_paid
+				clr_country_flag = ISR70_policy_project_export_services_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_export_services_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_export_services_paid
-			clr_country_flag = ISR70_policy_project_export_services_active
 		}
 	}
 }
@@ -346,22 +439,51 @@ country_event = {
 	desc = ISR70P.400.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { ISR70_is_scenario = yes }
+	trigger = { ISR70_is_scenario = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	option = {
 		name = ISR70P.400.a
 		ai_chance = { base = 2 }
 		trigger = {
 			208 = { is_owned_by = PAL is_controlled_by = ISR }
+		
+			# IMPERIA COLD WAR — Retired Israel callback guard.
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 		}
-		set_country_flag = ISR70_policy_target_208
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			set_country_flag = ISR70_policy_target_208
+		}
 	}
 	option = {
 		name = ISR70P.400.b
 		ai_chance = { base = 1 }
 		trigger = {
 			209 = { is_owned_by = PAL is_controlled_by = ISR }
+		
+			# IMPERIA COLD WAR — Retired Israel callback guard.
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 		}
-		set_country_flag = ISR70_policy_target_209
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			set_country_flag = ISR70_policy_target_209
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -374,45 +496,90 @@ country_event = {
 		original_tag = PAL
 		IMP_is_1970_scenario = yes
 		ISR = { ISR70_is_scenario = yes }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.401.a
-		ai_chance = { base = 3 }
-		ISR = {
-			set_country_flag = ISR70_policy_freeze_agreed
-			if = {
-				limit = { has_country_flag = ISR70_policy_target_208 }
-				208 = {
-					remove_resistance_target = 197208
-					add_resistance_target = {
-						id = 197208
-						amount = -5
-						occupied = PAL
-						occupier = ISR
-						tooltip = ISR70_policy_resistance_197208_tt
-					}
-				}
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 			}
-			if = {
-				limit = { has_country_flag = ISR70_policy_target_209 }
-				209 = {
-					remove_resistance_target = 197209
-					add_resistance_target = {
-						id = 197209
-						amount = -5
-						occupied = PAL
-						occupier = ISR
-						tooltip = ISR70_policy_resistance_197209_tt
-					}
-				}
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT
+			effect_tooltip = {
+				custom_effect_tooltip = ISR70_policy_preview_israel_tt
+				custom_effect_tooltip = ISR70_policy_selected_area_tt
+				add_to_variable = { ISR70_display_freeze_resistance = -0.05 tooltip = ISR70_policy_preview_resistance_tt }
+				custom_effect_tooltip = ISR70_policy_preview_palestine_tt
+				add_to_variable = { ISR70_display_freeze_opinion = 15 tooltip = ISR70_policy_preview_pal_opinion_tt }
 			}
 		}
-		add_opinion_modifier = { target = ISR modifier = ISR70_policy_settlement_freeze }
+		ai_chance = { base = 3 }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = {
+				set_country_flag = ISR70_policy_freeze_agreed
+				if = {
+					limit = { has_country_flag = ISR70_policy_target_208 }
+					208 = {
+						remove_resistance_target = 197208
+						add_resistance_target = {
+							id = 197208
+							amount = -5
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_resistance_197208_tt
+						}
+					}
+				}
+				if = {
+					limit = { has_country_flag = ISR70_policy_target_209 }
+					209 = {
+						remove_resistance_target = 197209
+						add_resistance_target = {
+							id = 197209
+							amount = -5
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_resistance_197209_tt
+						}
+					}
+				}
+			}
+			add_opinion_modifier = { target = ISR modifier = ISR70_policy_settlement_freeze }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.401.b
 		ai_chance = { base = 2 }
-		ISR = { set_country_flag = ISR70_policy_freeze_declined }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_freeze_declined }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -421,44 +588,51 @@ country_event = {
 	desc = ISR70P.1008.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_municipal_works_208_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					208 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_208
-					208 = { is_owned_by = PAL }
-					has_country_flag = ISR70_policy_freeze_agreed
-					can_staff_an_industrial_complex = yes
-					208 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_municipal_works_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_freeze_agreed
+						can_staff_an_industrial_complex = yes
+						208 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
 					208 = {
-						free_building_slots = { building = infrastructure size > 0 }
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 					}
 					208 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_municipal_supply_208 }
 					}
+					set_country_flag = ISR70_policy_project_municipal_works_208_done
+					add_ideas = ISR70_policy_project_municipal_works_208_idea
 				}
-				208 = {
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_municipal_works_208_paid }
+					modify_treasury_effect = yes
 				}
-				208 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_settlement_municipal_supply_208 }
-				}
-				set_country_flag = ISR70_policy_project_municipal_works_208_done
-				add_ideas = ISR70_policy_project_municipal_works_208_idea
+				clear_variable = ISR70_policy_project_municipal_works_208_paid
+				clr_country_flag = ISR70_policy_project_municipal_works_208_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_municipal_works_208_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_municipal_works_208_paid
-			clr_country_flag = ISR70_policy_project_municipal_works_208_active
 		}
 	}
 }
@@ -468,44 +642,51 @@ country_event = {
 	desc = ISR70P.1009.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_municipal_works_209_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					209 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_209
-					209 = { is_owned_by = PAL }
-					has_country_flag = ISR70_policy_freeze_agreed
-					can_staff_an_industrial_complex = yes
-					209 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_municipal_works_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_freeze_agreed
+						can_staff_an_industrial_complex = yes
+						209 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
 					209 = {
-						free_building_slots = { building = infrastructure size > 0 }
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 					}
 					209 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_municipal_supply_209 }
 					}
+					set_country_flag = ISR70_policy_project_municipal_works_209_done
+					add_ideas = ISR70_policy_project_municipal_works_209_idea
 				}
-				209 = {
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_municipal_works_209_paid }
+					modify_treasury_effect = yes
 				}
-				209 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_settlement_municipal_supply_209 }
-				}
-				set_country_flag = ISR70_policy_project_municipal_works_209_done
-				add_ideas = ISR70_policy_project_municipal_works_209_idea
+				clear_variable = ISR70_policy_project_municipal_works_209_paid
+				clr_country_flag = ISR70_policy_project_municipal_works_209_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_municipal_works_209_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_municipal_works_209_paid
-			clr_country_flag = ISR70_policy_project_municipal_works_209_active
 		}
 	}
 }
@@ -519,16 +700,71 @@ country_event = {
 		original_tag = PAL
 		IMP_is_1970_scenario = yes
 		ISR = { ISR70_is_scenario = yes }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.402.a
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT
+			effect_tooltip = {
+				custom_effect_tooltip = ISR70_policy_preview_israel_tt
+				set_temp_variable = { treasury_change = ISR.gdp_total }
+				multiply_temp_variable = { treasury_change = -0.003 }
+				custom_effect_tooltip = modify_treasury_effect_tt
+				custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_policy_land_compact }
+				add_to_variable = { ISR70_display_compact_bureaucracy = -0.05 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+				custom_effect_tooltip = ISR70_policy_selected_area_tt
+				add_to_variable = { ISR70_display_compact_garrison = -0.2 tooltip = required_garrison_factor_tt }
+				add_to_variable = { ISR70_display_compact_resistance = -0.05 tooltip = ISR70_policy_preview_resistance_tt }
+				custom_effect_tooltip = ISR70_policy_preview_palestine_tt
+				PAL = {
+					set_temp_variable = { treasury_change = ISR.gdp_total }
+					multiply_temp_variable = { treasury_change = 0.003 }
+					custom_effect_tooltip = modify_treasury_effect_tt
+				}
+			}
+		}
 		ai_chance = { base = 3 }
-		ISR = { set_country_flag = ISR70_policy_land_compact_agreed }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_land_compact_agreed }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.402.b
 		ai_chance = { base = 2 }
-		ISR = { set_country_flag = ISR70_policy_land_compact_declined }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_land_compact_declined }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -537,37 +773,43 @@ country_event = {
 	desc = ISR70P.1010.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_designated_sites_208_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					208 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_208
-					208 = { is_owned_by = PAL }
-					can_staff_an_agriculture_district = yes
-					208 = {
-						free_building_slots = { building = agriculture_district size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_designated_sites_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						can_staff_an_agriculture_district = yes
 					}
+					208 = {
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+					}
+					PAL = {
+						add_opinion_modifier = { target = ISR modifier = ISR70_policy_designated_sites }
+					}
+					set_country_flag = ISR70_policy_project_designated_sites_208_done
+					add_ideas = ISR70_policy_project_designated_sites_208_idea
 				}
-				208 = {
-					add_extra_state_shared_building_slots = 1
-					add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_designated_sites_208_paid }
+					modify_treasury_effect = yes
 				}
-				PAL = {
-					add_opinion_modifier = { target = ISR modifier = ISR70_policy_designated_sites }
-				}
-				set_country_flag = ISR70_policy_project_designated_sites_208_done
-				add_ideas = ISR70_policy_project_designated_sites_208_idea
+				clear_variable = ISR70_policy_project_designated_sites_208_paid
+				clr_country_flag = ISR70_policy_project_designated_sites_208_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_designated_sites_208_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_designated_sites_208_paid
-			clr_country_flag = ISR70_policy_project_designated_sites_208_active
 		}
 	}
 }
@@ -577,37 +819,43 @@ country_event = {
 	desc = ISR70P.1011.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_designated_sites_209_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					209 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_209
-					209 = { is_owned_by = PAL }
-					can_staff_an_agriculture_district = yes
-					209 = {
-						free_building_slots = { building = agriculture_district size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_designated_sites_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						can_staff_an_agriculture_district = yes
 					}
+					209 = {
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+					}
+					PAL = {
+						add_opinion_modifier = { target = ISR modifier = ISR70_policy_designated_sites }
+					}
+					set_country_flag = ISR70_policy_project_designated_sites_209_done
+					add_ideas = ISR70_policy_project_designated_sites_209_idea
 				}
-				209 = {
-					add_extra_state_shared_building_slots = 1
-					add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_designated_sites_209_paid }
+					modify_treasury_effect = yes
 				}
-				PAL = {
-					add_opinion_modifier = { target = ISR modifier = ISR70_policy_designated_sites }
-				}
-				set_country_flag = ISR70_policy_project_designated_sites_209_done
-				add_ideas = ISR70_policy_project_designated_sites_209_idea
+				clear_variable = ISR70_policy_project_designated_sites_209_paid
+				clr_country_flag = ISR70_policy_project_designated_sites_209_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_designated_sites_209_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_designated_sites_209_paid
-			clr_country_flag = ISR70_policy_project_designated_sites_209_active
 		}
 	}
 }
@@ -617,48 +865,61 @@ country_event = {
 	desc = ISR70P.1012.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_settlement_services_208_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					208 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_208
-					208 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_designated_sites_208_done
-						has_country_flag = ISR70_policy_project_designated_sites_209_done
+				limit = { has_country_flag = ISR70_policy_project_settlement_services_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_designated_sites_208_done
+							has_country_flag = ISR70_policy_project_designated_sites_209_done
+						}
+						208 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
 					208 = {
-						free_building_slots = { building = infrastructure size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 					}
-				}
-				208 = {
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
-				}
-				208 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_limited_supply_208 }
-				}
-				208 = {
-					remove_resistance_target = 199208
-					add_resistance_target = {
-						id = 199208
-						amount = 5
-						occupied = PAL
-						occupier = ISR
-						tooltip = ISR70_policy_resistance_199208_tt
+					208 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_limited_supply_208 }
 					}
+					208 = {
+						remove_resistance_target = 199208
+						add_resistance_target = {
+							id = 199208
+							amount = 5
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_resistance_199208_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_services_208_done
 				}
-				set_country_flag = ISR70_policy_project_settlement_services_208_done
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_services_208_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_services_208_paid
+				clr_country_flag = ISR70_policy_project_settlement_services_208_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_settlement_services_208_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_settlement_services_208_paid
-			clr_country_flag = ISR70_policy_project_settlement_services_208_active
 		}
 	}
 }
@@ -668,48 +929,61 @@ country_event = {
 	desc = ISR70P.1013.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_settlement_services_209_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					209 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_209
-					209 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_designated_sites_208_done
-						has_country_flag = ISR70_policy_project_designated_sites_209_done
+				limit = { has_country_flag = ISR70_policy_project_settlement_services_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_designated_sites_208_done
+							has_country_flag = ISR70_policy_project_designated_sites_209_done
+						}
+						209 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
 					209 = {
-						free_building_slots = { building = infrastructure size > 0 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 					}
-				}
-				209 = {
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
-				}
-				209 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_limited_supply_209 }
-				}
-				209 = {
-					remove_resistance_target = 199209
-					add_resistance_target = {
-						id = 199209
-						amount = 5
-						occupied = PAL
-						occupier = ISR
-						tooltip = ISR70_policy_resistance_199209_tt
+					209 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_limited_supply_209 }
 					}
+					209 = {
+						remove_resistance_target = 199209
+						add_resistance_target = {
+							id = 199209
+							amount = 5
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_resistance_199209_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_services_209_done
 				}
-				set_country_flag = ISR70_policy_project_settlement_services_209_done
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_services_209_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_services_209_paid
+				clr_country_flag = ISR70_policy_project_settlement_services_209_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_settlement_services_209_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_settlement_services_209_paid
-			clr_country_flag = ISR70_policy_project_settlement_services_209_active
 		}
 	}
 }
@@ -719,45 +993,56 @@ country_event = {
 	desc = ISR70P.1014.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_settlement_ceiling_208_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					208 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_208
-					208 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_settlement_services_208_done
-						has_country_flag = ISR70_policy_project_settlement_services_209_done
+				limit = { has_country_flag = ISR70_policy_project_settlement_ceiling_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_settlement_services_208_done
+							has_country_flag = ISR70_policy_project_settlement_services_209_done
+						}
+						has_full_control_of_state = 208
+						208 = {
+							free_building_slots = { building = bunker size > 0 province = 7107 }
+						}
 					}
-					has_full_control_of_state = 208
 					208 = {
-						free_building_slots = { building = bunker size > 0 province = 7107 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 7107 }
+						}
 					}
-				}
-				208 = {
-					add_building_construction = {
-						type = bunker
-						level = 1
-						instant_build = yes
-						province = { id = 7107 }
+					208 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_limited_garrison_208 }
 					}
+					set_country_flag = ISR70_policy_binding_settlement_ceiling
+					set_country_flag = ISR70_policy_project_settlement_ceiling_208_done
+					add_ideas = ISR70_policy_project_settlement_ceiling_208_idea
 				}
-				208 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_limited_garrison_208 }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_ceiling_208_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_binding_settlement_ceiling
-				set_country_flag = ISR70_policy_project_settlement_ceiling_208_done
+				clear_variable = ISR70_policy_project_settlement_ceiling_208_paid
+				clr_country_flag = ISR70_policy_project_settlement_ceiling_208_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_settlement_ceiling_208_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_settlement_ceiling_208_paid
-			clr_country_flag = ISR70_policy_project_settlement_ceiling_208_active
 		}
 	}
 }
@@ -767,45 +1052,56 @@ country_event = {
 	desc = ISR70P.1015.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_settlement_ceiling_209_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					209 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_209
-					209 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_settlement_services_208_done
-						has_country_flag = ISR70_policy_project_settlement_services_209_done
+				limit = { has_country_flag = ISR70_policy_project_settlement_ceiling_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_settlement_services_208_done
+							has_country_flag = ISR70_policy_project_settlement_services_209_done
+						}
+						has_full_control_of_state = 209
+						209 = {
+							free_building_slots = { building = bunker size > 0 province = 13207 }
+						}
 					}
-					has_full_control_of_state = 209
 					209 = {
-						free_building_slots = { building = bunker size > 0 province = 13207 }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 13207 }
+						}
 					}
-				}
-				209 = {
-					add_building_construction = {
-						type = bunker
-						level = 1
-						instant_build = yes
-						province = { id = 13207 }
+					209 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_limited_garrison_209 }
 					}
+					set_country_flag = ISR70_policy_binding_settlement_ceiling
+					set_country_flag = ISR70_policy_project_settlement_ceiling_209_done
+					add_ideas = ISR70_policy_project_settlement_ceiling_209_idea
 				}
-				209 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_limited_garrison_209 }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_ceiling_209_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_binding_settlement_ceiling
-				set_country_flag = ISR70_policy_project_settlement_ceiling_209_done
+				clear_variable = ISR70_policy_project_settlement_ceiling_209_paid
+				clr_country_flag = ISR70_policy_project_settlement_ceiling_209_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_settlement_ceiling_209_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_settlement_ceiling_209_paid
-			clr_country_flag = ISR70_policy_project_settlement_ceiling_209_active
 		}
 	}
 }
@@ -815,33 +1111,42 @@ country_event = {
 	desc = ISR70P.1016.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_authorize_expansion_208_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					208 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_208
-					208 = { is_owned_by = PAL }
+				limit = { has_country_flag = ISR70_policy_project_authorize_expansion_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+					}
+					208 = { add_extra_state_shared_building_slots = 3 }
+					208 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_infra_208 }
+					}
+					PAL = {
+						add_opinion_modifier = { target = ISR modifier = ISR70_policy_settlement_expansion }
+					}
+					set_country_flag = ISR70_policy_project_authorize_expansion_208_done
+					add_ideas = ISR70_policy_project_authorize_expansion_208_idea
 				}
-				208 = { add_extra_state_shared_building_slots = 3 }
-				208 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_settlement_infra_208 }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_authorize_expansion_208_paid }
+					modify_treasury_effect = yes
 				}
-				PAL = {
-					add_opinion_modifier = { target = ISR modifier = ISR70_policy_settlement_expansion }
-				}
-				set_country_flag = ISR70_policy_project_authorize_expansion_208_done
-				add_ideas = ISR70_policy_project_authorize_expansion_208_idea
+				clear_variable = ISR70_policy_project_authorize_expansion_208_paid
+				clr_country_flag = ISR70_policy_project_authorize_expansion_208_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_authorize_expansion_208_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_authorize_expansion_208_paid
-			clr_country_flag = ISR70_policy_project_authorize_expansion_208_active
 		}
 	}
 }
@@ -851,33 +1156,42 @@ country_event = {
 	desc = ISR70P.1017.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_authorize_expansion_209_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					209 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_209
-					209 = { is_owned_by = PAL }
+				limit = { has_country_flag = ISR70_policy_project_authorize_expansion_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+					}
+					209 = { add_extra_state_shared_building_slots = 3 }
+					209 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_infra_209 }
+					}
+					PAL = {
+						add_opinion_modifier = { target = ISR modifier = ISR70_policy_settlement_expansion }
+					}
+					set_country_flag = ISR70_policy_project_authorize_expansion_209_done
+					add_ideas = ISR70_policy_project_authorize_expansion_209_idea
 				}
-				209 = { add_extra_state_shared_building_slots = 3 }
-				209 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_settlement_infra_209 }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_authorize_expansion_209_paid }
+					modify_treasury_effect = yes
 				}
-				PAL = {
-					add_opinion_modifier = { target = ISR modifier = ISR70_policy_settlement_expansion }
-				}
-				set_country_flag = ISR70_policy_project_authorize_expansion_209_done
-				add_ideas = ISR70_policy_project_authorize_expansion_209_idea
+				clear_variable = ISR70_policy_project_authorize_expansion_209_paid
+				clr_country_flag = ISR70_policy_project_authorize_expansion_209_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_authorize_expansion_209_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_authorize_expansion_209_paid
-			clr_country_flag = ISR70_policy_project_authorize_expansion_209_active
 		}
 	}
 }
@@ -887,45 +1201,46 @@ country_event = {
 	desc = ISR70P.1018.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_settlement_package_208_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					208 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_208
-					208 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_authorize_expansion_208_done
-						has_country_flag = ISR70_policy_project_authorize_expansion_209_done
-					}
-					can_staff_an_agriculture_district = yes
-					208 = {
-						free_building_slots = { building = agriculture_district size > 0 }
-					}
-					can_staff_an_industrial_complex = yes
-					208 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_settlement_package_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_authorize_expansion_208_done
+							has_country_flag = ISR70_policy_project_authorize_expansion_209_done
+						}
+						can_staff_an_agriculture_district = yes
+						can_staff_an_industrial_complex = yes
 					}
 					208 = {
-						free_building_slots = { building = industrial_complex size > 1 }
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_settlement_package_208_done
+					add_ideas = ISR70_policy_project_settlement_package_208_idea
 				}
-				208 = {
-					add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_package_208_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_settlement_package_208_done
-				add_ideas = ISR70_policy_project_settlement_package_208_idea
+				clear_variable = ISR70_policy_project_settlement_package_208_paid
+				clr_country_flag = ISR70_policy_project_settlement_package_208_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_settlement_package_208_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_settlement_package_208_paid
-			clr_country_flag = ISR70_policy_project_settlement_package_208_active
 		}
 	}
 }
@@ -935,45 +1250,46 @@ country_event = {
 	desc = ISR70P.1019.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_settlement_package_209_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					209 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_209
-					209 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_authorize_expansion_208_done
-						has_country_flag = ISR70_policy_project_authorize_expansion_209_done
-					}
-					can_staff_an_agriculture_district = yes
-					209 = {
-						free_building_slots = { building = agriculture_district size > 0 }
-					}
-					can_staff_an_industrial_complex = yes
-					209 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_settlement_package_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_authorize_expansion_208_done
+							has_country_flag = ISR70_policy_project_authorize_expansion_209_done
+						}
+						can_staff_an_agriculture_district = yes
+						can_staff_an_industrial_complex = yes
 					}
 					209 = {
-						free_building_slots = { building = industrial_complex size > 1 }
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_settlement_package_209_done
+					add_ideas = ISR70_policy_project_settlement_package_209_idea
 				}
-				209 = {
-					add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_package_209_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_settlement_package_209_done
-				add_ideas = ISR70_policy_project_settlement_package_209_idea
+				clear_variable = ISR70_policy_project_settlement_package_209_paid
+				clr_country_flag = ISR70_policy_project_settlement_package_209_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_settlement_package_209_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_settlement_package_209_paid
-			clr_country_flag = ISR70_policy_project_settlement_package_209_active
 		}
 	}
 }
@@ -983,49 +1299,62 @@ country_event = {
 	desc = ISR70P.1020.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_entrench_network_208_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					208 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_208
-					208 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_settlement_package_208_done
-						has_country_flag = ISR70_policy_project_settlement_package_209_done
+				limit = { has_country_flag = ISR70_policy_project_entrench_network_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_settlement_package_208_done
+							has_country_flag = ISR70_policy_project_settlement_package_209_done
+						}
+						208 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_2_tt
+								check_variable = { var = building_level@infrastructure value = 4 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 208
+						208 = {
+							free_building_slots = { building = bunker size > 1 province = 7107 }
+						}
 					}
 					208 = {
-						free_building_slots = { building = infrastructure size > 1 }
+						add_extra_state_shared_building_slots = 4
+						add_building_construction = { type = infrastructure level = 2 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 2
+							instant_build = yes
+							province = { id = 7107 }
+						}
 					}
-					has_full_control_of_state = 208
 					208 = {
-						free_building_slots = { building = bunker size > 1 province = 7107 }
+						add_dynamic_modifier = { modifier = ISR70_policy_network_supply_208 }
 					}
+					set_country_flag = ISR70_policy_project_entrench_network_208_done
+					add_ideas = ISR70_policy_project_entrench_network_208_idea
 				}
-				208 = {
-					add_building_construction = { type = infrastructure level = 2 instant_build = yes }
-					add_building_construction = {
-						type = bunker
-						level = 2
-						instant_build = yes
-						province = { id = 7107 }
-					}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_entrench_network_208_paid }
+					modify_treasury_effect = yes
 				}
-				208 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_network_supply_208 }
-				}
-				set_country_flag = ISR70_policy_project_entrench_network_208_done
-				add_ideas = ISR70_policy_project_entrench_network_208_idea
+				clear_variable = ISR70_policy_project_entrench_network_208_paid
+				clr_country_flag = ISR70_policy_project_entrench_network_208_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_entrench_network_208_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_entrench_network_208_paid
-			clr_country_flag = ISR70_policy_project_entrench_network_208_active
 		}
 	}
 }
@@ -1035,49 +1364,62 @@ country_event = {
 	desc = ISR70P.1021.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_entrench_network_209_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					209 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_target_209
-					209 = { is_owned_by = PAL }
-					OR = {
-						has_country_flag = ISR70_policy_project_settlement_package_208_done
-						has_country_flag = ISR70_policy_project_settlement_package_209_done
+				limit = { has_country_flag = ISR70_policy_project_entrench_network_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						OR = {
+							has_country_flag = ISR70_policy_project_settlement_package_208_done
+							has_country_flag = ISR70_policy_project_settlement_package_209_done
+						}
+						209 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_2_tt
+								check_variable = { var = building_level@infrastructure value = 4 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 209
+						209 = {
+							free_building_slots = { building = bunker size > 1 province = 13207 }
+						}
 					}
 					209 = {
-						free_building_slots = { building = infrastructure size > 1 }
+						add_extra_state_shared_building_slots = 4
+						add_building_construction = { type = infrastructure level = 2 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 2
+							instant_build = yes
+							province = { id = 13207 }
+						}
 					}
-					has_full_control_of_state = 209
 					209 = {
-						free_building_slots = { building = bunker size > 1 province = 13207 }
+						add_dynamic_modifier = { modifier = ISR70_policy_network_supply_209 }
 					}
+					set_country_flag = ISR70_policy_project_entrench_network_209_done
+					add_ideas = ISR70_policy_project_entrench_network_209_idea
 				}
-				209 = {
-					add_building_construction = { type = infrastructure level = 2 instant_build = yes }
-					add_building_construction = {
-						type = bunker
-						level = 2
-						instant_build = yes
-						province = { id = 13207 }
-					}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_entrench_network_209_paid }
+					modify_treasury_effect = yes
 				}
-				209 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_network_supply_209 }
-				}
-				set_country_flag = ISR70_policy_project_entrench_network_209_done
-				add_ideas = ISR70_policy_project_entrench_network_209_idea
+				clear_variable = ISR70_policy_project_entrench_network_209_paid
+				clr_country_flag = ISR70_policy_project_entrench_network_209_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_entrench_network_209_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_entrench_network_209_paid
-			clr_country_flag = ISR70_policy_project_entrench_network_209_active
 		}
 	}
 }
@@ -1091,16 +1433,140 @@ country_event = {
 		original_tag = PAL
 		IMP_is_1970_scenario = yes
 		ISR = { ISR70_is_scenario = yes }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.403.a
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			effect_tooltip = {
+				if = {
+					limit = {
+						ISR = { has_country_flag = ISR70_policy_target_209 }
+					}
+					custom_effect_tooltip = ISR70_policy_palestinian_terms_209_tt
+					custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_policy_palestinian_pressure_209 }
+					set_temp_variable = { ISR70_policy_display_pal_level_209 = 1 }
+					set_temp_variable = {
+						ISR70_policy_display_pal_209_stability_factor = ISR70_policy_display_pal_level_209
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_209_stability_factor = -0.02 }
+					add_to_variable = { ISR70_display_pal_row_209_stability_factor = ISR70_policy_display_pal_209_stability_factor tooltip = stability_factor_tt }
+					set_temp_variable = {
+						ISR70_policy_display_pal_209_political_power_factor = ISR70_policy_display_pal_level_209
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_209_political_power_factor = -0.025 }
+					add_to_variable = { ISR70_display_pal_row_209_political_power_factor = ISR70_policy_display_pal_209_political_power_factor tooltip = political_power_factor_tt }
+					set_temp_variable = {
+						ISR70_policy_display_pal_209_offices_productivity = ISR70_policy_display_pal_level_209
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_209_offices_productivity = -0.04 }
+					add_to_variable = { ISR70_display_pal_row_209_offices_productivity = ISR70_policy_display_pal_209_offices_productivity tooltip = offices_productivity_tt }
+					set_temp_variable = {
+						ISR70_policy_display_pal_209_bureaucracy_cost_multiplier_modifier = ISR70_policy_display_pal_level_209
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_209_bureaucracy_cost_multiplier_modifier = 0.04 }
+					add_to_variable = {
+						ISR70_display_pal_row_209_bureaucracy_cost_multiplier_modifier = ISR70_policy_display_pal_209_bureaucracy_cost_multiplier_modifier
+						tooltip = bureaucracy_cost_multiplier_modifier_tt
+					}
+					set_temp_variable = {
+						ISR70_policy_display_pal_209_social_cost_multiplier_modifier = ISR70_policy_display_pal_level_209
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_209_social_cost_multiplier_modifier = 0.03 }
+					add_to_variable = {
+						ISR70_display_pal_row_209_social_cost_multiplier_modifier = ISR70_policy_display_pal_209_social_cost_multiplier_modifier
+						tooltip = social_cost_multiplier_modifier_tt
+					}
+				}
+				else = {
+					custom_effect_tooltip = ISR70_policy_palestinian_terms_208_tt
+					custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_policy_palestinian_pressure_208 }
+					set_temp_variable = { ISR70_policy_display_pal_level_208 = 1 }
+					set_temp_variable = {
+						ISR70_policy_display_pal_208_stability_factor = ISR70_policy_display_pal_level_208
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_208_stability_factor = -0.02 }
+					add_to_variable = { ISR70_display_pal_row_208_stability_factor = ISR70_policy_display_pal_208_stability_factor tooltip = stability_factor_tt }
+					set_temp_variable = {
+						ISR70_policy_display_pal_208_political_power_factor = ISR70_policy_display_pal_level_208
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_208_political_power_factor = -0.025 }
+					add_to_variable = { ISR70_display_pal_row_208_political_power_factor = ISR70_policy_display_pal_208_political_power_factor tooltip = political_power_factor_tt }
+					set_temp_variable = {
+						ISR70_policy_display_pal_208_offices_productivity = ISR70_policy_display_pal_level_208
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_208_offices_productivity = -0.04 }
+					add_to_variable = { ISR70_display_pal_row_208_offices_productivity = ISR70_policy_display_pal_208_offices_productivity tooltip = offices_productivity_tt }
+					set_temp_variable = {
+						ISR70_policy_display_pal_208_bureaucracy_cost_multiplier_modifier = ISR70_policy_display_pal_level_208
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_208_bureaucracy_cost_multiplier_modifier = 0.04 }
+					add_to_variable = {
+						ISR70_display_pal_row_208_bureaucracy_cost_multiplier_modifier = ISR70_policy_display_pal_208_bureaucracy_cost_multiplier_modifier
+						tooltip = bureaucracy_cost_multiplier_modifier_tt
+					}
+					set_temp_variable = {
+						ISR70_policy_display_pal_208_social_cost_multiplier_modifier = ISR70_policy_display_pal_level_208
+					}
+					multiply_temp_variable = { ISR70_policy_display_pal_208_social_cost_multiplier_modifier = 0.03 }
+					add_to_variable = {
+						ISR70_display_pal_row_208_social_cost_multiplier_modifier = ISR70_policy_display_pal_208_social_cost_multiplier_modifier
+						tooltip = social_cost_multiplier_modifier_tt
+					}
+				}
+			}
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT
+			effect_tooltip = {
+				custom_effect_tooltip = ISR70_policy_preview_israel_tt
+				set_temp_variable = { treasury_change = ISR.gdp_total }
+				multiply_temp_variable = { treasury_change = -0.006 }
+				custom_effect_tooltip = modify_treasury_effect_tt
+				custom_effect_tooltip = ISR70_policy_selected_area_tt
+				add_to_variable = { ISR70_display_compensation_garrison = 0.05 tooltip = required_garrison_factor_tt }
+				add_to_variable = { ISR70_display_compensation_resistance = 0.03 tooltip = ISR70_policy_preview_resistance_tt }
+			}
+		}
 		ai_chance = { base = 2 }
-		ISR = { set_country_flag = ISR70_policy_settlement_compensation_accepted }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_settlement_compensation_accepted }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.403.b
 		ai_chance = { base = 3 }
-		ISR = { set_country_flag = ISR70_policy_settlement_compensation_rejected }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_settlement_compensation_rejected }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1113,17 +1579,48 @@ country_event = {
 		original_tag = PAL
 		IMP_is_1970_scenario = yes
 		ISR = { ISR70_is_scenario = yes }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.404.a
 		ai_chance = { base = 3 }
-		add_opinion_modifier = { target = ISR modifier = ISR70_policy_unilateral_settlement }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			add_opinion_modifier = { target = ISR modifier = ISR70_policy_unilateral_settlement }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.404.b
 		ai_chance = { base = 3 }
-		add_opinion_modifier = { target = ISR modifier = ISR70_policy_unilateral_settlement }
-		add_political_power = 25
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			add_opinion_modifier = { target = ISR modifier = ISR70_policy_unilateral_settlement }
+			add_political_power = 25
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1132,30 +1629,42 @@ country_event = {
 	desc = ISR70P.1022.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_gi_sinai_housing_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					213 = {
-						free_building_slots = { building = infrastructure size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_gi_sinai_housing_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						213 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
+					213 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+					}
+					set_country_flag = ISR70_policy_project_gi_sinai_housing_done
 				}
-				213 = {
-					add_extra_state_shared_building_slots = 2
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_gi_sinai_housing_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_gi_sinai_housing_done
+				clear_variable = ISR70_policy_project_gi_sinai_housing_paid
+				clr_country_flag = ISR70_policy_project_gi_sinai_housing_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_gi_sinai_housing_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_gi_sinai_housing_paid
-			clr_country_flag = ISR70_policy_project_gi_sinai_housing_active
 		}
 	}
 }
@@ -1165,35 +1674,44 @@ country_event = {
 	desc = ISR70P.1100.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_gi_sinai_families_migration_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					204 = { is_owned_by = ISR is_controlled_by = ISR state_population > 353 }
-				}
+				limit = { has_country_flag = ISR70_policy_gi_sinai_families_migration_active }
 				if = {
 					limit = {
-						check_variable = { ISR70_policy_gi_sinai_families_migration_steps < 59 }
+						213 = { is_controlled_by = ISR }
+						204 = { is_owned_by = ISR is_controlled_by = ISR state_population > 353 }
 					}
-					204 = { add_manpower = -333 }
-					213 = { add_manpower = 333 }
-					add_to_variable = { ISR70_policy_gi_sinai_families_migration_steps = 1 }
-					country_event = { id = ISR70P.1100 days = 30 }
+					if = {
+						limit = {
+							check_variable = { ISR70_policy_gi_sinai_families_migration_steps < 59 }
+						}
+						204 = { add_manpower = -333 }
+						213 = { add_manpower = 333 }
+						add_to_variable = { ISR70_policy_gi_sinai_families_migration_steps = 1 }
+						country_event = { id = ISR70P.1100 days = 30 }
+					}
+					else = {
+						204 = { add_manpower = -353 }
+						213 = { add_manpower = 353 }
+						set_country_flag = ISR70_policy_gi_sinai_families_migration_done
+						clr_country_flag = ISR70_policy_gi_sinai_families_migration_active
+					}
 				}
 				else = {
-					204 = { add_manpower = -353 }
-					213 = { add_manpower = 353 }
-					set_country_flag = ISR70_policy_gi_sinai_families_migration_done
 					clr_country_flag = ISR70_policy_gi_sinai_families_migration_active
+					remove_ideas = ISR70_policy_gi_sinai_families_services
 				}
-			}
-			else = {
-				clr_country_flag = ISR70_policy_gi_sinai_families_migration_active
-				remove_ideas = ISR70_policy_gi_sinai_families_services
 			}
 		}
 	}
@@ -1204,39 +1722,40 @@ country_event = {
 	desc = ISR70P.1023.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_gi_sinai_economy_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_project_gi_sinai_housing_done
-					can_staff_an_agriculture_district = yes
-					213 = {
-						free_building_slots = { building = agriculture_district size > 0 }
-					}
-					can_staff_an_industrial_complex = yes
-					213 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_gi_sinai_economy_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_project_gi_sinai_housing_done
+						can_staff_an_agriculture_district = yes
+						can_staff_an_industrial_complex = yes
 					}
 					213 = {
-						free_building_slots = { building = industrial_complex size > 1 }
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_gi_sinai_economy_done
 				}
-				213 = {
-					add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_gi_sinai_economy_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_gi_sinai_economy_done
+				clear_variable = ISR70_policy_project_gi_sinai_economy_paid
+				clr_country_flag = ISR70_policy_project_gi_sinai_economy_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_gi_sinai_economy_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_gi_sinai_economy_paid
-			clr_country_flag = ISR70_policy_project_gi_sinai_economy_active
 		}
 	}
 }
@@ -1246,42 +1765,55 @@ country_event = {
 	desc = ISR70P.1024.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_gi_canal_repair_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
+				limit = { has_country_flag = ISR70_policy_project_gi_canal_repair_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						213 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 213
+						213 = {
+							free_building_slots = { building = naval_base size > 0 province = 10099 }
+						}
+					}
 					213 = {
-						free_building_slots = { building = infrastructure size > 0 }
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = naval_base
+							level = 1
+							instant_build = yes
+							province = { id = 10099 }
+						}
 					}
-					has_full_control_of_state = 213
 					213 = {
-						free_building_slots = { building = naval_base size > 0 province = 10099 }
+						add_dynamic_modifier = { modifier = ISR70_policy_canal_repair_garrison }
 					}
+					set_country_flag = ISR70_policy_project_gi_canal_repair_done
 				}
-				213 = {
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
-					add_building_construction = {
-						type = naval_base
-						level = 1
-						instant_build = yes
-						province = { id = 10099 }
-					}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_gi_canal_repair_paid }
+					modify_treasury_effect = yes
 				}
-				213 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_canal_repair_garrison }
-				}
-				set_country_flag = ISR70_policy_project_gi_canal_repair_done
+				clear_variable = ISR70_policy_project_gi_canal_repair_paid
+				clr_country_flag = ISR70_policy_project_gi_canal_repair_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_gi_canal_repair_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_gi_canal_repair_paid
-			clr_country_flag = ISR70_policy_project_gi_canal_repair_active
 		}
 	}
 }
@@ -1291,35 +1823,44 @@ country_event = {
 	desc = ISR70P.1101.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_gi_canal_settlers_migration_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					204 = { is_owned_by = ISR is_controlled_by = ISR state_population > 250 }
-				}
+				limit = { has_country_flag = ISR70_policy_gi_canal_settlers_migration_active }
 				if = {
 					limit = {
-						check_variable = { ISR70_policy_gi_canal_settlers_migration_steps < 59 }
+						213 = { is_controlled_by = ISR }
+						204 = { is_owned_by = ISR is_controlled_by = ISR state_population > 250 }
 					}
-					204 = { add_manpower = -250 }
-					213 = { add_manpower = 250 }
-					add_to_variable = { ISR70_policy_gi_canal_settlers_migration_steps = 1 }
-					country_event = { id = ISR70P.1101 days = 30 }
+					if = {
+						limit = {
+							check_variable = { ISR70_policy_gi_canal_settlers_migration_steps < 59 }
+						}
+						204 = { add_manpower = -250 }
+						213 = { add_manpower = 250 }
+						add_to_variable = { ISR70_policy_gi_canal_settlers_migration_steps = 1 }
+						country_event = { id = ISR70P.1101 days = 30 }
+					}
+					else = {
+						204 = { add_manpower = -250 }
+						213 = { add_manpower = 250 }
+						set_country_flag = ISR70_policy_gi_canal_settlers_migration_done
+						clr_country_flag = ISR70_policy_gi_canal_settlers_migration_active
+					}
 				}
 				else = {
-					204 = { add_manpower = -250 }
-					213 = { add_manpower = 250 }
-					set_country_flag = ISR70_policy_gi_canal_settlers_migration_done
 					clr_country_flag = ISR70_policy_gi_canal_settlers_migration_active
+					remove_ideas = ISR70_policy_gi_canal_settlers_services
 				}
-			}
-			else = {
-				clr_country_flag = ISR70_policy_gi_canal_settlers_migration_active
-				remove_ideas = ISR70_policy_gi_canal_settlers_services
 			}
 		}
 	}
@@ -1330,38 +1871,41 @@ country_event = {
 	desc = ISR70P.1025.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_gi_canal_industry_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_project_gi_canal_repair_done
-					can_staff_an_industrial_complex = yes
-					213 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_gi_canal_industry_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_project_gi_canal_repair_done
+						can_staff_an_industrial_complex = yes
+						can_staff_an_dockyard = yes
+						213 = { is_coastal = yes }
 					}
-					can_staff_an_dockyard = yes
-					213 = { is_coastal = yes }
 					213 = {
-						free_building_slots = { building = dockyard size > 0 }
+						add_extra_state_shared_building_slots = 4
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
+					set_country_flag = ISR70_policy_project_gi_canal_industry_done
 				}
-				213 = {
-					add_extra_state_shared_building_slots = 2
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
-					add_building_construction = { type = dockyard level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_gi_canal_industry_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_gi_canal_industry_done
+				clear_variable = ISR70_policy_project_gi_canal_industry_paid
+				clr_country_flag = ISR70_policy_project_gi_canal_industry_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_gi_canal_industry_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_gi_canal_industry_paid
-			clr_country_flag = ISR70_policy_project_gi_canal_industry_active
 		}
 	}
 }
@@ -1371,29 +1915,38 @@ country_event = {
 	desc = ISR70P.1026.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_gi_canal_navigation_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_project_gi_canal_repair_done
+				limit = { has_country_flag = ISR70_policy_project_gi_canal_navigation_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_project_gi_canal_repair_done
+					}
+					213 = {  }
+					213 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_sinai_coastal_logistics }
+					}
+					set_country_flag = ISR70_policy_project_gi_canal_navigation_done
+					add_ideas = ISR70_policy_project_gi_canal_navigation_idea
 				}
-				213 = {  }
-				213 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_sinai_coastal_logistics }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_gi_canal_navigation_paid }
+					modify_treasury_effect = yes
 				}
-				set_country_flag = ISR70_policy_project_gi_canal_navigation_done
-				add_ideas = ISR70_policy_project_gi_canal_navigation_idea
+				clear_variable = ISR70_policy_project_gi_canal_navigation_paid
+				clr_country_flag = ISR70_policy_project_gi_canal_navigation_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_gi_canal_navigation_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_gi_canal_navigation_paid
-			clr_country_flag = ISR70_policy_project_gi_canal_navigation_active
 		}
 	}
 }
@@ -1407,16 +1960,47 @@ country_event = {
 		original_tag = EGY
 		IMP_is_1970_scenario = yes
 		ISR = { has_country_flag = ISR70_policy_equal_civil }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.410.a
 		ai_chance = { base = 2 }
-		ISR = { set_country_flag = ISR70_policy_council_agreed }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_council_agreed }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.410.b
 		ai_chance = { base = 5 }
-		ISR = { set_country_flag = ISR70_policy_council_declined }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_council_declined }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1429,16 +2013,47 @@ country_event = {
 		original_tag = EGY
 		IMP_is_1970_scenario = yes
 		ISR = { has_country_flag = ISR70_policy_equal_civil }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.411.a
 		ai_chance = { base = 2 }
-		ISR = { set_country_flag = ISR70_policy_property_claims_agreed }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_property_claims_agreed }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.411.b
 		ai_chance = { base = 3 }
-		ISR = { set_country_flag = ISR70_policy_property_claims_unresolved }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_property_claims_unresolved }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1451,16 +2066,47 @@ country_event = {
 		original_tag = EGY
 		IMP_is_1970_scenario = yes
 		ISR = { ISR70_policy_core_long_conditions = yes }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.412.a
 		ai_chance = { base = 1 }
-		ISR = { set_country_flag = ISR70_policy_local_status_accepted }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_local_status_accepted }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.412.b
 		ai_chance = { base = 6 }
-		ISR = { set_country_flag = ISR70_policy_local_status_rejected }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_local_status_rejected }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1473,16 +2119,47 @@ country_event = {
 		original_tag = EGY
 		IMP_is_1970_scenario = yes
 		ISR = { has_country_flag = ISR70_policy_local_status_accepted }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.413.a
 		ai_chance = { base = 1 }
-		ISR = { set_country_flag = ISR70_policy_egypt_status_accepted }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_egypt_status_accepted }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.413.b
 		ai_chance = { base = 10 }
-		ISR = { set_country_flag = ISR70_policy_egypt_status_rejected }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_egypt_status_rejected }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1491,33 +2168,46 @@ country_event = {
 	desc = ISR70P.1027.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_occ_security_roads_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_occupation_special
-					213 = {
-						free_building_slots = { building = infrastructure size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_occ_security_roads_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_occupation_special
+						213 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
 					}
+					213 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+					}
+					213 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_occupation_roads }
+					}
+					set_country_flag = ISR70_policy_project_occ_security_roads_done
 				}
-				213 = {
-					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_occ_security_roads_paid }
+					modify_treasury_effect = yes
 				}
-				213 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_occupation_roads }
-				}
-				set_country_flag = ISR70_policy_project_occ_security_roads_done
+				clear_variable = ISR70_policy_project_occ_security_roads_paid
+				clr_country_flag = ISR70_policy_project_occ_security_roads_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_occ_security_roads_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_occ_security_roads_paid
-			clr_country_flag = ISR70_policy_project_occ_security_roads_active
 		}
 	}
 }
@@ -1531,16 +2221,47 @@ country_event = {
 		original_tag = EGY
 		IMP_is_1970_scenario = yes
 		ISR = { has_country_flag = ISR70_policy_occupation_special }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.414.a
 		ai_chance = { base = 1 }
-		ISR = { set_country_flag = ISR70_policy_delegated_agreed }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_delegated_agreed }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.414.b
 		ai_chance = { base = 5 }
-		ISR = { set_country_flag = ISR70_policy_delegated_declined }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_delegated_declined }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1549,35 +2270,41 @@ country_event = {
 	desc = ISR70P.1028.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_occ_occupation_industry_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					has_country_flag = ISR70_policy_occupation_special
-					can_staff_an_industrial_complex = yes
-					213 = {
-						free_building_slots = { building = industrial_complex size > 0 }
+				limit = { has_country_flag = ISR70_policy_project_occ_occupation_industry_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_occupation_special
+						can_staff_an_industrial_complex = yes
 					}
+					213 = {
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+					}
+					213 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_occupation_industry_garrison }
+					}
+					set_country_flag = ISR70_policy_project_occ_occupation_industry_done
 				}
-				213 = {
-					add_extra_state_shared_building_slots = 1
-					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_occ_occupation_industry_paid }
+					modify_treasury_effect = yes
 				}
-				213 = {
-					add_dynamic_modifier = { modifier = ISR70_policy_occupation_industry_garrison }
-				}
-				set_country_flag = ISR70_policy_project_occ_occupation_industry_done
+				clear_variable = ISR70_policy_project_occ_occupation_industry_paid
+				clr_country_flag = ISR70_policy_project_occ_occupation_industry_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_occ_occupation_industry_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_occ_occupation_industry_paid
-			clr_country_flag = ISR70_policy_project_occ_occupation_industry_active
 		}
 	}
 }
@@ -1587,35 +2314,44 @@ country_event = {
 	desc = ISR70P.1102.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_rad_mafdal_settlers_migration_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					204 = { is_owned_by = ISR is_controlled_by = ISR state_population > 305 }
-				}
+				limit = { has_country_flag = ISR70_policy_rad_mafdal_settlers_migration_active }
 				if = {
 					limit = {
-						check_variable = { ISR70_policy_rad_mafdal_settlers_migration_steps < 35 }
+						213 = { is_controlled_by = ISR }
+						204 = { is_owned_by = ISR is_controlled_by = ISR state_population > 305 }
 					}
-					204 = { add_manpower = -277 }
-					213 = { add_manpower = 277 }
-					add_to_variable = { ISR70_policy_rad_mafdal_settlers_migration_steps = 1 }
-					country_event = { id = ISR70P.1102 days = 30 }
+					if = {
+						limit = {
+							check_variable = { ISR70_policy_rad_mafdal_settlers_migration_steps < 35 }
+						}
+						204 = { add_manpower = -277 }
+						213 = { add_manpower = 277 }
+						add_to_variable = { ISR70_policy_rad_mafdal_settlers_migration_steps = 1 }
+						country_event = { id = ISR70P.1102 days = 30 }
+					}
+					else = {
+						204 = { add_manpower = -305 }
+						213 = { add_manpower = 305 }
+						set_country_flag = ISR70_policy_rad_mafdal_settlers_migration_done
+						clr_country_flag = ISR70_policy_rad_mafdal_settlers_migration_active
+					}
 				}
 				else = {
-					204 = { add_manpower = -305 }
-					213 = { add_manpower = 305 }
-					set_country_flag = ISR70_policy_rad_mafdal_settlers_migration_done
 					clr_country_flag = ISR70_policy_rad_mafdal_settlers_migration_active
+					remove_ideas = ISR70_policy_rad_mafdal_settlers_services
 				}
-			}
-			else = {
-				clr_country_flag = ISR70_policy_rad_mafdal_settlers_migration_active
-				remove_ideas = ISR70_policy_rad_mafdal_settlers_services
 			}
 		}
 	}
@@ -1626,16 +2362,47 @@ country_event = {
 	desc = ISR70P.420.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { original_tag = EGY IMP_is_1970_scenario = yes }
+	trigger = { original_tag = EGY IMP_is_1970_scenario = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	option = {
 		name = ISR70P.420.a
 		ai_chance = { base = 2 }
-		ISR = { set_country_flag = ISR70_policy_mafdal_purchase_accepted }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_mafdal_purchase_accepted }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.420.b
 		ai_chance = { base = 3 }
-		ISR = { set_country_flag = ISR70_policy_mafdal_purchase_rejected }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_mafdal_purchase_rejected }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1644,26 +2411,35 @@ country_event = {
 	desc = ISR70P.1029.d
 	picture = GFX_israeli_government_event
 	is_triggered_only = yes
-	trigger = { always = yes }
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
 	hidden = yes
 	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
 		if = {
-			limit = { has_country_flag = ISR70_policy_project_mafdal_purchase_active }
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
 			if = {
-				limit = {
-					213 = { is_controlled_by = ISR }
-					western_autocrats_are_in_power = yes
-					has_country_flag = ISR70_policy_mafdal_purchase_accepted
+				limit = { has_country_flag = ISR70_policy_project_mafdal_purchase_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						western_autocrats_are_in_power = yes
+						has_country_flag = ISR70_policy_mafdal_purchase_accepted
+					}
+					213 = { add_extra_state_shared_building_slots = 1 }
+					set_country_flag = ISR70_policy_project_mafdal_purchase_done
 				}
-				213 = { add_extra_state_shared_building_slots = 1 }
-				set_country_flag = ISR70_policy_project_mafdal_purchase_done
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_mafdal_purchase_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_mafdal_purchase_paid
+				clr_country_flag = ISR70_policy_project_mafdal_purchase_active
 			}
-			else = {
-				set_temp_variable = { treasury_change = ISR70_policy_project_mafdal_purchase_paid }
-				modify_treasury_effect = yes
-			}
-			clear_variable = ISR70_policy_project_mafdal_purchase_paid
-			clr_country_flag = ISR70_policy_project_mafdal_purchase_active
 		}
 	}
 }
@@ -1677,17 +2453,48 @@ country_event = {
 		IMP_is_1970_scenario = yes
 		NOT = { original_tag = ISR }
 		ISR = { has_country_flag = ISR70_policy_expulsion_damage }
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.421.a
 		ai_chance = { base = 4 }
-		send_embargo = ISR
-		add_opinion_modifier = { target = ISR modifier = ISR70_policy_expulsion_condemnation }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			send_embargo = ISR
+			add_opinion_modifier = { target = ISR modifier = ISR70_policy_expulsion_condemnation }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.421.b
 		ai_chance = { base = 3 }
-		add_opinion_modifier = { target = ISR modifier = ISR70_policy_expulsion_condemnation }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			add_opinion_modifier = { target = ISR modifier = ISR70_policy_expulsion_condemnation }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
 	}
 }
 country_event = {
@@ -1703,16 +2510,765 @@ country_event = {
 			NOT = { has_country_flag = ISR70_policy_greater_mandate }
 			NOT = { has_country_flag = ISR70_policy_inalienable_land }
 		}
+	
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
 	}
 	option = {
 		name = ISR70P.430.a
 		ai_chance = { base = 5 }
-		ISR = { set_country_flag = ISR70_egypt_peace_signed ISR70_implement_egypt_peace = yes }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_egypt_peace_signed ISR70_implement_egypt_peace = yes }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
 	}
 	option = {
 		name = ISR70P.430.b
 		ai_chance = { base = 1 }
-		ISR = { set_country_flag = ISR70_policy_withdrawal_rejected }
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			ISR = { set_country_flag = ISR70_policy_withdrawal_rejected }
+		}
+	
+		trigger = {
+			NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+		}
+	}
+
+	option = {
+		name = ISR2_legacy_dismiss
+		trigger = {
+			OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } }
+		}
+		ai_chance = { base = 100 }
+	}
+}
+country_event = {
+	id = ISR70P.1030
+	title = ISR70P.1030.t
+	desc = ISR70P.1030.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_settlement_extension_1_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_settlement_unilateral
+						NOT = { has_country_flag = ISR70_policy_binding_settlement_ceiling }
+						has_country_flag = ISR70_policy_project_entrench_network_208_done
+						can_staff_an_agriculture_district = yes
+						208 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 208
+						208 = {
+							free_building_slots = { building = bunker size > 0 province = 7107 }
+						}
+					}
+					208 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 7107 }
+						}
+					}
+					208 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_extension_1_208_supply }
+						remove_resistance_target = 209081
+						add_resistance_target = {
+							id = 209081
+							amount = 4
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_settlement_extension_1_208_resistance_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_extension_1_208_done
+					add_ideas = ISR70_policy_project_settlement_extension_1_208_idea
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_extension_1_208_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_extension_1_208_paid
+				clr_country_flag = ISR70_policy_project_settlement_extension_1_208_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1031
+	title = ISR70P.1031.t
+	desc = ISR70P.1031.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_settlement_extension_2_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_settlement_unilateral
+						NOT = { has_country_flag = ISR70_policy_binding_settlement_ceiling }
+						has_country_flag = ISR70_policy_project_settlement_extension_1_208_done
+						can_staff_an_agriculture_district = yes
+						208 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 208
+						208 = {
+							free_building_slots = { building = bunker size > 0 province = 7107 }
+						}
+					}
+					208 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 7107 }
+						}
+					}
+					208 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_extension_2_208_supply }
+						remove_resistance_target = 209082
+						add_resistance_target = {
+							id = 209082
+							amount = 4
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_settlement_extension_2_208_resistance_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_extension_2_208_done
+					add_ideas = ISR70_policy_project_settlement_extension_2_208_idea
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_extension_2_208_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_extension_2_208_paid
+				clr_country_flag = ISR70_policy_project_settlement_extension_2_208_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1032
+	title = ISR70P.1032.t
+	desc = ISR70P.1032.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_settlement_extension_3_208_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_208
+						208 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_settlement_unilateral
+						NOT = { has_country_flag = ISR70_policy_binding_settlement_ceiling }
+						has_country_flag = ISR70_policy_project_settlement_extension_2_208_done
+						can_staff_an_agriculture_district = yes
+						208 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 208
+						208 = {
+							free_building_slots = { building = bunker size > 0 province = 7107 }
+						}
+					}
+					208 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 7107 }
+						}
+					}
+					208 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_extension_3_208_supply }
+						remove_resistance_target = 209083
+						add_resistance_target = {
+							id = 209083
+							amount = 4
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_settlement_extension_3_208_resistance_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_extension_3_208_done
+					add_ideas = ISR70_policy_project_settlement_extension_3_208_idea
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_extension_3_208_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_extension_3_208_paid
+				clr_country_flag = ISR70_policy_project_settlement_extension_3_208_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1033
+	title = ISR70P.1033.t
+	desc = ISR70P.1033.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_settlement_extension_1_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_settlement_unilateral
+						NOT = { has_country_flag = ISR70_policy_binding_settlement_ceiling }
+						has_country_flag = ISR70_policy_project_entrench_network_209_done
+						can_staff_an_agriculture_district = yes
+						209 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 209
+						209 = {
+							free_building_slots = { building = bunker size > 0 province = 13207 }
+						}
+					}
+					209 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 13207 }
+						}
+					}
+					209 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_extension_1_209_supply }
+						remove_resistance_target = 209091
+						add_resistance_target = {
+							id = 209091
+							amount = 4
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_settlement_extension_1_209_resistance_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_extension_1_209_done
+					add_ideas = ISR70_policy_project_settlement_extension_1_209_idea
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_extension_1_209_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_extension_1_209_paid
+				clr_country_flag = ISR70_policy_project_settlement_extension_1_209_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1034
+	title = ISR70P.1034.t
+	desc = ISR70P.1034.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_settlement_extension_2_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_settlement_unilateral
+						NOT = { has_country_flag = ISR70_policy_binding_settlement_ceiling }
+						has_country_flag = ISR70_policy_project_settlement_extension_1_209_done
+						can_staff_an_agriculture_district = yes
+						209 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 209
+						209 = {
+							free_building_slots = { building = bunker size > 0 province = 13207 }
+						}
+					}
+					209 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 13207 }
+						}
+					}
+					209 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_extension_2_209_supply }
+						remove_resistance_target = 209092
+						add_resistance_target = {
+							id = 209092
+							amount = 4
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_settlement_extension_2_209_resistance_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_extension_2_209_done
+					add_ideas = ISR70_policy_project_settlement_extension_2_209_idea
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_extension_2_209_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_extension_2_209_paid
+				clr_country_flag = ISR70_policy_project_settlement_extension_2_209_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1035
+	title = ISR70P.1035.t
+	desc = ISR70P.1035.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_settlement_extension_3_209_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						has_country_flag = ISR70_policy_target_209
+						209 = { is_owned_by = PAL }
+						has_country_flag = ISR70_policy_settlement_unilateral
+						NOT = { has_country_flag = ISR70_policy_binding_settlement_ceiling }
+						has_country_flag = ISR70_policy_project_settlement_extension_2_209_done
+						can_staff_an_agriculture_district = yes
+						209 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 209
+						209 = {
+							free_building_slots = { building = bunker size > 0 province = 13207 }
+						}
+					}
+					209 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 13207 }
+						}
+					}
+					209 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_settlement_extension_3_209_supply }
+						remove_resistance_target = 209093
+						add_resistance_target = {
+							id = 209093
+							amount = 4
+							occupied = PAL
+							occupier = ISR
+							tooltip = ISR70_policy_settlement_extension_3_209_resistance_tt
+						}
+					}
+					set_country_flag = ISR70_policy_project_settlement_extension_3_209_done
+					add_ideas = ISR70_policy_project_settlement_extension_3_209_idea
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_settlement_extension_3_209_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_settlement_extension_3_209_paid
+				clr_country_flag = ISR70_policy_project_settlement_extension_3_209_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1036
+	title = ISR70P.1036.t
+	desc = ISR70P.1036.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_controlled_west_bank_active }
+				if = {
+					limit = {
+						208 = { is_controlled_by = ISR }
+						OR = {
+							208 = { is_owned_by = PAL }
+							208 = { is_owned_by = ISR }
+						}
+						NOT = {
+							AND = {
+								has_country_flag = ISR70_policy_target_208
+								OR = {
+									has_country_flag = ISR70_policy_freeze_agreed
+									has_country_flag = ISR70_policy_binding_settlement_ceiling
+								}
+							}
+						}
+						can_staff_an_agriculture_district = yes
+						208 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 208
+						208 = {
+							free_building_slots = { building = bunker size > 0 province = 7107 }
+						}
+					}
+					208 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 7107 }
+						}
+					}
+					208 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_controlled_settlement_208 scope = ISR }
+					}
+					set_country_flag = ISR70_policy_project_controlled_west_bank_done
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_controlled_west_bank_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_controlled_west_bank_paid
+				clr_country_flag = ISR70_policy_project_controlled_west_bank_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1037
+	title = ISR70P.1037.t
+	desc = ISR70P.1037.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_controlled_gaza_active }
+				if = {
+					limit = {
+						209 = { is_controlled_by = ISR }
+						OR = {
+							209 = { is_owned_by = PAL }
+							209 = { is_owned_by = ISR }
+						}
+						NOT = {
+							AND = {
+								has_country_flag = ISR70_policy_target_209
+								OR = {
+									has_country_flag = ISR70_policy_freeze_agreed
+									has_country_flag = ISR70_policy_binding_settlement_ceiling
+								}
+							}
+						}
+						can_staff_an_agriculture_district = yes
+						209 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 209
+						209 = {
+							free_building_slots = { building = bunker size > 0 province = 13207 }
+						}
+					}
+					209 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 13207 }
+						}
+					}
+					209 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_controlled_settlement_209 scope = ISR }
+					}
+					set_country_flag = ISR70_policy_project_controlled_gaza_done
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_controlled_gaza_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_controlled_gaza_paid
+				clr_country_flag = ISR70_policy_project_controlled_gaza_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1038
+	title = ISR70P.1038.t
+	desc = ISR70P.1038.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_controlled_sinai_active }
+				if = {
+					limit = {
+						213 = { is_controlled_by = ISR }
+						OR = {
+							213 = { is_owned_by = EGY }
+							213 = { is_owned_by = ISR }
+						}
+						can_staff_an_agriculture_district = yes
+						213 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 213
+						213 = {
+							free_building_slots = { building = bunker size > 0 province = 10099 }
+						}
+					}
+					213 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 10099 }
+						}
+					}
+					213 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_controlled_settlement_213 scope = ISR }
+					}
+					set_country_flag = ISR70_policy_project_controlled_sinai_done
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_controlled_sinai_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_controlled_sinai_paid
+				clr_country_flag = ISR70_policy_project_controlled_sinai_active
+			}
+		}
+	}
+}
+country_event = {
+	id = ISR70P.1039
+	title = ISR70P.1039.t
+	desc = ISR70P.1039.d
+	picture = GFX_israeli_government_event
+	is_triggered_only = yes
+	trigger = { always = yes 
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+	}
+	hidden = yes
+	immediate = {
+		# IMPERIA COLD WAR — Retired Israel callback guard.
+		if = {
+			limit = {
+				NOT = { OR = { has_global_flag = ISR2_legacy_replaced ISR = { tag = ISR has_country_flag = ISR2_enabled } } }
+			}
+			if = {
+				limit = { has_country_flag = ISR70_policy_project_controlled_golan_active }
+				if = {
+					limit = {
+						587 = { is_controlled_by = ISR }
+						OR = {
+							587 = { is_owned_by = SYR }
+							587 = { is_owned_by = ISR }
+						}
+						can_staff_an_agriculture_district = yes
+						587 = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt
+								check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+							}
+						}
+						has_full_control_of_state = 587
+						587 = {
+							free_building_slots = { building = bunker size > 0 province = 13205 }
+						}
+					}
+					587 = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+						add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = { id = 13205 }
+						}
+					}
+					587 = {
+						add_dynamic_modifier = { modifier = ISR70_policy_controlled_settlement_587 scope = ISR }
+					}
+					set_country_flag = ISR70_policy_project_controlled_golan_done
+				}
+				else = {
+					set_temp_variable = { treasury_change = ISR70_policy_project_controlled_golan_paid }
+					modify_treasury_effect = yes
+				}
+				clear_variable = ISR70_policy_project_controlled_golan_paid
+				clr_country_flag = ISR70_policy_project_controlled_golan_active
+			}
+		}
 	}
 }
 country_event = {

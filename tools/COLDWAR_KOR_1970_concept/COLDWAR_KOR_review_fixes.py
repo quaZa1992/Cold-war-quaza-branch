@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: documented concept-review corrections; no runtime writes.
+# IMPERIA COLD WAR — Cold War: documented concept-review corrections; no runtime writes.
 """Apply historical, reachability and spatial review to the single design model."""
 P='COLDWAR_KOR_'
 

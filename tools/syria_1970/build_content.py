@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Syrian construction grant capacity integration.
 # IMPERIA CW — Cold War: Syria 1970 content imported from quaZa.
 """Compile Syria's approved 1970 programme, preserving the reviewed focus geometry.
 
@@ -11,10 +12,13 @@ import json
 import os
 import re
 import tempfile
+import sys
 from presentation import availability
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT/'tools'))
+from building_grants.remaining import repair_syria_output
 SPEC = importlib.util.spec_from_file_location('syria_script_format', ROOT/'tools/israel_1970/script_format.py')
 FORMAT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(FORMAT)
@@ -49,6 +53,7 @@ def write(relative, source, bom=False):
             source = PROJECT_MARKER+source
     if path.suffix == '.txt' and relative.startswith(('common/', 'events/')):
         source = FORMAT.format_script(source)
+    source = repair_syria_output(relative, source)
     payload = source.encode('utf-8-sig' if bom else 'utf-8')
     if not path.exists() or path.read_bytes() != payload:
         with tempfile.NamedTemporaryFile(dir=path.parent, prefix='.__syr70_', delete=False) as stream:

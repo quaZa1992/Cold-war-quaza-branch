@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # South Korea 1970–1990 — installed implementation
 
 Installed into `mdcoldwar-main` on 25 October 2026. The approved 298-focus design is now loaded by the 1970 South Korean country history and protected from the generic-tree fallback. The modern MD tree remains available to its original scenario.

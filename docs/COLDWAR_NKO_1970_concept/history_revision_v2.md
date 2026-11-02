@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # DPRK foreign-diplomacy concepts, 1970–1994: historical revision
 
 This supplement supports concept work only. Historical claims below are separated from proposed game abstraction. The date window ends with Kim Il Sung’s death on 8 July 1994; the later famine and fully developed Songun framework must not be projected backward into the 1970 start.

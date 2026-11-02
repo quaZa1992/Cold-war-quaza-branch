@@ -1,8 +1,17 @@
-# IMPERIA CW — Cold War: israel 1970 — player rewards.
+# IMPERIA COLD WAR — Israel 1970 numeric reward inspector.
 """Plain English reward descriptions, with the same units as MD modifiers."""
 import re
 
 LABELS={
+ 'resistance_target':'Resistance Target','local_factories':'Local Factory Access',
+ 'monthly_population':'Population Growth',
+ 'total_workforce_modifier':'Available Workforce','agricolture_productivity_modifier':'Agricultural Productivity',
+ 'civilian_factories_productivity':'Civilian Industry Productivity',
+ 'tax_gain_multiplier_modifier':'Corporate Tax Income','corporate_tax_income_multiplier_modifier':'Corporate Tax Income',
+ 'air_accidents_factor':'Air Accident Chance','airforce_personnel_cost_multiplier_modifier':'Air Force Personnel Cost',
+ 'army_armor_speed_factor':'Armor Division Speed','fuel_gain_factor':'Fuel Gain','naval_coordination':'Fleet Coordination',
+ 'navy_personnel_cost_multiplier_modifier':'Navy Personnel Cost','positioning':'Naval Positioning',
+ 'production_factory_efficiency_gain_factor':'Production Efficiency Growth','special_forces_cap':'Special Forces Capacity',
  'offices_worker_requirement_modifier':'Office Worker Requirement','offices_productivity':'Office Productivity',
  'police_cost_multiplier_modifier':'Police Cost','personnel_cost_multiplier_modifier':'Personnel Cost',
  'local_supplies_for_controller':'Local Supplies for Controller','required_garrison_factor':'Local Garrison Requirement',
@@ -34,6 +43,7 @@ GROUPS={'labour_unions':'Labor Unions','small_medium_business_owners':'Small and
 def modifier_line(key,value):
     assert key in LABELS,('Missing player-facing modifier label',key)
     if key in ('productivity_growth_modifier','max_dig_in'):unit='';amount=value
+    elif key in ('resistance_target','local_factories'):unit=' percentage points';amount=value*100
     elif key=='interest_rate_multiplier_modifier':unit=' percentage points';amount=value
     else:unit='%';amount=value*100
     return LABELS[key]+': '+f'{amount:+g}'+unit

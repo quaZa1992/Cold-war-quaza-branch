@@ -1,33 +1,48 @@
-# IMPERIA CW — Cold War: israel 1970 — layout.
-"""Compact MD-style branch blocks with relative anchors, shared with the preview."""
+# IMPERIA COLD WAR — Israel 1970 national programme layout.
+"""Native focus clusters: national institutions, political families and policy.
+
+Positions are authored once here and consumed by both the game compiler and the
+interactive preview. This module changes geometry only; the original grouped
+prerequisites, exclusive choices and government gates remain intact.
+"""
 
 COMMON = {
- 'state': {'january_1970':(0,0),'knesset':(0,1),'unity_cabinet':(-2,2),'narrow_cabinet':(2,2),'civil_service':(0,3),'oversight':(0,4),'local_councils':(-3,4),'central_planning':(3,4),'basic_laws':(0,5)},
- 'economy': {'economic_plan':(0,0),'water':(-6,1),'negev_agriculture':(-5,2),'water_maintenance':(-8,2),'haifa_industry':(0,1),'tel_aviv_offices':(6,1),'negev_roads':(-5,3),'power_grid':(0,2),'exports':(6,2),'import_substitution':(-2,2),'export_specialization':(2,2),'diaspora_bonds':(6,3),'investment_scrutiny':(6,4),'civil_electronics':(0,4),'technion':(0,5),'sme_credit':(6,5),'civil_plant':(0,6),'fiscal_review':(6,6),'steady_budget':(5,7),'development_budget':(7,7)},
- 'society': {'social_contract':(0,0),'vocational':(-5,1),'development_towns':(-5,2),'absorption_reform':(-5,3),'arab_citizens':(0,1),'equal_local_services':(-1,2),'local_autonomy':(1,2),'religion_state':(5,1),'religious_compromise':(4,2),'civil_marriage':(6,2),'national_service':(5,3),'volunteer_service':(4,4),'service_expansion':(6,4),'universities':(-7,2),'public_health':(-3,3)},
- 'defense': {'staff':(0,0),'reserve_system':(-9,1),'defensive_depth':(-11,2),'maneuver':(-9,2),'armour_programme':(-3,1),'survivability':(-4,2),'armour_mobility':(-2,2),'imi':(-3,3),'artillery':(-7,2),'engineers':(-7,3),'special_forces':(-7,4),'air_staff':(5,1),'foreign_aircraft':(4,2),'local_aircraft':(6,2),'air_maintenance':(5,3),'airfield':(5,4),'air_defense':(8,2),'naval_staff':(12,1),'missile_boats':(11,2),'submarines':(13,2),'shipyards':(12,3),'intelligence':(0,5),'intelligence_analysis':(-2,6),'intelligence_operations':(2,6),'civil_defense':(-15,2),'preparedness':(-10,5)},
- 'diplomacy': {'foreign_policy':(0,0),'us_channel':(-9,1),'us_security':(-10,2),'us_civil':(-8,2),'france_channel':(-4,1),'european_trade':(-4,2),'soviet_channel':(0,1),'soviet_dialogue':(0,2),'independent_diplomacy':(5,1),'africa_contacts':(4,2),'jordan_backchannel':(10,1),'iran_contacts':(14,1),'oil_security':(14,2),'nuclear_policy':(7,2),'keep_ambiguity':(6,3),'nuclear_transparency':(8,3)},
- 'territories': {'suez':(0,0),'limited_attrition':(-2,1),'deep_raids':(2,1),'rogers':(0,2),'ceasefire':(-2,3),'armed_stalemate':(2,3),'territorial_policy':(0,4),'all_on':(-5,5),'territorial_maximalism':(-2,5),'regional_compromise':(5,5),'sinai_negotiation':(-6,6),'westbank_autonomy':(-3,6),'golan_review':(3,7),'gaza_services':(6,7),'egypt_peace':(-6,7),'regional_normalization':(-5,8),'territory_administration':(0,6),'annexation_review':(0,7)},
+ 'state': {'january_1970':(0,0),'knesset':(0,1),'unity_cabinet':(-3,2),'narrow_cabinet':(3,2),'civil_service':(0,3),'oversight':(0,4),'local_councils':(-4,4),'central_planning':(4,4),'basic_laws':(0,5)},
+ 'economy': {'economic_plan':(0,0),'water':(-7,1),'negev_agriculture':(-6,2),'water_maintenance':(-9,2),'haifa_industry':(0,1),'tel_aviv_offices':(7,1),'negev_roads':(-6,3),'power_grid':(0,2),'exports':(7,2),'import_substitution':(-2,2),'export_specialization':(2,2),'diaspora_bonds':(7,3),'investment_scrutiny':(7,4),'civil_electronics':(0,3),'technion':(0,4),'sme_credit':(7,5),'civil_plant':(0,5),'fiscal_review':(7,6),'steady_budget':(6,7),'development_budget':(8,7)},
+ 'society': {'social_contract':(0,0),'vocational':(-4,1),'development_towns':(-4,2),'absorption_reform':(-4,3),'arab_citizens':(0,1),'equal_local_services':(-1,2),'local_autonomy':(1,2),'religion_state':(4,1),'religious_compromise':(3,2),'civil_marriage':(5,2),'national_service':(4,3),'volunteer_service':(3,4),'service_expansion':(5,4),'universities':(-7,2),'public_health':(-1,3)},
+ 'defense': {'staff':(0,0),'reserve_system':(-12,1),'defensive_depth':(-14,2),'maneuver':(-12,2),'armour_programme':(-2,1),'survivability':(-3,2),'armour_mobility':(-1,2),'imi':(-2,3),'artillery':(-6,2),'engineers':(-6,3),'special_forces':(-6,4),'air_staff':(7,1),'foreign_aircraft':(6,2),'local_aircraft':(8,2),'air_maintenance':(7,3),'airfield':(7,4),'air_defense':(-9,2),'naval_staff':(14,1),'missile_boats':(13,2),'submarines':(15,2),'shipyards':(14,3),'intelligence':(0,5),'intelligence_analysis':(-3,6),'intelligence_operations':(3,6),'civil_defense':(-17,2),'preparedness':(-12,4)},
+ 'diplomacy': {'foreign_policy':(0,0),'us_channel':(-10,1),'us_security':(-11,2),'us_civil':(-9,2),'france_channel':(-5,1),'european_trade':(-5,2),'soviet_channel':(0,1),'soviet_dialogue':(0,2),'independent_diplomacy':(5,1),'africa_contacts':(4,2),'jordan_backchannel':(10,1),'iran_contacts':(14,1),'oil_security':(14,2),'nuclear_policy':(7,2),'keep_ambiguity':(6,3),'nuclear_transparency':(8,3)},
+ 'territories': {'suez':(-10,0),'limited_attrition':(-15,1),'deep_raids':(-11,1),'rogers':(-7,1),'ceasefire':(-7,2),'armed_stalemate':(-13,2),'territorial_policy':(4,0),'all_on':(0,1),'territorial_maximalism':(4,1),'regional_compromise':(10,1),'sinai_negotiation':(0,2),'westbank_autonomy':(3,2),'golan_review':(13,1),'gaza_services':(16,1),'egypt_peace':(0,3),'regional_normalization':(2,4),'territory_administration':(6,2),'annexation_review':(6,3)},
 }
 EXTRA = {'alignment_balance':(-6,2),'golda_labour':(-7,3),'golda_manager':(-5,3),'golda_panthers':(-6,4),'golda_housing':(-6,5),'golda_succession':(0,5),'rabin_cabinet':(-1,6),'peres_cabinet':(1,6),'gahal_identity':(-6,2),'gahal_coalition':(-7,3),'likud_foundation':(-5,3)}
 
-# Policy branches extend below the established tree in two compact rows. Each
-# branch has its own local coordinate system, so its ODER lanes remain local.
+# A single policy terrace follows the political families. Read left to right:
+# citizenship, development finance, settlements, Sinai, civil status and the
+# radical alternatives. Keep the authored policy lanes and their visible forks.
 POLICY_ORIGINS = {
- 'policy_citizens':(4,26),'policy_settlements':(44,26),'policy_finance':(84,26),
- 'policy_greater':(4,42),'policy_occupation':(44,42),'policy_radicals':(84,42),
+ 'policy_citizens':(12,26),'policy_finance':(39,26),
+ 'policy_settlements':(67,26),'policy_greater':(92,26),
+ 'policy_occupation':(110,26),'policy_radicals':(135,26),
+ 'policy_presence':(67,36),
 }
 
-# Match Russia's use of independent thematic roots and offsets from local
-# anchors. Party programmes occupy two tiers rather than one 457-column strip.
+# National branches occupy the upper terrace. The Knesset anchors the centre,
+# social and economic programmes lie to its left, military and foreign policy
+# to its right. Four political families below them remain inspectable together.
+# Larger Alignment and Gahal footprints receive their own western-family space.
 ORIGINS={
- 'state':(34,0),'economy':(13,1),'society':(59,1),
- 'diplomacy':(83,1),'defense':(110,1),'territories':(110,9),
- 'party_3':(9,10),'party_1':(21,10),'party_0':(11,17),'party_2':(19,17),
- 'party_4':(32,7),'party_5':(40,7),'party_6':(32,12),'party_7':(40,12),
- 'party_12':(49,7),'party_13':(57,7),'party_14':(65,7),'party_15':(73,7),
- 'party_16':(49,12),'party_17':(57,12),'party_18':(65,12),'party_19':(73,12),
- 'party_20':(82,7),'party_21':(90,7),'party_22':(82,12),'party_23':(90,12),
+ 'state':(53,0),'economy':(15,0),'society':(37,0),
+ 'defense':(83,0),'diplomacy':(121,0),'territories':(121,7),
+ 'party_3':(14,10),'party_1':(29,10),
+ 'party_0':(12,18),'party_2':(25,18),
+ 'party_4':(44,10),'party_5':(55,10),
+ 'party_6':(44,17),'party_7':(55,17),
+ 'party_12':(71,10),'party_13':(82,10),
+ 'party_14':(93,10),'party_15':(104,10),
+ 'party_16':(71,17),'party_17':(82,17),
+ 'party_18':(93,17),'party_19':(104,17),
+ 'party_20':(119,18),'party_21':(130,18),
+ 'party_22':(119,22),'party_23':(130,22),
  **POLICY_ORIGINS,
 }
 
@@ -107,4 +122,4 @@ def apply_layout(nodes, groups, root):
         else:
             n['relative_position_id']=anchor
             n['script_xy']=[n['xy'][axis]-by_id[anchor]['xy'][axis] for axis in (0,1)]
-    return {'revision':6,'x_unit':80,'y_unit':190,'node_width':148,'node_height':160,'icons':{},'coordinate_system':'Resolved MD coordinates. Policy branches are compact local blocks below the original tree; within-block ODER prerequisites stay visible and cross-block requirements remain availability gates.'}
+    return {'revision':10,'x_unit':80,'y_unit':190,'node_width':148,'node_height':160,'icons':{},'initial_show_position':[53,0],'continuous_focus_position':[0,2900],'coordinate_system':'Resolved MD coordinates. National institutions form the upper terrace; party families occupy the middle; six policy programmes form the lower terrace, with external associations and controlled-state development stacked beneath them. Within-block OR prerequisites stay visible and cross-block requirements remain availability gates.'}

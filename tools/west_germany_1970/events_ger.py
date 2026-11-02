@@ -1,4 +1,5 @@
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Retire Western integration and Moscow backing point mechanics.
 """West German events: Bonn politics, terrorism, economy, society and scandals."""
 from cw_lib import *
 from roster import requirement
@@ -82,11 +83,12 @@ E(f"{EVG}.21", "The Motion Fails",
      f"if = {{ limit = {{ {SPD} check_variable = {{ cwger_stasi_penetration > 45 }} }} {v('cwger_scandal', 8)} }}",
      f"{P}_update_bundestag = yes"))])
 
+# IMPERIA CW — Cold War: A player-chosen Barzel government has no calendar expiry.
 E(f"{EVG}.22", "A New Chancellor",
   "The motion carries. Without an election, without a coalition agreement worth the name, the Federal Republic has a new head of government - the first time Article 67 has worked as its authors intended.",
   "GFX_bundestag",
   [O("The opposition takes over.", J("set_variable = { cwger_defectors = 0 }",
-     f"if = {{ limit = {{ {SPD} }} if = {{ limit = {{ date < 1976.1.1 check_variable = {{ cwger_cdu_leader = 1 }} }} set_country_flag = {P}_barzel_government }} {gov(1, [2])} }}",
+     f"if = {{ limit = {{ {SPD} }} if = {{ limit = {{ check_variable = {{ cwger_cdu_leader = 1 }} }} set_country_flag = {P}_barzel_government }} {gov(1, [2])} }}",
      f"else = {{ {gov(3, [2])} }}", stab(-0.03)))])
 
 E(f"{EVG}.23", "The Bundestag Is Dissolved",
@@ -95,6 +97,7 @@ E(f"{EVG}.23", "The Bundestag Is Dissolved",
   [O("To the voters.", J("set_variable = { cwger_defectors = 0 }",
      "if = { limit = { NOT = { has_country_flag = generic_election_killswitch } NOT = { has_country_flag = elections_in_progress } } country_event = { id = MD4_election_campaign.0 days = 1 } }"))])
 
+# IMPERIA CW — Cold War: The CSU split follows opposition and autonomy, without a calendar lock.
 E(f"{EVG}.24", "Coalition Talks",
   "The votes are counted. In Bonn nobody governs alone: the parties above the five-percent hurdle sit down to divide ministries and principles. Who governs with whom depends on arithmetic - and on where the Free Democrats think their future lies.\n\n"
   "Seat shares: social-liberal §Y[?cwger_q_sl|%0]§!, Christian-liberal §Y[?cwger_q_cl|%0]§!, grand coalition §Y[?cwger_q_gc|%0]§!, red-green §Y[?cwger_q_rg|%0]§!.",
@@ -111,7 +114,7 @@ E(f"{EVG}.24", "Coalition Talks",
    O("Red-green.", J(gov(3, [17]), v("cwger_anti_nuclear", -5)), trig=f"{requirement('greens')} has_country_flag = {P}_greens_founded check_variable = {{ cwger_q_rg > 0.5 }}",
      ai="base = 15 modifier = { factor = 2 has_country_flag = " + P + "_greens_realo }")],
   imm=J(f"{P}_coalition_math = yes", f"{P}_update_bundestag = yes",
-        f"if = {{ limit = {{ NOT = {{ {UNION} }} NOT = {{ is_in_array = {{ gov_coalition_array = 1 }} }} date > 1976.6.1 check_variable = {{ cwger_csu_autonomy > 45 }} NOT = {{ has_country_flag = {P}_kreuth_seen }} }} "
+        f"if = {{ limit = {{ NOT = {{ {UNION} }} NOT = {{ is_in_array = {{ gov_coalition_array = 1 }} }} check_variable = {{ cwger_csu_autonomy > 45 }} NOT = {{ has_country_flag = {P}_kreuth_seen }} }} "
         f"set_country_flag = {P}_kreuth_seen {fire(f'{EVG}.32', 20)} }}"))
 
 E(f"{EVG}.25", "Landtag Elections",
@@ -122,40 +125,54 @@ E(f"{EVG}.25", "Landtag Elections",
      "set_country_flag = { flag = " + P + "_landtag_cooldown days = 200 value = 1 }"))],
   trig=f"NOT = {{ has_country_flag = {P}_landtag_cooldown }} NOT = {{ has_country_flag = elections_in_progress }}")
 
+# IMPERIA COLD WAR — Coalition pressures remain player choices with a safe status-quo option.
 E(f"{EVG}.26", "The Lambsdorff Paper",
   "The economics minister has put his demands in writing: cuts to welfare, lower taxes on business, less state. The SPD calls it a divorce letter. The Free Democrats are looking across the aisle.",
   "GFX_german_parliament_bundestag",
-  [O("Let them go. We govern alone.", J(gov(3, []), f"set_country_flag = {P}_schmidt_iii", party("spd", 0.006), party("fdp", -0.008),
+  [O("Keep the social-liberal coalition in office.", ai=50),
+   O("Let them go. We govern alone.", J(gov(3, []), f"set_country_flag = {P}_schmidt_iii", party("spd", 0.006), party("fdp", -0.008),
      "add_to_variable = { cwger_defectors = 0 }"), ai="base = 25 modifier = { factor = 0.3 check_variable = { cwger_fdp_course > 60 } }"),
    O("Concede on the budget.", J(v("cwger_fdp_course", -20), faction("dgb", -10), pp(-60), debt_gdp(-0.002)), ai=25),
    O("The FDP switches sides.", J(gov(1, [2]), f"set_country_flag = {P}_era2", f"set_country_flag = {P}_fdp_switched", party("fdp", -0.015), stab(-0.02),
-     tt(f"{P}_tt_wende", "§YDie Wende§!: the Union and the FDP form a new government without an election.")),
-     ai="base = 15 modifier = { factor = 4 check_variable = { cwger_fdp_course > 60 } }")])
+     tt(f"{P}_tt_wende", "The Union and the FDP form a new government without an election.")),
+     ai="base = 15 modifier = { factor = 4 check_variable = { cwger_fdp_course > 60 } }")],
+  trig=f"{SPD} {FDP_IN} check_variable = {{ cwger_fdp_course > 30 }}")
 
+# IMPERIA COLD WAR — A queued Guillaume crisis cannot resign the current chancellor by default.
 E(f"{EVG}.28", "The Spy in the Chancellery",
   "Günter Guillaume, the chancellor's personal aide, has been arrested. He is an officer of the Ministry for State Security and has read everything that crossed the desk, including NATO papers on holiday in Norway. 'I am an officer of the National People's Army,' he tells the arresting officers.",
   "GFX_der_Spiegel",
-  [O("The chancellor takes responsibility and resigns.", J("set_variable = { cwger_spd_leader = 2 }", f"{P}_refresh_leader = yes", v("cwger_stasi_penetration", -15),
-     v("cwger_counterintel", 10), stab(-0.02), v("cwger_ostpolitik", -4)), ai=70),
-   O("He stays. The spy was the security services' failure.", J(v("cwger_scandal", 25), pp(-100), party("spd", -0.01), v("cwger_stasi_penetration", -10)), ai=30)])
+  [O("Keep Brandt in office while the security failure is investigated.", ai=50),
+   O("The chancellor takes responsibility and resigns.", J("set_variable = { cwger_spd_leader = 2 }", f"{P}_refresh_leader = yes", v("cwger_stasi_penetration", -15),
+     v("cwger_counterintel", 10), stab(-0.02), v("cwger_ostpolitik", -4)), trig=f"{SPD} check_variable = {{ cwger_spd_leader = 1 }}", ai=50)],
+  trig=f"{SPD} check_variable = {{ cwger_spd_leader = 1 }}")
 
 E(f"{EVG}.29", "A Spy Caught Early",
   "Counter-intelligence has identified an aide in the Chancellery who receives coded radio messages from the East. He is quietly removed months before he could read anything that matters.",
   "GFX_der_Spiegel",
   [O("Good work, Cologne.", J(v("cwger_stasi_penetration", -15), v("cwger_counterintel", 5), pp(40)))])
 
+# IMPERIA COLD WAR — CDU leadership changes require the live Barzel leadership receipt.
 E(f"{EVG}.30", "A New Chairman for the CDU",
   "The Union has lost the 1972 election badly. Rainer Barzel resigns the chairmanship. The 43-year-old minister-president of Rhineland-Palatinate, Helmut Kohl, wants the party - but Franz Josef Strauß wants the candidacy.",
   "GFX_flag_cdu",
-  [O("Helmut Kohl leads the party.", J(party("cdu", 0.004), v("cwger_csu_autonomy", 5)), ai=80),
-   O("Strauß is the strongest man the Union has.", J("set_variable = { cwger_cdu_leader = 3 }", v("cwger_csu_autonomy", -20), party("cdu", -0.004), v("cwger_fdp_course", -8)), ai=20)])
+  [O("Retain Barzel as chairman for now.", ai=40),
+   O("Helmut Kohl leads the party.", J("set_variable = { cwger_cdu_leader = 2 }", f"{P}_refresh_leader = yes", party("cdu", 0.004), v("cwger_csu_autonomy", 5)),
+     trig="check_variable = { cwger_cdu_leader = 1 }", ai=40),
+   O("Strauß is the strongest man the Union has.", J("set_variable = { cwger_cdu_leader = 3 }", f"{P}_refresh_leader = yes", v("cwger_csu_autonomy", -20), party("cdu", -0.004), v("cwger_fdp_course", -8)),
+     trig="check_variable = { cwger_cdu_leader = 1 }", ai=20)],
+  trig="check_variable = { cwger_cdu_leader = 1 }")
 
+# IMPERIA COLD WAR — Union candidate choices require the current opposition leadership state.
 E(f"{EVG}.31", "The K-Question",
   "Who will be the Union's candidate for chancellor? The CDU's young modernisers favour Ernst Albrecht of Lower Saxony. The CSU will accept no one but Franz Josef Strauß. Kohl, the chairman, waits.",
   "GFX_flag_cdu",
-  [O("Strauß. The CSU gets its candidate.", J("set_variable = { cwger_cdu_leader = 3 }", v("cwger_csu_autonomy", -20), party("cdu", -0.008), party("spd", 0.004), v("cwger_fdp_course", -10)), ai=60),
-   O("Albrecht. The CDU decides.", J("set_variable = { cwger_cdu_leader = 4 }", v("cwger_csu_autonomy", 15), party("cdu", 0.004)), ai=25),
-   O("Kohl runs himself.", J(v("cwger_csu_autonomy", 8), pp(25)), ai=15)])
+  [O("Kohl remains the Union's candidate.", J(v("cwger_csu_autonomy", 8), pp(25)), ai=50),
+   O("Strauß. The CSU gets its candidate.", J("set_variable = { cwger_cdu_leader = 3 }", v("cwger_csu_autonomy", -20), party("cdu", -0.008), party("spd", 0.004), v("cwger_fdp_course", -10)),
+     trig="NOT = { check_variable = { ruling_party = 1 } } check_variable = { cwger_cdu_leader = 2 }", ai=30),
+   O("Albrecht. The CDU decides.", J("set_variable = { cwger_cdu_leader = 4 }", v("cwger_csu_autonomy", 15), party("cdu", 0.004)),
+     trig="NOT = { check_variable = { ruling_party = 1 } } check_variable = { cwger_cdu_leader = 2 }", ai=20)],
+  trig="NOT = { check_variable = { ruling_party = 1 } } check_variable = { cwger_cdu_leader = 2 }")
 
 E(f"{EVG}.32", "Wildbad Kreuth",
   "After another lost election the CSU's deputies vote in Wildbad Kreuth to leave the joint parliamentary group. Strauß wants a fourth party that competes in every state. Kohl threatens to found a CDU branch in Bavaria.",
@@ -163,33 +180,42 @@ E(f"{EVG}.32", "Wildbad Kreuth",
   [O("Reconcile. The joint group is restored.", J(v("cwger_csu_autonomy", -15), party("cdu", -0.003), pp(25)), ai=80),
    O("Let them go. A fourth party.", J(f"set_country_flag = {P}_csu_fourth_party", party("cdu", 0.008), stab(-0.02), v("cwger_csu_autonomy", 25)), ai=20)])
 
-E(f"{EVG}.34", "The Chancellor Hands Over",
-  "Willy Brandt has led the government through the treaties with the East. Tired, ill and increasingly isolated in his own party, he hands over to Helmut Schmidt, the manager the times seem to call for.",
+# IMPERIA COLD WAR — Let Bonn choose the Brandt–Schmidt succession.
+E(f"{EVG}.34", "The Chancellor's Succession",
+  "Willy Brandt has led the government through the treaties with the East. The party debates whether he should remain in office or hand the chancellorship to Helmut Schmidt.",
   "GFX_german_parliament_bundestag",
-  [O("Schmidt takes over.", J("set_variable = { cwger_spd_leader = 2 }", f"{P}_refresh_leader = yes", stab(0.01)))])
+  [O("Brandt remains chancellor.", J(party("spd", -0.003), pp(-25)), ai=50),
+   O("Schmidt takes over.", J("set_variable = { cwger_spd_leader = 2 }", f"{P}_refresh_leader = yes", stab(0.01)),
+     trig=f"{SPD} check_variable = {{ cwger_spd_leader = 1 }}", ai=50)],
+  trig=f"{SPD} check_variable = {{ cwger_spd_leader = 1 }}")
 
 E(f"{EVG}.36", "The Candidate from Lower Saxony",
   "Oskar Lafontaine chairs the party, but Gerhard Schröder wins Lower Saxony with an absolute majority. Lafontaine steps aside: the SPD's candidate for chancellor is the man who once rattled the gates of the Chancellery and shouted 'I want in there!'",
   "GFX_election_day",
   [O("Innovation and justice.", J(party("spd", 0.01), faction("bdi", 4)))])
 
+# IMPERIA COLD WAR — Preserve Kohl by default; a player may select an alternative chairman.
 E(f"{EVG}.37", "Bremen Party Congress",
   "The Union is far behind in the polls. Heiner Geißler, Rita Süssmuth and Lothar Späth prepare to challenge Helmut Kohl at the Bremen party congress. Kohl has spent the summer on the telephone.",
   "GFX_flag_cdu",
-  [O("Kohl fights back and dismisses Geißler.", J(pp(-25), party("cdu", 0.004), v("cwger_csu_autonomy", -5)), ai=75),
-   O("Späth takes over.", J("set_variable = { cwger_cdu_leader = 5 }", f"{P}_refresh_leader = yes", party("cdu", 0.006), stab(-0.02)), ai=25)])
+  [O("Kohl remains chairman.", J(pp(-25), party("cdu", 0.004), v("cwger_csu_autonomy", -5)), ai=50),
+   O("Späth takes over.", J("set_variable = { cwger_cdu_leader = 5 }", f"{P}_refresh_leader = yes", party("cdu", 0.006), stab(-0.02)),
+     trig=f"{UNION} check_variable = {{ cwger_cdu_leader = 2 }}", ai=50)],
+  trig=f"{UNION} check_variable = {{ cwger_cdu_leader = 2 }}")
 
+# IMPERIA COLD WAR — Candidate succession follows the live SPD opposition state and player choice.
 E(f"{EVG}.38", "Attack in Cologne",
   "At a campaign event in Cologne-Mülheim a mentally ill woman stabs Oskar Lafontaine in the neck with a knife. He survives by millimetres.",
   "GFX_Polizeiabsperrung",
-  [O("He will return to the campaign.", J(party("spd", 0.006), stab(-0.01)), trig=f"NOT = {{ has_country_flag = {P}_lafontaine_badly_hurt }}"),
-   O("Johannes Rau steps in as candidate.", J("set_variable = { cwger_spd_leader = 4 }", party("spd", 0.004), stab(-0.01)), trig=f"has_country_flag = {P}_lafontaine_badly_hurt")],
-  imm=f"random_list = {{ 80 = {{ }} 20 = {{ set_country_flag = {P}_lafontaine_badly_hurt }} }}")
+  [O("Lafontaine continues as the candidate.", J(party("spd", 0.006), stab(-0.01)), ai=50),
+   O("Johannes Rau steps in as candidate.", J("set_variable = { cwger_spd_leader = 4 }", party("spd", 0.004), stab(-0.01)),
+     trig=f"NOT = {{ {SPD} }} check_variable = {{ cwger_spd_leader = 5 }}", ai=50)],
+  trig=f"NOT = {{ {SPD} }} check_variable = {{ cwger_spd_leader = 5 }}")
 
 E(f"{EVG}.40", "Karlsruhe Rules on the Basic Treaty",
   "Bavaria has sued against the Basic Treaty. The Federal Constitutional Court upholds it - but declares that the German Reich continues to exist in law, that the Federal Republic is identical with it, and that the inner-German border is a border like that between Länder of the Federal Republic.",
   "GFX_Giese_Gericht",
-  [O("The treaty stands, and so does the claim to unity.", J(v("cwger_westbindung", 3), v("cwger_ostpolitik", -2), v("cwger_unity", 3)), ai=70),
+  [O("The treaty stands, and so does the claim to unity.", J(v("cwger_ostpolitik", -2), v("cwger_unity", 3)), ai=70),
    O("Criticise Munich for the lawsuit.", J(v("cwger_csu_autonomy", 5), v("cwger_ostpolitik", 3), party("cdu", -0.003)), ai=30)])
 
 # ===================================================================== TERRORISM
@@ -253,7 +279,7 @@ E(f"{EVG}.57", "Death Night in Stammheim",
   [O("The official account stands.", J(v("cwger_rechtsstaat", -3), v("cwger_raf_milieu", 6)), ai=60),
    O("An independent inquiry.", J(v("cwger_rechtsstaat", 4), pp(-50), v("cwger_raf_milieu", 2)), ai=40)],
   imm=J(f"set_country_flag = {P}_deutscher_herbst_over", "subtract_from_variable = { cwger_raf_prisoners = 3 }",
-        "clamp_variable = { var = cwger_raf_prisoners min = 0 max = 40 }", f"add_timed_idea = {{ idea = {P}_idea_deutscher_herbst days = 365 }}"))
+        "clamp_variable = { var = cwger_raf_prisoners min = 0 max = 40 }", f"add_timed_idea = {{ idea = {P}_idea_deutscher_herbst days = 365 }}", f"{P}_sec_gui_refresh = yes"))
 
 E(f"{EVG}.58", "The Third Generation",
   "Nobody knows who they are. They leave no fingerprints, use no flats the police know, and strike the representatives of what they call the 'military-industrial complex'. The RAF has become a phantom.",
@@ -288,7 +314,7 @@ E(f"{EVG}.62", "Right-Wing Terror",
 E(f"{EVG}.65", "International Terrorism",
   "", "GFX_terrorist_attack",
   [O("Hunt down the network.", J(v("cwger_security", 4), v("cwger_terror_foreign", -4), stab(-0.02)), ai=60),
-   O("Quiet diplomacy with the sponsors.", J(v("cwger_terror_foreign", -2), v("cwger_rechtsstaat", -2), v("cwger_westbindung", -2)), ai=40)],
+   O("Quiet diplomacy with the sponsors.", J(v("cwger_terror_foreign", -2), v("cwger_rechtsstaat", -2)), ai=40)],
   descs=[("date < 1983.1.1", "Palestinian and international commandos use West German soil as a battlefield: an attack at an airport, a bomb in a Jewish community centre. The trail leads to Beirut, Baghdad and Damascus."),
          ("date > 1982.12.31 date < 1991.1.1", "A bomb in a Berlin discotheque frequented by American soldiers. Intercepted cables from the Libyan People's Bureau in East Berlin speak of a 'joyful event'."),
          ("date > 1990.12.31", "PKK militants occupy consulates and set fire to Turkish businesses across the country. Ankara demands a ban.")])
@@ -345,8 +371,8 @@ E(f"{EVG}.85", "The Bundesbank Says No",
 E(f"{EVG}.90", "The Hofgarten Demonstration",
   "Three hundred thousand people fill the Bonn Hofgarten against the stationing of new American missiles. Heinrich Böll speaks, Petra Kelly speaks, so do SPD deputies. The chancellor's own party is marching against his policy.",
   "GFX_peace_demonstration_berlin",
-  [O("Dialogue with the movement.", J(v("cwger_peace_movement", -5), v("cwger_westbindung", -2), party("greens", 0.002), protest(-5)), ai=40),
-   O("Security policy is not made on the street.", J(protest(10), f"add_timed_idea = {{ idea = {P}_idea_peace_movement_idea days = 365 }}", v("cwger_peace_movement", 5), v("cwger_westbindung", 3), party("greens", 0.004)), ai=60)])
+  [O("Dialogue with the movement.", J(v("cwger_peace_movement", -5), party("greens", 0.002), protest(-5)), ai=40),
+   O("Security policy is not made on the street.", J(protest(10), f"add_timed_idea = {{ idea = {P}_idea_peace_movement_idea days = 365 }}", v("cwger_peace_movement", 5), party("greens", 0.004)), ai=60)])
 
 E(f"{EVG}.91", "Brokdorf",
   "Tens of thousands march to the planned reactor site on the Elbe. Water cannon, helicopters, barbed wire. A 'civil war around a building site', the newspapers write.",
@@ -357,8 +383,8 @@ E(f"{EVG}.91", "Brokdorf",
 E(f"{EVG}.92", "War Scare",
   "A NATO command exercise has been followed by alarming Soviet reactions: aircraft on alert in East Germany, intelligence officers ordered to look for signs of a surprise attack. In Bonn the cabinet meets at night.",
   "GFX_missiles_on_road",
-  [O("Open the line to Moscow.", J(tension(-5), v("cwger_westbindung", -3), v("cwger_ostpolitik", 4)), ai=50),
-   O("Stand firm with the alliance.", J(ws(0.05), v("cwger_peace_movement", 10), v("cwger_westbindung", 3)), ai=50)])
+  [O("Open the line to Moscow.", J(tension(-5), v("cwger_ostpolitik", 4)), ai=50),
+   O("Stand firm with the alliance.", J(ws(0.05), v("cwger_peace_movement", 10)), ai=50)])
 
 E(f"{EVG}.93", "The Greens Are Founded",
   "In Karlsruhe, environmentalists, pacifists, feminists, former Maoists and a few conservatives found a federal party: 'Die Grünen'. 'We are neither left nor right, we are in front.'",
@@ -393,16 +419,16 @@ E(f"{EVG}.97", "Forest Dieback",
 E(f"{EVG}.120", "Trouble on the Transit Routes",
   "East German border guards hold up lorries for hours on the Helmstedt autobahn; a family is arrested for 'transit abuse'. The road to West Berlin is again a lever in someone else's hand.",
   "GFX_Polizeiabsperrung",
-  [O("Protest through the Western Allies.", J(v("cwger_westbindung", 2), v("cwger_berlin_access", -3), tension(1)), ai=50),
+  [O("Protest through the Western Allies.", J(v("cwger_berlin_access", -3), tension(1)), ai=50),
    O("Pay a higher transit lump sum.", J(money_gdp(-0.0008), v("cwger_berlin_access", 6), dv("cwddr_hard_currency", -3), v("cwger_ostpolitik", 2)), ai=50)])
 
 E(f"{EVG}.110", "France Votes on Maastricht",
   "", "GFX_european_parliament",
-  [O("The road to the euro is open.", J(f"set_country_flag = {P}_maastricht_signed", v("cwger_westbindung", 5)), trig=f"has_country_flag = {P}_maastricht_yes"),
-   O("Europe stalls. The D-Mark remains.", J(f"set_country_flag = {P}_maastricht_failed", v("cwger_westbindung", -3), v("cwger_bundesbank", -10)), trig=f"NOT = {{ has_country_flag = {P}_maastricht_yes }}")],
+  [O("The road to the euro is open.", J(f"set_country_flag = {P}_maastricht_signed"), trig=f"has_country_flag = {P}_maastricht_yes"),
+   O("Europe stalls. The D-Mark remains.", J(f"set_country_flag = {P}_maastricht_failed", v("cwger_bundesbank", -10)), trig=f"NOT = {{ has_country_flag = {P}_maastricht_yes }}")],
   descs=[(f"has_country_flag = {P}_maastricht_yes", "Fifty-one percent. France has said yes to the Treaty on European Union by the narrowest margin. The single currency will come - and the Bundesbank's rules will come with it."),
          (f"NOT = {{ has_country_flag = {P}_maastricht_yes }}", "Non. French voters have rejected the Maastricht Treaty. Mitterrand's European project is in ruins; in Frankfurt, nobody is entirely unhappy.")],
-  imm=J(f"random_list = {{ 70 = {{ modifier = {{ add = 10 check_variable = {{ cwger_westbindung > 70 }} }} set_country_flag = {P}_maastricht_yes }} 30 = {{ modifier = {{ add = 10 check_variable = {{ cwger_bundesbank > 50 }} }} }} }}"))
+  imm=J(f"random_list = {{ 70 = {{ set_country_flag = {P}_maastricht_yes }} 30 = {{ modifier = {{ add = 10 check_variable = {{ cwger_bundesbank > 50 }} }} }} }}"))
 
 # ===================================================================== SCANDALS
 scandal_opts = [O("Accept the resignations.", J(v("cwger_scandal", -25), pp(-50), ruling_party_shift(-0.004)), ai=60),
@@ -436,57 +462,10 @@ E(f"{EVG}.106", "A Bonn Affair",
   "A minister's travel expenses, a state secretary's consultancy contracts, a party treasurer's memory gaps: Bonn has another affair. The magazines are delighted.",
   "GFX_der_Spiegel", scandal_opts)
 
-# ---------------------------------------------------------------- monthly checks
+# IMPERIA COLD WAR — Monthly checks retain condition-driven pressures, not dated political replacements.
 EXTRA_EFFECTS.append(f"""
-# Monthly event triggers for West Germany. None of them is dated to the day: each needs
-# a window and the right conditions, and some never happen at all.
+# Monthly event triggers for West Germany. Political succession and coalition choices remain player-led.
 {P}_events_tick = {{
-	# Brandt's successor: the spy affair, or a later hand-over
-	if = {{
-		limit = {{ {SPD} check_variable = {{ cwger_spd_leader = 1 }} date > 1973.9.1 NOT = {{ has_country_flag = {P}_guillaume_done }} check_variable = {{ cwger_stasi_penetration > 39 }} }}
-		random_list = {{
-			92 = {{ }}
-			8 = {{
-				set_country_flag = {P}_guillaume_done
-				if = {{ limit = {{ check_variable = {{ cwger_counterintel > 55 }} }} country_event = {{ id = {EVG}.29 days = 1 }} }}
-				else = {{ country_event = {{ id = {EVG}.28 days = 1 }} }}
-			}}
-		}}
-	}}
-	if = {{
-		limit = {{ {SPD} check_variable = {{ cwger_spd_leader = 1 }} date > 1976.12.1 NOT = {{ has_country_flag = {P}_brandt_handover }} }}
-		set_country_flag = {P}_brandt_handover
-		country_event = {{ id = {EVG}.34 days = 3 }}
-	}}
-	# the FDP looks for a new partner
-	if = {{
-		limit = {{ {SPD} {FDP_IN} check_variable = {{ cwger_fdp_course > 40 }} date > 1976.6.1 NOT = {{ has_country_flag = {P}_fdp_switch_cooldown }} NOT = {{ has_country_flag = elections_in_progress }} }}
-		set_country_flag = {{ flag = {P}_fdp_switch_cooldown days = 720 value = 1 }}
-		country_event = {{ id = {EVG}.26 days = 5 }}
-	}}
-	# Union leadership
-	if = {{
-		limit = {{ NOT = {{ {UNION} }} date > 1979.5.1 date < 1983.1.1 NOT = {{ has_country_flag = {P}_kfrage_done }} }}
-		set_country_flag = {P}_kfrage_done
-		country_event = {{ id = {EVG}.31 days = 2 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ {UNION} }} OR = {{ check_variable = {{ cwger_cdu_leader = 3 }} check_variable = {{ cwger_cdu_leader = 4 }} }} date > 1981.1.1 date < 1990.1.1 }}
-		set_variable = {{ cwger_cdu_leader = 2 }}
-	}}
-	if = {{
-		limit = {{ {UNION} check_variable = {{ cwger_cdu_leader = 2 }} date > 1989.6.1 date < 1989.10.1 check_variable = {{ party_pop_array^1 < 0.37 }} NOT = {{ has_country_flag = {P}_bremen_done }} }}
-		set_country_flag = {P}_bremen_done
-		country_event = {{ id = {EVG}.37 days = 3 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ {UNION} }} check_variable = {{ cwger_cdu_leader = 2 }} date > 1998.11.1 }}
-		set_variable = {{ cwger_cdu_leader = 6 }}
-	}}
-	if = {{
-		limit = {{ NOT = {{ {SPD} }} check_variable = {{ cwger_spd_leader = 5 }} date > 1990.3.1 date < 1990.6.1 NOT = {{ has_country_flag = {P}_cologne_attack_done }} }}
-		random_list = {{ 70 = {{ }} 30 = {{ set_country_flag = {P}_cologne_attack_done country_event = {{ id = {EVG}.38 days = 1 }} }} }}
-	}}
 	# Munich 1972
 	if = {{
 		limit = {{ date > 1972.8.26 date < 1972.9.11 NOT = {{ has_country_flag = {P}_munich_happened }} NOT = {{ has_country_flag = {P}_munich_rolled }} }}
@@ -530,7 +509,7 @@ EXTRA_EFFECTS.append(f"""
 		random_list = {{ 90 = {{ }} 10 = {{ country_event = {{ id = {EVG}.94 days = 2 }} }} }}
 	}}
 	if = {{
-		limit = {{ NOT = {{ has_country_flag = {P}_asylum_seen }} OR = {{ date > 1991.6.1 AND = {{ has_global_flag = {P}_wall_open date > 1990.6.1 }} AND = {{ date > 1985.1.1 check_variable = {{ imp_refugee_pressure > 0.15 }} }} }} }}
+		limit = {{ NOT = {{ has_country_flag = {P}_asylum_seen }} OR = {{ date > 1991.6.1 AND = {{ {P}_border_open = yes date > 1990.6.1 }} AND = {{ date > 1985.1.1 check_variable = {{ imp_refugee_pressure > 0.15 }} }} }} }}
 		random_list = {{ 85 = {{ }} 15 = {{ set_country_flag = {P}_asylum_seen country_event = {{ id = {EVG}.95 days = 2 }} }} }}
 	}}
 	if = {{

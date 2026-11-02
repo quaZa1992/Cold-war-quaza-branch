@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — Naval adaptation integrated with retained country generator.
+# IMPERIA COLD WAR — Retain physical building-grant providers in Soviet build output.
 # IMPERIA CW — Cold War: Soviet Union 1970 content generator.
 # COLDWAR | Writes every mod file of the Soviet Union 1970 tree. Run: python3 cw_build.py
 import os, re, glob, shutil
@@ -185,9 +187,13 @@ for _p in list(FILES):
 # 2. every COLDWAR flag and variable gets a readable localisation key (cw_names): nothing can show up raw
 import cw_names as NM
 NM.add_name_loc([t for _p, t in FILES.items() if _p.endswith(".txt")])
+# IMPERIA COLD WAR — Preserve the independent naval runtime after local formatting.
+FILES.update(FO._naval_runtime())
+# Keep shared grant effects, triggers and English requirements after local formatting.
+FILES.update(FO._grant_runtime())
 if __name__ == "__main__":
     for p, t in FILES.items():
-        write(p, t)
+        write(p, t, bom=p.endswith(".yml"))
     for p, src in BINARIES.items():
         os.makedirs(os.path.dirname(os.path.join(OUT, p)), exist_ok=True)
         shutil.copyfile(src, os.path.join(OUT, p))

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uae 1970 — test development.
+# IMPERIA COLD WAR — UAE construction, slot, ownership and development regressions.
 """Exercise installed costly industrialisation and population route rewards."""
 import copy
 import json
@@ -22,11 +22,15 @@ def run():
     cases.append('The105-day industrial port commissions its first realCIC for7.5bn once even at negative treasury, without a zero-CIC construction deadlock')
     w = World(); parents(w, 'aviation_hub'); w.variables['treasury'] = 2.5
     w.call('apply_aviation_hub'); w.call('apply_aviation_hub')
-    assert w.states[179]['air_base'] == 1 and w.states[179]['slots'] == 3 and w.variables['treasury'] == 0 and not w.queue
+    assert w.states[179]['air_base'] == 1 and w.states[179]['slots'] == 4 and w.variables['treasury'] == 0 and not w.queue
     assert not w.test(T[P+'can_apply_industrial_port'])
     full = World(); parents(full, 'aviation_hub'); full.states[179]['air_base'] = 10
-    full.call('apply_aviation_hub'); assert full.variables['treasury'] == 10
-    cases.append('The2.5bn airport commissions one airbase with no shared slot, respects level10, and preserves the exclusive industry choice')
+    full.call('apply_aviation_hub'); assert full.variables['treasury'] == 10 and full.states[179]['slots'] == 3
+    for role in ['owner', 'controller']:
+        lost = World(); parents(lost, 'aviation_hub'); lost.states[179][role] = 'ENG'
+        lost.call('apply_aviation_hub')
+        assert lost.variables['treasury'] == 10 and lost.states[179]['slots'] == 3 and lost.states[179].get('air_base', 0) == 0
+    cases.append('The2.5bn airport grants one slot before its airbase exactly once; full, foreign-owned or occupied sites receive neither construction nor slots or charges')
     for key, state, resource, amount, cost, burden in [
         ('jebel_ali_smelter', 179, 'aluminium', 12, 4.5, .12),
         ('steel_rolling_mills', 180, 'steel', 5, 3.0, .06),
@@ -93,11 +97,22 @@ def run():
     assert keys.index(P+'startup_industry') < keys.index('if')
     assert 'IMP_1970_gdp_profile_applied' not in str(E[P+'apply_jebel_ali_smelter'])
     tree = first(parse((ROOT/'common/national_focus/COLDWAR_UAE_1970_focus.txt').read_text(encoding='utf-8')), 'focus_tree')
+    authored = {node['id'] for node in D['nodes']}
+    checked, naval = set(), set()
     for _, _, focus in [r for r in tree if r[0] == 'focus']:
+        identifier = first(focus, 'id')
+        if identifier not in authored:
+            # The naval adapter has its own tested native preview grammar.
+            assert identifier.startswith('COLDWAR_NAVY_UAE_'), identifier
+            naval.add(identifier)
+            continue
         preview = first(first(focus, 'completion_reward'), 'effect_tooltip')
+        assert preview is not None, identifier
         assert not any(key in {'ingame_update_setup', 'set_country_flag'} for key,_,_ in preview)
+        checked.add(identifier)
+    assert checked == authored and len(naval) == 15
     cases.append('Industrial baseline precedes economic freeze; paid expansions preserve GDP offset and native reward previews omit internal refresh/receipt leaves')
-    report = {'passed': len(cases), 'cases': cases, 'errors': [], 'engine_tested': False}
+    report = {'project': 'IMPERIA COLD WAR', 'passed': len(cases), 'cases': cases, 'errors': [], 'engine_tested': False}
     (HERE/'development_validation.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     print(json.dumps(report))
 

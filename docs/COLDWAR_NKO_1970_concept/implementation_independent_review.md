@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # NKO 1970 implementation: independent core audit
 
 **Scope:** Read-only review of the approved v2 focus output, its core triggers/effects/modifiers, and NKO 1970 startup. Foreign Diplomacy, domestic programme outputs and Kim Jong Il succession are excluded while their implementation is in progress. The audit compares emitted output to `v2/COLDWAR_NKO_v2_design.json`; it does not certify HOI4 runtime behavior.

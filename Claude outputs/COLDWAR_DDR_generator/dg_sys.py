@@ -1,5 +1,6 @@
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
-# COLDWAR | Scripted effects and triggers of the GDR tree: initialisation, money, factions, outlooks, Moscow's Trust,
+# IMPERIA COLD WAR — DDR initialization and monthly processing no longer maintain Moscow trust.
+# COLDWAR | Scripted effects and triggers of the GDR tree: initialisation, money, factions, outlooks,
 # the Inner-German course, elections, the ladders, the First Secretaries (install, heirs, deaths, succession, the Central
 # Committee and the Kremlin's say), Fraternal Assistance, accession, the garrison and the Warsaw Pact.
 from dg_common import *
@@ -67,8 +68,7 @@ def build():
          "# laws, internal factions and the seven starting spirits", "add_ideas = {"] + laws + [f for f, _ in facs] + spirits + ["}"]
     L += [f"set_variable = {{ {f}_opinion = {v} }}" for f, v in facs]
     L += ["initialize_internal_faction_dynamic_modifiers = yes",
-          f"# Moscow's Trust (0-100) and the Inner-German course (shadow of the balance of power, -1 Demarcation .. +1 Rapprochement)",
-          f"set_variable = {{ {PFX}moscow_trust = {C['trust']['start']} }}",
+          f"# The Inner-German course (shadow of the balance of power, -1 Demarcation .. +1 Rapprochement)",
           f"set_variable = {{ {PFX}course = {fmt(C['course']['initial'])} }}",
           f"set_power_balance = {{ id = {E.COURSE_BOP} left_side = {E.COURSE_BOP}_left_side right_side = {E.COURSE_BOP}_right_side set_value = {fmt(C['course']['initial'])} }}"]
     for g, mods in DYN_START.items():
@@ -76,7 +76,6 @@ def build():
     from dg_manual import DYN_ORDER
     L += ["# the five country modifiers (MD: base modifiers at the start; the foci of each area strengthen them)"]
     L += [f"add_dynamic_modifier = {{ modifier = {PFX}{g}_modifier }}" for g in DYN_ORDER]
-    L += [f"add_dynamic_modifier = {{ modifier = {PFX}trust_{t} }}" for t, *_ in TRUST_TIERS]
     L += ["# the parties of the republic (design start popularities)",
           "set_popularities = { " + " ".join(f"{g} = {outl[o]}" for o, g in ((0, "democratic"), (1, "communism"), (3, "neutrality"), (4, "nationalist")))
           + " fascism = 0 }", "set_politics = { ruling_party = communism elections_allowed = no }", "IMP_1970_clear_politics = yes"]
@@ -108,61 +107,18 @@ def build():
           f"set_temp_variable = {{ temp_outlook_increase = {PFX}outlook_amount }}", "change_relative_party_popularity = yes", "}"]
     add("\n".join(block(s)) + "\n")
 
-    # ------------------------------------------------------------------ Moscow's Trust
-    add(f"""# ---- Moscow's Trust (0-100; temp {PFX}trust_delta). The tooltip is shown by the caller. ----------
-{PFX}change_trust = {{
-	add_to_variable = {{ {PFX}moscow_trust = {PFX}trust_delta }}
-	clamp_variable = {{ var = {PFX}moscow_trust min = 0 max = 100 }}
-	force_update_dynamic_modifier = yes
-}}
-
-# monthly (on_monthly_DDR): -1 at Rapprochement 0.4 or more, -1 while a non-Emerging government rules,
-# +1 at Demarcation -0.4 or less while the SED governs (only up to 70); the Ambassador calls below 25
-{PFX}monthly = {{
+    # IMPERIA COLD WAR — clear an unresolved Central Committee consent request if SOV no longer exists.
+    add(f"""{PFX}monthly = {{
 	if = {{ limit = {{ has_country_flag = {PFX}cc_pending NOT = {{ country_exists = SOV }} }} clr_country_flag = {PFX}cc_pending }}
-	# Moscow's Trust only matters while the republic is in the Soviet orbit (a subject of Moscow or in the Warsaw Pact)
-	if = {{
-		limit = {{ {PFX}in_soviet_orbit = yes }}
-		{PFX}monthly_trust = yes
-	}}
 }}
+""")
 
-{PFX}monthly_trust = {{
-	set_temp_variable = {{ {PFX}trust_delta = 0 }}
-	if = {{ limit = {{ check_variable = {{ {PFX}course > 0.39 }} }} add_to_temp_variable = {{ {PFX}trust_delta = -1 }} }}
-	if = {{ limit = {{ NOT = {{ has_government = communism }} }} add_to_temp_variable = {{ {PFX}trust_delta = -1 }} }}
-	if = {{
-		limit = {{ check_variable = {{ {PFX}course < -0.39 }} {SED} check_variable = {{ {PFX}moscow_trust < 70 }} }}
-		add_to_temp_variable = {{ {PFX}trust_delta = 1 }}
-	}}
-	if = {{ limit = {{ NOT = {{ check_variable = {{ {PFX}trust_delta = 0 }} }} }} {PFX}change_trust = yes }}
-	if = {{
-		limit = {{
-			check_variable = {{ {PFX}moscow_trust < 25 }}
-			country_exists = SOV
-			NOT = {{ has_country_flag = {PFX}ambassador_cooldown }}
-		}}
-		set_country_flag = {{ flag = {PFX}ambassador_cooldown days = 365 }}
-		country_event = {{ id = {NS}.{EV[PFX + 'ambassador_calls']} days = 1 }}
-	}}
-	# a computer-led Soviet Union courts a rival when trust is low (a human one decides itself, with a decision)
-	if = {{
-		limit = {{
-			check_variable = {{ {PFX}moscow_trust < 31 }}
-			{SED}
-			country_exists = SOV
-			SOV = {{ is_ai = yes }}
-			NOT = {{ has_country_flag = {PFX}soviet_endorses_change }}
-		}}
-		{PFX}soviet_endorses_change = yes
-	}}
-}}
-
+    add(f"""
 {PFX}soviet_endorses_change = {{
 	country_event = {{ id = {NS}.{EV[PFX + 'soviet_endorses']} days = 1 }}
 }}
 
-# ---- the Kremlin's say: a human Soviet Union hears of key steps and may endorse (+5) or object (-5)
+# ---- the Kremlin's say: a human Soviet Union hears of key steps and may endorse or object
 {PFX}notify_kremlin_first_sec = {{
 	if = {{ limit = {{ {SOV_HUMAN} has_country_flag = {PFX}initialized }} SOV = {{ country_event = {{ id = {NS}.{EV[PFX + 'kremlin_notice_first_sec']} days = 1 }} }} }}
 }}
@@ -173,13 +129,9 @@ def build():
 	if = {{ limit = {{ {SOV_HUMAN} }} SOV = {{ country_event = {{ id = {NS}.{EV[PFX + 'kremlin_notice_basic_treaty']} days = 1 }} }} }}
 }}
 {PFX}kremlin_endorses = {{
-	set_temp_variable = {{ {PFX}trust_delta = 5 }}
-	{PFX}change_trust = yes
 	country_event = {{ id = {NS}.{EV[PFX + 'kremlin_endorsed']} days = 1 }}
 }}
 {PFX}kremlin_objects = {{
-	set_temp_variable = {{ {PFX}trust_delta = -5 }}
-	{PFX}change_trust = yes
 	country_event = {{ id = {NS}.{EV[PFX + 'kremlin_objected']} days = 1 }}
 }}
 
@@ -191,9 +143,8 @@ def build():
 
 {PFX}bow_to_moscow = {{
 	add_stability = -0.10
-	custom_effect_tooltip = {T('bow_to_moscow', "Moscow's Trust rises to at least §Y50§!; a government of the SED returns if another party rules.")}
+	custom_effect_tooltip = {T('bow_to_moscow', 'The SED returns to government if another party rules.')}
 	hidden_effect = {{
-		if = {{ limit = {{ check_variable = {{ {PFX}moscow_trust < 50 }} }} set_variable = {{ {PFX}moscow_trust = 50 }} force_update_dynamic_modifier = yes }}
 		clr_country_flag = {PFX}fraternal_assistance_open
 	}}
 	if = {{ limit = {{ NOT = {{ {SED} }} }} {PFX}restore_party_rule = yes }}
@@ -208,7 +159,9 @@ def build():
 		if = {{ limit = {{ country_exists = SOV NOT = {{ has_war_with = SOV }} }} SOV = {{ declare_war_on = {{ target = PREV type = topple_government }} }} }}
 	}}
 }}
+""")
 
+    add(f"""
 # ---- the Warsaw Pact, the garrison, accession ----------------------------------------------------
 {PFX}leave_warsaw_pact = {{
 	custom_effect_tooltip = {T('leave_wp', 'The republic leaves the §YWarsaw Pact§! and its treaty ties with the Soviet Union.')}
@@ -332,6 +285,7 @@ def build():
     chain.append((None, [f"country_event = {{ id = {NS}.{EV[PFX + 'succession_plenum']} days = 1 }}"]))
     s += ["# the designated heir is elected; otherwise the Central Committee chooses among the living (event)",
           f"{PFX}succession = {{"] + ifelse(chain) + ["}", ""]
+    # IMPERIA COLD WAR — Calendar mortality may advance AI DDR succession only.
     for k in sorted(DEATHS):
         body = [f"set_country_flag = {PFX}dead_{k}"]
         if k == "hof":
@@ -342,7 +296,8 @@ def build():
             body += [f"if = {{ limit = {{ has_country_flag = {PFX}first_sec_{k} }} {PFX}succession = yes }}"]
         body += [f"if = {{ limit = {{ has_country_flag = {PFX}heir_{k} }} clr_country_flag = {PFX}heir_{k} }}"]
         LOC[f"{PFX}dies_{k}_tt"] = f"§Y{LEADER_NAME[k]}§! is dead. If he led the party, the Central Committee elects a successor."
-        s += [f"{PFX}leader_dies_{k} = {{", f"custom_effect_tooltip = {PFX}dies_{k}_tt", "hidden_effect = {"] + body + ["}", "}", ""]
+        s += [f"{PFX}leader_dies_{k} = {{", "if = {", "limit = { is_ai = yes }",
+              f"custom_effect_tooltip = {PFX}dies_{k}_tt", "hidden_effect = {"] + body + ["}", "}", "}", ""]
     # back to party rule from another party's tree: the living First Secretary takes over the state again
     kes = [(f"has_country_flag = {PFX}kessler_leads", ["retire_country_leader = yes", leader_create("hof", "Heinz Keßler", "gfx/leaders/DDR/DDR_Heinz_Kessler.dds"),
                                                        f"add_country_leader_trait = {PFX}hof_army_general"])]
@@ -363,22 +318,6 @@ def build():
           f"country_event = {{ id = {NS}.{EV[PFX + 'kremlin_veto']} days = 1 }}", "}", ""]
     add("\n".join(block(s)) + "\n")
     return "\n".join(out) + "\n"
-
-
-# Moscow's Trust tiers (dynamic modifiers with enable conditions; 45-64 'Under Observation' has no effect)
-ORBIT = f"{PFX}in_soviet_orbit = yes"
-TRUST_TIERS = [
-    ("brothers_in_arms", "Moscow's Trust: Brothers in Arms", f"{ORBIT} check_variable = {{ {PFX}moscow_trust > 84 }}",
-     [("political_power_factor", 0.05), ("stability_factor", 0.03), ("tax_gain_multiplier_modifier", 0.03)]),
-    ("garrison_relief", "Brothers in Arms: The Garrison Is Ours", f"{ORBIT} check_variable = {{ {PFX}moscow_trust > 84 }} has_idea = {PFX}the_soviet_garrison",
-     [("political_power_factor", 0.05)]),
-    ("reliable_ally", "Moscow's Trust: Reliable Ally", f"{ORBIT} check_variable = {{ {PFX}moscow_trust > 64 }} check_variable = {{ {PFX}moscow_trust < 85 }}",
-     [("political_power_factor", 0.03), ("stability_factor", 0.02)]),
-    ("displeasure", "Moscow's Trust: Moscow's Displeasure", f"{ORBIT} check_variable = {{ {PFX}moscow_trust > 24 }} check_variable = {{ {PFX}moscow_trust < 45 }}",
-     [("political_power_factor", -0.05), ("stability_factor", -0.03), ("production_speed_buildings_factor", -0.05)]),
-    ("brezhnev_doctrine", "Moscow's Trust: The Brezhnev Doctrine", f"{ORBIT} check_variable = {{ {PFX}moscow_trust < 25 }}",
-     [("political_power_factor", -0.10), ("stability_factor", -0.10)]),
-]
 
 
 def triggers():

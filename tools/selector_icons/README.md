@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Selector policy artwork
+# IMPERIA COLD WAR — Selector policy artwork
 
 Thirty-one individual badges were generated with the built-in `image_gen` tool.
 The complete prompts, subjects, category assignments and reference images are in
@@ -30,7 +30,7 @@ Run `python tools/selector_icons/build.py` from the repository root.
 re-exporting textures. Registration is idempotent.
 
 FFmpeg only downsizes the generated artwork, using premultiplied filtering to
-preserve the alpha edge. Native textures are 64×64 uncompressed RGBA32 DDS, without
+preserve the alpha edge. Native textures are 64×64 uncompressed BGRA8 DDS (A8R8G8B8), without
 lossy block compression or mipmaps. PNG companions match the decoded DDS exactly.
 Runtime textures are in `gfx/interface/ideas/COLDWAR_selector/` and registered in
 `interface/COLDWAR_IMPERIA_selector_icons.gfx`.
@@ -43,3 +43,10 @@ localisation, encoding, supported engine modifiers and unchanged existing gamepl
 tokens. Script/GFX files use UTF-8 without BOM; localisation uses UTF-8 with BOM.
 Static integration and visual export checks passed. No running-game or multiplayer
 session was used for validation.
+
+<!-- IMPERIA COLD WAR — Native selector palette and UAV adoption date. -->
+## Native palette correction and UAV availability
+
+The generated masters already use the military selector's burgundy palette. Their former DDS export stored RGBA bytes, unlike the existing numbered Imperia icons' native BGRA layout. The game screenshot showed the resulting red/blue swap as purple military badges. The exporter now writes BGRA bytes with matching A8R8G8B8 channel masks for all 31 generated selector badges. Decoded colours, source masters, motifs and alpha remain unchanged; this is a native texture-format correction. Source and permission information is recorded in [NOTICE.md](../../gfx/interface/ideas/COLDWAR_selector/NOTICE.md).
+
+UAV Projects (`imp_ni_54`) remains visible in the military selector but can be adopted only from **1 January 2000**, alongside its existing defence-policy requirements. The native date trigger displays that requirement. Costs, commitment and equipment modifiers retain their existing values.

@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Independent mechanics audit — NKO 1970 concept
 
 Scope: `COLDWAR_NKO_1970_design.json` (167 nodes) and `build_concept.py`. This is a concept audit only; I did not edit the canonical design. Static source tracing verifies definitions and script flows, not final HOI4 parsing or tooltip behavior.

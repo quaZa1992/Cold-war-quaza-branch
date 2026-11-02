@@ -19,6 +19,9 @@ sys.path.insert(0, str(ROOT / 'tools/israel_1970'))
 from script_format import read
 sys.path.insert(0, str(ROOT / 'tools/currency_balance'))
 from balance_manifest import reverse_if_recorded
+# IMPERIA COLD WAR — Retain the original DDR integration baseline after Franc/Lira additions.
+sys.path.insert(0,str(ROOT/'tools/frf_itl_currencies'))
+from extension_manifest import reverse_extension
 
 
 def direct(block, key):
@@ -97,7 +100,8 @@ def main():
                          '\t\t\t}')
     old_laws = None
     for name, expected in baseline.items():
-        current = reverse_if_recorded(name, (ROOT / name).read_bytes())
+        # IMPERIA COLD WAR — Strip the independently recorded later currency insertions first.
+        current = reverse_if_recorded(name, reverse_extension(name, (ROOT / name).read_bytes()))
         # Later authorized currency-label/art work has a separate reverse-byte
         # manifest. Preserve the DDR audit's original baseline rather than
         # replacing it with hashes that silently accept unrelated changes.

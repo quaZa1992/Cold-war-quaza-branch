@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan 1970 installed-content checks.
+# IMPERIA COLD WAR — Cold War: Japan 1970 installed-content checks.
 """Check the installed Japan tree and its custom references; not an engine test."""
 from collections import Counter
 from pathlib import Path
@@ -53,6 +53,14 @@ for focus in focuses:
 for key in re.findall(r'custom_(?:effect|trigger)_tooltip\s*=\s*(COLDWAR_JAP\w+)', tree):
     if key not in loc_keys:
         errors.append('Missing focus tooltip localization: ' + key)
+# Numeric formatters are also supplied by the shared Cold War localisation
+# library. Keep Japan's duplicate/ownership checks above country-specific.
+global_loc_keys=set(loc_keys)
+for path in (root/'localisation/english').rglob('*.yml'):
+    global_loc_keys.update(re.findall(r'(?m)^\s*([^\s:#]+):',path.read_text(encoding='utf-8-sig',errors='replace')))
+for key in re.findall(r'tooltip\s*=\s*(COLDWAR_[A-Za-z0-9_]+)', tree):
+    if key not in global_loc_keys:
+        errors.append('Missing native numeric formatter localization: ' + key)
 
 scripts = list((root / 'common').rglob('COLDWAR_JAP*.txt')) + list((root / 'events').glob('COLDWAR_JAP*.txt'))
 for path in scripts:

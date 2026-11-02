@@ -233,9 +233,9 @@ complete_effect = {{ if = {{ limit = {{ {P}reserve_law_available = yes has_polit
         mode = terms['mode']
         focus = sources[slug]['id'].removeprefix(P)
         stem = P + 'v2_' + slug
-        target_gate = 'has_idea = EU_member' if mode in ('eec','trade') else 'OR = { ' + ' '.join('tag = '+tag for tag in terms['targets'])+' }'
+        target_gate = 'COLDWAR_EC_is_member = yes' if mode in ('eec','trade') else 'OR = { ' + ' '.join('tag = '+tag for tag in terms['targets'])+' }'
         sender_gate = f'tag = SPR IMP_is_1970_scenario = yes is_subject = no {applied(focus)} has_country_flag = {unlock(slug)}'
-        if mode == 'eec': sender_gate += f' has_government = democratic has_elections = yes has_country_flag = {P}v2_ec_legal_ready NOT = {{ has_idea = EU_member }}'
+        if mode == 'eec': sender_gate += f' has_government = democratic has_elections = yes has_country_flag = {P}v2_ec_legal_ready NOT = {{ COLDWAR_EC_is_member = yes }}'
         if mode in ('transition','presence'):
             sender_gate += f' {P}v2_sahara_conference_all_consented = yes'
         if mode in ('training','loan','access'):
@@ -250,7 +250,7 @@ set_country_flag = {{ flag = {stem}_pending@FROM days = 90 }}
 set_country_flag = {stem}_awaiting@FROM
 FROM = {{ country_event = {{ id = COLDWAR_SPR_v2_agreements.{number} hours = 1 }} }} }}'''
         E(stem + '_send', send)
-        D(P + slug, f'''{'target_array = global.EU_member' if mode in ('eec','trade') else 'targets = { '+ ' '.join(terms['targets'])+' }'}
+        D(P + slug, f'''{'target_array = global.cwec_members' if mode in ('eec','trade') else 'targets = { '+ ' '.join(terms['targets'])+' }'}
 visible = {{ has_country_flag = {unlock(slug)} }}
 target_trigger = {{ FROM = {{ exists = yes {target_gate} NOT = {{ has_war_with = SPR }} }} NOT = {{ has_country_flag = {stem}_accepted@FROM }} }}
 available = {{ {stem}_sender_live = yes NOT = {{ has_country_flag = {stem}_pending@FROM }} }}
@@ -317,9 +317,9 @@ clr_country_flag = {stem}_created_access }}''')
     # No nationality, agenda or global EU activation is invented: native candidate
     # state and the existing EU_apply_for_membership perform the real admission.
     E(P+'v2_ec_update_candidate', f'''if = {{ limit = {{ tag = SPR has_country_flag = {P}v2_ec_legal_ready has_government = democratic has_elections = yes
-any_other_country = {{ has_idea = EU_member }}
-NOT = {{ any_other_country = {{ has_idea = EU_member OR = {{ has_war_with = SPR NOT = {{ SPR = {{ has_country_flag = {P}v2_eec_application_accepted@PREV }} }} }} }} }} }}
-set_country_flag = EU_candidate set_country_flag = {P}v2_ec_consent_complete set_eu_candidate_europeanism_floor = yes }}''')
+any_other_country = {{ COLDWAR_EC_is_member = yes }}
+NOT = {{ any_other_country = {{ COLDWAR_EC_is_member = yes OR = {{ has_war_with = SPR NOT = {{ SPR = {{ has_country_flag = {P}v2_eec_application_accepted@PREV }} }} }} }} }} }}
+set_country_flag = EU_candidate set_country_flag = {P}v2_ec_consent_complete }}''')
     D(P+'v2_ec_legal_adjustment', f'''visible = {{ has_country_flag = {unlock('eec_application')} NOT = {{ has_country_flag = {P}v2_ec_legal_ready }} }}
 available = {{ has_government = democratic has_elections = yes {applied('european_application')} }}
 days_remove = 70 cancel_trigger = {{ OR = {{ NOT = {{ has_government = democratic }} NOT = {{ has_elections = yes }} }} }}
@@ -328,8 +328,8 @@ remove_effect = {{ if = {{ limit = {{ has_government = democratic has_elections 
     L(P+'v2_ec_legal_adjustment_desc','Parliament and the ministries must reconcile commercial law and administrative obligations before presenting a complete accession application.')
     # The membership receipt is provided by the root's approved-spirit compiler.
     refresh += [f'''{P}v2_ec_update_candidate = yes
-if = {{ limit = {{ has_idea = EU_member has_country_flag = {P}v2_ec_consent_complete has_country_flag = {P}v2_ec_legal_ready NOT = {{ has_idea = {P}eec_membership }} }} add_ideas = {P}eec_membership }}
-if = {{ limit = {{ has_idea = {P}eec_membership NOT = {{ has_idea = EU_member }} }} remove_ideas = {P}eec_membership }}''']
+if = {{ limit = {{ COLDWAR_EC_is_member = yes has_country_flag = {P}v2_ec_consent_complete has_country_flag = {P}v2_ec_legal_ready NOT = {{ has_idea = {P}eec_membership }} }} add_ideas = {P}eec_membership }}
+if = {{ limit = {{ has_idea = {P}eec_membership NOT = {{ COLDWAR_EC_is_member = yes }} }} remove_ideas = {P}eec_membership }}''']
     # Native NATO.14 is owned by the alliance leader. Shared event guards use this
     # live transaction trigger for Spanish applicants only.
     T(P+'v2_nato_offer_live', f'''tag = SPR IMP_is_1970_scenario = yes

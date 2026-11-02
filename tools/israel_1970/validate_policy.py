@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: israel 1970 — validate policy.
+# IMPERIA COLD WAR — Israel 1970 funded policy verification.
 """Validate the Israel 1970 policy compiler output and key policy invariants.
 
 This is a static/compiler-output and small state-transition simulation. It does
@@ -430,7 +430,7 @@ def check_compiled(metadata, args):
                   'add_to_variable = { ISR70_policy_access_room = ISR70_policy_access_applied }',
                   'clamp_variable = { var = ISR70_policy_access_room min = 0 max = ISR70_policy_access_wanted }',
                   'set_variable = { ISR70_policy_access_applied = ISR70_policy_access_room }',
-                  'remove_dynamic_modifier = ISR70_policy_factory_access',
+                  'remove_dynamic_modifier = { modifier = ISR70_policy_factory_access }',
                   'clear_variable = ISR70_policy_access_applied'):
         check(token in update, f'factory-access clamp/reconciliation is missing: {token}')
     for requested in (0.10, 0.15, 0.12):

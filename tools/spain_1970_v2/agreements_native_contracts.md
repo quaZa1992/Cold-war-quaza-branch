@@ -87,6 +87,11 @@ genuine `EU_member` plus the completed Spanish consent/legal stage provides the
 approved `COLDWAR_SPR_eec_membership` receipt, which is removed on departure. No
 modern global activation or global founding-member setup is run by this module.
 
+Update 30.10.2026: MD's EU is switched off in the 1970 scenario and replaced by the European Communities
+system (`COLDWAR_EC_*`). Membership checks read `COLDWAR_EC_is_member`, the European offers target
+`global.cwec_members`, and the candidate flag `EU_candidate` is taken up by the EC system as an application
+(Art. 237); the players then vote in the EC window. The MD Europeanism floor is no longer set.
+
 NATO uses `NATO_join_via_event` -> member/faction leader's `NATO.14` -> Spanish
 `NATO.9` -> native `NATO_join`. The shared .14/.9 options were narrowly patched,
 with root authorization, only for Spain in the 1970 scenario. Visibility and

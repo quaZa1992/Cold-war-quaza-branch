@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — West German native technology requirements.
 """Player-facing tooltips.
 
 * nice(trigger): wraps every condition the game cannot localise on its own (flags,
@@ -11,8 +11,10 @@ import re
 
 from cw_lib import P, L, LOC, VARS, DDR_VARS
 
-NATIVE = ("date ", "date<", "date>", "country_exists", "has_completed_focus", "has_idea", "original_tag",
-          "IMP_is_1970_scenario", "always", "tag ", "is_ai", "has_war", "is_in_faction", "has_government", "custom_trigger_tooltip", "has_stability")
+# IMPERIA COLD WAR — Show actual UN membership and civil-war conditions natively.
+NATIVE = ("has_dynamic_modifier", "has_civil_war", "date ", "date<", "date>", "country_exists", "has_completed_focus", "has_idea", "has_tech", "original_tag",
+          "IMP_is_1970_scenario", "always", "tag ", "is_ai", "has_war", "is_in_faction", "has_government", "custom_trigger_tooltip", "has_stability",
+          "western_social_democrats_are_in_power", "western_conservatism_are_in_power")
 
 PARTY = {1: "the CDU/CSU", 3: "the SPD", 4: "the DKP", 5: "the PDS", 2: "the FDP", 17: "the Greens",
          20: "the Republikaner", 21: "the NPD", 22: "the DVU"}
@@ -21,6 +23,7 @@ LEADERS = {"cwger_cdu_leader": {1: "Rainer Barzel", 2: "Helmut Kohl", 3: "Franz 
            "cwger_spd_leader": {1: "Willy Brandt", 2: "Helmut Schmidt", 3: "Hans-Jochen Vogel", 4: "Johannes Rau",
                                 5: "Oskar Lafontaine", 6: "Björn Engholm", 7: "Rudolf Scharping", 8: "Gerhard Schröder"}}
 FLAGS = {
+    "recent_global_recog_request_campaign": "a recognition campaign was launched in the past 365 days",
     "era2": "the 'Wende' has opened a new political era",
     "un_member": "the Federal Republic is a member of the United Nations",
     "reception_ready": "the reception camps have been expanded",
@@ -134,6 +137,13 @@ def flag_text(name):
 def describe(c, neg=False):
     c = c.strip()
     head = c.split("=")[0].split("<")[0].split(">")[0].strip()
+    # IMPERIA COLD WAR — Show national policy requirements without internal identifiers.
+    if head == P+'_border_open':
+        return 'the DDR retains its restrictive border regime' if neg else 'the DDR has ended its restrictive border regime'
+    if head == P+'_ddr_security_measures':
+        return 'East Berlin is not conducting heightened security measures' if neg else 'East Berlin is conducting heightened security measures'
+    if head == "is_on_un_sec_council":
+        return "the Federal Republic does not hold a UN Security Council seat" if neg else "the Federal Republic holds a UN Security Council seat"
     if head == "custom_trigger_tooltip":
         match = re.search(r"\btooltip\s*=\s*(\S+)", c)
         text = LOC[match.group(1)].rstrip(".")
@@ -307,6 +317,9 @@ def rivalry_var_text(var, op, val, neg):
 
 def native(c):
     c = c.strip()
+    # IMPERIA COLD WAR — The real permanent-member spirit has a native negative requirement.
+    if re.fullmatch(r"NOT\s*=\s*\{\s*has_idea\s*=\s*p5_member\s*\}", c):
+        return True
     return c.startswith(NATIVE)
 
 

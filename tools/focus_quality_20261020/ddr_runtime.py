@@ -40,8 +40,6 @@ COLDWAR_DDR_Q_finish_repayment = {
         modify_debt_effect = yes
         add_timed_idea = { idea = COLDWAR_DDR_Q_creditworthiness days = 730 }
         add_to_variable = { COLDWAR_DDR_planned_economy_imp_sanction_resistance = 0.08 tooltip = COLDWAR_imp_sanction_resistance_tt }
-        set_temp_variable = { COLDWAR_DDR_trust_delta = 5 }
-        COLDWAR_DDR_change_trust = yes
         set_temp_variable = { temp_opinion = 5 }
         change_communist_cadres_opinion = yes
         add_power_balance_value = { id = COLDWAR_DDR_german_course_bop value = -0.05 tooltip_side = COLDWAR_DDR_german_course_bop_left_side }
@@ -138,8 +136,6 @@ COLDWAR_DDR_Q_accept_import = {
             set_country_flag = COLDWAR_DDR_Q_import_done
             clr_country_flag = COLDWAR_DDR_Q_import_open
             clr_country_flag = COLDWAR_DDR_Q_trade_pending
-            set_temp_variable = { COLDWAR_DDR_trust_delta = 3 }
-            COLDWAR_DDR_change_trust = yes
             set_temp_variable = { temp_opinion = -5 }
             change_industrial_conglomerates_opinion = yes
             set_temp_variable = { temp_opinion = 10 }
@@ -183,8 +179,6 @@ COLDWAR_DDR_Q_accept_import = {
                 force_update_dynamic_modifier = yes
                 set_temp_variable = { temp_opinion = 10 }
                 change_industrial_conglomerates_opinion = yes
-                set_temp_variable = { COLDWAR_DDR_trust_delta = -3 }
-                COLDWAR_DDR_change_trust = yes
                 set_country_flag = COLDWAR_DDR_Q_licence_done
                 clr_country_flag = COLDWAR_DDR_Q_licence_open
                 clr_country_flag = COLDWAR_DDR_Q_trade_pending
@@ -368,10 +362,10 @@ l_english:
  COLDWAR_DDR_Q_import_receipt_tt:0 "Completed transfer from Soviet reserves: §G90 tanks§!\\nPayment completed: §Y$[?COLDWAR_DDR_Q_import_price|2] billion§! to the Soviet treasury."
  COLDWAR_DDR_Q_licence_receipt_tt:0 "Soviet tank-production licence: §Gactive§!\\nMilitary factories delivered: §G2§!\\nMilitary-factory productivity: §G+3%§!\\nPayment completed: §Y$[?COLDWAR_DDR_Q_licence_price|2] billion§! to the Soviet treasury."
  COLDWAR_DDR_Q_licence_payment_tt:0 "Soviet treasury on successful implementation: §G+$[?DDR.COLDWAR_DDR_Q_licence_price|2] billion§!\\nGerman treasury on successful implementation: §R-$[?DDR.COLDWAR_DDR_Q_licence_price|2] billion§!"
- COLDWAR_DDR_Q_repayment_payment_tt:0 "Treasury: §R-$[?COLDWAR_DDR_Q_repayment_cost|2] billion§!\\nOutstanding debt: §G-$[?COLDWAR_DDR_Q_repayment_cost|2] billion§!\\nSanction resistance: §G+8%§!\\nMoscow's Trust: §G+5§!"
+ COLDWAR_DDR_Q_repayment_payment_tt:0 "Treasury: §R-$[?COLDWAR_DDR_Q_repayment_cost|2] billion§!\\nOutstanding debt: §G-$[?COLDWAR_DDR_Q_repayment_cost|2] billion§!\\nSanction resistance: §G+8%§!"
  COLDWAR_DDR_Q_creditworthiness:0 "Restored Creditworthiness"
  COLDWAR_DDR_Q_creditworthiness_desc:0 "A funded reduction in outstanding debt has strengthened confidence in the republic's finances. The interest-rate reduction is measured in percentage points."
- COLDWAR_DDR_Q_repayment_terms_tt:0 "Fund a debt repayment of up to §Y3% of current GDP§!, capped at outstanding principal. The same amount is deducted from the treasury and debt; no new borrowing finances this transaction. If funds are insufficient, the repayment remains available under §YState Finance and Procurement§!. Successful repayment also grants §G+8%§! sanction resistance, §G+5§! Moscow's Trust and moves the Inner-German course §Y0.05§! towards demarcation."
+ COLDWAR_DDR_Q_repayment_terms_tt:0 "Fund a debt repayment of up to §Y3% of current GDP§!, capped at outstanding principal. The same amount is deducted from the treasury and debt; no new borrowing finances this transaction. If funds are insufficient, the repayment remains available under §YState Finance and Procurement§!. Successful repayment grants §G+8%§! sanction resistance and moves the Inner-German course §Y0.05§! towards demarcation."
  COLDWAR_DDR_Q_import_terms_tt:0 "Request a paid transfer of §Y90 tanks§! from existing Soviet stock. The Soviet government must accept. Price: §Y1% of GDP§!, frozen when the request is sent and paid entirely to the Soviet treasury. No tanks or money change hands on refusal or failed validation. Unfinished requests can be renewed under §YState Finance and Procurement§!."
  COLDWAR_DDR_Q_licence_terms_tt:0 "Request a Soviet tank-production licence and a domestic assembly project: §Y2 military factories§!, §G+3%§! military-factory productivity. Implementation costs §Y1.6% of GDP§!, frozen when requested and paid to the Soviet treasury. Payment and factories require a successfully created licence and an eligible construction site. No future model is unlocked."
  COLDWAR_DDR_Q_licence_native_tt:0 "German Democratic Republic receives an active Soviet tank-production licence, §Y2 military factories§! and §G+3%§! military-factory productivity only after successful implementation."

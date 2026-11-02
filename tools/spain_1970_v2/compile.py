@@ -107,7 +107,7 @@ class Compiler:
                 gid=n['group'];visible.append(block('custom_trigger_tooltip','tooltip = '+V+'government_'+gid+'_tt\nCOLDWAR_SPR_government_'+gid+' = yes'))
             elif k=='actual_membership_spirit':
                 visible.append('has_idea = '+v)
-                if v==P+'eec_membership':visible.append('has_idea = EU_member')
+                if v==P+'eec_membership':visible.append('COLDWAR_EC_is_member = yes')
             elif k=='operating_nuclear_generation':
                 visible.append(block('custom_trigger_tooltip','tooltip = '+V+'operating_reactor_tt\nCOLDWAR_SPR_has_operating_nuclear_generation = yes'))
             elif k=='not_NATO_member':visible.append('NOT = { has_idea = NATO_member }')
@@ -224,7 +224,7 @@ class Compiler:
         member=n.get('gate',{}).get('actual_membership_spirit')
         if member:
             conditions.append('has_idea = '+member)
-            if member==P+'eec_membership':conditions.append('has_idea = EU_member')
+            if member==P+'eec_membership':conditions.append('COLDWAR_EC_is_member = yes')
         return '\n'.join(conditions)
     def programmes(self):
         dyn='';sync='';groupkeys={}

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: South Korean release presentation and English prose.
+# IMPERIA COLD WAR — Cold War: South Korean release presentation and English prose.
 """Display-only adapters. Every predicate and executed reward is retained."""
 import hashlib
 import json
@@ -511,7 +511,7 @@ class Presentation:
             elif path.startswith('common/national_focus/'):
                 rows=self.remove_empty_notes(rows)
             else:continue
-            self.c.files[path]='# IMPERIA CW — Cold War: South Korean presentation.\n'+self.emit(rows)+'\n'
+            self.c.files[path]='# IMPERIA COLD WAR — Cold War: South Korean presentation.\n'+self.emit(rows)+'\n'
         self.decision_prose()
         # Existing focus wrappers reference the same keys. Replace their old
         # generic inverse text even if a focus alone was the original writer.

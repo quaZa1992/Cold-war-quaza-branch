@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: South Korea 1970 concept data; never installs game content.
+# IMPERIA COLD WAR — Cold War: South Korea 1970 concept data; never installs game content.
 """Author the approval-stage design, resolved layout and native-art preview data.
 
 All outputs stay in docs/design/COLDWAR_KOR_1970. No loaded mod directory is

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: North Korea screenshot amendments and successor programme.
+# IMPERIA COLD WAR — Cold War: North Korea screenshot amendments and successor programme.
 """Apply authorized amendments to the preserved v2 approval snapshot."""
 from pathlib import Path
 from copy import deepcopy
@@ -35,7 +35,7 @@ UPGRADE_DESCRIPTIONS={
  'japan_ports':'Broaden commercial arrangements through fisheries and port access. More reliable civilian trade would require additional policing and careful management of external commitments.',
 }
 
-def load():
+def load(apply_rewards=True):
     d=json.loads(APPROVED.read_text(encoding='utf-8'))
     for node in d['nodes']:
         node['cost_gdp_share']=raised(node['cost_gdp_share'])
@@ -104,4 +104,22 @@ def load():
     d['amendments']={'one_off_price_multiplier':1.25,'proposal_reuse_days':180,'added_focuses':9,'weekly_commitments_changed':False,'presidency_historical_date_gate_removed':True}
     from expansion import extend
     extend(d)
+    # Earlier enactment is an RP policy choice. Actual party, leader, research,
+    # agreement and predecessor conditions remain authoritative.
+    for node in d['nodes']:
+        node['eligibility_notes']=[g for g in node['eligibility_notes'] if not ('date >' in g or 'date <' in g)]
+        node['title']=node['title'].replace('\ufffd','’')
+        node['description']=node['description'].replace('\ufffd','’')
+        if 'long_title' in node:node['long_title']=node['long_title'].replace('\ufffd','’')
+        if node['key']=='fifth_congress':
+            node['title']='Congress Preparations'
+            node['long_title']='Prepare the Fifth Party Congress'
+            node['description']='Preparations for the Fifth Party Congress begin as the extended Seven-Year Plan draws to a close. Its delegates must reconcile industrial ambitions, defence commitments and the shortages confronting ordinary households. The programme will guide the next round of state investment.'
+        elif node['key']=='ten_principles':
+            node['description']='The Workers’ Party can bind ministries, army commands and provincial committees to a single ideological hierarchy. Such discipline reinforces the leadership’s authority, while leaving officials less room to adapt policy to local conditions.'
+    for group in d['groups']:group['title']=group['title'].replace('\ufffd','’')
+    from reward_revision import apply as apply_reward_revision
+    if apply_rewards:
+        apply_reward_revision(d)
+    d['amendments']['arbitrary_policy_date_gates_removed']=True
     return d

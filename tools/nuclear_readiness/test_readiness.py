@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: execute authored readiness scripts against multiplayer scenarios.
+# IMPERIA COLD WAR — Cold War: execute authored readiness scripts against multiplayer scenarios.
 """Strict AST interpreter. Native graphics, notifications and economy refresh are boundaries."""
 from pathlib import Path
 import copy
@@ -17,7 +17,7 @@ P='COLDWAR_nr_'
 def read(rel):return (ROOT/rel).read_text(encoding='utf-8-sig')
 E={k:v for k,_,v in parse(read('common/scripted_effects/COLDWAR_nuclear_readiness.txt'))}
 T={k:v for k,_,v in parse(read('common/scripted_triggers/COLDWAR_nuclear_readiness.txt'))}
-# IMPERIA CW — Cold War: execute the target-bound release procedure and native war boundary.
+# IMPERIA COLD WAR — Cold War: execute the target-bound release procedure and native war boundary.
 E.update({k:v for k,_,v in parse(read('common/scripted_effects/COLDWAR_nuclear_escalation.txt'))})
 T.update({k:v for k,_,v in parse(read('common/scripted_triggers/COLDWAR_nuclear_escalation.txt'))})
 T.update({k:v for k,_,v in parse(read('common/scripted_triggers/01_raids_triggers.txt')) if k in ['is_able_to_use_nuclear_strikes','is_able_to_use_nuclear_strikes_tac']})
@@ -97,7 +97,9 @@ class World:
             elif k=='has_capitulated':answer=c['cap']==(v=='yes')
             elif k=='is_subject':answer=c['subject']==(v=='yes')
             elif k=='exists':answer=c['exists']==(v=='yes')
-            elif k=='has_political_power':answer=c['pp']>self.num(v,stack,root,fr)
+            elif k=='has_political_power':
+                amount=self.num(v,stack,root,fr)
+                answer=c['pp']>amount if op=='>' else c['pp']<amount if op=='<' else c['pp']==amount
             elif k=='has_idea':answer=v in c['ideas']
             elif k=='has_variable':
                 store,key=self.address(v,stack,root,fr);answer=key in store
@@ -111,6 +113,7 @@ class World:
                 answer={'=':a==b,'>':a>b,'<':a<b,'>=':a>=b,'<=':a<=b,'!=':a!=b}[cmp]
             elif k=='tag':answer=stack[-1]==self.scope(v,stack,root,fr)
             elif k=='is_in_faction_with':answer=c['faction']==self.c[self.scope(v,stack,root,fr)]['faction']
+            elif k=='is_in_faction':answer=(any(t!=stack[-1] and other['faction']==c['faction'] for t,other in self.c.items()))==(v=='yes')
             elif k=='has_war_with':answer=frozenset([stack[-1],self.scope(v,stack,root,fr)]) in self.wars
             elif k=='has_non_aggression_pact_with':answer=frozenset([stack[-1],self.scope(v,stack,root,fr)]) in self.naps
             elif k=='is_subject_of':answer=c['overlord']==self.scope(v,stack,root,fr)
@@ -160,7 +163,10 @@ class World:
                 else:c['flags'][v]=None
             elif k=='clr_country_flag':c['flags'].pop(v,None)
             elif k=='add_dynamic_modifier':c['dynamic'].add(first(v,'modifier'))
-            elif k=='remove_dynamic_modifier':c['dynamic'].discard(first(v,'modifier'))
+            elif k=='remove_dynamic_modifier':
+                modifier=first(v,'modifier')
+                if modifier not in c['dynamic']:raise AssertionError(('removing absent dynamic modifier',modifier))
+                c['dynamic'].remove(modifier)
             elif k=='add_political_power':c['pp']+=float(v)
             elif k=='save_event_target_as':self.targets[v]=stack[-1]
             elif k=='country_event':
@@ -214,7 +220,7 @@ class World:
         self.set('accept_kind',kind,a);self.call('finish_offer',a,b,[('KIND','=',str(kind))])
 
 class Readiness(unittest.TestCase):
-    # IMPERIA CW — Cold War: arsenal ownership enables nuclear diplomacy for every country.
+    # IMPERIA COLD WAR — Cold War: arsenal ownership enables nuclear diplomacy for every country.
     def test_warning_access_follows_weapons_without_status_laws_or_country_restrictions(self):
         for tag in World().tags[:-1]:
             for equipment in ['nuclear_missile_equipment','nuclear_ballistic_missile_equipment']:
@@ -318,6 +324,13 @@ class Readiness(unittest.TestCase):
         self.assertFalse(w.check('strategic_ready'))
         w.call('daily');self.assertEqual(w.var('level'),5)
         self.assertEqual(w.var('forces_weekly'),0)
+    def test_weaponless_target_does_not_receive_a_nuclear_readiness_assessment(self):
+        w=World();w.c['SOV']['stock']={};w.set('level',1,'SOV')
+        w.c['USA']['intel']['SOV']=.8;w.g['mdcw_cw_tension']=20
+        w.call('assess_prev',prev='SOV')
+        self.assertEqual((w.var('assessment'),w.var('assessed_level')),(0,0))
+        self.assertEqual(w.g['mdcw_cw_tension'],20)
+        self.assertIn(('USA','cw_nuclear.14'),w.events)
     def test_intelligence_access_does_not_reveal_exact_low_intel(self):
         w=World();w.level(2,'SOV')
         w.call('assess_prev',prev='SOV');self.assertEqual(w.var('assessment'),0)
@@ -361,7 +374,7 @@ class Readiness(unittest.TestCase):
         w.c['RAID']['v'].update(actor_country=w.ids[attacker],victim_country=w.ids[victim])
         w.call('record_raid','RAID',params=[('LOSS','=',str(loss))])
 
-# IMPERIA CW — Cold War: multiplayer first-use lifecycle and adversarial state changes.
+# IMPERIA COLD WAR — Cold War: multiplayer first-use lifecycle and adversarial state changes.
 class FirstUse(unittest.TestCase):
     def prepared(self,tag='USA',target='SOV'):
         w=World();w.level(1,tag);w.warn(tag,target)
@@ -514,19 +527,78 @@ class FirstUse(unittest.TestCase):
         self.assertFalse(w.check('can_ultimatum_prev',prev='SOV'))
 
 class Integration(unittest.TestCase):
+    def test_loaded_localisation_has_exactly_one_native_newline_escape(self):
+        import build
+        actual={key:json.loads(value) for key,value in re.findall(r'^ ([\w.]+):0 (".*")$',read('localisation/english/COLDWAR_nuclear_readiness_l_english.yml'),re.M)}
+        self.assertEqual(actual,{key:value.replace('\\n','\n') for key,value in build.LOC.items()})
+        self.assertNotIn('\\\\n',read('localisation/english/COLDWAR_nuclear_readiness_l_english.yml'))
+        for level in range(1,6):self.assertIn('\n\n',actual[P+f'level_{level}_tt'])
+
+    def test_both_writers_share_the_canonical_serialiser(self):
+        import ast,build
+        for marker in [build.MARK,'# IMPERIA COLD WAR — quaZa integration.']:
+            source=build.localisation_source(marker)
+            self.assertEqual(source.splitlines()[:2],['l_english:',marker.rstrip()])
+            self.assertNotIn('\\\\n',source)
+        tree=ast.parse(read('tools/quaza_eastasia_integration/apply_reviewed.py'))
+        self.assertTrue(any(isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='localisation_source' for n in ast.walk(tree)))
+
+    def test_fractional_political_power_cannot_underpay_orders_or_civil_defence(self):
+        for power in [24,24.5,24.99999,25,25.25]:
+            for effect in ['order_level_3','start_civil']:
+                with self.subTest(power=power,effect=effect):
+                    w=World();w.c['USA']['pp']=power
+                    w.call(effect)
+                    self.assertEqual(w.c['USA']['pp'],power-25 if power>=25 else power)
+                    self.assertEqual(w.var('build_days')>0 if effect.startswith('order') else w.var('civil_days')>0,power>=25)
+
+    def test_consultation_requires_the_complete_twenty_points(self):
+        gui=first(parse(read('common/scripted_guis/COLDWAR_nuclear_readiness.txt')),'scripted_gui')
+        window=first(gui,P+'command_gui')
+        enabled=first(first(window,'triggers'),P+'consult_click_enabled')
+        click=first(first(window,'effects'),P+'consult_click')
+        for power in [19,19.5,19.99999,20]:
+            w=World();w.level(3);w.warn();w.c['USA']['faction']='NATO';w.c['FRA']['faction']='NATO';w.c['USA']['pp']=power
+            self.assertEqual(w.cond(enabled,['USA'],'USA'),power>=20)
+            if power<20:
+                w.run(click,['USA'],'USA')
+                self.assertEqual(w.c['USA']['pp'],power)
+                self.assertNotIn(P+'consulted',w.c['USA']['flags'])
+
+    def test_command_eligibility_does_not_wait_for_readiness_dirty_counter(self):
+        gui=first(parse(read('common/scripted_guis/COLDWAR_nuclear_readiness.txt')),'scripted_gui')
+        self.assertIsNone(first(first(gui,P+'command_gui'),'dirty'))
+        self.assertEqual(first(first(gui,P+'launcher_gui'),'dirty'),P+'dirty')
+
+    def test_civil_release_and_capitulation_cleanup_are_repeatable(self):
+        w=World();w.call('end_civil');w.call('start_civil');power=w.c['USA']['pp']
+        for _ in range(3):w.call('end_civil')
+        self.assertEqual(w.c['USA']['pp'],power)
+        self.assertEqual(w.var('civil_weekly'),0)
+        w.c['USA']['cap']=True
+        for _ in range(3):w.call('daily')
+        self.assertNotIn(P+'civil_defence',w.c['USA']['dynamic'])
+
+    def test_empty_arsenal_has_an_explicit_panel_notice(self):
+        texts=parse(read('common/scripted_localisation/COLDWAR_nuclear_readiness.txt'))
+        notice=next(body for key,op,body in texts if key=='defined_text' and first(body,'name')==P+'posture_notice_L')
+        w=World();w.c['USA']['stock']={};w.call('refresh')
+        choices=[first(body,'localization_key') for key,op,body in notice if key=='text' and w.cond(first(body,'trigger',[]),['USA'],'USA')]
+        self.assertEqual(choices[0],P+'notice_unarmed')
+
     def test_live_script_encoding_references_and_precision(self):
         files=list((ROOT/'common').glob('*/COLDWAR_nuclear_readiness.txt'))+list((ROOT/'common').glob('*/COLDWAR_nuclear_escalation.txt'))+list((ROOT/'interface').glob('COLDWAR_nuclear_readiness.*'))+list((ROOT/'events').glob('COLDWAR_nuclear_readiness.txt'))
         for path in files:
             self.assertFalse(path.read_bytes().startswith(b'\xef\xbb\xbf'),path)
             s=path.read_text(encoding='utf-8');parse(s)
             self.assertNotRegex(s,r'\b\d+\.\d{6,}\b')
-            self.assertTrue(s.startswith('# IMPERIA CW'))
+            self.assertTrue(s.startswith('# IMPERIA COLD WAR'))
         loc=ROOT/'localisation/english/COLDWAR_nuclear_readiness_l_english.yml'
         self.assertTrue(loc.read_bytes().startswith(b'\xef\xbb\xbf'))
         keys=re.findall(r'^ ([\w.]+):',loc.read_text(encoding='utf-8-sig'),re.M)
         self.assertEqual(len(keys),len(set(keys)))
         self.assertNotIn('[event_target:',loc.read_text(encoding='utf-8-sig'))
-        # IMPERIA CW — Cold War: native diplomacy derives these keys from each action ID.
+        # IMPERIA COLD WAR — Cold War: native diplomacy derives these keys from each action ID.
         for action_id in A:
             for suffix in ['_TITLE','_ACTION_DESC']:
                 self.assertIn(action_id.upper()+suffix,keys)
@@ -554,7 +626,8 @@ class Integration(unittest.TestCase):
         self.assertEqual(doctrine.count(P+'retaliation_allowed = yes'),4)
     def test_generation_is_deterministic(self):
         import build
-        build.artwork()
+        # The import authors scripts without writing assets. Binary artwork is
+        # unchanged by this review and is deliberately not regenerated in a test.
         for rel,expected in build.FILES.items():self.assertEqual(read(rel),expected,rel)
     def test_timed_commitments_have_an_explicit_nonzero_flag_value(self):
         for file in ['COLDWAR_nuclear_readiness.txt','COLDWAR_nuclear_escalation.txt']:

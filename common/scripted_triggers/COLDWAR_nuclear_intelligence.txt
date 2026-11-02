@@ -1,0 +1,56 @@
+# IMPERIA COLD WAR — private, observer-specific nuclear intelligence.
+COLDWAR_NI_great_power = {
+	OR = {
+		original_tag = USA
+		original_tag = SOV
+		original_tag = ENG
+		original_tag = FRA
+		original_tag = CHI
+		has_idea = great_power
+		has_idea = super_power
+	}
+}
+
+COLDWAR_NI_public_nuclear_power = {
+	OR = { has_idea = nuclear_power_def has_idea = nuclear_power_off }
+}
+
+COLDWAR_NI_live_weapons_project = {
+	OR = {
+		is_special_project_being_researched = sp:sp_nuclear_bomb
+		is_special_project_being_researched = sp:sp_nuclear_warhead_program
+	}
+}
+
+COLDWAR_NI_relevant_country = {
+	exists = yes
+	NOT = { has_idea = non_state_actor }
+	OR = {
+		has_tech = nuclear_technology
+		enrichment_facility > 0
+		COLDWAR_NI_live_weapons_project = yes
+		has_country_flag = COLDWAR_NI_weapons_trace
+		has_country_flag = COLDWAR_NI_weapons_record
+	}
+}
+
+# THIS = observer, ROOT = programme country. Public nuclear status is already known.
+COLDWAR_NI_unresolved_weapons = {
+	check_variable = { COLDWAR_NI_weapons_knowledge@ROOT < 2 }
+	ROOT = {
+		NOT = { COLDWAR_NI_public_nuclear_power = yes }
+		OR = {
+			COLDWAR_NI_live_weapons_project = yes
+			has_country_flag = COLDWAR_NI_weapons_trace
+			has_country_flag = COLDWAR_NI_weapons_record
+		}
+	}
+}
+
+# Raid country scope: THIS = raider, FROM = target. No automatic disclosure to allies.
+COLDWAR_NI_enrichment_target_known = {
+	OR = {
+		has_country_flag = COLDWAR_NI_enrichment_known@FROM
+		FROM = { COLDWAR_NI_public_nuclear_power = yes }
+	}
+}

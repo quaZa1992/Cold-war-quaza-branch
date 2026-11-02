@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan focus presentation and section anchors.
+# IMPERIA COLD WAR — Cold War: Japan focus presentation and section anchors.
 """Current presentation of the approved graph; no gameplay data is changed."""
 from copy import deepcopy
 

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan 1970 approved design effect inventory.
+# IMPERIA COLD WAR — Cold War: Japan 1970 approved design effect inventory.
 """Translate explicit general-policy rewards into reviewable MD effect records.
 
 This is a read-only analysis step; it never writes loaded mod content.
@@ -8,7 +8,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-DATA = json.loads((ROOT / 'approved_design.json').read_text(encoding='utf-8'))['design']
+from reward_revision import effective_design, effective_inventory
+DATA = effective_design(json.loads((ROOT / 'approved_design.json').read_text(encoding='utf-8'))['design'])
 
 # Labels are resolved to keys with a country-scope use in current MD Japan or
 # current MD modifier definitions and consumers. Percent values remain fractions.
@@ -100,7 +101,8 @@ def main():
    record=parse(n); records.append(record)
    if not (record['matched'] or record['treasury_cost'] or record['buildings'] or record['bonuses'] or record['special']):
     print('UNRESOLVED',record['id'],record['effects_text'])
- (ROOT/'effect_inventory.json').write_text(json.dumps(records,indent=2,ensure_ascii=False),encoding='utf-8')
- print('Inventoried',len(records),'general-policy focuses; human review required before use.')
+ effective = list(effective_inventory(records).values())
+ (ROOT/'effect_inventory.json').write_text(json.dumps(effective,indent=2,ensure_ascii=False),encoding='utf-8')
+ print('Inventoried',len(effective),'general-policy focuses with the current JAP reward overlay; human review required before use.')
 
 if __name__=='__main__':main()

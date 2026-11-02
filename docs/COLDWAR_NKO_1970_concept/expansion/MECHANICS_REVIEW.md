@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # North Korea 1970 expansion mechanics review
 
 **Review target:** final emitted build with 360 focus nodes and 15 agreements, checked against `tools/north_korea_1970/current_design.json`, its four expansion modules, emitted NKO focus/effect/trigger/event files, and installed MD Workshop source `2777392649` (MD 2.0.2 reference in this checkout).

@@ -1,12 +1,13 @@
-# IMPERIA CW — Cold War: Japan 1970 design and graph validation.
+# IMPERIA COLD WAR — Cold War: Japan 1970 design and graph validation.
 """Check the approved graph without writing to loaded game files."""
 from collections import Counter
 from pathlib import Path
 import json
 from functools import lru_cache
+from reward_revision import effective_design
 
 root = Path(__file__).resolve().parent
-design = json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design']
+design = effective_design(json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design'])
 nodes = [node for section in design['sections'] for node in section['nodes']]
 by_id = {n['id']: n for n in nodes}
 errors = []

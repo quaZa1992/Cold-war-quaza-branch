@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Bilateral treaty investment adjustments in native project formulas
 # International Investments System
 # Player (GUI) and AI (investments_event.500) both call start_project_two.
 # Slot conventions: ^-1 = staging, ^-2 = snapshot, ^0..14 = active projects.
@@ -240,6 +241,8 @@ project_monetary_cost_calculation = {
 				}
 				add_to_temp_variable = { investments_cost_modifier = -0.05 }
 			}
+			# IMPERIA COLD WAR — Maximum applicable bilateral treaty discount
+			icwt_investment_cost_extra = yes
 		}
 	}
 	add_to_temp_variable = { investments_cost_modifier = ROOT.modifier@investment_cost_modifier }
@@ -475,6 +478,8 @@ precompute_state_construction_data = {
 			}
 			add_to_temp_variable = { receiving_investment_duration_temp = -0.05 }
 		}
+		# IMPERIA COLD WAR — Maximum applicable bilateral treaty duration adjustment
+		icwt_investment_duration_extra = yes
 		add_to_temp_variable = { receiving_investment_duration_temp = THIS.modifier@receiving_investment_duration_modifier }
 	}
 }
@@ -490,13 +495,8 @@ calculate_project_duration = {
 
 	# receiving_investment_duration_temp was pre-computed by precompute_state_construction_data
 	add_to_temp_variable = { receiving_investment_duration_temp = modifier@investment_duration_modifier }
-	clamp_temp_variable = { var = receiving_investment_duration_temp min = -1 }
-	if = { limit = { check_variable = { receiving_investment_duration_temp > 0 } }
-		add_to_temp_variable = { construction_speed = receiving_investment_duration_temp }
-	}
-	else = {
-		subtract_from_temp_variable = { construction_speed = receiving_investment_duration_temp }
-	}
+# IMPERIA COLD WAR — Economic organisation investment duration semantics
+	set_temp_variable = { icw_investment_duration_factor = { value = 1 add = receiving_investment_duration_temp clamp = { min = 0.1 max = 10 } } }
 
 	set_variable = { displayable_construction_modifier = construction_speed }
 
@@ -504,6 +504,9 @@ calculate_project_duration = {
 	multiply_temp_variable = { construction_speed = 75 }
 	if = { limit = { check_variable = { construction_speed > 0 } }
 		divide_temp_variable = { building_cost = construction_speed }
+		# IMPERIA COLD WAR — Economic organisation investment duration semantics
+		multiply_temp_variable = { building_cost = icw_investment_duration_factor }
+		clamp_temp_variable = { var = building_cost min = 1 }
 	}
 	else = {
 		# construction_speed <= 0 means instant or broken; clamp to 1 day to avoid instant completion

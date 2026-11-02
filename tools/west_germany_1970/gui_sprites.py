@@ -352,7 +352,10 @@ def scales(pos, w=300, h=40):
 
 def build_all():
     import akte_sprites
+    import entry_ui
     akte_sprites.build(reg)
+    # IMPERIA COLD WAR — German politics minigame launcher icons
+    entry_ui.build(reg)
     reg("cwgg_topbar_rivalry", topbar_icon("rivalry"))
     reg("cwgg_topbar_security", topbar_icon("security"))
     reg("cwgg_climate_track", gradient_track(560, 18))
@@ -407,7 +410,8 @@ def gfx_file(header):
                          f'\t\ttilingCenter = yes\n\t\teffectFile = "gfx/FX/buttonstate_nodowneffect.lua"\n\t}}')   # corneredTileSpriteType has no legacy_lazy_load
             continue
         extra = f"\n\t\tnoOfFrames = {n}" if n > 1 else ""
-        fx = "\n\t\teffectFile = \"gfx/FX/buttonstate.lua\"" if name.startswith("cwgg_topbar") or name in akte_sprites.BUTTONS else ""
+        # IMPERIA COLD WAR — German politics minigame launcher icons
+        fx = "\n\t\teffectFile = \"gfx/FX/buttonstate.lua\"" if name.startswith(("cwgg_topbar", "cwgg_launcher_")) or name in akte_sprites.BUTTONS else ""
         lines.append(f'\tspriteType = {{\n\t\tname = "GFX_{name}"\n\t\ttexturefile = "{rel}"{extra}{fx}\n\t\tlegacy_lazy_load = no\n\t}}')
     lines.append("}")
     return "\n".join(lines) + "\n"

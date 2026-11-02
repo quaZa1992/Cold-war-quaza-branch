@@ -1,5 +1,13 @@
 # Colonial Affairs runtime
 
+<!-- IMPERIA CW — Cold War: unified security-register navigation. -->
+
+The native entry point is **Decisions → Security Affairs**. `COLDWAR_COL_section` stores the selected tab: 0 Territories, 1 Internal Files, 2 Foreign Files. With no saved selection, an active administrator defaults to Territories; Britain/Germany without a selected administration default to Internal Files; other countries default to Foreign Files. The three predicates are mutually exclusive. The category is available to human players in the existing 1970/1985 scenario envelope even when no organisation is accessible.
+
+The British internal file uses the current IRA target and policy providers. The German file uses `COLDWAR_COL_own_raf`, which preserves the organisation's existing date, ownership, initialization and dissolution gates. Its countermeasure button additionally requires `cwsec_initialized` and the native German cabinet visibility predicate, then opens `cwsec_open`, selects `cwsec_tab = 1` and calls `COLDWAR_GER_1970_sec_gui_refresh`. It does not replace German policing or recalculate a parallel RAF budget. Germany before 14 May 1970 sees an observation notice.
+
+Foreign organisation names, emblems, strength and support buttons additionally require `COLDWAR_COL_contact_target_available`. The browser selects the smallest eligible state ID above the current target and wraps to the smallest eligible ID. Every candidate passes the complete per-state foreign-contact gate before selection. If access is lost, the organisation content is hidden and the requirements sheet is shown; the main register remains accessible. Existing organisation registration and aid effects are unchanged.
+
 The historical inclusion and grouping decisions are recorded in [HISTORY.md](HISTORY.md) and [registry.json](registry.json). Weekly budget values are gameplay calibration, not quotations of historical government expenditure. The runtime preserves existing ownership, control, cores, governments and constitutional arrangements.
 
 `runtime.py.build(root, registry)` returns the canonical generated scripts and English localisation. Run `compile.py` to write them, merge UI localisation and maintain the manifest. Script files use UTF-8 without BOM; localisation uses UTF-8 with BOM. `validate.py` checks installed sources. `test_runtime.py` exercises a bounded model of emitted script AST; neither establishes native engine behaviour or visual correctness.
@@ -73,7 +81,7 @@ The following new regional policy table applies to the IRA:
 | --- | --- | --- | --- |
 | Routine policing | $0.005bn | +1 | No additional restriction modifier |
 | Community liaison | $0.012bn | −0.5 | Slow, costly de-escalation |
-| Intensive investigation | $0.020bn | −1 | Additional construction −5% and local workforce −2% |
+| Intensive investigation | $0.020bn | −1 | Additional construction −5% and local manpower −2% |
 
 Changing policy costs 25 PP and locks that regional mandate for 180 days. Choosing the existing policy is blocked. Foreign active aid adds 0.1 monthly strength per aid point; political support adds 5 strength once, arms add 3 once. Funding/arms add +5 ongoing aid for 180 days, capped at 15. IRA strength has a 25 minimum and a 90 maximum. Regional construction penalty is strength × −0.1%, resources/workforce strength × −0.05%. Above 44 strength there is a 15% monthly incident chance, at most one incident per country every 90 days; an incident costs 0.5% stability and 10 PP. A negotiated British settlement flag from the retained national political route deactivates the IRA case.
 
@@ -88,6 +96,30 @@ When this mechanic creates a forced override it stores both an ownership flag an
 All administrative and temporary petition modifier providers require `COLDWAR_COL_active_state`; daily cleanup removes their entries and custom resistance-target entries from ineligible states. `COLDWAR_COL_registered` identifies the states covered by the shared system. The Sahara migration removes the old `COLDWAR_SAHARA_political_mobilisation` modifier to prevent it stacking with the new administration.
 
 ## UI contract
+
+### Domestic measures
+
+`measures.py` owns `COLDWAR_colonial_measures.txt` effect/trigger adapters and appends contact outcome events 4–7. `COLDWAR_COL_measures_open` toggles the organisation's measures sheet; `COLDWAR_COL_measure_page` selects one of its two pages. All German measure wrappers call the native `_sec_can_*` and `_sec_act_*` providers, retaining their unlocks and cooldowns. `raf_programmes.json` is the common catalogue; `tools/west_germany_1970/security_contract.py` owns their actual actions, lifecycle, monthly programme effects and budget calculation.
+
+Northern Ireland lazily initializes `COLDWAR_COL_tension = 55`, without resetting existing organisation strength or policies. The monthly hook applies the existing base police drift, plus active programme changes, foreign aid and tension. Tension above 69 adds +0.5 strength/month; below 36 adds −0.5. Tension stays within 20–95. Organisation remains within the existing 25–90 bounds. If organisation exceeds 44 and the incident cooldown has expired, monthly incident probability is 15%, 25% at high tension, or 2% during a ceasefire. The original incident effects and 90-day cooldown remain.
+
+| British measure | Upfront PP / bn | Weekly bn | Term / cooldown | Consequences |
+|---|---:|---:|---|---|
+| Casework | 20 / 0.025 | 0.003 | 180 / 180 days | Agency required; strength −2, then −0.5/month. |
+| Employment/complaints | 30 / 0.040 | 0.004 | 180 / 365 days | Tension −8, then −1/month; incompatible with internment. |
+| Internment | 45 / 0.020 | 0.006 | 90 / 365 days | Strength must exceed 44; −8 strength, +15 tension, −1% stability; +1.5 recruitment/month and −3% local manpower while active. Blocks ceasefire/reform/roundtable combinations. |
+| Detention review | 15 / 0 | 0 | Immediate | Ends internment's cost/restriction/recruitment penalty; strength +3, tension −8. Preserves cooldown. |
+| Confidential contacts | 25 / 0.015 | 0.002 on success | 90 / 180 days | Tension below 71, no internment; 60% ceasefire and tension −5; 40% failure, tension +5 and −0.5% stability. Ceasefire gives −0.5 strength/month and 2% incident probability. |
+| Constitutional roundtable | 60 / 0.080 | 0.006 | 180 / 365 days | Active ceasefire, tension below 46, reconciled aid below 6, no internment. Tension −10, then −1/month; strength −0.5/month; −1.5% stability. At day 60, 30% chance of obstruction ending talks and ceasefire, +10 tension and +3 strength. No automatic settlement. |
+
+Each German programme requires the actual active RAF case and native security cabinet. Coordination additionally needs BKA level 1 and cadres: 25 PP, 0.035bn upfront and 0.003bn/week for 180 days; +8 trace initially and +1/month for each wanted person still at large, capped at 100, without automatic arrest. Judicial review costs 35 PP, 0.025bn upfront and 0.002bn/week for 180 days: rule of law +3, security −2, milieu −3 initially and −0.25/month. Medical review requires prisoners, hunger pressure above 9 and security above 1: 35 PP, 0.030bn upfront and 0.003bn/week for 90 days; hunger pressure −10, milieu −2, rule of law +2, security −2. It does not replace the selected prison regime. Judicial/medical review have 180-day cooldowns.
+
+<!-- IMPERIA CW — Cold War: one RAF runtime and focus unlock contract. -->
+Programme focus requirements are respectively **BKA Expansion**, **Data Protection** and **The Stammheim Trial**. Existing completed focuses recover their unlock receipts without replaying rewards. Legacy live/cooldown programme flag names remain valid; an already paid term can finish, but future activation requires its focus. The native cabinet's fourth tab and the shared file use exactly the same actions. Relevant focus rewards refresh the native case immediately. The existing reconciliation focus retains its OR prerequisites.
+
+Before an IRA measure is paid, local aid is reconciled and ownership is rechecked. All paid actions recheck political power, treasury, programme cooldown and institutional prerequisites at effect time. A blocked action does not pay. Active programme flags drive weekly costs; expiry or loss of the case ends the cost. Cancellation/loss preserves cooldown flags. The existing national expense hook calls `COLDWAR_COL_domestic_budget`, which adds these costs once. The dossier's regional cost includes active British programmes; costs never depend on which UI page is open.
+
+The existing once-per-country monthly contact hook owns British measure effects. The native German monthly dispatcher alone invokes `COLDWAR_GER_1970_security_external_monthly`, before native recruitment and manhunts; common contacts never tick RAF aid or programmes. Recomputing derived threat, displayed costs or GUI geometry cannot replay monthly effects. The delayed roundtable event checks that the original Northern Ireland case and roundtable remain active. Its 365-day cooldown prevents a second roundtable from taking over an old 60-day callback. Receipt events describe outcomes after activation; they do not offer a second charge or an agreement acceptance option. See [MEASURES_HISTORY.md](MEASURES_HISTORY.md) for historical evidence versus authored game values and [SECURITY_CONTRACT.md](../west_germany_1970/SECURITY_CONTRACT.md) for German lifecycle, custody and stale-action checks.
 
 Country selection uses `COLDWAR_COL_selected` (one-based registry index) and `COLDWAR_COL_selected_anchor` (saved state ID). Navigation and policy effects run in country scope. `COLDWAR_COL_refresh_view` copies resistance, compliance, cost, policy, pending concern, days remaining, state count and current construction/resource percentages into country-owned `COLDWAR_COL_view_*` fields. Construction and resource percentages average each eligible state's actual administration variables after policy and resistance-stage effects; they are not fixed policy-label values. Temporary petition grants or penalties remain separate native modifiers. Resistance and compliance are read from the native `THIS.resistance` and `THIS.compliance` values and averaged over eligible member states. They are not a second custom insurgency simulation.
 

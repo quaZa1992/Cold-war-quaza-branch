@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: North Korea 1970 domestic adapters.
+# IMPERIA COLD WAR — Cold War: North Korea 1970 domestic adapters.
 """Emit the approved NKO 1970 domestic decision and account support."""
 
 from __future__ import annotations
@@ -7,7 +7,7 @@ import json
 
 
 P = "COLDWAR_NKO_"
-HEADER = "# IMPERIA CW — Cold War: North Korea 1970 domestic adapters.\n"
+HEADER = "# IMPERIA COLD WAR — Cold War: North Korea 1970 domestic adapters.\n"
 
 
 def build(ROOT, D, put):

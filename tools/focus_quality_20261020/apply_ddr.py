@@ -1,5 +1,5 @@
-# IMPERIA CW — Cold War: focus quality 20261020 — apply ddr.
-"""Apply only approved DDR focus changes; leave unrelated live output intact."""
+# IMPERIA COLD WAR — DDR reward overlay rebuild hook.
+"""Apply the retained DDR quality pass, then reapply its bounded 2026 reward overlay."""
 import json
 import re
 from source_edit import ROOT, write, replace_reward, loc_update
@@ -43,7 +43,7 @@ def apply():
             row[2] = row[2].replace('Arms Industry opinion', 'Industrial Conglomerates opinion')
         if sid in actions:
             f['e'] = [['mix', 'quality', {
-                'open_repayment': 'Fund a treasury-backed repayment up to3%GDP; matching debt reduction, -0.25pp interest730days, +8%sanction resistance and +5Moscow Trust on settlement.',
+                'open_repayment': 'Fund a treasury-backed repayment up to3%GDP; matching debt reduction, -0.25pp interest730days and +8%sanction resistance on settlement.',
                 'start_import': '25ArmyXP; request90real Soviet tanks at1%GDP, paid on accepted delivery; no equipment grant on refusal.',
                 'start_licence': 'Request an available Soviet tank licence and2military factories at1.6%GDP; +3%military-factory productivity only on successful implementation.'
             }[actions[sid]]]]
@@ -64,6 +64,9 @@ def apply():
     entries[P + 'nva_the_t72_licence'] = 'Soviet Tank Assembly Licence'
     write(locpath, loc_update(locpath.read_text(encoding='utf-8-sig'), entries))
     build()
+    # Keep the bounded reward overlay present after this retained post-process.
+    from apply_ddr_reward_overlay import apply_overlay
+    print('DDR reward overlay:', apply_overlay())
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: event art — export ddr intro.
+# IMPERIA COLD WAR — Export DDR event art in native BGRA DDS format.
 """Package the unchanged MD photograph in its native country-event frame.
 
 FFmpeg performs the proportional photo fit and native frame composition.
@@ -44,9 +44,10 @@ def main():
         assert all(image.getpixel((x,y)) == native.getpixel((x,y))
                    for y in range(163) for x in range(217)
                    if not (19 <= x < 199 and 6 <= y < 156))
-    header = [124,4111,163,217,217*4,0,0]+[0]*11+[32,65,0,32,255,65280,16711680,4278190080,4096,0,0,0,0]
+    # IMPERIA COLD WAR — Match native MD byte order without changing the photograph.
+    header = [124,4111,163,217,217*4,0,0]+[0]*11+[32,65,0,32,16711680,65280,255,4278190080,4096,0,0,0,0]
     dds = OUTPUT.with_suffix('.dds')
-    dds.write_bytes(b'DDS '+struct.pack('<31I',*header)+pixels)
+    dds.write_bytes(b'DDS '+struct.pack('<31I',*header)+image.tobytes('raw', 'BGRA'))
     assert Image.open(dds).convert('RGBA').tobytes() == pixels
     archived = ROOT/'Claude outputs/COLDWAR_DDR_generator/art/dds/COLDWAR_DDR_intro.dds'
     archived.parent.mkdir(parents=True, exist_ok=True)

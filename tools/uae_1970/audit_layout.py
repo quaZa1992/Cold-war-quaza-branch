@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uae 1970 — audit layout.
+# IMPERIA COLD WAR — UAE installed layout and native numeric preview audit.
 """Independently reconstruct installed UAE focus geometry and native card proofs.
 
 Reads emitted Clausewitz/YML/GFX rather than importing the compiler. Writes only
@@ -614,6 +614,10 @@ def main():
     }
     for key, fields_allowed in direct_fields.items():
         allowed[P+key].update(fields_allowed | {'streamlined'})
+    for key in ('citizen_ballot', 'citizen_dividend'):
+        allowed[P+key].update({'modifiers', 'description', 'reward_summary', 'effect_body'})
+    for key in ('national_training', 'foreign_specialists', 'technical_institutes'):
+        allowed[P+key].update({'starting_changes', 'spirit_changes', 'reward_summary', 'effect_body'})
     for identifier, before in original_by.items():
         after = revised_by[identifier]
         normalized_summary = [line for line in before.get('reward_summary', [])
@@ -636,10 +640,13 @@ def main():
     # Later explicit user revision replaces only the expatriate military malus.
     starting_original[P+'expatriate_workforce']['modifiers'] = {
         'total_workforce_modifier': 0.10, 'army_morale_factor': -0.20}
+    starting_original[P+'scarce_specialists'].update(
+        modifiers={'research_speed_factor': -0.15},
+        treatment='Training or specialist recruitment reduces the research penalty; Technical Institutes removes the remaining penalty.')
     starting_current = {s["id"]: s for s in data["starting_spirits"]}
     if set(starting_current) - set(starting_original) != {P + "maritime_livelihoods"} or any(
             starting_current.get(key) != value for key, value in starting_original.items()):
-        errors.append("Starting-spirit revision differs outside the authorized maritime addition and expatriate recovery-rate change")
+        errors.append("Starting-spirit revision differs outside the authorized maritime, expatriate recovery-rate and research-only scarcity changes")
     maritime = starting_current.get(P + "maritime_livelihoods", {})
     if maritime.get("modifiers") != {"agricolture_productivity_modifier": 0.10,
                                      "offices_productivity": 0.03, "social_cost_multiplier_modifier": -0.05,

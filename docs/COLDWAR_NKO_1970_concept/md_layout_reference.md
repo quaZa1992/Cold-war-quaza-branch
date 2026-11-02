@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # MD layout and style reference for a DPRK 1970 concept
 
 Scope: reference profile for the proposed DPRK 1970 tree. This file records geometry and syntax only; it does not authorize or implement loaded game content.

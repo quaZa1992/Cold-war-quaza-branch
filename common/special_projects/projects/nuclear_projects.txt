@@ -30,12 +30,17 @@ sp_nuclear_energy = {
 			add_to_array = { global.enrichment_countries = THIS.id }
 			set_variable = { var_reactor_material_stockpile = 300 }
 			set_country_flag = enabled_nuclear_reactor_fuel_production
+			# IMPERIA COLD WAR — initial enrichment leaves discoverable procurement traces.
+			COLDWAR_NI_mark_enrichment_expansion = yes
 		}
 		facility_state_effects = {
 			set_building_level = {
 				type = enrichment_facility
 				level = 1
 			}
+			# IMPERIA COLD WAR — record the gifted plant once, without a second expansion receipt.
+			set_variable = { COLDWAR_NI_last_owner = OWNER.id }
+			set_variable = { COLDWAR_NI_last_level = 1 }
 		}
 	}
 
@@ -147,6 +152,8 @@ sp_nuclear_bomb = {
 	project_output = { #Do we have bombs in MD?
 		country_effects = {
 			custom_effect_tooltip = sp_nuclear_bomb_tt
+			# IMPERIA COLD WAR — completed weapons research remains discoverable.
+			COLDWAR_NI_record_weapons_work = yes
 		}
 	}
 
@@ -241,7 +248,11 @@ sp_nuclear_warhead_program = {
 	complexity = sp_complexity.insane
 
 	project_output = {
-		country_effects = { custom_effect_tooltip = sp_nuclear_warhead_program_tt }
+		country_effects = {
+			custom_effect_tooltip = sp_nuclear_warhead_program_tt
+			# IMPERIA COLD WAR — completed weapons research remains discoverable.
+			COLDWAR_NI_record_weapons_work = yes
+		}
 		enable_equipment_modules = { spec_nuclear_consent }
 	}
 

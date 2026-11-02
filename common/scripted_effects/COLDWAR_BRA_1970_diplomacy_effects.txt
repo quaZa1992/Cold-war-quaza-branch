@@ -1,0 +1,3197 @@
+# IMPERIA COLD WAR — Brazil 1970 national programmes.
+COLDWAR_BRA_offer_preview_us_training = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_us_training_brazil_1 = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_us_training_brazil_1_million = { value = COLDWAR_BRA_quote_us_training_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_us_training_brazil_1_tt
+		army_experience = 30
+		add_ideas = COLDWAR_BRA_us_training_BRA
+	}
+	USA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_us_training_recipient_1 = { value = gdp_total multiply = 0.00015 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_us_training_recipient_1_million = { value = COLDWAR_BRA_quote_us_training_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_us_training_recipient_1_tt
+		army_experience = 15
+		add_ideas = COLDWAR_BRA_us_training_USA
+	}
+}
+
+COLDWAR_BRA_propose_us_training = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_us_training = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_us_training
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_us_training
+		USA = {
+			set_country_flag = COLDWAR_BRA_pending_us_training
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.1 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_us_training = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_us_training = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_us_training
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+				modify_treasury_effect = yes
+				army_experience = 30
+				set_country_flag = COLDWAR_BRA_paid_us_training
+			}
+		}
+		USA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_us_training
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0004 } }
+				modify_treasury_effect = yes
+				army_experience = 15
+				set_country_flag = COLDWAR_BRA_paid_us_training
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_us_training
+		clr_country_flag = COLDWAR_BRA_pending_us_training
+		USA = {
+			set_country_flag = COLDWAR_BRA_signed_us_training
+			clr_country_flag = COLDWAR_BRA_pending_us_training
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_us_training = {
+	if = {
+		limit = {
+			tag = USA
+			has_country_flag = COLDWAR_BRA_pending_us_training
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_us_training = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_us_training = {
+	if = {
+		limit = {
+			tag = USA
+			has_country_flag = COLDWAR_BRA_pending_us_training
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_us_training
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_us_training days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_us_training
+	}
+}
+
+COLDWAR_BRA_terminate_us_training = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_us_training
+		clr_country_flag = COLDWAR_BRA_signed_us_training
+		clr_country_flag = COLDWAR_BRA_pending_us_training
+		USA = {
+			clr_country_flag = COLDWAR_BRA_signed_us_training
+			clr_country_flag = COLDWAR_BRA_pending_us_training
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_us_training_BRA
+			}
+			remove_ideas = COLDWAR_BRA_us_training_BRA
+		}
+		USA = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_us_training_USA
+				}
+				remove_ideas = COLDWAR_BRA_us_training_USA
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_us_training = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_us_training_BRA
+	}
+	USA = {
+		remove_ideas = COLDWAR_BRA_us_training_USA
+	}
+}
+
+COLDWAR_BRA_offer_preview_us_industry = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_us_industry_brazil_1 = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_us_industry_brazil_1_million = { value = COLDWAR_BRA_quote_us_industry_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_us_industry_brazil_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_us_industry_brazil_research_4
+			bonus = 0.5
+			uses = 1
+			category = CAT_industry
+		}
+		add_ideas = COLDWAR_BRA_us_industry_BRA
+	}
+	USA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0005 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_us_industry_recipient_1 = { value = gdp_total multiply = 0.00015 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_us_industry_recipient_1_million = { value = COLDWAR_BRA_quote_us_industry_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_us_industry_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_us_industry_recipient_research_3
+			bonus = 0.25
+			uses = 1
+			category = CAT_industry
+		}
+		add_ideas = COLDWAR_BRA_us_industry_USA
+	}
+}
+
+COLDWAR_BRA_propose_us_industry = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_us_industry = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_us_industry
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_us_industry
+		USA = {
+			set_country_flag = COLDWAR_BRA_pending_us_industry
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.2 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_us_industry = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_us_industry = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_us_industry
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_us_industry_brazil_research_4
+					bonus = 0.5
+					uses = 1
+					category = CAT_industry
+				}
+				set_country_flag = COLDWAR_BRA_paid_us_industry
+			}
+		}
+		USA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_us_industry
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0005 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_us_industry_recipient_research_3
+					bonus = 0.25
+					uses = 1
+					category = CAT_industry
+				}
+				set_country_flag = COLDWAR_BRA_paid_us_industry
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_us_industry
+		clr_country_flag = COLDWAR_BRA_pending_us_industry
+		USA = {
+			set_country_flag = COLDWAR_BRA_signed_us_industry
+			clr_country_flag = COLDWAR_BRA_pending_us_industry
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_us_industry = {
+	if = {
+		limit = {
+			tag = USA
+			has_country_flag = COLDWAR_BRA_pending_us_industry
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_us_industry = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_us_industry = {
+	if = {
+		limit = {
+			tag = USA
+			has_country_flag = COLDWAR_BRA_pending_us_industry
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_us_industry
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_us_industry days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_us_industry
+	}
+}
+
+COLDWAR_BRA_terminate_us_industry = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_us_industry
+		clr_country_flag = COLDWAR_BRA_signed_us_industry
+		clr_country_flag = COLDWAR_BRA_pending_us_industry
+		USA = {
+			clr_country_flag = COLDWAR_BRA_signed_us_industry
+			clr_country_flag = COLDWAR_BRA_pending_us_industry
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_us_industry_BRA
+			}
+			remove_ideas = COLDWAR_BRA_us_industry_BRA
+		}
+		USA = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_us_industry_USA
+				}
+				remove_ideas = COLDWAR_BRA_us_industry_USA
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_us_industry = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_us_industry_BRA
+	}
+	USA = {
+		remove_ideas = COLDWAR_BRA_us_industry_USA
+	}
+}
+
+COLDWAR_BRA_offer_preview_china_trade = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_china_trade_brazil_1 = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_china_trade_brazil_1_million = { value = COLDWAR_BRA_quote_china_trade_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_china_trade_brazil_1_tt
+		add_ideas = COLDWAR_BRA_china_trade_BRA
+	}
+	CHI = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_china_trade_recipient_1 = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_china_trade_recipient_1_million = { value = COLDWAR_BRA_quote_china_trade_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_china_trade_recipient_1_tt
+		add_ideas = COLDWAR_BRA_china_trade_CHI
+	}
+}
+
+COLDWAR_BRA_propose_china_trade = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_china_trade = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_china_trade
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_china_trade
+		CHI = {
+			set_country_flag = COLDWAR_BRA_pending_china_trade
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.3 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_china_trade = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_china_trade = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_china_trade
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+				modify_treasury_effect = yes
+				set_country_flag = COLDWAR_BRA_paid_china_trade
+			}
+		}
+		CHI = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_china_trade
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+				modify_treasury_effect = yes
+				set_country_flag = COLDWAR_BRA_paid_china_trade
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_china_trade
+		clr_country_flag = COLDWAR_BRA_pending_china_trade
+		CHI = {
+			set_country_flag = COLDWAR_BRA_signed_china_trade
+			clr_country_flag = COLDWAR_BRA_pending_china_trade
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_china_trade = {
+	if = {
+		limit = {
+			tag = CHI
+			has_country_flag = COLDWAR_BRA_pending_china_trade
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_china_trade = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_china_trade = {
+	if = {
+		limit = {
+			tag = CHI
+			has_country_flag = COLDWAR_BRA_pending_china_trade
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_china_trade
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_china_trade days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_china_trade
+	}
+}
+
+COLDWAR_BRA_terminate_china_trade = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_china_trade
+		clr_country_flag = COLDWAR_BRA_signed_china_trade
+		clr_country_flag = COLDWAR_BRA_pending_china_trade
+		CHI = {
+			clr_country_flag = COLDWAR_BRA_signed_china_trade
+			clr_country_flag = COLDWAR_BRA_pending_china_trade
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_china_trade_BRA
+			}
+			remove_ideas = COLDWAR_BRA_china_trade_BRA
+		}
+		CHI = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_china_trade_CHI
+				}
+				remove_ideas = COLDWAR_BRA_china_trade_CHI
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_china_trade = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_china_trade_BRA
+	}
+	CHI = {
+		remove_ideas = COLDWAR_BRA_china_trade_CHI
+	}
+}
+
+COLDWAR_BRA_offer_preview_ussr_machines = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_ussr_machines_brazil_1 = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_ussr_machines_brazil_1_million = { value = COLDWAR_BRA_quote_ussr_machines_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_ussr_machines_brazil_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_ussr_machines_brazil_research_2
+			bonus = 0.5
+			uses = 2
+			category = CAT_industry
+		}
+		add_ideas = COLDWAR_BRA_ussr_machines_BRA
+	}
+	SOV = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_ussr_machines_recipient_1 = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_ussr_machines_recipient_1_million = { value = COLDWAR_BRA_quote_ussr_machines_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_ussr_machines_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_ussr_machines_recipient_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_agriculture
+		}
+		add_ideas = COLDWAR_BRA_ussr_machines_SOV
+	}
+}
+
+COLDWAR_BRA_propose_ussr_machines = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_ussr_machines = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_ussr_machines
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_ussr_machines
+		SOV = {
+			set_country_flag = COLDWAR_BRA_pending_ussr_machines
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.4 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_ussr_machines = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_ussr_machines = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_ussr_machines
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_ussr_machines_brazil_research_2
+					bonus = 0.5
+					uses = 2
+					category = CAT_industry
+				}
+				set_country_flag = COLDWAR_BRA_paid_ussr_machines
+			}
+		}
+		SOV = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_ussr_machines
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_ussr_machines_recipient_research_2
+					bonus = 0.5
+					uses = 1
+					category = CAT_agriculture
+				}
+				set_country_flag = COLDWAR_BRA_paid_ussr_machines
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_ussr_machines
+		clr_country_flag = COLDWAR_BRA_pending_ussr_machines
+		SOV = {
+			set_country_flag = COLDWAR_BRA_signed_ussr_machines
+			clr_country_flag = COLDWAR_BRA_pending_ussr_machines
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_ussr_machines = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_BRA_pending_ussr_machines
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_ussr_machines = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_ussr_machines = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_BRA_pending_ussr_machines
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_ussr_machines
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_ussr_machines days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_ussr_machines
+	}
+}
+
+COLDWAR_BRA_terminate_ussr_machines = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_ussr_machines
+		clr_country_flag = COLDWAR_BRA_signed_ussr_machines
+		clr_country_flag = COLDWAR_BRA_pending_ussr_machines
+		SOV = {
+			clr_country_flag = COLDWAR_BRA_signed_ussr_machines
+			clr_country_flag = COLDWAR_BRA_pending_ussr_machines
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_ussr_machines_BRA
+			}
+			remove_ideas = COLDWAR_BRA_ussr_machines_BRA
+		}
+		SOV = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_ussr_machines_SOV
+				}
+				remove_ideas = COLDWAR_BRA_ussr_machines_SOV
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_ussr_machines = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_ussr_machines_BRA
+	}
+	SOV = {
+		remove_ideas = COLDWAR_BRA_ussr_machines_SOV
+	}
+}
+
+COLDWAR_BRA_offer_preview_itaipu = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_brazil_1 = { value = gdp_total multiply = 0.0018 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_brazil_1_million = { value = COLDWAR_BRA_quote_itaipu_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_itaipu_brazil_1_tt
+		880 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = renewable_energy_infra
+				level = 1
+				instant_build = no
+			}
+		}
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_brazil_transfer = { value = BRA.gdp_total multiply = 0.0008 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_brazil_transfer_million = { value = COLDWAR_BRA_quote_itaipu_brazil_transfer multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_itaipu_brazil_transfer_tt
+		add_ideas = COLDWAR_BRA_itaipu_BRA
+	}
+	PAR = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_recipient_1 = { value = gdp_total multiply = 0.0012 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_recipient_1_million = { value = COLDWAR_BRA_quote_itaipu_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_itaipu_recipient_1_tt
+		895 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = renewable_energy_infra
+				level = 1
+				instant_build = no
+			}
+		}
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_recipient_transfer = { value = BRA.gdp_total multiply = 0.0008 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_itaipu_recipient_transfer_million = { value = COLDWAR_BRA_quote_itaipu_recipient_transfer multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_itaipu_recipient_transfer_tt
+		add_ideas = COLDWAR_BRA_itaipu_PAR
+	}
+}
+
+COLDWAR_BRA_propose_itaipu = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_itaipu = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_itaipu
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_itaipu
+		PAR = {
+			set_country_flag = COLDWAR_BRA_pending_itaipu
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.5 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_itaipu = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_itaipu = yes
+		}
+		BRA = {
+			880 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		PAR = {
+			895 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_itaipu
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+				modify_treasury_effect = yes
+				880 = {
+					add_building_construction = {
+						type = renewable_energy_infra
+						level = 1
+						instant_build = no
+					}
+				}
+				set_country_flag = COLDWAR_BRA_paid_itaipu
+			}
+		}
+		PAR = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_itaipu
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+				modify_treasury_effect = yes
+				895 = {
+					add_building_construction = {
+						type = renewable_energy_infra
+						level = 1
+						instant_build = no
+					}
+				}
+				set_country_flag = COLDWAR_BRA_paid_itaipu
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_itaipu
+		clr_country_flag = COLDWAR_BRA_pending_itaipu
+		PAR = {
+			set_country_flag = COLDWAR_BRA_signed_itaipu
+			clr_country_flag = COLDWAR_BRA_pending_itaipu
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_itaipu = {
+	if = {
+		limit = {
+			tag = PAR
+			has_country_flag = COLDWAR_BRA_pending_itaipu
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_itaipu = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_itaipu = {
+	if = {
+		limit = {
+			tag = PAR
+			has_country_flag = COLDWAR_BRA_pending_itaipu
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_itaipu
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_itaipu days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_itaipu
+	}
+}
+
+COLDWAR_BRA_terminate_itaipu = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_itaipu
+		clr_country_flag = COLDWAR_BRA_signed_itaipu
+		clr_country_flag = COLDWAR_BRA_pending_itaipu
+		PAR = {
+			clr_country_flag = COLDWAR_BRA_signed_itaipu
+			clr_country_flag = COLDWAR_BRA_pending_itaipu
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_itaipu_BRA
+			}
+			remove_ideas = COLDWAR_BRA_itaipu_BRA
+		}
+		PAR = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_itaipu_PAR
+				}
+				remove_ideas = COLDWAR_BRA_itaipu_PAR
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_itaipu = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_itaipu_BRA
+	}
+	PAR = {
+		remove_ideas = COLDWAR_BRA_itaipu_PAR
+	}
+}
+
+COLDWAR_BRA_offer_preview_japan_agro = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_japan_agro_brazil_1 = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_japan_agro_brazil_1_million = { value = COLDWAR_BRA_quote_japan_agro_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_japan_agro_brazil_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_japan_agro_brazil_research_3
+			bonus = 0.5
+			uses = 1
+			category = CAT_agriculture
+		}
+		add_ideas = COLDWAR_BRA_japan_agro_BRA
+	}
+	JAP = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_japan_agro_recipient_1 = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_japan_agro_recipient_1_million = { value = COLDWAR_BRA_quote_japan_agro_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_japan_agro_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_japan_agro_recipient_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_agriculture
+		}
+		add_ideas = COLDWAR_BRA_japan_agro_JAP
+	}
+}
+
+COLDWAR_BRA_propose_japan_agro = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_japan_agro = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_japan_agro
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_japan_agro
+		JAP = {
+			set_country_flag = COLDWAR_BRA_pending_japan_agro
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.6 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_japan_agro = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_japan_agro = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_japan_agro
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_japan_agro_brazil_research_3
+					bonus = 0.5
+					uses = 1
+					category = CAT_agriculture
+				}
+				set_country_flag = COLDWAR_BRA_paid_japan_agro
+			}
+		}
+		JAP = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_japan_agro
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_japan_agro_recipient_research_2
+					bonus = 0.5
+					uses = 1
+					category = CAT_agriculture
+				}
+				set_country_flag = COLDWAR_BRA_paid_japan_agro
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_japan_agro
+		clr_country_flag = COLDWAR_BRA_pending_japan_agro
+		JAP = {
+			set_country_flag = COLDWAR_BRA_signed_japan_agro
+			clr_country_flag = COLDWAR_BRA_pending_japan_agro
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_japan_agro = {
+	if = {
+		limit = {
+			tag = JAP
+			has_country_flag = COLDWAR_BRA_pending_japan_agro
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_japan_agro = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_japan_agro = {
+	if = {
+		limit = {
+			tag = JAP
+			has_country_flag = COLDWAR_BRA_pending_japan_agro
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_japan_agro
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_japan_agro days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_japan_agro
+	}
+}
+
+COLDWAR_BRA_terminate_japan_agro = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_japan_agro
+		clr_country_flag = COLDWAR_BRA_signed_japan_agro
+		clr_country_flag = COLDWAR_BRA_pending_japan_agro
+		JAP = {
+			clr_country_flag = COLDWAR_BRA_signed_japan_agro
+			clr_country_flag = COLDWAR_BRA_pending_japan_agro
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_japan_agro_BRA
+			}
+			remove_ideas = COLDWAR_BRA_japan_agro_BRA
+		}
+		JAP = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_japan_agro_JAP
+				}
+				remove_ideas = COLDWAR_BRA_japan_agro_JAP
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_japan_agro = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_japan_agro_BRA
+	}
+	JAP = {
+		remove_ideas = COLDWAR_BRA_japan_agro_JAP
+	}
+}
+
+COLDWAR_BRA_offer_preview_japan_steel = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_japan_steel_brazil_1 = { value = gdp_total multiply = 0.001 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_japan_steel_brazil_1_million = { value = COLDWAR_BRA_quote_japan_steel_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_japan_steel_brazil_1_tt
+		884 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}
+		add_ideas = COLDWAR_BRA_japan_steel_BRA
+	}
+	JAP = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_japan_steel_recipient_1 = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_japan_steel_recipient_1_million = { value = COLDWAR_BRA_quote_japan_steel_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_japan_steel_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_japan_steel_recipient_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_industry
+		}
+		add_ideas = COLDWAR_BRA_japan_steel_JAP
+	}
+}
+
+COLDWAR_BRA_propose_japan_steel = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_japan_steel = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_japan_steel
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_japan_steel
+		JAP = {
+			set_country_flag = COLDWAR_BRA_pending_japan_steel
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.7 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_japan_steel = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_japan_steel = yes
+		}
+		BRA = {
+			884 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					884 = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			BRA = {
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = COLDWAR_BRA_paid_japan_steel
+						}
+					}
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+					modify_treasury_effect = yes
+					884 = {
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+					}
+					set_country_flag = COLDWAR_BRA_paid_japan_steel
+				}
+			}
+			JAP = {
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = COLDWAR_BRA_paid_japan_steel
+						}
+					}
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+					modify_treasury_effect = yes
+					add_tech_bonus = {
+						name = COLDWAR_BRA_japan_steel_recipient_research_2
+						bonus = 0.5
+						uses = 1
+						category = CAT_industry
+					}
+					set_country_flag = COLDWAR_BRA_paid_japan_steel
+				}
+			}
+			set_country_flag = COLDWAR_BRA_signed_japan_steel
+			clr_country_flag = COLDWAR_BRA_pending_japan_steel
+			JAP = {
+				set_country_flag = COLDWAR_BRA_signed_japan_steel
+				clr_country_flag = COLDWAR_BRA_pending_japan_steel
+			}
+			COLDWAR_BRA_sync_agreements = yes
+		}
+		else = {
+			BRA = {
+				884 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_accept_japan_steel = {
+	if = {
+		limit = {
+			tag = JAP
+			has_country_flag = COLDWAR_BRA_pending_japan_steel
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_japan_steel = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_japan_steel = {
+	if = {
+		limit = {
+			tag = JAP
+			has_country_flag = COLDWAR_BRA_pending_japan_steel
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_japan_steel
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_japan_steel days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_japan_steel
+	}
+}
+
+COLDWAR_BRA_terminate_japan_steel = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_japan_steel
+		clr_country_flag = COLDWAR_BRA_signed_japan_steel
+		clr_country_flag = COLDWAR_BRA_pending_japan_steel
+		JAP = {
+			clr_country_flag = COLDWAR_BRA_signed_japan_steel
+			clr_country_flag = COLDWAR_BRA_pending_japan_steel
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_japan_steel_BRA
+			}
+			remove_ideas = COLDWAR_BRA_japan_steel_BRA
+		}
+		JAP = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_japan_steel_JAP
+				}
+				remove_ideas = COLDWAR_BRA_japan_steel_JAP
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_japan_steel = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_japan_steel_BRA
+	}
+	JAP = {
+		remove_ideas = COLDWAR_BRA_japan_steel_JAP
+	}
+}
+
+COLDWAR_BRA_offer_preview_angola = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_angola_brazil_1 = { value = gdp_total multiply = 0.0004 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_angola_brazil_1_million = { value = COLDWAR_BRA_quote_angola_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_angola_brazil_1_tt
+		add_ideas = COLDWAR_BRA_angola_BRA
+	}
+	AGL = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_angola_recipient_1 = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_angola_recipient_1_million = { value = COLDWAR_BRA_quote_angola_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_angola_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_angola_recipient_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_industry
+		}
+		add_ideas = COLDWAR_BRA_angola_AGL
+	}
+}
+
+COLDWAR_BRA_propose_angola = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_angola = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_angola
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_angola
+		AGL = {
+			set_country_flag = COLDWAR_BRA_pending_angola
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.8 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_angola = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_angola = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_angola
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+				modify_treasury_effect = yes
+				set_country_flag = COLDWAR_BRA_paid_angola
+			}
+		}
+		AGL = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_angola
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_angola_recipient_research_2
+					bonus = 0.5
+					uses = 1
+					category = CAT_industry
+				}
+				set_country_flag = COLDWAR_BRA_paid_angola
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_angola
+		clr_country_flag = COLDWAR_BRA_pending_angola
+		AGL = {
+			set_country_flag = COLDWAR_BRA_signed_angola
+			clr_country_flag = COLDWAR_BRA_pending_angola
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_angola = {
+	if = {
+		limit = {
+			tag = AGL
+			has_country_flag = COLDWAR_BRA_pending_angola
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_angola = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_angola = {
+	if = {
+		limit = {
+			tag = AGL
+			has_country_flag = COLDWAR_BRA_pending_angola
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_angola
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_angola days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_angola
+	}
+}
+
+COLDWAR_BRA_terminate_angola = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_angola
+		clr_country_flag = COLDWAR_BRA_signed_angola
+		clr_country_flag = COLDWAR_BRA_pending_angola
+		AGL = {
+			clr_country_flag = COLDWAR_BRA_signed_angola
+			clr_country_flag = COLDWAR_BRA_pending_angola
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_angola_BRA
+			}
+			remove_ideas = COLDWAR_BRA_angola_BRA
+		}
+		AGL = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_angola_AGL
+				}
+				remove_ideas = COLDWAR_BRA_angola_AGL
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_angola = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_angola_BRA
+	}
+	AGL = {
+		remove_ideas = COLDWAR_BRA_angola_AGL
+	}
+}
+
+COLDWAR_BRA_offer_preview_arg_basin = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_arg_basin_brazil_1 = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_arg_basin_brazil_1_million = { value = COLDWAR_BRA_quote_arg_basin_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_arg_basin_brazil_1_tt
+		add_ideas = COLDWAR_BRA_arg_basin_BRA
+	}
+	ARG = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_arg_basin_recipient_1 = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_arg_basin_recipient_1_million = { value = COLDWAR_BRA_quote_arg_basin_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_arg_basin_recipient_1_tt
+		add_ideas = COLDWAR_BRA_arg_basin_ARG
+	}
+}
+
+COLDWAR_BRA_propose_arg_basin = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_arg_basin = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_arg_basin
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_arg_basin
+		ARG = {
+			set_country_flag = COLDWAR_BRA_pending_arg_basin
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.9 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_arg_basin = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_arg_basin = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_arg_basin
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+				modify_treasury_effect = yes
+				set_country_flag = COLDWAR_BRA_paid_arg_basin
+			}
+		}
+		ARG = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_arg_basin
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+				modify_treasury_effect = yes
+				set_country_flag = COLDWAR_BRA_paid_arg_basin
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_arg_basin
+		clr_country_flag = COLDWAR_BRA_pending_arg_basin
+		ARG = {
+			set_country_flag = COLDWAR_BRA_signed_arg_basin
+			clr_country_flag = COLDWAR_BRA_pending_arg_basin
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_arg_basin = {
+	if = {
+		limit = {
+			tag = ARG
+			has_country_flag = COLDWAR_BRA_pending_arg_basin
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_arg_basin = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_arg_basin = {
+	if = {
+		limit = {
+			tag = ARG
+			has_country_flag = COLDWAR_BRA_pending_arg_basin
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_arg_basin
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_arg_basin days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_arg_basin
+	}
+}
+
+COLDWAR_BRA_terminate_arg_basin = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_arg_basin
+		clr_country_flag = COLDWAR_BRA_signed_arg_basin
+		clr_country_flag = COLDWAR_BRA_pending_arg_basin
+		ARG = {
+			clr_country_flag = COLDWAR_BRA_signed_arg_basin
+			clr_country_flag = COLDWAR_BRA_pending_arg_basin
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_arg_basin_BRA
+			}
+			remove_ideas = COLDWAR_BRA_arg_basin_BRA
+		}
+		ARG = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_arg_basin_ARG
+				}
+				remove_ideas = COLDWAR_BRA_arg_basin_ARG
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_arg_basin = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_arg_basin_BRA
+	}
+	ARG = {
+		remove_ideas = COLDWAR_BRA_arg_basin_ARG
+	}
+}
+
+COLDWAR_BRA_offer_preview_germany_nuclear = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.009 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_germany_nuclear_brazil_1 = { value = gdp_total multiply = 0.0015 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_germany_nuclear_brazil_1_million = { value = COLDWAR_BRA_quote_germany_nuclear_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_germany_nuclear_brazil_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_germany_nuclear_brazil_research_2
+			bonus = 0.5
+			uses = 2
+			category = CAT_nuclear_reactors
+		}
+		add_ideas = COLDWAR_BRA_germany_nuclear_BRA
+	}
+	GER = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_germany_nuclear_recipient_1 = { value = gdp_total multiply = 0.0004 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_germany_nuclear_recipient_1_million = { value = COLDWAR_BRA_quote_germany_nuclear_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_germany_nuclear_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_germany_nuclear_recipient_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_nuclear_reactors
+		}
+		add_ideas = COLDWAR_BRA_germany_nuclear_GER
+	}
+}
+
+COLDWAR_BRA_propose_germany_nuclear = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_germany_nuclear = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_germany_nuclear
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_germany_nuclear
+		GER = {
+			set_country_flag = COLDWAR_BRA_pending_germany_nuclear
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.10 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_germany_nuclear = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_germany_nuclear = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_germany_nuclear
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.009 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_germany_nuclear_brazil_research_2
+					bonus = 0.5
+					uses = 2
+					category = CAT_nuclear_reactors
+				}
+				set_country_flag = COLDWAR_BRA_paid_germany_nuclear
+			}
+		}
+		GER = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_germany_nuclear
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_germany_nuclear_recipient_research_2
+					bonus = 0.5
+					uses = 1
+					category = CAT_nuclear_reactors
+				}
+				set_country_flag = COLDWAR_BRA_paid_germany_nuclear
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_germany_nuclear
+		clr_country_flag = COLDWAR_BRA_pending_germany_nuclear
+		GER = {
+			set_country_flag = COLDWAR_BRA_signed_germany_nuclear
+			clr_country_flag = COLDWAR_BRA_pending_germany_nuclear
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_germany_nuclear = {
+	if = {
+		limit = {
+			tag = GER
+			has_country_flag = COLDWAR_BRA_pending_germany_nuclear
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_germany_nuclear = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_germany_nuclear = {
+	if = {
+		limit = {
+			tag = GER
+			has_country_flag = COLDWAR_BRA_pending_germany_nuclear
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_germany_nuclear
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_germany_nuclear days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_germany_nuclear
+	}
+}
+
+COLDWAR_BRA_terminate_germany_nuclear = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_germany_nuclear
+		clr_country_flag = COLDWAR_BRA_signed_germany_nuclear
+		clr_country_flag = COLDWAR_BRA_pending_germany_nuclear
+		GER = {
+			clr_country_flag = COLDWAR_BRA_signed_germany_nuclear
+			clr_country_flag = COLDWAR_BRA_pending_germany_nuclear
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_germany_nuclear_BRA
+			}
+			remove_ideas = COLDWAR_BRA_germany_nuclear_BRA
+		}
+		GER = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_germany_nuclear_GER
+				}
+				remove_ideas = COLDWAR_BRA_germany_nuclear_GER
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_germany_nuclear = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_germany_nuclear_BRA
+	}
+	GER = {
+		remove_ideas = COLDWAR_BRA_germany_nuclear_GER
+	}
+}
+
+COLDWAR_BRA_offer_preview_arg_nuclear = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_arg_nuclear_brazil_1 = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_arg_nuclear_brazil_1_million = { value = COLDWAR_BRA_quote_arg_nuclear_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_arg_nuclear_brazil_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_arg_nuclear_brazil_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_nuclear_reactors
+		}
+		add_ideas = COLDWAR_BRA_arg_nuclear_BRA
+	}
+	ARG = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_arg_nuclear_recipient_1 = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_arg_nuclear_recipient_1_million = { value = COLDWAR_BRA_quote_arg_nuclear_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_arg_nuclear_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_arg_nuclear_recipient_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_nuclear_reactors
+		}
+		add_ideas = COLDWAR_BRA_arg_nuclear_ARG
+	}
+}
+
+COLDWAR_BRA_propose_arg_nuclear = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_arg_nuclear = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_arg_nuclear
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_arg_nuclear
+		ARG = {
+			set_country_flag = COLDWAR_BRA_pending_arg_nuclear
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.11 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_arg_nuclear = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_arg_nuclear = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_arg_nuclear
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_arg_nuclear_brazil_research_2
+					bonus = 0.5
+					uses = 1
+					category = CAT_nuclear_reactors
+				}
+				set_country_flag = COLDWAR_BRA_paid_arg_nuclear
+			}
+		}
+		ARG = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_arg_nuclear
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_arg_nuclear_recipient_research_2
+					bonus = 0.5
+					uses = 1
+					category = CAT_nuclear_reactors
+				}
+				set_country_flag = COLDWAR_BRA_paid_arg_nuclear
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_arg_nuclear
+		clr_country_flag = COLDWAR_BRA_pending_arg_nuclear
+		ARG = {
+			set_country_flag = COLDWAR_BRA_signed_arg_nuclear
+			clr_country_flag = COLDWAR_BRA_pending_arg_nuclear
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_arg_nuclear = {
+	if = {
+		limit = {
+			tag = ARG
+			has_country_flag = COLDWAR_BRA_pending_arg_nuclear
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_arg_nuclear = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_arg_nuclear = {
+	if = {
+		limit = {
+			tag = ARG
+			has_country_flag = COLDWAR_BRA_pending_arg_nuclear
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_arg_nuclear
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_arg_nuclear days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_arg_nuclear
+	}
+}
+
+COLDWAR_BRA_terminate_arg_nuclear = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_arg_nuclear
+		clr_country_flag = COLDWAR_BRA_signed_arg_nuclear
+		clr_country_flag = COLDWAR_BRA_pending_arg_nuclear
+		ARG = {
+			clr_country_flag = COLDWAR_BRA_signed_arg_nuclear
+			clr_country_flag = COLDWAR_BRA_pending_arg_nuclear
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_arg_nuclear_BRA
+			}
+			remove_ideas = COLDWAR_BRA_arg_nuclear_BRA
+		}
+		ARG = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_arg_nuclear_ARG
+				}
+				remove_ideas = COLDWAR_BRA_arg_nuclear_ARG
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_arg_nuclear = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_arg_nuclear_BRA
+	}
+	ARG = {
+		remove_ideas = COLDWAR_BRA_arg_nuclear_ARG
+	}
+}
+
+COLDWAR_BRA_offer_preview_arg_integration = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_arg_integration_brazil_1 = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_arg_integration_brazil_1_million = { value = COLDWAR_BRA_quote_arg_integration_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_arg_integration_brazil_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_arg_integration_brazil_research_4
+			bonus = 0.5
+			uses = 1
+			category = CAT_industry
+		}
+		add_ideas = COLDWAR_BRA_arg_integration_BRA
+	}
+	ARG = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_arg_integration_recipient_1 = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_arg_integration_recipient_1_million = { value = COLDWAR_BRA_quote_arg_integration_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_arg_integration_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_arg_integration_recipient_research_4
+			bonus = 0.5
+			uses = 1
+			category = CAT_industry
+		}
+		add_ideas = COLDWAR_BRA_arg_integration_ARG
+	}
+}
+
+COLDWAR_BRA_propose_arg_integration = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_arg_integration = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_arg_integration
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_arg_integration
+		ARG = {
+			set_country_flag = COLDWAR_BRA_pending_arg_integration
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.12 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_arg_integration = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_arg_integration = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_arg_integration
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_arg_integration_brazil_research_4
+					bonus = 0.5
+					uses = 1
+					category = CAT_industry
+				}
+				set_country_flag = COLDWAR_BRA_paid_arg_integration
+			}
+		}
+		ARG = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_arg_integration
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_arg_integration_recipient_research_4
+					bonus = 0.5
+					uses = 1
+					category = CAT_industry
+				}
+				set_country_flag = COLDWAR_BRA_paid_arg_integration
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_arg_integration
+		clr_country_flag = COLDWAR_BRA_pending_arg_integration
+		ARG = {
+			set_country_flag = COLDWAR_BRA_signed_arg_integration
+			clr_country_flag = COLDWAR_BRA_pending_arg_integration
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_arg_integration = {
+	if = {
+		limit = {
+			tag = ARG
+			has_country_flag = COLDWAR_BRA_pending_arg_integration
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_arg_integration = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_arg_integration = {
+	if = {
+		limit = {
+			tag = ARG
+			has_country_flag = COLDWAR_BRA_pending_arg_integration
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_arg_integration
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_arg_integration days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_arg_integration
+	}
+}
+
+COLDWAR_BRA_terminate_arg_integration = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_arg_integration
+		clr_country_flag = COLDWAR_BRA_signed_arg_integration
+		clr_country_flag = COLDWAR_BRA_pending_arg_integration
+		ARG = {
+			clr_country_flag = COLDWAR_BRA_signed_arg_integration
+			clr_country_flag = COLDWAR_BRA_pending_arg_integration
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_arg_integration_BRA
+			}
+			remove_ideas = COLDWAR_BRA_arg_integration_BRA
+		}
+		ARG = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_arg_integration_ARG
+				}
+				remove_ideas = COLDWAR_BRA_arg_integration_ARG
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_arg_integration = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_arg_integration_BRA
+	}
+	ARG = {
+		remove_ideas = COLDWAR_BRA_arg_integration_ARG
+	}
+}
+
+COLDWAR_BRA_offer_preview_uruguay = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_uruguay_brazil_1 = { value = gdp_total multiply = 0.0004 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_uruguay_brazil_1_million = { value = COLDWAR_BRA_quote_uruguay_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_uruguay_brazil_1_tt
+		add_ideas = COLDWAR_BRA_uruguay_BRA
+	}
+	URG = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_uruguay_recipient_1 = { value = gdp_total multiply = 0.00055 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_uruguay_recipient_1_million = { value = COLDWAR_BRA_quote_uruguay_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_uruguay_recipient_1_tt
+		893 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = offices
+				level = 1
+				instant_build = yes
+			}
+		}
+		add_ideas = COLDWAR_BRA_uruguay_URG
+	}
+}
+
+COLDWAR_BRA_propose_uruguay = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_uruguay = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_uruguay
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_uruguay
+		URG = {
+			set_country_flag = COLDWAR_BRA_pending_uruguay
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.13 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_uruguay = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_uruguay = yes
+		}
+		URG = {
+			893 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				URG = {
+					893 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			BRA = {
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = COLDWAR_BRA_paid_uruguay
+						}
+					}
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+					modify_treasury_effect = yes
+					set_country_flag = COLDWAR_BRA_paid_uruguay
+				}
+			}
+			URG = {
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = COLDWAR_BRA_paid_uruguay
+						}
+					}
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+					modify_treasury_effect = yes
+					893 = {
+						add_building_construction = {
+							type = offices
+							level = 1
+							instant_build = yes
+						}
+					}
+					set_country_flag = COLDWAR_BRA_paid_uruguay
+				}
+			}
+			set_country_flag = COLDWAR_BRA_signed_uruguay
+			clr_country_flag = COLDWAR_BRA_pending_uruguay
+			URG = {
+				set_country_flag = COLDWAR_BRA_signed_uruguay
+				clr_country_flag = COLDWAR_BRA_pending_uruguay
+			}
+			COLDWAR_BRA_sync_agreements = yes
+		}
+		else = {
+			URG = {
+				893 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_accept_uruguay = {
+	if = {
+		limit = {
+			tag = URG
+			has_country_flag = COLDWAR_BRA_pending_uruguay
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_uruguay = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_uruguay = {
+	if = {
+		limit = {
+			tag = URG
+			has_country_flag = COLDWAR_BRA_pending_uruguay
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_uruguay
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_uruguay days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_uruguay
+	}
+}
+
+COLDWAR_BRA_terminate_uruguay = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_uruguay
+		clr_country_flag = COLDWAR_BRA_signed_uruguay
+		clr_country_flag = COLDWAR_BRA_pending_uruguay
+		URG = {
+			clr_country_flag = COLDWAR_BRA_signed_uruguay
+			clr_country_flag = COLDWAR_BRA_pending_uruguay
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_uruguay_BRA
+			}
+			remove_ideas = COLDWAR_BRA_uruguay_BRA
+		}
+		URG = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_uruguay_URG
+				}
+				remove_ideas = COLDWAR_BRA_uruguay_URG
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_uruguay = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_uruguay_BRA
+	}
+	URG = {
+		remove_ideas = COLDWAR_BRA_uruguay_URG
+	}
+}
+
+COLDWAR_BRA_offer_preview_france_aircraft = {
+	custom_effect_tooltip = COLDWAR_BRA_if_accept_tt
+	BRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_france_aircraft_brazil_1 = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_france_aircraft_brazil_1_million = { value = COLDWAR_BRA_quote_france_aircraft_brazil_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_france_aircraft_brazil_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_france_aircraft_brazil_research_2
+			bonus = 0.5
+			uses = 2
+			category = CAT_aircraft
+		}
+		add_ideas = COLDWAR_BRA_france_aircraft_BRA
+	}
+	FRA = {
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_BRA_quote_france_aircraft_recipient_1 = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		set_temp_variable = { COLDWAR_BRA_quote_france_aircraft_recipient_1_million = { value = COLDWAR_BRA_quote_france_aircraft_recipient_1 multiply = 1000 } }
+		custom_effect_tooltip = COLDWAR_BRA_quote_france_aircraft_recipient_1_tt
+		add_tech_bonus = {
+			name = COLDWAR_BRA_france_aircraft_recipient_research_2
+			bonus = 0.5
+			uses = 1
+			category = CAT_aircraft
+		}
+		add_ideas = COLDWAR_BRA_france_aircraft_FRA
+	}
+}
+
+COLDWAR_BRA_propose_france_aircraft = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_propose_france_aircraft = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_pending_france_aircraft
+			}
+		}
+		set_country_flag = COLDWAR_BRA_pending_france_aircraft
+		FRA = {
+			set_country_flag = COLDWAR_BRA_pending_france_aircraft
+			country_event = { id = COLDWAR_BRA_AGREEMENTS.14 days = 1 }
+		}
+	}
+}
+
+COLDWAR_BRA_accept_initiator_france_aircraft = {
+	if = {
+		limit = {
+			COLDWAR_BRA_can_accept_france_aircraft = yes
+		}
+		BRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_france_aircraft
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_france_aircraft_brazil_research_2
+					bonus = 0.5
+					uses = 2
+					category = CAT_aircraft
+				}
+				set_country_flag = COLDWAR_BRA_paid_france_aircraft
+			}
+		}
+		FRA = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = COLDWAR_BRA_paid_france_aircraft
+					}
+				}
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+				modify_treasury_effect = yes
+				add_tech_bonus = {
+					name = COLDWAR_BRA_france_aircraft_recipient_research_2
+					bonus = 0.5
+					uses = 1
+					category = CAT_aircraft
+				}
+				set_country_flag = COLDWAR_BRA_paid_france_aircraft
+			}
+		}
+		set_country_flag = COLDWAR_BRA_signed_france_aircraft
+		clr_country_flag = COLDWAR_BRA_pending_france_aircraft
+		FRA = {
+			set_country_flag = COLDWAR_BRA_signed_france_aircraft
+			clr_country_flag = COLDWAR_BRA_pending_france_aircraft
+		}
+		COLDWAR_BRA_sync_agreements = yes
+	}
+}
+
+COLDWAR_BRA_accept_france_aircraft = {
+	if = {
+		limit = {
+			tag = FRA
+			has_country_flag = COLDWAR_BRA_pending_france_aircraft
+		}
+		BRA = {
+			COLDWAR_BRA_accept_initiator_france_aircraft = yes
+		}
+	}
+}
+
+COLDWAR_BRA_decline_france_aircraft = {
+	if = {
+		limit = {
+			tag = FRA
+			has_country_flag = COLDWAR_BRA_pending_france_aircraft
+		}
+		BRA = {
+			clr_country_flag = COLDWAR_BRA_pending_france_aircraft
+			set_country_flag = { flag = COLDWAR_BRA_proposal_cooldown_france_aircraft days = 90 }
+		}
+		clr_country_flag = COLDWAR_BRA_pending_france_aircraft
+	}
+}
+
+COLDWAR_BRA_terminate_france_aircraft = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		set_country_flag = COLDWAR_BRA_terminated_france_aircraft
+		clr_country_flag = COLDWAR_BRA_signed_france_aircraft
+		clr_country_flag = COLDWAR_BRA_pending_france_aircraft
+		FRA = {
+			clr_country_flag = COLDWAR_BRA_signed_france_aircraft
+			clr_country_flag = COLDWAR_BRA_pending_france_aircraft
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_BRA_france_aircraft_BRA
+			}
+			remove_ideas = COLDWAR_BRA_france_aircraft_BRA
+		}
+		FRA = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_france_aircraft_FRA
+				}
+				remove_ideas = COLDWAR_BRA_france_aircraft_FRA
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_preview_termination_france_aircraft = {
+	BRA = {
+		remove_ideas = COLDWAR_BRA_france_aircraft_BRA
+	}
+	FRA = {
+		remove_ideas = COLDWAR_BRA_france_aircraft_FRA
+	}
+}
+
+COLDWAR_BRA_sync_agreements = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_us_training_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_us_training_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_us_training_BRA
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_us_training_USA
+						}
+					}
+					add_ideas = COLDWAR_BRA_us_training_USA
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_us_training_BRA
+				}
+				remove_ideas = COLDWAR_BRA_us_training_BRA
+			}
+			USA = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_us_training_USA
+					}
+					remove_ideas = COLDWAR_BRA_us_training_USA
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_us_industry_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_us_industry_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_us_industry_BRA
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_us_industry_USA
+						}
+					}
+					add_ideas = COLDWAR_BRA_us_industry_USA
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_us_industry_BRA
+				}
+				remove_ideas = COLDWAR_BRA_us_industry_BRA
+			}
+			USA = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_us_industry_USA
+					}
+					remove_ideas = COLDWAR_BRA_us_industry_USA
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_china_trade_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_china_trade_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_china_trade_BRA
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_china_trade_CHI
+						}
+					}
+					add_ideas = COLDWAR_BRA_china_trade_CHI
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_china_trade_BRA
+				}
+				remove_ideas = COLDWAR_BRA_china_trade_BRA
+			}
+			CHI = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_china_trade_CHI
+					}
+					remove_ideas = COLDWAR_BRA_china_trade_CHI
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_ussr_machines_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_ussr_machines_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_ussr_machines_BRA
+			}
+			SOV = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_ussr_machines_SOV
+						}
+					}
+					add_ideas = COLDWAR_BRA_ussr_machines_SOV
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_ussr_machines_BRA
+				}
+				remove_ideas = COLDWAR_BRA_ussr_machines_BRA
+			}
+			SOV = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_ussr_machines_SOV
+					}
+					remove_ideas = COLDWAR_BRA_ussr_machines_SOV
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_itaipu_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_itaipu_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_itaipu_BRA
+			}
+			PAR = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_itaipu_PAR
+						}
+					}
+					add_ideas = COLDWAR_BRA_itaipu_PAR
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_itaipu_BRA
+				}
+				remove_ideas = COLDWAR_BRA_itaipu_BRA
+			}
+			PAR = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_itaipu_PAR
+					}
+					remove_ideas = COLDWAR_BRA_itaipu_PAR
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_japan_agro_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_japan_agro_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_japan_agro_BRA
+			}
+			JAP = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_japan_agro_JAP
+						}
+					}
+					add_ideas = COLDWAR_BRA_japan_agro_JAP
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_japan_agro_BRA
+				}
+				remove_ideas = COLDWAR_BRA_japan_agro_BRA
+			}
+			JAP = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_japan_agro_JAP
+					}
+					remove_ideas = COLDWAR_BRA_japan_agro_JAP
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_japan_steel_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_japan_steel_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_japan_steel_BRA
+			}
+			JAP = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_japan_steel_JAP
+						}
+					}
+					add_ideas = COLDWAR_BRA_japan_steel_JAP
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_japan_steel_BRA
+				}
+				remove_ideas = COLDWAR_BRA_japan_steel_BRA
+			}
+			JAP = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_japan_steel_JAP
+					}
+					remove_ideas = COLDWAR_BRA_japan_steel_JAP
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_angola_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_angola_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_angola_BRA
+			}
+			AGL = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_angola_AGL
+						}
+					}
+					add_ideas = COLDWAR_BRA_angola_AGL
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_angola_BRA
+				}
+				remove_ideas = COLDWAR_BRA_angola_BRA
+			}
+			AGL = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_angola_AGL
+					}
+					remove_ideas = COLDWAR_BRA_angola_AGL
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_arg_basin_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_arg_basin_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_arg_basin_BRA
+			}
+			ARG = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_arg_basin_ARG
+						}
+					}
+					add_ideas = COLDWAR_BRA_arg_basin_ARG
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_arg_basin_BRA
+				}
+				remove_ideas = COLDWAR_BRA_arg_basin_BRA
+			}
+			ARG = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_arg_basin_ARG
+					}
+					remove_ideas = COLDWAR_BRA_arg_basin_ARG
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_germany_nuclear_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_germany_nuclear_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_germany_nuclear_BRA
+			}
+			GER = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_germany_nuclear_GER
+						}
+					}
+					add_ideas = COLDWAR_BRA_germany_nuclear_GER
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_germany_nuclear_BRA
+				}
+				remove_ideas = COLDWAR_BRA_germany_nuclear_BRA
+			}
+			GER = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_germany_nuclear_GER
+					}
+					remove_ideas = COLDWAR_BRA_germany_nuclear_GER
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_arg_nuclear_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_arg_nuclear_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_arg_nuclear_BRA
+			}
+			ARG = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_arg_nuclear_ARG
+						}
+					}
+					add_ideas = COLDWAR_BRA_arg_nuclear_ARG
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_arg_nuclear_BRA
+				}
+				remove_ideas = COLDWAR_BRA_arg_nuclear_BRA
+			}
+			ARG = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_arg_nuclear_ARG
+					}
+					remove_ideas = COLDWAR_BRA_arg_nuclear_ARG
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_arg_integration_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_arg_integration_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_arg_integration_BRA
+			}
+			ARG = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_arg_integration_ARG
+						}
+					}
+					add_ideas = COLDWAR_BRA_arg_integration_ARG
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_arg_integration_BRA
+				}
+				remove_ideas = COLDWAR_BRA_arg_integration_BRA
+			}
+			ARG = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_arg_integration_ARG
+					}
+					remove_ideas = COLDWAR_BRA_arg_integration_ARG
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_uruguay_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_uruguay_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_uruguay_BRA
+			}
+			URG = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_uruguay_URG
+						}
+					}
+					add_ideas = COLDWAR_BRA_uruguay_URG
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_uruguay_BRA
+				}
+				remove_ideas = COLDWAR_BRA_uruguay_BRA
+			}
+			URG = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_uruguay_URG
+					}
+					remove_ideas = COLDWAR_BRA_uruguay_URG
+				}
+			}
+		}
+		if = {
+			limit = {
+				COLDWAR_BRA_france_aircraft_eligible = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_france_aircraft_BRA
+					}
+				}
+				add_ideas = COLDWAR_BRA_france_aircraft_BRA
+			}
+			FRA = {
+				if = {
+					limit = {
+						NOT = {
+							has_idea = COLDWAR_BRA_france_aircraft_FRA
+						}
+					}
+					add_ideas = COLDWAR_BRA_france_aircraft_FRA
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_france_aircraft_BRA
+				}
+				remove_ideas = COLDWAR_BRA_france_aircraft_BRA
+			}
+			FRA = {
+				if = {
+					limit = {
+						has_idea = COLDWAR_BRA_france_aircraft_FRA
+					}
+					remove_ideas = COLDWAR_BRA_france_aircraft_FRA
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_cleanup_orphaned_agreements = {
+	if = {
+		limit = {
+			tag = USA
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_us_training_USA
+		clr_country_flag = COLDWAR_BRA_pending_us_training
+	}
+	if = {
+		limit = {
+			tag = USA
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_us_industry_USA
+		clr_country_flag = COLDWAR_BRA_pending_us_industry
+	}
+	if = {
+		limit = {
+			tag = CHI
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_china_trade_CHI
+		clr_country_flag = COLDWAR_BRA_pending_china_trade
+	}
+	if = {
+		limit = {
+			tag = SOV
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_ussr_machines_SOV
+		clr_country_flag = COLDWAR_BRA_pending_ussr_machines
+	}
+	if = {
+		limit = {
+			tag = PAR
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_itaipu_PAR
+		clr_country_flag = COLDWAR_BRA_pending_itaipu
+	}
+	if = {
+		limit = {
+			tag = JAP
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_japan_agro_JAP
+		clr_country_flag = COLDWAR_BRA_pending_japan_agro
+	}
+	if = {
+		limit = {
+			tag = JAP
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_japan_steel_JAP
+		clr_country_flag = COLDWAR_BRA_pending_japan_steel
+	}
+	if = {
+		limit = {
+			tag = AGL
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_angola_AGL
+		clr_country_flag = COLDWAR_BRA_pending_angola
+	}
+	if = {
+		limit = {
+			tag = ARG
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_arg_basin_ARG
+		clr_country_flag = COLDWAR_BRA_pending_arg_basin
+	}
+	if = {
+		limit = {
+			tag = GER
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_germany_nuclear_GER
+		clr_country_flag = COLDWAR_BRA_pending_germany_nuclear
+	}
+	if = {
+		limit = {
+			tag = ARG
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_arg_nuclear_ARG
+		clr_country_flag = COLDWAR_BRA_pending_arg_nuclear
+	}
+	if = {
+		limit = {
+			tag = ARG
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_arg_integration_ARG
+		clr_country_flag = COLDWAR_BRA_pending_arg_integration
+	}
+	if = {
+		limit = {
+			tag = URG
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_uruguay_URG
+		clr_country_flag = COLDWAR_BRA_pending_uruguay
+	}
+	if = {
+		limit = {
+			tag = FRA
+			NOT = { country_exists = BRA }
+		}
+		remove_ideas = COLDWAR_BRA_france_aircraft_FRA
+		clr_country_flag = COLDWAR_BRA_pending_france_aircraft
+	}
+}
+
+COLDWAR_BRA_add_weekly_expenses = {
+	set_variable = { COLDWAR_BRA_cooperation_weekly_expense = 0 }
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_us_training_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = USA
+			BRA = { COLDWAR_BRA_us_training_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00015 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_us_industry_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = USA
+			BRA = { COLDWAR_BRA_us_industry_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00015 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_china_trade_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = CHI
+			BRA = { COLDWAR_BRA_china_trade_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_ussr_machines_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = SOV
+			BRA = { COLDWAR_BRA_ussr_machines_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_itaipu_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0018 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_itaipu_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = BRA.gdp_total multiply = 0.0008 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = PAR
+			BRA = { COLDWAR_BRA_itaipu_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_japan_agro_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = JAP
+			BRA = { COLDWAR_BRA_japan_agro_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_japan_steel_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = JAP
+			BRA = { COLDWAR_BRA_japan_steel_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_angola_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0004 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = AGL
+			BRA = { COLDWAR_BRA_angola_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_arg_basin_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = ARG
+			BRA = { COLDWAR_BRA_arg_basin_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00035 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_germany_nuclear_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0015 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = GER
+			BRA = { COLDWAR_BRA_germany_nuclear_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0004 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_arg_nuclear_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = ARG
+			BRA = { COLDWAR_BRA_arg_nuclear_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_arg_integration_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = ARG
+			BRA = { COLDWAR_BRA_arg_integration_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_uruguay_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0004 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = URG
+			BRA = { COLDWAR_BRA_uruguay_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00055 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = BRA
+			BRA = { COLDWAR_BRA_france_aircraft_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	if = {
+		limit = {
+			tag = FRA
+			BRA = { COLDWAR_BRA_france_aircraft_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.00025 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_expense = COLDWAR_BRA_stream }
+	}
+	add_to_variable = { additional_expenses_rate = COLDWAR_BRA_cooperation_weekly_expense }
+	COLDWAR_BRA_add_domestic_weekly_expenses = yes
+	set_variable = { COLDWAR_BRA_total_weekly_expense = COLDWAR_BRA_cooperation_weekly_expense }
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+		}
+		add_to_variable = { COLDWAR_BRA_total_weekly_expense = COLDWAR_BRA_domestic_weekly }
+	}
+	set_variable = { COLDWAR_BRA_total_weekly_expense_millions = { value = COLDWAR_BRA_total_weekly_expense multiply = 1000 } }
+}
+
+COLDWAR_BRA_add_weekly_income = {
+	set_variable = { COLDWAR_BRA_cooperation_weekly_income = 0 }
+	if = {
+		limit = {
+			tag = PAR
+			BRA = { COLDWAR_BRA_itaipu_active = yes }
+		}
+		set_temp_variable = { COLDWAR_BRA_stream = { value = BRA.gdp_total multiply = 0.0008 divide = 52 } }
+		add_to_variable = { COLDWAR_BRA_cooperation_weekly_income = COLDWAR_BRA_stream }
+	}
+	add_to_variable = { additional_income_rate = COLDWAR_BRA_cooperation_weekly_income }
+	set_variable = { COLDWAR_BRA_cooperation_weekly_income_millions = { value = COLDWAR_BRA_cooperation_weekly_income multiply = 1000 } }
+}

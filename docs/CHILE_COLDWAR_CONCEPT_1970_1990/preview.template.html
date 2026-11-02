@@ -1,0 +1,160 @@
+<!-- IMPERIA COLD WAR — Cold War Chile approval concept, native MD geometry and local donor art. -->
+<div id="coldwar-chile-concept">
+  <div class="ch-window">
+    <div class="ch-mast"><span>CHILE <small>JANUARY 1970</small></span><span class="ch-status">FOCUS TREE CONCEPT</span></div>
+    <div class="ch-toolbar">
+      <label>Section<select id="ch-section" aria-label="Focus tree section"></select></label>
+      <label>Government<select id="ch-government" aria-label="Government">
+        <option value="1">Christian Democratic Party</option><option value="2">National Party</option><option value="3">Radical Party</option>
+        <option value="18">Socialist Party of Chile</option><option value="4">Communist Party of Chile</option><option value="19">Popular Unitary Action Movement</option>
+        <option value="14">Radical Democracy</option><option value="20">National Democratic Party</option><option value="0">Gremialist Movement</option>
+        <option value="5">Revolutionary Left Movement</option><option value="22">Chilean Armed Forces: collective leadership</option><option value="22P">Chilean Armed Forces: Augusto Pinochet</option>
+      </select></label>
+      <button type="button" id="ch-overview">Full tree</button><button type="button" id="ch-native">Native scale</button>
+      <button type="button" id="ch-spirits">Starting spirits</button><button type="button" id="ch-events">Events</button>
+    </div>
+    <div class="ch-caption" id="ch-caption"></div>
+    <div class="ch-viewport" id="ch-viewport" aria-label="National focus tree">
+    <div id="ch-stage"><div id="ch-canvas"><svg id="ch-edges" aria-hidden="true"></svg><div id="ch-focuses"></div></div><div id="ch-headings"></div></div>
+    </div>
+    <div class="ch-legend"><span>Solid: prerequisites</span><span class="ch-exclusive-key">Red: mutually exclusive</span><span>Dimmed: another government</span><span>Concept composition. Native font and connector routing approximated.</span></div>
+    <div id="ch-inspector" class="ch-inspector" aria-live="polite"></div>
+  </div>
+</div>
+<style>
+#coldwar-chile-concept{font:14px Arial,sans-serif;color:#eee8d7;color-scheme:dark;--ch-ink:#eee8d7;--ch-gold:#d1bb82;--ch-muted:#bbc0b1;--ch-panel:#252d28;--ch-line:#6d7966;--ch-red:#d87973;--ch-green:#9bd18d;--ch-base:#1a211e}
+#coldwar-chile-concept *{box-sizing:border-box}
+#coldwar-chile-concept .ch-window{width:100%;background:var(--ch-panel);border:1px solid #66705b}
+#coldwar-chile-concept .ch-mast{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#343c32;border-bottom:1px solid #8a805e;padding:14px 18px;color:var(--ch-gold);font-weight:500;letter-spacing:1.5px}
+#coldwar-chile-concept small{font-size:12px;font-weight:400;letter-spacing:.5px;margin-left:10px}
+#coldwar-chile-concept .ch-status{font-size:12px;letter-spacing:1px}
+#coldwar-chile-concept .ch-toolbar{display:flex;align-items:end;gap:8px;flex-wrap:wrap;padding:12px}
+#coldwar-chile-concept label{font-size:12px;display:flex;gap:5px;flex-direction:column;min-width:0;max-width:100%;color:var(--ch-muted)}
+#coldwar-chile-concept select,#coldwar-chile-concept .ch-toolbar button{background:#3a4437;border:1px solid #727d62;border-radius:0;color:var(--ch-ink);padding:7px 9px;font:inherit;max-width:100%;min-width:0}
+#coldwar-chile-concept select{font-size:13px;width:250px}
+#coldwar-chile-concept .ch-caption{padding:0 12px 12px;color:var(--ch-muted);font-size:12px;line-height:1.5}
+#coldwar-chile-concept .ch-viewport{height:580px;overflow:auto;position:relative;background:radial-gradient(ellipse at 45% 25%,#394335,#202820 80%);border-top:1px solid #65715b;border-bottom:1px solid #65715b;overscroll-behavior:contain}
+#coldwar-chile-concept #ch-stage{position:relative;min-height:100%;min-width:100%}
+#coldwar-chile-concept #ch-canvas{position:absolute;left:0;top:0;transform-origin:0 0}
+#coldwar-chile-concept #ch-edges{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+#coldwar-chile-concept .ch-focus{position:absolute;width:165px;height:128px;border:0;padding:0;background:none;color:var(--ch-ink);font:14px Arial,sans-serif}
+#coldwar-chile-concept .ch-focus .ch-art{position:absolute;left:50%;top:0;transform:translateX(-50%);object-fit:contain;width:98px;height:88px}
+#coldwar-chile-concept .ch-focus .ch-title{position:absolute;left:0;top:65px;width:165px;height:50px;background-size:165px 50px;background-position:center;background-repeat:no-repeat;display:flex;align-items:center;justify-content:center;padding:0 8px;font-size:12px;text-shadow:0 1px 2px #000}
+#coldwar-chile-concept .ch-focus .ch-title>span{display:block;max-width:147px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#coldwar-chile-concept .ch-focus .ch-days{display:none}
+#coldwar-chile-concept .ch-focus.inactive .ch-art{filter:grayscale(.8) brightness(.62)}
+#coldwar-chile-concept .ch-focus.inactive .ch-title{color:#b0b7a5}
+#coldwar-chile-concept .ch-focus.selected .ch-title{outline:1px solid var(--ch-gold);outline-offset:-2px}
+#coldwar-chile-concept .ch-focus.selected .ch-art{filter:brightness(1.2)}
+#coldwar-chile-concept .ch-legend{display:flex;gap:8px 18px;flex-wrap:wrap;padding:10px 12px;color:var(--ch-muted);font-size:11px;line-height:1.5}
+#coldwar-chile-concept .ch-exclusive-key{color:var(--ch-red)}
+#coldwar-chile-concept .ch-inspector{padding:18px;background:var(--ch-base);border-top:1px solid #53604c;overflow-wrap:anywhere;line-height:1.5;min-height:230px}
+#coldwar-chile-concept h3{font-size:19px;color:var(--ch-gold);font-weight:500;margin:0 0 7px}
+#coldwar-chile-concept h4{font-size:14px;color:var(--ch-gold);font-weight:500;margin:15px 0 5px}
+#coldwar-chile-concept p{margin:5px 0 10px}
+#coldwar-chile-concept ul{margin:4px 0 10px;padding-left:21px}
+#coldwar-chile-concept li{margin:2px 0}
+#coldwar-chile-concept .ch-positive{color:var(--ch-green)}
+#coldwar-chile-concept .ch-negative{color:var(--ch-red)}
+#coldwar-chile-concept .ch-note{color:var(--ch-muted);font-size:12px}
+#coldwar-chile-concept .ch-gate{font-size:13px;color:#dad6bd}
+#coldwar-chile-concept .ch-terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:10px 25px}
+#coldwar-chile-concept details{margin-top:12px}
+#coldwar-chile-concept summary{color:var(--ch-gold)}
+#coldwar-chile-concept pre{white-space:pre-wrap;font:12px monospace;background:#141b17;padding:12px;overflow-wrap:anywhere}
+#coldwar-chile-concept .ch-choice{margin-top:12px;padding-top:8px;border-top:1px solid #44513e}
+#coldwar-chile-concept .ch-event-select{margin-bottom:12px;width:100%}
+#coldwar-chile-concept .ch-overview-label{position:absolute;width:90px;text-align:center;transform:translateX(-50%);pointer-events:none;color:var(--ch-gold);font-size:11px}
+@media(max-width:560px){#coldwar-chile-concept .ch-viewport{height:450px}#coldwar-chile-concept label{width:100%}#coldwar-chile-concept select{width:100%}#coldwar-chile-concept .ch-toolbar button{min-height:44px}#coldwar-chile-concept .ch-inspector{padding:12px}#coldwar-chile-concept .ch-status{width:100%}}
+</style>
+<script>
+(()=>{
+const root=document.getElementById('coldwar-chile-concept'),data=__DATA__,art=__ART__;
+const $=s=>root.querySelector(s),byId=Object.fromEntries(data.nodes.map(n=>[n.id,n])),spirits=Object.fromEntries([...data.spirits,...data.conditional_spirits].map(s=>[s.id,s]));
+const section=$('#ch-section'),government=$('#ch-government'),viewport=$('#ch-viewport'),canvas=$('#ch-canvas'),stage=$('#ch-stage'),inspector=$('#ch-inspector');
+const PARTIES={0:'Gremialist Movement',1:'Christian Democratic Party',2:'National Party',3:'Radical Party',4:'Communist Party of Chile',5:'Revolutionary Left Movement',14:'Radical Democracy',18:'Socialist Party of Chile',19:'Popular Unitary Action Movement',20:'National Democratic Party',22:'Chilean Armed Forces'};
+const COUNTRIES={CHL:'Chile',USA:'United States',SOV:'Soviet Union',JAP:'Japan',CUB:'Cuba',ARG:'Argentina',PRU:'Peru',BOL:'Bolivia',COL:'Colombia',ECU:'Ecuador',FRA:'France'};
+const STATES={463:'Southern Chile',468:'Central Chile',472:'Atacama',949:'Tarapaca',950:'Arica'};
+const BUILDINGS={industrial_complex:'Civilian Factory',arms_factory:'Military Factory',dockyard:'Naval Dockyard',infrastructure:'Infrastructure',agriculture_district:'Agricultural District',fossil_powerplant:'Fossil Power Plant',radar_station:'Radar Station'};
+const CATEGORIES={CAT_industry:'Industry',CAT_computing:'Computing',CAT_aircraft:'Aircraft',CAT_surface_ships:'Surface Ships'};
+const labels=Object.fromEntries(Object.values(data.stats).map(([k,v])=>[k,v]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sign=v=>(v>0?'+':'')+Number(v.toFixed(3));
+const money=v=>'$'+Number(v.toFixed(5)).toFixed(v%1?Math.min(5,Math.max(3,(String(v).split('.')[1]||'').length)):3)+' billion';
+const negativeGood=k=>/(?:cost_multiplier|supply_consumption|training_time|interest_rate)/.test(k);
+const fmt=(k,v)=>k==='interest_rate_multiplier_modifier'?sign(v)+' pp':sign(v*100)+'%';
+const modList=mods=>Object.entries(mods||{}).map(([k,v])=>'<li>'+esc(labels[k]||k)+': <span class="'+((v>0)!==negativeGood(k)?'ch-positive':'ch-negative')+'">'+fmt(k,v)+'</span></li>').join('');
+const bonusList=rs=>(rs||[]).map(r=>'<li>'+r.uses+' × '+Math.round(r.bonus*100)+'% research bonus: '+esc(CATEGORIES[r.category]||r.category)+'</li>').join('');
+const buildingList=bs=>(bs||[]).map(b=>'<li>'+esc(STATES[b.state]||b.state)+': +'+b.slots+' shared building slot'+(b.slots===1?'':'s')+'; +'+b.levels+' '+esc(BUILDINGS[b.type]||b.type)+'</li>').join('');
+let state={section:'all',government:'1',selected:'COLDWAR_CHL_constitutional_mandate',mode:'tree'},scale=1,box=null;
+const saved=window.openai?.widgetState;
+if(saved?.modelContent?.selected&&byId[saved.modelContent.selected])state={...state,...saved.privateContent,...saved.modelContent};
+const save=()=>window.openai?.setWidgetState?.({modelContent:{selected:state.selected,government:state.government,section:state.section},privateContent:{mode:state.mode}}).catch(()=>{});
+let option=document.createElement('option');option.value='all';option.textContent='Full tree';section.append(option);
+for(const g of data.groups){let o=document.createElement('option');o.value=g.id;o.textContent=g.title;section.append(o)}
+government.value=state.government;section.value=state.section;
+function available(n){return n.party===null||(n.party===parseInt(state.government)&&(!n.leader||state.government==='22P'))}
+function activeNodes(){return state.section==='all'?data.nodes:data.nodes.filter(n=>n.group===state.section)}
+function rememberAndShow(n){state.selected=n.id;state.mode='tree';inspect(n);root.querySelectorAll('.ch-focus').forEach(b=>b.classList.toggle('selected',b.dataset.id===n.id));save()}
+function renderTree(fit=false){
+ state.mode='tree';section.value=state.section;const nodes=activeNodes();
+ const minX=Math.min(...nodes.map(n=>n.x)),maxX=Math.max(...nodes.map(n=>n.x)),minY=Math.min(...nodes.map(n=>n.y)),maxY=Math.max(...nodes.map(n=>n.y));
+ box={minX,minY,w:(maxX-minX)*96+205,h:(maxY-minY)*130+180};
+ viewport.style.height=fit?Math.max(240,Math.min(440,(viewport.clientWidth-12)*box.h/box.w+46))+'px':(window.innerWidth<560?'450px':'580px');
+ const px=n=>(n.x-minX)*96+20,py=n=>(n.y-minY)*130+25;
+ canvas.style.width=box.w+'px';canvas.style.height=box.h+'px';
+ scale=fit?Math.min((viewport.clientWidth-12)/box.w,(viewport.clientHeight-46)/box.h):1;
+ canvas.style.transform='scale('+scale+')';canvas.style.top=fit?'34px':'0';stage.style.width=Math.max(viewport.clientWidth,box.w*scale)+'px';stage.style.height=Math.max(viewport.clientHeight,box.h*scale+34)+'px';
+ const shown=new Set(nodes.map(n=>n.id));let paths='';
+ for(const n of nodes)for(const [gi,ps] of n.prerequisites.entries())for(const pid of ps){if(!shown.has(pid))continue;const p=byId[pid],ax=px(p)+82.5,ay=py(p)+128,bx=px(n)+82.5,by=py(n),mid=(ay+by)/2;paths+='<path data-parent="'+p.id+'" data-child="'+n.id+'" d="M'+ax+','+ay+' V'+mid+' H'+bx+' V'+by+'" fill="none" stroke="#a2ac91" stroke-width="2"/>';}
+ const exclusionSeen=new Set();for(const n of nodes)for(const other of n.excludes){if(!shown.has(other))continue;const pair=[n.id,other].sort().join('|');if(exclusionSeen.has(pair))continue;exclusionSeen.add(pair);const o=byId[other];const between=nodes.some(b=>b.y===n.y&&b.x>Math.min(n.x,o.x)&&b.x<Math.max(n.x,o.x)&&n.excludes.includes(b.id)&&o.excludes.includes(b.id));if(n.y===o.y&&!between)paths+='<path d="M'+(px(n)+82.5)+','+(py(n)+45)+' H'+(px(o)+82.5)+'" fill="none" stroke="#c67770" stroke-width="2" stroke-dasharray="6 5"/>';}
+ $('#ch-edges').setAttribute('width',box.w);$('#ch-edges').setAttribute('height',box.h);$('#ch-edges').innerHTML=paths;
+ $('#ch-focuses').innerHTML=nodes.map(n=>'<button type="button" class="ch-focus cursor-interaction'+(!available(n)?' inactive':'')+(state.selected===n.id?' selected':'')+'" data-id="'+n.id+'" aria-label="'+esc(n.title)+'" style="left:'+px(n)+'px;top:'+py(n)+'px"><img class="ch-art" src="'+(art[n.icon]||art.politics||'')+'" alt=""><span class="ch-title" style="background-image:url('+(!available(n)||n.prerequisites.length||n.requirements.length?art.barlocked:art.bar)+')"><span>'+esc(n.title)+'</span></span><span class="ch-days">'+n.days+' days</span></button>').join('');
+ $('#ch-focuses').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{const n=byId[b.dataset.id];if(scale<.4){state.section=n.group;renderTree(false)}rememberAndShow(n)}));
+ const shortGroups={republic:'Republic',development:'Economy',defence:'Military',pdc:'PDC',pn:'PN',pr:'PR',ps:'PS',pcch:'PCCh',mapu:'MAPU',dr:'DR',padena:'PADENA',gremial:'Gremial',mir:'MIR',military:'Pinochet',diplomacy:'Diplomacy'};
+ const mobileGroups={republic:'State',development:'Econ.',defence:'Army',padena:'PAD',gremial:'GM',military:'Junta',diplomacy:'Deals'};
+ $('#ch-headings').innerHTML=fit?data.groups.map(g=>'<div class="ch-overview-label" style="width:'+Math.max(28,Math.min(90,14*96*scale))+'px;left:'+(((g.x-minX)*96+102.5)*scale)+'px;top:'+(((g.y-minY)*130+5)*scale+16)+'px">'+esc((viewport.clientWidth<560?mobileGroups[g.id]:null)||shortGroups[g.id]||g.title)+'</div>').join(''):'';
+ $('#ch-caption').textContent=state.section==='all'?data.meta.focus_count+' focuses · '+data.meta.party_programmes+' political programmes · '+data.meta.exclusive_pairs+' exclusive pairs · Select a focus to open its branch.':data.groups.find(g=>g.id===state.section).title+' · '+nodes.length+' focuses · 96 × 130 native grid · All branches remain visible.';
+ viewport.scrollTop=0;viewport.scrollLeft=0;
+ if(byId[state.selected])inspect(byId[state.selected]);
+}
+function sideTerms(a,side,tag){const t=a[side];let html='<section><h4>'+esc(COUNTRIES[tag]||tag)+'</h4><ul>';
+ if(t.setup)html+='<li>Treasury: <span class="ch-negative">-'+money(t.setup)+'</span></li>';
+ if(t.weekly)html+='<li>Additional expenses: <span class="ch-negative">+'+money(t.weekly)+' weekly</span></li>';
+ html+='<li>Add national spirit: '+esc(side==='recipient'?(a.recipient_spirits?.[tag]||t.spirit):t.spirit)+'<ul>'+modList(t.modifiers)+'</ul></li>';
+ html+=buildingList(a.buildings.filter(b=>b.country===tag))+bonusList(a.research.filter(r=>r.country===tag));return html+'</ul></section>';}
+function inspect(n){
+ let req=[];if(n.party!==null)req.push((n.party===parseInt(state.government)?'✓ ':'✕ ')+PARTIES[n.party]+' is in power.');if(n.leader)req.push((state.government==='22P'?'✓ ':'✕ ')+n.leader+' is the national leader.');req.push(...n.requirements);
+ let html='<h3>'+esc(n.title)+'</h3><p>'+esc(n.description)+'</p><div class="ch-note">'+n.days+' days</div>';
+ if(req.length)html+='<h4>Requirements</h4><ul class="ch-gate">'+req.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ul>';
+ if(n.prerequisites.length)html+='<div class="ch-note">Requires: '+n.prerequisites.map(ps=>'('+ps.map(id=>esc(byId[id].title)).join(' OR ')+')').join(' AND ')+'</div>';
+ if(n.excludes.length)html+='<div class="ch-note">Mutually exclusive with: '+n.excludes.map(id=>esc(byId[id].title)).join('; ')+'</div>';
+ html+='<h4>Effects</h4><ul>';
+ if(n.money)html+='<li>Treasury: <span class="ch-negative">-'+money(n.money)+'</span></li>';
+ if(n.weekly)html+='<li>Additional expenses: <span class="ch-negative">+'+money(n.weekly)+' weekly</span></li>';
+ if(Object.keys(n.modifiers).length)html+='<li>Modify '+esc(n.programme)+':<ul>'+modList(n.modifiers)+'</ul></li>';
+ for(const id of n.remove){const s=spirits[id];html+='<li>Remove national spirit: '+esc(s?.name||id)+'<ul>'+modList(Object.fromEntries(Object.entries(s?.modifiers||{}).map(([k,v])=>[k,-v])))+'</ul></li>';}
+ if(n.replace_spirit){const old=spirits[n.replace_spirit.old],next=spirits[n.replace_spirit.new];html+='<li>Remove national spirit: '+esc(old.name)+'<ul>'+modList(Object.fromEntries(Object.entries(old.modifiers).map(([k,v])=>[k,-v])))+'</ul></li><li>Add national spirit: '+esc(next.name)+' ('+n.replace_spirit.duration+' days)<ul>'+modList(next.modifiers)+'</ul></li>';}
+ html+=buildingList(n.buildings)+bonusList(n.research);
+ if(n.event){const ev=data.events.find(e=>e.key===n.event);html+='<li>Event: '+esc(ev?.title||n.event)+'</li>';}
+ if(n.decision)html+='<li>Unlock decision: '+esc(n.decision)+'</li>';
+ if(n.agreement)html+='<li>Unlock recipient decision: '+esc(data.agreements.find(a=>a.id===n.agreement).decision)+'</li>';
+ html+='</ul>';
+ if(n.agreement){const a=data.agreements.find(a=>a.id===n.agreement);html+='<h4>If they accept</h4><div class="ch-terms">'+sideTerms(a,'chile','CHL')+(a.partners||[a.partner]).map(tag=>sideTerms(a,'recipient',tag)).join('')+'</div><h4>Agreement requirements</h4><ul>'+[...a.requirements,...a.conditions].map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul>';}
+ if(n.event){const ev=data.events.find(e=>e.key===n.event);if(ev)html+='<details><summary>Event options: '+esc(ev.title)+'</summary>'+eventOptions(ev)+'</details>';}
+ html+='<details><summary>Design record and native API references</summary><p class="ch-note">'+esc(n.id)+' · '+n.x+', '+n.y+' · '+esc(n.lifetime)+' programme</p>'+((data.groups.find(g=>g.id===n.group).description)?'<p class="ch-note">'+esc(data.groups.find(g=>g.id===n.group).description)+'</p>':'')+'<p class="ch-note">'+esc(data.integration.sync)+'</p>'+(n.agreement?'<p class="ch-note">'+esc(data.agreements.find(a=>a.id===n.agreement).implementation)+'</p>':'')+'<pre>'+esc(n.availability_code)+'\n\n'+esc(n.proposed_code)+'</pre><p class="ch-note">Native primitives and proposed modifier records. New Chile providers and guards require implementation after approval. Source-level audit does not establish live HOI4 behavior.</p></details>';
+ inspector.innerHTML=html;
+}
+function eventOptions(ev){return ev.options.map(o=>{let fx='';if(o.money)fx+='<li>Treasury: <span class="ch-negative">-'+money(o.money)+'</span></li>';if(o.weekly)fx+='<li>Additional expenses: <span class="ch-negative">+'+money(o.weekly)+' weekly</span></li>';if(Object.keys(o.modifiers).length)fx+='<li>'+(o.duration?'Add '+ev.title+' ('+o.duration+' days)':'Modify '+ev.title)+':<ul>'+modList(o.modifiers)+'</ul></li>';if(o.party_support)fx+='<li>'+esc(PARTIES[o.party_support.party])+': +'+(o.party_support.amount*100)+' percentage points support</li>';if(o.add_spirit){const s=spirits[o.add_spirit];fx+='<li>Add national spirit: '+esc(s.name)+'<ul>'+modList(s.modifiers)+'</ul></li>';}if(o.remove_spirit){const s=spirits[o.remove_spirit];fx+='<li>Remove national spirit: '+esc(s.name)+'<ul>'+modList(Object.fromEntries(Object.entries(s.modifiers).map(([k,v])=>[k,-v])))+'</ul></li>';}if(o.replace_spirit){const old=spirits[o.replace_spirit.old],next=spirits[o.replace_spirit.new];fx+='<li>Remove '+esc(old.name)+'<ul>'+modList(Object.fromEntries(Object.entries(old.modifiers).map(([k,v])=>[k,-v])))+'</ul></li><li>Add '+esc(next.name)+'<ul>'+modList(next.modifiers)+'</ul></li>';}return '<div class="ch-choice"><h4>'+esc(o.name)+'</h4>'+(o.require?'<p class="ch-gate">'+esc(o.require)+'</p>':'')+'<ul>'+fx+'</ul>'+(o.result?'<details><summary>Design resolution</summary><p class="ch-note">'+esc(o.result)+'</p></details>':'')+'</div>';}).join('');}
+function showSpirits(persist=true){state.mode='spirits';inspector.innerHTML='<h3>Chile on 1 January 1970</h3><p>Eduardo Frei Montalva · Christian Democratic Party</p>'+data.spirits.map(s=>'<h4>'+esc(s.name)+'</h4><p>'+esc(s.description)+'</p><ul>'+modList(s.modifiers)+'</ul>').join('')+'<details><summary>Conditional crises and later liabilities</summary>'+data.conditional_spirits.map(s=>'<h4>'+esc(s.name)+'</h4><p>'+esc(s.description)+'</p><ul>'+modList(s.modifiers)+'</ul><p class="ch-note">'+esc(s.activation)+' '+esc(s.remedy)+'</p>').join('')+'</details>';if(persist)save()}
+function showEvents(selected=null,persist=true){state.mode='events';inspector.innerHTML='<h3>Events and Political Dilemmas</h3><label>Event<select class="ch-event-select" id="ch-event"></select></label><div id="ch-event-detail"></div>';const sel=$('#ch-event');for(const ev of data.events){let o=document.createElement('option');o.value=ev.key;o.textContent=ev.title;sel.append(o)}if(selected)sel.value=selected;const draw=()=>{const ev=data.events.find(e=>e.key===sel.value);$('#ch-event-detail').innerHTML='<h4>'+esc(ev.title)+'</h4><p>'+esc(ev.description)+'</p><p class="ch-note">'+esc(ev.trigger)+'</p>'+eventOptions(ev)};sel.addEventListener('change',draw);draw();if(persist)save()}
+section.addEventListener('change',()=>{state.section=section.value;const first=activeNodes()[0];state.selected=first.id;renderTree(state.section==='all');save()});
+government.addEventListener('change',()=>{state.government=government.value;const mode=state.mode;renderTree(state.section==='all');if(mode==='spirits')showSpirits();if(mode==='events')showEvents();save()});
+$('#ch-overview').addEventListener('click',()=>{state.section='all';renderTree(true);save()});
+$('#ch-native').addEventListener('click',()=>{if(state.section==='all'&&byId[state.selected])state.section=byId[state.selected].group;renderTree(false);save()});
+$('#ch-spirits').addEventListener('click',showSpirits);$('#ch-events').addEventListener('click',()=>showEvents());
+window.addEventListener('openai:set_globals',event=>{const saved=event.detail?.globals?.widgetState;if(saved?.modelContent?.selected&&byId[saved.modelContent.selected]){state={...state,...saved.privateContent,...saved.modelContent};government.value=state.government;const restoredMode=state.mode;renderTree(state.section==='all');if(restoredMode==='spirits')showSpirits(false);if(restoredMode==='events')showEvents(null,false)}});
+window.COLDWAR_CHL_PREVIEW={data,state,showSpirits,showEvents,select:(key)=>{const n=byId[key]||data.nodes.find(n=>n.key===key);state.section=n.group;state.selected=n.id;renderTree(false);inspect(n)},overview:()=>{state.section='all';renderTree(true)}};
+const initialMode=state.mode;renderTree(state.section==='all');if(initialMode==='spirits')showSpirits(false);if(initialMode==='events')showEvents(null,false);
+})();
+</script>

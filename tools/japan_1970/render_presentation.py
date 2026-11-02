@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan focus presentation review from emitted script.
+# IMPERIA COLD WAR — Cold War: Japan focus presentation review from emitted script.
 """Native assets and GUI dimensions; Arial and connector routing approximate."""
 import hashlib
 import json
@@ -7,15 +7,16 @@ from functools import lru_cache
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from presentation import read_focuses
+from reward_revision import effective_design
 
 root = Path(__file__).resolve().parent
 game = root.parents[1]
-vanilla = Path('C:/Program Files (x86)/Steam/steamapps/common/Hearts of Iron IV')
-donor = Path('C:/Program Files (x86)/Steam/steamapps/workshop/content/394360/2777392649')
+vanilla = Path('E:/SteamLibrary/steamapps/common/Hearts of Iron IV')
+donor = Path('E:/SteamLibrary/steamapps/workshop/content/394360/2777392649')
 out = root / 'staging/graph'
 source = out / 'focus_tree.txt'
 nodes = read_focuses(source.read_text(encoding='utf-8'))
-design = json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design']
+design = effective_design(json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design'])
 loc = (out / 'focus_l_english.yml').read_text(encoding='utf-8-sig')
 titles = dict(re.findall(r'(?m)^\s*(\w+):\s*"([^"\n]*)"', loc))
 sprites = {}

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: emitted North Korea tree preview with native title glyphs.
+# IMPERIA COLD WAR — Cold War: emitted North Korea tree preview with native title glyphs.
 """Render actual emitted coordinates/icons/localisation; connectors approximate HOI4."""
 from pathlib import Path
 import re,json,sys,hashlib
@@ -8,13 +8,15 @@ sys.path.insert(0,str(ROOT/'tools/vietnam_1970'))
 from script_ast import parse,first,values
 OUT=ROOT/'docs/COLDWAR_NKO_1970_concept/expansion'
 OUT.mkdir(exist_ok=True)
-GAME=Path(r'C:/Program Files (x86)/Steam/steamapps/common/Hearts of Iron IV')
+GAME=Path('E:/SteamLibrary/steamapps/common/Hearts of Iron IV')
 source=ROOT/'common/national_focus/COLDWAR_NKO_1970_focus.txt'
 rows=first(parse(source.read_text(encoding='utf-8')),'focus_tree')
 nodes={first(v,'id'):v for k,_,v in rows if k=='focus'}
 design=json.loads((Path(__file__).with_name('current_design.json')).read_text(encoding='utf-8'))
 titles={n['id']:n['title'] for n in design['nodes']}
-sprites=dict(re.findall(r'name\s*=\s*"([^"]+)"\s*\n\s*texturefile\s*=\s*"([^"]+)"',(ROOT/'interface/goals.gfx').read_text(encoding='utf-8-sig'),re.I))
+sprites={}
+for path in (ROOT/'interface').glob('*.gfx'):
+    sprites.update(re.findall(r'spriteType\s*=\s*\{\s*name\s*=\s*"([^"]+)"\s*texturefile\s*=\s*"([^"]+)"',path.read_text(encoding='utf-8-sig'),re.I))
 fonttext=(GAME/'gfx/fonts/hoi_16mbs.fnt').read_text(encoding='utf-8')
 glyphs={}
 for line in fonttext.splitlines():

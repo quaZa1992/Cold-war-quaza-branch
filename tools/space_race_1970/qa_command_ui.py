@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: exercise the replacement ledger and native command-room controls.
+# IMPERIA COLD WAR — qa command ui validation.
 import hashlib
 import json
 import re
@@ -114,7 +114,7 @@ def run():
     for file,body in V.ASTS.items():
         source=(ROOT/file).read_text(encoding='utf-8')
         V.check(not re.search(r'(?<![\w.])[-+]?\d+\.\d{6,}(?![\w.])',source),'Overlong numeric literal: '+file)
-    result={'checks':V.CHECKS,'status':'passed','legacy_antarctica':'startup/ticks/AI, windows and decision retired; modifiers/costs cleaned','ledger':'complete donor button/icon pair and adjacent slot positions checked','tabs':7,'catalogue_programmes':84,'finance':'weekly; one-time existing-save budget conversion','bulletin_replay':'no finance, reward or RNG mutation','in_game_tested':False}
+    result={'project':'IMPERIA COLD WAR','checks':V.CHECKS,'status':'passed','legacy_antarctica':'startup/ticks/AI, windows and decision retired; modifiers/costs cleaned','ledger':'complete donor button/icon pair and adjacent slot positions checked','tabs':7,'catalogue_programmes':84,'finance':'weekly; one-time existing-save budget conversion','bulletin_replay':'no finance, reward or RNG mutation','in_game_tested':False}
     (Path(__file__).with_name('command_ui_validation.json')).write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(result))
 
 

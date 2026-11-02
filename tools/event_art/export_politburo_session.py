@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: event art — export politburo session.
+# IMPERIA COLD WAR — Export Politburo event art in native BGRA DDS format.
 """Package the ImageGen restoration in the exact native MD country-event frame.
 
 FFmpeg handles image scaling and frame composition. Pillow only decodes pixels
@@ -38,9 +38,10 @@ def main():
         assert all(image.getpixel((x,y)) == native.getpixel((x,y))
                    for y in range(163) for x in range(217)
                    if not (19 <= x < 199 and 6 <= y < 156)), 'Native MD frame changed'
-    header = [124,4111,163,217,217*4,0,0]+[0]*11+[32,65,0,32,255,65280,16711680,4278190080,4096,0,0,0,0]
+    # IMPERIA COLD WAR — Match native MD byte order without changing the artwork.
+    header = [124,4111,163,217,217*4,0,0]+[0]*11+[32,65,0,32,16711680,65280,255,4278190080,4096,0,0,0,0]
     dds = OUTPUT.with_suffix('.dds')
-    dds.write_bytes(b'DDS '+struct.pack('<31I', *header)+pixels)
+    dds.write_bytes(b'DDS '+struct.pack('<31I', *header)+image.tobytes('raw', 'BGRA'))
     assert Image.open(dds).convert('RGBA').tobytes() == pixels
     # The Soviet generator stages its own binary; a later tree build must retain it.
     generator_copy = ROOT/'Claude outputs/COLDWAR_SOV_generator/art/dds/COLDWAR_SOV_politburo_session.dds'
@@ -51,7 +52,7 @@ def main():
               'prompt_file': 'tools/event_art/politburo_prompt.txt',
               'runtime_event_ids': ['COLDWAR_SOV.10', 'COLDWAR_SOV.11'],
               'output': str(dds.relative_to(ROOT)), 'size': [217,163],
-              'photo_inset': [19,6,180,150], 'format': 'DDS uncompressed RGBA32',
+              'photo_inset': [19,6,180,150], 'format': 'DDS uncompressed BGRA8 (A8R8G8B8)',
               'native_frame_pixels_unchanged': True, 'dds_matches_preview': True,
               'master_sha256': hashlib.sha256(MASTER.read_bytes()).hexdigest(),
               'dds_sha256': hashlib.sha256(dds.read_bytes()).hexdigest()}

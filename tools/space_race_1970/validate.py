@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: execute the generated native Space Race scripts.
+# IMPERIA COLD WAR — validate validation.
 """Strict static validation and deterministic execution of actual Clausewitz ASTs.
 
 This rejects unsupported statements. It is not an in-game UI or multiplayer test.
@@ -43,7 +43,7 @@ for file in MANIFEST['outputs']:
     raw=path.read_bytes()
     if path.suffix in ['.txt','.gui','.gfx']:
         check(not raw.startswith(b'\xef\xbb\xbf'),'Script BOM '+file)
-        check(raw.decode('utf-8').startswith('# IMPERIA CW'),'Missing ownership comment '+file)
+        check(raw.decode('utf-8').startswith('# IMPERIA COLD WAR —'),'Missing ownership comment '+file)
         try:ASTS[file]=parse(raw.decode('utf-8'))
         except AssertionError as error:raise AssertionError(file+': '+str(error)) from error
     elif path.suffix=='.yml':
@@ -51,7 +51,7 @@ for file in MANIFEST['outputs']:
     elif path.suffix=='.dds':
         im=Image.open(path).convert('RGBA')
         if '/news_' in file or '/report_' in file:
-            check(im.getchannel('A').getextrema()==(255,255),'Transparent event image '+file)
+            check(im.getchannel('A').getextrema()==((0,255) if '/report_' in file else (255,255)),'Incorrect native event alpha '+file)
 
 EFFECTS={};TRIGGERS={}
 for file,body in ASTS.items():
@@ -72,24 +72,66 @@ class Country:
     tech_bonuses:list=field(default_factory=list)
     ideas:set=field(default_factory=set)
     dynamic_modifiers:set=field(default_factory=set)
+    technologies:set=field(default_factory=set)
+    arrays:dict=field(default_factory=dict)
+    projects:set=field(default_factory=set)
+    # IMPERIA COLD WAR — Native space-production cancellation model.
+    missions:set=field(default_factory=set)
+    # IMPERIA COLD WAR — Annexation and unavailable-country lifecycle cases.
+    exists:bool=True
 
 
 class Machine:
     def __init__(self,tags=('SAU','USA','SOV')):
         self.countries={t:Country(t) for t in tags};self.c=self.countries[tags[0]]
         self.g={'year':D(1970),'month':D(1)};self.gf=set();self.targets={};self.events=[];self.rolls=deque();self.date='1970.1.1'
+        # IMPERIA COLD WAR — Native persistent country-variable and PREV scope model.
+        self.is_1970=True;self.parents=[];self.wars=set()
+        self.country_ids={tag:D(i+1) for i,tag in enumerate(tags)}
+
+    def scoped(self,key):
+        if key.startswith('PREV.'):
+            assert self.parents,'PREV outside a country scope'
+            return self.parents[-1],key[5:]
+        if key.startswith('THIS.'):return self.c,key[5:]
+        return self.c,key
+
+    def enter(self,country,body,condition=None):
+        old=self.c;self.parents.append(old);self.c=country
+        try:
+            if condition is None or self.test(condition):self.run(body)
+        finally:self.c=self.parents.pop()
+
+    def country(self,value):
+        if value=='PREV':return self.parents[-1] if self.parents else None
+        if value in ['THIS','ROOT']:return self.c
+        if value.startswith('var:'):value=self.get(value[4:])
+        elif value in self.countries:return self.countries[value]
+        return next((c for tag,c in self.countries.items() if self.country_ids[tag]==value),None)
 
     def store(self,key,temp=False):
+        country,key=self.scoped(key)
         if key.startswith('global.'):return self.g,key[7:]
-        return (self.c.temp if temp else self.c.variables),key
+        return (country.temp if temp else country.variables),key
 
     def get(self,key):
         try:return Q(key)
         except Exception:pass
+        if key in self.countries:return self.country_ids[key]
+        country,key=self.scoped(key)
+        if key=='id':return self.country_ids[country.tag]
+        if '^' in key:
+            name,index=key.split('^',1);array=country.arrays.get(name,[])
+            return D(len(array)) if index=='num' else (array[int(self.get(index))] if 0<=int(self.get(index))<len(array) else D(0))
         if key.startswith('global.'):return self.g.get(key[7:],D(0))
-        return self.c.temp.get(key,self.c.variables.get(key,D(0)))
+        return country.temp.get(key,country.variables.get(key,D(0)))
 
     def put(self,key,value,temp=False):
+        if '^' in key:
+            name,index=key.split('^',1);idx=int(self.get(index));array=self.c.arrays.setdefault(name,[])
+            assert idx>=0,'Negative array write'
+            while len(array)<=idx:array.append(D(0))
+            array[idx]=Q(value);return
         store,name=self.store(key,temp);store[name]=Q(value)
 
     def compare(self,a,op,b):
@@ -104,13 +146,35 @@ class Machine:
             elif key=='NOT':a=not self.test(v)
             elif key=='always':a=v=='yes'
             elif key=='is_ai':a=self.c.ai==(v=='yes')
-            elif key=='IMP_is_1970_scenario':a=True
+            elif key=='exists':a=self.c.exists==(v=='yes')
+            elif key=='has_war_with':
+                target=self.country(v);a=bool(target and frozenset((self.c.tag,target.tag)) in self.wars)
+            elif key.startswith('var:'):
+                target=self.country(key);old=self.c;self.parents.append(old)
+                try:
+                    if target:self.c=target;a=self.test(v)
+                    else:a=False
+                finally:self.c=self.parents.pop()
+            # IMPERIA COLD WAR — Country scopes in native orbital GUI visibility.
+            elif key in ['ROOT','THIS','PREV']:
+                target=self.country(key);old=self.c;self.parents.append(old)
+                try:
+                    if target:self.c=target;a=self.test(v)
+                    else:a=False
+                finally:self.c=self.parents.pop()
+            elif key=='IMP_is_1970_scenario':a=self.is_1970==(v=='yes')
             elif key=='has_country_flag':a=v in self.c.flags
+            elif key=='hidden_trigger':a=self.test(v)
+            elif key=='has_active_mission':a=v in self.c.missions
             elif key=='has_idea':a=v in self.c.ideas
             elif key=='has_dynamic_modifier':a=(first(v,'modifier') if isinstance(v,list) else v) in self.c.dynamic_modifiers
+            elif key=='has_tech':a=v in self.c.technologies
+            elif key=='is_special_project_completed':a=v in self.c.projects
+            elif key=='custom_trigger_tooltip':a=self.test([node for node in v if node[0]!='tooltip'])
             elif key=='has_global_flag':a=v in self.gf
             elif key=='has_event_target':a=v in self.targets
-            elif key in ['tag','original_tag']:a=self.c.tag==v
+            elif key in ['tag','original_tag']:
+                target=self.country(v);a=bool(target and self.c.tag==target.tag)
             elif key=='date':a=self.compare(tuple(map(int,self.date.split('.'))),op,tuple(map(int,v.split('.'))))
             elif key=='check_variable':
                 if first(v,'var') is not None:name,operator,target=first(v,'var'),first(v,'compare','equals'),first(v,'value')
@@ -131,22 +195,45 @@ class Machine:
                     self.run([n for n in v if n[0]!='limit']);taken=True
                 continue
             taken=False
-            if key in EFFECTS:self.call(key)
+            if key=='hidden_effect':self.run(v)
+            elif key in EFFECTS:self.call(key)
             elif key=='every_country':
-                old=self.c
                 for c in self.countries.values():
-                    self.c=c
-                    if self.test(first(v,'limit',[])):self.run([n for n in v if n[0]!='limit'])
-                self.c=old
+                    if c.exists:self.enter(c,[n for n in v if n[0]!='limit'],first(v,'limit',[]))
             elif key.startswith('event_target:'):
-                old=self.c;self.c=self.targets[key.split(':',1)[1]];self.run(v);self.c=old
+                self.enter(self.targets[key.split(':',1)[1]],v)
+            elif key.startswith('var:'):
+                target=self.country(key)
+                if target:self.enter(target,v)
             elif key in ['set_country_flag','clr_country_flag']:
                 (self.c.flags.add if key=='set_country_flag' else self.c.flags.discard)(v)
+            # IMPERIA COLD WAR — Remove expired archive variables as the engine does.
+            elif key=='clear_variable':
+                store,name=self.store(v);store.pop(name,None)
             elif key=='set_global_flag':self.gf.add(v if isinstance(v,str) else first(v,'flag'))
             elif key=='save_global_event_target_as':self.targets[v]=self.c
             elif key=='clear_global_event_target':self.targets.pop(v,None)
             elif key=='modify_treasury_effect':self.put('treasury',self.get('treasury')+self.get('treasury_change'))
+            elif key=='set_technology':self.c.technologies.update(k for k,op,value in v if k!='popup' and value=='1')
+            elif key=='clear_array':self.c.arrays[v]=[]
+            elif key=='add_to_array':
+                name,_,value=v[0];self.c.arrays.setdefault(name,[]).append(self.get(value))
+            elif key=='for_each_loop':
+                name=first(v,'array');variable=first(v,'value','v');body=[x for x in v if x[0] not in ['array','value']]
+                for item in list(self.c.arrays.get(name,[])):
+                    self.put(variable,item,True);self.run(body)
+            elif key=='add_satellite_from_payload':
+                # Contract model of the external MD API, not an execution of its
+                # full GUI, ASAT, treaty and orbit-layout implementation.
+                for raw in self.c.arrays.get('payload_array',[]):
+                    model=int(raw);family='GNSS' if 121<=model<=132 else 'COM' if 141<=model<=152 else 'SPY' if 161<=model<=172 else None
+                    assert family,'Unsupported native pilot model'
+                    base={'GNSS':121,'COM':141,'SPY':161}[family];orbit=self.c.arrays.setdefault('orbit_array',[])
+                    if len(orbit)<3000 and sum(base<=int(m)<base+12 for m in orbit)<1000:
+                        orbit.append(D(model));self.put(f'{family}_satellite_array^{model-base}',self.get(f'{family}_satellite_array^{model-base}')+1)
+                self.c.arrays['payload_array']=[]
             elif key=='international_systems_update':self.g['md_ui_updates']=self.g.get('md_ui_updates',D(0))+1
+            elif key=='remove_mission':self.c.missions.discard(v)
             elif key=='remove_ideas':self.c.ideas.discard(v)
             elif key=='remove_dynamic_modifier':
                 assert isinstance(v,list),'remove_dynamic_modifier requires a modifier block'
@@ -162,7 +249,10 @@ class Machine:
                 roll=self.rolls.popleft();check(self.get(first(v,'min'))<=roll<self.get(first(v,'max')),'RNG outside documented interval')
                 self.put(first(v,'var'),roll,True)
             elif key in ['clamp_variable','clamp_temp_variable']:
-                name=first(v,'var');a=max(self.get(first(v,'min')),min(self.get(name),self.get(first(v,'max'))));self.put(name,a,'temp' in key)
+                # IMPERIA COLD WAR — Invalid clamp intervals must fail, not be silently repaired.
+                name=first(v,'var');lo=self.get(first(v,'min'));hi=self.get(first(v,'max'))
+                assert lo<=hi,'Invalid native clamp bounds: '+name+' '+str(lo)+' > '+str(hi)
+                self.put(name,max(lo,min(self.get(name),hi)),'temp' in key)
             elif key.endswith('_variable'):
                 name,_,operand=v[0];value=self.get(operand);old=self.get(name)
                 if key.startswith('set_'):a=value
@@ -184,6 +274,7 @@ class Machine:
         self.c.temp.clear();self.call('cw_sr_weekly')
 
 
+# IMPERIA COLD WAR — Project marker and native reference validation.
 def static_checks():
     # Resolve every generated helper/event/sprite/defined-text reference.
     for file,body in ASTS.items():
@@ -192,9 +283,12 @@ def static_checks():
                 check(key in EFFECTS or key in TRIGGERS,'Unresolved helper '+key+' in '+file)
             if key in ['country_event','news_event'] and isinstance(v,list):
                 check(first(v,'id') in EVENTS,'Unresolved event')
-    sprites={first(v,'name').strip('"'):v for file,body in ASTS.items() if file.endswith('.gfx') for k,op,group in body if k=='spriteTypes' for k2,op2,v in group if k2=='spriteType'}
+    sprites={first(v,'name').strip('"'):v for file,body in ASTS.items() if file.endswith('.gfx') for k,op,group in body if k=='spriteTypes' for k2,op2,v in group if k2 in ['spriteType','maskedShieldType']}
+    # IMPERIA COLD WAR — The native masked-flag donor resolves base-game overlays.
+    from native_flags import asset_path
     for name,body in sprites.items():
-        path=ROOT/first(body,'texturefile').strip('"');check(path.exists(),'Missing sprite texture '+name)
+        path=asset_path(ROOT,first(body,'texturefile',first(body,'textureFile1')).strip('"'));check(path.exists(),'Missing sprite texture '+name)
+        if first(body,'textureFile2'):check(asset_path(ROOT,first(body,'textureFile2').strip('"')).exists(),'Missing flag mask '+name)
     gui=first(ASTS['interface/COLDWAR_space_race.gui'],'guiTypes')
     window=first(gui,'containerWindowType')
     bounds=first(window,'size');panel_width=int(first(bounds,'width'));panel_height=int(first(bounds,'height'))
@@ -208,7 +302,7 @@ def static_checks():
         if kind=='instantTextBoxType':w=int(first(v,'maxWidth'));h=int(first(v,'maxHeight'))
         else:
             sprite=first(v,'spriteType').strip('"');check(sprite in sprites,'Unresolved GUI sprite '+sprite)
-            image=Image.open(ROOT/first(sprites[sprite],'texturefile').strip('"'));frames=int(first(sprites[sprite],'noOfFrames','1'));w=image.width//frames;h=image.height
+            image=Image.open(asset_path(ROOT,first(sprites[sprite],'texturefile',first(sprites[sprite],'textureFile1')).strip('"')));frames=int(first(sprites[sprite],'noOfFrames','1'));w=image.width//frames;h=image.height
         check(x>=0 and y>=0 and x+w<=panel_width and y+h<=panel_height,'GUI outside panel '+name)
     loc=(ROOT/'localisation/english/COLDWAR_space_race_l_english.yml').read_text(encoding='utf-8-sig')
     pairs=re.findall(r'^ ([\w.]+): "(.*)"$',loc,re.M);localisation=dict(pairs)
@@ -234,7 +328,7 @@ def mechanics():
         m=Machine((tag,));m.init()
         for c in profile['capabilities']:
             check('cw_sr_cap_'+c.replace('-','_') in m.c.flags,tag+' missing inherited '+c)
-        check(m.get('cw_sr_prestige')==0,'Free campaign prestige')
+        check(m.get('cw_sr_prestige')==__import__('historical_standings').BASES.get(tag,0),'Incorrect historical prestige baseline')
     m=Machine();m.c.ai=True;m.init();check('cw_sr_initialized' not in m.c.flags,'AI initialised')
     m.c.ai=False;m.init();m.put('cw_sr_budget',1000)
     m.call('cw_sr_p47_start');check(m.get('cw_sr_active')==1,'Start did not occupy slot')
@@ -267,14 +361,14 @@ def mechanics():
     # Delayed mission acceptance, frozen probability, no launch/repeat farming.
     m=Machine(('SAU','USA','SOV'));m.init()
     p=DATA['programmes'][26]
-    m.c.flags.update('cw_sr_cap_'+c.replace('-','_') for c in p['capabilityRequirements']);m.put('cw_sr_p27_state',3);m.put('cw_sr_p27_work',100)
+    m.c.flags.update('cw_sr_cap_'+c.replace('-','_') for c in p['capabilityRequirements']);m.c.technologies.add('OLV1');m.put('cw_sr_p27_state',3);m.put('cw_sr_p27_work',100)
     ids={p['id']:i for i,p in enumerate(DATA['programmes'],1)}
     m.c.flags.update('cw_sr_p'+str(ids[group[0]])+'_awarded' for group in REQUIREMENTS[p['id']])
     m.rolls.append(0);before=m.get('treasury');m.call('cw_sr_p27_launch')
     check(m.get('treasury')==before-28 and m.get('cw_sr_p27_state')==4,'Mission appropriation or departure failed')
     check('cw_sr_cap_lunar_landing' not in m.c.flags,'Lunar capability granted on launch')
     frozen=m.get('cw_sr_p27_op');m.put('cw_sr_science',10000);m.call('cw_sr_p27_odds');check(m.get('cw_sr_p27_op')==frozen,'In-flight probability changed')
-    days=int(m.get('cw_sr_p27_days'));m.rolls.append(0)
+    days=int(m.get('cw_sr_p27_days'));m.rolls.extend([9999,0])
     for _ in range(days):m.call('cw_sr_daily')
     check('cw_sr_cap_lunar_landing' in m.c.flags,'Completed lunar flight did not grant capability')
     check(('country_event','cw_sr_report.8003','SAU') in m.events and ('news_event','cw_sr_world.8003','SAU') in m.events,'Saudi lunar image route missing')
@@ -293,12 +387,12 @@ def mechanics():
     # Mars firsts: award only on returned mission; share the receipt between countries.
     for tag,event in [('USA','cw_sr_world.9101'),('SOV','cw_sr_world.9102')]:
         t=Machine((tag,'SAU'));t.init();t.date='1988.1.1';t.g.update(year=D(1988),month=D(1))
-        p=DATA['programmes'][83];t.c.flags.update('cw_sr_cap_'+c.replace('-','_') for c in p['capabilityRequirements']);t.put('cw_sr_p84_state',3);t.g['cw_sr_window_mars']=D(0)
+        p=DATA['programmes'][83];t.c.flags.update('cw_sr_cap_'+c.replace('-','_') for c in p['capabilityRequirements']);t.c.technologies.add('OLV3');t.put('cw_sr_p84_state',3);t.g['cw_sr_window_mars']=D(0)
         t.c.flags.update('cw_sr_p'+str(ids[group[0]])+'_awarded' for group in REQUIREMENTS[p['id']])
         t.rolls.append(0);t.call('cw_sr_p84_launch');check(t.get('cw_sr_p84_state')==4 and 'cw_sr_cap_crewed_mars_return' not in t.c.flags,'Mars return granted at departure')
         t.put('cw_sr_p84_days',1);t.rolls.append(0);t.call('cw_sr_daily')
         check(('news_event',event,tag) in t.events,'First Mars news did not use national image '+tag)
-        check(t.get('cw_sr_prestige')==580,'Mars first reward incorrect')
+        check(t.get('cw_sr_prestige')==580+__import__('historical_standings').BASES.get(tag,0),'Mars first reward incorrect')
         old=t.get('cw_sr_prestige');bonuses=len(t.c.tech_bonuses)
         for _ in range(50):t.call('cw_sr_p84_success')
         check(t.get('cw_sr_prestige')<=old+D(48) and len(t.c.tech_bonuses)==bonuses,'Repeated flight reward farming')
@@ -310,16 +404,16 @@ def mechanics():
             for _ in range(math_ceil(months*52/12)+3):t.call(f'cw_sr_p{n}_week')
             check(t.get(f'cw_sr_p{n}_state')==3,p['id']+' review deadlock '+kind)
     # Shared ranking and upkeep reduction; no leader for a tie or an AI score.
-    m=Machine();m.init()
-    for t,score in [('SAU',10),('USA',20),('SOV',30)]:
+    m=Machine(('SAU','ENG','BRA'));m.init()
+    for t,score in [('SAU',10),('ENG',20),('BRA',30)]:
         m.c=m.countries[t];m.init();m.put('cw_sr_prestige',score)
-    m.call('cw_sr_rank');check(m.targets['cw_sr_rank1'].tag=='SOV','Wrong leader')
-    m.c=m.countries['SOV'];m.c.flags.add('cw_sr_p1_deployed');before=m.get('treasury')
+    m.call('cw_sr_rank');check(m.targets['cw_sr_rank1'].tag=='BRA','Wrong leader')
+    m.c=m.countries['BRA'];m.c.flags.add('cw_sr_p1_deployed');before=m.get('treasury')
     for _ in range(52):m.call('cw_sr_p1_upkeep')
     check(abs(before-m.get('treasury')-D('2.28'))<=D('.002'),'Leader weekly upkeep is not reduced by five percent')
-    m.c=m.countries['USA'];m.put('cw_sr_prestige',30);m.call('cw_sr_rank');check(not any('cw_sr_leader' in c.flags for c in m.countries.values()),'Tie conferred leadership')
-    m.countries['SOV'].ai=True;m.call('cw_sr_rank');check('cw_sr_leader' in m.countries['USA'].flags,'AI retained leadership')
-    m.c=m.countries['USA'];m.put('treasury',0);m.c.flags.add('cw_sr_p1_deployed');m.call('cw_sr_p1_upkeep');check(m.get('cw_sr_p1_arrears')>0,'Unpaid operating debt was discarded')
+    m.c=m.countries['ENG'];m.put('cw_sr_prestige',30);m.call('cw_sr_rank');check(not any('cw_sr_leader' in c.flags for c in m.countries.values()),'Tie conferred leadership')
+    m.countries['BRA'].ai=True;m.call('cw_sr_rank');check('cw_sr_leader' in m.countries['ENG'].flags,'AI retained leadership')
+    m.c=m.countries['ENG'];m.put('treasury',0);m.c.flags.add('cw_sr_p1_deployed');m.call('cw_sr_p1_upkeep');check(m.get('cw_sr_p1_arrears')>0,'Unpaid operating debt was discarded')
     for year,month,expected in [(1970,1,10),(1971,5,0),(1973,7,0)]:
         m.g['year']=D(year);m.g['month']=D(month);m.call('cw_sr_windows');check(m.g['cw_sr_window_mars']==expected,'Mars transfer window calendar drift')
 
@@ -329,6 +423,6 @@ def math_ceil(x):return int(-(-x//1))
 
 if __name__=='__main__':
     static_checks();mechanics()
-    result={'checks':CHECKS,'programmes':84,'policies_per_programme':4,'investigation_cases':252,'status':'passed','arithmetic':'three-decimal fixed-point stress execution of generated ASTs','in_game_tested':False}
+    result={'project':'IMPERIA COLD WAR','checks':CHECKS,'programmes':84,'policies_per_programme':4,'investigation_cases':252,'status':'passed','arithmetic':'three-decimal fixed-point stress execution of generated ASTs','in_game_tested':False}
     (HERE/'validation.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(result))

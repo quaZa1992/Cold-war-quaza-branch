@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uranium arithmetic, conservation and integration checks.
+# IMPERIA COLD WAR — Uranium, civilian shelter artwork and complete nuclear budget regressions.
 import collections,hashlib,json,re,sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'Claude outputs/COLDWAR_SOV_generator/tools'))
@@ -14,9 +14,9 @@ class Model:
         self.effects={}
         for rel in ['common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt',
                     'common/scripted_effects/COLDWAR_nuclear_development_budget.txt']:
-            self.effects.update({k:v for k,op,v,line in pdx.parse(read(ROOT/rel))[0] if isinstance(v,list)})
-        self.vars['@imp_uranium_per_enrichment_facility']=25
-        self.vars['@math_expressions_max']=100000000
+            rows=pdx.parse(read(ROOT/rel))[0]
+            self.effects.update({k:v for k,op,v,line in rows if isinstance(v,list)})
+            self.vars.update({k:float(v) for k,op,v,line in rows if k.startswith('@') and not isinstance(v,list)})
     def value(self,x):
         if isinstance(x,list):
             val=0
@@ -30,7 +30,10 @@ class Model:
                 else:raise AssertionError(k)
             return val
         try:return float(x)
-        except (ValueError,TypeError):return self.vars.get(x,0)
+        except (ValueError,TypeError):
+            if isinstance(x,str) and x.startswith('@'):
+                assert x in self.vars, 'Undeclared native script constant: '+x
+            return self.vars.get(x,0)
     def condition(self,items):
         conditions=[]
         for k,op,v,line in items:
@@ -52,10 +55,10 @@ class Model:
                 if k=='if':chain=False
                 if not chain and (k=='else' or self.condition(pdx.get(v,'limit'))):
                     chain=True;self.run([item for item in v if item[0]!='limit'])
-            elif k in ['set_variable','set_temp_variable','multiply_variable','add_to_variable','add_to_temp_variable','subtract_from_variable']:
+            elif k in ['set_variable','set_temp_variable','multiply_variable','multiply_temp_variable','add_to_variable','add_to_temp_variable','subtract_from_variable']:
                 name,_,amount,_=v[0];amount=self.value(amount)
                 if k.startswith('set_'):self.vars[name]=amount
-                elif k=='multiply_variable':self.vars[name]=self.value(name)*amount
+                elif k in ['multiply_variable','multiply_temp_variable']:self.vars[name]=self.value(name)*amount
                 elif k in ['add_to_variable','add_to_temp_variable']:self.vars[name]=self.value(name)+amount
                 else:self.vars[name]=self.value(name)-amount
             elif k=='round_variable':self.vars[v]=round(self.value(v))
@@ -65,6 +68,43 @@ class Model:
     def call(self,name):self.run(self.effects[name])
 
 class Integration(unittest.TestCase):
+    def test_civilian_projects_and_enrichment_weekly_costs(self):
+        bases = {
+            'sp_nuclear_energy': 0.05,
+            'sp_COLDWAR_gas_centrifuge_enrichment': 0.06,
+            'sp_COLDWAR_fuel_reprocessing': 0.07,
+            'sp_COLDWAR_fast_breeder': 0.10,
+            'sp_COLDWAR_reactor_design': 0.05,
+            'sp_COLDWAR_waste_repository': 0.04,
+            'sp_thorium_nuclear_fuel': 0.08,
+        }
+        scenarios = [(set(), 0)] + [({'sp:'+key}, base) for key, base in bases.items()]
+        scenarios += [({'sp:'+key for key in bases}, sum(bases.values()))]
+        for projects, weekly in scenarios:
+            for facilities in [0, 1, 3]:
+                for gdpc, multiplier in [(9, 0.4), (36, 1), (72, 1.2)]:
+                    with self.subTest(projects=projects, facilities=facilities, gdpc=gdpc):
+                        m = Model(); m.projects = projects
+                        m.vars.update(total_enrichment_facilities=facilities, gdp_per_capita=gdpc, inflation_multiplier=1.35)
+                        for _ in range(3):
+                            m.call('COLDWAR_calculate_nuclear_development_budget')
+                            self.assertAlmostEqual(m.vars['COLDWAR_nuclear_development_weekly_cost'], (weekly+0.02*facilities)*multiplier*1.35)
+                        m.projects = set(); m.vars['total_enrichment_facilities'] = 0
+                        m.call('COLDWAR_calculate_nuclear_development_budget')
+                        self.assertEqual(m.vars['COLDWAR_nuclear_development_weekly_cost'], 0)
+
+    def test_combined_nuclear_expense_enters_defence_once(self):
+        s = read(ROOT/'common/scripted_effects/00_money_system.txt'); n = block(s, 'update_military_rate')
+        tail = pdx.parse(s[n['open']:n['close']])[0][-2:]
+        m = Model()
+        m.projects = {'sp:sp_nuclear_bomb', 'sp:sp_nuclear_warhead_program', 'sp:sp_nuclear_energy'}
+        m.vars.update(gdp_per_capita=36, inflation_multiplier=1, total_enrichment_facilities=3,
+                      defence_breakdown_cyber=0.1, **{'array_defence_spend^def_index': 1})
+        expected = 1.1 + 0.15384 + 0.09615 + 0.05 + 0.06
+        for _ in range(5):
+            m.run(tail)
+            self.assertAlmostEqual(m.vars['defence_gain'], expected)
+
     def test_development_budget_rates_and_lifecycle(self):
         # Match the engine's five-place fixed-point precision when converting the source budgets.
         bomb=int(8/52*100000)/100000;warhead=int(5/52*100000)/100000
@@ -210,11 +250,17 @@ class Integration(unittest.TestCase):
                 blocks(data.decode('utf-8'))
             self.assertNotRegex(data.decode('utf-8-sig'),r'(?m)^(<<<<<<<|=======|>>>>>>>)')
     def test_icon_frames_keep_shelter_and_add_uranium(self):
-        from PIL import Image,ImageChops
+        from PIL import Image
+        shelter=Image.open(ROOT/'tools/civilian_shelter_icon/frame_39.png')
+        self.assertEqual(shelter.mode,'RGBA');self.assertEqual(shelter.size,(46,46))
         for name in ['building_icon_strip.dds','building_icon_without_bg_strip.dds']:
             rel='gfx/interface/buildings/'+name
             original=Image.open(AUDIT/'before'/rel).convert('RGBA');current=Image.open(ROOT/rel).convert('RGBA')
-            self.assertEqual(current.size,(1840,46));self.assertIsNone(ImageChops.difference(original,current.crop((0,0,1794,46))).getbbox())
+            source=Image.open(SOURCE/rel).convert('RGBA')
+            self.assertEqual(original.size,(1794,46));self.assertEqual(source.size,(1794,46));self.assertEqual(current.size,(1840,46))
+            self.assertEqual(original.crop((0,0,1748,46)).tobytes(),current.crop((0,0,1748,46)).tobytes(),name)
+            self.assertEqual(shelter.tobytes(),current.crop((1748,0,1794,46)).tobytes(),name)
+            self.assertEqual(source.crop((1748,0,1794,46)).tobytes(),current.crop((1794,0,1840,46)).tobytes(),name)
         s=read(ROOT/'common/buildings/mdcw_imperia_shelters.txt');self.assertIn('icon_frame = 39',s)
         s=read(ROOT/'common/buildings/00_buildings.txt')
         n=block(s,'uranium_mine');self.assertIn('icon_frame = 40',s[n['start']:n['end']])
@@ -247,6 +293,9 @@ class Integration(unittest.TestCase):
         self.assertEqual(len(re.findall(r'imp_uranium_add_deposit = yes',part)),len(register['deposits']))
         self.assertNotIn('add_resource',part)
         self.assertNotIn('add_building_construction',part)
+        n=block(s,'COLDWAR_uranium_setup_karelia_mali_deposits');part=s[n['open']:n['close']]
+        self.assertNotIn('add_resource',part)
+        self.assertNotIn('building',part)
     def test_1970_geological_register_and_generated_capacities(self):
         register=json.loads(read(AUDIT/'uranium_1970_research.json'))
         balance=json.loads(read(AUDIT/'coldwar_balance.json'))
@@ -276,8 +325,56 @@ class Integration(unittest.TestCase):
             self.assertEqual(assignments,{'imp_uranium_mine_slots':row['slots'],'imp_uranium_per_level':row['output_per_level']})
             self.assertEqual(balance['deposits'][str(state)],{'mine_slots':row['slots'],'output_per_level':row['output_per_level']})
         self.assertEqual(balance['starting_resources'],{})
+        self.assertEqual(set(balance['deposits']),{str(row['state_id']) for row in register['deposits']+register['rp_geographic_additions']})
         self.assertEqual(expected[717]['slots'],1) # Only the early southern Kazakh prospects.
         self.assertEqual(expected[756]['output_per_level'],6) # No later giant Athabasca discoveries.
+    def test_requested_geographic_deposits_and_startup_migration(self):
+        register=json.loads(read(AUDIT/'uranium_1970_research.json'))
+        balance=json.loads(read(AUDIT/'coldwar_balance.json'))
+        additions={row['state_id']:row for row in register['rp_geographic_additions']}
+        self.assertEqual(set(additions),{1128,1164,1166})
+        self.assertTrue(set(additions).isdisjoint(row['state_id'] for row in register['deposits']))
+        s=read(ROOT/'common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt')
+        name='COLDWAR_uranium_setup_karelia_mali_deposits'
+        n=block(s,name);part=s[n['open']:n['close']]
+        states={int(k):v for k,op,v,line in pdx.parse(part)[0]}
+        self.assertEqual(set(states),set(additions))
+        for state,row in additions.items():
+            self.assertEqual(row['scenario_access'],'user_requested_geographic_exception')
+            self.assertTrue(row['sources'] and row['discovery_history'])
+            self.assertTrue(all(url.startswith('https://') for url in row['sources']))
+            self.assertNotIn('known_by_year',row)
+            expected=('LOW',1,3) if state==1128 else ('HIGH',3,9)
+            self.assertEqual((row['requested_tier'],row['slots'],row['output_per_level']),expected)
+            assignments={v[0][0]:int(v[0][2]) for k,op,v,line in states[state] if k=='set_variable'}
+            self.assertEqual(assignments,{'imp_uranium_mine_slots':row['slots'],'imp_uranium_per_level':row['output_per_level']})
+            self.assertEqual(balance['deposits'][str(state)],{'mine_slots':row['slots'],'output_per_level':row['output_per_level']})
+        # A separate global guard must apply to an already initialized campaign too.
+        hooks=read(ROOT/'common/on_actions/COLDWAR_quaza_zzzzzz_imp_uranium_on_actions.txt')
+        startup=block(hooks,'on_startup')
+        country=next(child for child in startup['children'][0]['children'] if child['name']=='random_country')
+        guards=[hooks[child['start']:child['end']] for child in country['children'] if child['name']=='if']
+        guarded=next(part for part in guards if name+' = yes' in part)
+        self.assertIn('NOT = { has_global_flag = COLDWAR_uranium_karelia_mali_set }',guarded)
+        self.assertNotIn('imp_uranium_deposits_v4_set',guarded)
+        self.assertEqual(hooks.count(name+' = yes'),1)
+        self.assertLess(guarded.index(name+' = yes'),guarded.index('set_global_flag = COLDWAR_uranium_karelia_mali_set'))
+        self.assertLess(hooks.index(name+' = yes'),hooks.index('every_state = { imp_uranium_sync_mine_slots = yes }'))
+    def test_requested_deposits_do_not_reset_or_duplicate_mine_output(self):
+        s=read(ROOT/'common/scripted_effects/COLDWAR_quaza_imp_uranium_effects.txt')
+        n=block(s,'COLDWAR_uranium_setup_karelia_mali_deposits')
+        for state,op,body,line in pdx.parse(s[n['open']:n['close']])[0]:
+            for working in [0,1,2,3]:
+                with self.subTest(state=state,working=working):
+                    m=Model();m.run(body)
+                    m.vars['non_damaged_building_level@uranium_mine']=working
+                    m.call('imp_uranium_count_mine_levels');m.call('imp_uranium_sync_mine_output')
+                    expected=min(working,m.vars['imp_uranium_mine_slots'])*m.vars['imp_uranium_per_level']
+                    self.assertEqual(m.resource,expected)
+                    for _ in range(3):
+                        m.run(body)
+                        m.call('imp_uranium_count_mine_levels');m.call('imp_uranium_sync_mine_output')
+                        self.assertEqual(m.resource,expected)
     def test_uranium_map_reports_capacity_without_unsupported_tonnage(self):
         s=read(ROOT/'common/map_modes/COLDWAR_quaza_imp_uranium_map_mode.txt')
         self.assertNotIn('imp_uranium_deposit_kt',s)

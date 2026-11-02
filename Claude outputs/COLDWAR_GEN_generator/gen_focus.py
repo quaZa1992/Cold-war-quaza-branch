@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Generic economic layout, progression and outlook entry availability.
 # IMPERIA CW — Cold War: Generic 1970 national focus content generator.
 """COLDWAR | write mdcw_1970_generic_focus.txt: header kept, party paths + trunks from the design,
 domain blocks moved to floor 2 and re-emitted in MD field order (rewards verbatim)."""
@@ -5,6 +6,13 @@ import re
 from gen_common import (P, num, FIRST_ENTRY_X, PARTY_ROW, FLOOR2_ROW, FLOOR2_X, BLOCK_GAP, CONTINUOUS_FOCUS_POSITION,
                         DOMAIN_ORDER, POLITICAL_SECTIONS, OUTLOOK_GOV, CHAMPIONS, ALLOW_BRANCH, AI_BASE_NEW, AI_OVERRIDE)
 from gen_load import abs_positions, simple
+
+# IMPERIA COLD WAR — Scripted grant capacity and once-only payout integration.
+from pathlib import Path as _GrantPath
+import sys as _grant_sys
+_grant_sys.path.insert(0,str(_GrantPath(__file__).resolve().parents[2]/'tools'))
+from building_grants.grants import repair_focus_tree as _repair_grants
+from economic_organisation.focus_integration import patch_generic_tree as _repair_economic_paths
 
 MD_ORDER = [['id', 'icon'], ['x', 'y', 'relative_position_id'], ['cost'], ['allow_branch'],
             ['prerequisite', 'mutually_exclusive', 'will_lead_to_war_with'], ['search_filters'], ['available'],
@@ -147,11 +155,12 @@ def focus_fields(n, t0, trunk_x, party_x, by_id, ctx, icons, old, meta, compile_
     if n['grp'] == 'party':
         trig = meta[n['party']]['trigger']
         fields.append(('available', f'{{ {trig} = yes }}'))
+    # IMPERIA COLD WAR — Outlook entry availability.
     elif n['slot'] == 'T0':
-        others = [CHAMPIONS[x] for x in CHAMPIONS if x != n['o']]
-        lines = ['OR = {', '\tNOT = {'] + [f'\t\thas_completed_focus = {P}{x}' for x in others] + \
-                ['\t}', f'\thas_government = {OUTLOOK_GOV[n["o"]]}', '}']
-        fields.append(('available', block(lines)))
+        fields.append(('available', block([
+            '# IMPERIA COLD WAR — Outlook entry availability.',
+            f'has_government = {OUTLOOK_GOV[n["o"]]}'
+        ])))
     elif n['slot'] == 'T3':
         fields.append(('available', f'{{ has_government = {OUTLOOK_GOV[n["o"]]} }}'))
     # reward
@@ -207,6 +216,10 @@ def tension_sub(m):
             f'{i}\tset_temp_variable = {{ mdcw_cw_tension_delta = {v} }}\n{i}\tmdcw_cw_add_tension = yes\n{i}}}')
 
 
+# IMPERIA COLD WAR — Debt relief sits outside the exclusive economic-policy line.
+ECONOMIC_X = {P + 'debt_restructuring': 7}
+
+
 def domain_text(name, foci, move):
     dx, dy, _ = move
     out = []
@@ -214,7 +227,9 @@ def domain_text(name, foci, move):
         fields = []
         d = simple(f['fields'])
         for k, v in f['fields']:
-            if k == 'x' and not d.get('relative_position_id'):
+            if k == 'x' and f['id'] in ECONOMIC_X:
+                v = str(ECONOMIC_X[f['id']])
+            elif k == 'x' and not d.get('relative_position_id'):
                 v = str(int(v) + dx)
             elif k == 'y' and not d.get('relative_position_id'):
                 v = str(int(v) + dy)
@@ -228,10 +243,24 @@ def domain_text(name, foci, move):
     return '\n'.join(out)
 
 
+# IMPERIA COLD WAR — Government branch spacing.
+# Keep the administrative fork two columns away from Guided Democracy.
+GOVERNMENT_X = {
+    P + 'administrative_reform': 3,
+    P + 'centralisation': 2,
+    P + 'decentralisation': 4,
+    P + 'professional_civil_service': 3,
+}
+
+
+# IMPERIA COLD WAR — Government branch spacing.
 def government_text(foci):
     out = []
     for f in foci:
         fields = [(k, collapse(v) if k in ('available', 'allow_branch', 'bypass') else v) for k, v in f['fields']]
+        if f['id'] in GOVERNMENT_X:
+            fields = [(k, str(GOVERNMENT_X[f['id']]) if k == 'x' else v) for k, v in fields]
+            out.append('\t# IMPERIA COLD WAR — Government branch spacing.')
         out.append(emit_block(fields))
         out.append('')
     return '\n'.join(out)
@@ -258,4 +287,10 @@ def write_focus_file(loaded, pol_texts, moves):
         out.append(f'\t### {name} ###\n' + domain_text(name, secd[name], moves[name]))
     text = '\n'.join(x.rstrip('\n') + '\n' for x in out)
     text = text.rstrip('\n') + '\n}\n'
-    return text
+    # IMPERIA COLD WAR — Compact Cyprus shared-focus imports.
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools'))
+    from cyprus_1970_rework.integration import attach_foreign_focuses
+    # IMPERIA COLD WAR — Preserve economic organisation progression on regeneration.
+    return _repair_economic_paths(attach_foreign_focuses(_repair_grants('GENERIC1970', text), 'GENERIC'))

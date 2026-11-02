@@ -1,0 +1,236 @@
+# IMPERIA COLD WAR — Cuba 1970 historical chronology observer.
+# This observer is called by COLDWAR_CUB_daily_update and only schedules a dated
+# decision once. Migration remains the responsibility of the shared ledger.
+COLDWAR_CUB_history_update = {
+	if = {
+		limit = { COLDWAR_CUB_is_1970 = yes }
+		COLDWAR_CUB_history_sync_missions = yes
+		if = {
+			limit = { date > 1970.5.18 NOT = { has_country_flag = COLDWAR_CUB_history_harvest_debate_seen } }
+			set_country_flag = COLDWAR_CUB_history_harvest_debate_seen
+			country_event = { id = COLDWAR_CUB_history.11 }
+		}
+		if = {
+			limit = { date > 1970.7.25 NOT = { has_country_flag = COLDWAR_CUB_history_harvest_seen } }
+			set_country_flag = COLDWAR_CUB_history_harvest_seen
+			COLDWAR_CUB_resolve_harvest = yes
+			country_event = { id = COLDWAR_CUB_history.1 }
+		}
+		if = {
+			limit = { date > 1972.6.19 check_variable = { ruling_party = 4 } OR = { has_country_flag = COLDWAR_CUB_thaelmann_name_applied has_completed_focus = COLDWAR_CUB_foreign_symbolic } NOT = { has_country_flag = COLDWAR_CUB_history_island_seen } }
+			set_country_flag = COLDWAR_CUB_history_island_seen
+			country_event = { id = COLDWAR_CUB_history.2 }
+		}
+		if = {
+			limit = { date > 1975.10.31 check_variable = { ruling_party = 4 } country_exists = AGL AGL = { COLDWAR_CUB_independent_wartime_partner = yes } NOT = { has_country_flag = COLDWAR_CUB_history_angola_seen } }
+			set_country_flag = COLDWAR_CUB_history_angola_seen
+			country_event = { id = COLDWAR_CUB_history.3 }
+		}
+		if = {
+			limit = { date > 1977.6.30 check_variable = { ruling_party = 4 } country_exists = USA NOT = { has_country_flag = COLDWAR_CUB_history_interests_sections_seen } }
+			set_country_flag = COLDWAR_CUB_history_interests_sections_seen
+			country_event = { id = COLDWAR_CUB_history.4 }
+		}
+		if = {
+			limit = { date > 1977.10.31 check_variable = { ruling_party = 4 } country_exists = ETH country_exists = SOM ETH = { COLDWAR_CUB_independent_wartime_partner = yes has_war_with = SOM } NOT = { has_country_flag = COLDWAR_CUB_history_ethiopia_seen } }
+			set_country_flag = COLDWAR_CUB_history_ethiopia_seen
+			country_event = { id = COLDWAR_CUB_history.5 }
+		}
+		if = {
+			limit = { date > 1978.12.7 check_variable = { ruling_party = 4 } NOT = { has_country_flag = COLDWAR_CUB_history_dialogue_seen } }
+			set_country_flag = COLDWAR_CUB_history_dialogue_seen
+			country_event = { id = COLDWAR_CUB_history.6 }
+		}
+		if = {
+			limit = { date > 1979.9.2 check_variable = { ruling_party = 4 } NOT = { has_country_flag = COLDWAR_CUB_history_nam_seen } }
+			set_country_flag = COLDWAR_CUB_history_nam_seen
+			country_event = { id = COLDWAR_CUB_history.7 }
+		}
+		if = {
+			limit = { date > 1980.4.19 check_variable = { ruling_party = 4 } country_exists = USA OR = { has_country_flag = COLDWAR_CUB_mariel_crisis_verified has_stability < 0.50 } NOT = { has_country_flag = COLDWAR_CUB_history_mariel_seen } }
+			set_country_flag = COLDWAR_CUB_history_mariel_seen
+			country_event = { id = COLDWAR_CUB_history.8 }
+		}
+		if = {
+			limit = { date > 1986.1.31 check_variable = { ruling_party = 4 } NOT = { has_country_flag = COLDWAR_CUB_history_rectification_seen } }
+			set_country_flag = COLDWAR_CUB_history_rectification_seen
+			country_event = { id = COLDWAR_CUB_history.9 }
+		}
+		if = {
+			limit = { date > 1990.7.31 has_country_flag = COLDWAR_CUB_verified_supply_shortage NOT = { has_country_flag = COLDWAR_CUB_history_supply_seen } }
+			set_country_flag = COLDWAR_CUB_history_supply_seen
+			country_event = { id = COLDWAR_CUB_history.10 }
+		}
+	}
+}
+
+COLDWAR_CUB_history_sync_missions = {
+	# Active profiles mirror an accepted recipient mission and its current eligibility.
+	if = {
+		limit = { country_exists = AGL }
+		AGL = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_overseas_mission_active has_country_flag = COLDWAR_CUB_history_angola_force_offer }
+				set_country_flag = COLDWAR_CUB_history_angola_force_active
+				clr_country_flag = COLDWAR_CUB_history_angola_force_offer
+			}
+			else_if = {
+				limit = { has_country_flag = COLDWAR_CUB_overseas_mission_active has_country_flag = COLDWAR_CUB_history_angola_advisers_offer }
+				set_country_flag = COLDWAR_CUB_history_angola_advisers_active
+				clr_country_flag = COLDWAR_CUB_history_angola_advisers_offer
+			}
+			if = {
+				limit = { NOT = { COLDWAR_CUB_independent_wartime_partner = yes } }
+				clr_country_flag = COLDWAR_CUB_overseas_mission_active
+				clr_country_flag = COLDWAR_CUB_history_angola_force_active
+				clr_country_flag = COLDWAR_CUB_history_angola_advisers_active
+				clr_country_flag = COLDWAR_CUB_history_angola_force_offer
+				clr_country_flag = COLDWAR_CUB_history_angola_advisers_offer
+				clr_country_flag = COLDWAR_CUB_overseas_offer_pending
+			}
+			if = {
+				limit = { NOT = { OR = { has_country_flag = COLDWAR_CUB_overseas_mission_active has_country_flag = COLDWAR_CUB_overseas_offer_pending } } }
+				clr_country_flag = COLDWAR_CUB_history_angola_force_active
+				clr_country_flag = COLDWAR_CUB_history_angola_advisers_active
+				clr_country_flag = COLDWAR_CUB_history_angola_force_offer
+				clr_country_flag = COLDWAR_CUB_history_angola_advisers_offer
+			}
+		}
+		if = {
+			limit = { AGL = { has_country_flag = COLDWAR_CUB_history_angola_force_active } }
+			if = { limit = { NOT = { has_idea = COLDWAR_CUB_hist_angola_force_active } } add_ideas = COLDWAR_CUB_hist_angola_force_active }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_history_angola_force_settled } } add_stability = -0.02 set_country_flag = COLDWAR_CUB_history_angola_force_settled }
+		}
+		else_if = {
+			limit = { AGL = { has_country_flag = COLDWAR_CUB_history_angola_advisers_active } }
+			if = { limit = { NOT = { has_idea = COLDWAR_CUB_hist_angola_advisers_active } } add_ideas = COLDWAR_CUB_hist_angola_advisers_active }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_history_angola_advisers_settled } } add_stability = 0.01 set_country_flag = COLDWAR_CUB_history_angola_advisers_settled }
+		}
+		else = {
+			remove_ideas = { COLDWAR_CUB_hist_angola_force_active COLDWAR_CUB_hist_angola_advisers_active }
+			clr_country_flag = COLDWAR_CUB_history_angola_force_settled
+			clr_country_flag = COLDWAR_CUB_history_angola_advisers_settled
+		}
+	}
+	else = {
+		remove_ideas = { COLDWAR_CUB_hist_angola_force_active COLDWAR_CUB_hist_angola_advisers_active }
+		clr_country_flag = COLDWAR_CUB_history_angola_force_settled
+		clr_country_flag = COLDWAR_CUB_history_angola_advisers_settled
+	}
+	if = {
+		limit = { country_exists = ETH }
+		ETH = {
+			if = {
+				limit = { has_country_flag = COLDWAR_CUB_overseas_mission_active has_country_flag = COLDWAR_CUB_history_ethiopia_force_offer }
+				set_country_flag = COLDWAR_CUB_history_ethiopia_force_active
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_force_offer
+			}
+			else_if = {
+				limit = { has_country_flag = COLDWAR_CUB_overseas_mission_active has_country_flag = COLDWAR_CUB_history_ethiopia_advisers_offer }
+				set_country_flag = COLDWAR_CUB_history_ethiopia_advisers_active
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_advisers_offer
+			}
+			if = {
+				limit = { NOT = { COLDWAR_CUB_independent_wartime_partner = yes } }
+				clr_country_flag = COLDWAR_CUB_overseas_mission_active
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_force_active
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_advisers_active
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_force_offer
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_advisers_offer
+				clr_country_flag = COLDWAR_CUB_overseas_offer_pending
+			}
+			if = {
+				limit = { NOT = { OR = { has_country_flag = COLDWAR_CUB_overseas_mission_active has_country_flag = COLDWAR_CUB_overseas_offer_pending } } }
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_force_active
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_advisers_active
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_force_offer
+				clr_country_flag = COLDWAR_CUB_history_ethiopia_advisers_offer
+			}
+		}
+		if = {
+			limit = { ETH = { has_country_flag = COLDWAR_CUB_history_ethiopia_force_active } }
+			if = { limit = { NOT = { has_idea = COLDWAR_CUB_hist_ethiopia_force_active } } add_ideas = COLDWAR_CUB_hist_ethiopia_force_active }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_history_ethiopia_force_settled } } add_stability = -0.02 set_country_flag = COLDWAR_CUB_history_ethiopia_force_settled }
+		}
+		else_if = {
+			limit = { ETH = { has_country_flag = COLDWAR_CUB_history_ethiopia_advisers_active } }
+			if = { limit = { NOT = { has_idea = COLDWAR_CUB_hist_ethiopia_advisers_active } } add_ideas = COLDWAR_CUB_hist_ethiopia_advisers_active }
+			if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_history_ethiopia_advisers_settled } } add_stability = 0.01 set_country_flag = COLDWAR_CUB_history_ethiopia_advisers_settled }
+		}
+		else = {
+			remove_ideas = { COLDWAR_CUB_hist_ethiopia_force_active COLDWAR_CUB_hist_ethiopia_advisers_active }
+			clr_country_flag = COLDWAR_CUB_history_ethiopia_force_settled
+			clr_country_flag = COLDWAR_CUB_history_ethiopia_advisers_settled
+		}
+	}
+	else = {
+		remove_ideas = { COLDWAR_CUB_hist_ethiopia_force_active COLDWAR_CUB_hist_ethiopia_advisers_active }
+		clr_country_flag = COLDWAR_CUB_history_ethiopia_force_settled
+		clr_country_flag = COLDWAR_CUB_history_ethiopia_advisers_settled
+	}
+}
+COLDWAR_CUB_history_accept_interests_sections = {
+	# IMPERIA COLD WAR — Reciprocal representation, permanent agreement and once-only setup.
+	if = {
+		limit = {
+			tag = USA
+			has_country_flag = COLDWAR_CUB_history_interests_offer_pending
+			NOT = { has_war_with = CUB }
+			CUB = {
+				has_country_flag = COLDWAR_CUB_history_interests_offer_open
+				NOT = { has_war_with = USA }
+			}
+		}
+		if = {
+			limit = { NOT = { has_country_flag = COLDWAR_CUB_history_interests_receipt } }
+			set_temp_variable = { treasury_change = -0.05 }
+			modify_treasury_effect = yes
+			add_opinion_modifier = { target = CUB modifier = COLDWAR_CUB_history_bilateral_10 }
+			set_country_flag = COLDWAR_CUB_history_interests_receipt
+			CUB = {
+				set_temp_variable = { treasury_change = -0.05 }
+				modify_treasury_effect = yes
+				add_opinion_modifier = { target = USA modifier = COLDWAR_CUB_history_bilateral_10 }
+				add_stability = 0.01
+				set_country_flag = COLDWAR_CUB_history_interests_receipt
+			}
+		}
+		set_country_flag = COLDWAR_CUB_history_interests_sections_active
+		clr_country_flag = COLDWAR_CUB_history_interests_offer_pending
+		CUB = {
+			set_country_flag = COLDWAR_CUB_history_interests_sections_active
+			clr_country_flag = COLDWAR_CUB_history_interests_offer_open
+			COLDWAR_CUB_reconcile_interests_sections = yes
+		}
+	}
+}
+
+COLDWAR_CUB_history_accept_mariel = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CUB_history_mariel_offer_pending
+			NOT = { has_war_with = CUB }
+			CUB = {
+				has_country_flag = COLDWAR_CUB_history_mariel_offer_open
+				OR = { has_country_flag = COLDWAR_CUB_mariel_crisis_verified has_stability < 0.50 }
+				NOT = { has_war_with = USA }
+			}
+		}
+		CUB = {
+			add_stability = -0.05
+			add_timed_idea = { idea = COLDWAR_CUB_hist_mariel_open_180 days = 180 }
+			set_country_flag = COLDWAR_CUB_mariel_agreement_ratified
+			clr_country_flag = COLDWAR_CUB_history_mariel_offer_open
+		}
+		clr_country_flag = COLDWAR_CUB_history_mariel_offer_pending
+	}
+}
+
+
+
+
+
+
+
+
+

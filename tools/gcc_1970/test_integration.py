@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: gcc 1970 — test integration.
+# IMPERIA COLD WAR — Gulf programme integration with guarded native cleanup.
 """Independent emitted-AST integration cases; this is not an HOI4 engine test.
 
 Native treasury, idea, technology-sharing and XP commands are explicit simulation
@@ -110,6 +110,11 @@ class World:
             if k == 'if':
                 branch = self.test(first(v, 'limit', []), c, root, prev)
                 if branch: self.execute([r for r in v if r[0] != 'limit'], c, root, prev)
+                continue
+            if k == 'else_if':
+                if not branch:
+                    branch = self.test(first(v, 'limit', []), c, root, prev)
+                    if branch: self.execute([r for r in v if r[0] != 'limit'], c, root, prev)
                 continue
             if k == 'else':
                 if not branch: self.execute(v, c, root, prev)

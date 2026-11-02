@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uae 1970 — test revision.
+# IMPERIA COLD WAR — UAE 1970 authorized-revision preservation checks.
 """Check the user's independence/proclamation correction in installed scripts."""
 import hashlib
 import json
@@ -47,7 +47,15 @@ def run():
                 ('unlock', 'decision', 'respond to an invasion', 'crisis popup'))]
         if key.removeprefix(P) in FOCUS_ACTIONS:
             normalized['focus_actions'] = FOCUS_ACTIONS[key.removeprefix(P)]
-        assert after == normalized, key
+        # The later research-only revision may change only these exact fields.
+        specialist_fields = {
+            P+'citizen_ballot': {'modifiers', 'description', 'reward_summary', 'effect_body'},
+            P+'citizen_dividend': {'modifiers', 'description', 'reward_summary', 'effect_body'},
+            P+'national_training': {'starting_changes', 'spirit_changes', 'reward_summary', 'effect_body'},
+            P+'foreign_specialists': {'starting_changes', 'spirit_changes', 'reward_summary', 'effect_body'},
+            P+'technical_institutes': {'starting_changes', 'spirit_changes', 'reward_summary', 'effect_body'},
+        }.get(key, set())
+        assert {k:v for k,v in after.items() if k not in specialist_fields} == {k:v for k,v in normalized.items() if k not in specialist_fields}, key
     expected_decisions = json.loads(json.dumps([d for d in original['decisions']
         if d['id'].removeprefix(P+'decision_') in RETAINED_DECISIONS]))
     for d in expected_decisions:
@@ -80,10 +88,11 @@ def run():
 
     tree = first(parse((ROOT / 'common/national_focus/COLDWAR_UAE_1970_focus.txt').read_text()), 'focus_tree')
     focuses = {first(f, 'id'): f for f in values(tree, 'focus')}
-    assert len(focuses)==114
+    assert len(focuses)==129
+    assert len([fid for fid in focuses if fid.startswith('COLDWAR_NAVY_UAE_')])==15
     assert all(n['days']==70 and n['cost']==10 for n in revised['nodes'])
     assert all(float(first(f,'cost'))==10 for f in focuses.values())
-    cases.append('All114 UAE national focuses have nominal70-day duration in current design and installed cost10; other fields retain their separate approved revisions')
+    cases.append('All129 installed UAE national focuses, including15 naval additions, have nominal70-day duration and cost10; the114 legacy design nodes retain their separate approved revisions')
     for k in ['rak_accession', 'federal_council']:
         assert [values(r, 'focus') for r in values(focuses[P + k], 'prerequisite')] == [[P + 'proclaim_federation']]
     assert [values(r, 'focus') for r in values(focuses[P + 'proclaim_federation'], 'prerequisite')] == [[P + 'sovereign_union']]
@@ -183,8 +192,8 @@ def run():
         # response handlers whose own transaction invoices legitimately differ.
         application = E[P + 'apply_' + n['id'].removeprefix(P)]
         no_funds_predicate(first(first(application, 'if'), 'limit', []))
-    cases.append('All114 focus eligibility and actual application guards have no direct or transitive treasury veto or funds-tooltip label; separate foreign-consent transactions remain outside this predicate audit')
-    report = {'passed': len(cases), 'cases': cases, 'errors': [], 'engine_tested': False}
+    cases.append('All114 legacy programme eligibility and actual application guards have no direct or transitive treasury veto or funds-tooltip label; separate foreign-consent transactions and the separately tested naval adapter remain outside this predicate audit')
+    report = {'project': 'IMPERIA COLD WAR', 'passed': len(cases), 'cases': cases, 'errors': [], 'engine_tested': False}
     (HERE / 'revision_validation.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report))
 

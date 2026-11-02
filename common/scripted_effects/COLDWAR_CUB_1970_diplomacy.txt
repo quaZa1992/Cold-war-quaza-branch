@@ -1,0 +1,226 @@
+# IMPERIA COLD WAR — Cuba 1970 diplomatic contracts.
+# Recipient-owned offers, acceptance-time validation, and once-only rewards.
+
+# Fixed-recipient offers are opened from a CUB-scoped national-focus reward.
+# Matching flags on sender and recipient expire after 90 days; no payment is made at proposal.
+COLDWAR_CUB_offer_soviet_assistance = {
+	if = {
+		limit = { country_exists = SOV NOT = { has_country_flag = COLDWAR_CUB_soviet_offer_open } NOT = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } SOV = { NOT = { has_country_flag = COLDWAR_CUB_soviet_offer_pending } NOT = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed } NOT = { has_war_with = CUB } } NOT = { has_war_with = SOV } }
+		set_country_flag = { flag = COLDWAR_CUB_soviet_offer_open value = 1 days = 90 }
+		SOV = { set_country_flag = { flag = COLDWAR_CUB_soviet_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.1 } }
+	}
+}
+
+# Metadata-only bilateral fuel undertaking. The recorded baseline observes current native imports;
+# this agreement does not create imports, alter trade routes, or pay either treasury.
+COLDWAR_CUB_offer_soviet_fuel_commitment = {
+	if = {
+		limit = { country_exists = SOV check_variable = { resource_imported@oil > 0 } NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active } NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_open } SOV = { NOT = { has_country_flag = COLDWAR_CUB_soviet_fuel_offer_pending } NOT = { has_war_with = CUB } } NOT = { has_war_with = SOV } }
+		set_country_flag = { flag = COLDWAR_CUB_soviet_fuel_offer_open value = 1 days = 90 }
+		SOV = { set_country_flag = { flag = COLDWAR_CUB_soviet_fuel_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.10 } }
+	}
+}
+
+COLDWAR_CUB_offer_cmea_admission = {
+	if = {
+		limit = { country_exists = SOV NOT = { has_idea = COLDWAR_CUB_cmea_member } NOT = { has_country_flag = COLDWAR_CUB_cmea_offer_open } SOV = { NOT = { has_country_flag = COLDWAR_CUB_cmea_offer_pending } NOT = { has_war_with = CUB } } NOT = { has_war_with = SOV } }
+		set_country_flag = { flag = COLDWAR_CUB_cmea_offer_open value = 1 days = 90 }
+		SOV = { set_country_flag = { flag = COLDWAR_CUB_cmea_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.2 } }
+	}
+}
+
+COLDWAR_CUB_offer_air_defence = {
+	if = {
+		limit = { country_exists = SOV NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } NOT = { has_country_flag = COLDWAR_CUB_air_offer_open } SOV = { NOT = { has_country_flag = COLDWAR_CUB_air_offer_pending } NOT = { has_war_with = CUB } } NOT = { has_war_with = SOV } owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
+	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
+	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
+} } }
+		set_country_flag = { flag = COLDWAR_CUB_air_offer_open value = 1 days = 90 }
+		SOV = { set_country_flag = { flag = COLDWAR_CUB_air_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.3 } }
+	}
+}
+
+# Focus enables recipient selection; the actual recipient-specific offer is opened by a targeted decision.
+COLDWAR_CUB_offer_medical_mission = {
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_medical_offer_open } NOT = { has_country_flag = COLDWAR_CUB_medical_refused } }
+		set_country_flag = COLDWAR_CUB_medical_targeting_enabled
+	}
+}
+
+COLDWAR_CUB_offer_overseas_mission = {
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_overseas_offer_open } NOT = { has_country_flag = COLDWAR_CUB_overseas_refused } }
+		set_country_flag = COLDWAR_CUB_overseas_targeting_enabled
+	}
+}
+
+# History events can open a recipient-owned offer to the named wartime partner only.
+COLDWAR_CUB_offer_overseas_mission_to_angola = {
+	if = {
+		limit = { country_exists = AGL NOT = { has_country_flag = COLDWAR_CUB_overseas_offer_open } AGL = { COLDWAR_CUB_independent_wartime_partner = yes NOT = { has_country_flag = COLDWAR_CUB_overseas_mission_active } } }
+		set_country_flag = { flag = COLDWAR_CUB_overseas_offer_open value = 1 days = 90 }
+		AGL = { set_country_flag = { flag = COLDWAR_CUB_overseas_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.5 } }
+	}
+}
+COLDWAR_CUB_offer_overseas_mission_to_ethiopia = {
+	if = {
+		limit = { country_exists = ETH NOT = { has_country_flag = COLDWAR_CUB_overseas_offer_open } ETH = { COLDWAR_CUB_independent_wartime_partner = yes NOT = { has_country_flag = COLDWAR_CUB_overseas_mission_active } } }
+		set_country_flag = { flag = COLDWAR_CUB_overseas_offer_open value = 1 days = 90 }
+		ETH = { set_country_flag = { flag = COLDWAR_CUB_overseas_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.5 } }
+	}
+}
+
+COLDWAR_CUB_offer_us_normalisation = {
+	if = {
+		limit = { country_exists = USA NOT = { has_country_flag = COLDWAR_CUB_us_full_settlement } NOT = { has_country_flag = COLDWAR_CUB_us_offer_open } USA = { NOT = { has_country_flag = COLDWAR_CUB_us_offer_pending } NOT = { has_war_with = CUB } } NOT = { has_war_with = USA } }
+		set_country_flag = { flag = COLDWAR_CUB_us_offer_open value = 1 days = 90 }
+		USA = { set_country_flag = { flag = COLDWAR_CUB_us_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.6 } }
+	}
+}
+
+COLDWAR_CUB_offer_ddr_commission = {
+	if = {
+		limit = { country_exists = DDR NOT = { has_country_flag = COLDWAR_CUB_ddr_commission_receipt } NOT = { has_country_flag = COLDWAR_CUB_ddr_offer_open } DDR = { NOT = { has_country_flag = COLDWAR_CUB_ddr_offer_pending } NOT = { has_war_with = CUB } } NOT = { has_war_with = DDR } }
+		set_country_flag = { flag = COLDWAR_CUB_ddr_offer_open value = 1 days = 90 }
+		DDR = { set_country_flag = { flag = COLDWAR_CUB_ddr_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.7 } }
+	}
+}
+
+COLDWAR_CUB_offer_symbolic_island_cooperation = {
+	if = {
+		limit = { country_exists = DDR has_country_flag = COLDWAR_CUB_thaelmann_name_applied owns_state = 1252 controls_state = 1252 COLDWAR_CUB_pair_ddr_clear = yes NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } NOT = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } NOT = { has_country_flag = COLDWAR_CUB_symbolic_offer_open } DDR = { NOT = { has_country_flag = COLDWAR_CUB_symbolic_offer_pending } NOT = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } NOT = { has_war_with = CUB } } NOT = { has_war_with = DDR } }
+		set_country_flag = { flag = COLDWAR_CUB_symbolic_offer_open value = 1 days = 90 }
+		DDR = { set_country_flag = { flag = COLDWAR_CUB_symbolic_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.8 } }
+	}
+}
+
+COLDWAR_CUB_offer_island_cession = {
+	if = {
+		limit = { date > 1972.6.18 country_exists = DDR owns_state = 1252 controls_state = 1252 NOT = { has_country_flag = COLDWAR_CUB_thaelmann_name_applied } NOT = { has_country_flag = COLDWAR_CUB_island_cession_ratified } NOT = { has_country_flag = COLDWAR_CUB_cession_offer_open } DDR = { NOT = { has_country_flag = COLDWAR_CUB_cession_offer_pending } NOT = { has_war_with = CUB } } NOT = { has_war_with = DDR } }
+		set_country_flag = { flag = COLDWAR_CUB_cession_offer_open value = 1 days = 90 }
+		DDR = { set_country_flag = { flag = COLDWAR_CUB_cession_offer_pending value = 1 days = 90 } country_event = { id = COLDWAR_CUB_diplomacy.9 } }
+	}
+}
+
+# Called by CUB's diplomacy daily reconciliation. COLDWAR_CUB_american_embargo is a fallback;
+# the native and Imperia trade restrictions take precedence at start and after partial easing.
+COLDWAR_CUB_sync_embargo = {
+	if = {
+		limit = { COLDWAR_CUB_us_trade_restriction_active = yes }
+		if = { limit = { has_idea = COLDWAR_CUB_american_embargo } remove_ideas = COLDWAR_CUB_american_embargo }
+		if = { limit = { has_idea = COLDWAR_CUB_american_embargo_limited } remove_ideas = COLDWAR_CUB_american_embargo_limited }
+	}
+	else_if = {
+		limit = { has_country_flag = COLDWAR_CUB_us_easing_limited NOT = { has_country_flag = COLDWAR_CUB_us_full_settlement } }
+		if = { limit = { has_idea = COLDWAR_CUB_american_embargo } remove_ideas = COLDWAR_CUB_american_embargo }
+		if = { limit = { NOT = { has_idea = COLDWAR_CUB_american_embargo_limited } } add_ideas = COLDWAR_CUB_american_embargo_limited }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_CUB_american_embargo_limited } remove_ideas = COLDWAR_CUB_american_embargo_limited }
+		if = { limit = { has_idea = COLDWAR_CUB_american_embargo } remove_ideas = COLDWAR_CUB_american_embargo }
+		if = { limit = { NOT = { has_country_flag = COLDWAR_CUB_us_full_settlement } NOT = { has_idea = COLDWAR_CUB_american_embargo } } add_ideas = COLDWAR_CUB_american_embargo }
+	}
+}
+
+# IMPERIA COLD WAR — reconcile accepted bilateral agreements each day.
+COLDWAR_CUB_diplomacy_daily = {
+	COLDWAR_CUB_sync_embargo = yes
+	COLDWAR_CUB_sync_soviet_fuel_commitment = yes
+	COLDWAR_CUB_refresh_overseas_aggregate = yes
+	COLDWAR_CUB_reconcile_bilateral = yes
+}
+
+# A shortage is verified only after a signed Soviet undertaking is withdrawn (or SOV ceases
+# to exist) and Cuban aggregate oil imports fall below 80% of the recorded nonzero baseline.
+COLDWAR_CUB_sync_soviet_fuel_commitment = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_active OR = { NOT = { country_exists = SOV } SOV = { has_country_flag = COLDWAR_CUB_soviet_fuel_commitment_withdrawn } } check_variable = { COLDWAR_CUB_soviet_oil_import_baseline > 0 } }
+		set_temp_variable = { COLDWAR_CUB_oil_import_recovery_threshold = COLDWAR_CUB_soviet_oil_import_baseline }
+		multiply_temp_variable = { COLDWAR_CUB_oil_import_recovery_threshold = 0.8 }
+		if = {
+			limit = { has_country_flag = COLDWAR_CUB_verified_supply_shortage NOT = { check_variable = { resource_imported@oil < COLDWAR_CUB_oil_import_recovery_threshold } } }
+			clr_country_flag = COLDWAR_CUB_verified_supply_shortage
+			COLDWAR_CUB_refresh_dependency = yes
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = COLDWAR_CUB_verified_supply_shortage } check_variable = { resource_imported@oil < COLDWAR_CUB_oil_import_recovery_threshold } }
+			set_country_flag = COLDWAR_CUB_verified_supply_shortage
+			COLDWAR_CUB_refresh_dependency = yes
+		}
+	}
+}
+
+# Per-recipient mission flags persist while the partner remains an independent wartime partner.
+COLDWAR_CUB_refresh_overseas_aggregate = {
+	every_country = {
+		limit = { has_country_flag = COLDWAR_CUB_overseas_mission_active NOT = { COLDWAR_CUB_independent_wartime_partner = yes } }
+		clr_country_flag = COLDWAR_CUB_overseas_mission_active
+	}
+	clr_country_flag = COLDWAR_CUB_overseas_mission_active
+	every_country = {
+		limit = { has_country_flag = COLDWAR_CUB_overseas_mission_active NOT = { tag = CUB } is_subject = no has_war = yes NOT = { has_war_with = CUB } }
+		CUB = { set_country_flag = COLDWAR_CUB_overseas_mission_active }
+	}
+}
+
+# Limited settlement removes the native US embargo and only the Imperia economic link.
+# Finance, diplomacy and military restrictions require their own terms.
+COLDWAR_CUB_lift_usa_economic_restriction = {
+	if = {
+		limit = { country_exists = USA }
+		USA = { if = { limit = { is_embargoing = CUB } break_embargo = CUB } }
+		if = {
+			limit = { is_in_array = { array = imp_eco_sanc_on_us value = USA } }
+			remove_from_array = { array = imp_eco_sanc_on_us value = USA }
+			remove_opinion_modifier = { target = USA modifier = opinion_eco_sanctioned_us }
+			USA = { remove_from_array = { array = imp_eco_sanc_by_us value = CUB } }
+			set_temp_variable = { mdcw_cw_t_sanc_type = 3 }
+			if = { limit = { has_global_flag = mdcw_cw_initialized } mdcw_cw_on_sanction_lifted = yes }
+			imp_sanctions_calculate = yes
+			USA = { imp_sanctions_calculate = yes }
+		}
+	}
+}
+
+# Full executive settlement additionally removes the bilateral financial restriction.
+COLDWAR_CUB_lift_usa_trade_restrictions = {
+	COLDWAR_CUB_lift_usa_economic_restriction = yes
+	if = {
+		limit = { country_exists = USA }
+		if = {
+			limit = { is_in_array = { array = imp_fin_sanc_on_us value = USA } }
+			remove_from_array = { array = imp_fin_sanc_on_us value = USA }
+			remove_opinion_modifier = { target = USA modifier = opinion_fin_sanctioned_us }
+			USA = { remove_from_array = { array = imp_fin_sanc_by_us value = CUB } }
+			set_temp_variable = { mdcw_cw_t_sanc_type = 2 }
+			if = { limit = { has_global_flag = mdcw_cw_initialized } mdcw_cw_on_sanction_lifted = yes }
+			imp_sanctions_calculate = yes
+			USA = { imp_sanctions_calculate = yes }
+		}
+	}
+}
+
+# IMPERIA COLD WAR — make bilateral termination available during suspension too.
+COLDWAR_CUB_end_soviet_assistance = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CUB_soviet_assistance_signed }
+		if = { limit = { has_idea = COLDWAR_CUB_soviet_assistance } remove_ideas = COLDWAR_CUB_soviet_assistance }
+		clr_country_flag = COLDWAR_CUB_soviet_assistance_active
+		COLDWAR_CUB_refresh_dependency = yes
+		if = { limit = { country_exists = SOV } SOV = { clr_country_flag = COLDWAR_CUB_soviet_assistance_active } }
+		COLDWAR_CUB_cancel_soviet_assistance = yes
+	}
+}
+
+# IMPERIA COLD WAR — make symbolic bilateral termination available during suspension.
+COLDWAR_CUB_end_symbolic_cooperation = {
+	if = { limit = { has_country_flag = COLDWAR_CUB_symbolic_cooperation_signed } COLDWAR_CUB_cancel_symbolic_cooperation = yes }
+	clr_country_flag = COLDWAR_CUB_symbolic_cooperation_active
+	if = { limit = { country_exists = DDR } DDR = { clr_country_flag = COLDWAR_CUB_symbolic_cooperation_active } }
+	COLDWAR_CUB_cancel_symbolic_cooperation = yes
+}
+
+# No second compensation or transfer can occur at the follow-up focus.
+COLDWAR_CUB_island_cession_followup = {
+	if = { limit = { has_country_flag = COLDWAR_CUB_island_cession_ratified DDR = { owns_state = 1252 } } set_country_flag = COLDWAR_CUB_development_protocol_completed }
+}
+

@@ -1,0 +1,36 @@
+# IMPERIA COLD WAR — PMC access controls in the existing GC category.
+imp_gc_tools_decisions = {
+	ICW_pmc_gc_open = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = { ICW_pmc_gc_controller = yes ICW_pmc_system_active = no }
+		available = { hidden_trigger = { ICW_pmc_gc_controller = yes ICW_pmc_system_active = no } }
+		complete_effect = { ICW_pmc_gc_open = yes }
+		ai_will_do = { factor = 0 }
+	}
+	ICW_pmc_gc_close = {
+		icon = GFX_decision_imp_list
+		cost = 0
+		visible = { ICW_pmc_gc_controller = yes ICW_pmc_system_active = yes }
+		available = { hidden_trigger = { ICW_pmc_gc_controller = yes ICW_pmc_system_active = yes } }
+		complete_effect = { ICW_pmc_gc_close = yes }
+		ai_will_do = { factor = 0 }
+	}
+}
+
+# IMPERIA COLD WAR — Voluntary termination remains available while contracting is suspended.
+pmc_category = {
+	ICW_pmc_dismiss_existing_units = {
+		icon = GFX_decisions_category_pmc
+		cost = 0
+		visible = { ICW_pmc_system_active = no check_variable = { pmc_bought > 0 } }
+		available = { ICW_pmc_system_active = no check_variable = { pmc_bought > 0 } }
+		complete_effect = {
+			if = {
+				limit = { ICW_pmc_system_active = no check_variable = { pmc_bought > 0 } }
+				dismiss_all_pmc_units = yes
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+}

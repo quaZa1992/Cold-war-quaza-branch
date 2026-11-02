@@ -1,4 +1,6 @@
+# IMPERIA COLD WAR — Native diplomatic recognition and UN membership.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Retire Western integration and Moscow backing point mechanics.
 """Small helpers to emit Clausewitz script for the West Germany 1970 content.
 
 Everything is authored as compact script snippets; `fmt` re-indents by braces.
@@ -17,7 +19,13 @@ USED_EFFECTS = set()
 USED_EVENTS = set()
 
 
+# IMPERIA COLD WAR — Use native-font-compatible punctuation in player-facing text.
+def player_text(text):
+    return text.translate(str.maketrans({'\u2212': '-', '\u2013': '-', '\u2014': '-'}))
+
+
 def L(key, text):
+    text = player_text(text)
     if key in LOC and LOC[key] != text:
         raise ValueError("conflicting localisation for " + key)
     LOC[key] = text
@@ -89,7 +97,6 @@ VARS = {
     "cwger_bundesrat_union": ("Union share of the Bundesrat", 0, 100),
     "cwger_peace_movement": ("Peace movement", 0, 100),
     "cwger_anti_nuclear": ("Anti-nuclear movement", 0, 100),
-    "cwger_westbindung": ("Western integration", 0, 100),
     "cwger_scandal": ("Scandal pressure", 0, 100),
     "cwger_bundesbank": ("Bundesbank friction", 0, 100),
     "cwger_unity": ("Unity momentum", 0, 100),
@@ -104,8 +111,6 @@ DDR_VARS = {
     "cwddr_west_media": ("Western media reach in the GDR", 0, 100),
     "cwddr_opposition": ("GDR civic opposition", 0, 100),
     "cwddr_sed_control": ("SED control", 0, 100),
-    "cwddr_moscow_backing": ("Moscow's guarantee for the GDR", 0, 100),
-    "cwddr_recognition": ("GDR international recognition", 0, 100),
 }
 
 
@@ -272,11 +277,11 @@ def check_braces(text, where):
 
 # ------------------------------------------------- hooks into existing mod systems
 def europe(n):
-    """MD/Imperia EU system: change this country's europeanism."""
+    """European Communities 1970 (COLDWAR_EC): change this country's support for Europe (MD's EU is off in 1970)."""
     key = f"{P}_tt_europe_{'up' if n > 0 else 'down'}_{abs(n)}"
-    L(key, f"Europeanism: §{'G' if n > 0 else 'R'}{'+' if n > 0 else '-'}{abs(n)}§!")
-    return (f"custom_effect_tooltip = {key}\nhidden_effect = {{ set_temp_variable = {{ modify_europeanism = {n} }} "
-            f"set_temp_variable = {{ modify_europeanism_target = ROOT.id }} europeanism_change = yes }}")
+    L(key, f"Support for Europe: §{'G' if n > 0 else 'R'}{'+' if n > 0 else '-'}{abs(n)}§!")
+    return (f"custom_effect_tooltip = {key}\nhidden_effect = {{ if = {{ limit = {{ has_global_flag = COLDWAR_EC_initialized }} "
+            f"set_temp_variable = {{ cwec_t_z = {n} }} COLDWAR_EC_add_support = yes }} }}")
 
 
 def protest(n):

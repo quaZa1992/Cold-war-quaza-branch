@@ -1,4 +1,5 @@
-# IMPERIA CW — Cold War: Soviet Union 1970 content generator.
+# IMPERIA COLD WAR — USA and Soviet political leadership integration.
+# IMPERIA COLD WAR — Native Soviet decision eligibility integration.
 # COLDWAR | Shared helpers for the Soviet Union 1970 generator (Cold War mod, MD Imperia).
 # Marker convention: every new ID, flag, variable, idea, event, loc key and file carries "COLDWAR"
 # (like Imperia's "IMP"): COLDWAR_SOV_<name>, events COLDWAR_SOV.N, files COLDWAR_SOV_1970_*.
@@ -71,6 +72,12 @@ def block(lines, base=0):
 
 
 def write(path, text, bom=False):
+    import sys
+    sys.path.append(os.path.join(MOD, 'tools'))
+    from multiplayer_quality.native_compat import normalize as native_compatibility
+    text = native_compatibility(text, path)
+    from superpower_1970_leaders.integration import adapt as superpower_leadership
+    text = superpower_leadership(path, text)
     full = os.path.join(OUT, path)
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w", encoding="utf-8-sig" if bom else "utf-8", newline="\n") as fh:

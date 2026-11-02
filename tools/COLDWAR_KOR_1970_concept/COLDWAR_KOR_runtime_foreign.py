@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Korean bilateral agreement runtime generator.
+# IMPERIA COLD WAR — Cold War: Korean bilateral agreement runtime generator.
 """Build the KOR 1970 consent-based foreign agreement subsystem.
 
 The returned script files are not written here: the approved-tree orchestrator
@@ -13,7 +13,7 @@ from COLDWAR_KOR_presentation import agreement_terms, AGREEMENTS
 
 
 PREFIX = "COLDWAR_KOR_"
-SCRIPT_COMMENT = "# IMPERIA CW — Cold War: Korean bilateral agreement runtime."
+SCRIPT_COMMENT = "# IMPERIA COLD WAR — Cold War: Korean bilateral agreement runtime."
 SELECTABLE_KEYS = {"technology_licence", "security_partner_contacts", "alternative_finance_contacts", "nordpolitik_recognition", "gulf_project_access"}
 
 
@@ -127,8 +127,6 @@ def _event_localisation(c, localised):
     localised[f"COLDWAR_KOR_foreign.{c['event_index']}.option_a"] = "Accept the agreement"
     localised[f"COLDWAR_KOR_foreign.{c['event_index']}.option_b"] = "Decline the agreement"
     localised[f"COLDWAR_KOR_foreign.{c['event_index']}.option_c"] = "Close the Lapsed Proposal"
-    localised[f"COLDWAR_KOR_{key}_offer_tt"] = agreement_terms(c,offer=True)
-    localised[f"COLDWAR_KOR_foreign.{c['event_index']}.accepted_tt"] = agreement_terms(c,offer=False)
     if c.get("selector_index"):
         localised[f"COLDWAR_KOR_foreign.{c['selector_index']}.t"] = "Select a negotiating counterpart"
         localised[f"COLDWAR_KOR_foreign.{c['selector_index']}.d"] = "Choose which government will receive this proposal. No agreement or payment takes effect until that government accepts."
@@ -158,6 +156,11 @@ def _numeric_effects(tag, c, side, partner_tag=None, display=False):
     delta = -c.get("KOR_cost_bn", 0) if side == "kor" else c.get("recipient_effects", {}).get("treasury_change", 0)
     if delta:
         lines += [f"\tset_temp_variable = {{ treasury_change = {_q(delta)} }}", "\tmodify_treasury_effect = yes"]
+    if display:
+        expenses = c.get("KOR_weekly_bn", 0) if side == "kor" else c.get("recipient_effects", {}).get("weekly_expense_bn", 0)
+        income = c.get("recipient_effects", {}).get("weekly_income_bn", 0) if side == "partner" else 0
+        if expenses: lines.append(f"\tadd_to_variable = {{ additional_expenses_rate = {_q(expenses)} }}")
+        if income: lines.append(f"\tadd_to_variable = {{ additional_income_rate = {_q(income)} }}")
     policy = _policy(c, side)
     if policy:
         lines += [f"\tadd_ideas = COLDWAR_KOR_agreement_{c['key']}_{side}_preview"] if display else [f"\tadd_dynamic_modifier = {{ modifier = {_modifier_name(c, side, partner_tag)} }}"]
@@ -249,7 +252,10 @@ def _scripted_effects(contracts):
     for c in contracts:
         key, tags = c["key"], c["tags"]
         preview=_numeric_effects('KOR',c,'kor',display=True)
-        if len(tags)==1:preview+=_numeric_effects(tags[0],c,'partner',display=True)
+        # Show the full prospective terms in the native effect tree. For a
+        # selectable offer, country scopes distinguish the available partners.
+        for tag in tags:
+            preview+=_numeric_effects(tag,c,'partner',tag,display=True)
         out += [f'COLDWAR_KOR_preview_agreement_{key} = {{']+['\t'+x for x in preview]+['}']
         out.append(f"COLDWAR_KOR_send_{key} = {{")
         out.append("\tif = {")
@@ -482,8 +488,9 @@ def _events(contracts, localised):
                 out.extend("\t\t\t\t" + x for x in _numeric_effects("ROOT", c, "partner", tag, display=True))
                 out.append("\t\t\t}")
         elif key not in SELECTABLE_KEYS:
-            out.extend("\t\t\t" + x for x in _numeric_effects("ROOT", c, "partner", display=True))
-        out += ["\t\t}", f"\t\tcustom_effect_tooltip = COLDWAR_KOR_foreign.{idx}.accepted_tt", f"\t\tCOLDWAR_KOR_accept_{key} = yes", "\t}", "\toption = {", f"\t\tname = COLDWAR_KOR_foreign.{idx}.option_b", f"\t\ttrigger = {{ COLDWAR_KOR_can_refuse_{key} = yes }}", f"\t\tCOLDWAR_KOR_refuse_{key} = yes", "\t}", f"\toption = {{ name = COLDWAR_KOR_foreign.{idx}.option_c trigger = {{ NOT = {{ OR = {{ COLDWAR_KOR_can_accept_{key} = yes COLDWAR_KOR_can_refuse_{key} = yes }} }} }} }}", "}"]
+            for tag in c["tags"]:
+                out.extend("\t\t\t" + x for x in _numeric_effects(tag, c, "partner", tag, display=True))
+        out += ["\t\t}", f"\t\tCOLDWAR_KOR_accept_{key} = yes", "\t}", "\toption = {", f"\t\tname = COLDWAR_KOR_foreign.{idx}.option_b", f"\t\ttrigger = {{ COLDWAR_KOR_can_refuse_{key} = yes }}", f"\t\tCOLDWAR_KOR_refuse_{key} = yes", "\t}", f"\toption = {{ name = COLDWAR_KOR_foreign.{idx}.option_c trigger = {{ NOT = {{ OR = {{ COLDWAR_KOR_can_accept_{key} = yes COLDWAR_KOR_can_refuse_{key} = yes }} }} }} }}", "}"]
         out += ["country_event = {", f"\tid = COLDWAR_KOR_foreign.{rep}", "\tis_triggered_only = yes", f"\ttitle = COLDWAR_KOR_foreign.{rep}.t", f"\tdesc = COLDWAR_KOR_foreign.{rep}.d", "\toption = {", f"\t\tname = COLDWAR_KOR_foreign.{rep}.option_a", "\t}", "}"]
         out += ["country_event = {", f"\tid = COLDWAR_KOR_foreign.{exp}", "\tis_triggered_only = yes", "\thidden = yes", f"\ttrigger = {{ has_country_flag = {c['pending']} NOT = {{ has_country_flag = COLDWAR_KOR_{key}_offer_open }} }}", "\timmediate = {", f"\t\tCOLDWAR_KOR_expire_{key} = yes", "\t}", "}"]
         for result in (c['refusal_index'],c['notice_index']):
@@ -549,7 +556,7 @@ def _preview_ideas(contracts,loc):
             if not mods:continue
             id=f'COLDWAR_KOR_agreement_{c["key"]}_{side}_preview'
             loc[id]=AGREEMENTS[c['key']]
-            loc[id+'_desc']='The ratified agreement defines the participating governments’ cooperation and commitments.'
+            loc[id+'_desc']='Prospective terms if the participating governments accept this agreement.'
             out.append(id+' = { picture = COLDWAR_KOR_spirit_diplomacy allowed = { always = yes } removal_cost = -1 modifier = { '+' '.join(k+' = '+_q(v) for k,v in mods.items())+' } }')
     return '\n'.join(out+['} }'])+'\n'
 

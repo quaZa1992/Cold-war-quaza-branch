@@ -1,0 +1,4678 @@
+# IMPERIA COLD WAR — Israel V2 territorial administration and settlements.
+ISR2_territories_quote_controlled_sites = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.015 }
+	set_variable = { ISR2_private_required = gdp_total }
+	multiply_variable = { ISR2_private_required = 0.005 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_territories_yanai_term
+			western_social_democrats_are_in_power = yes
+			check_variable = { ISR2_territories_yanai_used < 2 }
+			ISR2_private_ready = yes
+		}
+		set_variable = { ISR2_territories_preview_public_price = gdp_total }
+		multiply_variable = { ISR2_territories_preview_public_price = 0.01 }
+	}
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_controlled_sites = ISR2_project_net_cost }
+}
+ISR2_territories_complete_controlled_sites = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				controls_state = 208
+				has_full_control_of_state = 208
+				208 = {
+					owner = { exists = yes }
+				}
+				208 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				208 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				208 = {
+					free_building_slots = { building = bunker size > 0 province = 11620 }
+				}
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_controlled_sites }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_quote = gdp_total }
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.015 }
+			set_variable = { ISR2_private_required = ISR2_territories_project_quote }
+			multiply_variable = { ISR2_private_required = 0.005 }
+			if = {
+				limit = {
+					has_country_flag = ISR2_territories_yanai_term
+					western_social_democrats_are_in_power = yes
+					check_variable = { ISR2_territories_yanai_used < 2 }
+					ISR2_private_ready = yes
+				}
+				ISR2_private_commit = yes
+				if = {
+					limit = {
+						check_variable = {
+							var = ISR2_private_paid
+							value = ISR2_private_required
+							compare = greater_than_or_equals
+						}
+					}
+					set_variable = { ISR2_territories_project_price = ISR2_territories_project_quote }
+					multiply_variable = { ISR2_territories_project_price = 0.01 }
+					add_to_variable = { ISR2_territories_yanai_used = 1 }
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 1 }
+						}
+						set_variable = { ISR2_territories_yanai_state_1 = 208 }
+						set_variable = { ISR2_territories_yanai_USA_1 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_1 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_1 = ISR2_private_paid_ROM }
+					}
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 2 }
+						}
+						set_variable = { ISR2_territories_yanai_state_2 = 208 }
+						set_variable = { ISR2_territories_yanai_USA_2 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_2 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_2 = ISR2_private_paid_ROM }
+					}
+				}
+			}
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			208 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes
+					province = { id = 11620 }
+				}
+			}
+			add_to_variable = { ISR2_territories_tiers_208 = 1 }
+			add_to_variable = { ISR2_territories_nahal_208 = 1 }
+			set_country_flag = ISR2_territories_done_controlled_sites
+			set_country_flag = { flag = ISR2_territories_cooldown_controlled_sites days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_controlled_sites
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_controlled_sites
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_foreign_footholds = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				NOT = { controls_state = 208 }
+				208 = {
+					controller = { exists = yes }
+				}
+				NOT = { has_country_flag = ISR2_territories_foreign_208 }
+				check_variable = { ISR2_territories_foreign_count < 2 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_foreign_footholds }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_01 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_foreign_quote_208 = gdp_total }
+			set_country_flag = ISR2_territories_foreign_208
+			set_country_flag = ISR2_territories_done_foreign_footholds
+			set_country_flag = { flag = ISR2_territories_cooldown_foreign_footholds days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_foreign_footholds
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_foreign_footholds
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_west_bank_projects = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.015 }
+	set_variable = { ISR2_private_required = gdp_total }
+	multiply_variable = { ISR2_private_required = 0.005 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_territories_yanai_term
+			western_social_democrats_are_in_power = yes
+			check_variable = { ISR2_territories_yanai_used < 2 }
+			ISR2_private_ready = yes
+		}
+		set_variable = { ISR2_territories_preview_public_price = gdp_total }
+		multiply_variable = { ISR2_territories_preview_public_price = 0.01 }
+	}
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_west_bank_projects = ISR2_project_net_cost }
+}
+ISR2_territories_complete_west_bank_projects = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				controls_state = 208
+				has_full_control_of_state = 208
+				208 = {
+					owner = { exists = yes }
+				}
+				208 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				208 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				208 = {
+					free_building_slots = { building = bunker size > 0 province = 11620 }
+				}
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_west_bank_projects }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_quote = gdp_total }
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.015 }
+			set_variable = { ISR2_private_required = ISR2_territories_project_quote }
+			multiply_variable = { ISR2_private_required = 0.005 }
+			if = {
+				limit = {
+					has_country_flag = ISR2_territories_yanai_term
+					western_social_democrats_are_in_power = yes
+					check_variable = { ISR2_territories_yanai_used < 2 }
+					ISR2_private_ready = yes
+				}
+				ISR2_private_commit = yes
+				if = {
+					limit = {
+						check_variable = {
+							var = ISR2_private_paid
+							value = ISR2_private_required
+							compare = greater_than_or_equals
+						}
+					}
+					set_variable = { ISR2_territories_project_price = ISR2_territories_project_quote }
+					multiply_variable = { ISR2_territories_project_price = 0.01 }
+					add_to_variable = { ISR2_territories_yanai_used = 1 }
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 1 }
+						}
+						set_variable = { ISR2_territories_yanai_state_1 = 208 }
+						set_variable = { ISR2_territories_yanai_USA_1 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_1 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_1 = ISR2_private_paid_ROM }
+					}
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 2 }
+						}
+						set_variable = { ISR2_territories_yanai_state_2 = 208 }
+						set_variable = { ISR2_territories_yanai_USA_2 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_2 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_2 = ISR2_private_paid_ROM }
+					}
+				}
+			}
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			208 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes
+					province = { id = 11620 }
+				}
+			}
+			add_to_variable = { ISR2_territories_tiers_208 = 1 }
+			add_to_variable = { ISR2_territories_nahal_208 = 1 }
+			set_country_flag = ISR2_territories_done_west_bank_projects
+			set_country_flag = { flag = ISR2_territories_cooldown_west_bank_projects days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_west_bank_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_west_bank_projects
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_sinai_projects = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.015 }
+	set_variable = { ISR2_private_required = gdp_total }
+	multiply_variable = { ISR2_private_required = 0.005 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_territories_yanai_term
+			western_social_democrats_are_in_power = yes
+			check_variable = { ISR2_territories_yanai_used < 2 }
+			ISR2_private_ready = yes
+		}
+		set_variable = { ISR2_territories_preview_public_price = gdp_total }
+		multiply_variable = { ISR2_territories_preview_public_price = 0.01 }
+	}
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_sinai_projects = ISR2_project_net_cost }
+}
+ISR2_territories_complete_sinai_projects = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				controls_state = 213
+				has_full_control_of_state = 213
+				213 = {
+					owner = { exists = yes }
+				}
+				213 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				213 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				213 = {
+					free_building_slots = { building = bunker size > 0 province = 4161 }
+				}
+				check_variable = { ISR2_territories_tiers_213 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_sinai_projects }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_quote = gdp_total }
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.015 }
+			set_variable = { ISR2_private_required = ISR2_territories_project_quote }
+			multiply_variable = { ISR2_private_required = 0.005 }
+			if = {
+				limit = {
+					has_country_flag = ISR2_territories_yanai_term
+					western_social_democrats_are_in_power = yes
+					check_variable = { ISR2_territories_yanai_used < 2 }
+					ISR2_private_ready = yes
+				}
+				ISR2_private_commit = yes
+				if = {
+					limit = {
+						check_variable = {
+							var = ISR2_private_paid
+							value = ISR2_private_required
+							compare = greater_than_or_equals
+						}
+					}
+					set_variable = { ISR2_territories_project_price = ISR2_territories_project_quote }
+					multiply_variable = { ISR2_territories_project_price = 0.01 }
+					add_to_variable = { ISR2_territories_yanai_used = 1 }
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 1 }
+						}
+						set_variable = { ISR2_territories_yanai_state_1 = 213 }
+						set_variable = { ISR2_territories_yanai_USA_1 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_1 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_1 = ISR2_private_paid_ROM }
+					}
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 2 }
+						}
+						set_variable = { ISR2_territories_yanai_state_2 = 213 }
+						set_variable = { ISR2_territories_yanai_USA_2 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_2 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_2 = ISR2_private_paid_ROM }
+					}
+				}
+			}
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			213 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes
+					province = { id = 4161 }
+				}
+			}
+			add_to_variable = { ISR2_territories_tiers_213 = 1 }
+			add_to_variable = { ISR2_territories_nahal_213 = 1 }
+			set_country_flag = ISR2_territories_done_sinai_projects
+			set_country_flag = { flag = ISR2_territories_cooldown_sinai_projects days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_sinai_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_sinai_projects
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_gaza_projects = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.015 }
+	set_variable = { ISR2_private_required = gdp_total }
+	multiply_variable = { ISR2_private_required = 0.005 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_territories_yanai_term
+			western_social_democrats_are_in_power = yes
+			check_variable = { ISR2_territories_yanai_used < 2 }
+			ISR2_private_ready = yes
+		}
+		set_variable = { ISR2_territories_preview_public_price = gdp_total }
+		multiply_variable = { ISR2_territories_preview_public_price = 0.01 }
+	}
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_gaza_projects = ISR2_project_net_cost }
+}
+ISR2_territories_complete_gaza_projects = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				controls_state = 209
+				has_full_control_of_state = 209
+				209 = {
+					owner = { exists = yes }
+				}
+				209 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				209 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				209 = {
+					free_building_slots = { building = bunker size > 0 province = 13207 }
+				}
+				check_variable = { ISR2_territories_tiers_209 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_gaza_projects }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_quote = gdp_total }
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.015 }
+			set_variable = { ISR2_private_required = ISR2_territories_project_quote }
+			multiply_variable = { ISR2_private_required = 0.005 }
+			if = {
+				limit = {
+					has_country_flag = ISR2_territories_yanai_term
+					western_social_democrats_are_in_power = yes
+					check_variable = { ISR2_territories_yanai_used < 2 }
+					ISR2_private_ready = yes
+				}
+				ISR2_private_commit = yes
+				if = {
+					limit = {
+						check_variable = {
+							var = ISR2_private_paid
+							value = ISR2_private_required
+							compare = greater_than_or_equals
+						}
+					}
+					set_variable = { ISR2_territories_project_price = ISR2_territories_project_quote }
+					multiply_variable = { ISR2_territories_project_price = 0.01 }
+					add_to_variable = { ISR2_territories_yanai_used = 1 }
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 1 }
+						}
+						set_variable = { ISR2_territories_yanai_state_1 = 209 }
+						set_variable = { ISR2_territories_yanai_USA_1 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_1 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_1 = ISR2_private_paid_ROM }
+					}
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 2 }
+						}
+						set_variable = { ISR2_territories_yanai_state_2 = 209 }
+						set_variable = { ISR2_territories_yanai_USA_2 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_2 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_2 = ISR2_private_paid_ROM }
+					}
+				}
+			}
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			209 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes
+					province = { id = 13207 }
+				}
+			}
+			add_to_variable = { ISR2_territories_tiers_209 = 1 }
+			add_to_variable = { ISR2_territories_nahal_209 = 1 }
+			set_country_flag = ISR2_territories_done_gaza_projects
+			set_country_flag = { flag = ISR2_territories_cooldown_gaza_projects days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_gaza_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_gaza_projects
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_golan_projects = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.015 }
+	set_variable = { ISR2_private_required = gdp_total }
+	multiply_variable = { ISR2_private_required = 0.005 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_territories_yanai_term
+			western_social_democrats_are_in_power = yes
+			check_variable = { ISR2_territories_yanai_used < 2 }
+			ISR2_private_ready = yes
+		}
+		set_variable = { ISR2_territories_preview_public_price = gdp_total }
+		multiply_variable = { ISR2_territories_preview_public_price = 0.01 }
+	}
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_golan_projects = ISR2_project_net_cost }
+}
+ISR2_territories_complete_golan_projects = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				controls_state = 587
+				has_full_control_of_state = 587
+				587 = {
+					owner = { exists = yes }
+				}
+				587 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				587 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				587 = {
+					free_building_slots = { building = bunker size > 0 province = 13205 }
+				}
+				check_variable = { ISR2_territories_tiers_587 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_golan_projects }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_quote = gdp_total }
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.015 }
+			set_variable = { ISR2_private_required = ISR2_territories_project_quote }
+			multiply_variable = { ISR2_private_required = 0.005 }
+			if = {
+				limit = {
+					has_country_flag = ISR2_territories_yanai_term
+					western_social_democrats_are_in_power = yes
+					check_variable = { ISR2_territories_yanai_used < 2 }
+					ISR2_private_ready = yes
+				}
+				ISR2_private_commit = yes
+				if = {
+					limit = {
+						check_variable = {
+							var = ISR2_private_paid
+							value = ISR2_private_required
+							compare = greater_than_or_equals
+						}
+					}
+					set_variable = { ISR2_territories_project_price = ISR2_territories_project_quote }
+					multiply_variable = { ISR2_territories_project_price = 0.01 }
+					add_to_variable = { ISR2_territories_yanai_used = 1 }
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 1 }
+						}
+						set_variable = { ISR2_territories_yanai_state_1 = 587 }
+						set_variable = { ISR2_territories_yanai_USA_1 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_1 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_1 = ISR2_private_paid_ROM }
+					}
+					if = {
+						limit = {
+							check_variable = { ISR2_territories_yanai_used = 2 }
+						}
+						set_variable = { ISR2_territories_yanai_state_2 = 587 }
+						set_variable = { ISR2_territories_yanai_USA_2 = ISR2_private_paid_USA }
+						set_variable = { ISR2_territories_yanai_GER_2 = ISR2_private_paid_GER }
+						set_variable = { ISR2_territories_yanai_ROM_2 = ISR2_private_paid_ROM }
+					}
+				}
+			}
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			587 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes
+					province = { id = 13205 }
+				}
+			}
+			add_to_variable = { ISR2_territories_tiers_587 = 1 }
+			add_to_variable = { ISR2_territories_nahal_587 = 1 }
+			set_country_flag = ISR2_territories_done_golan_projects
+			set_country_flag = { flag = ISR2_territories_cooldown_golan_projects days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_golan_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_golan_projects
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_gaza_foothold = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				NOT = { controls_state = 209 }
+				209 = {
+					controller = { exists = yes }
+				}
+				NOT = { has_country_flag = ISR2_territories_foreign_209 }
+				check_variable = { ISR2_territories_foreign_count < 2 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_gaza_foothold }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_01 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_foreign_quote_209 = gdp_total }
+			set_country_flag = ISR2_territories_foreign_209
+			set_country_flag = ISR2_territories_done_gaza_foothold
+			set_country_flag = { flag = ISR2_territories_cooldown_gaza_foothold days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_gaza_foothold
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_gaza_foothold
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_sinai_foothold = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				NOT = { controls_state = 213 }
+				213 = {
+					controller = { exists = yes }
+				}
+				NOT = { has_country_flag = ISR2_territories_foreign_213 }
+				check_variable = { ISR2_territories_foreign_count < 2 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_sinai_foothold }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_01 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_foreign_quote_213 = gdp_total }
+			set_country_flag = ISR2_territories_foreign_213
+			set_country_flag = ISR2_territories_done_sinai_foothold
+			set_country_flag = { flag = ISR2_territories_cooldown_sinai_foothold days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_sinai_foothold
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_sinai_foothold
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_golan_foothold = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				NOT = { controls_state = 587 }
+				587 = {
+					controller = { exists = yes }
+				}
+				NOT = { has_country_flag = ISR2_territories_foreign_587 }
+				check_variable = { ISR2_territories_foreign_count < 2 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_cooldown_golan_foothold }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_01 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_foreign_quote_587 = gdp_total }
+			set_country_flag = ISR2_territories_foreign_587
+			set_country_flag = ISR2_territories_done_golan_foothold
+			set_country_flag = { flag = ISR2_territories_cooldown_golan_foothold days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_golan_foothold
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_golan_foothold
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_close_west_bank = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				has_country_flag = ISR2_territories_foreign_208
+				NOT = { controls_state = 208 }
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_west_bank }
+			}
+			ISR2_territories_refresh_prices = yes
+			clr_country_flag = ISR2_territories_foreign_208
+			set_country_flag = ISR2_territories_done_close_west_bank
+			set_country_flag = { flag = ISR2_territories_cooldown_close_west_bank days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_close_west_bank
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_close_west_bank
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_close_gaza = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				has_country_flag = ISR2_territories_foreign_209
+				NOT = { controls_state = 209 }
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_gaza }
+			}
+			ISR2_territories_refresh_prices = yes
+			clr_country_flag = ISR2_territories_foreign_209
+			set_country_flag = ISR2_territories_done_close_gaza
+			set_country_flag = { flag = ISR2_territories_cooldown_close_gaza days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_close_gaza
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_close_gaza
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_close_sinai = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				has_country_flag = ISR2_territories_foreign_213
+				NOT = { controls_state = 213 }
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_sinai }
+			}
+			ISR2_territories_refresh_prices = yes
+			clr_country_flag = ISR2_territories_foreign_213
+			set_country_flag = ISR2_territories_done_close_sinai
+			set_country_flag = { flag = ISR2_territories_cooldown_close_sinai days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_close_sinai
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_close_sinai
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_close_golan = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				has_country_flag = ISR2_territories_foreign_587
+				NOT = { controls_state = 587 }
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_golan }
+			}
+			ISR2_territories_refresh_prices = yes
+			clr_country_flag = ISR2_territories_foreign_587
+			set_country_flag = ISR2_territories_done_close_golan
+			set_country_flag = { flag = ISR2_territories_cooldown_close_golan days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_close_golan
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_close_golan
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_labor_valley = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.016 }
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_labor_valley = ISR2_project_net_cost }
+}
+ISR2_territories_complete_labor_valley = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_social_democrats_are_in_power = yes
+				controls_state = 208
+				has_full_control_of_state = 208
+				208 = {
+					owner = { exists = yes }
+				}
+				208 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				208 = {
+					free_building_slots = { building = bunker size > 1 province = 11620 }
+				}
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_done_labor_valley }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.016 }
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			208 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = {
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = { id = 11620 }
+				}
+			}
+			set_variable = { ISR2_territories_quote_labor_valley = gdp_total }
+			add_to_variable = { ISR2_territories_tiers_208 = 1 }
+			set_country_flag = ISR2_territories_done_labor_valley
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_labor_valley
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_labor_valley
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_gahal_settler_entitlement = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.021 }
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_gahal_settler_entitlement = ISR2_project_net_cost }
+}
+ISR2_territories_complete_gahal_settler_entitlement = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_conservatism_are_in_power = yes
+				controls_state = 208
+				has_full_control_of_state = 208
+				208 = {
+					owner = { exists = yes }
+				}
+				208 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				208 = {
+					check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+				}
+				can_staff_an_offices = yes
+				208 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_done_gahal_settler_entitlement }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.021 }
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			208 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = offices level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+			set_variable = { ISR2_territories_quote_gahal_settler_entitlement = gdp_total }
+			add_to_variable = { ISR2_territories_tiers_208 = 1 }
+			set_country_flag = ISR2_territories_done_gahal_settler_entitlement
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_gahal_settler_entitlement
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_gahal_settler_entitlement
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_mafdal_activist_current = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.016 }
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_mafdal_activist_current = ISR2_project_net_cost }
+}
+ISR2_territories_complete_mafdal_activist_current = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_autocrats_are_in_power = yes
+				controls_state = 208
+				has_full_control_of_state = 208
+				208 = {
+					owner = { exists = yes }
+				}
+				208 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				208 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_done_mafdal_activist_current }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.016 }
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			208 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+			set_variable = { ISR2_territories_quote_mafdal_activist_current = gdp_total }
+			add_to_variable = { ISR2_territories_tiers_208 = 1 }
+			set_country_flag = ISR2_territories_done_mafdal_activist_current
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_activist_current
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_mafdal_activist_current
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_mafdal_regularise_sites = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.014 }
+	set_variable = { ISR2_private_required = gdp_total }
+	multiply_variable = { ISR2_private_required = 0.003 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_territories_committee_term
+			NOT = { has_country_flag = ISR2_territories_committee_match_used }
+			ISR2_private_ready = yes
+		}
+		set_variable = { ISR2_territories_preview_public_price = gdp_total }
+		multiply_variable = { ISR2_territories_preview_public_price = 0.011 }
+	}
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_mafdal_regularise_sites = ISR2_project_net_cost }
+}
+ISR2_territories_complete_mafdal_regularise_sites = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_autocrats_are_in_power = yes
+				controls_state = 208
+				has_full_control_of_state = 208
+				208 = {
+					owner = { exists = yes }
+				}
+				208 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				208 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				has_country_flag = ISR2_territories_done_mafdal_activist_current
+				NOT = { has_country_flag = ISR2_territories_done_mafdal_regularise_sites }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.014 }
+			if = {
+				limit = {
+					has_country_flag = ISR2_territories_committee_term
+					NOT = { has_country_flag = ISR2_territories_committee_match_used }
+				}
+				set_variable = { ISR2_private_required = gdp_total }
+				multiply_variable = { ISR2_private_required = 0.003 }
+				if = {
+					limit = { ISR2_private_ready = yes }
+					ISR2_private_commit = yes
+					if = {
+						limit = {
+							check_variable = {
+								var = ISR2_private_paid
+								value = ISR2_private_required
+								compare = greater_than_or_equals
+							}
+						}
+						subtract_from_variable = { ISR2_territories_project_price = ISR2_private_paid }
+						set_country_flag = ISR2_territories_committee_match_used
+					}
+				}
+			}
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			208 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+			set_variable = { ISR2_territories_quote_mafdal_regularise_sites = gdp_total }
+			add_to_variable = { ISR2_territories_tiers_208 = 1 }
+			set_country_flag = ISR2_territories_done_mafdal_regularise_sites
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_regularise_sites
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_mafdal_regularise_sites
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_mafdal_land_westbank = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.01 }
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_mafdal_land_westbank = ISR2_project_net_cost }
+}
+ISR2_territories_complete_mafdal_land_westbank = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_autocrats_are_in_power = yes
+				controls_state = 208
+				has_full_control_of_state = 208
+				208 = {
+					owner = { exists = yes }
+				}
+				208 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_done_mafdal_land_westbank }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.01 }
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			208 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+			}
+			set_variable = { ISR2_territories_quote_mafdal_land_westbank = gdp_total }
+			add_to_variable = { ISR2_territories_tiers_208 = 1 }
+			set_country_flag = ISR2_territories_done_mafdal_land_westbank
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_land_westbank
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_mafdal_land_westbank
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_quote_mafdal_land_gaza = {
+	set_variable = { ISR2_territories_preview_public_price = gdp_total }
+	multiply_variable = { ISR2_territories_preview_public_price = 0.01 }
+	set_variable = { ISR2_project_cost = ISR2_territories_preview_public_price }
+	set_variable = { ISR2_project_class = 2 }
+	set_variable = { ISR2_project_quote = gdp_total }
+	set_variable = { ISR2_project_procurement = 0 }
+	ISR2_project_support_quote = yes
+	set_variable = { ISR2_territories_preview_cost_mafdal_land_gaza = ISR2_project_net_cost }
+}
+ISR2_territories_complete_mafdal_land_gaza = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_autocrats_are_in_power = yes
+				controls_state = 209
+				has_full_control_of_state = 209
+				209 = {
+					owner = { exists = yes }
+				}
+				209 = {
+					check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+				}
+				can_staff_an_agriculture_district = yes
+				check_variable = { ISR2_territories_tiers_209 < 3 }
+				NOT = { ISR2_territories_no_new_starts = yes }
+				NOT = { has_country_flag = ISR2_territories_done_mafdal_land_gaza }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_territories_project_price = gdp_total }
+			multiply_variable = { ISR2_territories_project_price = 0.01 }
+			set_variable = { ISR2_project_cost = ISR2_territories_project_price }
+			set_variable = { ISR2_project_class = 2 }
+			set_variable = { ISR2_project_quote = gdp_total }
+			set_variable = { ISR2_project_procurement = 0 }
+			ISR2_project_support_commit = yes
+			set_temp_variable = { treasury_change = ISR2_project_net_cost }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			209 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+			}
+			set_variable = { ISR2_territories_quote_mafdal_land_gaza = gdp_total }
+			add_to_variable = { ISR2_territories_tiers_209 = 1 }
+			set_country_flag = ISR2_territories_done_mafdal_land_gaza
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_land_gaza
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_mafdal_land_gaza
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_occupation_accounts = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				NOT = { has_country_flag = ISR2_territories_done_occupation_accounts }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_0025 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_quote_occupation_accounts = gdp_total }
+			set_country_flag = ISR2_territories_done_occupation_accounts
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_occupation_accounts
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_occupation_accounts
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_civil_admin = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				NOT = { has_country_flag = ISR2_territories_done_civil_admin }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_006 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_quote_civil_admin = gdp_total }
+			set_country_flag = ISR2_territories_done_civil_admin
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_civil_admin
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_civil_admin
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_labor_permit_market = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_social_democrats_are_in_power = yes
+				OR = {
+					AND = {
+						controls_state = 208
+						208 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 209
+						209 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+				}
+				NOT = { has_country_flag = ISR2_territories_done_labor_permit_market }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_005 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_quote_labor_permit_market = gdp_total }
+			set_country_flag = ISR2_territories_done_labor_permit_market
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_labor_permit_market
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_labor_permit_market
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_labor_functional_rule = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_social_democrats_are_in_power = yes
+				OR = {
+					AND = {
+						controls_state = 208
+						208 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 209
+						209 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 213
+						213 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 587
+						587 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+				}
+				NOT = { has_country_flag = ISR2_territories_done_labor_functional_rule }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_006 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_quote_labor_functional_rule = gdp_total }
+			set_country_flag = ISR2_territories_done_labor_functional_rule
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_labor_functional_rule
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_labor_functional_rule
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_mafdal_planning_appeals = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_autocrats_are_in_power = yes
+				OR = { controls_state = 208 controls_state = 209 controls_state = 206 controls_state = 205 }
+				NOT = { has_country_flag = ISR2_territories_done_mafdal_planning_appeals }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_004 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_quote_mafdal_planning_appeals = gdp_total }
+			if = {
+				limit = { controls_state = 208 }
+				208 = { set_state_flag = ISR2_territories_planning_appeals }
+			}
+			else = {
+				if = {
+					limit = { controls_state = 209 }
+					209 = { set_state_flag = ISR2_territories_planning_appeals }
+				}
+				else = {
+					if = {
+						limit = { controls_state = 206 }
+						206 = { set_state_flag = ISR2_territories_planning_appeals }
+					}
+					else = {
+						if = {
+							limit = { controls_state = 205 }
+							205 = { set_state_flag = ISR2_territories_planning_appeals }
+						}
+					}
+				}
+			}
+			set_country_flag = ISR2_territories_done_mafdal_planning_appeals
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_planning_appeals
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_mafdal_planning_appeals
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_funded_network = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				check_variable = { ISR2_territories_foreign_count > 0 }
+				NOT = { has_country_flag = ISR2_territories_done_funded_network }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_004 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_country_flag = ISR2_territories_network
+			set_country_flag = ISR2_territories_done_funded_network
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_funded_network
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_funded_network
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_cap_projects = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				OR = {
+					check_variable = { ISR2_territories_foreign_count > 0 }
+					check_variable = { ISR2_territories_tiers_208 > 0 }
+					check_variable = { ISR2_territories_tiers_209 > 0 }
+					check_variable = { ISR2_territories_tiers_213 > 0 }
+					check_variable = { ISR2_territories_tiers_587 > 0 }
+				}
+				NOT = { has_country_flag = ISR2_territories_freeze_parliament }
+				NOT = { has_country_flag = ISR2_territories_cooldown_cap_projects }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_country_flag = ISR2_territories_freeze_parliament
+			set_country_flag = ISR2_territories_done_cap_projects
+			set_country_flag = { flag = ISR2_territories_cooldown_cap_projects days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_cap_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_cap_projects
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_mafdal_restrain_sites = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_autocrats_are_in_power = yes
+				NOT = { has_country_flag = ISR2_territories_freeze_mafdal }
+				NOT = { has_country_flag = ISR2_territories_cooldown_mafdal_restrain_sites }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_country_flag = ISR2_territories_freeze_mafdal
+			set_country_flag = ISR2_territories_done_mafdal_restrain_sites
+			set_country_flag = { flag = ISR2_territories_cooldown_mafdal_restrain_sites days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_restrain_sites
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_mafdal_restrain_sites
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_lift_freeze = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				OR = {
+					has_country_flag = ISR2_territories_freeze_parliament
+					has_country_flag = ISR2_territories_freeze_mafdal
+				}
+				NOT = { has_country_flag = ISR2_territories_cooldown_lift_freeze }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_001 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			clr_country_flag = ISR2_territories_freeze_parliament
+			clr_country_flag = ISR2_territories_freeze_mafdal
+			remove_dynamic_modifier = { modifier = ISR2_territories_mafdal_restrain_sites }
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_restrain_sites
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			set_country_flag = ISR2_territories_done_lift_freeze
+			set_country_flag = { flag = ISR2_territories_cooldown_lift_freeze days = 182 value = 1 }
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_lift_freeze
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_lift_freeze
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_mafdal_land_committee = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_autocrats_are_in_power = yes
+				has_country_flag = ISR2_territories_done_mafdal_activist_current
+				controls_state = 208
+				NOT = { has_country_flag = ISR2_territories_done_mafdal_land_committee }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_001 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_committee_quote = gdp_total }
+			set_country_flag = { flag = ISR2_territories_committee_term days = 364 value = 1 }
+			set_country_flag = ISR2_territories_done_mafdal_land_committee
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_land_committee
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_mafdal_land_committee
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_labor_yanai = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_social_democrats_are_in_power = yes
+				NOT = { has_country_flag = ISR2_territories_done_labor_yanai }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_002 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_yanai_quote = gdp_total }
+			set_variable = { ISR2_territories_yanai_reserve = gdp_total }
+			multiply_variable = { ISR2_territories_yanai_reserve = 0.002 }
+			set_country_flag = { flag = ISR2_territories_yanai_term days = 364 value = 1 }
+			set_country_flag = ISR2_territories_done_labor_yanai
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_labor_yanai
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_labor_yanai
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_liberal_hotel_credit = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_liberals_are_in_power = yes
+				check_variable = {
+					var = ISR2_private_available
+					value = ISR2_territories_cost_0_006
+					compare = greater_than_or_equals
+				}
+				NOT = { has_country_flag = ISR2_territories_done_liberal_hotel_credit }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_temp_variable = { treasury_change = ISR2_territories_cost_0_001 }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_variable = { ISR2_territories_hotel_quote = gdp_total }
+			set_variable = { ISR2_territories_hotel_reserve = gdp_total }
+			multiply_variable = { ISR2_territories_hotel_reserve = 0.001 }
+			set_country_flag = { flag = ISR2_territories_hotel_term days = 728 value = 1 }
+			set_country_flag = ISR2_territories_done_liberal_hotel_credit
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_liberal_hotel_credit
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_liberal_hotel_credit
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_liberal_sinai_resort = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_liberals_are_in_power = yes
+				controls_state = 213
+				has_full_control_of_state = 213
+				213 = {
+					owner = { exists = yes }
+				}
+				213 = {
+					check_variable = { var = building_level@offices value = 48 compare = less_than_or_equals }
+				}
+				213 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				can_staff_an_offices = yes
+				has_country_flag = ISR2_territories_hotel_term
+				NOT = { has_country_flag = ISR2_hotel_resort_committed }
+				check_variable = {
+					var = ISR2_private_available
+					value = ISR2_territories_cost_0_006
+					compare = greater_than_or_equals
+				}
+				NOT = { has_country_flag = ISR2_territories_done_liberal_sinai_resort }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_private_required = gdp_total }
+			multiply_variable = { ISR2_private_required = 0.006 }
+			ISR2_private_commit = yes
+			if = {
+				limit = {
+					check_variable = {
+						var = ISR2_private_paid
+						value = ISR2_private_required
+						compare = greater_than_or_equals
+					}
+				}
+				set_temp_variable = { treasury_change = ISR2_territories_cost_0_012 }
+				multiply_temp_variable = { treasury_change = -1 }
+				modify_treasury_effect = yes
+				213 = {
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = { type = offices level = 2 instant_build = yes }
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				}
+				set_country_flag = ISR2_hotel_resort_committed
+				set_variable = { ISR2_territories_hotel_state = 213 }
+				set_variable = { ISR2_territories_hotel_USA = ISR2_private_paid_USA }
+				set_variable = { ISR2_territories_hotel_GER = ISR2_private_paid_GER }
+				set_variable = { ISR2_territories_hotel_ROM = ISR2_private_paid_ROM }
+			}
+			if = {
+				limit = { has_country_flag = ISR2_hotel_resort_committed }
+				set_country_flag = ISR2_territories_done_liberal_sinai_resort
+			}
+			else = {
+				uncomplete_national_focus = {
+					focus = ISR2_liberal_sinai_resort
+					uncomplete_children = no
+					refund_political_power = no
+				}
+			}
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_liberal_sinai_resort
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_liberal_sinai_resort
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_complete_liberal_coastal_resort = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			has_variable = gdp_total
+			check_variable = { gdp_total > 0 }
+		}
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_variable = gdp_total
+				check_variable = { gdp_total > 0 }
+				western_liberals_are_in_power = yes
+				controls_state = 205
+				has_full_control_of_state = 205
+				205 = {
+					owner = { exists = yes }
+				}
+				205 = {
+					check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+				}
+				205 = {
+					check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+				}
+				can_staff_an_offices = yes
+				has_country_flag = ISR2_territories_hotel_term
+				NOT = { has_country_flag = ISR2_hotel_resort_committed }
+				check_variable = {
+					var = ISR2_private_available
+					value = ISR2_territories_cost_0_006
+					compare = greater_than_or_equals
+				}
+				owns_state = 205
+				NOT = { has_country_flag = ISR2_territories_done_liberal_coastal_resort }
+			}
+			ISR2_territories_refresh_prices = yes
+			set_variable = { ISR2_private_required = gdp_total }
+			multiply_variable = { ISR2_private_required = 0.006 }
+			ISR2_private_commit = yes
+			if = {
+				limit = {
+					check_variable = {
+						var = ISR2_private_paid
+						value = ISR2_private_required
+						compare = greater_than_or_equals
+					}
+				}
+				set_temp_variable = { treasury_change = ISR2_territories_cost_0_009 }
+				multiply_temp_variable = { treasury_change = -1 }
+				modify_treasury_effect = yes
+				205 = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = offices level = 1 instant_build = yes }
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				}
+				set_country_flag = ISR2_hotel_resort_committed
+				set_variable = { ISR2_territories_hotel_state = 205 }
+				set_variable = { ISR2_territories_hotel_USA = ISR2_private_paid_USA }
+				set_variable = { ISR2_territories_hotel_GER = ISR2_private_paid_GER }
+				set_variable = { ISR2_territories_hotel_ROM = ISR2_private_paid_ROM }
+			}
+			if = {
+				limit = { has_country_flag = ISR2_hotel_resort_committed }
+				set_country_flag = ISR2_territories_done_liberal_coastal_resort
+			}
+			else = {
+				uncomplete_national_focus = {
+					focus = ISR2_liberal_coastal_resort
+					uncomplete_children = no
+					refund_political_power = no
+				}
+			}
+			ISR2_territories_refresh = yes
+			update_money_dirty_variable = yes
+		}
+		else = {
+			uncomplete_national_focus = {
+				focus = ISR2_liberal_coastal_resort
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+	else = {
+		uncomplete_national_focus = {
+			focus = ISR2_liberal_coastal_resort
+			uncomplete_children = no
+			refund_political_power = no
+		}
+	}
+}
+ISR2_territories_pressure_reconcile = {
+	set_variable = { ISR2_territories_pressure_208 = 0 }
+	if = {
+		limit = {
+			PAL = { exists = yes }
+			208 = { is_core_of = PAL }
+		}
+		if = {
+			limit = { controls_state = 208 }
+			set_variable = { ISR2_territories_pressure_208 = ISR2_territories_tiers_208 }
+		}
+		else = {
+			if = {
+				limit = { has_country_flag = ISR2_territories_foreign_208 }
+				set_variable = { ISR2_territories_pressure_208 = 1 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_territories_pressure_208 > 2 }
+		}
+		set_variable = { ISR2_territories_pressure_208 = 2 }
+	}
+	set_variable = { ISR2_territories_effective_pressure_208 = ISR2_territories_pressure_208 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_pal_service_relief_active
+			check_variable = { ISR2_pal_service_relief_state = 208 }
+			check_variable = { ISR2_territories_effective_pressure_208 > 1 }
+		}
+		set_variable = { ISR2_territories_effective_pressure_208 = 1 }
+	}
+	set_variable = { ISR2_territories_pressure_209 = 0 }
+	if = {
+		limit = {
+			PAL = { exists = yes }
+			209 = { is_core_of = PAL }
+		}
+		if = {
+			limit = { controls_state = 209 }
+			set_variable = { ISR2_territories_pressure_209 = ISR2_territories_tiers_209 }
+		}
+		else = {
+			if = {
+				limit = { has_country_flag = ISR2_territories_foreign_209 }
+				set_variable = { ISR2_territories_pressure_209 = 1 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_territories_pressure_209 > 2 }
+		}
+		set_variable = { ISR2_territories_pressure_209 = 2 }
+	}
+	set_variable = { ISR2_territories_effective_pressure_209 = ISR2_territories_pressure_209 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_pal_service_relief_active
+			check_variable = { ISR2_pal_service_relief_state = 209 }
+			check_variable = { ISR2_territories_effective_pressure_209 > 1 }
+		}
+		set_variable = { ISR2_territories_effective_pressure_209 = 1 }
+	}
+	set_variable = { ISR2_territories_effective_pressure_total = ISR2_territories_effective_pressure_208 }
+	add_to_variable = { ISR2_territories_effective_pressure_total = ISR2_territories_effective_pressure_209 }
+	PAL = {
+		if = {
+			limit = { exists = yes }
+			if = {
+				limit = {
+					ISR = {
+						check_variable = { ISR2_territories_effective_pressure_total > 0 }
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_1 }
+						}
+					}
+					add_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_1 }
+					update_money_dirty_variable = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_1 }
+					}
+					remove_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_1 }
+					update_money_dirty_variable = yes
+				}
+			}
+		}
+	}
+	PAL = {
+		if = {
+			limit = { exists = yes }
+			if = {
+				limit = {
+					ISR = {
+						check_variable = { ISR2_territories_effective_pressure_total > 1 }
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_2 }
+						}
+					}
+					add_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_2 }
+					update_money_dirty_variable = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_2 }
+					}
+					remove_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_2 }
+					update_money_dirty_variable = yes
+				}
+			}
+		}
+	}
+	PAL = {
+		if = {
+			limit = { exists = yes }
+			if = {
+				limit = {
+					ISR = {
+						check_variable = { ISR2_territories_effective_pressure_total > 2 }
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_3 }
+						}
+					}
+					add_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_3 }
+					update_money_dirty_variable = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_3 }
+					}
+					remove_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_3 }
+					update_money_dirty_variable = yes
+				}
+			}
+		}
+	}
+	PAL = {
+		if = {
+			limit = { exists = yes }
+			if = {
+				limit = {
+					ISR = {
+						check_variable = { ISR2_territories_effective_pressure_total > 3 }
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_4 }
+						}
+					}
+					add_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_4 }
+					update_money_dirty_variable = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						has_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_4 }
+					}
+					remove_dynamic_modifier = { modifier = ISR2_territories_pal_pressure_4 }
+					update_money_dirty_variable = yes
+				}
+			}
+		}
+	}
+}
+ISR2_territories_refresh_prices = {
+	set_variable = { ISR2_territories_cost_0_001 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_001 = 0.001 }
+	set_variable = { ISR2_territories_cost_0_002 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_002 = 0.002 }
+	set_variable = { ISR2_territories_cost_0_0025 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_0025 = 0.0025 }
+	set_variable = { ISR2_territories_cost_0_004 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_004 = 0.004 }
+	set_variable = { ISR2_territories_cost_0_005 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_005 = 0.005 }
+	set_variable = { ISR2_territories_cost_0_006 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_006 = 0.006 }
+	set_variable = { ISR2_territories_cost_0_009 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_009 = 0.009 }
+	set_variable = { ISR2_territories_cost_0_01 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_01 = 0.01 }
+	set_variable = { ISR2_territories_cost_0_012 = gdp_total }
+	multiply_variable = { ISR2_territories_cost_0_012 = 0.012 }
+}
+ISR2_territories_refresh = {
+	if = {
+		limit = { ISR2_is_scenario = yes }
+		ISR2_private_recalculate = yes
+		ISR2_territories_refresh_prices = yes
+		ISR2_territories_quote_controlled_sites = yes
+		ISR2_territories_quote_west_bank_projects = yes
+		ISR2_territories_quote_sinai_projects = yes
+		ISR2_territories_quote_gaza_projects = yes
+		ISR2_territories_quote_golan_projects = yes
+		ISR2_territories_quote_labor_valley = yes
+		ISR2_territories_quote_gahal_settler_entitlement = yes
+		ISR2_territories_quote_mafdal_activist_current = yes
+		ISR2_territories_quote_mafdal_regularise_sites = yes
+		ISR2_territories_quote_mafdal_land_westbank = yes
+		ISR2_territories_quote_mafdal_land_gaza = yes
+		set_variable = { ISR2_territories_foreign_count = 0 }
+		if = {
+			limit = { has_country_flag = ISR2_territories_foreign_208 }
+			add_to_variable = { ISR2_territories_foreign_count = 1 }
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_foreign_209 }
+			add_to_variable = { ISR2_territories_foreign_count = 1 }
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_foreign_213 }
+			add_to_variable = { ISR2_territories_foreign_count = 1 }
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_foreign_587 }
+			add_to_variable = { ISR2_territories_foreign_count = 1 }
+		}
+		set_variable = { ISR2_territories_previous_weekly_expense = ISR2_territories_weekly_expense }
+		set_variable = { ISR2_territories_weekly_income = 0 }
+		set_variable = { ISR2_territories_weekly_expense = 0 }
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_208_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_208_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 208
+				208 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_208_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_208_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_occupation_208_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_occupation_208_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_209_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_209_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 209
+				209 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_209_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_209_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_occupation_209_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_occupation_209_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_213_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_213_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 213
+				213 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_213_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_213_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_occupation_213_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_occupation_213_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		587 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_587_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_587_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 587
+				587 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_587_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_587_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_occupation_587_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_occupation_587_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 208
+				check_variable = { ISR2_territories_nahal_208 > 0 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_1_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_208_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_1_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_208_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_1_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_208_1_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 208
+				check_variable = { ISR2_territories_nahal_208 > 1 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_2_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_208_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_2_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_208_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_2_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_208_2_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 208
+				check_variable = { ISR2_territories_nahal_208 > 2 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_3_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_208_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_3_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_208_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_208_3_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_208_3_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 209
+				check_variable = { ISR2_territories_nahal_209 > 0 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_1_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_209_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_1_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_209_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_1_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_209_1_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 209
+				check_variable = { ISR2_territories_nahal_209 > 1 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_2_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_209_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_2_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_209_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_2_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_209_2_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 209
+				check_variable = { ISR2_territories_nahal_209 > 2 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_3_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_209_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_3_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_209_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_209_3_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_209_3_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 213
+				check_variable = { ISR2_territories_nahal_213 > 0 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_1_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_213_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_1_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_213_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_1_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_213_1_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 213
+				check_variable = { ISR2_territories_nahal_213 > 1 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_2_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_213_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_2_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_213_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_2_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_213_2_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 213
+				check_variable = { ISR2_territories_nahal_213 > 2 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_3_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_213_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_3_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_213_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_213_3_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_213_3_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 587
+				check_variable = { ISR2_territories_nahal_587 > 0 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_1_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_587_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_1_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_587_1_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		587 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_1_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_587_1_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 587
+				check_variable = { ISR2_territories_nahal_587 > 1 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_2_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_587_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_2_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_587_2_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		587 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_2_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_587_2_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				controls_state = 587
+				check_variable = { ISR2_territories_nahal_587 > 2 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_3_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_587_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_3_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_nahal_587_3_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		587 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_nahal_587_3_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_nahal_587_3_local scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_208
+				NOT = { controls_state = 208 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_israel }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_208_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_israel }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_208_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_208
+				NOT = { controls_state = 208 }
+				has_country_flag = ISR2_territories_network
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_network }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_208_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_network }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_208_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_208_local scope = ISR }
+			}
+		}
+		208 = {
+			controller = {
+				if = {
+					limit = {
+						NOT = { tag = ISR }
+						exists = yes
+						ISR = { has_country_flag = ISR2_territories_foreign_208 }
+					}
+					if = {
+						limit = {
+							NOT = {
+								has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_host }
+							}
+						}
+						add_dynamic_modifier = { modifier = ISR2_territories_foreign_208_host }
+						update_money_dirty_variable = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_208
+				NOT = { controls_state = 208 }
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_208 }
+			multiply_variable = { ISR2_territories_stream = 0.00015 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_208
+				NOT = { controls_state = 208 }
+				has_country_flag = ISR2_territories_network
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_208 }
+			multiply_variable = { ISR2_territories_stream = 0.00005 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_209
+				NOT = { controls_state = 209 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_israel }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_209_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_israel }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_209_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_209
+				NOT = { controls_state = 209 }
+				has_country_flag = ISR2_territories_network
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_network }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_209_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_network }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_209_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_209_local scope = ISR }
+			}
+		}
+		209 = {
+			controller = {
+				if = {
+					limit = {
+						NOT = { tag = ISR }
+						exists = yes
+						ISR = { has_country_flag = ISR2_territories_foreign_209 }
+					}
+					if = {
+						limit = {
+							NOT = {
+								has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_host }
+							}
+						}
+						add_dynamic_modifier = { modifier = ISR2_territories_foreign_209_host }
+						update_money_dirty_variable = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_209
+				NOT = { controls_state = 209 }
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_209 }
+			multiply_variable = { ISR2_territories_stream = 0.00015 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_209
+				NOT = { controls_state = 209 }
+				has_country_flag = ISR2_territories_network
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_209 }
+			multiply_variable = { ISR2_territories_stream = 0.00005 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_213
+				NOT = { controls_state = 213 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_israel }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_213_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_israel }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_213_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_213
+				NOT = { controls_state = 213 }
+				has_country_flag = ISR2_territories_network
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_network }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_213_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_network }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_213_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_213_local scope = ISR }
+			}
+		}
+		213 = {
+			controller = {
+				if = {
+					limit = {
+						NOT = { tag = ISR }
+						exists = yes
+						ISR = { has_country_flag = ISR2_territories_foreign_213 }
+					}
+					if = {
+						limit = {
+							NOT = {
+								has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_host }
+							}
+						}
+						add_dynamic_modifier = { modifier = ISR2_territories_foreign_213_host }
+						update_money_dirty_variable = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_213
+				NOT = { controls_state = 213 }
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_213 }
+			multiply_variable = { ISR2_territories_stream = 0.00015 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_213
+				NOT = { controls_state = 213 }
+				has_country_flag = ISR2_territories_network
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_213 }
+			multiply_variable = { ISR2_territories_stream = 0.00005 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_587
+				NOT = { controls_state = 587 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_israel }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_587_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_israel }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_587_israel }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_587
+				NOT = { controls_state = 587 }
+				has_country_flag = ISR2_territories_network
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_network }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_587_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_network }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_587_network }
+				update_money_dirty_variable = yes
+			}
+		}
+		587 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_foreign_587_local scope = ISR }
+			}
+		}
+		587 = {
+			controller = {
+				if = {
+					limit = {
+						NOT = { tag = ISR }
+						exists = yes
+						ISR = { has_country_flag = ISR2_territories_foreign_587 }
+					}
+					if = {
+						limit = {
+							NOT = {
+								has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_host }
+							}
+						}
+						add_dynamic_modifier = { modifier = ISR2_territories_foreign_587_host }
+						update_money_dirty_variable = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_587
+				NOT = { controls_state = 587 }
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_587 }
+			multiply_variable = { ISR2_territories_stream = 0.00015 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_foreign_587
+				NOT = { controls_state = 587 }
+				has_country_flag = ISR2_territories_network
+			}
+			set_variable = { ISR2_territories_stream = ISR2_territories_foreign_quote_587 }
+			multiply_variable = { ISR2_territories_stream = 0.00005 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_valley_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_valley_local scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_labor_valley controls_state = 208 }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_labor_valley }
+			multiply_variable = { ISR2_territories_stream = 0.00015 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_gahal_settler_entitlement_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_gahal_settler_entitlement_local scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_gahal_settler_entitlement controls_state = 208 }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_gahal_settler_entitlement }
+			multiply_variable = { ISR2_territories_stream = 0.0002 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_activist_current_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_activist_current_local scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_mafdal_activist_current controls_state = 208 }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_mafdal_activist_current }
+			multiply_variable = { ISR2_territories_stream = 0.0002 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_regularise_sites_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_regularise_sites_local scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_mafdal_regularise_sites controls_state = 208 }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_mafdal_regularise_sites }
+			multiply_variable = { ISR2_territories_stream = 0.00015 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_land_westbank_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_land_westbank_local scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_mafdal_land_westbank controls_state = 208 }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_mafdal_land_westbank }
+			multiply_variable = { ISR2_territories_stream = 0.00005 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_land_gaza_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_land_gaza_local scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_mafdal_land_gaza controls_state = 209 }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_mafdal_land_gaza }
+			multiply_variable = { ISR2_territories_stream = 0.00005 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		every_country = {
+			limit = {
+				OR = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_host }
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_host }
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_host }
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_host }
+				}
+			}
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_208_host }
+					OR = {
+						NOT = { controls_state = 208 }
+						tag = ISR
+						ISR = {
+							NOT = { has_country_flag = ISR2_territories_foreign_208 }
+						}
+					}
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_208_host }
+				update_money_dirty_variable = yes
+			}
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_209_host }
+					OR = {
+						NOT = { controls_state = 209 }
+						tag = ISR
+						ISR = {
+							NOT = { has_country_flag = ISR2_territories_foreign_209 }
+						}
+					}
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_209_host }
+				update_money_dirty_variable = yes
+			}
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_213_host }
+					OR = {
+						NOT = { controls_state = 213 }
+						tag = ISR
+						ISR = {
+							NOT = { has_country_flag = ISR2_territories_foreign_213 }
+						}
+					}
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_213_host }
+				update_money_dirty_variable = yes
+			}
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_foreign_587_host }
+					OR = {
+						NOT = { controls_state = 587 }
+						tag = ISR
+						ISR = {
+							NOT = { has_country_flag = ISR2_territories_foreign_587 }
+						}
+					}
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_foreign_587_host }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_occupation_accounts }
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_occupation_accounts }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_occupation_accounts }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_occupation_accounts }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_occupation_accounts }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_civil_admin }
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_civil_admin }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_civil_admin }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_civil_admin }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_civil_admin }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_civil_admin }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_civil_admin }
+			multiply_variable = { ISR2_territories_stream = 0.0002 }
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_civil_admin_208 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_civil_admin_208 scope = ISR }
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_civil_admin_209 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_civil_admin_209 scope = ISR }
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_civil_admin_213 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_civil_admin_213 scope = ISR }
+			}
+		}
+		587 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_civil_admin_587 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_civil_admin_587 scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_done_labor_permit_market
+				western_social_democrats_are_in_power = yes
+				OR = {
+					AND = {
+						controls_state = 208
+						208 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 209
+						209 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market }
+				update_money_dirty_variable = yes
+			}
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market_208 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market_208 scope = ISR }
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market_209 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_permit_market_209 scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_done_labor_functional_rule
+				western_social_democrats_are_in_power = yes
+				OR = {
+					AND = {
+						controls_state = 208
+						208 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 209
+						209 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 213
+						213 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+					AND = {
+						controls_state = 587
+						587 = {
+							NOT = { is_core_of = ISR }
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule }
+				update_money_dirty_variable = yes
+			}
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_208 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_208 scope = ISR }
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_209 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_209 scope = ISR }
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_213 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_213 scope = ISR }
+			}
+		}
+		587 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_587 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_labor_functional_rule_587 scope = ISR }
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_done_mafdal_planning_appeals
+				western_autocrats_are_in_power = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals }
+				update_money_dirty_variable = yes
+			}
+		}
+		208 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_208 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_208 scope = ISR }
+			}
+		}
+		209 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_209 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_209 scope = ISR }
+			}
+		}
+		206 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_206 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_206 scope = ISR }
+			}
+		}
+		205 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_205 scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_planning_appeals_205 scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_freeze_mafdal western_autocrats_are_in_power = yes }
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_mafdal_restrain_sites }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_mafdal_restrain_sites }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_mafdal_restrain_sites }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_mafdal_restrain_sites }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_committee_term controls_state = 208 }
+			set_variable = { ISR2_territories_stream = ISR2_territories_quote_mafdal_activist_current }
+			multiply_variable = { ISR2_territories_stream = -0.00004 }
+			if = {
+				limit = { has_country_flag = ISR2_territories_freeze_parliament }
+				multiply_variable = { ISR2_territories_stream = 0.8 }
+			}
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_committee_term }
+			set_variable = { ISR2_territories_stream = ISR2_territories_committee_quote }
+			multiply_variable = { ISR2_territories_stream = 0.00001 }
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_yanai_term }
+			set_variable = { ISR2_territories_stream = ISR2_territories_yanai_quote }
+			multiply_variable = { ISR2_territories_stream = 0.0001 }
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_yanai_term
+				NOT = { has_country_flag = ISR2_territories_yanai_claimed_1 }
+				OR = {
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_1 = 208 }
+						NOT = { controls_state = 208 }
+					}
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_1 = 209 }
+						NOT = { controls_state = 209 }
+					}
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_1 = 213 }
+						NOT = { controls_state = 213 }
+					}
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_1 = 587 }
+						NOT = { controls_state = 587 }
+					}
+				}
+			}
+			set_country_flag = ISR2_territories_yanai_claimed_1
+			set_variable = { ISR2_territories_yanai_claim = ISR2_territories_yanai_quote }
+			multiply_variable = { ISR2_territories_yanai_claim = 0.008 }
+			set_variable = { ISR2_territories_yanai_gross_claim = ISR2_territories_yanai_claim }
+			if = {
+				limit = {
+					check_variable = {
+						var = ISR2_territories_yanai_reserve
+						value = ISR2_territories_yanai_claim
+						compare = greater_than_or_equals
+					}
+				}
+				subtract_from_variable = { ISR2_territories_yanai_reserve = ISR2_territories_yanai_claim }
+			}
+			else = {
+				subtract_from_variable = { ISR2_territories_yanai_claim = ISR2_territories_yanai_reserve }
+				set_variable = { ISR2_territories_yanai_reserve = 0 }
+				set_temp_variable = { treasury_change = ISR2_territories_yanai_claim }
+				multiply_temp_variable = { treasury_change = -1 }
+				modify_treasury_effect = yes
+			}
+			set_variable = { ISR2_private_claim_id = 1 }
+			set_variable = { ISR2_private_claim_amount = ISR2_territories_yanai_gross_claim }
+			set_variable = { ISR2_private_claim_share_USA = ISR2_territories_yanai_USA_1 }
+			set_variable = { ISR2_private_claim_share_GER = ISR2_territories_yanai_GER_1 }
+			set_variable = { ISR2_private_claim_share_ROM = ISR2_territories_yanai_ROM_1 }
+			ISR2_private_claim_credit = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_yanai_term
+				NOT = { has_country_flag = ISR2_territories_yanai_claimed_2 }
+				OR = {
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_2 = 208 }
+						NOT = { controls_state = 208 }
+					}
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_2 = 209 }
+						NOT = { controls_state = 209 }
+					}
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_2 = 213 }
+						NOT = { controls_state = 213 }
+					}
+					AND = {
+						check_variable = { ISR2_territories_yanai_state_2 = 587 }
+						NOT = { controls_state = 587 }
+					}
+				}
+			}
+			set_country_flag = ISR2_territories_yanai_claimed_2
+			set_variable = { ISR2_territories_yanai_claim = ISR2_territories_yanai_quote }
+			multiply_variable = { ISR2_territories_yanai_claim = 0.008 }
+			set_variable = { ISR2_territories_yanai_gross_claim = ISR2_territories_yanai_claim }
+			if = {
+				limit = {
+					check_variable = {
+						var = ISR2_territories_yanai_reserve
+						value = ISR2_territories_yanai_claim
+						compare = greater_than_or_equals
+					}
+				}
+				subtract_from_variable = { ISR2_territories_yanai_reserve = ISR2_territories_yanai_claim }
+			}
+			else = {
+				subtract_from_variable = { ISR2_territories_yanai_claim = ISR2_territories_yanai_reserve }
+				set_variable = { ISR2_territories_yanai_reserve = 0 }
+				set_temp_variable = { treasury_change = ISR2_territories_yanai_claim }
+				multiply_temp_variable = { treasury_change = -1 }
+				modify_treasury_effect = yes
+			}
+			set_variable = { ISR2_private_claim_id = 2 }
+			set_variable = { ISR2_private_claim_amount = ISR2_territories_yanai_gross_claim }
+			set_variable = { ISR2_private_claim_share_USA = ISR2_territories_yanai_USA_2 }
+			set_variable = { ISR2_private_claim_share_GER = ISR2_territories_yanai_GER_2 }
+			set_variable = { ISR2_private_claim_share_ROM = ISR2_territories_yanai_ROM_2 }
+			ISR2_private_claim_credit = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_done_labor_yanai
+				NOT = { has_country_flag = ISR2_territories_yanai_term }
+				NOT = { has_country_flag = ISR2_territories_yanai_settled }
+			}
+			set_country_flag = ISR2_territories_yanai_settled
+			set_variable = { ISR2_territories_yanai_refund = ISR2_territories_yanai_reserve }
+			set_variable = { ISR2_territories_yanai_reserve = 0 }
+			set_temp_variable = { treasury_change = ISR2_territories_yanai_refund }
+			modify_treasury_effect = yes
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_hotel_term }
+			set_variable = { ISR2_territories_stream = ISR2_territories_hotel_quote }
+			multiply_variable = { ISR2_territories_stream = 0.00003 }
+			add_to_variable = { ISR2_territories_weekly_expense = ISR2_territories_stream }
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_liberal_sinai_resort controls_state = 213 }
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_liberal_sinai_resort_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_liberal_sinai_resort_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_liberal_sinai_resort_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_liberal_sinai_resort_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		213 = {
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_liberal_sinai_resort_local scope = ISR }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_liberal_sinai_resort_local scope = ISR }
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_territories_done_liberal_coastal_resort controls_state = 205 }
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_territories_liberal_coastal_resort_budget }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_territories_liberal_coastal_resort_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_territories_liberal_coastal_resort_budget }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_territories_liberal_coastal_resort_budget }
+				update_money_dirty_variable = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_hotel_term
+				NOT = { has_country_flag = ISR2_territories_hotel_claimed }
+				has_country_flag = ISR2_hotel_resort_committed
+				OR = {
+					AND = {
+						check_variable = { ISR2_territories_hotel_state = 213 }
+						NOT = { controls_state = 213 }
+					}
+					AND = {
+						check_variable = { ISR2_territories_hotel_state = 205 }
+						NOT = { controls_state = 205 }
+					}
+				}
+			}
+			set_country_flag = ISR2_territories_hotel_claimed
+			set_variable = { ISR2_territories_hotel_claim = ISR2_territories_hotel_quote }
+			multiply_variable = { ISR2_territories_hotel_claim = 0.008 }
+			set_variable = { ISR2_territories_hotel_gross_claim = ISR2_territories_hotel_claim }
+			if = {
+				limit = {
+					check_variable = {
+						var = ISR2_territories_hotel_reserve
+						value = ISR2_territories_hotel_claim
+						compare = greater_than_or_equals
+					}
+				}
+				subtract_from_variable = { ISR2_territories_hotel_reserve = ISR2_territories_hotel_claim }
+			}
+			else = {
+				subtract_from_variable = { ISR2_territories_hotel_claim = ISR2_territories_hotel_reserve }
+				set_variable = { ISR2_territories_hotel_reserve = 0 }
+				set_temp_variable = { treasury_change = ISR2_territories_hotel_claim }
+				multiply_temp_variable = { treasury_change = -1 }
+				modify_treasury_effect = yes
+			}
+			set_variable = { ISR2_private_claim_id = 3 }
+			set_variable = { ISR2_private_claim_amount = ISR2_territories_hotel_gross_claim }
+			set_variable = { ISR2_private_claim_share_USA = ISR2_territories_hotel_USA }
+			set_variable = { ISR2_private_claim_share_GER = ISR2_territories_hotel_GER }
+			set_variable = { ISR2_private_claim_share_ROM = ISR2_territories_hotel_ROM }
+			ISR2_private_claim_credit = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_territories_done_liberal_hotel_credit
+				NOT = { has_country_flag = ISR2_territories_hotel_term }
+				NOT = { has_country_flag = ISR2_territories_hotel_settled }
+			}
+			set_country_flag = ISR2_territories_hotel_settled
+			set_variable = { ISR2_territories_hotel_refund = ISR2_territories_hotel_reserve }
+			set_variable = { ISR2_territories_hotel_reserve = 0 }
+			set_temp_variable = { treasury_change = ISR2_territories_hotel_refund }
+			modify_treasury_effect = yes
+		}
+		ISR2_territories_pressure_reconcile = yes
+		if = {
+			limit = {
+				has_completed_focus = ISR2_controlled_sites
+				NOT = { has_country_flag = ISR2_territories_cooldown_controlled_sites }
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_controlled_sites
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_foreign_footholds
+				NOT = { has_country_flag = ISR2_territories_cooldown_foreign_footholds }
+				NOT = { has_country_flag = ISR2_territories_foreign_208 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_foreign_footholds
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_west_bank_projects
+				NOT = { has_country_flag = ISR2_territories_cooldown_west_bank_projects }
+				check_variable = { ISR2_territories_tiers_208 < 3 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_west_bank_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_sinai_projects
+				NOT = { has_country_flag = ISR2_territories_cooldown_sinai_projects }
+				check_variable = { ISR2_territories_tiers_213 < 3 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_sinai_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_gaza_projects
+				NOT = { has_country_flag = ISR2_territories_cooldown_gaza_projects }
+				check_variable = { ISR2_territories_tiers_209 < 3 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_gaza_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_golan_projects
+				NOT = { has_country_flag = ISR2_territories_cooldown_golan_projects }
+				check_variable = { ISR2_territories_tiers_587 < 3 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_golan_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_gaza_foothold
+				NOT = { has_country_flag = ISR2_territories_cooldown_gaza_foothold }
+				NOT = { has_country_flag = ISR2_territories_foreign_209 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_gaza_foothold
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_sinai_foothold
+				NOT = { has_country_flag = ISR2_territories_cooldown_sinai_foothold }
+				NOT = { has_country_flag = ISR2_territories_foreign_213 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_sinai_foothold
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_golan_foothold
+				NOT = { has_country_flag = ISR2_territories_cooldown_golan_foothold }
+				NOT = { has_country_flag = ISR2_territories_foreign_587 }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_golan_foothold
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_close_west_bank
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_west_bank }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_close_west_bank
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_close_gaza
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_gaza }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_close_gaza
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_close_sinai
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_sinai }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_close_sinai
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_close_golan
+				NOT = { has_country_flag = ISR2_territories_cooldown_close_golan }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_close_golan
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_cap_projects
+				NOT = { has_country_flag = ISR2_territories_cooldown_cap_projects }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_cap_projects
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_mafdal_restrain_sites
+				NOT = { has_country_flag = ISR2_territories_cooldown_mafdal_restrain_sites }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_mafdal_restrain_sites
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_lift_freeze
+				NOT = { has_country_flag = ISR2_territories_cooldown_lift_freeze }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_lift_freeze
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { ISR2_territories_weekly_expense = ISR2_territories_previous_weekly_expense }
+				}
+			}
+			update_money_dirty_variable = yes
+		}
+	}
+}
+ISR2_territories_daily = {
+	ISR2_territories_refresh = yes
+}
+ISR2_territories_init = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			NOT = { has_country_flag = ISR2_territories_initialized }
+		}
+		set_variable = { ISR2_territories_foreign_count = 0 }
+		set_variable = { ISR2_territories_weekly_income = 0 }
+		set_variable = { ISR2_territories_weekly_expense = 0 }
+		set_variable = { ISR2_territories_previous_weekly_expense = 0 }
+		set_variable = { ISR2_territories_yanai_used = 0 }
+		set_variable = { ISR2_territories_yanai_quote = 0 }
+		set_variable = { ISR2_territories_yanai_reserve = 0 }
+		set_variable = { ISR2_territories_yanai_claim = 0 }
+		set_variable = { ISR2_territories_yanai_gross_claim = 0 }
+		set_variable = { ISR2_territories_yanai_refund = 0 }
+		set_variable = { ISR2_territories_hotel_quote = 0 }
+		set_variable = { ISR2_territories_hotel_reserve = 0 }
+		set_variable = { ISR2_territories_hotel_claim = 0 }
+		set_variable = { ISR2_territories_hotel_gross_claim = 0 }
+		set_variable = { ISR2_territories_hotel_refund = 0 }
+		set_variable = { ISR2_territories_hotel_state = 0 }
+		set_variable = { ISR2_territories_committee_quote = 0 }
+		set_variable = { ISR2_territories_effective_pressure_total = 0 }
+		set_variable = { ISR2_territories_tiers_208 = 0 }
+		set_variable = { ISR2_territories_nahal_208 = 0 }
+		set_variable = { ISR2_territories_foreign_quote_208 = 0 }
+		set_variable = { ISR2_territories_tiers_209 = 0 }
+		set_variable = { ISR2_territories_nahal_209 = 0 }
+		set_variable = { ISR2_territories_foreign_quote_209 = 0 }
+		set_variable = { ISR2_territories_tiers_213 = 0 }
+		set_variable = { ISR2_territories_nahal_213 = 0 }
+		set_variable = { ISR2_territories_foreign_quote_213 = 0 }
+		set_variable = { ISR2_territories_tiers_587 = 0 }
+		set_variable = { ISR2_territories_nahal_587 = 0 }
+		set_variable = { ISR2_territories_foreign_quote_587 = 0 }
+		set_variable = { ISR2_territories_pressure_208 = 0 }
+		set_variable = { ISR2_territories_effective_pressure_208 = 0 }
+		set_variable = { ISR2_territories_pressure_209 = 0 }
+		set_variable = { ISR2_territories_effective_pressure_209 = 0 }
+		set_variable = { ISR2_territories_yanai_state_1 = 0 }
+		set_variable = { ISR2_territories_yanai_state_2 = 0 }
+		set_variable = { ISR2_territories_yanai_USA_1 = 0 }
+		set_variable = { ISR2_territories_yanai_GER_1 = 0 }
+		set_variable = { ISR2_territories_yanai_ROM_1 = 0 }
+		set_variable = { ISR2_territories_yanai_USA_2 = 0 }
+		set_variable = { ISR2_territories_yanai_GER_2 = 0 }
+		set_variable = { ISR2_territories_yanai_ROM_2 = 0 }
+		set_variable = { ISR2_territories_hotel_USA = 0 }
+		set_variable = { ISR2_territories_hotel_GER = 0 }
+		set_variable = { ISR2_territories_hotel_ROM = 0 }
+		set_variable = { ISR2_territories_quote_labor_valley = 0 }
+		set_variable = { ISR2_territories_quote_gahal_settler_entitlement = 0 }
+		set_variable = { ISR2_territories_quote_mafdal_activist_current = 0 }
+		set_variable = { ISR2_territories_quote_mafdal_regularise_sites = 0 }
+		set_variable = { ISR2_territories_quote_mafdal_land_westbank = 0 }
+		set_variable = { ISR2_territories_quote_mafdal_land_gaza = 0 }
+		if = {
+			limit = {
+				date < 1970.2.1
+				controls_state = 208
+				208 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			208 = {
+				if = {
+					limit = {
+						NOT = { has_resistance = yes }
+					}
+					start_resistance = PAL
+				}
+				set_resistance = 18
+				set_compliance = 25
+			}
+		}
+		if = {
+			limit = {
+				date < 1970.2.1
+				controls_state = 209
+				209 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			209 = {
+				if = {
+					limit = {
+						NOT = { has_resistance = yes }
+					}
+					start_resistance = PAL
+				}
+				set_resistance = 25
+				set_compliance = 15
+			}
+		}
+		if = {
+			limit = {
+				date < 1970.2.1
+				controls_state = 213
+				213 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			213 = {
+				if = {
+					limit = {
+						NOT = { has_resistance = yes }
+					}
+					start_resistance = EGY
+				}
+				set_resistance = 8
+				set_compliance = 30
+			}
+		}
+		if = {
+			limit = {
+				date < 1970.2.1
+				controls_state = 587
+				587 = {
+					NOT = { is_core_of = ISR }
+				}
+			}
+			587 = {
+				if = {
+					limit = {
+						NOT = { has_resistance = yes }
+					}
+					start_resistance = SYR
+				}
+				set_resistance = 10
+				set_compliance = 20
+			}
+		}
+		set_country_flag = ISR2_territories_initialized
+	}
+	ISR2_territories_refresh = yes
+}

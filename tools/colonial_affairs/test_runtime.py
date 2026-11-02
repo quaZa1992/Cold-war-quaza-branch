@@ -24,6 +24,9 @@ class Scope:
     kind: str = 'country'
     vars: dict = field(default_factory=dict)
     flags: set = field(default_factory=set)
+    focuses: set = field(default_factory=set)
+    wars: set = field(default_factory=set)
+    ideas: set = field(default_factory=set)
     equipment: dict = field(default_factory=lambda: {'infantry_weapons_type': D(250), 'cnc_equipment_type': D(25)})
     owner: object = None
     controller: object = None
@@ -48,6 +51,14 @@ class Model:
         self.triggers = dict((k,v) for k,o,v in parse((ROOT/'common/scripted_triggers/COLDWAR_colonial_affairs.txt').read_text(encoding='utf-8')))
         self.effects.update((k,v) for k,o,v in parse((ROOT/'common/scripted_effects/COLDWAR_colonial_contacts.txt').read_text(encoding='utf-8')))
         self.triggers.update((k,v) for k,o,v in parse((ROOT/'common/scripted_triggers/COLDWAR_colonial_contacts.txt').read_text(encoding='utf-8')))
+        self.effects.update((k,v) for k,o,v in parse((ROOT/'common/scripted_effects/COLDWAR_colonial_measures.txt').read_text(encoding='utf-8')))
+        self.triggers.update((k,v) for k,o,v in parse((ROOT/'common/scripted_triggers/COLDWAR_colonial_measures.txt').read_text(encoding='utf-8')))
+        native=parse((ROOT/'common/scripted_triggers/COLDWAR_GER_1970_windows_triggers.txt').read_text(encoding='utf-8'))
+        self.triggers['COLDWAR_GER_1970_rv_active']=first(native,'COLDWAR_GER_1970_rv_active')
+        self.triggers.update((k,v) for k,o,v in parse((ROOT/'common/scripted_triggers/COLDWAR_GER_1970_security_contract.txt').read_text(encoding='utf-8')))
+        self.effects.update((k,v) for k,o,v in parse((ROOT/'common/scripted_effects/COLDWAR_GER_1970_security_contract.txt').read_text(encoding='utf-8')))
+        for key,op,value in parse((ROOT/'common/scripted_effects/COLDWAR_GER_1970_windows_effects.txt').read_text(encoding='utf-8')):
+            if key in ('COLDWAR_GER_1970_sec_gui_refresh','COLDWAR_GER_1970_sec_gui_touch'):self.effects[key]=value
         self.c = {tag:Scope(tag) for tag in ('SPR','SHA','MOR','ALG','USA','SOV','FRA','COM','ENG','BHR')}
         self.s = {str(i):Scope(str(i),'state') for i in (372,373,269,940,1214,423)}
         self.g = Scope('global','global')
@@ -110,6 +121,10 @@ class Model:
             if k in ('OR','AND','NOT'):
                 values=(self.condition([row],current,root,prev) for row in v)
                 return any(values) if k=='OR' else all(values) if k=='AND' else not any(values)
+            if k in ('custom_trigger_tooltip','hidden_trigger'):return self.condition([row for row in v if row[0]!='tooltip'],current,root,prev)
+            if k=='has_war_with':return v in current.wars
+            if k=='has_idea':return v in current.ideas
+            if k=='is_in_array':return self.value(v[0][2],current,root,prev) in current.vars.get(v[0][0],[])
             if k=='always':return v=='yes'
             if k=='check_variable':
                 if first(v,'var') is not None:
@@ -117,10 +132,14 @@ class Model:
                     return self.compare(self.value(first(v,'var'),current,root,prev),ops.get(first(v,'compare','equals'),'='),self.value(first(v,'value'),current,root,prev))
                 name,operation,value=v[0];return self.compare(self.value(name,current,root,prev),operation,self.value(value,current,root,prev))
             if k in ('has_country_flag','has_state_flag'):return v in current.flags
+            if k=='has_global_flag':return v in self.g.flags
+            if k=='has_completed_focus':return v in current.focuses
+            if k=='country_exists':return v in self.c
+            if k=='has_political_power':return self.compare(current.pp,op,D(v))
             if k=='has_variable':return v in current.vars
             if k=='political_power':return self.compare(current.pp,op,self.value(v,current,root,prev))
             if k=='resistance':return self.compare(current.resistance,op,self.value(v,current,root,prev))
-            if k=='tag':return current is self.scope(v,current,root,prev)
+            if k in ('tag','original_tag'):return current is self.scope(v,current,root,prev)
             if k=='exists':return (current is not None)==(v=='yes')
             if k=='is_subject':return (current.overlord is not None)==(v=='yes')
             if k=='is_subject_of':return current.overlord is self.scope(v,current,root,prev)
@@ -174,17 +193,23 @@ class Model:
             if key=='if':
                 last_if=self.condition(first(value,'limit',[]),current,root,prev)
                 if last_if:self.execute([(k,o,v) for k,o,v in value if k!='limit'],current,root,prev)
+            elif key=='else_if':
+                if last_if is False:
+                    last_if=self.condition(first(value,'limit',[]),current,root,prev)
+                    if last_if:self.execute([(k,o,v) for k,o,v in value if k!='limit'],current,root,prev)
             elif key=='else':
                 if last_if is False:self.execute(value,current,root,prev)
                 last_if=None
             elif key in ('hidden_effect','effect_tooltip'):
                 if key=='hidden_effect':self.execute(value,current,root,prev)
-            elif key in ('set_variable','set_temp_variable','add_to_variable','add_to_temp_variable','subtract_from_variable','multiply_variable','multiply_temp_variable','divide_variable','divide_temp_variable'):
+            elif key in ('set_variable','set_temp_variable','add_to_variable','add_to_temp_variable','subtract_from_variable','subtract_from_temp_variable','multiply_variable','multiply_temp_variable','divide_variable','divide_temp_variable'):
                 name,operation,argument=value[0];target,fieldname=self.variable(name,current,root,prev);number=self.value(argument,current,root,prev)
                 old=target.vars.get(fieldname,D(0))
                 target.vars[fieldname]=number if key.startswith('set_') else old+number if key.startswith('add_') else old-number if key.startswith('subtract_') else old*number if key.startswith('multiply_') else old/number
-            elif key=='clamp_variable':
+            elif key in ('clamp_variable','clamp_temp_variable'):
                 obj,name=self.variable(first(value,'var'),current,root,prev);obj.vars[name]=min(D(first(value,'max')),max(D(first(value,'min')),obj.vars.get(name,D(0))))
+            elif key in ('round_variable','round_temp_variable'):
+                obj,name=self.variable(value,current,root,prev);obj.vars[name]=obj.vars.get(name,D(0)).to_integral_value()
             elif key in ('set_country_flag','set_state_flag'):
                 current.flags.add(first(value,'flag') if isinstance(value,list) else value)
             elif key in ('clr_country_flag','clr_state_flag'):current.flags.discard(value)
@@ -196,14 +221,15 @@ class Model:
                 self.execute(entries[min(self.random_branch,len(entries)-1)],current,root,prev)
             elif key=='save_event_target_as':self.saved_targets[value]=current
             elif key in ('country_event','news_event'):self.events.append((first(value,'id'),current.id,dict(self.saved_targets)))
-            elif key=='every_country':
+            elif key in ('every_country','every_state'):
                 limit=first(value,'limit',[]);body=[row for row in value if row[0]!='limit']
-                for country in self.c.values():
+                for country in (self.c if key=='every_country' else self.s).values():
                     if self.condition(limit,country,root,current):self.execute(body,country,root,current)
             elif key=='modify_treasury_effect':current.vars['treasury']+=current.vars['treasury_change']
             elif key=='add_political_power':current.pp+=self.value(value,current,root,prev)
             elif key=='add_stability':current.stability+=self.value(value,current,root,prev)
             elif key=='remove_ideas':pass
+            elif key in ('custom_effect_tooltip','log','force_update_dynamic_modifier'):pass
             elif key=='add_equipment_to_stockpile':current.equipment[first(value,'type')]+=self.value(first(value,'amount'),current,root,prev)
             elif key in ('add_dynamic_modifier','remove_dynamic_modifier'):
                 modifier=first(value,'modifier');current.modifiers.add(modifier) if key.startswith('add_') else current.modifiers.discard(modifier)
@@ -474,6 +500,7 @@ class Transactions(unittest.TestCase):
     def raf_case(self):
         donor,region=self.local_case('41','GER');self.m.date='1970.6.1'
         country=self.m.c['GER'];country.flags.add('COLDWAR_GER_1970_initialized')
+        country.flags.update(('cwsec_initialized','cwgg_initialized'))
         country.vars.update(cwger_raf_gen=D(1),cwger_raf_cadre=D(12),cwger_raf_milieu=D(22),cwsec_plan_justice=D(74))
         for state in ('41','42','1080','1251'):
             s=self.m.s.setdefault(state,Scope(state,'state'));s.owner=s.controller=country;s.cores={'GER'};s.has_resistance=False;donor.networks[state]=D(51)
@@ -486,6 +513,8 @@ class Transactions(unittest.TestCase):
         self.assertEqual(country.vars['cwger_raf_cadre'],13)
         self.assertEqual(country.vars['COLDWAR_COL_raf_aid'],5)
         self.m.run('COLDWAR_COL_contacts_monthly',country)
+        self.assertEqual(country.vars['cwger_raf_cadre'],13)
+        self.m.run('COLDWAR_GER_1970_security_external_monthly',country)
         self.assertEqual(country.vars['cwger_raf_cadre'],D('13.25'))
         self.assertEqual(country.vars['cwsec_plan_justice'],74)
         self.assertNotIn('COLDWAR_COL_domestic_security',region.modifiers)
@@ -598,6 +627,210 @@ class Transactions(unittest.TestCase):
         self.m.c['SPR'].vars['COLDWAR_COL_selected']=D(0)
         self.m.run('COLDWAR_COL_recalculate_budget',self.m.c['SPR'])
         self.assertEqual(self.m.c['SPR'].vars['COLDWAR_COL_total_weekly_cost'],D('.012'))
+
+    def test_security_register_tabs_are_exclusive_on_default_and_saved_selections(self):
+        self.m.populate_registry()
+        self.m.c.setdefault('GER',Scope('GER'))
+        pages=['territory','internal','contacts']
+        for tag in ('SPR','ENG','GER','ALG'):
+            country=self.m.c[tag]
+            for selection in (None,0,1,2):
+                if selection is None:country.vars.pop('COLDWAR_COL_section',None)
+                else:country.vars['COLDWAR_COL_section']=D(selection)
+                active=[p for p in pages if self.m.condition(self.m.triggers['COLDWAR_COL_tab_'+p],country)]
+                self.assertEqual(len(active),1,(tag,selection,active))
+                if selection is not None:self.assertEqual(active,[pages[selection]])
+
+    def test_contact_browser_cycles_only_authorised_states_and_wraps(self):
+        donor,region=self.local_case('900','FRA')
+        self.local_case('901','FRA');self.local_case('902','FRA')
+        donor.networks['901']=D(50) # exact threshold remains hidden
+        donor.networks.pop('373',None)
+        donor.vars['COLDWAR_COL_support_target']=D(372)
+        for expected in (900,902,372,900):
+            self.m.run('COLDWAR_COL_next_contact',donor)
+            self.assertEqual(donor.vars['COLDWAR_COL_support_target'],expected)
+        donor.agency=False
+        before=dict(donor.vars)
+        self.m.run('COLDWAR_COL_next_contact',donor)
+        self.assertEqual(donor.vars['COLDWAR_COL_support_target'],before['COLDWAR_COL_support_target'])
+        self.assertFalse(self.m.condition(self.m.triggers['COLDWAR_COL_contact_target_available'],donor))
+
+    def test_ira_and_raf_views_cannot_overlap_and_raf_date_is_preserved(self):
+        donor,region,country=self.raf_case()
+        self.m.run('COLDWAR_COL_refresh_case',self.m.c['ENG'])
+        for viewer in self.m.c.values():
+            ira=self.m.condition(self.m.triggers['COLDWAR_COL_case_target_available'],viewer)
+            raf=self.m.condition(self.m.triggers['COLDWAR_COL_own_raf'],viewer)
+            self.assertFalse(ira and raf)
+        self.assertTrue(self.m.condition(self.m.triggers['COLDWAR_COL_own_raf'],country))
+        self.m.date='1970.1.1'
+        self.assertFalse(self.m.condition(self.m.triggers['COLDWAR_COL_own_raf'],country))
+
+    def test_unified_register_keeps_foreign_controls_and_images_guarded(self):
+        guis=first(parse((ROOT/'common/scripted_guis/COLDWAR_colonial_affairs_gui.txt').read_text()),'scripted_gui')
+        hub=first(guis,'COLDWAR_colonial_affairs_gui');guards=first(hub,'triggers')
+        for widget in ('COLDWAR_COL_support_name','COLDWAR_COL_movement','COLDWAR_COL_support_status','COLDWAR_COL_movement_emblem','COLDWAR_COL_support_funding'):
+            guard=first(guards,widget+'_visible')
+            self.assertIn(('COLDWAR_COL_tab_contacts','=','yes'),guard)
+            self.assertIn(('COLDWAR_COL_contact_target_available','=','yes'),guard)
+        category=first(parse((ROOT/'common/decisions/categories/COLDWAR_colonial_affairs.txt').read_text()),'COLDWAR_colonial_affairs_category')
+        self.assertEqual(first(category,'scripted_gui'),'COLDWAR_colonial_affairs_gui')
+        visible=first(category,'visible')
+        self.assertNotIn('any_state',[k for k,o,v in visible])
+        images=json.loads((ROOT/'tools/colonial_affairs/authority_images.json').read_text())
+        self.assertEqual(len(images['powers']),10)
+        self.assertEqual(set(images['powers']),set(images['sources']))
+        self.assertEqual(set(images['powers']),{row['tag'] for row in images['leaders']})
+
+    def ira_measures_case(self):
+        donor,region=self.local_case('17','ENG');country=self.m.c['ENG']
+        region.owner=country;region.cores={'ENG'};region.has_resistance=False
+        region.vars.update(COLDWAR_COL_cells=D(50),COLDWAR_COL_tension=D(55),COLDWAR_COL_case_policy=D(0))
+        region.flags.add('COLDWAR_COL_ira_initialized')
+        country.pp=D(300);country.vars['treasury']=D(1)
+        self.m.run('COLDWAR_COL_refresh_case',country)
+        return country,region
+
+    def test_casework_payment_cooldown_weekly_cost_and_expiry(self):
+        country,region=self.ira_measures_case();country.pp=D(20);country.vars['treasury']=D('.025')
+        self.m.run('COLDWAR_COL_measure_casework',country)
+        self.assertEqual((country.pp,country.vars['treasury'],region.vars['COLDWAR_COL_cells']),(0,0,48))
+        self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],D('.008'))
+        country.pp=D(200);country.vars['treasury']=D(1)
+        self.m.run('COLDWAR_COL_measure_casework',country)
+        self.assertEqual((country.pp,country.vars['treasury'],region.vars['COLDWAR_COL_cells']),(200,1,48))
+        region.flags.discard('COLDWAR_COL_measure_casework_live')
+        self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],D('.005'))
+
+    def test_ira_measure_insufficient_funds_and_wrong_controller_do_not_pay(self):
+        country,region=self.ira_measures_case();country.vars['treasury']=D('.02499')
+        self.m.run('COLDWAR_COL_measure_casework',country)
+        self.assertEqual(country.pp,300);self.assertEqual(region.vars['COLDWAR_COL_cells'],50)
+        country.vars['treasury']=D(1);region.controller=self.m.c['FRA']
+        self.m.run('COLDWAR_COL_measure_internment',country)
+        self.assertEqual((country.pp,country.vars['treasury']),(300,1))
+
+    def test_internment_has_recruitment_backlash_and_can_be_ended(self):
+        country,region=self.ira_measures_case()
+        self.m.run('COLDWAR_COL_measure_internment',country)
+        self.assertEqual((region.vars['COLDWAR_COL_cells'],region.vars['COLDWAR_COL_tension']),(42,70))
+        self.assertEqual(region.vars['COLDWAR_COL_domestic_workforce'],D('-.051'))
+        self.assertEqual(country.stability,D('.49'))
+        self.m.run('COLDWAR_COL_contacts_monthly',country)
+        self.assertEqual(region.vars['COLDWAR_COL_cells'],45) # 1 policing + 1.5 detention + .5 tension
+        self.assertFalse(self.m.condition(self.m.triggers['COLDWAR_COL_measure_backchannel_available'],country))
+        self.m.run('COLDWAR_COL_measure_release',country)
+        self.assertEqual((region.vars['COLDWAR_COL_cells'],region.vars['COLDWAR_COL_tension']),(48,62))
+        self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],D('.005'))
+        self.assertIn('COLDWAR_COL_measure_internment_cooldown',region.flags)
+        before=country.pp;self.m.run('COLDWAR_COL_measure_release',country);self.assertEqual(country.pp,before)
+
+    def test_reforms_are_not_an_instant_cell_removal_and_block_internment(self):
+        country,region=self.ira_measures_case()
+        self.m.run('COLDWAR_COL_measure_reform',country)
+        self.assertEqual((region.vars['COLDWAR_COL_cells'],region.vars['COLDWAR_COL_tension']),(50,47))
+        self.assertFalse(self.m.condition(self.m.triggers['COLDWAR_COL_measure_internment_available'],country))
+        self.m.run('COLDWAR_COL_contacts_monthly',country)
+        self.assertEqual((region.vars['COLDWAR_COL_cells'],region.vars['COLDWAR_COL_tension']),(51,46))
+
+    def test_backchannel_success_failure_and_foreign_aid_still_matter(self):
+        country,region=self.ira_measures_case()
+        self.m.run('COLDWAR_COL_measure_backchannel',country)
+        self.assertIn('COLDWAR_COL_measure_ceasefire_live',region.flags)
+        self.assertEqual(region.vars['COLDWAR_COL_tension'],50)
+        self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],D('.007'))
+        self.assertEqual(self.m.events[-1][0],'COLDWAR_colonial_contacts.4')
+        donor=self.m.c['ALG'];donor.flags.add('COLDWAR_COL_local_funding_live')
+        donor.vars.update(COLDWAR_COL_local_funding_state=D(17),COLDWAR_COL_local_funding_power=country)
+        self.m.run('COLDWAR_COL_contacts_monthly',country)
+        self.assertEqual((region.vars['COLDWAR_COL_cells'],region.vars['COLDWAR_COL_local_aid']),(51,5))
+        region.flags.discard('COLDWAR_COL_measure_ceasefire_live');region.flags.discard('COLDWAR_COL_measure_backchannel_cooldown')
+        self.m.random_branch=1
+        self.m.run('COLDWAR_COL_measure_backchannel',country)
+        self.assertNotIn('COLDWAR_COL_measure_ceasefire_live',region.flags)
+        self.assertEqual(region.vars['COLDWAR_COL_tension'],55)
+        self.assertEqual(country.stability,D('.495'))
+        self.assertEqual(self.m.events[-1][0],'COLDWAR_colonial_contacts.5')
+
+    def test_roundtable_requires_ceasefire_low_tension_and_reconciled_aid(self):
+        country,region=self.ira_measures_case()
+        self.assertFalse(self.m.condition(self.m.triggers['COLDWAR_COL_measure_roundtable_available'],country))
+        region.flags.add('COLDWAR_COL_measure_ceasefire_live');region.vars['COLDWAR_COL_tension']=D(40)
+        for tag in ('ALG','USA'):
+            donor=self.m.c[tag];donor.flags.add('COLDWAR_COL_local_funding_live')
+            donor.vars.update(COLDWAR_COL_local_funding_state=D(17),COLDWAR_COL_local_funding_power=country)
+        self.m.run('COLDWAR_COL_measure_roundtable',country)
+        self.assertEqual(country.pp,300);self.assertEqual(region.vars['COLDWAR_COL_local_aid'],10)
+        for tag in ('ALG','USA'):self.m.c[tag].flags.discard('COLDWAR_COL_local_funding_live')
+        self.m.run('COLDWAR_COL_measure_roundtable',country)
+        self.assertEqual((country.pp,region.vars['COLDWAR_COL_tension']),(240,30))
+        self.assertNotIn('COLDWAR_COL_ira_settlement',country.flags)
+        self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],D('.013'))
+
+    def test_roundtable_obstruction_callback_and_stale_callback_guard(self):
+        country,region=self.ira_measures_case()
+        events=parse((ROOT/'events/COLDWAR_colonial_contacts.txt').read_text())
+        event=next(v for k,o,v in events if k=='country_event' and first(v,'id')=='COLDWAR_colonial_contacts.6')
+        callback=first(event,'immediate');self.m.random_branch=1
+        self.m.execute(callback,country,country,None)
+        self.assertEqual(region.vars['COLDWAR_COL_cells'],50);self.assertFalse(self.m.events)
+        region.flags.update(('COLDWAR_COL_measure_roundtable_live','COLDWAR_COL_measure_ceasefire_live'))
+        self.m.execute(callback,country,country,None)
+        self.assertEqual((region.vars['COLDWAR_COL_cells'],region.vars['COLDWAR_COL_tension']),(53,65))
+        self.assertNotIn('COLDWAR_COL_measure_ceasefire_live',region.flags)
+        self.assertEqual(self.m.events[-1][0],'COLDWAR_colonial_contacts.7')
+
+    def test_raf_coordination_uses_native_trace_cards_and_charges_once(self):
+        donor,region,country=self.raf_case();country.pp=D(100);country.vars['treasury']=D(1)
+        country.vars.update(cwger_bka_level=D(1),cwsec_w1_ort=D(98),cwsec_w2_st=D(2),cwsec_w2_ort=D(50),cwger_raf_prisoners=D(2))
+        country.focuses.add('COLDWAR_GER_1970_bka_expansion')
+        self.m.run('COLDWAR_COL_measure_coordination',country)
+        self.assertEqual((country.pp,country.vars['treasury']),(75,D('.965')))
+        self.assertEqual((country.vars['cwsec_w1_ort'],country.vars['cwsec_w2_ort']),(100,50))
+        self.m.run('COLDWAR_GER_1970_security_external_monthly',country)
+        self.assertEqual(country.vars['cwsec_w3_ort'],9)
+        self.assertEqual(country.vars['cwger_raf_cadre'],12)
+        self.m.run('COLDWAR_COL_measure_coordination',country)
+        self.assertEqual(country.pp,75)
+        self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],D('.003'))
+
+    def test_raf_oversight_and_medical_measures_have_native_tradeoffs(self):
+        donor,region,country=self.raf_case();country.pp=D(200);country.vars['treasury']=D(1)
+        country.vars.update(cwger_rechtsstaat=D(50),cwger_security=D(50),cwger_raf_prisoners=D(2),cwsec_hunger=D(35))
+        country.focuses.update(('COLDWAR_GER_1970_data_protection','COLDWAR_GER_1970_stammheim_trial'))
+        self.m.run('COLDWAR_COL_measure_judicial',country)
+        self.assertEqual((country.vars['cwger_rechtsstaat'],country.vars['cwger_security'],country.vars['cwger_raf_milieu']),(53,48,19))
+        self.m.run('COLDWAR_COL_measure_medical',country)
+        self.assertEqual((country.vars['cwsec_hunger'],country.vars['cwger_security'],country.vars['cwger_raf_milieu']),(25,46,17))
+        self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],D('.005'))
+
+    def test_measures_cleanup_ends_costs_but_preserves_cooldowns(self):
+        country,region=self.ira_measures_case()
+        self.m.run('COLDWAR_COL_measure_casework',country);region.owner=self.m.c['FRA']
+        self.m.run('COLDWAR_COL_measures_daily',country);self.m.run('COLDWAR_COL_domestic_budget',country)
+        self.assertNotIn('COLDWAR_COL_measure_casework_live',region.flags)
+        self.assertIn('COLDWAR_COL_measure_casework_cooldown',region.flags)
+        self.assertEqual(country.vars['COLDWAR_COL_domestic_weekly_cost'],0)
+
+    def test_measure_gui_preserves_group_page_and_payment_guards(self):
+        guis=first(parse((ROOT/'common/scripted_guis/COLDWAR_colonial_affairs_gui.txt').read_text()),'scripted_gui')
+        hub=first(guis,'COLDWAR_colonial_affairs_gui');guards=first(hub,'triggers');effects=first(hub,'effects')
+        mapping=json.loads((ROOT/'tools/colonial_affairs/ui_measures.json').read_text())['widgets']
+        for name,data in mapping.items():
+            visible=first(guards,name+'_visible')
+            self.assertIn(('COLDWAR_COL_measure_'+data['group']+'_available','=','yes'),visible)
+            self.assertIn(('has_country_flag','=','COLDWAR_COL_measures_open'),visible)
+            if name.endswith('_terms'):continue
+            self.assertEqual(first(guards,name+'_click_enabled'),[(name+'_available','=','yes')])
+            self.assertEqual(first(effects,name+'_click'),[(name,'=','yes')])
 
 
 if __name__=='__main__':

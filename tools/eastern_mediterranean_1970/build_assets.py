@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: eastern mediterranean 1970 — build assets.
+# IMPERIA COLD WAR — Regional portrait conversion with Greek leadership extensions.
 """Build HOI4 leader DDS files from completed, existing portrait masters.
 
 This script performs only a restrained aspect-ratio crop and format/size
@@ -207,6 +207,13 @@ def main() -> None:
                         help="Mod root; override for isolated tests")
     args = parser.parse_args()
     result = build(read_records(args.generation, args.generated_dir), args.output_root.resolve(), args.generation.resolve())
+    if args.output_root.resolve() == ROOT and args.generation.resolve() == HERE / 'generation.json':
+        # The dedicated Greek owner preserves its completed additions after
+        # the legacy regional asset manifest is rebuilt. Never writes from a fixture.
+        import sys
+        sys.path.insert(0, str(ROOT / 'tools'))
+        from greece_1970_leaders.build import assets as greek_leadership_assets
+        result['greek_leadership_portraits'] = len(greek_leadership_assets())
     print(json.dumps(result, ensure_ascii=False))
 
 

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Export the Imagegen military badge to native idea-icon size.
+# IMPERIA COLD WAR — Export the military badge in native BGRA DDS format.
 from pathlib import Path
 import hashlib
 import json
@@ -21,13 +21,14 @@ def main():
         assert image.getchannel('A').getextrema() == (0,255)
         assert image.getpixel((0,0))[3] == 0
         pixels = image.tobytes()
-    header = [124,4111,64,64,64*4,0,0]+[0]*11+[32,65,0,32,255,65280,16711680,4278190080,4096,0,0,0,0]
+    # IMPERIA COLD WAR — Preserve the intended military palette in the game.
+    header = [124,4111,64,64,64*4,0,0]+[0]*11+[32,65,0,32,16711680,65280,255,4278190080,4096,0,0,0,0]
     dds = OUTPUT.with_suffix('.dds')
-    dds.write_bytes(b'DDS '+struct.pack('<31I',*header)+pixels)
+    dds.write_bytes(b'DDS '+struct.pack('<31I',*header)+image.tobytes('raw', 'BGRA'))
     assert Image.open(dds).convert('RGBA').tobytes() == pixels
     report = dict(tool='Built-in image_gen, precise-object-edit',
                   master='tools/joint_training_icon/master.png',prompt='tools/joint_training_icon/prompt.txt',
-                  output=str(dds.relative_to(ROOT)),size=[64,64],format='Uncompressed RGBA32 DDS',
+                  output=str(dds.relative_to(ROOT)),size=[64,64],format='Uncompressed BGRA8 DDS (A8R8G8B8)',
                   alpha_preserved=True,lossless_dds_matches_png=True,
                   master_sha256=hashlib.sha256(MASTER.read_bytes()).hexdigest(),
                   dds_sha256=hashlib.sha256(dds.read_bytes()).hexdigest(),engine_tested=False)

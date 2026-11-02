@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Generic construction and economic progression canonical integration.
 # IMPERIA CW — Cold War: Generic 1970 national focus content generator.
 """COLDWAR | build the party paths of the 1970 generic tree.
 
@@ -9,6 +10,8 @@ from gen_common import *
 import gen_effects as GE
 from gen_load import load_focus_file, simple
 from gen_focus import political_sections, domain_moves, write_focus_file
+from building_grants.grants import runtime_outputs as grant_runtime_outputs
+from economic_organisation.focus_integration import runtime_files as economic_path_runtime_files
 from gen_icons import sprite_pool, picture_pool, keywords, assign, ICON_OVERRIDE, PICTURE_OVERRIDE
 from gen_misc import (ideas_file, dynmod_file, old_programme_icons, old_loc_transform, new_loc_file, shared_tt_file,
                       effects_patch, loc_keys)
@@ -125,6 +128,11 @@ def main():
     eff, eff_bom = read(f'{MOD}/{F_EFFECTS}')
     write(F_EFFECTS, effects_patch(eff), bom=eff_bom)
     for relative, payload in runtime_files().items():
+        write(relative, payload, bom=relative.endswith('.yml'))
+    for relative, payload in grant_runtime_outputs().items():
+        write(relative, payload, bom=relative.endswith('.yml'))
+    # IMPERIA COLD WAR — Emit economic progression providers with their focus calls.
+    for relative, payload in economic_path_runtime_files().items():
         write(relative, payload, bom=relative.endswith('.yml'))
 
     report = dict(

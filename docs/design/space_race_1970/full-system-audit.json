@@ -1,0 +1,175 @@
+{
+  "project": "IMPERIA COLD WAR",
+  "feature": "Full Space Race system audit",
+  "review_date": "2026-10-23",
+  "scope": [
+    "84 programmes and four funding policies",
+    "technology and precursor gates",
+    "weekly development, upkeep, inquiries and international invoices",
+    "launch/objective/anomaly risk and frozen flight data",
+    "general research, conserved partner awards and world firsts",
+    "crew and two-slot operational contracts",
+    "historical standings, news retention and native GUI/event art",
+    "persistent GC shutdown and the existing native orbital adapter"
+  ],
+  "findings": [
+    {
+      "id": "SPACE-AUDIT-UI-01",
+      "priority": "P1",
+      "status": "corrected",
+      "title": "Invalid named-target localisation",
+      "evidence": "The game log recorded 1015 unknown-promotion errors for event_target:cw_sr_rank1/2/3. Rank names were empty; world-first-holder strings used the same invalid syntax.",
+      "correction": "Use native [cw_sr_rank1.GetName] and equivalent holder scopes. The preview renderer now rejects the invalid prefix.",
+      "compiler_sources": "compile.py, presentation.py, render_preview.py"
+    },
+    {
+      "id": "SPACE-AUDIT-UI-02",
+      "priority": "P1",
+      "status": "corrected",
+      "title": "Duplicate native GUI name",
+      "evidence": "A conditions textbox and the international-operations button shared cw_sr_control_operations. The engine logged a duplicate widget; the shared localisation key overwrote the finance conditions text.",
+      "correction": "Give the conditions panel its own name and key. The compiler and audit reject duplicate names across widget types.",
+      "compiler_sources": "orbital_atlas.py, presentation.py"
+    },
+    {
+      "id": "SPACE-AUDIT-FIN-01",
+      "priority": "P1",
+      "status": "corrected",
+      "title": "Negative treasury creates an invalid clamp interval",
+      "evidence": "Development and inquiry payments used clamp min=0, max=treasury even when treasury was negative. The previous model silently repaired the invalid interval.",
+      "correction": "Derive nonnegative available cash before calculating payments. Assert ordered clamp bounds in the interpreter. Exercise 504 unfunded/negative-cash cases across all 84 programmes.",
+      "compiler_sources": "compile.py, validate.py"
+    },
+    {
+      "id": "SPACE-AUDIT-CREW-01",
+      "priority": "P1",
+      "status": "corrected",
+      "title": "Orphaned preflight delegations and invalid training payments",
+      "evidence": "Accepted astronaut delegations remained reserved after operator AI takeover, annexation, war or a broken operator/seat/serial binding. Some invalid agreements still bought weekly training.",
+      "correction": "Use one exact bilateral preflight binding for billing and daily administrative withdrawal. Retain existing consent, paid qualification, no-refund and outstanding-popup rules.",
+      "compiler_sources": "crew.py"
+    },
+    {
+      "id": "SPACE-AUDIT-OPS-01",
+      "priority": "P2",
+      "status": "corrected",
+      "title": "Operational training did not verify the exact work-order binding",
+      "evidence": "The weekly work-package bill checked an existing human operator at peace but not the matching country, role, host status and offer serial. Daily cleanup could run after another charge.",
+      "correction": "Use exact per-slot preflight triggers before billing and reclaim invalid pending/accepted orders without cancelling another valid order.",
+      "compiler_sources": "cooperation.py"
+    },
+    {
+      "id": "SPACE-AUDIT-UI-03",
+      "priority": "P2",
+      "status": "corrected",
+      "title": "Qualified launches showed a missing development place",
+      "evidence": "A qualified programme could correctly launch while three other programmes occupied the development ceiling, but its checklist showed development capacity as missing.",
+      "correction": "Show that qualified hardware needs no additional development place. Retain the real three-place start guard.",
+      "compiler_sources": "readiness.py"
+    },
+    {
+      "id": "SPACE-AUDIT-UI-04",
+      "priority": "P2",
+      "status": "corrected",
+      "title": "First-success preview overstated unclaimed prestige",
+      "evidence": "After a partial-result award, the UI still showed full first-success prestige although runtime deducted the partial payout before sharing the remainder.",
+      "correction": "Derive the remaining prestige pool once for the selected programme and use it in national, crew and operational reward previews. Compare the displayed figure with the actual later transaction.",
+      "compiler_sources": "compile.py, readiness.py, crew.py, cooperation.py"
+    },
+    {
+      "id": "SPACE-AUDIT-UI-05",
+      "priority": "P2",
+      "status": "corrected",
+      "title": "Long country names could be clipped in standings",
+      "evidence": "A 24-pixel rank textbox could not fit two 17-pixel font lines. Long current country names could hide their name or score.",
+      "correction": "Allow two lines inside the existing standings bar; retain native country names and flags.",
+      "compiler_sources": "orbital_atlas.py"
+    },
+    {
+      "id": "SPACE-AUDIT-CREW-02",
+      "priority": "P1",
+      "status": "corrected",
+      "title": "Disappeared flight operators stranded reservations and stale settlement could erase a replacement",
+      "evidence": "A delegation remained administratively reserved if its operator was annexed during flight. Unconditional assignment cleanup in an old flight settlement could subsequently erase a replacement delegation after the old country returned.",
+      "correction": "Release only the administrative reservation when the operator no longer exists. Preserve frozen flight nationality, money and historical entitlements. A later settlement clears a current delegation only when host, programme, seat, serial and flight status still match.",
+      "compiler_sources": "crew.py"
+    },
+    {
+      "id": "SPACE-AUDIT-CREW-03",
+      "priority": "P2",
+      "status": "corrected",
+      "title": "Legacy foreign-pilot casualty charged to the national total",
+      "evidence": "The legacy Interkosmos mission had two crew, one national crew member, one national manpower loss, but added two to the national fatality counter. The prior risk test encoded that wrong expectation.",
+      "correction": "National fatality counter uses nationalCrewSize. Total mission losses remain two. Corrected the risk assertion and added a dedicated launch-accident regression.",
+      "compiler_sources": "compile.py, qa_risks.py, qa_system_audit.py"
+    }
+  ],
+  "engine_log_evidence": {
+    "path": "<HOI4 user directory>/logs/error.log",
+    "snapshot_bytes": 104857618,
+    "invalid_rank_promotions": 1015,
+    "duplicate_operations_widget_warnings": 1,
+    "after_change_engine_restart_tested": false
+  },
+  "validation": {
+    "status": "passed",
+    "report": "tools/space_race_1970/audit_regression.json",
+    "focused": "tools/space_race_1970/system_audit_validation.json",
+    "before_fix_reproductions": "tools/space_race_1970/audit_before_fixes.json",
+    "layout": "docs/design/space_race_1970/native_review/audit-layout.json",
+    "in_game_retested": false,
+    "live_multiplayer_tested": false,
+    "checks": 70117,
+    "generated_outputs": 158,
+    "encoding_issues": [],
+    "repeat_build_changed_outputs": [],
+    "native_layout_overflows": 0,
+    "multiplayer_ui_isolation": {
+      "report": "tools/space_race_1970/multiplayer_ui_validation.json",
+      "interleaved_human_countries": 3,
+      "ui_actions": 45,
+      "independent_country_views": true,
+      "competing_guest_and_world_first_guards": "passed",
+      "same_country_coop": "Country-scoped menu selections are shared.",
+      "live_network_test": false
+    }
+  },
+  "remaining_boundaries": [
+    {
+      "id": "SPACE-INFRA-001",
+      "classification": "simulation abstraction",
+      "detail": "No state-based orbital launchpads, pad damage, launch corridors or physical launch queue. National engineering receipts and mission appropriations provide the current launch abstraction."
+    },
+    {
+      "id": "SPACE-HARDWARE-002",
+      "classification": "simulation abstraction",
+      "detail": "Missions require actual researched hardware but do not consume an OLV stock unit. Procurement is financed through mission appropriations; native production must not be charged a second time without reconciling this bill."
+    },
+    {
+      "id": "SPACE-LIFECYCLE-005",
+      "classification": "simulation abstraction",
+      "detail": "Stations and habitats are deployed programmes, not complete persistent assets with separate stores, crew rotation and resupply endurance."
+    },
+    {
+      "id": "SPACE-LEGACY-INTERKOSMOS",
+      "classification": "legacy special case",
+      "detail": "The old Interkosmos guest-cosmonaut programme uses a two-person mission with one national astronaut and an abstract foreign pilot. It remains outside the normal selectable guest-seat model; a full role reversal/provider roster requires a dedicated content change. National casualty accounting is corrected; the foreign commander still has no separately selected nationality."
+    },
+    {
+      "id": "SPACE-OPERATOR-AI",
+      "classification": "existing player-only policy",
+      "detail": "If a still-existing operator becomes AI after departure, its flight is suspended until a player returns. Launched reservations remain committed. Annexation now releases administrative reservations; no AI progression, automatic fictional deaths, refunds or new mission outcomes were introduced."
+    },
+    {
+      "id": "SPACE-VALIDATION-006",
+      "classification": "live validation required",
+      "detail": "The deterministic AST interpreter and native layout renderer do not replace a real multiplayer soak test, save/load and hotjoin test, or a naturally financed 25-year campaign. The full MD orbital/ASAT runtime remains outside the delivery-adapter contract model."
+    }
+  ],
+  "provenance": {
+    "source": "Existing project compiler, generated Clausewitz files, local HOI4 error log, and unchanged MD donor conventions",
+    "author_credit": "IMPERIA COLD WAR project modifications; inherited MD and Paradox credits remain in their original files. Individual authors unknown where not recorded.",
+    "licence_or_permission": "Existing notices apply; separate redistribution rights are unknown where not documented. No new third-party material downloaded.",
+    "modifications": "Original lifecycle guards, ordered-cash calculation, native localisation/GUI corrections and additional automated checks. Existing images, flags and fonts retain their separate notices."
+  }
+}

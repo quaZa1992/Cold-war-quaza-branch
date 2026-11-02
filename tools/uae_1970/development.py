@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uae 1970 — development.
+# IMPERIA COLD WAR — UAE development, construction slots and approved growth rewards.
 """User-authorized costly industrialisation and strong population development.
 
 Values are roleplay balance in native MD billions/resource units, not historical
@@ -57,8 +57,8 @@ def apply_revision(data):
     aviation = by['aviation_hub']
     aviation.update(treasury_cost_billion=2.5, days=105, cost=15.0, available='always = yes',
         description="Dubai's commercial air links need a larger airport, reliable ground services and connections to the port economy. A new runway and supporting facilities can bring passengers and high-value cargo to the coast, but their construction and operation require substantial funding and electricity.",
-        reward_summary=['Treasury: -$2.50 billion.', 'Complete one airport/airbase level in Dubai.'],
-        effect_body='179 = { add_building_construction = { type = air_base level = 1 instant_build = yes } }')
+        reward_summary=['Treasury: -$2.50 billion.', 'Complete one airport/airbase level and add one shared building slot in Dubai.'],
+        effect_body='179 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = air_base level = 1 instant_build = yes } }')
 
     # A completed industrial base is a genuine extra condition, not a hidden
     # duplicate of a graph predecessor. The compiler supplies its numeric label.

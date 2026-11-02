@@ -1,3 +1,17 @@
+# IMPERIA COLD WAR — Brazil 1970 weekly finance integration.
+# IMPERIA COLD WAR — Chile 1970 weekly programme expense integration.
+# IMPERIA COLD WAR — Argentina 1970 custom integration.
+# IMPERIA COLD WAR — Chile 1970 weekly programme expense integration.
+# IMPERIA COLD WAR — France 1970 national programme integration.
+# IMPERIA COLD WAR — Israel V2 native budget and protected bilateral principal integration.
+# IMPERIA COLD WAR — France 1970 national programme integration.
+# IMPERIA COLD WAR — Dynamic 1970 apartheid policies and reciprocal diplomacy.
+# IMPERIA COLD WAR — USA 1970 national programmes and negotiated partnerships.
+# IMPERIA COLD WAR — Universal SSR focus programme integration.
+# IMPERIA COLD WAR — USA 1970 national programmes and negotiated partnerships.
+# IMPERIA COLD WAR — COMECON weekly national programme expenses integration.
+# IMPERIA COLD WAR — USA 1970 national programmes and negotiated partnerships.
+# IMPERIA COLD WAR — Suez navigation income and fiscal cache integration.
 # Author(s): Angriest Bird, Hiddengearz, Killerrabbit
 
 # GDP Calculation
@@ -220,6 +234,8 @@ setup_spending_ladders = {
 # Effect: ingame_update_setup
 # Purpose: Aggregates every income and expense stream, then refreshes the economy UI; the weekly economic tick
 ingame_update_setup = {
+	# IMPERIA COLD WAR — Apply the resolved canal burden before reading fiscal modifiers.
+	mdcw_suez_update_country = yes
 	#National values (GDP, pop etc.) MUST BE FIRST
 	update_state_variables = yes
 	# Resident costs use the refreshed population and feed the native spending categories.
@@ -551,6 +567,8 @@ calculate_tax_gain = {
 				multiply = {
 					value = 1
 					add = modifier@agricolture_productivity_modifier
+					# IMPERIA COLD WAR — Commercial agriculture only.
+					add = modifier@COLDWAR_AP_commercial_agriculture_productivity
 				}
 				multiply = agriculture_district_manpower_fulfillment
 				multiply = {
@@ -808,6 +826,23 @@ calculate_tax_gain = {
 # Purpose: Aggregates special income sources (seigniorage, ideas, canal revenue, foreign aid)
 calculate_additional_income_rate = {
 	set_variable = { additional_income_rate = 0 }
+# IMPERIA COLD WAR — Kissinger weekly income BEGIN
+COLDWAR_USA_KS_calculate_streams = yes
+add_to_variable = { additional_income_rate = COLDWAR_USA_KS_weekly_income }
+# IMPERIA COLD WAR — Signed superpower programmes in weekly MD units
+icwt_programme_fiscal = yes
+add_to_variable = { additional_income_rate = icwt_weekly_income }
+# IMPERIA COLD WAR — Kissinger weekly income END
+	# COLDWAR: European Communities - weekly receipts from the Community budget (COLDWAR_EC_1970_budget.txt)
+	add_to_variable = { additional_income_rate = cwec_wk_recv } # COLDWAR
+	# COLDWAR: COMECON - weekly receipts of the clearing and IIB credits (COLDWAR_CMEA_1970_settlement.txt)
+	add_to_variable = { additional_income_rate = cwcm_wk_recv } # COLDWAR
+# IMPERIA COLD WAR — USA signed weekly income BEGIN
+COLDWAR_USA_agreements_calculate_weekly_streams = yes
+	add_to_variable = { additional_income_rate = COLDWAR_USA_agreements_weekly_income }
+	COLDWAR_USA_early_calculate_weekly_streams = yes
+	add_to_variable = { additional_income_rate = COLDWAR_USA_early_weekly_income }
+# IMPERIA COLD WAR — USA signed weekly income END
 	# IMPERIA CW — Cold War: Guest-worker remittances enter native weekly income.
 	mdcw_gw_add_remittance_income = yes
 	# Own Libyan portfolio income; producer resets and computes its variables.
@@ -979,12 +1014,14 @@ calculate_additional_income_rate = {
 		}
 	}
 	# IMPERIA CW — Cold War: Economic calibration and weekly finances.
-	if = { limit = { has_idea = full_control_of_suez OR = { NOT = { IMP_is_1970_scenario = yes } has_global_flag = ISR70_policy_canal_open } }
+	# IMPERIA COLD WAR — Transit income requires an open physical canal.
+	if = { limit = { has_idea = full_control_of_suez OR = { NOT = { IMP_is_1970_scenario = yes } has_global_flag = ISR70_policy_canal_open } NOT = { has_global_flag = SUEZ_CANAL_BLOCKED } }
 		set_variable = { additional_income_suez = 0.1 }
 		add_to_variable = { additional_income_rate = additional_income_suez }
 	}
 	# IMPERIA CW — Cold War: Economic calibration and weekly finances.
-	if = { limit = { has_idea = partial_control_of_suez OR = { NOT = { IMP_is_1970_scenario = yes } has_global_flag = ISR70_policy_canal_open } }
+	# IMPERIA COLD WAR — Transit income requires an open physical canal.
+	if = { limit = { has_idea = partial_control_of_suez OR = { NOT = { IMP_is_1970_scenario = yes } has_global_flag = ISR70_policy_canal_open } NOT = { has_global_flag = SUEZ_CANAL_BLOCKED } }
 		set_variable = { additional_income_suez_partial = 0.05 }
 		add_to_variable = { additional_income_rate = additional_income_suez_partial }
 	}
@@ -2504,10 +2541,40 @@ calculate_additional_income_rate = {
 	if = { limit = { has_idea = CPD_war_reparations_receiver }
 		add_to_variable = { additional_income_rate = CPD_reparations_weekly }
 	}
-# IMPERIA CW — Cold War: South Korea1970 national programme.
+# IMPERIA COLD WAR — Cold War: South Korea1970 national programme.
 # COLDWAR KOR WEEKLY INCOME BEGIN
 	COLDWAR_KOR_contract_income = yes
 # COLDWAR KOR WEEKLY INCOME END
+
+
+
+
+
+# IMPERIA COLD WAR — Cyprus weekly income BEGIN
+COLDWAR_CYP_R2_calculate_weekly_streams = yes
+add_to_variable = { additional_income_rate = COLDWAR_CYP_R2_weekly_income }
+# IMPERIA COLD WAR — Cyprus weekly income END
+# IMPERIA COLD WAR — Israel V2 money [income streams] BEGIN
+if = { limit = { ISR2_is_scenario = yes } ISR2_refresh = yes }
+set_variable = { ISR2_money_weekly_income = 0 }
+if = { limit = { ISR2_is_scenario = yes has_variable = ISR2_core_weekly_income } add_to_variable = { ISR2_money_weekly_income = ISR2_core_weekly_income } }
+if = { limit = { ISR2_is_scenario = yes has_variable = ISR2_domestic_weekly_income } add_to_variable = { ISR2_money_weekly_income = ISR2_domestic_weekly_income } }
+if = { limit = { ISR2_is_scenario = yes has_variable = ISR2_territories_weekly_income } add_to_variable = { ISR2_money_weekly_income = ISR2_territories_weekly_income } }
+if = { limit = { IMP_is_1970_scenario = yes has_variable = ISR2_bilateral_weekly_income OR = { ISR2_is_scenario = yes tag = ETH tag = UGA tag = KEN tag = USA tag = ROM tag = EGY tag = PER tag = PAL tag = SOV tag = JOR tag = DRC tag = TUR tag = GER } } add_to_variable = { ISR2_money_weekly_income = ISR2_bilateral_weekly_income } }
+add_to_variable = { additional_income_rate = ISR2_money_weekly_income }
+# IMPERIA COLD WAR — Israel V2 money [income streams] END
+	# IMPERIA COLD WAR — France matched weekly income BEGIN
+	# The native aggregator runs in each payer or recipient country scope.
+	COLDWAR_FRA2_add_weekly_income = yes
+	# IMPERIA COLD WAR — France matched weekly income END
+
+# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_INCOME_RATE BEGIN
+COLDWAR_ARG_add_weekly_income = yes
+# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_INCOME_RATE END
+
+	# IMPERIA COLD WAR — Brazil weekly programme stream BEGIN
+	COLDWAR_BRA_add_weekly_income = yes
+	# IMPERIA COLD WAR — Brazil weekly programme stream END
 }
 
 # Effect: update_tension_premium
@@ -2544,6 +2611,9 @@ calculate_debt_fx_factor = {
 # Effect: calculate_interest_rate
 # Purpose: Computes daily interest rate on debt based on debt-to-GDP ratio, monetary policy, and world threat
 calculate_interest_rate = {
+# IMPERIA COLD WAR — Israel V2 money [principal floor before interest] BEGIN
+ISR2_money_preserve_principal = yes
+# IMPERIA COLD WAR — Israel V2 money [principal floor before interest] END
 	# Handle no debt case - skip all debt calculations
 	if = {
 		limit = { check_variable = { debt = 0 } }
@@ -2664,6 +2734,14 @@ calculate_interest_rate = {
 		clear_variable = salafist_drift_very_high_interest_modifier
 		clear_variable = nationalist_drift_very_high_interest_modifier
 	}
+# IMPERIA COLD WAR — Israel V2 money [exclude contracted interest] BEGIN
+if = { limit = { ISR2_money_has_protected_loan = yes }
+ set_temp_variable = { ISR2_money_interest_exclusion = { value = ISR2_bilateral_loan_outstanding multiply = 0.00019 multiply = interest_rate multiply = debt_fx_factor } }
+ if = { limit = { check_variable = { ISR2_money_interest_exclusion > debt_rate } } set_temp_variable = { ISR2_money_interest_exclusion = debt_rate } }
+ subtract_from_variable = { debt_rate = ISR2_money_interest_exclusion }
+ clamp_variable = { var = debt_rate min = 0 }
+}
+# IMPERIA COLD WAR — Israel V2 money [exclude contracted interest] END
 }
 
 restructure_debt_after_financial_collapse = {
@@ -2692,6 +2770,9 @@ restructure_debt_after_financial_collapse = {
 	else_if = { limit = { check_variable = { debt > 0 } }
 		set_variable = { debt = 0 }
 	}
+# IMPERIA COLD WAR — Israel V2 money [restructuring preserves principal] BEGIN
+ISR2_money_preserve_principal = yes
+# IMPERIA COLD WAR — Israel V2 money [restructuring preserves principal] END
 	ingame_update_setup = yes
 }
 
@@ -3316,7 +3397,7 @@ update_military_rate = {
 	}
 
 	# IMPERIA CW — Cold War: quaZa uranium supply chain and raid integration.
-	# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+	# IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.
 	COLDWAR_nr_calculate_budget = yes
 	COLDWAR_calculate_nuclear_development_budget = yes
 	set_variable = { defence_gain = { value = array_defence_spend^def_index add = defence_breakdown_cyber add = COLDWAR_nuclear_development_weekly_cost add = COLDWAR_nr_weekly_cost clamp = { min = 0 max = @math_expressions_max } } }
@@ -3670,6 +3751,16 @@ update_infra_rate = {
 # Purpose: Aggregates special expenses (propaganda campaigns, diplomatic actions, special projects)
 calculate_additional_expense_rate = {
 	set_variable = { additional_expenses_rate = 0 }
+# COLDWAR_CHL_WEEKLY_EXPENSES_BEGIN
+if = { limit = { has_variable = COLDWAR_CHL_domestic_weekly } add_to_variable = { additional_expenses_rate = COLDWAR_CHL_domestic_weekly } }
+if = { limit = { has_variable = COLDWAR_CHL_politics_weekly } add_to_variable = { additional_expenses_rate = COLDWAR_CHL_politics_weekly } }
+if = { limit = { has_variable = COLDWAR_CHL_diplomacy_weekly } add_to_variable = { additional_expenses_rate = COLDWAR_CHL_diplomacy_weekly } }
+# COLDWAR_CHL_WEEKLY_EXPENSES_END
+
+	# COLDWAR: COMECON - weekly payments of the clearing, programmes and IIB credits (COLDWAR_CMEA_1970_settlement.txt)
+	add_to_variable = { additional_expenses_rate = cwcm_wk_pay } # COLDWAR
+	# COLDWAR: European Communities - weekly payments to the Community budget (COLDWAR_EC_1970_budget.txt)
+	add_to_variable = { additional_expenses_rate = cwec_wk_pay } # COLDWAR
 	# Existing bilateral subsidies are separate from native company/overlord subsidies.
 	# IMPERIA CW — Cold War: Economic calibration and weekly finances.
 	add_to_variable = { additional_expenses_rate = total_subsidies_out }
@@ -4536,24 +4627,71 @@ calculate_additional_expense_rate = {
 		if = { limit = { has_country_flag = SAU_turkey_pipeline_open } add_to_variable = { additional_expense_SAU_pipeline = 1.25 } }
 		add_to_variable = { additional_expenses_rate = additional_expense_SAU_pipeline }
 	}
+# IMPERIA COLD WAR — SSR weekly programme expenses BEGIN
+	COLDWAR_SSR_add_weekly_expenses = yes
+	# IMPERIA COLD WAR — SSR weekly programme expenses END
 	# IMPERIA CW — Cold War: Economic calibration and weekly finances.
 	# Current Cold War monthly programme/bloc costs enter weekly accounts once.
 	if = {
 		limit = { has_global_flag = mdcw_cw_initialized has_country_flag = mdcw_cw_initialized }
 		mdcw_cw_add_weekly_expenses = yes
 	}
-	# IMPERIA CW — Cold War: North Korea 1970 national programme.
+	# IMPERIA COLD WAR — Cold War: North Korea 1970 national programme.
 	COLDWAR_NKO_foreign_add_weekly_expenses = yes
 	# IMPERIA CW — Cold War: Guest-worker integration programme expenses.
 	add_to_variable = { additional_expenses_rate = gw_project_weekly }
 	# IMPERIA CW — Cold War: Settlement grants are an actual weekly expense.
 	add_to_variable = { additional_expenses_rate = gw_dp_retention_weekly }
+# IMPERIA COLD WAR — USA signed weekly expenses BEGIN
+COLDWAR_USA_agreements_calculate_weekly_streams = yes
+	add_to_variable = { additional_expenses_rate = COLDWAR_USA_agreements_weekly_expense }
+	COLDWAR_USA_early_calculate_weekly_streams = yes
+	add_to_variable = { additional_expenses_rate = COLDWAR_USA_early_weekly_expense }
+	COLDWAR_USA_dom_add_expense_rate = yes
+# IMPERIA COLD WAR — USA signed weekly expenses END
 
-# IMPERIA CW — Cold War: South Korea1970 national programme.
+# IMPERIA COLD WAR — Cold War: South Korea1970 national programme.
 # COLDWAR KOR WEEKLY EXPENSES BEGIN
 	COLDWAR_KOR_add_weekly_programme_cost = yes
 	COLDWAR_KOR_contract_expenses = yes
 # COLDWAR KOR WEEKLY EXPENSES END
+
+
+
+
+
+# IMPERIA COLD WAR — Cyprus weekly expenses BEGIN
+COLDWAR_CYP_R2_calculate_weekly_streams = yes
+add_to_variable = { additional_expenses_rate = COLDWAR_CYP_R2_weekly_expenses }
+# IMPERIA COLD WAR — Cyprus weekly expenses END
+	# IMPERIA COLD WAR — France GDP programme expenses BEGIN
+	# The native aggregator runs in each payer country, including every RP recipient.
+	COLDWAR_FRA2_add_weekly_expenses = yes
+	# IMPERIA COLD WAR — France GDP programme expenses END
+# IMPERIA COLD WAR — Israel V2 money [expense streams] BEGIN
+if = { limit = { ISR2_is_scenario = yes } ISR2_refresh = yes }
+set_variable = { ISR2_money_weekly_expense = 0 }
+if = { limit = { ISR2_is_scenario = yes has_variable = ISR2_core_weekly_expense } add_to_variable = { ISR2_money_weekly_expense = ISR2_core_weekly_expense } }
+if = { limit = { ISR2_is_scenario = yes has_variable = ISR2_domestic_weekly_expense } add_to_variable = { ISR2_money_weekly_expense = ISR2_domestic_weekly_expense } }
+if = { limit = { ISR2_is_scenario = yes has_variable = ISR2_territories_weekly_expense } add_to_variable = { ISR2_money_weekly_expense = ISR2_territories_weekly_expense } }
+if = { limit = { IMP_is_1970_scenario = yes has_variable = ISR2_bilateral_weekly_expense OR = { ISR2_is_scenario = yes tag = ETH tag = UGA tag = KEN tag = USA tag = ROM tag = EGY tag = PER tag = PAL tag = SOV tag = JOR tag = DRC tag = TUR tag = GER } } add_to_variable = { ISR2_money_weekly_expense = ISR2_bilateral_weekly_expense } }
+add_to_variable = { additional_expenses_rate = ISR2_money_weekly_expense }
+# IMPERIA COLD WAR — Israel V2 money [expense streams] END
+# IMPERIA COLD WAR — Kissinger weekly expense BEGIN
+COLDWAR_USA_KS_calculate_streams = yes
+add_to_variable = { additional_expenses_rate = COLDWAR_USA_KS_weekly_expense }
+# IMPERIA COLD WAR — Signed superpower programmes in weekly MD units
+icwt_programme_fiscal = yes
+add_to_variable = { additional_expenses_rate = icwt_weekly_expense }
+# IMPERIA COLD WAR — Kissinger weekly expense END
+
+# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_EXPENSE_RATE BEGIN
+COLDWAR_ARG_add_weekly_expenses = yes
+# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_EXPENSE_RATE END
+
+	# IMPERIA COLD WAR — Brazil weekly programme stream BEGIN
+	COLDWAR_BRA_add_weekly_expenses = yes
+	# IMPERIA COLD WAR — Brazil weekly programme stream END
 }
 
 # Effect: calculate_int_investments_rate
@@ -6063,7 +6201,8 @@ calculate_gdp = {
 	set_temp_variable = {
 		gdp_from_agriculture_district = {
 			value = agriculture_district_total
-			multiply = { value = @gdp_agriculture_district_base_factor add = { value = @gdp_agriculture_district_prod_factor multiply = modifier@agricolture_productivity_modifier } }
+			multiply = { value = @gdp_agriculture_district_base_factor add = { value = @gdp_agriculture_district_prod_factor multiply = { value = modifier@agricolture_productivity_modifier add = modifier@COLDWAR_AP_commercial_agriculture_productivity } # IMPERIA COLD WAR — Commercial agriculture only.
+ } }
 			multiply = agriculture_district_manpower_fulfillment
 		}
 	}

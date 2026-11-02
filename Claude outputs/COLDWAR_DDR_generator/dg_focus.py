@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Native building grants and naval adaptation in the retained country generator.
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
 # COLDWAR | Writes the focus tree file of the GDR in the code style of MD's Russia tree (05_russia.txt):
 # field order id, icon | x, y, relative_position_id | cost | prerequisite, mutually_exclusive | search_filters | available | bypass |
@@ -7,6 +8,15 @@ from dg_common import *
 from dg_load import FOCI, BYID, SECT, POS, ANCHOR, ORDER, P
 import dg_avail as A
 import dg_effects as E
+
+# IMPERIA COLD WAR — Native generic naval adaptation integration.
+from pathlib import Path as _NavalPath
+import sys as _naval_sys
+_naval_sys.path.insert(0, str(_NavalPath(__file__).resolve().parents[2] / "tools"))
+from naval_adaptation_1970.naval_adapter import integrate_tree as _naval_tree, runtime_outputs as _naval_runtime
+from building_grants import grants as _grant_api
+_grant_runtime = _grant_api.runtime_outputs
+_GRANT_MARK = '# IMPERIA COLD WAR — Physical capacity for national building grants.\n'
 
 PICK = json.load(open(os.path.join(HERE, "gfxsel", "gfx_pick.json"), encoding="utf-8"))["foci"]
 GOAL_SPRITES = {}
@@ -130,6 +140,9 @@ def focus_effects(f):
     while out and out[-1] == E.NEWLINE:
         out.pop()
     out = [l for n, l in enumerate(out) if not (l == E.NEWLINE and n + 1 < len(out) and out[n + 1] == E.NEWLINE)]
+    # IMPERIA COLD WAR — UN delegation rewards require actual UN admission.
+    if sid == "rec_the_133rd_member":
+        return ["if = { limit = { has_dynamic_modifier = { modifier = united_nations_member } }"] + out + recalc + ["}"]
     return out + recalc
 
 
@@ -178,6 +191,9 @@ def focus_text(f):
         Lf += pre + [""]
     Lf += ["search_filters = { " + " ".join(filters_of(f)) + " }", ""]
     av = A.convert(f)
+    # IMPERIA COLD WAR — The native UN vote must precede the membership focus.
+    if short(fid) == "rec_the_133rd_member":
+        av = (av + "\nhas_dynamic_modifier = { modifier = united_nations_member }").strip()
     if av:
         Lf += one_line("available", [l for l in av.split("\n") if l.strip()]) + [""]
     bp = bypass(f)
@@ -192,7 +208,7 @@ def focus_file():
     H = P["header"]
     cfp = H["continuous_focus_position"]
     LOC[TREE_ID] = "East German Focus Tree"
-    parts = [HEADER, "focus_tree = {", f"\tid = {TREE_ID}", "\tcountry = {", "\t\tfactor = 0", "\t\tmodifier = {",
+    parts = [_GRANT_MARK, HEADER, "focus_tree = {", f"\tid = {TREE_ID}", "\tcountry = {", "\t\tfactor = 0", "\t\tmodifier = {",
              "\t\t\tadd = 100", "\t\t\toriginal_tag = DDR", "\t\t\tIMP_is_1970_scenario = yes", "\t\t}", "\t}",
              "\tdefault = no", "\treset_on_civilwar = no",
              f"\tcontinuous_focus_position = {{ x = {cfp['x']} y = {cfp['y']} }}", "",
@@ -213,4 +229,4 @@ def focus_file():
     while parts[-1] == "":
         parts.pop()
     parts.append("}")
-    return "\n".join(parts) + "\n"
+    return _naval_tree("DDR", _grant_api.repair_focus_tree("DDR", "\n".join(parts) + "\n"))

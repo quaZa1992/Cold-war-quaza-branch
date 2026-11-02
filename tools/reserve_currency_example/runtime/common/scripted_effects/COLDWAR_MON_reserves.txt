@@ -1,0 +1,225 @@
+# IMPERIA COLD WAR — Inactive example: separate reserves, future funding and existing dollar debt.
+# All principal stocks use the existing MD debt ledger's billion-unit accounting basis.
+
+# IMPERIA COLD WAR — Explicit one-time migration; never infer old contracts from a new reserve choice.
+COLDWAR_MON_initialize = {
+	if = {
+		limit = { COLDWAR_MON_seed_valid = yes }
+		set_variable = { COLDWAR_MON_usd_principal = debt }
+		multiply_variable = { COLDWAR_MON_usd_principal = COLDWAR_MON_seed_debt_usd_share }
+		set_variable = { COLDWAR_MON_debt_book = debt }
+		set_variable = { COLDWAR_MON_reserve_usd_share = COLDWAR_MON_seed_reserve_usd_share }
+		set_variable = { COLDWAR_MON_reserve_target = COLDWAR_MON_reserve_usd_share }
+		set_variable = { COLDWAR_MON_new_usd_share = COLDWAR_MON_seed_new_usd_share }
+		set_variable = { COLDWAR_MON_months_left = 0 }
+		set_variable = { COLDWAR_MON_last_month = global.COLDWAR_MON_month_serial }
+		set_country_flag = COLDWAR_MON_initialized
+		clr_country_flag = COLDWAR_MON_seed_approved
+		COLDWAR_MON_refresh_derived = yes
+	}
+}
+
+# IMPERIA COLD WAR — Compatibility fallback: unidentified extra borrowing remains dollar-exposed.
+# This is not a replacement for instrumenting every accepted debt transaction.
+COLDWAR_MON_reconcile_untracked = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_MON_initialized
+			NOT = { check_variable = { var = debt value = COLDWAR_MON_debt_book compare = equals } }
+		}
+		if = {
+			limit = { check_variable = { debt > COLDWAR_MON_debt_book } }
+			set_temp_variable = { COLDWAR_MON_untracked_delta = debt }
+			subtract_from_temp_variable = { COLDWAR_MON_untracked_delta = COLDWAR_MON_debt_book }
+			add_to_variable = { COLDWAR_MON_usd_principal = COLDWAR_MON_untracked_delta }
+		}
+		else_if = {
+			limit = { check_variable = { COLDWAR_MON_debt_book > 0 } }
+			multiply_variable = { COLDWAR_MON_usd_principal = debt }
+			divide_variable = { COLDWAR_MON_usd_principal = COLDWAR_MON_debt_book }
+		}
+		set_country_flag = COLDWAR_MON_untracked_debt_seen
+		set_variable = { COLDWAR_MON_debt_book = debt }
+		COLDWAR_MON_normalize_principal = yes
+	}
+}
+
+# IMPERIA COLD WAR — Freeze contract terms before the native accepted debt mutation.
+COLDWAR_MON_before_debt_change = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_MON_initialized
+			NOT = { has_country_flag = COLDWAR_MON_debt_transaction }
+		}
+		COLDWAR_MON_reconcile_untracked = yes
+		set_variable = { COLDWAR_MON_debt_before = debt }
+		set_variable = { COLDWAR_MON_contract_usd_share = COLDWAR_MON_new_usd_share }
+		set_country_flag = COLDWAR_MON_debt_transaction
+	}
+}
+
+# IMPERIA COLD WAR — Record only actual principal changes, including the native borrowing fee.
+COLDWAR_MON_after_debt_change = {
+	if = {
+		limit = { has_country_flag = COLDWAR_MON_debt_transaction }
+		set_temp_variable = { COLDWAR_MON_debt_delta = debt }
+		subtract_from_temp_variable = { COLDWAR_MON_debt_delta = COLDWAR_MON_debt_before }
+		if = {
+			limit = { check_variable = { COLDWAR_MON_debt_delta > 0 } }
+			multiply_temp_variable = { COLDWAR_MON_debt_delta = COLDWAR_MON_contract_usd_share }
+			add_to_variable = { COLDWAR_MON_usd_principal = COLDWAR_MON_debt_delta }
+		}
+		else_if = {
+			limit = {
+				check_variable = { COLDWAR_MON_debt_delta < 0 }
+				check_variable = { COLDWAR_MON_debt_before > 0 }
+			}
+			# Generic MD repayments and haircuts retire denominations proportionately.
+			multiply_variable = { COLDWAR_MON_usd_principal = debt }
+			divide_variable = { COLDWAR_MON_usd_principal = COLDWAR_MON_debt_before }
+		}
+		set_variable = { COLDWAR_MON_debt_book = debt }
+		COLDWAR_MON_normalize_principal = yes
+		clr_country_flag = COLDWAR_MON_debt_transaction
+	}
+}
+
+# IMPERIA COLD WAR — Bounded stocks and explicit zero-debt cleanup.
+COLDWAR_MON_normalize_principal = {
+	clamp_variable = { var = COLDWAR_MON_usd_principal min = 0 max = 100000000 }
+	if = {
+		limit = { check_variable = { COLDWAR_MON_usd_principal > debt } }
+		set_variable = { COLDWAR_MON_usd_principal = debt }
+	}
+	if = {
+		limit = { NOT = { check_variable = { debt > 0 } } }
+		set_variable = { COLDWAR_MON_usd_principal = 0 }
+		set_variable = { COLDWAR_MON_debt_book = 0 }
+	}
+}
+
+# IMPERIA COLD WAR — Reserve policy never edits outstanding contract stocks.
+COLDWAR_MON_calculate_debt_fx = {
+	COLDWAR_MON_reconcile_untracked = yes
+	set_variable = { debt_fx_factor = 1 }
+	if = {
+		limit = {
+			check_variable = { debt > 0 }
+			check_variable = { COLDWAR_MON_usd_principal > 0 }
+			NOT = { has_country_flag = is_usd_issuer }
+		}
+		set_temp_variable = { COLDWAR_MON_safe_strength = currency_strength }
+		clamp_temp_variable = { var = COLDWAR_MON_safe_strength min = 0.15 max = 2 }
+		set_temp_variable = { COLDWAR_MON_usd_fx = 1 }
+		divide_temp_variable = { COLDWAR_MON_usd_fx = COLDWAR_MON_safe_strength }
+		clamp_temp_variable = { var = COLDWAR_MON_usd_fx min = 0.5 max = 2 }
+		subtract_from_temp_variable = { COLDWAR_MON_usd_fx = 1 }
+		multiply_temp_variable = { COLDWAR_MON_usd_fx = COLDWAR_MON_usd_principal }
+		divide_temp_variable = { COLDWAR_MON_usd_fx = debt }
+		add_to_variable = { debt_fx_factor = COLDWAR_MON_usd_fx }
+	}
+}
+
+# IMPERIA COLD WAR — New financing terms require a separate accepted credit arrangement.
+# The accepting agreement supplies COLDWAR_MON_requested_usd_share in country scope.
+COLDWAR_MON_accept_funding_terms = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_MON_initialized
+			has_country_flag = COLDWAR_MON_credit_terms_accepted
+			has_variable = COLDWAR_MON_requested_usd_share
+			NOT = { has_country_flag = COLDWAR_MON_debt_transaction }
+			NOT = { check_variable = { COLDWAR_MON_requested_usd_share < 0 } }
+			NOT = { check_variable = { COLDWAR_MON_requested_usd_share > 1 } }
+		}
+		COLDWAR_MON_reconcile_untracked = yes
+		set_variable = { COLDWAR_MON_new_usd_share = COLDWAR_MON_requested_usd_share }
+		clr_country_flag = COLDWAR_MON_credit_terms_accepted
+	}
+}
+
+# IMPERIA COLD WAR — Execution-time affordability and replay guards precede every payment.
+COLDWAR_MON_begin_diversification = {
+	if = {
+		limit = { COLDWAR_MON_can_diversify = yes }
+		add_political_power = -75
+		set_temp_variable = { treasury_change = -0.025 }
+		modify_treasury_effect = yes
+		hidden_effect = {
+			set_variable = { COLDWAR_MON_reserve_target = 0.4 }
+			set_variable = { COLDWAR_MON_months_left = 24 }
+			set_variable = { COLDWAR_MON_last_month = global.COLDWAR_MON_month_serial }
+			set_country_flag = { flag = COLDWAR_MON_diversification_cooldown days = 730 }
+			COLDWAR_MON_refresh_derived = yes
+			# One explicit player transaction may refresh the native economy once.
+			ingame_update_setup = yes
+		}
+	}
+}
+
+# IMPERIA COLD WAR — Calendar dispatch receipt survives save/load and repeated UI requests.
+# The serial advances once inside MD's existing global monthly guard, not once per country.
+COLDWAR_MON_monthly_once = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_MON_initialized
+			check_variable = { global.COLDWAR_MON_month_serial > COLDWAR_MON_last_month }
+		}
+		set_variable = { COLDWAR_MON_last_month = global.COLDWAR_MON_month_serial }
+		if = {
+			limit = { check_variable = { COLDWAR_MON_months_left > 0 } }
+			if = {
+				limit = { has_country_flag = COLDWAR_MON_clearing_access }
+				if = {
+					limit = { check_variable = { COLDWAR_MON_months_left = 1 } }
+					set_variable = { COLDWAR_MON_reserve_usd_share = COLDWAR_MON_reserve_target }
+				}
+				else = {
+					set_temp_variable = { COLDWAR_MON_reserve_step = COLDWAR_MON_reserve_target }
+					subtract_from_temp_variable = { COLDWAR_MON_reserve_step = COLDWAR_MON_reserve_usd_share }
+					divide_temp_variable = { COLDWAR_MON_reserve_step = COLDWAR_MON_months_left }
+					add_to_variable = { COLDWAR_MON_reserve_usd_share = COLDWAR_MON_reserve_step }
+				}
+				subtract_from_variable = { COLDWAR_MON_months_left = 1 }
+			}
+			else = {
+				# Retain the achieved allocation and original cooldown; no second payment or refund.
+				set_variable = { COLDWAR_MON_months_left = 0 }
+				set_variable = { COLDWAR_MON_reserve_target = COLDWAR_MON_reserve_usd_share }
+			}
+		}
+		COLDWAR_MON_refresh_derived = yes
+	}
+}
+
+# IMPERIA COLD WAR — Pure country-local derived values; no progress, charges or global recount.
+COLDWAR_MON_refresh_derived = {
+	clamp_variable = { var = COLDWAR_MON_reserve_usd_share min = 0 max = 1 }
+	set_variable = { reserve_roi_bonus = global.proj_roi_usd }
+	multiply_variable = { reserve_roi_bonus = COLDWAR_MON_reserve_usd_share }
+	set_variable = { reserve_trade_bonus = global.proj_trade_usd }
+	multiply_variable = { reserve_trade_bonus = COLDWAR_MON_reserve_usd_share }
+	if = {
+		limit = { check_variable = { currency_strength > 0 } }
+		refresh_currency_inflation_effects = yes
+	}
+	COLDWAR_MON_calculate_transition_cost = yes
+}
+
+# IMPERIA COLD WAR — Weekly MD appropriation; the existing expense accumulator consumes it once.
+COLDWAR_MON_calculate_transition_cost = {
+	set_variable = { COLDWAR_MON_prospective_weekly_cost = gdp_total }
+	multiply_variable = { COLDWAR_MON_prospective_weekly_cost = 0.00002 }
+	clamp_variable = { var = COLDWAR_MON_prospective_weekly_cost min = 0.001 max = 0.025 }
+	set_variable = { COLDWAR_MON_weekly_transition_cost = 0 }
+	if = {
+		limit = { check_variable = { COLDWAR_MON_months_left > 0 } }
+		set_variable = { COLDWAR_MON_weekly_transition_cost = COLDWAR_MON_prospective_weekly_cost }
+	}
+}
+
+# IMPERIA COLD WAR — Weighted participant equivalents during the existing native reserve recount only.
+# Do not additionally count the initialized country's domestic law in on_add/on_remove.
+COLDWAR_MON_add_reserve_weight = {
+	add_to_variable = { global.usd_reserve_adoption_count = COLDWAR_MON_reserve_usd_share }
+}

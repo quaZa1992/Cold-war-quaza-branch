@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # DPRK 1970 concept layout review
 
 Reviewed the canonical concept snapshot in `COLDWAR_NKO_1970_design.json`, its structural validation output, the eight party/institution visibility states, and the rendered overview plus all twelve branch PNGs dated 23 October 2026. This is an independent static and visual layout review; no canonical design or build source was edited for this report.

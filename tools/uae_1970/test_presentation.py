@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: uae 1970 — test presentation.
+# IMPERIA COLD WAR — UAE 1970 native preview and reconciler checks.
 """Execute preview arithmetic against the actual programme reconciler AST."""
 from __future__ import annotations
 from copy import deepcopy
@@ -134,12 +134,12 @@ def run():
     for focus, earned, expected in [('federal_ministries', {'seven_emirates'}, -0.10),
                                     ('emirate_commands', {'dual_veto'}, 0.02),
                                     ('dual_veto', {'union_command'}, 0.0),
-                                    ('technical_institutes', {'national_training', 'technical_cadres'}, 0.0)]:
+                                    ('technical_institutes', {'national_training', 'technical_cadres'}, 0.05)]:
         node = next(n for n in data['nodes'] if ui._suffix(n) == focus)
         world = Preview(); world.flags = {ui.P+'done_'+key: None for key in earned}; refresh(world)
         world.lines = []; world.execute(parse(ui.spirit_change_preview(node, data, loc)))
         check(math.isclose(world.lines[0][1], expected, abs_tol=1e-9), (focus, 'Nominal relief displayed instead of marginal relief', world.lines))
-    cases.append('Explicit incremental examples: federal administration, stronger command credit and already-cleared research burden')
+    cases.append('Explicit incremental examples: federal administration, stronger command credit and remaining research burden')
     # The approved routes currently stay below the political stability cap.
     # A copied synthetic candidate proves the same renderer at/near the cap
     # without editing the approved data or changing any actual reward.

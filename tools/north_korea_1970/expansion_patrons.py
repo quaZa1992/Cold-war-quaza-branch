@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: North Korea 1970 reciprocal patron programmes.
+# IMPERIA COLD WAR — Cold War: North Korea 1970 reciprocal patron programmes.
 """Add consent-based PRC and Soviet branches to the NKO 1970 design model."""
 from copy import deepcopy
 

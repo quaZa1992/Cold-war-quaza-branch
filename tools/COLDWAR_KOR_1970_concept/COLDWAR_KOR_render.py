@@ -1,13 +1,18 @@
-# IMPERIA CW — Cold War: faithful-coordinate concept preview and English catalogue.
+# IMPERIA COLD WAR — Cold War: faithful-coordinate concept preview and English catalogue.
 from pathlib import Path
-import base64, hashlib, html, io, json, math, re
+import base64, hashlib, html, io, json, math, re, sys
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'docs/design/COLDWAR_KOR_1970'
 HERE=Path(__file__).resolve().parent
+sys.path.insert(0,str(ROOT/'tools/vietnam_1970'))
+sys.path.insert(0,str(HERE))
+from COLDWAR_KOR_alliance_revision import load_design
 VIZ=Path('C:/Users/sonyz/.codex/visualizations/2026/10/24/01a16eac-abda-7393-822c-036cb1025900')
-D=json.loads((OUT/'COLDWAR_KOR_design.json').read_text(encoding='utf-8'))
+# Render the derived design in memory. The immutable approved JSON stays the
+# baseline; alliance and reward revisions are layered by the effective loader.
+D=load_design()
 COLORS={'bg':'#202b30','text':'#e3dfca','muted':'#aab5b7','line':'#84999e','gold':'#cfba7d','exclusive':'#cb8e70'}
 SOURCES={
  'park':'gfx/interface/goals/south_korea/south_korea_authoritarnism.dds',
@@ -89,7 +94,9 @@ def art():
 
 def summary(n):
     e=n['effects'];r=[]
-    if e['cost']:r.append(f'Treasury: -${e["cost"]:g}bn (once)')
+    if e.get('gdp_share_cost_fraction'):
+        r.append(f'National focus Treasury charge: {e["gdp_share_cost_fraction"]*100:g}% of current GDP (once; positive GDP required)')
+    elif e['cost']:r.append(f'Treasury: -${e["cost"]:g}bn (once)')
     if e['weekly']:r.append(f'Active programme: ${e["weekly"]:.5f}bn/week (replacement slot)')
     inv={v:k for k,v in D['modifier_labels'].items()}
     for p in e['policies']:
@@ -98,8 +105,19 @@ def summary(n):
             label=D['modifier_labels'].get(k,k)
             r.append(f'{label}: {v:+g} percentage points' if k=='interest_rate_multiplier_modifier' else f'{label}: {v*100:+g}%')
         if p.get('active_condition'):r.append('Active only after '+p['active_condition'])
-    for b in e['buildings']:r.append(f'State {b["state"]}: +{b["level"]} {b["type"]} (paid, once)')
+    for b in e['buildings']:
+        r.append(f'State {b["state"]}: +{b["level"]} shared building slots, then +{b["level"]} {b["type"]} (paid, once; ownership, control, and capacity required)')
     for k,v in e['one_time'].items():r.append(f'{k}: {v:+g} (once)')
+    for bonus in e.get('equipment_bonuses',[]):
+        for equipment_type, values in bonus['types'].items():
+            equipment_label={'infantry_weapons_type':'Infantry weapons'}.get(equipment_type,equipment_type)
+            for modifier,value in values.items():
+                modifier_label={'build_cost_ic':'production cost'}.get(modifier,modifier)
+                r.append(f'{equipment_label} {modifier_label}: {value*100:+g}% (equipment bonus)')
+    for bonus in e.get('tech_bonuses',[]):
+        r.append(f"Research bonus: {bonus['category']} {bonus['bonus']*100:+g}%, {bonus['uses']} use")
+    for bonus in e.get('doctrine_bonuses',[]):
+        r.append(f"Doctrine cost reduction: {bonus['category']} {bonus['cost_reduction']*100:g}%, {bonus['uses']} use")
     for a in e['actions']:r.append(a['type']+': '+a['value'])
     if n.get('start_replacements'):r.append('Replace starting problem: '+', '.join(n['start_replacements']))
     return r
@@ -244,9 +262,9 @@ def main():
     art();catalogue()
     # Exact displayed rewards remain in the inline view; duplicated audit/code
     # maps stay in the full JSON instead of pushing the fragment over1MB.
-    keep=('status','country','start','horizon','prefix','groups','starting_spirits','modifier_labels','layout','rules','party_migration','contracts','transition_events','art','titlebar_data','revision','expansion_summary','transition_system','state_outcome_labels','transition_decisions','proposed_transition_events')
+    keep=('status','country','start','horizon','prefix','groups','starting_spirits','modifier_labels','layout','rules','party_migration','contracts','transition_events','art','titlebar_data','revision','reward_revision','expansion_summary','transition_system','state_outcome_labels','transition_decisions','proposed_transition_events')
     payload={k:D[k] for k in keep if k in D}
-    node_keep=('id','key','group','label','description','xy','days','prerequisites','mutually_exclusive','gate','ownership','effects','icon_family','requirements','bypass','conditional_completion','start_replacements','state_effects','temporary_effect','native_gate_body','native_leaf_effects','economic_effect_note','added_in_revision','historicity','transition_link')
+    node_keep=('id','key','group','label','description','xy','days','prerequisites','mutually_exclusive','gate','ownership','effects','icon_family','requirements','bypass','conditional_completion','start_replacements','state_effects','temporary_effect','native_gate_body','native_leaf_effects','economic_effect_note','added_in_revision','historicity','transition_link','reward_revision')
     payload['nodes']=[{k:n[k] for k in node_keep if k in n} for n in D['nodes']]
     assert all(a['id']==b['id'] and a['xy']==b['xy'] and a['effects']==b['effects'] and a['prerequisites']==b['prerequisites'] for a,b in zip(D['nodes'],payload['nodes']))
     blob=json.dumps(payload,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')

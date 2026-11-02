@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: read-only runtime audit with reproducible report/hash refresh.
+# IMPERIA COLD WAR — Current nuclear research, enrichment and uranium cost reporting.
 import hashlib,json,re
 from port import ROOT,AUDIT,read,write
 from adapt import block,blocks
@@ -51,6 +51,7 @@ def main():
     old_passes=old_daily+old_weekly+old_nuclear
     state_files=len(list((ROOT/'history/states').glob('*.txt')))
     report={
+      'project':'IMPERIA COLD WAR',
       'method':'Structural iterator count from saved before/runtime scripts, not elapsed-time profiling.',
       'scope':'Additional uranium integration state scans, excluding native MD building/energy accounting and demand-gated AI searches.',
       'state_files':state_files,
@@ -83,11 +84,16 @@ def main():
             resource=pdx.parse(part(part(part(source,name),'resource_cost'),'resources'))[0]
             projects[name]={'file':rel,'resources':{k:int(v) for k,op,v,line in resource}}
     base_rates={}
-    for name in ['sp:sp_nuclear_bomb','sp:sp_nuclear_warhead_program']:
+    for name in ['sp:sp_nuclear_bomb','sp:sp_nuclear_warhead_program',
+                 'sp:sp_nuclear_energy','sp:sp_COLDWAR_gas_centrifuge_enrichment',
+                 'sp:sp_COLDWAR_fuel_reprocessing','sp:sp_COLDWAR_fast_breeder',
+                 'sp:sp_COLDWAR_reactor_design','sp:sp_COLDWAR_waste_repository',
+                 'sp:sp_thorium_nuclear_fuel']:
         m=Model();m.vars.update(gdp_per_capita=36,inflation_multiplier=1);m.projects={name}
         m.call('COLDWAR_calculate_nuclear_development_budget')
         base_rates[name]={'base_weekly_billion':m.vars['COLDWAR_nuclear_development_weekly_base'],'weekly_at_gdpc_36k_inflation_1':m.vars['COLDWAR_nuclear_development_weekly_cost']}
     costs={
+      'project':'IMPERIA COLD WAR',
       'unit':'MD monetary values in billions; IC for native construction costs; resource units are native production/research requirements.',
       'starting_production':f'Zero raw uranium production in every state; {len(json.loads(read(AUDIT/"coldwar_balance.json"))["deposits"])} surveyed districts enable paid mine development.',
       'mine':{
@@ -101,15 +107,16 @@ def main():
       'enrichment':{'construction_ic':int(pdx.get(enrichment,'base_cost')),
         'uranium_required_per_facility':int(re.search(r'@imp_uranium_per_enrichment_facility\s*=\s*(\d+)',uranium)[1]),
         'shortage_output':'Proportional, with zero new fuel output when uranium supply is zero.',
-        'separate_new_cash_upkeep':False,
-        'cash_note':'No additional standalone enrichment-facility operating fee was introduced; existing native reactor upkeep remains in infrastructure spending.'},
+        'separate_new_cash_upkeep':True,
+        'base_weekly_billion_per_facility':0.02,
+        'cash_note':'The current nuclear-development provider charges each controlled enrichment-facility level 0.02 billion per week, scaled by GDP/c and inflation; existing reactor upkeep remains in infrastructure spending.'},
       'special_project_resources':projects,
-      'weapons_research_budgets':{'rates':base_rates,
+      'nuclear_research_budgets':{'rates':base_rates,
         'weekly_formula':'weekly_base × clamp(GDP/c_in_thousands / 36, 0.4, 1.2) × inflation_multiplier',
-        'active_condition':'Actual special project being researched; both add if active together; no arsenal-size exemption.',
+        'active_condition':'Actual civilian or weapons special projects being researched; all active project bases add together. Enrichment-facility upkeep applies even without active research.',
         'lifecycle':'Calculated on native economic refresh; completion/cancellation resets the rate, disruption does not waive costs.',
         'accounting_path':['COLDWAR_calculate_nuclear_development_budget','update_military_rate -> defence_gain','update_display -> display_expense -> treasury_rate','MD_on_actions on_weekly -> treasury'],
-        'display':['Defence Spending breakdown','Atomic bomb and warhead project descriptions'],
+        'display':['Nuclear Research and Enrichment in the Defence Spending breakdown','All nine funded project descriptions'],
         'refresh_safety':'Rate calculation overwrites its result and never directly modifies treasury.'},
       'raid_policy':'50/50 raids block AI in both available and launchable.'
     }
@@ -117,7 +124,7 @@ def main():
     engine=read(ROOT/'tools/quaza_nuclear_integration/runtime/logs/error.log')
     names={PathLike(entry['file']) for entry in manifest['runtime_files']}
     diagnostic=[line for line in engine.splitlines() if any(name in line for name in names) and 'Missing icon shine' not in line]
-    write(AUDIT/'engine_modified_files_errors.json',json.dumps({'runtime_files':len(names),'diagnostics':diagnostic,
+    write(AUDIT/'engine_modified_files_errors.json',json.dumps({'project':'IMPERIA COLD WAR','runtime_files':len(names),'diagnostics':diagnostic,
           'scope':'Filename scan of the last saved engine log only; the interrupted run predates the latest geology and project-card changes. This is not native verification of the current build.'},indent=2))
     assert not diagnostic,diagnostic[:10]
     print(json.dumps({'runtime_files':len(manifest['runtime_files']),'cost_report':'cost_audit.json','performance_report':'performance_report.json','modified_file_engine_diagnostics':len(diagnostic)}))

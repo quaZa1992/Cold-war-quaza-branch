@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # KOR 1970 expansion — independent layout review
 
 Read-only review of the resolved 298-focus concept and its regenerated PNG previews. No design, generator, or game files were changed. Review focuses on native-grid card spacing, lower-party/top-extension clearance, three-way connectors, the economy/KJP boundary, and tree navigation.

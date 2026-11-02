@@ -1,0 +1,26 @@
+IMPERIA COLD WAR
+
+# Greece replacement concept
+
+This folder owns the pending January 1970 Greece design. It has no connection to the loaded Greek generator until the user approves this proposal. The requested phase is design, complete prospective effects and visualization first. Do not replace or delete the existing runtime tree before that approval.
+
+- `design.py`: 100 focuses, coordinates, prerequisites, reciprocal exclusions, party and leader ownership, costs and rewards. Nine existing Greek CYP_R2 focus IDs are retained.
+- `contracts.py`: nine starting spirits, twelve standing agreements, one paid military transfer, two territorial offers, source links and bilateral or multi-state validity rules.
+- `enosis.py`: exclusive full and southern Enosis terms, Cypriot consent, Turkish warning and one resumed ratification round, exact-once public-account succession and delayed civil integration.
+- `fiscal.py`: authoritative GDP-cost revision, exact native weekly coefficients, bilateral payment matching and spirit/episode-bound expense lifetimes. Ordinary setup commitments are doubled; selected major capital programmes are tripled. Crisis helper fees are replaced explicitly rather than charged twice.
+- `build.py`: static validation, review documentation and the inline preview. It writes only the dedicated documentation folder and the authorized thread preview path.
+- `preview.html`: literal approval-view template. Native assets and grid, external font and approximate connectors. It is not a screenshot of HOI4.
+
+Run `python tools/greece_1970_rework_concept/build.py` from the mod root. Generated review files are in `docs/greece_1970_rework_20261029/`. Do not run `tools/greece_1970/compile.py` as part of this concept build; that is the old loaded generator.
+
+The implementation contract is in `concept.json` and `CONCEPT.md`. It includes actual party/leader activation, irreversible asset receipts, dynamic native Community membership and law previews, all-six-pair Cypriot settlement eligibility, monthly reconciliation, successful war-entry verification, rollback and native NATO bookkeeping. Data describing these planned helpers does not establish installed runtime behavior.
+
+The Enosis extension keeps the tree at100 focuses by folding the existing enduring-order follow-up into the two exclusive junta follow-ups, provincial infrastructure into the university programme, and worker participation into the Social Contract. Their rewards and setup costs remain; the shared junta consolidation is now owned by its respective leader branch. Full Enosis annexes exactly145+146; southern Enosis annexes CYP only after CYP already retains exactly145 and the north has a separate actual TUR/NCY owner. Both routes end the residual CYP country, retain existing units once and exclude British812. Greek cores require the separate settlement after730 days,70 compliance and enacted regional/minority representation. Live Cypriot balances and asset counts still require the native preview implementation and engine fixture.
+
+An explicit CYP refusal now awards Greece a native war goal: `annex_everything` for the full claim, or `take_state_focus` with generator145 for the southern claim. Only the current Cypriot refusal option can do so, once across both routes. Silence, expiration and another guarantor's refusal do not. The source country is always GRE and the target always CYP. State-goal expiry is the native730 days; no unsupported inline expiration is introduced. A refusal war is GRE against CYP, with possible TUR entry for CYP, so it must not call the older Greek-on-Cyprus-side-against-Turkey helper. Recorded postwar incorporation uses the same integration costs and elapsed-time/compliance requirements rather than granting free cores.
+
+The final fiscal revision sets Greek network/coup/direct-entry setup fees at0.75/1.5/1.5 percent of Greek GDP. Fixed180-day funding is0.004 percent weekly for Staff College Funding,0.006 for Aegean Staff Funding,0.01 for Forward Operational Planning,0.03 for Operational Initiative, and0.05 for Aegean Expeditionary Command. Volunteers cost0.02 percent weekly only during an actual active deployment. Full/southern Enosis costs5/2.5 percent once and0.03/0.015 weekly during interim administration; civil integration costs1 percent per state and then0.004 weekly for the active regional institutions. All figures are proposed game balance, not historical budget claims.
+
+The two funding-only spirits add no positive combat modifiers: their original one-time research/XP rewards remain and their financial period ends after180 days. New idea IDs, episode flags, original-expiry events, native display/expense refresh and the existing Greek-Cypriot helper price replacements are implementation work after approval. `FISCAL_REVISION_CHECKS.json` records constant-GDP compatible-branch totals and the desired zero-cost states; it is not a native economy test.
+
+After approval, retain an immutable approved input, archive the old Greek content outside the mod on E: under the project archive policy, integrate the canonical generator and loaded outputs, and validate the native tree and representative multiplayer routes. Do not overwrite the existing Cyprus shared-focus IDs or remove unrelated country content.

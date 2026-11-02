@@ -1,0 +1,1 @@
+IMPERIA COLD WAR: compositions of current native GUI geometry, DDS sprites and font glyphs using illustrative fixture records. Not live game screenshots. Approved visual reference: intelligence-dossiers.html. Asset provenance: ../art_notice.json.

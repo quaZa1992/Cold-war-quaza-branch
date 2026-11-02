@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # South Korea 1970–1990 Concept: Independent Mechanics Review
 
 Read-only review of the current `COLDWAR_KOR_design.json`, `COLDWAR_KOR_native_recipes.md`, builder/contract sources, and active MD Cold War source. No loaded game scripts or parent-authored concept files were changed. This review addresses mechanical traceability and concept consistency, not balance approval or implementation.

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: independent presentation surface and preservation audit.
+# IMPERIA COLD WAR — Cold War: independent presentation surface and preservation audit.
 """Compare executable semantics, not merely counts, before installing polish."""
 from pathlib import Path
 import argparse,hashlib,json,re,sys

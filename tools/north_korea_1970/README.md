@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # North Korea 1970 implementation
 
 The user approved implementation of `docs/COLDWAR_NKO_1970_concept/v2/COLDWAR_NKO_v2_design.json`, then authorized the screenshot fixes and a substantial expansion, explicitly waiving the earlier focus-count limit. The installed design now has **360 focuses**, including dedicated Chinese and Soviet programmes. `design.py` applies the authorized amendments without changing the original approval snapshot. `current_design.json` is the complete exported design used by the emitted-source validator and independent review. The current status is recorded in `docs/COLDWAR_NKO_1970_concept/IMPLEMENTATION.md`.

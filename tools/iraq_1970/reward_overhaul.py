@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Coastal predecessor building-slot correction.
 # IMPERIA CW — Cold War: iraq 1970 — reward overhaul.
 """Direct national-focus rewards, with a separate v3 old-save entitlement.
 
@@ -139,7 +140,9 @@ def apply(data):
 def _raw(c,amount):
     if amount<=0:return ''
     kind=c['kind']
-    if kind=='building':return f'{c["state"]} = {{ add_building_construction = {{ type = {c["building_type"]} level = {int(amount)} instant_build = yes }} }}'
+    if kind=='building':
+        slots = f'add_extra_state_shared_building_slots = {int(amount)} ' if c.get('receipt') == P+'reward_v3_defence_coastal_0' else ''
+        return f'{c["state"]} = {{ {slots}add_building_construction = {{ type = {c["building_type"]} level = {int(amount)} instant_build = yes }} }}'
     if kind in ('army_xp','air_xp','navy_xp'):return f'{kind.removesuffix("_xp")}_experience = {amount:g}'
     if kind=='literacy':return f'set_temp_variable = {{ LR_change = {amount:g} }}\nupdate_literacy_rate = yes'
     if kind=='instant':return c['raw']

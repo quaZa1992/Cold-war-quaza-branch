@@ -2,7 +2,7 @@
 """Connects focus rewards to systems that already exist in the mod.
 
 Kept in one place so the links are easy to review:
-* MD/EU europeanism (europeanism_change) for the European focuses,
+* support for Europe in the European Communities system (COLDWAR_EC_add_support) for the European focuses,
 * the Soviet 1970 tree (treaty partner opinion, improved trade agreement, Helsinki signatures),
 * MD trade agreements, MD protests and MD corruption.
 """
@@ -26,7 +26,8 @@ EXTRA = {
     "single_market": europe(8),
     "schengen": europe(5),
     "maastricht": europe(10),
-    "euro_founder": J(europe(10), tt(f"{P}_tt_euro_join", "From 1999 the D-Mark is replaced by the §Yeuro§! (MD currency system).")),
+    # IMPERIA CW — Cold War: Completing the currency programme replaces the D-Mark without a date lock.
+    "euro_founder": J(europe(10), tt(f"{P}_tt_euro_join", "The D-Mark is replaced by the §Yeuro§!.")),
     "dmark_bloc": europe(-10),
     # the Soviet tree sees the same treaties
     "moscow_treaty": J(SOV_TREATY, tt(f"{P}_tt_sov_treaty", "The Soviet Union counts the Federal Republic as a §Ytreaty partner§! and an improved trade agreement is signed.")),

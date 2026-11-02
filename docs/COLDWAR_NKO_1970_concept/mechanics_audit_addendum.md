@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # NKO 1970 concept mechanics audit addendum
 
 This addendum reviews the regenerated `COLDWAR_NKO_1970_design.json` after the earlier corrections. The concept is now **source-backed, with new country adapters still unimplemented**. The JSON validator reports 167 nodes and no graph/layout errors, but it explicitly has `engine_tested: false`; static source review cannot establish that a future implementation loads, renders, or behaves correctly in game.

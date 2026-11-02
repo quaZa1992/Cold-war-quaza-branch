@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: exact bitmap-font layout proof for the command panel.
+# IMPERIA COLD WAR — Cold War: exact bitmap-font layout proof for the command panel.
 """Render the native widget geometry with the actual font atlas and stress copy."""
 from functools import lru_cache
 import hashlib
@@ -12,6 +12,7 @@ import command_ui as ui
 ROOT = build.ROOT
 OUT = ROOT/'docs/nuclear_readiness/interface'
 ASSETS = ROOT/'gfx/interface/COLDWAR_nuclear_readiness'
+LOADED_LOC={key:json.loads(value) for key,value in re.findall(r'^ ([\w.]+):0 (".*")$',(ROOT/'localisation/english/COLDWAR_nuclear_readiness_l_english.yml').read_text(encoding='utf-8-sig'),re.M)}
 COLOUR_CODES = {'Y': '#d4be7f', 'H': '#d4be7f', 'G': '#9cc79e', 'R': '#e28f7c', 'g': '#8da394', 'T': '#d4dcd0'}
 
 
@@ -81,6 +82,7 @@ def draw_text(canvas, box, text, font_name, align='left', name=''):
 
 CASES = [
     dict(name='routine', level=5, order=None, civil='inactive', crisis=False, hotline=False),
+    dict(name='no_arsenal', level=5, order=None, civil='inactive', crisis=False, hotline=False, empty=True),
     dict(name='preparing', level=5, order=1, civil='preparing', crisis=False, hotline=False),
     dict(name='strategic_alert', level=2, order=None, civil='active', crisis=True, hotline=True),
     dict(name='ultimatum', level=1, order=None, civil='active', crisis=True, hotline=True, escalation='waiting'),
@@ -100,7 +102,7 @@ def visible(condition, case):
 
 
 def localisation(key):
-    return build.LOC[key.replace('nr_', 'COLDWAR_nr_')]
+    return LOADED_LOC[key.replace('nr_', 'COLDWAR_nr_')]
 
 
 def copy_for(key, case):
@@ -108,7 +110,7 @@ def copy_for(key, case):
     defined = {
         '[nr_fatigue_value_L]': localisation('nr_fatigue_high'),
         '[nr_level_L]': build.LEVELS[level][0],
-        '[nr_posture_notice_L]': localisation('nr_notice_orders' if case['order'] else 'nr_notice_ready'),
+        '[nr_posture_notice_L]': localisation('nr_notice_orders' if case['order'] else 'nr_notice_unarmed' if case.get('empty') else 'nr_notice_ready'),
         '[nr_order_status_L]': localisation('nr_order_pending' if case['order'] else 'nr_order_none'),
         '[nr_civil_status_L]': localisation({'active': 'nr_civil_active_text', 'inactive': 'nr_civil_inactive', 'preparing': 'nr_civil_preparing'}[case['civil']]),
         '[nr_crisis_status_L]': localisation('nr_crisis_partner' if case['crisis'] else 'nr_crisis_none'),
@@ -123,11 +125,15 @@ def copy_for(key, case):
         '[?nr_ready_share|%0]': f'{build.LEVELS[level][1]:.0%}',
         '[?nr_reserve_share|%0]': f'{build.LEVELS[level][2]:.0%}',
         '[?nr_forces_weekly|3]': '0.030' if not case.get('stress') else '12345.678',
-        '[?nr_civil_weekly|3]': '0.018', '[?nr_fatigue|0]': '100',
+        '[?nr_civil_weekly|3]': '0.018' if case['civil'] != 'inactive' else '0.000',
+        '[?nr_fatigue|0]': '0' if case.get('empty') else '100',
         '[?nr_opponent.GetNameDef]': 'the Soviet Union' if not case.get('stress') else 'the Democratic People\'s Republic of Korea',
         '[?nr_build_days|0]': '8', '[?nr_civil_days|0]': '3',
         '[?nr_fu_hours|0]': '72', '[?nr_fu_incoming_hours|0]': '168',
     }.items():
+        if case.get('empty') and any(part in variable for part in ['arsenal','ready_count','protected_count']):value='0'
+        if case.get('empty') and 'forces_weekly' in variable:value='0.000'
+        if case.get('empty') and any(part in variable for part in ['ready_share','reserve_share']):value='0%'
         text = text.replace(variable.replace('nr_', 'COLDWAR_nr_'), value)
     text = text.replace('[COLDWAR_nr_level_L]', build.LEVELS[level][0])
     assert '[' not in text, (key, text)
@@ -157,7 +163,7 @@ def render(case):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    manifest = {'tool': 'Built-in ImageGen', 'emblem_master': 'tools/nuclear_readiness/art/command_emblem_master.png',
+    manifest = {'project':'IMPERIA COLD WAR','tool': 'Native asset/font composition; existing ImageGen emblem', 'emblem_master': 'tools/nuclear_readiness/art/command_emblem_master.png',
         'prompt': 'tools/nuclear_readiness/art/command_emblem_prompt.txt',
         'emblem_source': 'Original generated artwork; no third-party source image.',
         'panel_size': [ui.WIDTH, ui.HEIGHT], 'layout_checks': [],

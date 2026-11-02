@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: israel 1970 — update documents.
+# IMPERIA COLD WAR — Israel 1970 generated design documentation.
 """Keep the design report and code export aligned with the compiled module."""
 from pathlib import Path
 import html
@@ -10,10 +10,11 @@ ROOT=HERE.parents[1]
 DOC=ROOT/'docs/israel_1970_design'
 data=json.loads((HERE/'english_design.json').read_text(encoding='utf-8'))
 manifest=json.loads((HERE/'manifest.json').read_text(encoding='utf-8'))
-report=['# Israel 1970: Implemented Focus Tree','',
+report=['# IMPERIA COLD WAR: Israel 1970 Implemented Focus Tree','',
         f"{len(data['nodes'])} focuses, {manifest['total_decisions']} decisions, {manifest['events']} events, twenty political families and thirty-seven named party/list variants. All new game localisation is English.", '',
         'The compact layout uses relative-position anchors as in the MD Russia tree. Each political family starts directly when its exact party governs. The twelve outlook unlocks and twenty government-mandate focuses have been removed. No party entry requires a focus or a foundation flag. Internal policy choices remain connected within their branches. Shared achievements survive changes of government; party programme modifiers apply only while that party governs.','',
-        'Rewards were rewritten individually in revision 2. Party policies combine visible MD-style modifier changes with buildings, research, experience, interest-group approval and real constitutional choices. Descriptions contain narrative text; the game shows rewards through completion-effect tooltips. There is no generic 65/35 modifier split.','',
+        'The 27 October 2026 revision adds distinct institutional rewards, stronger civilian productivity and diaspora finance, a shared workforce route capped at +15%, and three bounded settlement extensions. Ceasefire talks are player-initiated and territorial administration opens independently of military outcomes. See REWORK_20261027.md for history, numerical routes, provenance and validation limits.','',
+        'The corrected settlement-presence extension separates unilateral footholds under foreign control from controlled-state construction, with regional occupation costs. The affected controller receives production, stability and budget penalties without a consent decision or payment. An existing Palestine also receives bounded West Bank/Gaza institutional and commercial pressure from actual settlement programmes, with selected funded compensation relief. See UNILATERAL_SETTLEMENTS.md, PRESENCE_AND_OCCUPATION.md and PALESTINIAN_PRESSURE.md for conditions, numeric terms, period sources and verification limits.','',
         'The retained outlooks are Western, Emerging, Non-Aligned and Nationalist. There are no Shiite or Salafist paths, foundations, campaigns or government programmes. Their four native slots are disabled for the 1970 Israel scenario.','',
         'Golda Meir and the Alignment lead the January 1970 coalition. Religious Zionist and Orthodox parliamentary parties retain their own programmes. Later named parties require their dated or explicitly alternative foundations. Generic MD symbols and portraits are used when period assets are absent.','',
         '## Starting Spirits','']
@@ -32,30 +33,12 @@ for group in data['groups']:
 report+=['## Validation','',
          'Run `python tools/israel_1970/build_content.py` followed by `python tools/israel_1970/validate_content.py`. Static validation covers references, syntax, assets, party restrictions, programme routes, treasury reservations, negotiations and scenario integration. It does not replace an HOI4 engine test.','']
 (DOC/'DESIGN.md').write_text('\n'.join(report),encoding='utf-8')
-exports=[]
+exports=['# IMPERIA COLD WAR — Israel 1970 emitted script reference.']
 for rel in manifest['generated']:
     if rel.endswith('.txt'):exports+=['# ===== '+rel+' =====\n'+(ROOT/rel).read_text(encoding='utf-8-sig')]
 (DOC/'md_style_code_drafts.txt').write_text('\n\n'.join(exports),encoding='utf-8')
-# Keep the existing standalone preview's embedded design synchronized without
-# depending on the visualization output directory of the chat that created it.
-preview=DOC/'preview.html'
-if preview.exists():
-    source=preview.read_text(encoding='utf-8')
-    iframe=re.search(r'data-srcdoc="([^"]*)"',source)
-    assert iframe,'Missing standalone preview iframe'
-    fragment=html.unescape(iframe[1])
-    pattern=r'(<script type="application/json" id="isr70-data">)(.*?)(</script>)'
-    payload=re.search(pattern,fragment,re.S)
-    assert payload,'Missing embedded focus design'
-    previous=json.loads(payload[2])
-    current={key:data[key] for key in previous}
-    for key in ('nodes','groups'):
-        fields=previous[key][0].keys()
-        current[key]=[{field:item[field] for field in fields} for item in data[key]]
-    encoded=json.dumps(current,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')
-    fragment=re.sub(pattern,lambda match:match[1]+encoded+match[3],fragment,count=1,flags=re.S)
-    source=source[:iframe.start(1)]+html.escape(fragment,quote=True)+source[iframe.end(1):]
-    preview.write_text(source,encoding='utf-8')
+# render_preview.py owns the compact inspector data and readable conditions.
+# Its output is wrapped separately; never infer a schema from an older preview.
 # These four unused icons were created by this module before the scope correction.
 asset_root=(ROOT/'gfx/texticons/parties_icons/israel/1970').resolve()
 for idx in (8,9,10,11):

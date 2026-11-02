@@ -1,15 +1,19 @@
-# IMPERIA CW — Cold War: North Korea 1970 negotiated foreign agreements.
+# IMPERIA COLD WAR — Cold War: North Korea 1970 negotiated foreign agreements.
 """Generate isolated recipient-decided NKO 1970 bilateral agreement support."""
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'reward_rework_20261027'))
+from building_technology import state_technology_guard
 
 
 P = "COLDWAR_NKO_foreign_"
 LOC = "COLDWAR_NKO_foreign_"
-HEADER = "# IMPERIA CW — Cold War: North Korea 1970 bilateral agreements.\n"
+HEADER = "# IMPERIA COLD WAR — Cold War: North Korea 1970 bilateral agreements.\n"
 PARTNER_LABELS = {
     "SOV": "the Soviet Union",
     "CHI": "China",
@@ -57,6 +61,28 @@ MOD_LABELS = {
     "agricolture_productivity_modifier": "Agricultural Productivity",
     "police_cost_multiplier_modifier": "Police Cost Multiplier",
 }
+BUILDING_LABELS = {
+    "industrial_complex": "Civilian Factory",
+    "arms_factory": "Military Factory",
+    "agriculture_district": "Agricultural District",
+    "fossil_powerplant": "Fossil Power Plant",
+    "renewable_energy_infra": "Renewable Energy Infrastructure",
+    "dockyard": "Naval Dockyard",
+    "infrastructure": "Infrastructure",
+    "land_fort": "Land Fort",
+    "coastal_fort": "Coastal Fort",
+}
+BUILDING_CAPS = {
+    "industrial_complex": 50,
+    "arms_factory": 35,
+    "agriculture_district": 10,
+    "fossil_powerplant": 20,
+    "renewable_energy_infra": 20,
+    "dockyard": 20,
+    "infrastructure": 6,
+    "land_fort": 10,
+    "coastal_fort": 10,
+}
 
 
 def num(value: float) -> str:
@@ -93,6 +119,64 @@ def effect_tooltip_lines(mods: dict[str, float]) -> list[str]:
         if key=='experience_gain_army':label='Daily Army Experience Gain'
         lines.append(f"{label}: {amount}")
     return lines
+
+
+def _building_site_check(agreement: dict, state_id: int) -> str:
+    """Return the shared candidate-site predicate used by preview and award."""
+    buildings = agreement.get("buildings", [])
+    checks = [
+        f"{item['type']} < {BUILDING_CAPS[item['type']] - item['levels'] + 1}"
+        for item in buildings
+    ]
+    checks.extend(check for item in buildings
+                  if (check := state_technology_guard(item['type'], item['levels'], 'NKO')))
+    if any(item["type"] == "dockyard" for item in buildings):
+        checks.append("is_coastal = yes")
+    return (
+        f"{state_id} = {{ is_owned_by = NKO is_controlled_by = NKO "
+        f"{' '.join(checks)} }}"
+    )
+
+
+def _building_candidates(agreement: dict) -> list[int]:
+    buildings = agreement.get("buildings", [])
+    if not buildings:
+        return []
+    states = set(buildings[0]["state_ids"])
+    for item in buildings[1:]:
+        states.intersection_update(item["state_ids"])
+    if not states:
+        raise ValueError((agreement["key"], "agreement buildings have no shared candidate state"))
+    return sorted(states)
+
+
+def _building_reward(agreement: dict, state_id: int) -> str:
+    buildings = agreement["buildings"]
+    slots = sum(item["slots"] for item in buildings)
+    construction = " ".join(
+        f"add_building_construction = {{ type = {item['type']} level = {item['levels']} instant_build = yes }}"
+        for item in buildings
+    )
+    return f"{state_id} = {{ add_extra_state_shared_building_slots = {slots} {construction} }}"
+
+
+def _building_preview(agreement: dict) -> str:
+    """Show the package at the first eligible site, with a locked fallback."""
+    states = _building_candidates(agreement)
+    if not states:
+        return ""
+    clauses = []
+    for index, state_id in enumerate(states):
+        branch = "if" if index == 0 else "else_if"
+        condition = _building_site_check(agreement, state_id)
+        clauses.append(
+            f"{branch} = {{ limit = {{ {condition} }} {_building_reward(agreement, state_id)} }}"
+        )
+    # Preserve a complete prospective package while the agreement is locked
+    # or all current sites fail the native ownership, control, cap or coast
+    # checks. The localization above names all eligible alternatives.
+    clauses.append(f"else = {{ {_building_reward(agreement, states[0])} }}")
+    return " ".join(clauses)
 
 
 def setup_line(name: str, share: float) -> str:
@@ -319,10 +403,10 @@ check_variable = {{ gdp_total > 0 }} {partner} = {{ check_variable = {{ gdp_tota
                 valid_extra = f"{pair_clear} = yes"
                 if agreement.get("buildings"):
                     valid_extra += f"\n{P}{key}_building_site_valid = yes"
-                    T(f"{P}{key}_building_site_valid", "OR = {\n" + indent("\n".join(
-                        f"{sid} = {{ is_owned_by = NKO is_controlled_by = NKO industrial_complex < 50 }}"
-                        for sid in agreement["buildings"][0]["state_ids"]
-                    )) + "\n}")
+                    clauses=[]
+                    for sid in _building_candidates(agreement):
+                        clauses.append(_building_site_check(agreement, sid))
+                    T(f"{P}{key}_building_site_valid", "OR = {\n" + indent("\n".join(clauses)) + "\n}")
             else:
                 T(sender_live, f"""tag = NKO IMP_is_1970_scenario = yes
 NKO = {{ has_country_flag = {base_receipt} }} {partner} = {{ exists = yes has_country_flag = {base_receipt} }}
@@ -382,8 +466,16 @@ else_if = {{ limit = {{ NOT = {{ has_country_flag = {stage_pending} }} NOT = {{ 
             L(focus_tooltip,f'Propose §Y{title}§! to [{partner}.GetNameDef]. A reply is due within §Y90 days§!; payment follows acceptance.')
             building_tt=None
             if base_stage and agreement.get('buildings'):
-                b=agreement['buildings'][0];regions=' or '.join(design['state_names'][str(s)] for s in b['state_ids'])
-                building_tt=L(f'{P}{key}_building_tt',f'Add §G{b["levels"]}§! Civilian Factory and §G{b["slots"]}§! Building Slot in {regions}.')
+                valid_states=_building_candidates(agreement)
+                regions=' or '.join(design['state_names'][str(s)] for s in valid_states)
+                labels=[]
+                for item in agreement['buildings']:
+                    labels.append(f'§G{item["levels"]}§! {BUILDING_LABELS[item["type"]]}')
+                slots=sum(item['slots'] for item in agreement['buildings'])
+                building_tt=L(f'{P}{key}_building_tt',f'Add {" and ".join(labels)} with §G{slots}§! Building Slots in {regions}.')
+            def preview_buildings():
+                if not base_stage or not agreement.get('buildings'):return ''
+                return _building_preview(agreement)
             def material(saved):
                 chunks=[]
                 for tag,side,share,dm in [('NKO','nko',setup_nko,dm_nko),(partner,'recipient',setup_partner,dm_partner)]:
@@ -392,8 +484,9 @@ else_if = {{ limit = {{ NOT = {{ has_country_flag = {stage_pending} }} NOT = {{ 
                     old=f'remove_dynamic_modifier = {{ modifier = COLDWAR_NKO_1970_foreign_{key}_base_'+('nko' if side=='nko' else 'partner')+' }' if not base_stage else ''
                     annual=agreement[side]['annual_commitment_gdp_share']
                     weekly=f'set_temp_variable = {{ {P}weekly_preview = gdp_total }} multiply_temp_variable = {{ {P}weekly_preview = {num(annual)} }} divide_temp_variable = {{ {P}weekly_preview = 52 }} custom_effect_tooltip = COLDWAR_NKO_foreign_weekly_commitment_tt'
-                    building=f'custom_effect_tooltip = {building_tt}' if tag=='NKO' and building_tt else ''
-                    chunks.append(f'{tag} = {{ {money} {old} add_dynamic_modifier = {{ modifier = {dm} }} {weekly} {building} }}')
+                    stats=' '.join('custom_effect_tooltip = '+L(f'{P}{key}_{stage_kind}_{side}_effect_{i}',line) for i,line in enumerate(effect_tooltip_lines(changes_nko if side=='nko' else changes_partner)))
+                    building=f'{preview_buildings()} custom_effect_tooltip = {building_tt}' if tag=='NKO' and building_tt else ''
+                    chunks.append(f'{tag} = {{ {money} {old} add_dynamic_modifier = {{ modifier = {dm} }} {stats} {weekly} {building} }}')
                 return '\n'.join(chunks)
             preview_id=f'{P}preview_{key}_{stage_kind}'
             terms_id=f'{P}terms_{key}_{stage_kind}'
@@ -587,7 +680,7 @@ clr_country_flag = {stage_pending}
     effect_file = HEADER + "\n\n".join(effects) + "\n"
     trigger_file = HEADER + "\n\n".join(triggers) + "\n"
     dynamic_file = HEADER + "\n\n".join(dynamic) + "\n"
-    localisation = "l_english:\n# IMPERIA CW — Cold War: North Korea 1970 bilateral agreements.\n"
+    localisation = "l_english:\n# IMPERIA COLD WAR — Cold War: North Korea 1970 bilateral agreements.\n"
     localisation += "".join(f" {key}:0 \"{value.replace(chr(34), chr(39))}\"\n" for key, value in loc.items())
     return {
         "common/scripted_effects/COLDWAR_NKO_1970_foreign.txt": effect_file,
@@ -606,14 +699,13 @@ clr_country_flag = {stage_pending}
 def _building_grant(agreement: dict) -> str:
     if not agreement.get("buildings"):
         return ""
-    building = agreement["buildings"][0]
-    sid_list = building["state_ids"]
+    states = _building_candidates(agreement)
     clauses = []
-    for index, sid in enumerate(sid_list):
+    for index, sid in enumerate(states):
         prefix = "if" if index == 0 else "else_if"
         clauses.append(
-            f"{prefix} = {{ limit = {{ {sid} = {{ is_owned_by = NKO is_controlled_by = NKO industrial_complex < 50 }} }} "
-            f"{sid} = {{ add_extra_state_shared_building_slots = {building['slots']} add_building_construction = {{ type = {building['type']} level = {building['levels']} instant_build = yes }} }} }}"
+            f"{prefix} = {{ limit = {{ {_building_site_check(agreement, sid)} }} "
+            f"{_building_reward(agreement, sid)} }}"
         )
     return "NKO = {\n" + indent("\n".join(clauses)) + "\n}"
 
@@ -630,6 +722,9 @@ def build(root: Path, design: dict) -> list[Path]:
         path.parent.mkdir(parents=True, exist_ok=True)
         encoding = "utf-8-sig" if relative.endswith(".yml") else "utf-8"
         if not relative.endswith('.yml'):text=HEADER+format_code(text)
+        else:
+            text='l_english:\n'+HEADER+'\n'.join(line for line in text.splitlines() if line.strip()!='l_english:' and not line.startswith('# IMPERIA COLD WAR'))+'\n'
+            text='\n'.join(line if line.lstrip().startswith('#') else line.replace('\u2014',': ').replace('\u2013','-') for line in text.splitlines())+'\n'
         blob=text.lstrip('\ufeff').encode(encoding)
         if not path.exists() or path.read_bytes()!=blob:path.write_bytes(blob)
         paths.append(path)

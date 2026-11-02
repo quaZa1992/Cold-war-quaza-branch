@@ -1,0 +1,231 @@
+# IMPERIA COLD WAR — Generic focus economic organisation progression.
+icw_gen_econ_apply_shift = {
+    hidden_effect = {
+        set_temp_variable = { icw_gen_econ_delta = { value = icw_econ_position add = icw_gen_econ_delta clamp = { min = -100 max = 100 } subtract = icw_econ_position } }
+        if = {
+            limit = { has_country_flag = icw_econ_reform_active }
+            set_temp_variable = { icw_gen_econ_old_sale_points = { value = icw_econ_pending_position subtract = icw_econ_market_high_water clamp = { min = 0 max = 10 } } }
+        }
+    }
+    add_to_variable = { icw_econ_position = icw_gen_econ_delta tooltip = icw_gen_econ_position_shift_tt }
+    hidden_effect = {
+        if = {
+            limit = { check_variable = { icw_econ_position > icw_econ_market_high_water } }
+            set_variable = { icw_econ_market_high_water = icw_econ_position }
+        }
+        if = {
+            limit = { has_country_flag = icw_econ_reform_active }
+            add_to_variable = { icw_econ_pending_position = icw_gen_econ_delta }
+            clamp_variable = { var = icw_econ_pending_position min = -100 max = 100 }
+            if = {
+                limit = { check_variable = { icw_econ_pending_sale > 0 } }
+                if = {
+                    limit = { check_variable = { icw_gen_econ_old_sale_points > 0 } }
+                    set_temp_variable = { icw_gen_econ_sale_ratio = { value = icw_econ_pending_position subtract = icw_econ_market_high_water clamp = { min = 0 max = icw_gen_econ_old_sale_points } } }
+                    divide_temp_variable = { icw_gen_econ_sale_ratio = icw_gen_econ_old_sale_points }
+                    multiply_temp_variable = { icw_gen_econ_sale_ratio = icw_econ_pending_sale }
+                    set_variable = { icw_econ_pending_sale = icw_gen_econ_sale_ratio }
+                }
+                else = { clear_variable = icw_econ_pending_sale }
+            }
+        }
+        if = {
+            limit = { has_country_flag = icw_econ_approval_pending NOT = { icw_econ_request_valid = yes } }
+            icw_econ_clear_request = yes
+        }
+        icw_econ_refresh_tier = yes
+        set_variable = { globalism_value_eq = modifier@globalism_equilibrium }
+        clamp_variable = { var = globalism_value_eq min = 0 max = 100 }
+        if = { limit = { has_dynamic_modifier = { modifier = imp_globalism_modifier } } imp_eco_globalism_modifier = yes }
+        if = { limit = { IMP_is_1970_scenario = yes } mdcw_cw_update_world_market = yes }
+        ingame_update_setup = yes
+    }
+}
+
+icw_gen_econ_focus_market_liberalisation = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_market_liberalisation } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = 10 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_market_liberalisation }
+    }
+}
+icw_gen_econ_focus_attract_foreign_investors = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_attract_foreign_investors } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = 5 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_attract_foreign_investors }
+    }
+}
+icw_gen_econ_focus_open_the_stock_exchange = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_open_the_stock_exchange } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = 10 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_open_the_stock_exchange }
+    }
+}
+icw_gen_econ_focus_simplify_the_tax_code = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_simplify_the_tax_code } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = 5 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_simplify_the_tax_code }
+    }
+}
+icw_gen_econ_focus_export_processing_zones = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_export_processing_zones } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = 10 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_export_processing_zones }
+    }
+}
+icw_gen_econ_focus_economic_miracle = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_economic_miracle } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = 10 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_economic_miracle }
+    }
+}
+icw_gen_econ_focus_the_mixed_economy = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_the_mixed_economy } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = { value = icw_econ_position multiply = -1 clamp = { min = -20 max = 20 } } }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_the_mixed_economy }
+    }
+}
+icw_gen_econ_focus_indicative_planning = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_indicative_planning } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = { value = icw_econ_position multiply = -1 clamp = { min = -20 max = 20 } } }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_indicative_planning }
+    }
+}
+icw_gen_econ_focus_national_champions = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_national_champions } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = { value = icw_econ_position multiply = -1 clamp = { min = -20 max = 20 } } }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_national_champions }
+    }
+}
+icw_gen_econ_focus_social_partnership = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_social_partnership } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = { value = icw_econ_position multiply = -1 clamp = { min = -20 max = 20 } } }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_social_partnership }
+    }
+}
+icw_gen_econ_focus_pension_fund_investments = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_pension_fund_investments } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = { value = icw_econ_position multiply = -1 clamp = { min = -20 max = 20 } } }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_pension_fund_investments }
+    }
+}
+icw_gen_econ_focus_planned_prosperity = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_planned_prosperity } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = { value = icw_econ_position multiply = -1 clamp = { min = -20 max = 20 } } }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_planned_prosperity }
+    }
+}
+icw_gen_econ_focus_central_planning = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_central_planning } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = -10 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_central_planning }
+    }
+}
+icw_gen_econ_focus_nationalise_key_industries = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_nationalise_key_industries } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = -15 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_nationalise_key_industries }
+    }
+}
+icw_gen_econ_focus_state_planning_committee = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_state_planning_committee } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = -10 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_state_planning_committee }
+    }
+}
+icw_gen_econ_focus_collectivise_agriculture = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_collectivise_agriculture } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = -10 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_collectivise_agriculture }
+    }
+}
+icw_gen_econ_focus_socialist_industrialisation = {
+    if = {
+        limit = { hidden_trigger = { NOT = { has_country_flag = icw_gen_econ_done_socialist_industrialisation } } }
+        hidden_effect = {
+            icw_econ_initialize = yes
+            set_temp_variable = { icw_gen_econ_delta = -15 }
+        }
+        icw_gen_econ_apply_shift = yes
+        hidden_effect = { set_country_flag = icw_gen_econ_done_socialist_industrialisation }
+    }
+}

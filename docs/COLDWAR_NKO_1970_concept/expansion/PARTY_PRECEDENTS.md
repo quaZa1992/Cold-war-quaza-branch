@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # NKO party expansion: historical precedents
 
 The seven additions are alternate-history continuations of existing party or institutional starts. The groups are not claims that these organizations governed the DPRK in 1970. The focus mechanics turn their different constituencies into bounded policy choices; their modifiers are balance proposals, not historical measurements.

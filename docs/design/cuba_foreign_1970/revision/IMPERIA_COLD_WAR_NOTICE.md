@@ -1,0 +1,3 @@
+# IMPERIA COLD WAR: native preview provenance
+
+The preview and PNG captures are generated from the approved Cuba revision plus the user-requested local copy of the installed Millennium Dawn generic naval tree and six required prerequisite feeders. Focus icons, title bars and the bitmap font reference or render installed Millennium Dawn and Hearts of Iron IV assets. Millennium Dawn contributors are credited in the donor record; individual artists and applicable upstream permissions are unknown here. This record grants no ownership or redistribution permission. See the repository IMPERIA_COLD_WAR_NOTICE.md and installed mods for original credits. Modifications: namespaced focus identifiers, preserved relative geometry, preview effect summaries and title wrapping.

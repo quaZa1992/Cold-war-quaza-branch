@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Guest Worker Administration
+# IMPERIA COLD WAR — Guest-worker administration and bounded external callbacks.
 """Execute the emitted Ministry UI, including its country-reference adapter.
 
 Native DDS rendering and HOI4 multiplayer scheduling are explicit boundaries.
@@ -15,6 +15,18 @@ import validate_diaspora as T
 class Machine(V.ScriptMachine):
     country_scans=0
     def execute(self,body):
+        if any(k == 'COLDWAR_CUB_observe_voluntary_return' for k, _, _ in body):
+            observer = V.first(V.read_script('common/scripted_effects/COLDWAR_CUB_1970_effects.txt'),
+                               'COLDWAR_CUB_observe_voluntary_return')
+            guard = V.first(V.first(observer, 'if'), 'limit')
+            assert V.first(guard, 'tag') == 'USA', 'External callback eligibility changed'
+            assert self.current.tag != 'USA', 'Cuban return verification needs its own country fixture'
+            # These fixtures use A/B/C countries. The actual callback is
+            # provably ineligible there; do not pretend to model Cuban policy.
+            for key, op, value in body:
+                if key != 'COLDWAR_CUB_observe_voluntary_return':
+                    self.execute([(key, op, value)])
+            return
         if not any(k=='every_country' for k,_,v in body):return super().execute(body)
         assert not any(k in ('else','else_if') for k,_,v in body)
         for key,op,value in body:

@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # DPRK 1970 concept: localization and layout revision v2
 
 This is a prose and geometry proposal for the current 167-focus concept. It adds ten shared foreign-relations focuses and an eight-focus alternate-history war route against South Korea, for a projected total of 185 focuses. No canonical JSON, build script, game localization, or loaded game file was changed.

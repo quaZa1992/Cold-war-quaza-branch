@@ -1,0 +1,720 @@
+{
+  "project": "IMPERIA COLD WAR",
+  "source_record": {
+    "audit": "France revision 4: exact Millennium Dawn research bonus API and eligible 1970-1990 targets",
+    "scope": "Read-only source audit. MD source is the installed workshop tree, overlaid by local common/technologies files of the same filename and local custom technologies. No game files, concept JSON, generator, or viewer were changed.",
+    "api": {
+      "confirmed": "add_tech_bonus supports technology = <technology_id>; multiple technology entries are accepted in one block. For a deterministic named target use a separate one-target block with uses = 1. Native category = CAT_* is supported, but category members depend on the active technology definitions.",
+      "evidence": [
+        {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/00_generic.txt",
+          "lines": "6161-6173",
+          "detail": "One add_tech_bonus block lists nine exact technology IDs (body_armor_1..4 and camouflage_1..5)."
+        },
+        {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_israel.txt",
+          "lines": "26045-26061",
+          "detail": "technology = gen_5_medium with BBA, else technology = Strike_fighter4; both use bonus 0.30, uses 1."
+        },
+        {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_russia.txt",
+          "lines": "24745-24774",
+          "detail": "Exact target branch bonus, with has_tech check to add a next-generation target when the first target is already researched. This demonstrates an explicit fallback pattern, not automatic engine fallback."
+        }
+      ],
+      "exhausted_targets": "Source cannot establish engine behavior when a listed technology is already researched or when all eligible targets become unavailable. Native examples add explicit has_tech fallback branches. For fixed France rewards, grant one exact technology target per branch and only include a fallback if its condition is explicitly coded. Do not describe an unused bonus as moving automatically to another technology."
+    },
+    "france_1970_state": {
+      "evidence": [
+        {
+          "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/history/countries/FRA - France.txt",
+          "lines": "44-49",
+          "detail": "1970 setup applies mdcw_apply_1970_infantry_research and loads the 1970 generic focus tree."
+        },
+        {
+          "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/on_actions/mdcw_infantry_legacy_on_actions.txt",
+          "lines": "4-15",
+          "detail": "Startup runs the 1970 profile at date 1970.1.1, once, through the helper."
+        },
+        {
+          "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/scripted_effects/mdcw_1970_infantry_research_effects.txt",
+          "lines": "3287-3326",
+          "detail": "French profile grants baseline infantry/support weapons, AT, camouflage and early support technologies. It does not grant the 1970/1978 custom support advancements, support_weapons2, aircraft, naval or the candidate tank/electronics technologies below."
+        }
+      ],
+      "note": "This proves the France-specific custom profile contents and 1970 hook. It does not establish every technology inherited from other scenario or game initialization systems. Candidate recommendations therefore use targets absent from the profile and remain subject to a live 1970 save check."
+    },
+    "eligible_targets": {
+      "armor": [
+        {
+          "id": "MBT_2",
+          "name": "MBT 1975",
+          "year": 1975,
+          "status": "not granted by French 1970 profile",
+          "path": "MBT_1 -> MBT_2 -> MBT_3",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/armor.txt",
+            "lines": "76-105"
+          }
+        },
+        {
+          "id": "MBT_3",
+          "name": "MBT 1985",
+          "year": 1985,
+          "status": "not granted by French 1970 profile",
+          "path": "MBT_2 -> MBT_3 -> MBT_4",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/armor.txt",
+            "lines": "88-128"
+          }
+        },
+        {
+          "id": "mbt_tech_1",
+          "name": "MBT technology 1975 (NSB line)",
+          "year": 1975,
+          "status": "not granted by French 1970 profile",
+          "path": "1955 NSB legacy tank -> mbt_tech -> mbt_tech_1",
+          "source": {
+            "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/NSB_armor.txt",
+            "lines": "237-275"
+          }
+        }
+      ],
+      "artillery_and_support": [
+        {
+          "id": "mdcw_automatic_grenade_launcher_1970",
+          "name": "Automatic grenade launcher",
+          "year": 1970,
+          "status": "not granted by French 1970 profile",
+          "path": "local 1965-1990 support-weapons branch leading to support_weapons2",
+          "source": {
+            "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/mdcw_infantry_1965_1990.txt",
+            "lines": "170-197"
+          }
+        },
+        {
+          "id": "mdcw_light_company_mortar_1978",
+          "name": "Light company mortar",
+          "year": 1978,
+          "status": "not granted by French 1970 profile",
+          "path": "mdcw_light_company_mortar_1978 -> support_weapons2",
+          "source": {
+            "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/mdcw_infantry_1965_1990.txt",
+            "lines": "198-225"
+          }
+        },
+        {
+          "id": "support_weapons2",
+          "name": "Support Weapons II",
+          "year": 1985,
+          "status": "not granted by French 1970 profile",
+          "path": "support_weapons -> support_weapons2 -> support_weapons3",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/infantry.txt",
+            "lines": "3251-3294"
+          }
+        },
+        {
+          "id": "tech_arty_1",
+          "name": "Artillery II",
+          "year": 1985,
+          "status": "not granted by French 1970 profile",
+          "path": "1955 M101 service model -> tech_arty_0 -> tech_arty_1",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/artillery.txt",
+            "lines": "81-110"
+          }
+        },
+        {
+          "id": "arty_upgrade_1",
+          "name": "Artillery upgrade I",
+          "year": 1985,
+          "status": "not granted by French 1970 profile",
+          "path": "1955 service model -> arty_upgrade_1 -> tech_arty_1 or SP_arty_1",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/artillery.txt",
+            "lines": "187-220"
+          }
+        },
+        {
+          "id": "nsb_arty_upgrade_1",
+          "name": "NSB artillery upgrade I",
+          "year": 1980,
+          "status": "No Step Back branch; not granted by French 1970 profile",
+          "path": "1955 NSB artillery -> nsb_arty_upgrade_1 -> nsb_artillery_2",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/NSB_artillery.txt",
+            "lines": "1220-1255"
+          }
+        }
+      ],
+      "electronics": [
+        {
+          "id": "microchip_production_1",
+          "name": "Microchip Production I",
+          "year": 1975,
+          "status": "not granted by French 1970 profile",
+          "path": "sp_microchip_production project branch -> microchip_production_1 -> microchip_production_2",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/engineering.txt",
+            "lines": "2560-2605"
+          }
+        },
+        {
+          "id": "internet_1",
+          "name": "Internet I",
+          "year": 1975,
+          "status": "not granted by French 1970 profile",
+          "path": "internet_1 -> internet_2; no inbound prerequisite is declared inside this block",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/engineering.txt",
+            "lines": "3726-3762"
+          }
+        },
+        {
+          "id": "microprocessors",
+          "name": "Microprocessors",
+          "year": 1975,
+          "status": "not granted by French 1970 profile",
+          "path": "integrated_circuit -> microprocessors",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/engineering.txt",
+            "lines": "2970-3020"
+          }
+        }
+      ],
+      "air_fighters": [
+        {
+          "id": "gen_4_light",
+          "name": "Fourth-generation light aircraft",
+          "year": 1980,
+          "status": "BBA aircraft branch; not granted by French 1970 profile",
+          "path": "gen_3_light -> gen_4_light -> gen_5_light",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/BBA_aircraft.txt",
+            "lines": "226-270"
+          }
+        },
+        {
+          "id": "gen_4_medium",
+          "name": "Fourth-generation medium aircraft",
+          "year": 1980,
+          "status": "BBA aircraft branch; not granted by French 1970 profile",
+          "path": "gen_3_medium -> gen_4_medium -> gen_5_medium",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/BBA_aircraft.txt",
+            "lines": "269-315"
+          }
+        },
+        {
+          "id": "AS_Fighter2",
+          "name": "Air-superiority fighter II",
+          "year": 1985,
+          "status": "non-BBA branch; not granted by French 1970 profile",
+          "path": "AS_Fighter1 -> AS_Fighter2 -> AS_upgrade_1",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/fixed_wing.txt",
+            "lines": "82-120"
+          }
+        },
+        {
+          "id": "MR_Fighter2",
+          "name": "Multirole fighter II",
+          "year": 1985,
+          "status": "non-BBA branch; not granted by French 1970 profile",
+          "path": "MR_Fighter1 -> MR_Fighter2 -> MR_upgrade_1",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/fixed_wing.txt",
+            "lines": "506-544"
+          }
+        }
+      ],
+      "rotary": [
+        {
+          "id": "nsb_attack_helicopter_tech_2",
+          "name": "2nd Generation Attack Helicopter",
+          "year": 1985,
+          "status": "No Step Back branch; not granted by French 1970 profile",
+          "path": "nsb_attack_helicopter_tech_1 -> nsb_attack_helicopter_tech_2",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/helicopter_techs.txt",
+            "lines": "87-125"
+          }
+        },
+        {
+          "id": "transport_helicopter_1",
+          "name": "Transport Helicopter I",
+          "year": 1965,
+          "status": "unresearched at French 1970 profile; valid only if helicopter special project is completed",
+          "path": "historical pre-1965 helicopter -> transport_helicopter_1 -> transport_helicopter_2",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/helicopter_techs.txt",
+            "lines": "928-965"
+          }
+        },
+        {
+          "id": "nsb_transport_helicopter_1",
+          "name": "NSB Transport Helicopter I",
+          "year": 1965,
+          "status": "unresearched at French 1970 profile; valid only if helicopter special project is completed",
+          "path": "historical pre-1965 helicopter -> nsb_transport_helicopter_1 -> nsb_transport_helicopter_2",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/helicopter_techs.txt",
+            "lines": "658-693"
+          }
+        },
+        {
+          "id": "no_second_period_transport_target",
+          "name": "Verified gap",
+          "year": null,
+          "status": "No second transport-helicopter category target starts by 1990; next transport-helicopter levels start 1995. Only one attack-helicopter tech starts by 1990, and it requires NSB. Do not promise two period-eligible targets without broadening the scope or choosing the 1965 transport predecessor.",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/helicopter_techs.txt",
+            "lines": "396-430, 658-693, 928-965"
+          }
+        }
+      ],
+      "ships": [
+        {
+          "id": "frigate_hull_2",
+          "name": "Frigate Hull II",
+          "year": 1980,
+          "status": "not granted by French 1970 profile",
+          "path": "frigate_hull_1 -> frigate_hull_2 -> frigate_hull_3",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/naval.txt",
+            "lines": "761-800"
+          }
+        },
+        {
+          "id": "destroyer_hull_2",
+          "name": "Destroyer Hull II",
+          "year": 1990,
+          "status": "not granted by French 1970 profile",
+          "path": "destroyer_hull_1 -> destroyer_hull_2 -> destroyer_hull_3",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/naval.txt",
+            "lines": "1236-1275"
+          }
+        },
+        {
+          "id": "attack_submarine_hull_2",
+          "name": "Attack Submarine Hull II",
+          "year": 1980,
+          "status": "not granted by French 1970 profile",
+          "path": "attack_submarine_hull_1 -> attack_submarine_hull_2 -> attack_submarine_hull_3",
+          "source": {
+            "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/naval.txt",
+            "lines": "3063-3090"
+          }
+        }
+      ]
+    },
+    "category_coverage": {
+      "finding": "The following 1970-1990 member counts were computed over the active source set (local same-name files replace the MD file; custom local files are added), deduplicated by technology ID. Category membership is demonstrably broad: these IDs include aircraft design, engines, avionics, refueling, drones and weapons; naval includes hulls plus radar/sonar, torpedoes, VLS, power systems and landing craft; armor includes ammo, engines, ERA and component upgrades. Prefer one direct technology ID where the focus is about a named programme.",
+      "counts": {
+        "CAT_armor": 28,
+        "CAT_tanks": 20,
+        "CAT_main_battle_tanks": 3,
+        "CAT_artillery": 9,
+        "CAT_towed_artillery": 4,
+        "CAT_aircraft": 32,
+        "CAT_naval": 33,
+        "CAT_electronics": 13,
+        "CAT_support_weapons": 5,
+        "CAT_transport_helicopters": 0,
+        "CAT_attack_helicopters": 1,
+        "CAT_frigates": 1,
+        "CAT_destroyers": 1,
+        "CAT_submarines": 3
+      },
+      "evidence": [
+        {
+          "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/armor.txt",
+          "lines": "76-128",
+          "detail": "The tank-category rows include MBT, armor components, engines and other upgrades; verify category list in the blocks."
+        },
+        {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/BBA_aircraft.txt",
+          "lines": "226-318",
+          "detail": "Light/medium aircraft IDs are specific, while umbrella aircraft categories are also assigned across aircraft technology rows."
+        },
+        {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/naval.txt",
+          "lines": "761-800",
+          "detail": "A hull uses CAT_naval plus the narrow CAT_frigates target; naval technology elsewhere also covers multiple ship systems and modules."
+        }
+      ]
+    },
+    "local_override_audit": {
+      "evidence": [
+        {
+          "path": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies",
+          "detail": "Local technologies directory contains same-name replacements for armor, artillery, engineering, fixed_wing, helicopter_techs and naval plus custom mdcw_* historic files. Active candidate rows remain present. No remove_technology/remove_tech directives were found under common/technologies."
+        }
+      ],
+      "result": "Use the active local definitions for category and branch checks; no local removal invalidates the listed exact technology IDs. The custom Cold War insertion files add 1940-1990 reachable predecessors and do not turn general research speed into a technology-specific bonus."
+    },
+    "native_balance_benchmarks": [
+      {
+        "country": "France",
+        "focus": "FRA_amx_leclerc",
+        "bonus": 0.5,
+        "uses": 2,
+        "target": "CAT_armor",
+        "cost_gate": "Focus requires military branch eligibility (not subject, not no_military idea); no explicit treasury deduction in this reward block.",
+        "source": {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_france.txt",
+          "lines": "16123-16149"
+        }
+      },
+      {
+        "country": "France",
+        "focus": "FRA_lafayette_class",
+        "bonus": 0.35,
+        "uses": 2,
+        "target": "CAT_frigates",
+        "cost_gate": "Military branch availability; no explicit treasury deduction in reward block.",
+        "source": {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_france.txt",
+          "lines": "16395-16420"
+        }
+      },
+      {
+        "country": "Russia",
+        "focus": "SOV_pogran",
+        "bonus": "0.75 / 0.35 / 0.35 / 0.75",
+        "uses": "2 / 2 / 2 / 1",
+        "target": "CAT_tanks, CAT_armored_fighting_vehicles, CAT_armored_personnel_carriers, CAT_light_tanks",
+        "cost_gate": "No direct money cost in reward; preceding focus requirements at 05_russia.txt:21847-21910. Broad modern-category precedent, not 1970 calibration.",
+        "source": {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_russia.txt",
+          "lines": "21847-21895"
+        }
+      },
+      {
+        "country": "Israel",
+        "focus": "ISR_raam",
+        "bonus": 0.3,
+        "uses": 1,
+        "target": "gen_5_medium with BBA; Strike_fighter4 fallback without BBA",
+        "cost_gate": "Cost is treasury -15; exact target follows DLC branch. This is a direct model-program target.",
+        "source": {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_israel.txt",
+          "lines": "26045-26062"
+        }
+      },
+      {
+        "country": "Germany",
+        "focus": "GER_reseach_requirents_for_airforce",
+        "bonus": 0.25,
+        "uses": 1,
+        "target": "CAT_aircraft",
+        "cost_gate": "Focus costs 4.3; additionally treasury_change = gdp_per_capita x -0.15. Broad category example.",
+        "source": {
+          "path": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/national_focus/05_germany.txt",
+          "lines": "8063-8087"
+        }
+      }
+    ],
+    "calibration": "Comparable native examples span +0.25 to +0.75 for one or two uses; direct model-specific bonuses use +0.30 to +0.55 for one use and can carry explicit funding cost. For the requested 1970 France institutional programmes, +0.25 to +0.50, uses 1, with one exact 1970-1990 technology ID and the real preceding programme cost is consistent. Avoid broad categories for weapons themes.",
+    "bundles": {
+      "infantry_support": {
+        "status": "ready",
+        "targets": [
+          {
+            "id": "mdcw_automatic_grenade_launcher_1970",
+            "condition": "No SP allow; French profile grants predecessor only.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/infantry.txt:3180-3195",
+            "label": "Automatic Grenade Launcher",
+            "year": 1970,
+            "prerequisite": "support_weapons"
+          },
+          {
+            "id": "mdcw_light_company_mortar_1978",
+            "condition": "No SP allow; predecessor ungranted by identified profile.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/infantry.txt:3208-3250",
+            "label": "Light Company Mortar",
+            "year": 1978,
+            "prerequisite": "squad_automatic_weapon OR tandem_charge_warheads"
+          },
+          {
+            "year": 1968,
+            "id": "mdcw_combat_engineer_vehicles_1968",
+            "label": "Combat Engineer Vehicles",
+            "prerequisite": "infantry_weapons_1",
+            "condition": "Active custom support-category tech; no SP allow; this grants engineering support combat stats, not a field-hospital/medical company.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/infantry.txt:1169-1176; C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/mdcw_infantry_1965_1990.txt:535-559"
+          }
+        ]
+      },
+      "armor": {
+        "status": "ready_reconnaissance_tank_only",
+        "targets": [
+          {
+            "id": "Rec_tank_0",
+            "condition": "No direct SP allow found; this is reconnaissance armor, not MBT.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/armor.txt:642-687",
+            "label": "Reconnaissance Tank I",
+            "year": 1965,
+            "prerequisite": "none identified"
+          },
+          {
+            "id": "Rec_tank_1",
+            "condition": "No direct SP allow found.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/armor.txt:652-738",
+            "label": "Reconnaissance Tank II",
+            "year": 1985,
+            "prerequisite": "Rec_tank_0"
+          },
+          {
+            "year": 1975,
+            "id": "mbt_tech_1",
+            "label": "MBT Technology I",
+            "prerequisite": "mbt_tech",
+            "condition": "Requires completed sp_armoured_vehicle_project; optional guarded candidate. Active local NSB_armor.txt does not declare allow_branch for this tech.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/NSB_armor.txt:220-275"
+          },
+          {
+            "year": 1975,
+            "id": "tank_components_tech_2",
+            "label": "Tank Components Technology II",
+            "prerequisite": "tank_components_tech",
+            "condition": "No direct SP allow found; tank-computer/components line, not hull research. No allow_branch declared in active local file.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/NSB_armor.txt:490-545"
+          },
+          {
+            "year": 1975,
+            "id": "diesel_engine_tech_2",
+            "label": "Diesel Engine Technology II",
+            "prerequisite": "diesel_engine_tech",
+            "condition": "No direct SP allow found; tank engine line, not hull research. No allow_branch declared in active local file.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/NSB_armor.txt:1017-1060"
+          }
+        ]
+      },
+      "artillery": {
+        "status": "ready_branch_specific",
+        "targets": [
+          {
+            "id": "arty_upgrade_1",
+            "condition": "Legacy branch; no SP allow.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/artillery.txt:19-55,188-220",
+            "label": "Artillery Upgrade I",
+            "year": 1985,
+            "prerequisite": "tech_arty_0"
+          },
+          {
+            "id": "tech_arty_1",
+            "condition": "Legacy branch; no SP allow.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/artillery.txt:82-110,188-220",
+            "label": "Artillery Technology I",
+            "year": 1985,
+            "prerequisite": "arty_upgrade_1"
+          },
+          {
+            "id": "nsb_arty_upgrade_1",
+            "condition": "NSB branch; no SP allow.",
+            "source": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/NSB_artillery.txt:1035-1049,1220-1240",
+            "label": "Artillery Upgrade I (NSB)",
+            "year": 1980,
+            "prerequisite": "nsb_artillery_1"
+          },
+          {
+            "id": "nsb_artillery_2",
+            "condition": "NSB branch; no SP allow.",
+            "source": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/NSB_artillery.txt:1062-1075,1220-1235",
+            "label": "Artillery II (NSB)",
+            "year": 1985,
+            "prerequisite": "nsb_arty_upgrade_1"
+          }
+        ]
+      },
+      "electronics": {
+        "status": "ready_no_SP_gate",
+        "targets": [
+          {
+            "id": "integrated_circuit",
+            "condition": "No SP allow; absent French 1970 profile.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/engineering.txt:1640-1689",
+            "label": "Integrated Circuit",
+            "year": 1955,
+            "prerequisite": "basic_computing"
+          },
+          {
+            "id": "microprocessors",
+            "condition": "No SP allow; unlocks separate SP. Exclude SP-gated microchip_production_1.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/engineering.txt:1690-1765",
+            "label": "Microprocessors",
+            "year": 1975,
+            "prerequisite": "integrated_circuit"
+          }
+        ]
+      },
+      "fighter": {
+        "status": "legacy_ready; BBA guarded",
+        "targets": [
+          {
+            "id": "AS_Fighter2",
+            "condition": "Legacy branch; no SP allow.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/fixed_wing.txt:54-120",
+            "label": "Air Superiority Fighter II",
+            "year": 1985,
+            "prerequisite": "AS_Fighter1"
+          },
+          {
+            "id": "MR_Fighter2",
+            "condition": "Legacy branch; no SP allow.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/fixed_wing.txt:438-535",
+            "label": "Multirole Fighter II",
+            "year": 1985,
+            "prerequisite": "MR_Fighter1"
+          },
+          {
+            "id": "gen_4_light",
+            "condition": "By Blood Alone and completed sp_aircraft_project required; optional with both gates.",
+            "source": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/BBA_aircraft.txt:226-250",
+            "label": "Fourth-Generation Light Fighter",
+            "year": 1980,
+            "prerequisite": "gen_3_light"
+          },
+          {
+            "id": "gen_4_medium",
+            "condition": "By Blood Alone and completed sp_aircraft_project required; optional with both gates.",
+            "source": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/BBA_aircraft.txt:269-295",
+            "label": "Fourth-Generation Medium Fighter",
+            "year": 1980,
+            "prerequisite": "gen_3_medium"
+          }
+        ]
+      },
+      "frigates_submarines": {
+        "status": "SP_gated_optional",
+        "targets": [
+          {
+            "id": "frigate_hull_2",
+            "condition": "Requires completed sp_naval_vessel_project; no generic France 1970 grant. Guard both project and branch.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/naval.txt:733-800",
+            "label": "Frigate Hull II",
+            "year": 1980,
+            "prerequisite": "frigate_hull_1"
+          },
+          {
+            "id": "attack_submarine_hull_2",
+            "condition": "Requires completed sp_naval_vessel_project; guard both project and branch.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/naval.txt:3045-3100",
+            "label": "Attack Submarine Hull II",
+            "year": 1980,
+            "prerequisite": "attack_submarine_hull_1"
+          }
+        ]
+      },
+      "transport_rescue": {
+        "status": "SP_gated_optional",
+        "targets": [
+          {
+            "id": "transport_helicopter_1",
+            "condition": "Legacy branch and completed sp_helicopter_project required.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/helicopter_techs.txt:928-965",
+            "label": "Transport Helicopter I",
+            "year": 1965,
+            "prerequisite": "none"
+          },
+          {
+            "id": "nsb_transport_helicopter_1",
+            "condition": "NSB branch and completed sp_helicopter_project required.",
+            "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/helicopter_techs.txt:658-693",
+            "label": "Transport Helicopter I (NSB)",
+            "year": 1965,
+            "prerequisite": "none"
+          }
+        ]
+      }
+    },
+    "global_1970_special_project_audit": {
+      "finding": "France 1970 history contains no completion of aviation, naval-vessel, armored-vehicle, helicopter, or microchip projects; completions appear later in the 2000 history block. Active MD on_actions, common scripted_effects, decisions and events search found no generic global 1970 completion for these. This proves no generic startup grant, not permanent unreachability; project availability can depend on DLC/state and was not runtime-tested. Treat gated technologies as optional only with native has_dlc and completed-project guards.",
+      "sources": [
+        "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/history/countries/FRA - France.txt:5-68,69-98,1626,1751",
+        "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/scripted_effects/99_KOR_scripted_effects.txt:457-475 (country-specific Korea inheritance)",
+        "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/scripted_effects/00_reverse_engineering_effects.txt:82-109,160-164 (conditional progress)"
+      ]
+    },
+    "bundle_usage_caveat": "These are candidate IDs, not a runtime auto-selection contract. With uses=1 and one exact technology field, the grant is finite. Do not promise automatic reassignment if the technology is already researched or unavailable; source evidence does not establish exhausted-target engine behavior. Any fallback must be an explicit separate guarded add_tech_bonus branch with its own exact technology field. Gated candidate bonus eligibility must include the same DLC/project guards as its technology.",
+    "project_and_dlc_gates": {
+      "project_defs": [
+        {
+          "allowed": "always = yes",
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/special_projects/projects/air_projects.txt:3-4",
+          "id": "sp_aircraft_project"
+        },
+        {
+          "allowed": "always = yes",
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/special_projects/projects/air_projects.txt:65-66",
+          "id": "sp_helicopter_project"
+        },
+        {
+          "allowed": "always = yes",
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/special_projects/projects/naval_projects.txt:3-4",
+          "id": "sp_naval_vessel_project"
+        }
+      ],
+      "technology_gate_examples": [
+        {
+          "source": "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/BBA_aircraft.txt:226-270",
+          "nativeGuard": "ROOT = { is_special_project_completed = sp:sp_aircraft_project }",
+          "target": "gen_4_light, gen_4_medium"
+        },
+        {
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/naval.txt:763-780",
+          "nativeGuard": "ROOT = { is_special_project_completed = sp:sp_naval_vessel_project }",
+          "target": "frigate_hull_2"
+        },
+        {
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/helicopter_techs.txt:658-673,930-946",
+          "nativeGuard": "ROOT = { is_special_project_completed = sp:sp_helicopter_project }; legacy allow_branch = { NOT = { has_dlc = \"No Step Back\" } }; NSB allow_branch = { has_dlc = \"No Step Back\" }",
+          "target": "transport_helicopter_1 / nsb_transport_helicopter_1"
+        }
+      ],
+      "dlcBranchFinding": "BBA_aircraft.txt tech blocks do not declare allow_branch or has_dlc in the active source; do not claim a native per-tech DLC branch guard. If the focus itself needs a BBA-only guard, source form is has_dlc = \"By Blood Alone\"; target itself additionally needs the native SP-completed check. NSB_armor.txt MBT/component/engine rows inspected have no allow_branch in active local definitions; do not invent one.",
+      "projectReachability": "These three project definitions are actively overridden locally and use allowed = { always = yes }, so the projects are available through the normal special-project interface, subject to player prerequisites/resources and runtime DLC/state; this does not mean France starts with them complete."
+    },
+    "support_research_search": {
+      "finding": "No active tech ID for field_hospital, medical_support, engineer_company or equivalent field-medical support was found in local/installed MD technology source. mdcw_combat_engineer_vehicles_1968 is a verified engineering-support-related combat stats tech, but it does not unlock a field-hospital support company. Keep rescue electronics as microprocessors; do not re-label a grenade launcher as rescue.",
+      "sources": [
+        "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/infantry.txt:1-4000",
+        "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/mdcw_infantry_1965_1990.txt:535-559",
+        "E:/SteamLibrary/steamapps/workshop/content/394360/2777392649/common/technologies/engineering.txt:1-1600"
+      ]
+    },
+    "citizen_rescue_candidates": {
+      "rescue": [
+        {
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/engineering.txt:1663-1690",
+          "id": "integrated_circuit",
+          "label": "Integrated Circuit",
+          "year": 1955
+        },
+        {
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/engineering.txt:1690-1765",
+          "id": "microprocessors",
+          "label": "Microprocessors",
+          "year": 1975
+        }
+      ],
+      "citizen": [
+        {
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/infantry.txt:3174-3223",
+          "id": "support_weapons",
+          "label": "Support Weapons",
+          "year": 1965
+        },
+        {
+          "source": "C:/Users/Enes/Documents/Paradox Interactive/Hearts of Iron IV/mod/mdcoldwar/common/technologies/infantry.txt:3256-3276",
+          "id": "support_weapons2",
+          "label": "Support Weapons II",
+          "year": 1975
+        }
+      ]
+    }
+  }
+}

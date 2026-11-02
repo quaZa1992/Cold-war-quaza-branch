@@ -1,3 +1,6 @@
+# IMPERIA COLD WAR — Historical January 1970 equipment component compatibility.
+# IMPERIA COLD WAR â€” Historical January 1970 equipment component compatibility.
+# IMPERIA COLD WAR — Historical January 1970 equipment component compatibility.
 # IMPERIA CW — Cold War: historical air naval — research technologies.
 # COLDWAR | Pre-1965 aircraft, helicopter, hull and naval module generations ahead of the MD 1965 lines.
 # Layout (absolute positions are the folder gridbox origin plus x/y slots):
@@ -6,13 +9,14 @@
 #  nsb_armour_folder    1940 = -8, 1943 = -6, 1945 = -4 (mbt_tech_ops, 1955 chassis beside it), 1965 = -2 (years run along x)
 #  artillery_folder     1940 = -4, 1950/1955 = -2, 1965 = 0
 #  fixed_wing_folder    1940 = -11, 1945 = -8 (early_fighter), 1950 = -6, 1955 = -3, 1965 = 0
-#  bba_aircraft_folder  1945 = -7, 1950 = -4, 1955 = -1 (early_airframe_designs)
+#  bba_aircraft_folder  1945 = -7, 1950 = -4, 1955 = -1 (early_airframe_designs); 1950/1955 airframes in mdcw_jet_generations.txt # COLDWAR jetgen
 #  naval_folder         1945 = -5 (MD foundations), 1955 = -1, 1965 = 3
 #  civilian_folder      rows relative to the MD civilian gridboxes (y = 840 px): 1940 = -12 ... 1975 = -2, MD 1985 = 2
 #  electronics_folder   machine tool column 32/36, two rows per generation (1940 = 2 ... 1970 = 10)
 technologies = {
 	mdcw_piston_fighter_1940 = {
-		enable_equipments = { mdcw_piston_fighter_1940_model }
+		enable_equipments = { mdcw_piston_fighter_1940_model
+		}
 
 		research_cost = 0.9
 		start_year = 1940
@@ -66,6 +70,11 @@ technologies = {
 			engine_prop_single_1
 			weap_multi_gun_1
 			module_mdcw_early_fighter_guns
+			module_mdcw_unguided_bombs_1945 # IMPERIA COLD WAR — Historical January 1970 component integration.
+			module_mdcw_aircraft_machine_guns_1940 # IMPERIA COLD WAR — Historical January 1970 component integration.
+			module_mdcw_aircraft_cannon_20mm # IMPERIA COLD WAR — Historical January 1970 component integration.
+			module_mdcw_aircraft_cannon_30mm # IMPERIA COLD WAR — Historical January 1970 component integration.
+			module_mdcw_mixed_aircraft_cannons_1945 # IMPERIA COLD WAR — Historical January 1970 component integration.
 		}
 
 		research_cost = 1.2
@@ -73,7 +82,9 @@ technologies = {
 
 		special_project_specialization = { specialization_air }
 
-		path = { research_cost_coeff = 1 leads_to_tech = mdcw_early_jet_airframes_1950 }
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_gen_1_light } # COLDWAR jetgen
+		path = { research_cost_coeff = 1 leads_to_tech = mdcw_gen_1_medium } # COLDWAR jetgen
+		path = { research_cost_coeff = 1 leads_to_tech = early_airframe_designs } # COLDWAR jetgen: was via mdcw_early_jet_airframes_1950
 		folder = { name = bba_aircraft_folder position = { x = -1 y = -7 } }
 
 		categories = {
@@ -86,35 +97,13 @@ technologies = {
 		ai_will_do = { factor = 1 }
 	}
 
-	mdcw_early_jet_airframes_1950 = {
-		allow = { ROOT = { is_special_project_completed = sp:sp_aircraft_project } }
-		allow_branch = { has_dlc = "By Blood Alone" }
-
-		enable_equipments = { mdcw_bba_early_jet_medium_airframe_1950 }
-		enable_equipment_modules = { wing_swept engine_jet_single_1 }
-
-		research_cost = 1.5
-		start_year = 1950
-
-		special_project_specialization = { specialization_air }
-
-		path = { research_cost_coeff = 1 leads_to_tech = early_airframe_designs }
-		folder = { name = bba_aircraft_folder position = { x = -1 y = -4 } }
-
-		categories = {
-			CAT_military
-			CAT_aircraft
-			CAT_light_aircraft
-			CAT_air_modules
-		}
-
-		ai_will_do = { factor = 1 }
-	}
+	# COLDWAR jetgen: mdcw_early_jet_airframes_1950 became mdcw_gen_1_medium (common/technologies/mdcw_jet_generations.txt).
 
 	mdcw_utility_helicopter_1955 = {
 		allow = { ROOT = { is_special_project_completed = sp:sp_helicopter_project } }
 
-		enable_equipments = { mdcw_utility_helicopter_1955_model }
+		enable_equipments = { transport_helicopter_1 # IMPERIA COLD WAR: native MD transport family.
+		}
 		enable_subunits = { L_Air_assault_Bat helicopter_combat_service_support }
 
 		research_cost = 1.2

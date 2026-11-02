@@ -1,0 +1,40 @@
+# IMPERIA COLD WAR — Treasury advice to the President after a dollar departure.
+add_namespace = ICW_reserve_currency
+
+# IMPERIA COLD WAR — Recheck the completed departure before notifying Washington.
+country_event = {
+	id = ICW_reserve_currency.2
+	hidden = yes
+	is_triggered_only = yes
+	immediate = {
+		if = {
+			limit = {
+				exists = yes
+				NOT = { tag = USA }
+				NOT = { has_idea = us_dollar }
+				country_exists = USA
+			}
+			USA = { country_event = { id = ICW_reserve_currency.1 } }
+		}
+	}
+}
+
+# IMPERIA COLD WAR — Country-specific advice in a private presidential briefing.
+country_event = {
+	id = ICW_reserve_currency.1
+	title = ICW_reserve_currency.1.t
+	desc = ICW_reserve_currency.1.d
+	picture = GFX_world_stockmarket
+	is_triggered_only = yes
+	trigger = {
+		tag = USA
+		FROM = {
+			exists = yes
+			NOT = { tag = USA }
+			NOT = { has_idea = us_dollar }
+		}
+	}
+	option = {
+		name = ICW_reserve_currency.1.a
+	}
+}

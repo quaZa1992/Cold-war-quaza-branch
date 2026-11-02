@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — Smaller, less frequent random oversupply shocks.
+# IMPERIA COLD WAR — Oil-market arithmetic boundaries.
 # IMPERIA CW — Cold War: Imperia oil prices scripted effects — scripted effects.
 #########################################################################################
 # Original Script by: Moveably - Please don't touch. Unless I'm gone. Then can touch :) #
@@ -104,7 +106,11 @@ imp_calculate_oil_dependency = {
 
         # Then the next 0.3 is determined by our share of power plants being fossil fuel
         set_temp_variable = { imp_fossil_p = fossil_pp_energy_generation }
-        divide_temp_variable = { imp_fossil_p = energy_sum }
+        if = {
+            limit = { check_variable = { energy_sum > 0 } }
+            divide_temp_variable = { imp_fossil_p = energy_sum }
+        }
+        else = { set_temp_variable = { imp_fossil_p = 0 } }
         set_temp_variable = { imp_fossil_mod = 0.3 }
         multiply_temp_variable = { imp_fossil_mod = imp_fossil_p }
         add_to_variable = { imp_oil_dependency = imp_fossil_mod }
@@ -137,7 +143,8 @@ imp_calculate_oil_equilibrium = {
     ### The base price is decided by the oil policies of the largest oil producers.
     ### The base oil price is $75
 
-    # First get all the oil exports
+    # First get all the oil exports. Reset shared temporary state for each call.
+    set_temp_variable = { total_oil_exports_t = 0 }
     for_each_scope_loop = {
         array = global.major_oil_exporters 
         add_to_temp_variable = { total_oil_exports_t = imp_oil_export_surplus }
@@ -743,6 +750,26 @@ imp_oil_war_event = {
     }
 }
 
+# IMPERIA COLD WAR — A surplus is a small relative spot-price shock, with a global repeat guard.
+COLDWAR_oil_oversupply_shock = {
+    if = {
+        limit = {
+            NOT = { has_global_flag = COLDWAR_oil_oversupply_cooldown }
+        }
+        set_global_flag = {
+            flag = COLDWAR_oil_oversupply_cooldown
+            days = 730
+            value = 1
+        }
+        set_temp_variable = { COLDWAR_oil_oversupply_change_t = global.imp_global_oil_price }
+        multiply_temp_variable = { COLDWAR_oil_oversupply_change_t = -0.01 }
+        add_to_variable = { global.imp_global_oil_price = COLDWAR_oil_oversupply_change_t }
+        clamp_variable = { var = global.imp_global_oil_price min = 15 max = 200 }
+        imp_update_oil_price_display = yes
+        country_event = { id = imp_oil.21 }
+    }
+}
+
 imp_random_global_oil_event = {
     random_list = { 
         30 = {
@@ -835,11 +862,13 @@ imp_random_global_oil_event = {
             set_temp_variable = { oil_cost_multiplier_t = -0.03 }
             imp_spike_oil_price = yes
         }
-        30 = {
-            # More Oil!
-            country_event = imp_oil.21
-            set_temp_variable = { oil_cost_multiplier_t = -0.05 }
-            imp_spike_oil_price = yes
+        15 = {
+            # IMPERIA COLD WAR — Halved draw weight; a locked surplus is excluded from the draw.
+            modifier = {
+                factor = 0
+                has_global_flag = COLDWAR_oil_oversupply_cooldown
+            }
+            COLDWAR_oil_oversupply_shock = yes
         }
         30 = {
             # Oil???

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: vietnam 1970 — reward rework.
+# IMPERIA COLD WAR — Vietnam 1970 programme reward revision.
 """User-requested whole-tree reward revision, layered over immutable approvals.
 
 Only design data is changed here. Importing or loading never writes game files.
@@ -9,6 +9,7 @@ import json
 
 HERE=Path(__file__).resolve().parent
 P='COLDWAR_VIE_'
+DIRECT_BUILDING_FOCUSES = {P + key for key in ('kiet_transport', 'industry_roads', 'farm_dykes', 'army_airdefence')}
 
 def specification():
     path=HERE/'reward_rework.json'
@@ -23,8 +24,9 @@ def reward_code(n):
             rows.append(f'add_to_variable = {{ {P}{group}_{key} = {value:g} tooltip = {P}tt_{key} }}')
     if n['cash']:rows += [f'set_temp_variable = {{ treasury_change = {-n["cash"]:g} }}','modify_treasury_effect = yes']
     if n['building']:
-        state,kind=n['building'];instant='yes' if n.get('instant_build') else 'no'
-        rows.append(f'{state} = {{ add_building_construction = {{ type = {kind} level = 1 instant_build = {instant} }} }}')
+        state,kind=n['building'];instant='yes' if n.get('instant_build') or n['id'] in DIRECT_BUILDING_FOCUSES else 'no'
+        slot = 'add_extra_state_shared_building_slots = 1 ' if n['id'] in DIRECT_BUILDING_FOCUSES else ''
+        rows.append(f'{state} = {{ {slot}add_building_construction = {{ type = {kind} level = 1 instant_build = {instant} }} }}')
     if n['unlock']:rows.append('set_country_flag = '+P+'unlock_'+n['unlock'])
     if n['support']:
         slot,amount=n['support'];rows += [f'set_temp_variable = {{ party_index = {slot} }}',f'set_temp_variable = {{ party_popularity_increase = {amount:g} }}',f'set_temp_variable = {{ temp_outlook_increase = {amount:g} }}','change_relative_party_popularity = yes']
@@ -96,7 +98,11 @@ def apply_base(design):
         q['modifiers']=spec['decisions'][q['id']]
         if q['family']=='foreign':q['family']='foreign_'+(q['target'] or q['unlock'])
         if q['id']==P+'decision_withdrawal':q['extra_code']+='\nCOLDWAR_VIE_campaign_cbd_land_drawdown = yes\nNOT = { has_war_with = CBD }'
-    for n in design['nodes']:n['raw_reward_code']=reward_code(n)
+    for n in design['nodes']:
+        # User-authorised capacity correction: five-country audit, 2026-10-28.
+        # Only these four reviewed assets become direct completion awards.
+        if n['id'] in DIRECT_BUILDING_FOCUSES:n['instant_build']=True
+        n['raw_reward_code']=reward_code(n)
     design['reward_revision']=spec['revision']
     return design
 

@@ -1,0 +1,746 @@
+# IMPERIA COLD WAR — USA recipient-approved agreement lifecycle effects.
+
+COLDWAR_USA_early_preview_israel = {
+	effect_tooltip = {
+	custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+	USA = {
+	add_ideas = COLDWAR_USA_early_israel_usa
+	add_to_variable = { COLDWAR_USA_early_preview_experience_gain_army_factor = 0.05 tooltip = COLDWAR_USA_early_mod_experience_gain_army_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_line_change_production_efficiency_factor = 0.03 tooltip = COLDWAR_USA_early_mod_line_change_production_efficiency_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_equipment_cost_multiplier_modifier = 0.01 tooltip = COLDWAR_USA_early_mod_equipment_cost_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.01 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+	}
+	ISR = {
+	add_ideas = COLDWAR_USA_early_israel_isr
+	add_to_variable = { COLDWAR_USA_early_preview_army_org_factor = 0.04 tooltip = COLDWAR_USA_early_mod_army_org_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_army_org_regain = 0.04 tooltip = COLDWAR_USA_early_mod_army_org_regain_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_equipment_cost_multiplier_modifier = -0.02 tooltip = COLDWAR_USA_early_mod_equipment_cost_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_personnel_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_personnel_cost_multiplier_modifier_tt }
+	}
+	}
+}
+
+COLDWAR_USA_early_renewal_preview_israel = {
+	effect_tooltip = {
+	custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+	USA = {
+	add_ideas = COLDWAR_USA_early_israel_usa
+	add_to_variable = { COLDWAR_USA_early_preview_experience_gain_army_factor = 0.05 tooltip = COLDWAR_USA_early_mod_experience_gain_army_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_line_change_production_efficiency_factor = 0.03 tooltip = COLDWAR_USA_early_mod_line_change_production_efficiency_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_equipment_cost_multiplier_modifier = 0.01 tooltip = COLDWAR_USA_early_mod_equipment_cost_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.01 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+	}
+	ISR = {
+	add_ideas = COLDWAR_USA_early_israel_isr
+	add_to_variable = { COLDWAR_USA_early_preview_army_org_factor = 0.04 tooltip = COLDWAR_USA_early_mod_army_org_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_army_org_regain = 0.04 tooltip = COLDWAR_USA_early_mod_army_org_regain_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_equipment_cost_multiplier_modifier = -0.02 tooltip = COLDWAR_USA_early_mod_equipment_cost_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_personnel_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_personnel_cost_multiplier_modifier_tt }
+	}
+	}
+}
+
+COLDWAR_USA_early_complete_israel = {
+	COLDWAR_USA_early_preview_israel = yes
+	hidden_effect = {
+	if = { limit = { COLDWAR_USA_early_can_offer_israel = yes } set_country_flag = COLDWAR_USA_early_israel_unlocked set_country_flag = COLDWAR_USA_early_israel_authorised COLDWAR_USA_early_send_israel = yes }
+	}
+}
+
+COLDWAR_USA_early_send_israel = {
+	if = { limit = { tag = USA COLDWAR_USA_early_can_offer_israel = yes has_country_flag = COLDWAR_USA_early_israel_authorised }
+	set_country_flag = { flag = COLDWAR_USA_early_israel_offer_open value = 1 days = 90 }
+	set_country_flag = COLDWAR_USA_early_israel_ever_offered
+	clr_country_flag = COLDWAR_USA_early_israel_consent_isr
+	ISR = {
+	set_country_flag = { flag = COLDWAR_USA_early_israel_offer_pending value = 1 days = 90 }
+	set_country_flag = COLDWAR_USA_early_israel_ever_offered
+	country_event = { id = COLDWAR_USA_early.100 }
+	}
+	}
+}
+
+COLDWAR_USA_early_on_first_accept_israel = {
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_israel_legacy_registered } } set_country_flag = COLDWAR_USA_early_israel_legacy_registered USA_1970_register_theater_acceptance = yes }
+}
+
+COLDWAR_USA_early_ratify_israel = {
+	if = { limit = { tag = USA COLDWAR_USA_early_transaction_valid_israel = yes has_country_flag = COLDWAR_USA_early_israel_consent_isr }
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_israel_setup_paid } }
+	
+	set_country_flag = COLDWAR_USA_early_israel_setup_paid
+	}
+	set_country_flag = COLDWAR_USA_early_israel_grant_usa_received
+	set_country_flag = COLDWAR_USA_early_israel_grant_isr_received
+	set_country_flag = COLDWAR_USA_early_israel_signed
+	clr_country_flag = COLDWAR_USA_early_israel_offer_open
+	ISR = {
+	set_country_flag = COLDWAR_USA_early_israel_signed
+	clr_country_flag = COLDWAR_USA_early_israel_offer_pending
+	}
+	COLDWAR_USA_early_on_first_accept_israel = yes
+	COLDWAR_USA_early_reconcile_all = yes
+	country_event = { id = COLDWAR_USA_early.500 }
+	}
+}
+
+COLDWAR_USA_early_accept_israel_isr = {
+	if = { limit = { COLDWAR_USA_early_accept_valid_israel_isr = yes }
+	USA = {
+	set_country_flag = COLDWAR_USA_early_israel_consent_isr
+	COLDWAR_USA_early_ratify_israel = yes
+	}
+	}
+}
+
+COLDWAR_USA_early_refuse_israel = {
+	if = { limit = { OR = { tag = ISR } has_country_flag = COLDWAR_USA_early_israel_offer_pending USA = { has_country_flag = COLDWAR_USA_early_israel_offer_open } }
+	USA = {
+	clr_country_flag = COLDWAR_USA_early_israel_offer_open
+	set_country_flag = { flag = COLDWAR_USA_early_israel_cooldown value = 1 days = 90 }
+	country_event = { id = COLDWAR_USA_early.600 }
+	}
+	ISR = {
+	clr_country_flag = COLDWAR_USA_early_israel_offer_pending
+	}
+	USA = {
+	clr_country_flag = COLDWAR_USA_early_israel_consent_isr
+	}
+	}
+}
+
+COLDWAR_USA_early_terminate_israel = {
+	if = { limit = { OR = { tag = USA tag = ISR } has_country_flag = COLDWAR_USA_early_israel_signed }
+	if = { limit = { country_exists = USA } USA = {
+	remove_ideas = COLDWAR_USA_early_israel_usa
+	clr_country_flag = COLDWAR_USA_early_israel_signed
+	clr_country_flag = COLDWAR_USA_early_israel_offer_pending
+	clr_country_flag = COLDWAR_USA_early_israel_offer_open
+	clr_country_flag = COLDWAR_USA_early_israel_authorised
+	clr_country_flag = COLDWAR_USA_early_israel_term
+	set_country_flag = { flag = COLDWAR_USA_early_israel_cooldown value = 1 days = 90 }
+	} }
+	if = { limit = { country_exists = ISR } ISR = {
+	remove_ideas = COLDWAR_USA_early_israel_isr
+	clr_country_flag = COLDWAR_USA_early_israel_signed
+	clr_country_flag = COLDWAR_USA_early_israel_offer_pending
+	} }
+	}
+}
+
+COLDWAR_USA_early_preview_canada = {
+	effect_tooltip = {
+	custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+	USA = {
+	add_ideas = COLDWAR_USA_early_canada_usa
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.02 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_line_change_production_efficiency_factor = 0.03 tooltip = COLDWAR_USA_early_mod_line_change_production_efficiency_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_tax_gain_multiplier_modifier = -0.01 tooltip = COLDWAR_USA_early_mod_tax_gain_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.005 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+	}
+	CAN = {
+	add_ideas = COLDWAR_USA_early_canada_can
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.03 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_production_factory_efficiency_gain_factor = 0.03 tooltip = COLDWAR_USA_early_mod_production_factory_efficiency_gain_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_tax_gain_multiplier_modifier = -0.01 tooltip = COLDWAR_USA_early_mod_tax_gain_multiplier_modifier_tt }
+	}
+	}
+}
+
+COLDWAR_USA_early_renewal_preview_canada = {
+	effect_tooltip = {
+	custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+	USA = {
+	add_ideas = COLDWAR_USA_early_canada_usa
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.02 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_line_change_production_efficiency_factor = 0.03 tooltip = COLDWAR_USA_early_mod_line_change_production_efficiency_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_tax_gain_multiplier_modifier = -0.01 tooltip = COLDWAR_USA_early_mod_tax_gain_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.005 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+	}
+	CAN = {
+	add_ideas = COLDWAR_USA_early_canada_can
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.03 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_production_factory_efficiency_gain_factor = 0.03 tooltip = COLDWAR_USA_early_mod_production_factory_efficiency_gain_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_tax_gain_multiplier_modifier = -0.01 tooltip = COLDWAR_USA_early_mod_tax_gain_multiplier_modifier_tt }
+	}
+	}
+}
+
+COLDWAR_USA_early_complete_canada = {
+	COLDWAR_USA_early_preview_canada = yes
+	hidden_effect = {
+	if = { limit = { COLDWAR_USA_early_can_offer_canada = yes } set_country_flag = COLDWAR_USA_early_canada_unlocked set_country_flag = COLDWAR_USA_early_canada_authorised COLDWAR_USA_early_send_canada = yes }
+	}
+}
+
+COLDWAR_USA_early_send_canada = {
+	if = { limit = { tag = USA COLDWAR_USA_early_can_offer_canada = yes has_country_flag = COLDWAR_USA_early_canada_authorised }
+	set_country_flag = { flag = COLDWAR_USA_early_canada_offer_open value = 1 days = 90 }
+	set_country_flag = COLDWAR_USA_early_canada_ever_offered
+	clr_country_flag = COLDWAR_USA_early_canada_consent_can
+	CAN = {
+	set_country_flag = { flag = COLDWAR_USA_early_canada_offer_pending value = 1 days = 90 }
+	set_country_flag = COLDWAR_USA_early_canada_ever_offered
+	country_event = { id = COLDWAR_USA_early.110 }
+	}
+	}
+}
+
+COLDWAR_USA_early_on_first_accept_canada = {
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_canada_legacy_registered } } set_country_flag = COLDWAR_USA_early_canada_legacy_registered USA_1970_register_theater_acceptance = yes }
+}
+
+COLDWAR_USA_early_ratify_canada = {
+	if = { limit = { tag = USA COLDWAR_USA_early_transaction_valid_canada = yes has_country_flag = COLDWAR_USA_early_canada_consent_can }
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_canada_setup_paid } }
+	
+	set_country_flag = COLDWAR_USA_early_canada_setup_paid
+	}
+	set_country_flag = COLDWAR_USA_early_canada_grant_usa_received
+	set_country_flag = COLDWAR_USA_early_canada_grant_can_received
+	set_country_flag = COLDWAR_USA_early_canada_signed
+	clr_country_flag = COLDWAR_USA_early_canada_offer_open
+	CAN = {
+	set_country_flag = COLDWAR_USA_early_canada_signed
+	clr_country_flag = COLDWAR_USA_early_canada_offer_pending
+	}
+	COLDWAR_USA_early_on_first_accept_canada = yes
+	COLDWAR_USA_early_reconcile_all = yes
+	country_event = { id = COLDWAR_USA_early.501 }
+	}
+}
+
+COLDWAR_USA_early_accept_canada_can = {
+	if = { limit = { COLDWAR_USA_early_accept_valid_canada_can = yes }
+	USA = {
+	set_country_flag = COLDWAR_USA_early_canada_consent_can
+	COLDWAR_USA_early_ratify_canada = yes
+	}
+	}
+}
+
+COLDWAR_USA_early_refuse_canada = {
+	if = { limit = { OR = { tag = CAN } has_country_flag = COLDWAR_USA_early_canada_offer_pending USA = { has_country_flag = COLDWAR_USA_early_canada_offer_open } }
+	USA = {
+	clr_country_flag = COLDWAR_USA_early_canada_offer_open
+	set_country_flag = { flag = COLDWAR_USA_early_canada_cooldown value = 1 days = 90 }
+	country_event = { id = COLDWAR_USA_early.601 }
+	}
+	CAN = {
+	clr_country_flag = COLDWAR_USA_early_canada_offer_pending
+	}
+	USA = {
+	clr_country_flag = COLDWAR_USA_early_canada_consent_can
+	}
+	}
+}
+
+COLDWAR_USA_early_terminate_canada = {
+	if = { limit = { OR = { tag = USA tag = CAN } has_country_flag = COLDWAR_USA_early_canada_signed }
+	if = { limit = { country_exists = USA } USA = {
+	remove_ideas = COLDWAR_USA_early_canada_usa
+	clr_country_flag = COLDWAR_USA_early_canada_signed
+	clr_country_flag = COLDWAR_USA_early_canada_offer_pending
+	clr_country_flag = COLDWAR_USA_early_canada_offer_open
+	clr_country_flag = COLDWAR_USA_early_canada_authorised
+	clr_country_flag = COLDWAR_USA_early_canada_term
+	set_country_flag = { flag = COLDWAR_USA_early_canada_cooldown value = 1 days = 90 }
+	} }
+	if = { limit = { country_exists = CAN } CAN = {
+	remove_ideas = COLDWAR_USA_early_canada_can
+	clr_country_flag = COLDWAR_USA_early_canada_signed
+	clr_country_flag = COLDWAR_USA_early_canada_offer_pending
+	} }
+	}
+}
+
+COLDWAR_USA_early_preview_mexico = {
+	effect_tooltip = {
+	custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+	USA = {
+	add_ideas = COLDWAR_USA_early_mexico_usa
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.02 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_production_factory_efficiency_gain_factor = 0.03 tooltip = COLDWAR_USA_early_mod_production_factory_efficiency_gain_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_tax_gain_multiplier_modifier = -0.01 tooltip = COLDWAR_USA_early_mod_tax_gain_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.005 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+	}
+	MEX = {
+	add_ideas = COLDWAR_USA_early_mexico_mex
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.03 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_production_factory_efficiency_gain_factor = 0.03 tooltip = COLDWAR_USA_early_mod_production_factory_efficiency_gain_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_education_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_education_cost_multiplier_modifier_tt }
+	}
+	}
+}
+
+COLDWAR_USA_early_renewal_preview_mexico = {
+	effect_tooltip = {
+	custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+	USA = {
+	add_ideas = COLDWAR_USA_early_mexico_usa
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.02 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_production_factory_efficiency_gain_factor = 0.03 tooltip = COLDWAR_USA_early_mod_production_factory_efficiency_gain_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_tax_gain_multiplier_modifier = -0.01 tooltip = COLDWAR_USA_early_mod_tax_gain_multiplier_modifier_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.005 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+	}
+	MEX = {
+	add_ideas = COLDWAR_USA_early_mexico_mex
+	add_to_variable = { COLDWAR_USA_early_preview_industrial_capacity_factory = 0.03 tooltip = COLDWAR_USA_early_mod_industrial_capacity_factory_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_production_factory_efficiency_gain_factor = 0.03 tooltip = COLDWAR_USA_early_mod_production_factory_efficiency_gain_factor_tt }
+	add_to_variable = { COLDWAR_USA_early_preview_education_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_education_cost_multiplier_modifier_tt }
+	}
+	}
+}
+
+COLDWAR_USA_early_complete_mexico = {
+	COLDWAR_USA_early_preview_mexico = yes
+	hidden_effect = {
+	if = { limit = { COLDWAR_USA_early_can_offer_mexico = yes } set_country_flag = COLDWAR_USA_early_mexico_unlocked set_country_flag = COLDWAR_USA_early_mexico_authorised COLDWAR_USA_early_send_mexico = yes }
+	}
+}
+
+COLDWAR_USA_early_send_mexico = {
+	if = { limit = { tag = USA COLDWAR_USA_early_can_offer_mexico = yes has_country_flag = COLDWAR_USA_early_mexico_authorised }
+	set_country_flag = { flag = COLDWAR_USA_early_mexico_offer_open value = 1 days = 90 }
+	set_country_flag = COLDWAR_USA_early_mexico_ever_offered
+	clr_country_flag = COLDWAR_USA_early_mexico_consent_mex
+	MEX = {
+	set_country_flag = { flag = COLDWAR_USA_early_mexico_offer_pending value = 1 days = 90 }
+	set_country_flag = COLDWAR_USA_early_mexico_ever_offered
+	country_event = { id = COLDWAR_USA_early.120 }
+	}
+	}
+}
+
+COLDWAR_USA_early_on_first_accept_mexico = {
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_mexico_legacy_registered } } set_country_flag = COLDWAR_USA_early_mexico_legacy_registered USA_1970_register_theater_acceptance = yes }
+}
+
+COLDWAR_USA_early_ratify_mexico = {
+	if = { limit = { tag = USA COLDWAR_USA_early_transaction_valid_mexico = yes has_country_flag = COLDWAR_USA_early_mexico_consent_mex }
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_mexico_setup_paid } }
+	
+	set_country_flag = COLDWAR_USA_early_mexico_setup_paid
+	}
+	set_country_flag = COLDWAR_USA_early_mexico_grant_usa_received
+	set_country_flag = COLDWAR_USA_early_mexico_grant_mex_received
+	set_country_flag = COLDWAR_USA_early_mexico_signed
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_open
+	MEX = {
+	set_country_flag = COLDWAR_USA_early_mexico_signed
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_pending
+	}
+	COLDWAR_USA_early_on_first_accept_mexico = yes
+	COLDWAR_USA_early_reconcile_all = yes
+	country_event = { id = COLDWAR_USA_early.502 }
+	}
+}
+
+COLDWAR_USA_early_accept_mexico_mex = {
+	if = { limit = { COLDWAR_USA_early_accept_valid_mexico_mex = yes }
+	USA = {
+	set_country_flag = COLDWAR_USA_early_mexico_consent_mex
+	COLDWAR_USA_early_ratify_mexico = yes
+	}
+	}
+}
+
+COLDWAR_USA_early_refuse_mexico = {
+	if = { limit = { OR = { tag = MEX } has_country_flag = COLDWAR_USA_early_mexico_offer_pending USA = { has_country_flag = COLDWAR_USA_early_mexico_offer_open } }
+	USA = {
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_open
+	set_country_flag = { flag = COLDWAR_USA_early_mexico_cooldown value = 1 days = 90 }
+	country_event = { id = COLDWAR_USA_early.602 }
+	}
+	MEX = {
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_pending
+	}
+	USA = {
+	clr_country_flag = COLDWAR_USA_early_mexico_consent_mex
+	}
+	}
+}
+
+COLDWAR_USA_early_terminate_mexico = {
+	if = { limit = { OR = { tag = USA tag = MEX } has_country_flag = COLDWAR_USA_early_mexico_signed }
+	if = { limit = { country_exists = USA } USA = {
+	remove_ideas = COLDWAR_USA_early_mexico_usa
+	clr_country_flag = COLDWAR_USA_early_mexico_signed
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_pending
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_open
+	clr_country_flag = COLDWAR_USA_early_mexico_authorised
+	clr_country_flag = COLDWAR_USA_early_mexico_term
+	set_country_flag = { flag = COLDWAR_USA_early_mexico_cooldown value = 1 days = 90 }
+	} }
+	if = { limit = { country_exists = MEX } MEX = {
+	remove_ideas = COLDWAR_USA_early_mexico_mex
+	clr_country_flag = COLDWAR_USA_early_mexico_signed
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_pending
+	} }
+	}
+}
+
+COLDWAR_USA_early_base_reconcile_all = {
+	if = { limit = { tag = USA IMP_is_1970_scenario = yes }
+	if = { limit = { has_country_flag = COLDWAR_USA_early_israel_signed COLDWAR_USA_early_ready_israel = yes ISR = {
+	has_country_flag = COLDWAR_USA_early_israel_signed
+	} }
+	USA = {
+	if = { limit = { NOT = { has_idea = COLDWAR_USA_early_israel_usa } } add_ideas = COLDWAR_USA_early_israel_usa }
+	}
+	ISR = {
+	if = { limit = { NOT = { has_idea = COLDWAR_USA_early_israel_isr } } add_ideas = COLDWAR_USA_early_israel_isr }
+	}
+	}
+	else = {
+	if = { limit = { country_exists = USA } USA = {
+	remove_ideas = COLDWAR_USA_early_israel_usa
+	} }
+	if = { limit = { country_exists = ISR } ISR = {
+	remove_ideas = COLDWAR_USA_early_israel_isr
+	} }
+	}
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_israel_offer_open } }
+	clr_country_flag = COLDWAR_USA_early_israel_consent_isr
+	if = { limit = { country_exists = ISR } ISR = {
+	clr_country_flag = COLDWAR_USA_early_israel_offer_pending
+	} }
+	}
+	if = { limit = { has_country_flag = COLDWAR_USA_early_canada_signed COLDWAR_USA_early_ready_canada = yes CAN = {
+	has_country_flag = COLDWAR_USA_early_canada_signed
+	} }
+	USA = {
+	if = { limit = { NOT = { has_idea = COLDWAR_USA_early_canada_usa } } add_ideas = COLDWAR_USA_early_canada_usa }
+	}
+	CAN = {
+	if = { limit = { NOT = { has_idea = COLDWAR_USA_early_canada_can } } add_ideas = COLDWAR_USA_early_canada_can }
+	}
+	}
+	else = {
+	if = { limit = { country_exists = USA } USA = {
+	remove_ideas = COLDWAR_USA_early_canada_usa
+	} }
+	if = { limit = { country_exists = CAN } CAN = {
+	remove_ideas = COLDWAR_USA_early_canada_can
+	} }
+	}
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_canada_offer_open } }
+	clr_country_flag = COLDWAR_USA_early_canada_consent_can
+	if = { limit = { country_exists = CAN } CAN = {
+	clr_country_flag = COLDWAR_USA_early_canada_offer_pending
+	} }
+	}
+	if = { limit = { has_country_flag = COLDWAR_USA_early_mexico_signed COLDWAR_USA_early_ready_mexico = yes MEX = {
+	has_country_flag = COLDWAR_USA_early_mexico_signed
+	} }
+	USA = {
+	if = { limit = { NOT = { has_idea = COLDWAR_USA_early_mexico_usa } } add_ideas = COLDWAR_USA_early_mexico_usa }
+	}
+	MEX = {
+	if = { limit = { NOT = { has_idea = COLDWAR_USA_early_mexico_mex } } add_ideas = COLDWAR_USA_early_mexico_mex }
+	}
+	}
+	else = {
+	if = { limit = { country_exists = USA } USA = {
+	remove_ideas = COLDWAR_USA_early_mexico_usa
+	} }
+	if = { limit = { country_exists = MEX } MEX = {
+	remove_ideas = COLDWAR_USA_early_mexico_mex
+	} }
+	}
+	if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_mexico_offer_open } }
+	clr_country_flag = COLDWAR_USA_early_mexico_consent_mex
+	if = { limit = { country_exists = MEX } MEX = {
+	clr_country_flag = COLDWAR_USA_early_mexico_offer_pending
+	} }
+	}
+	}
+}
+
+COLDWAR_USA_early_base_calculate_weekly_streams = {
+	set_variable = { COLDWAR_USA_early_weekly_income = 0 }
+	set_variable = { COLDWAR_USA_early_weekly_expense = 0 }
+	if = { limit = { IMP_is_1970_scenario = yes country_exists = USA }
+	if = { limit = { tag = USA USA = { COLDWAR_USA_early_active_israel = yes } } add_to_variable = { COLDWAR_USA_early_weekly_expense = 0.01 } }
+	if = { limit = { tag = USA USA = { COLDWAR_USA_early_active_canada = yes } } add_to_variable = { COLDWAR_USA_early_weekly_expense = 0.005 } }
+	if = { limit = { tag = USA USA = { COLDWAR_USA_early_active_mexico = yes } } add_to_variable = { COLDWAR_USA_early_weekly_expense = 0.005 } }
+	}
+}
+
+COLDWAR_USA_early_base_initialize = {
+	set_variable = { COLDWAR_USA_early_weekly_income = 0 }
+	set_variable = { COLDWAR_USA_early_weekly_expense = 0 }
+	if = { limit = { country_exists = USA } USA = { COLDWAR_USA_early_reconcile_all = yes } }
+}
+
+COLDWAR_USA_early_alliance_preview = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+		USA = {
+		add_ideas = COLDWAR_USA_early_allied_readiness_usa
+		add_to_variable = { COLDWAR_USA_early_preview_army_org_factor = 0.02 tooltip = COLDWAR_USA_early_mod_army_org_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_experience_gain_army_factor = 0.05 tooltip = COLDWAR_USA_early_mod_experience_gain_army_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_personnel_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_personnel_cost_multiplier_modifier_tt }
+		add_doctrine_cost_reduction = { name = COLDWAR_USA_early_allied_usa_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine }
+		}
+		custom_effect_tooltip = COLDWAR_USA_early_each_partner_tt
+		add_ideas = COLDWAR_USA_early_allied_readiness_partner
+		add_to_variable = { COLDWAR_USA_early_preview_army_org_factor = 0.03 tooltip = COLDWAR_USA_early_mod_army_org_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_supply_consumption_factor = -0.03 tooltip = COLDWAR_USA_early_mod_supply_consumption_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_personnel_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_personnel_cost_multiplier_modifier_tt }
+		add_doctrine_cost_reduction = { name = COLDWAR_USA_early_allied_partner_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine }
+		custom_effect_tooltip = COLDWAR_USA_early_each_partner_cost_tt
+		USA = {
+		add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.005 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+		}
+	}
+}
+
+COLDWAR_USA_early_alliance_recipient_preview = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_USA_early_if_accept_tt
+		USA = {
+		add_ideas = COLDWAR_USA_early_allied_readiness_usa
+		add_to_variable = { COLDWAR_USA_early_preview_army_org_factor = 0.02 tooltip = COLDWAR_USA_early_mod_army_org_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_experience_gain_army_factor = 0.05 tooltip = COLDWAR_USA_early_mod_experience_gain_army_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_personnel_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_personnel_cost_multiplier_modifier_tt }
+		if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_alliance_usa_grant_received } } add_doctrine_cost_reduction = { name = COLDWAR_USA_early_allied_usa_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine } }
+		add_to_variable = { COLDWAR_USA_early_preview_weekly = -0.005 tooltip = COLDWAR_USA_early_weekly_expense_tt }
+		}
+		add_ideas = COLDWAR_USA_early_allied_readiness_partner
+		add_to_variable = { COLDWAR_USA_early_preview_army_org_factor = 0.03 tooltip = COLDWAR_USA_early_mod_army_org_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_supply_consumption_factor = -0.03 tooltip = COLDWAR_USA_early_mod_supply_consumption_factor_tt }
+		add_to_variable = { COLDWAR_USA_early_preview_personnel_cost_multiplier_modifier = 0.02 tooltip = COLDWAR_USA_early_mod_personnel_cost_multiplier_modifier_tt }
+		if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_alliance_grant_received } } add_doctrine_cost_reduction = { name = COLDWAR_USA_early_allied_partner_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine } }
+	}
+}
+
+COLDWAR_USA_early_alliance_send_to_recipient = {
+	if = {
+		limit = { COLDWAR_USA_early_alliance_can_offer = yes }
+		set_country_flag = { flag = COLDWAR_USA_early_alliance_pending value = 1 days = 90 }
+		set_country_flag = COLDWAR_USA_early_alliance_sponsor_authorised
+		set_country_flag = COLDWAR_USA_early_alliance_ever_offered
+		USA = { if = { limit = { NOT = { is_in_array = { array = COLDWAR_USA_early_alliance_offered value = PREV } } } add_to_array = { array = COLDWAR_USA_early_alliance_offered value = PREV } } }
+		country_event = { id = COLDWAR_USA_early.900 }
+	}
+}
+
+COLDWAR_USA_early_alliance_record_candidate = {
+	if = {
+		limit = { exists = yes NOT = { tag = USA } country_exists = USA OR = { has_idea = NATO_member has_idea = Major_Non_NATO_Ally } USA = { has_country_flag = COLDWAR_USA_early_alliances_authorised } }
+		USA = { if = { limit = { NOT = { is_in_array = { array = COLDWAR_USA_early_alliance_offered value = PREV } } } add_to_array = { array = COLDWAR_USA_early_alliance_offered value = PREV } } }
+		COLDWAR_USA_early_alliance_send_to_recipient = yes
+	}
+}
+
+COLDWAR_USA_early_alliance_dispatch = {
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_USA_early_alliances_authorised }
+		every_country = {
+			limit = { NOT = { tag = USA } OR = { has_idea = NATO_member has_idea = Major_Non_NATO_Ally } }
+			COLDWAR_USA_early_alliance_record_candidate = yes
+		}
+	}
+}
+
+COLDWAR_USA_early_membership_changed = {
+	if = { limit = { country_exists = USA } USA = { COLDWAR_USA_early_reconcile_all = yes } }
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_USA_early_alliances_authorised has_idea = NATO_member }
+		COLDWAR_USA_early_alliance_dispatch = yes
+	}
+	else_if = {
+		limit = { NOT = { tag = USA } OR = { has_idea = NATO_member has_idea = Major_Non_NATO_Ally } }
+		COLDWAR_USA_early_alliance_record_candidate = yes
+	}
+}
+
+COLDWAR_USA_early_alliance_accept = {
+	if = {
+		limit = { COLDWAR_USA_early_alliance_accept_valid = yes }
+		set_country_flag = COLDWAR_USA_early_alliance_signed
+		clr_country_flag = COLDWAR_USA_early_alliance_pending
+		if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_alliance_grant_received } } add_doctrine_cost_reduction = { name = COLDWAR_USA_early_allied_partner_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine } set_country_flag = COLDWAR_USA_early_alliance_grant_received }
+		USA = { if = { limit = { NOT = { is_in_array = { array = COLDWAR_USA_early_alliance_accepted value = PREV } } } add_to_array = { array = COLDWAR_USA_early_alliance_accepted value = PREV } } if = { limit = { NOT = { has_country_flag = COLDWAR_USA_early_alliance_usa_grant_received } } add_doctrine_cost_reduction = { name = COLDWAR_USA_early_allied_usa_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine } set_country_flag = COLDWAR_USA_early_alliance_usa_grant_received } COLDWAR_USA_early_reconcile_all = yes }
+	}
+}
+
+COLDWAR_USA_early_alliance_decline = {
+	if = {
+		limit = { NOT = { tag = USA } has_country_flag = COLDWAR_USA_early_alliance_pending }
+		clr_country_flag = COLDWAR_USA_early_alliance_pending
+		set_country_flag = { flag = COLDWAR_USA_early_alliance_cooldown value = 1 days = 90 }
+	}
+}
+
+COLDWAR_USA_early_alliance_end = {
+	if = {
+		limit = { NOT = { tag = USA } has_country_flag = COLDWAR_USA_early_alliance_signed }
+		clr_country_flag = COLDWAR_USA_early_alliance_signed
+		clr_country_flag = COLDWAR_USA_early_alliance_pending
+		remove_ideas = COLDWAR_USA_early_allied_readiness_partner
+		set_country_flag = { flag = COLDWAR_USA_early_alliance_cooldown value = 1 days = 90 }
+		if = { limit = { ROOT = { tag = USA } } set_country_flag = COLDWAR_USA_early_alliance_sender_blocked clr_country_flag = COLDWAR_USA_early_alliance_sponsor_authorised }
+		if = { limit = { country_exists = USA } USA = { remove_from_array = { array = COLDWAR_USA_early_alliance_accepted value = PREV } COLDWAR_USA_early_reconcile_all = yes } }
+	}
+}
+
+COLDWAR_USA_early_reconcile_all = {
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes }
+		COLDWAR_USA_early_base_reconcile_all = yes
+		if = {
+			limit = { has_country_flag = COLDWAR_USA_early_israel_authorised NOT = { has_country_flag = COLDWAR_USA_early_israel_ever_offered } COLDWAR_USA_early_can_offer_israel = yes }
+			COLDWAR_USA_early_send_israel = yes
+		}
+		if = {
+			limit = { has_country_flag = COLDWAR_USA_early_canada_authorised NOT = { has_country_flag = COLDWAR_USA_early_canada_ever_offered } COLDWAR_USA_early_can_offer_canada = yes }
+			COLDWAR_USA_early_send_canada = yes
+		}
+		if = {
+			limit = { has_country_flag = COLDWAR_USA_early_mexico_authorised NOT = { has_country_flag = COLDWAR_USA_early_mexico_ever_offered } COLDWAR_USA_early_can_offer_mexico = yes }
+			COLDWAR_USA_early_send_mexico = yes
+		}
+		for_each_scope_loop = {
+			array = COLDWAR_USA_early_alliance_offered
+			if = {
+				limit = { NOT = { has_country_flag = COLDWAR_USA_early_alliance_ever_offered } COLDWAR_USA_early_alliance_can_offer = yes }
+				COLDWAR_USA_early_alliance_send_to_recipient = yes
+			}
+		}
+		set_variable = { COLDWAR_USA_early_alliance_active_count = 0 }
+		set_variable = { COLDWAR_USA_early_alliance_weekly_expense = 0 }
+		for_each_scope_loop = {
+			array = COLDWAR_USA_early_alliance_accepted
+			if = {
+				limit = { has_country_flag = COLDWAR_USA_early_alliance_signed COLDWAR_USA_early_alliance_relations_clear = yes COLDWAR_USA_early_alliance_member = yes USA = { has_country_flag = COLDWAR_USA_early_alliances_authorised } }
+				if = { limit = { NOT = { has_idea = COLDWAR_USA_early_allied_readiness_partner } } add_ideas = COLDWAR_USA_early_allied_readiness_partner }
+				USA = { add_to_variable = { COLDWAR_USA_early_alliance_active_count = 1 } add_to_variable = { COLDWAR_USA_early_alliance_weekly_expense = 0.005 } }
+			}
+			else = {
+				remove_ideas = COLDWAR_USA_early_allied_readiness_partner
+			}
+		}
+		if = {
+			limit = { check_variable = { COLDWAR_USA_early_alliance_active_count > 0 } }
+			if = { limit = { NOT = { has_idea = COLDWAR_USA_early_allied_readiness_usa } } add_ideas = COLDWAR_USA_early_allied_readiness_usa }
+		}
+		else = {
+			remove_ideas = COLDWAR_USA_early_allied_readiness_usa
+		}
+	}
+}
+
+COLDWAR_USA_early_calculate_weekly_streams = {
+	COLDWAR_USA_early_base_calculate_weekly_streams = yes
+	set_variable = { COLDWAR_USA_early_alliance_weekly_expense = 0 }
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes }
+		for_each_scope_loop = {
+			array = COLDWAR_USA_early_alliance_accepted
+			if = {
+				limit = { COLDWAR_USA_early_alliance_active = yes }
+				USA = { add_to_variable = { COLDWAR_USA_early_weekly_expense = 0.005 } add_to_variable = { COLDWAR_USA_early_alliance_weekly_expense = 0.005 } }
+			}
+		}
+	}
+}
+
+COLDWAR_USA_early_preview_root_israel = {
+	COLDWAR_USA_early_preview_israel = yes
+}
+
+COLDWAR_USA_early_authorise_root_israel = {
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes }
+		set_country_flag = COLDWAR_USA_early_root_israel_authorised
+		set_country_flag = COLDWAR_USA_early_israel_unlocked
+		set_country_flag = COLDWAR_USA_early_israel_authorised
+		COLDWAR_USA_early_send_israel = yes
+	}
+}
+
+COLDWAR_USA_early_complete_root_israel = {
+	COLDWAR_USA_early_preview_israel = yes
+	hidden_effect = {
+		if = {
+			limit = { tag = USA IMP_is_1970_scenario = yes }
+			COLDWAR_USA_early_authorise_root_israel = yes
+		}
+	}
+}
+
+COLDWAR_USA_early_preview_root_trade = {
+	COLDWAR_USA_early_preview_canada = yes
+	COLDWAR_USA_early_preview_mexico = yes
+}
+
+COLDWAR_USA_early_authorise_root_trade = {
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes }
+		set_country_flag = COLDWAR_USA_early_root_trade_authorised
+		set_country_flag = COLDWAR_USA_early_canada_unlocked
+		set_country_flag = COLDWAR_USA_early_canada_authorised
+		COLDWAR_USA_early_send_canada = yes
+		set_country_flag = COLDWAR_USA_early_mexico_unlocked
+		set_country_flag = COLDWAR_USA_early_mexico_authorised
+		COLDWAR_USA_early_send_mexico = yes
+	}
+}
+
+COLDWAR_USA_early_complete_root_trade = {
+	COLDWAR_USA_early_preview_canada = yes
+	COLDWAR_USA_early_preview_mexico = yes
+	hidden_effect = {
+		if = {
+			limit = { tag = USA IMP_is_1970_scenario = yes }
+			COLDWAR_USA_early_authorise_root_trade = yes
+		}
+	}
+}
+
+COLDWAR_USA_early_preview_root_alliances = {
+	COLDWAR_USA_early_alliance_preview = yes
+}
+
+COLDWAR_USA_early_authorise_root_alliances = {
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes }
+		set_country_flag = COLDWAR_USA_early_alliances_authorised
+		COLDWAR_USA_early_alliance_dispatch = yes
+	}
+}
+
+COLDWAR_USA_early_complete_root_alliances = {
+	COLDWAR_USA_early_alliance_preview = yes
+	hidden_effect = {
+		if = {
+			limit = { tag = USA IMP_is_1970_scenario = yes has_country_flag = USA_1970_nixon_presidency has_idea = NATO_member }
+			COLDWAR_USA_early_authorise_root_alliances = yes
+		}
+	}
+}
+
+COLDWAR_USA_early_initialize = {
+	if = {
+		limit = { tag = USA IMP_is_1970_scenario = yes }
+		if = {
+			limit = { NOT = { has_country_flag = COLDWAR_USA_early_initialized } }
+			set_country_flag = COLDWAR_USA_early_initialized
+			if = {
+				limit = { has_completed_focus = USA_1970_F7 NOT = { has_country_flag = COLDWAR_USA_early_root_israel_authorised } }
+				COLDWAR_USA_early_authorise_root_israel = yes
+			}
+			if = {
+				limit = { has_completed_focus = USA_1970_E9 NOT = { has_country_flag = COLDWAR_USA_early_root_trade_authorised } }
+				COLDWAR_USA_early_authorise_root_trade = yes
+			}
+			if = {
+				limit = { has_completed_focus = USA_1970_NIX_F3 NOT = { has_country_flag = COLDWAR_USA_early_alliances_authorised } }
+				COLDWAR_USA_early_authorise_root_alliances = yes
+			}
+		}
+		COLDWAR_USA_early_reconcile_all = yes
+	}
+}

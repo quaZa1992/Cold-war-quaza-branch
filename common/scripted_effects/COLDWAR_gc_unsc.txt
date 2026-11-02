@@ -1,0 +1,331 @@
+# IMPERIA COLD WAR — GC session-based Security Council seats
+# Five named country variables are authoritative in RP mode. Empty seats have no
+# array entry: zero is a valid THIS scope in native GUI flag expressions.
+COLDWAR_gc_un_append_seat_europe = {
+	if = {
+		limit = { has_variable = global.COLDWAR_gc_un_seat_europe }
+		if = {
+			limit = {
+				var:global.COLDWAR_gc_un_seat_europe = {
+					COLDWAR_gc_un_valid_elected_member = yes
+					NOT = { is_in_array = { global.security_council_members = THIS } }
+				}
+			}
+			add_to_array = { global.security_council_members = global.COLDWAR_gc_un_seat_europe }
+		} else = {
+			clear_variable = global.COLDWAR_gc_un_seat_europe
+		}
+	}
+}
+
+COLDWAR_gc_un_append_seat_americas = {
+	if = {
+		limit = { has_variable = global.COLDWAR_gc_un_seat_americas }
+		if = {
+			limit = {
+				var:global.COLDWAR_gc_un_seat_americas = {
+					COLDWAR_gc_un_valid_elected_member = yes
+					NOT = { is_in_array = { global.security_council_members = THIS } }
+				}
+			}
+			add_to_array = { global.security_council_members = global.COLDWAR_gc_un_seat_americas }
+		} else = {
+			clear_variable = global.COLDWAR_gc_un_seat_americas
+		}
+	}
+}
+
+COLDWAR_gc_un_append_seat_africa = {
+	if = {
+		limit = { has_variable = global.COLDWAR_gc_un_seat_africa }
+		if = {
+			limit = {
+				var:global.COLDWAR_gc_un_seat_africa = {
+					COLDWAR_gc_un_valid_elected_member = yes
+					NOT = { is_in_array = { global.security_council_members = THIS } }
+				}
+			}
+			add_to_array = { global.security_council_members = global.COLDWAR_gc_un_seat_africa }
+		} else = {
+			clear_variable = global.COLDWAR_gc_un_seat_africa
+		}
+	}
+}
+
+COLDWAR_gc_un_append_seat_middle_east = {
+	if = {
+		limit = { has_variable = global.COLDWAR_gc_un_seat_middle_east }
+		if = {
+			limit = {
+				var:global.COLDWAR_gc_un_seat_middle_east = {
+					COLDWAR_gc_un_valid_elected_member = yes
+					NOT = { is_in_array = { global.security_council_members = THIS } }
+				}
+			}
+			add_to_array = { global.security_council_members = global.COLDWAR_gc_un_seat_middle_east }
+		} else = {
+			clear_variable = global.COLDWAR_gc_un_seat_middle_east
+		}
+	}
+}
+
+COLDWAR_gc_un_append_seat_asia = {
+	if = {
+		limit = { has_variable = global.COLDWAR_gc_un_seat_asia }
+		if = {
+			limit = {
+				var:global.COLDWAR_gc_un_seat_asia = {
+					COLDWAR_gc_un_valid_elected_member = yes
+					NOT = { is_in_array = { global.security_council_members = THIS } }
+				}
+			}
+			add_to_array = { global.security_council_members = global.COLDWAR_gc_un_seat_asia }
+		} else = {
+			clear_variable = global.COLDWAR_gc_un_seat_asia
+		}
+	}
+}
+
+COLDWAR_gc_un_refresh = {
+	if = {
+		limit = { has_global_flag = COLDWAR_gc_un_session_seats }
+		clear_array = global.security_council_members
+		COLDWAR_gc_un_append_seat_europe = yes
+		COLDWAR_gc_un_append_seat_americas = yes
+		COLDWAR_gc_un_append_seat_africa = yes
+		COLDWAR_gc_un_append_seat_middle_east = yes
+		COLDWAR_gc_un_append_seat_asia = yes
+		for_each_loop = {
+			array = global.p5_sc_members
+			value = COLDWAR_gc_un_permanent
+			if = {
+				limit = {
+					var:COLDWAR_gc_un_permanent = { exists = yes }
+					NOT = { is_in_array = { global.security_council_members = COLDWAR_gc_un_permanent } }
+				}
+				add_to_array = { global.security_council_members = COLDWAR_gc_un_permanent }
+			}
+		}
+		recompute_un_sc_required_yes = yes
+		international_systems_force_update = yes
+		COLDWAR_Germany_un_status_changed = yes
+	}
+}
+
+# Keep parallel queue entries aligned and preserve every non-election proposal.
+COLDWAR_gc_un_cancel_elections = {
+	clr_global_flag = electing_new_unsc_members
+	clear_variable = global.unsc_reroll_count
+	clear_array = global.new_council_members
+	clear_array = global.confirmed_new_council_members
+	clear_array = COLDWAR_gc_un_kept_types
+	clear_array = COLDWAR_gc_un_kept_nations
+	for_each_loop = {
+		array = global.ga_vote_type_tracker
+		value = COLDWAR_gc_un_vote_type
+		index = COLDWAR_gc_un_vote_index
+		if = {
+			limit = { NOT = { check_variable = { COLDWAR_gc_un_vote_type = 6 } } }
+			add_to_array = { COLDWAR_gc_un_kept_types = COLDWAR_gc_un_vote_type }
+			add_to_array = { COLDWAR_gc_un_kept_nations = global.ga_vote_nation_tracker^COLDWAR_gc_un_vote_index }
+		}
+	}
+	clear_array = global.ga_vote_type_tracker
+	clear_array = global.ga_vote_nation_tracker
+	for_each_loop = {
+		array = COLDWAR_gc_un_kept_types
+		value = COLDWAR_gc_un_vote_type
+		index = COLDWAR_gc_un_vote_index
+		add_to_array = { global.ga_vote_type_tracker = COLDWAR_gc_un_vote_type }
+		add_to_array = { global.ga_vote_nation_tracker = COLDWAR_gc_un_kept_nations^COLDWAR_gc_un_vote_index }
+	}
+	clear_array = COLDWAR_gc_un_kept_types
+	clear_array = COLDWAR_gc_un_kept_nations
+}
+
+COLDWAR_gc_un_enable = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_controller = yes
+			COLDWAR_gc_un_between_votes = yes
+			NOT = { has_global_flag = COLDWAR_gc_un_session_seats }
+			check_variable = { global.UN_general_assembly^num > 0 }
+			check_variable = { global.p5_sc_members^num > 0 }
+		}
+		hidden_effect = {
+			set_global_flag = COLDWAR_gc_un_session_seats
+			clear_variable = global.COLDWAR_gc_un_seat_europe
+			clear_variable = global.COLDWAR_gc_un_seat_americas
+			clear_variable = global.COLDWAR_gc_un_seat_africa
+			clear_variable = global.COLDWAR_gc_un_seat_middle_east
+			clear_variable = global.COLDWAR_gc_un_seat_asia
+			COLDWAR_gc_un_cancel_elections = yes
+			COLDWAR_gc_un_refresh = yes
+		}
+		unlock_decision_tooltip = COLDWAR_gc_un_assign_europe
+		unlock_decision_tooltip = COLDWAR_gc_un_assign_americas
+		unlock_decision_tooltip = COLDWAR_gc_un_assign_africa
+		unlock_decision_tooltip = COLDWAR_gc_un_assign_middle_east
+		unlock_decision_tooltip = COLDWAR_gc_un_assign_asia
+	}
+}
+
+COLDWAR_gc_un_assign_europe = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			COLDWAR_gc_un_valid_target = yes
+		}
+		if = {
+			limit = { has_variable = global.COLDWAR_gc_un_seat_europe }
+			custom_effect_tooltip = COLDWAR_gc_un_remove_europe_tt
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_assign_europe_tt
+		hidden_effect = {
+			set_variable = { global.COLDWAR_gc_un_seat_europe = gc_tool_target_country }
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_assign_americas = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			COLDWAR_gc_un_valid_target = yes
+		}
+		if = {
+			limit = { has_variable = global.COLDWAR_gc_un_seat_americas }
+			custom_effect_tooltip = COLDWAR_gc_un_remove_americas_tt
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_assign_americas_tt
+		hidden_effect = {
+			set_variable = { global.COLDWAR_gc_un_seat_americas = gc_tool_target_country }
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_assign_africa = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			COLDWAR_gc_un_valid_target = yes
+		}
+		if = {
+			limit = { has_variable = global.COLDWAR_gc_un_seat_africa }
+			custom_effect_tooltip = COLDWAR_gc_un_remove_africa_tt
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_assign_africa_tt
+		hidden_effect = {
+			set_variable = { global.COLDWAR_gc_un_seat_africa = gc_tool_target_country }
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_assign_middle_east = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			COLDWAR_gc_un_valid_target = yes
+		}
+		if = {
+			limit = { has_variable = global.COLDWAR_gc_un_seat_middle_east }
+			custom_effect_tooltip = COLDWAR_gc_un_remove_middle_east_tt
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_assign_middle_east_tt
+		hidden_effect = {
+			set_variable = { global.COLDWAR_gc_un_seat_middle_east = gc_tool_target_country }
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_assign_asia = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			COLDWAR_gc_un_valid_target = yes
+		}
+		if = {
+			limit = { has_variable = global.COLDWAR_gc_un_seat_asia }
+			custom_effect_tooltip = COLDWAR_gc_un_remove_asia_tt
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_assign_asia_tt
+		hidden_effect = {
+			set_variable = { global.COLDWAR_gc_un_seat_asia = gc_tool_target_country }
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_clear_europe = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			has_variable = global.COLDWAR_gc_un_seat_europe
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_remove_europe_tt
+		hidden_effect = {
+			clear_variable = global.COLDWAR_gc_un_seat_europe
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_clear_americas = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			has_variable = global.COLDWAR_gc_un_seat_americas
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_remove_americas_tt
+		hidden_effect = {
+			clear_variable = global.COLDWAR_gc_un_seat_americas
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_clear_africa = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			has_variable = global.COLDWAR_gc_un_seat_africa
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_remove_africa_tt
+		hidden_effect = {
+			clear_variable = global.COLDWAR_gc_un_seat_africa
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_clear_middle_east = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			has_variable = global.COLDWAR_gc_un_seat_middle_east
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_remove_middle_east_tt
+		hidden_effect = {
+			clear_variable = global.COLDWAR_gc_un_seat_middle_east
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}
+
+COLDWAR_gc_un_clear_asia = {
+	if = {
+		limit = {
+			COLDWAR_gc_un_can_edit = yes
+			has_variable = global.COLDWAR_gc_un_seat_asia
+		}
+		custom_effect_tooltip = COLDWAR_gc_un_remove_asia_tt
+		hidden_effect = {
+			clear_variable = global.COLDWAR_gc_un_seat_asia
+			COLDWAR_gc_un_refresh = yes
+		}
+	}
+}

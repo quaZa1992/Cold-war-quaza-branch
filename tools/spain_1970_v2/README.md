@@ -36,6 +36,8 @@ The compiler owns the focus tree, core transactions, seven initial spirit famili
 
 The concept audit had missed the existing Cold War mode of MD's EC system. Implementation uses its actual candidate/admission route and member assent instead of a parallel organisation. The Spanish accession receipt follows real `EU_member` status, consent and legal adjustment. Member-only rewards require both that receipt and current native membership in availability, execution and ongoing activation. NATO uses its native leader/applicant consent chain with narrow SPR-only stale-acceptance guards.
 
+Update 30.10.2026: MD's EU is switched off in the 1970 scenario and replaced by the European Communities system (`COLDWAR_EC_*`). Membership checks read `COLDWAR_EC_is_member`, the European offers target `global.cwec_members`, and the candidate flag `EU_candidate` is taken up by the EC system as an application (Art. 237); the players then vote in the EC window. The MD Europeanism floor is no longer set.
+
 The territorial entry's approved `root` field was null because it already depended on the common trunk. The compiler uses its existing zero-offset focus as the relative anchor; every approved position, prerequisite group, icon, title and description remains identical. Sahara offers are diplomatic protocols and reviewed cooperation, with no forced foreign transfer or starting-map change.
 
 ## Verification and limits

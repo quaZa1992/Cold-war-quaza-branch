@@ -1,0 +1,265 @@
+# IMPERIA COLD WAR — Brazil 1970 party identity runtime effects.
+# Native elections continue to choose the MD ruling slot; these helpers register identities.
+
+COLDWAR_BRA_init_politics = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes NOT = { has_country_flag = COLDWAR_BRA_1970_politics_initialized } }
+		set_variable = { COLDWAR_BRA_1970_party_identity_1 = 1 }
+		set_variable = { COLDWAR_BRA_1970_party_identity_2 = 1 }
+		set_variable = { COLDWAR_BRA_1970_party_identity_3 = 0 }
+		set_variable = { COLDWAR_BRA_1970_party_identity_20 = 1 }
+		set_country_flag = COLDWAR_BRA_1970_party_arena_registered
+		set_country_flag = COLDWAR_BRA_1970_party_mdb_registered
+		set_country_flag = COLDWAR_BRA_1970_party_pcb_clandestine
+		set_country_flag = COLDWAR_BRA_1970_party_pcdob_clandestine
+		set_country_flag = COLDWAR_BRA_1970_lacerdist_movement_active
+		set_country_flag = COLDWAR_BRA_1970_armed_forces_identity
+		if = { limit = { has_variable = ruling_party } set_variable = { COLDWAR_BRA_1970_last_ruling_party = ruling_party } }
+		set_country_flag = COLDWAR_BRA_1970_politics_initialized
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_open_party_reform = {
+	if = { limit = { original_tag = BRA IMP_is_1970_scenario = yes }
+		set_country_flag = COLDWAR_BRA_1970_party_reform_open
+	}
+}
+
+COLDWAR_BRA_1970_reconcile_politics = {
+	if = { limit = { original_tag = BRA IMP_is_1970_scenario = yes }
+		COLDWAR_BRA_init_politics = yes
+		if = { limit = { has_variable = ruling_party NOT = { has_variable = COLDWAR_BRA_1970_last_ruling_party } }
+			set_variable = { COLDWAR_BRA_1970_last_ruling_party = ruling_party }
+			update_party_name = yes
+		}
+		else_if = { limit = { has_variable = ruling_party NOT = { check_variable = { COLDWAR_BRA_1970_last_ruling_party = ruling_party } } }
+			set_variable = { COLDWAR_BRA_1970_last_ruling_party = ruling_party }
+			update_party_name = yes
+		}
+	}
+}
+
+COLDWAR_BRA_1970_monthly_politics_reconcile = { COLDWAR_BRA_1970_reconcile_politics = yes }
+COLDWAR_BRA_1970_weekly_politics_reconcile = { COLDWAR_BRA_1970_reconcile_politics = yes }
+
+# Call when a posthumous political opening permits the Lacerdist movement to continue.
+COLDWAR_BRA_1970_mark_lacerdist_successor = {
+	if = { limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open date > 1977.5.21 NOT = { has_country_flag = COLDWAR_BRA_1970_lacerdist_successor_installed } }
+		if = { limit = { NOT = { has_country_leader = { name = "Sandra Cavalcanti" } } }
+			create_country_leader = { name = "Sandra Cavalcanti" ideology = Nat_Populism traits = { } }
+		}
+		if = { limit = { has_country_leader = { name = "Sandra Cavalcanti" } }
+			set_country_flag = COLDWAR_BRA_1970_lacerdist_successor_installed
+		}
+	}
+}
+
+COLDWAR_BRA_1970_mark_prn_leader_available = {
+	if = { limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open has_country_flag = COLDWAR_BRA_1970_prn_formation_open date > 1988.12.31 NOT = { has_country_leader = { name = "Fernando Collor de Mello" } } }
+		create_country_leader = { name = "Fernando Collor de Mello" ideology = Nat_Populism traits = { } }
+	}
+	if = { limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_leader = { name = "Fernando Collor de Mello" } }
+		set_country_flag = COLDWAR_BRA_1970_prn_leader_available
+	}
+}
+
+COLDWAR_BRA_1970_allow_pcb_alternative_accession = { if = { limit = { original_tag = BRA IMP_is_1970_scenario = yes } set_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } }
+COLDWAR_BRA_1970_allow_pcdob_alternative_accession = { if = { limit = { original_tag = BRA IMP_is_1970_scenario = yes } set_country_flag = COLDWAR_BRA_1970_pcdob_alternative_accession } }
+
+COLDWAR_BRA_1970_form_pds = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_pds_registered } }
+		set_country_flag = COLDWAR_BRA_1970_party_pds_registered
+		set_temp_variable = { party_index = 1 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_pds = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_pds_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_1 = 2 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_pmdb = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_pmdb_registered } }
+		set_country_flag = COLDWAR_BRA_1970_party_pmdb_registered
+		set_temp_variable = { party_index = 2 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_pmdb = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_pmdb_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_2 = 2 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_historic_ptb = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_historic_ptb_restored } has_country_flag = COLDWAR_BRA_1970_labourist_restoration_open }
+		set_country_flag = COLDWAR_BRA_1970_party_historic_ptb_restored
+		set_temp_variable = { party_index = 3 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_historic_ptb = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_historic_ptb_restored }
+		set_variable = { COLDWAR_BRA_1970_party_identity_3 = 1 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_ptb_late = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_ptb_late_registered } has_country_flag = COLDWAR_BRA_1970_labourist_reorganization_open }
+		set_country_flag = COLDWAR_BRA_1970_party_ptb_late_registered
+		set_temp_variable = { party_index = 3 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_ptb_late = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_ptb_late_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_3 = 2 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_pdt = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_pdt_registered } has_country_flag = COLDWAR_BRA_1970_labourist_reorganization_open }
+		set_country_flag = COLDWAR_BRA_1970_party_pdt_registered
+		set_temp_variable = { party_index = 3 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_pdt = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_pdt_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_3 = 3 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_pt = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_pt_registered } has_country_flag = COLDWAR_BRA_1970_labourist_reorganization_open }
+		set_country_flag = COLDWAR_BRA_1970_party_pt_registered
+		set_temp_variable = { party_index = 3 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_pt = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_pt_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_3 = 4 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_pfl = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_pfl_registered } has_country_flag = COLDWAR_BRA_1970_pds_split_authorized has_country_flag = COLDWAR_BRA_1970_party_pds_registered }
+		set_country_flag = COLDWAR_BRA_1970_party_pfl_registered
+		set_temp_variable = { party_index = 1 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_pfl = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_pfl_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_1 = 3 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_psdb = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_psdb_registered } has_country_flag = COLDWAR_BRA_1970_pmdb_split_authorized has_country_flag = COLDWAR_BRA_1970_party_pmdb_registered }
+		set_country_flag = COLDWAR_BRA_1970_party_psdb_registered
+		set_temp_variable = { party_index = 2 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_psdb = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_psdb_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_2 = 3 }
+		update_party_name = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_pcb = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized } has_country_flag = COLDWAR_BRA_1970_communist_legalization_open }
+		set_country_flag = COLDWAR_BRA_1970_party_pcb_legalized
+		set_country_flag = COLDWAR_BRA_1970_party_pcb_registered
+		set_country_flag = COLDWAR_BRA_1970_party_pcb_legalized
+		set_temp_variable = { party_index = 4 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_pcdob = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_pcdob_legalized } has_country_flag = COLDWAR_BRA_1970_communist_legalization_open }
+		set_country_flag = COLDWAR_BRA_1970_party_pcdob_legalized
+		set_country_flag = COLDWAR_BRA_1970_party_pcdob_registered
+		set_country_flag = COLDWAR_BRA_1970_party_pcdob_legalized
+		set_temp_variable = { party_index = 19 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_form_prn = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_reform_open NOT = { has_country_flag = COLDWAR_BRA_1970_party_prn_registered } has_country_flag = COLDWAR_BRA_1970_prn_formation_open has_country_flag = COLDWAR_BRA_1970_prn_leader_available }
+		set_country_flag = COLDWAR_BRA_1970_party_prn_registered
+		set_temp_variable = { party_index = 20 }
+		set_temp_variable = { party_popularity_increase = 0.01 }
+		set_temp_variable = { temp_outlook_increase = 0.01 }
+		change_relative_party_popularity = yes
+	}
+}
+
+COLDWAR_BRA_1970_nominate_prn = {
+	if = {
+		limit = { original_tag = BRA IMP_is_1970_scenario = yes has_country_flag = COLDWAR_BRA_1970_party_prn_registered }
+		set_variable = { COLDWAR_BRA_1970_party_identity_20 = 2 }
+		update_party_name = yes
+	}
+}

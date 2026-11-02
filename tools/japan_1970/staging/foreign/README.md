@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 Staged Japan 1970 Foreign Affairs outputs
 
 All outputs remain in staging/foreign and are not installed. The focus tree can call COLDWAR_JAP70_FOREIGN_<focus-id>_effect for domestic rewards or COLDWAR_JAP70_FOREIGN_<focus-id>_offer for bilateral consent flows. Expenses use the existing modify_treasury_effect hook with treasury_change in billions.

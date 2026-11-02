@@ -1,9 +1,10 @@
-# IMPERIA CW — Cold War: israel 1970 — validate rewards.
+# IMPERIA COLD WAR — Israel 1970 authored reward and roleplay verification.
 """Check the requested reward/icon revision, including visible tooltip coverage."""
 from pathlib import Path
 import json
 import re
 from PIL import Image
+from roleplay_routes import PREREQUISITES
 
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
@@ -23,8 +24,13 @@ for n in data['nodes']:
     old=baseline.get(n['id'])
     if old:
         if not n.get('policy_extension'):
-            for key in ('group','mutually_exclusive'):check(n[key]==old[key],'Policy structure changed: '+n['id']+'/'+key)
+            check(n['group']==old['group'],'Policy group changed: '+n['id'])
+            expected_exclusions=old['mutually_exclusive']
+            if n['id'] in ('ISR70_ceasefire','ISR70_armed_stalemate'):
+                expected_exclusions=[k for k in expected_exclusions if k not in ('ISR70_ceasefire','ISR70_armed_stalemate')]
+            check(n['mutually_exclusive']==expected_exclusions,'Policy exclusions changed unexpectedly: '+n['id'])
             expected=[[p for p in row if p not in data['removed_unlock_focuses']] for row in old['prerequisites']]
+            expected=PREREQUISITES.get(n['id'],expected)
             check(n['prerequisites']==[row for row in expected if row],'Policy dependencies changed: '+n['id'])
         changed+=n['reward']!=old['reward'] or n['modifiers']!=old['modifiers']
     check(n.get('reward_revision')==(3 if n.get('policy_extension') else 2) and bool(n.get('reward_summary')),'Missing rewritten reward: '+n['id'])
@@ -53,6 +59,6 @@ check('ISR70_sync_reward_revision = {' in effects and 'ISR70_sync_reward_revisio
 nodes={n['id']:n for n in data['nodes']}
 for slot in (7,21,22,23):
     for suffix,value in (('ca','yes'),('cb','no')):check('elections_allowed = '+value in nodes[f'ISR70_p{slot}_{suffix}']['reward'],'Constitutional choice has no election consequence: '+str(slot)+'/'+suffix)
-result={'status':'FAIL' if errors else 'PASS','errors':errors,'focus_rewards_rewritten':changed,'policy_choices_preserved':not any('Policy' in e for e in errors),'removed_unlock_focuses':len(data['removed_unlock_focuses']),'visible_programme_increments':increments,'reviewed_focus_textures':len(manifest['focus_art']),'language':'English only','runtime_test':False}
+result={'project':'IMPERIA COLD WAR','status':'FAIL' if errors else 'PASS','errors':errors,'focus_rewards_rewritten':changed,'policy_choices_preserved':not any('Policy' in e for e in errors),'removed_unlock_focuses':len(data['removed_unlock_focuses']),'visible_programme_increments':increments,'reviewed_focus_textures':len(manifest['focus_art']),'language':'English only','runtime_test':False}
 (ROOT/'docs/israel_1970_design/reward_revision_validation.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
 print(json.dumps(result,indent=2));raise SystemExit(bool(errors))

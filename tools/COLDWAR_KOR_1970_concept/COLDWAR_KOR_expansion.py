@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: researched second concept revision, no runtime installation.
+# IMPERIA COLD WAR — Cold War: researched second concept revision, no runtime installation.
 """Add92 focus designs, including36 institutional transition focuses.
 
 Called after reviewed base refinement and before native recipe declaration.

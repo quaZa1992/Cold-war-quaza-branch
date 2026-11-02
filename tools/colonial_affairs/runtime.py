@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: shared Colonial Affairs runtime generator.
+# IMPERIA COLD WAR — Native colonial state-variable display scopes.
 """Emit explicit, scope-safe colonial administration scripts.
 
 The registry is historical input, never a licence to change a state's owner,
@@ -332,7 +332,7 @@ set_variable = { COLDWAR_COL_view_resources_penalty = 0 }
         body = f'set_variable = {{ COLDWAR_COL_selected_anchor = {a} }}\n'
         for var in ('cost', 'issue_days', 'policy'):
             source = 'weekly_cost' if var == 'cost' else var
-            body += f'set_variable = {{ COLDWAR_COL_view_{var} = {a}.COLDWAR_COL_{source} }}\n'
+            body += f'{a} = {{ PREV = {{ set_variable = {{ COLDWAR_COL_view_{var} = PREV.COLDWAR_COL_{source} }} }} }}\n'
         body += iff(f'{a} = {{ has_state_flag = COLDWAR_COL_issue_pending }}', 'set_variable = { COLDWAR_COL_view_issue_pending = 1 }')
         for s in r['states']:
             body += iff(f'{s} = {{ COLDWAR_COL_state_{r["id"]}_{s} = yes }}', f'add_to_variable = {{ COLDWAR_COL_view_state_count = 1 }}\n{s} = {{ set_variable = {{ COLDWAR_COL_resistance = THIS.resistance }} set_variable = {{ COLDWAR_COL_compliance = THIS.compliance }} }}\nadd_to_variable = {{ COLDWAR_COL_view_resistance = {s}.COLDWAR_COL_resistance }}\nadd_to_variable = {{ COLDWAR_COL_view_compliance = {s}.COLDWAR_COL_compliance }}\nadd_to_variable = {{ COLDWAR_COL_view_construction_penalty = {s}.COLDWAR_COL_construction }}\nadd_to_variable = {{ COLDWAR_COL_view_resources_penalty = {s}.COLDWAR_COL_resources }}')
@@ -422,7 +422,7 @@ set_variable = { COLDWAR_COL_view_resources_penalty = 0 }
                 pay += f'\n{r["anchor"]} = {{ random_list = {{ 85 = {{ }} 15 = {{ set_state_flag = {{ flag = COLDWAR_COL_detente days = 90 }} }} }} }}'
             action += iff(f'check_variable = {{ COLDWAR_COL_event_anchor = {r["anchor"]} }}', f'COLDWAR_COL_reconcile_{r["id"]} = yes\n' + iff(gate, pay))
         effects.append(block(f'COLDWAR_COL_respond_{response}', action + '\nclr_country_flag = COLDWAR_COL_event_open'))
-    event = '''namespace = COLDWAR_colonial_affairs
+    event = '''add_namespace = COLDWAR_colonial_affairs
 country_event = {
     id = COLDWAR_colonial_affairs.1
     title = COLDWAR_COL_issue_title

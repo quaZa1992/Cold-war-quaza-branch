@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan staged reference checker.
+# IMPERIA COLD WAR — Cold War: Japan staged reference checker.
 """Read-only consistency checks for staged Japan content and active JAP files.
 
 This checker is deliberately not a game parser. It catches common unresolved

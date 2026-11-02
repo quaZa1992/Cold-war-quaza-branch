@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: execute native research initialization with the revised GDP ladder.
+# IMPERIA COLD WAR — Execute research initialization and country-scoped startup dispatch.
 """Regression checks for real script ASTs; not an HOI4 runtime simulation."""
 from copy import deepcopy
 from pathlib import Path
@@ -36,6 +36,7 @@ class Machine(V.ScriptMachine):
         super().__init__(EFFECTS, TRIGGERS)
         self.global_scope = V.Country('GLOBAL')
         self.start = start
+        self.global_flags = set()
         self.current.research_slots = 0
         self.current.decisions = set()
         self.current.civs = V.D((row or {}).get('civilian_factories', '100'))
@@ -50,7 +51,9 @@ class Machine(V.ScriptMachine):
 
     def test(self, body):
         for key, op, value in body:
-            if key == 'has_start_date':
+            if key == 'has_global_flag':
+                result = value in self.global_flags
+            elif key == 'has_start_date':
                 result = self.compare(self.start, op, tuple(map(int, value.split('.'))))
             elif key == 'num_of_civilian_factories':
                 result = self.compare(self.current.civs, op, self.expression(value))
@@ -66,6 +69,27 @@ class Machine(V.ScriptMachine):
         return True
 
     def execute(self, body):
+        if any(k in {'every_country', 'set_global_flag', 'clr_global_flag'} for k, _, _ in body):
+            ordinary = []
+            def flush():
+                if ordinary:
+                    self.execute(ordinary[:])
+                    ordinary.clear()
+            for key, op, value in body:
+                if key in {'every_country', 'set_global_flag', 'clr_global_flag'}:
+                    flush()
+                    if key == 'set_global_flag': self.global_flags.add(value)
+                    elif key == 'clr_global_flag': self.global_flags.discard(value)
+                    else:
+                        for country in self.countries.values():
+                            def run():
+                                if self.test(V.first(value, 'limit', [])):
+                                    self.execute([r for r in value if r[0] != 'limit'])
+                            self.in_scope(country, run)
+                else:
+                    ordinary.append((key, op, value))
+            flush()
+            return
         if not any(k in {'set_research_slots', 'add_research_slot'} for k, _, v in body):
             return super().execute(body)
         # Native initialization consists of independent if blocks, not an else chain.

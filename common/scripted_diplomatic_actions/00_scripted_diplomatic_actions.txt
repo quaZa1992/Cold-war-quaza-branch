@@ -1,3 +1,6 @@
+# IMPERIA COLD WAR — Superpower dossier correspondence observer integration
+# COLDWAR: synced with MD 2.0.3 hotfix (HOI4 1.19.4 UI controls, research-tab tooltips, native agency-upgrade queue)
+# IMPERIA COLD WAR — Superpower dossier correspondence observer integration
 # Author(s): AngriestBird
 scripted_diplomatic_actions = {
 	##Yard1's Recall Volunteers mod integrated :D
@@ -88,9 +91,13 @@ scripted_diplomatic_actions = {
 		send_description = PROPOSE_TRADE_AGREEMENT_DESC
 
 		on_sent_effect = {
+			# IMPERIA COLD WAR — Read-only correspondence receipt
+			icsd_note_trade_sent = yes
 			ROOT = { set_variable = { pending_trade_offer_country = PREV.id } }
 		}
 		complete_effect = {
+			# IMPERIA COLD WAR — Read-only correspondence receipt
+			icsd_note_trade_accepted = yes
 			set_country_flag = trade_agreement@ROOT
 			ROOT = {
 				clear_variable = pending_trade_offer_country
@@ -138,6 +145,8 @@ scripted_diplomatic_actions = {
 			}
 		}
 		reject_effect = {
+			# IMPERIA COLD WAR — Read-only correspondence receipt
+			icsd_note_trade_declined = yes
 			ROOT = {
 				clear_variable = pending_trade_offer_country
 				set_country_flag = { flag = rejected_trade_agreement_@PREV days = 180 value = 1 }
@@ -3019,11 +3028,6 @@ scripted_diplomatic_actions = {
 			modifier = {
 				factor = 0
 				ROOT = { has_country_flag = recently_rejected_reactor_material_purchase_@PREV }
-			}
-			modifier = {
-				factor = 0
-				is_ai = no
-				has_country_flag = MD_auto_reject_nuclear_fuel_offers
 			}
 		}
 	}

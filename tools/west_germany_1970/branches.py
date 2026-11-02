@@ -1,3 +1,5 @@
+# IMPERIA CW — Cold War: Player-paced focus availability preserves political and treaty conditions.
+# IMPERIA COLD WAR — Retire Western integration and Moscow backing point mechanics.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
 """Deeper branches for the short paths of the West Germany 1970 tree (multiplayer roleplay).
 
@@ -20,7 +22,6 @@ UNION = "check_variable = { ruling_party = 1 }"
 FDP_GOV = "is_in_array = { gov_coalition_array = 2 }"
 from roster import requirement
 GREEN_GOV = 'AND = { ' + requirement('greens') + ' OR = { check_variable = { ruling_party = 17 } is_in_array = { gov_coalition_array = 17 } } }'
-ERA2 = f"OR = {{ date > 1981.12.31 has_country_flag = {P}_era2 }}"
 UNITY = f"has_global_flag = {P}_unity_achieved"
 HUMAN = "is_ai = no"
 AI0 = "modifier = { factor = 0 is_ai = yes }"
@@ -54,7 +55,7 @@ def ev(title, desc, opts, pic="GFX_german_parliament", days=5, imm=""):
 # =========================================================================== LAFONTAINE
 F("mannheim_congress", "chancellery", 6, 12, cost=2, pre=[], icon="spd2", name="The Mannheim Party Congress",
   desc="The SPD has lost four federal elections in a row and drifts somewhere around thirty per cent, its chairman respected and unloved. Mannheim was meant to be a routine party congress. Then the Saarland's premier steps up to the lectern: 'There are still causes we can be enthusiastic about.' The delegates rise - and the party has to decide who leads it into the next election.",
-  avail=f"NOT = {{ {SPD} }} date > 1990.1.1",
+  avail=f"NOT = {{ {SPD} }} ",
   bypass=f"OR = {{ check_variable = {{ cwger_spd_leader = 5 }} check_variable = {{ cwger_spd_leader = 8 }} }}",
   reward=ev("Mannheim",
             "Twenty minutes of standing ovation. Oskar Lafontaine had not announced a candidacy; now the delegates demand one. Rudolf Scharping, the chairman, sits on the podium and knows that a vote tomorrow would be a vote of no confidence. In the corridors the Lower Saxony delegation counts heads for its own man - Gerhard Schröder, who wants the chancellorship more than the party.",
@@ -177,7 +178,7 @@ F("greens_merge", "greens_parliament", 0, 2, cost=3, pre=[["realos", "fundis"]],
   reward=J(party("greens", 0.006), core("bonn", drift=0.02), party("pds", -0.002)))
 F("bielefeld_congress", "greens_merge", 0, 1, cost=3, icon="kosovo", name="Bielefeld, 1999",
   desc="A paint bomb hits the foreign minister's ear. The party of peace must decide whether a Green government may send the Luftwaffe to war against Serbia.",
-  avail=f"{GREEN_GOV} date > 1998.6.1",
+  avail=GREEN_GOV,
   reward=ev("The Bielefeld Party Congress",
             "Delegates shout 'warmonger'. Fischer, his ear bleeding, speaks of Auschwitz and Srebrenica. The vote decides whether the coalition survives.",
             [O("The party follows its foreign minister.", J(party("greens", -0.004), core("armee", xp=0.02), opinion("USA", "medium_increase"), v("cwger_peace_movement", 4)), ai=70),
@@ -190,7 +191,7 @@ F("neckar_valley", "spaeth_slow_unity", -1, 1, cost=3, icon="research", name="Si
   reward=J(state_mod(BW, "neckar_valley"), state_build(BW, "offices"), tech("CAT_computing", 0.5, 1), core("modell", prod=0.02)))
 F("laender_partnership", "spaeth_slow_unity", 1, 1, cost=2, icon="unified", name="Partners in the East",
   desc="Baden-Württemberg adopts Saxony: civil servants, judges and engineers on loan, a partnership treaty between the Länder.",
-  avail=f"OR = {{ {UNITY} has_global_flag = {P}_wall_open }}",
+  avail=f"OR = {{ {UNITY} {P}_border_open = yes }}",
   reward=J(v("cwger_east_burden", -5), f"if = {{ limit = {{ {SAXONY} = {{ is_owned_by = ROOT }} }} {state_build(SAXONY, 'offices')} }}", core("bonn", stab=0.01)))
 F("jena_revival", "neckar_valley", 1, 1, cost=3, pre=[["neckar_valley", "laender_partnership"]], icon="research", name="Jenoptik",
   desc="Späth goes east himself: he turns the remains of Carl Zeiss Jena into a technology company that survives the Treuhand.",
@@ -212,7 +213,6 @@ F("donations_committee", "party_finance_law", -1, 1, cost=2, icon="cryptography"
   reward=J(v("cwger_scandal", -5), v("cwger_rechtsstaat", 3), party("greens", 0.002), pp(-25)))
 F("black_accounts", "donations_committee", 1, 1, cost=3, icon="dangerous_deal", name="Black Accounts",
   desc="Cash in suitcases, accounts in Liechtenstein, 'Jewish legacies' that never existed. A former chancellor refuses to name the donors - his 'word of honour'.",
-  avail="date > 1990.1.1",
   reward=ev("The Word of Honour",
             "The prosecutors, the press and the party's own young leaders demand the names. The old chancellor says he gave his word.",
             [O("The party breaks with its past.", J(v("cwger_scandal", -15), v("cwger_rechtsstaat", 5), party("cdu", -0.006), core("bonn", stab=-0.01)), ai=60),
@@ -231,7 +231,7 @@ F("dual_key", "npg_seat", 0, 1, cost=3, icon="nuclear", name="Two Keys",
   reward=J(core("armee", plan=0.05), ws(0.02), v("cwger_peace_movement", 4), opinion("SOV", "small_decrease")))
 F("chemical_free_zone", "npg_seat", 2, 1, cost=3, mutex=["national_option"], icon="truce", name="A Zone Free of Chemical Weapons",
   desc="1985: the SPD and the SED draft a treaty for a Central Europe free of chemical weapons - an opposition party negotiating with a foreign government. Here, a government makes it its policy.",
-  avail="country_exists = DDR date > 1980.1.1",
+  avail="country_exists = DDR ",
   reward=offer("cw_zone", "DDR", "A Zone Free of Chemical Weapons",
                "Bonn proposes a treaty between the two German states: no chemical weapons on German soil, verified by mutual inspections.",
                J(tension(-3), kl(6), climate_base(2), v("cwger_peace_movement", -5), opinion("USA", "small_decrease")),
@@ -248,7 +248,7 @@ F("gronau_enrichment", "national_option", 0, 1, cost=3, ai=0, ai_mod=AI0, avail=
            "if = { limit = { has_tech = nuclear_technology } hidden_effect = { set_temp_variable = { skip_payment = 1 } one_random_enrichment_facility = yes set_temp_variable = { skip_payment = 0 } } }",
            f"else = {{ {sp_progress('sp_nuclear_energy', 0.3)} }}",
            "set_temp_variable = { skip_payment = 1 }", "one_random_nuclear_facility = yes", "set_temp_variable = { skip_payment = 0 }",
-           money_gdp(-0.002), v("cwger_westbindung", -5), opinion("USA", "medium_decrease"), opinion("FRA", "small_decrease"),
+           money_gdp(-0.002), opinion("USA", "medium_decrease"), opinion("FRA", "small_decrease"),
            tension(3), news_all("Questions about Gronau", "Western intelligence services report that West Germany's uranium enrichment at Gronau is expanding beyond civilian needs.", "GFX_nuclear_power_plant")))
 F("german_bomb", "gronau_enrichment", 0, 1, cost=7, ai=0, ai_mod=AI0, avail=f"{HUMAN} NOT = {{ has_country_flag = {P}_npt_ratified }}", icon="nuclear", name="A German Bomb Programme",
   desc="The taboo of 1945 breaks. Engineers from Karlsruhe and Jülich, a test site that does not yet exist, and a question every government from Washington to Moscow will ask: what is a German bomb for?",
@@ -257,18 +257,17 @@ F("german_bomb", "gronau_enrichment", 0, 1, cost=7, ai=0, ai_mod=AI0, avail=f"{H
            sp_progress("sp_nuclear_energy", 0.25), sp_progress("sp_nuclear_bomb", 0.3), sp_progress("sp_nuclear_warhead_program", 0.1),
            "set_temp_variable = { skip_payment = 1 }", "one_random_air_facility = yes", "set_temp_variable = { skip_payment = 0 }",
            "add_tech_bonus = { name = " + P + "_bomb_bonus bonus = 0.5 uses = 2 category = CAT_nuclear_weapons }",
-           money_gdp(-0.006), v("cwger_westbindung", -15), protest(10), v("cwger_peace_movement", 15), tension(5),
+           money_gdp(-0.006), protest(10), v("cwger_peace_movement", 15), tension(5),
            opinion("USA", "medium_decrease"), opinion("SOV", "medium_decrease"), opinion("FRA", "medium_decrease"),
            news_all("A German Bomb Programme", "Leaks from Bonn suggest that the Federal Republic has begun a nuclear weapons programme. Washington, Moscow, London and Paris demand explanations.", "GFX_nuclear_power_plant"),
            tt(f"{P}_tt_german_bomb", "§RWhen the nuclear bomb project is completed§!, Washington, Moscow, London and Paris will have to decide how to answer a German finger on the trigger - with sanctions, with isolation, or with the threat to disarm the Federal Republic by force.")))
 L(f"{P}_bomb_bonus", "German bomb programme")
 EXTRA_BOMB = f"""
+# IMPERIA COLD WAR — Keep the bomb crisis independent of Western integration points.
 # Monthly, GER scope: the world reacts when the German bomb project is finished.
 {P}_bomb_watch = {{
 	if = {{ limit = {{ has_country_flag = {P}_bomb_programme NOT = {{ has_global_flag = {P}_german_bomb }} is_special_project_completed = sp:sp_nuclear_bomb }}
 		set_global_flag = {P}_german_bomb
-		add_to_variable = {{ cwger_westbindung = -10 }}
-		clamp_variable = {{ var = cwger_westbindung min = 0 max = 100 }}
 		if = {{ limit = {{ has_global_flag = mdcw_cw_initialized }} set_temp_variable = {{ mdcw_cw_tension_delta = 10 }} mdcw_cw_add_tension = yes }}
 		every_other_country = {{ limit = {{ OR = {{ original_tag = USA original_tag = SOV original_tag = FRA original_tag = ENG }} }} country_event = {{ id = {EVB}.90 days = 1 }} }}
 		{news_all("Germany Has the Bomb", "The Federal Republic of Germany has completed its first nuclear weapon. Twenty-five years of non-proliferation diplomacy lie in ruins.", "GFX_nuclear_power_plant")}
@@ -306,20 +305,18 @@ F("civil_defence", "wintex", -1, 1, cost=3, mutex=["peace_dividend_defence"], ic
   reward=J(money_gdp(-0.002), core("armee", core=0.05), ws(0.03), v("cwger_peace_movement", 5)))
 F("peace_dividend_defence", "wintex", 1, 1, cost=2, mutex=["civil_defence"], icon="pacifists", name="Defensive Defence",
   desc="'Structural inability to attack': fewer tanks, more anti-tank infantry and barriers - an army the other side cannot read as a threat.",
-  avail="date > 1980.1.1",
   reward=J(core("armee", core=0.05, equip=-0.05), kl(5), climate_base(2), v("cwger_peace_movement", -6), opinion("SOV", "small_increase")))
 
 # =========================================================================== STRAUSS
 F("strauss_moscow_flight", "strauss_east_credit", 0, 1, cost=3, icon="soviet", name="Strauß Flies to Moscow",
   desc="December 1987: the Bavarian premier pilots his own Cessna through a snowstorm to Moscow. The anti-communist of the 1950s meets Gorbachev - and is impressed.",
-  avail="country_exists = SOV date > 1985.1.1",
+  avail="country_exists = SOV ",
   reward=offer("strauss_moscow", "SOV", "A Visit from Strauß",
                "The Bavarian premier and former defence minister asks for a meeting with the General Secretary: trade, Bavarian industry, and a message from the Western conservatives.",
                J(opinion("SOV", "medium_increase"), kl(3), core("welt", market=0.02), v("cwger_csu_autonomy", 3)),
                partner_eff="add_political_power = 25", accept="Let him land.", refuse="Not this man.", pic="GFX_politics_talks"))
 F("wackersdorf", "strauss_aerospace", 0, 1, cost=3, icon="nuclear_plant", name="Wackersdorf",
   desc="A reprocessing plant for plutonium in the Upper Palatinate - Strauß's prestige project, and the scene of the fiercest battles the anti-nuclear movement ever fought.",
-  avail="date > 1981.1.1",
   reward=ev("The Battle of Wackersdorf",
             "Tens of thousands camp in the forest around the construction site; police use CS gas from helicopters. Austria protests, and the energy companies begin to doubt.",
             [O("Build it - Bavaria does not give way.", J(state_mod(BAY, "wackersdorf"), core("energie", nuclear=0.05), v("cwger_anti_nuclear", 10), protest(10), v("cwger_rechtsstaat", -3)), ai=50),
@@ -349,7 +346,7 @@ _lk.update(rel="mannheim_congress", dx=0, dy=1, ax=_tree.BY_KEY["mannheim_congre
 NDS_T = NDS
 F("candidate_from_hanover", "mannheim_congress", 3, 1, cost=3, icon="confidence", name="The Candidate from Hanover",
   desc="Gerhard Schröder once shook the railings of the chancellery in Bonn after a night out and shouted 'I want in there!'. Twenty years later he governs Lower Saxony with an absolute majority, sits on the supervisory board of Volkswagen and polls ten points ahead of his own party. The SPD does not love him. It may need him.",
-  avail=f"NOT = {{ {SPD} }} date > 1990.1.1 NOT = {{ check_variable = {{ cwger_spd_leader = 5 }} }}",
+  avail=f"NOT = {{ {SPD} }} NOT = {{ check_variable = {{ cwger_spd_leader = 5 }} }}",
   bypass="check_variable = { cwger_spd_leader = 8 }",
   reward=ev("The Troika",
             "Chairman, parliamentary leader and the premier of Lower Saxony pose for the photographers in Bonn, arms linked, smiles fixed. Behind the smiles one question: who will the party put on the posters? The Lower Saxony state election is two months away, and Schröder has announced that a single per cent lost will end his ambitions.",

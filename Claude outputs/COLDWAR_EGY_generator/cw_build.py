@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Retain physical building-grant providers in Egyptian build output.
 # IMPERIA CW — Cold War: Egypt 1970 content generator.
 # COLDWAR | Writes every mod file of the Egypt 1970 tree. Run: python3 cw_build.py
 import os, re, json, shutil, collections
@@ -676,8 +677,10 @@ FILES = {
     "history/countries/EGY - Egypt.txt": hist,
     "common/scripted_effects/mdcw_1970_focus_tree_effects.txt": fb,
 }
+# Keep shared grant effects, triggers and English requirements in the build pack.
+FILES.update(C._grant_runtime())
 for p, t in FILES.items():
-    write(p, t)
+    write(p, t, bom=p.endswith('.yml'))
 write("localisation/english/COLDWAR_EGY_1970_l_english.yml", loc_file(), bom=True)
 for dst, src in FLAGS.items():
     os.makedirs(os.path.dirname(os.path.join(C.OUT, dst)), exist_ok=True)

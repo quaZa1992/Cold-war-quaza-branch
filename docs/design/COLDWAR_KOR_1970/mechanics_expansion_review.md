@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # South Korea 1970–1990 expansion mechanics review
 
 **Review scope:** current 298-focus concept JSON and `tools/COLDWAR_KOR_1970_concept/COLDWAR_KOR_expansion.py`, with the generated native recipes. This is a read-only mechanics audit; no loaded game files or concept data were changed. The report reflects the files read on 24 October 2026 and should be refreshed after the parent’s pending event/state/provider-ledger corrections.

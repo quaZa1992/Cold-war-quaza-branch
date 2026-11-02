@@ -1,8 +1,8 @@
-# IMPERIA CW — Cold War: mutually authorized Korean-American exercises.
+# IMPERIA COLD WAR — Cold War: mutually authorized Korean-American exercises.
 """Invitation -> US assent -> Korean authorization -> paid training -> outcome."""
 P = "COLDWAR_KOR_usfk_exercise_"
 NS = "COLDWAR_KOR_usfk_exercise"
-HEADER = "# IMPERIA CW — Cold War: Korean-American combined exercises.\n"
+HEADER = "# IMPERIA COLD WAR — Cold War: Korean-American combined exercises.\n"
 SPECS = {
     "field": {"kind": 1, "cost": 2, "us_cost": 1, "weekly": 0.004, "xp": 40, "us_xp": 15,
         "burden": {"equipment_cost_multiplier_modifier": .03, "personnel_cost_multiplier_modifier": .03, "trade_opinion_factor": -.03},

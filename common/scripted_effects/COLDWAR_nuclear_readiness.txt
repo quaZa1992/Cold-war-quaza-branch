@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.
+# IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.
 COLDWAR_nr_touch = {
 	add_to_variable = { COLDWAR_nr_dirty = 1 }
 }
@@ -296,7 +296,7 @@ COLDWAR_nr_start_civil = {
 			COLDWAR_nr_enabled = yes
 			is_ai = no
 			has_capitulated = no
-			has_political_power > 24
+			NOT = { has_political_power < 25 }
 			NOT = { has_country_flag = COLDWAR_nr_civil_active }
 			check_variable = { COLDWAR_nr_civil_days = 0 }
 		}
@@ -310,7 +310,12 @@ COLDWAR_nr_start_civil = {
 COLDWAR_nr_end_civil = {
 	clr_country_flag = COLDWAR_nr_civil_active
 	set_variable = { COLDWAR_nr_civil_days = 0 }
-	remove_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+	if = {
+		limit = {
+			has_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+		}
+		remove_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+	}
 	COLDWAR_nr_refresh = yes
 }
 COLDWAR_nr_daily = {
@@ -752,63 +757,68 @@ COLDWAR_nr_assess_prev = {
 	set_variable = { COLDWAR_nr_assessed_level = 0 }
 	if = {
 		limit = {
-			intel_level_over = { target = PREV airforce_intel > 0.65 }
+			PREV = { COLDWAR_nr_nuclear_power = yes }
 		}
-		set_variable = { COLDWAR_nr_assessment = 2 }
-		set_variable = { COLDWAR_nr_assessed_level = PREV.COLDWAR_nr_level }
 		if = {
 			limit = {
-				check_variable = { COLDWAR_nr_assessed_level = 0 }
+				intel_level_over = { target = PREV airforce_intel > 0.65 }
 			}
-			set_variable = { COLDWAR_nr_assessed_level = 5 }
-		}
-		if = {
-			limit = {
+			set_variable = { COLDWAR_nr_assessment = 2 }
+			set_variable = { COLDWAR_nr_assessed_level = PREV.COLDWAR_nr_level }
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_assessed_level = 0 }
+				}
+				set_variable = { COLDWAR_nr_assessed_level = 5 }
+			}
+			if = {
+				limit = {
+					PREV = {
+						check_variable = { COLDWAR_nr_level < 3 }
+						NOT = { has_country_flag = COLDWAR_nr_public }
+						NOT = { has_country_flag = COLDWAR_nr_exposed_cd }
+					}
+				}
+				COLDWAR_nr_tension_1 = yes
 				PREV = {
-					check_variable = { COLDWAR_nr_level < 3 }
-					NOT = { has_country_flag = COLDWAR_nr_public }
-					NOT = { has_country_flag = COLDWAR_nr_exposed_cd }
+					set_country_flag = { flag = COLDWAR_nr_exposed_cd days = 30 value = 1 }
 				}
 			}
-			COLDWAR_nr_tension_1 = yes
-			PREV = {
-				set_country_flag = { flag = COLDWAR_nr_exposed_cd days = 30 value = 1 }
-			}
-		}
-	}
-	else_if = {
-		limit = {
-			OR = {
-				is_in_faction_with = PREV
-				COLDWAR_nr_is_opponent_prev = yes
-				PREV = { has_country_flag = COLDWAR_nr_public }
-				intel_level_over = { target = PREV airforce_intel > 0.35 }
-			}
-		}
-		set_variable = { COLDWAR_nr_assessment = 1 }
-		if = {
-			limit = {
-				PREV = {
-					check_variable = { COLDWAR_nr_level > 3 }
-				}
-			}
-			set_variable = { COLDWAR_nr_assessed_level = 5 }
 		}
 		else_if = {
 			limit = {
-				PREV = {
-					check_variable = { COLDWAR_nr_level > 1 }
+				OR = {
+					is_in_faction_with = PREV
+					COLDWAR_nr_is_opponent_prev = yes
+					PREV = { has_country_flag = COLDWAR_nr_public }
+					intel_level_over = { target = PREV airforce_intel > 0.35 }
 				}
 			}
-			set_variable = { COLDWAR_nr_assessed_level = 3 }
-		}
-		else_if = {
-			limit = {
-				PREV = {
-					check_variable = { COLDWAR_nr_level = 1 }
+			set_variable = { COLDWAR_nr_assessment = 1 }
+			if = {
+				limit = {
+					PREV = {
+						check_variable = { COLDWAR_nr_level > 3 }
+					}
 				}
+				set_variable = { COLDWAR_nr_assessed_level = 5 }
 			}
-			set_variable = { COLDWAR_nr_assessed_level = 1 }
+			else_if = {
+				limit = {
+					PREV = {
+						check_variable = { COLDWAR_nr_level > 1 }
+					}
+				}
+				set_variable = { COLDWAR_nr_assessed_level = 3 }
+			}
+			else_if = {
+				limit = {
+					PREV = {
+						check_variable = { COLDWAR_nr_level = 1 }
+					}
+				}
+				set_variable = { COLDWAR_nr_assessed_level = 1 }
+			}
 		}
 	}
 	country_event = { id = cw_nuclear.14 }

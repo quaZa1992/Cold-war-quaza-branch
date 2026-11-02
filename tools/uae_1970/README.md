@@ -1,4 +1,4 @@
-# COLDWAR UAE / Trucial States, 1970
+# IMPERIA COLD WAR — UAE / Trucial States, 1970
 
 The approved tree is installed as `COLDWAR_UAE_1970_focus`. Start a **new 1970 campaign as UAE / Trucial States** with the mod's Millennium Dawn dependencies enabled. The country history selects this tree and the generic fallback excludes this campaign. Later starts retain their native history/providers. Existing-save migration is not a verified target.
 
@@ -24,6 +24,8 @@ Treaty descriptions use country-specific English lore from `flavour.py`, followe
 
 ## Economy and earned progress
 
+The 25 October research-only revision replaces **Scarce Specialists** with **-15% research speed and no workforce-size penalty**. Train Citizens and Invite Specialists each remove five percentage points of that penalty; Technical Cadres retains its five-point remedy, and Technical Institutes clears any remainder. Positive workforce bonuses remain. Citizen Ballot and Citizen Dividend each use a **-3% research-speed** trade-off instead of their former **-3% workforce-size** penalty. Generator, native focus previews and the live reconciler are aligned through `specialists.py`; the original approval snapshot is unchanged. [Revision evidence](../../docs/audits/workforce_research_revision_20261025/REPORT.md).
+
 The starting **An Expatriate Workforce** spirit gives **+10% workforce size**
 and **−20% Division Recovery Rate** (`army_morale_factor`). The later user
 revision replaces its former recruitable-population penalty; it no longer
@@ -45,7 +47,7 @@ The four extraction projects cost **$0.75bn / $2.50bn / $5.00bn / $8.00bn**, add
 
 The industrial port commissions **one real civilian factory after70 focus days for$7.5bn**, using the native focus-price precedent. It supplies the completed industrial base needed by the two complementary70-day projects after Earnings beyond Oil: **Jebel Ali Smelter costs$4.5bn for+12 base aluminium inDubai and+12% energy use; Steel Rolling Mills cost$3bn for+5 base steel inAbuDhabi and+6% energy use**. Both recheck finishedDubaiCIC and recipient ownership/control before once-only payment, without requiring a positive balance. Resource grants remain physical; their ongoing energy burden suspends while the actual facility state is lost and resumes on return. Industrial port plus both metal projects cost$15bn. These are processing industries, not invented domestic ore deposits.
 
-The exclusive aviation alternative now commissions **one Dubai airport/airbase level for$2.5bn after70days**, without giving shared slots, planes or troops. Both capital focuses deliver completed facilities, avoiding a first-factory queue in a country with no startingCIC. Other previously queued projects keep ordinary construction.
+The exclusive aviation alternative now commissions **one Dubai airport/airbase level and one extra shared building slot for$2.5bn after70days**, without granting aircraft or troops. The shared slot precedes construction inside the same once-only transaction, with ownership, control and native airbase capacity checked separately. Both capital focuses deliver completed facilities, avoiding a first-factory queue in a country with no startingCIC. Other previously queued projects keep ordinary construction.
 
 Five public-service focuses now provide large native `monthly_population` contributions: **Schools and Clinics+40%; Water for the Towns+30%; Homes for Citizens+50% OR Housing the Workforce+90%; Services That Endure+40%**. Costs are$0.15bn/$0.50bn/$0.75bn or$0.60bn/$0.25bn; water and housing programmes take70days. Recurring health/social/power burdens accompany the benefits. The full six-focus population routes, including the existing training and technical institutes, cost **$1.69bn or$1.54bn** and add **+160% or+200% to normal population growth**. This does not instantly increase population by those percentages. At MD's0.6% yearly base alone, the resulting rates would be1.56% or1.80% yearly before GDP, migration and other modifiers. A hard+200% focus-tree cap is enforced on every programme refresh, including abnormal combinations of both exclusive housing flags. Native focus tooltips show the actual marginal benefit at the cap. No other UAE focus programme supplies an uncapped growth contribution; generation rejects a new provider outside this pool. Native GDP, migration and other game systems keep their own normal modifiers.
 

@@ -1,9 +1,12 @@
+# IMPERIA COLD WAR — Syrian construction grant canonical output integration.
 # IMPERIA CW — Cold War: isolated Syria focus-owned reform build and installation.
 """Generate in a temporary country-only tree. Never patch shared integration."""
 from pathlib import Path
 from copy import deepcopy
 import hashlib,json,shutil,sys,tempfile,zipfile
 import build_content as compiler
+from building_grants.remaining import repair_syria_output
+from building_grants.grants import write_outputs as write_grant_runtime
 
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
@@ -55,6 +58,7 @@ def generate():
             negative_localisation.install(stage,write)
             outputs={p.relative_to(stage).as_posix():p.read_text(encoding='utf-8-sig') for folder in ['common','events','localisation/english'] for p in (stage/folder).rglob('COLDWAR_SYR*') if p.is_file()}
             outputs,report=streamlining.transform(outputs,data)
+            outputs={relative:repair_syria_output(relative,source) for relative,source in outputs.items()}
         finally:compiler.write=original_write
     return outputs,data,report
 
@@ -79,6 +83,7 @@ def main():
         (HERE/'manifest.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         for rel in outputs:hashes['outputs'][rel]=hashlib.sha256((ROOT/rel).read_bytes()).hexdigest()
         hashes['streamlining_revision']=data['streamlining_revision'];hashes_path.write_text(json.dumps(hashes,indent=2)+'\n',encoding='utf-8')
+        write_grant_runtime()
     previous=json.loads((REPORT/'IMPLEMENTATION_REPORT.json').read_text(encoding='utf-8')) if (REPORT/'IMPLEMENTATION_REPORT.json').exists() else {}
     report.update(changed_files=sorted(set(changed)|set(previous.get('changed_files',[]))),written_files_this_run=changed,dry_run='--dry-run' in sys.argv,engine_tested=False)
     (REPORT/'IMPLEMENTATION_REPORT.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

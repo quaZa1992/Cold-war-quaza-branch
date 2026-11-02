@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Japan script grammar and focus nesting checks.
+# IMPERIA COLD WAR — Cold War: Japan script grammar and focus nesting checks.
 """Check Clausewitz token/assignment shapes, including the rejected >= syntax.
 
 This is a bounded syntax check, not the HOI4 parser. The comparison regression

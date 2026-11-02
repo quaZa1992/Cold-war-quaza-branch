@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Nuclear readiness event photographs
 
 Archival photographs selected from online collections. Eleven monochrome originals were individually colourised with built-in ImageGen; the SALT signing photograph retains its original colour. Colours are interpretive restorations. Native MD framing and proportional crops were applied after colourisation.

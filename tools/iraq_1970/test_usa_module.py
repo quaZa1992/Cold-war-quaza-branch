@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: iraq 1970 — test usa module.
+# IMPERIA COLD WAR — USA Gulf native flag and fixed-point regressions.
 """Bounded execution of emitted Gulf AST; not an HOI4 emulator.
 
 The interpreter fails closed on unsupported authored statements. It exercises
@@ -9,6 +9,7 @@ ordering, economy formulas or the graphical/diplomatic engine.
 from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
+from decimal import Decimal, ROUND_DOWN
 import sys
 import math
 import json
@@ -27,12 +28,16 @@ class Scope:
     exists: bool = True
     var: dict = field(default_factory=lambda: {"treasury": 10., "gdp_total": 10.})
     flags: dict = field(default_factory=dict)
+    flag_values: dict = field(default_factory=dict)
     ideas: dict = field(default_factory=dict)
     stock: float = 1000
     wars: set = field(default_factory=set)
     access: set = field(default_factory=set)
+    air_access: set = field(default_factory=set)
     subject: str | None = None
-    troops: int = 2
+    # Explicit maps model physical state placement. A scalar retained by older
+    # fixtures means that same number in each requested state, not a pooled army.
+    troops: int | dict[str, int] = 2
     owner: str = "IRQ"
     controller: str = "IRQ"
     cores: set = field(default_factory=lambda: {"IRQ", "KUR"})
@@ -41,6 +46,7 @@ class Scope:
     targets: dict = field(default_factory=dict)
     forced: bool = False
     infrastructure: int = 2
+    shared_slots: int = 0
     air_base: int = 1
     units: int = 0
 
@@ -51,18 +57,21 @@ class World:
         self.effects = dict((k,v) for k,_,v in parse(outputs['common/scripted_effects/COLDWAR_USA_gulf_effects.txt']))
         self.triggers = dict((k,v) for k,_,v in parse(outputs['common/scripted_triggers/COLDWAR_USA_gulf_triggers.txt']))
         self.events = dict((first(v,'id'),v) for v in values(parse(outputs['events/COLDWAR_USA_gulf_events.txt']),'country_event'))
-        self.c = {s:Scope(s) for s in ('USA','IRQ','KUR','PUK','TUR','SAU','ENG','FRA','KUW')}
+        self.c = {s:Scope(s) for s in ('USA','IRQ','KUR','PUK','TUR','PER','SAU','ENG','FRA','KUW')}
         self.c['KUR'].exists = self.c['PUK'].exists = False
         self.s = {str(s):Scope(str(s)) for s in (164,633,630,1078,165,172,488,399)}
         self.s['1078'].cores = {'IRQ','PUK'}
         self.s['1078'].occupied = 'PUK'
         self.s['100']=Scope('100',owner='TUR',controller='TUR')
+        buildings=first(parse((ROOT/'common/buildings/00_buildings.txt').read_text(encoding='utf-8-sig')),'buildings')
+        self.infrastructure_cap=int(first(first(first(buildings,'infrastructure'),'level_cap'),'state_max'))
         self.global_flags = set()
         self.day = 0
         self.event_queue = []
         self.units = []
         self.c['TUR'].flags[P+'host_north'] = None
         self.c['USA'].access.add('TUR')
+        self.call(P+'recalculate_prorated_costs')
     def lookup(self, key, c, root, prev, source):
         return {'ROOT':root,'PREV':prev,'THIS':c,'FROM':source}.get(key) or self.c.get(key) or self.s.get(key)
     def num(self, value, c):
@@ -72,7 +81,7 @@ class World:
                 tag,key=str(value).split('.',1)
                 if tag in self.c:return self.c[tag].var.get(key,0.)
             return c.var.get(value,0.)
-    def flag(self,c,key):return key in c.flags and (c.flags[key] is None or c.flags[key]>self.day)
+    def flag(self,c,key):return key in c.flags and c.flag_values.get(key,1)!=0 and (c.flags[key] is None or c.flags[key]>self.day)
     def idea(self,c,key):return key in c.ideas and (c.ideas[key] is None or c.ideas[key]>self.day)
     def compare(self,a,op,b):
         return {'=':lambda:math.isclose(a,b,abs_tol=1e-9),'>':lambda:a>b,'<':lambda:a<b,'>=':lambda:a>=b,'<=':lambda:a<=b}[op]()
@@ -108,6 +117,11 @@ class World:
         if k=='state':return c.key==v
         if k=='infrastructure':return self.compare(c.infrastructure,o,self.num(v,c))
         if k=='air_base':return self.compare(c.air_base,o,self.num(v,c))
+        if k=='free_building_slots':
+            assert c.key in self.s and first(v,'building')=='infrastructure', ('unmodeled capacity class',v)
+            assert first(v,'include_locked') is None, 'Infrastructure has an independent native level cap'
+            _,op,size=next(r for r in v if r[0]=='size')
+            return self.compare(self.infrastructure_cap-c.infrastructure,op,self.num(size,c))
         if k=='check_variable':
             if first(v,'var') is not None:
                 a=self.num(first(v,'var'),c);b=self.num(first(v,'value'),c)
@@ -117,7 +131,12 @@ class World:
             return self.compare(a,op,b)
         if k=='has_equipment':return all(self.compare(c.stock,op,self.num(amount,c)) for typ,op,amount in v)
         if k=='num_divisions_in_states':
-            _,op,n=next(r for r in v if r[0]=='count');return self.compare(c.troops,op,float(n))
+            assert c.key in self.c, 'num_divisions_in_states is a country trigger'
+            assert {r[0] for r in v}=={'count','states'}, ('unmodeled division filter',v)
+            states=first(v,'states');assert states and all(k=='_bare' and str(s).isdigit() for k,_,s in states)
+            placements=c.troops if isinstance(c.troops,dict) else {s:c.troops for _,_,s in states}
+            count=sum(placements.get(str(s),0) for _,_,s in states)
+            _,op,n=next(r for r in v if r[0]=='count');return self.compare(count,op,float(n))
         if k=='any_country':return any(self.tests(v,x,root,c,source) for x in self.c.values() if x.exists)
         if k in ('any_owned_state','any_controlled_state'):
             selected=[s for s in self.s.values() if (s.owner if k=='any_owned_state' else s.controller)==c.key]
@@ -142,19 +161,23 @@ class World:
             if k in self.effects:self.run(self.effects[k],c,root,prev,source);continue
             target=self.lookup(k,c,root,prev,source)
             if target:self.run(v,target,root,c,source);continue
-            if k in ('set_variable','set_temp_variable','add_to_variable','add_to_temp_variable','subtract_from_variable','multiply_temp_variable','multiply_variable'):
+            if k in ('set_variable','set_temp_variable','add_to_variable','add_to_temp_variable','subtract_from_variable','multiply_temp_variable','multiply_variable','divide_variable','divide_temp_variable'):
                 name,_,amount=v[0];amount=self.num(amount,c)
                 if k.startswith('set_'):c.var[name]=amount
                 elif k.startswith('add_'):c.var[name]=c.var.get(name,0)+amount
                 elif k.startswith('subtract_'):c.var[name]=c.var.get(name,0)-amount
+                elif k.startswith('divide_'):c.var[name]=float((Decimal(str(c.var.get(name,0)))/Decimal(str(amount))).quantize(Decimal('0.00001'),rounding=ROUND_DOWN))
                 else:c.var[name]=c.var.get(name,0)*amount
                 continue
             if k=='modify_treasury_effect':c.var['treasury']+=c.var['treasury_change'];continue
             if k in ('set_country_flag','set_state_flag'):
-                if isinstance(v,list):c.flags[first(v,'flag')]=self.day+self.num(first(v,'days'),c)
-                else:c.flags[v]=None
+                if isinstance(v,list):
+                    name=first(v,'flag');days=first(v,'days')
+                    c.flags[name]=self.day+self.num(days,c) if days is not None else None
+                    c.flag_values[name]=self.num(first(v,'value','0' if k=='set_country_flag' and days is not None else '1'),c)
+                else:c.flags[v]=None;c.flag_values.pop(v,None)
                 continue
-            if k in ('clr_country_flag','clr_state_flag'):c.flags.pop(v,None);continue
+            if k in ('clr_country_flag','clr_state_flag'):c.flags.pop(v,None);c.flag_values.pop(v,None);continue
             if k=='remove_ideas':c.ideas.pop(v,None);continue
             if k=='add_ideas':c.ideas[v]=None;continue
             if k=='add_timed_idea':c.ideas[first(v,'idea')]=self.day+self.num(first(v,'days'),c);continue
@@ -185,7 +208,21 @@ class World:
                 if k.startswith('random_'):selected=selected[:1]
                 for s in selected:self.run([r for r in v if r[0]!='limit'],s,root,c,source)
                 continue
-            if k in ('add_dynamic_modifier','add_building_construction','diplomatic_relation'):continue
+            if k=='add_extra_state_shared_building_slots':c.shared_slots+=int(self.num(v,c));continue
+            if k=='add_building_construction':
+                assert c.key in self.s and first(v,'type')=='infrastructure', ('unmodeled construction class',v)
+                amount=int(first(v,'level'));assert c.infrastructure+amount<=self.infrastructure_cap
+                c.infrastructure+=amount;continue
+            if k == 'diplomatic_relation':
+                target = self.lookup(first(v,'country'),c,root,prev,source)
+                assert target and first(v,'active') in ('yes','no'), ('unmodeled diplomatic endpoint',v)
+                relation = first(v,'relation')
+                assert relation in ('military_access','air_base_access'), ('unmodeled diplomatic relation',v)
+                bucket = c.access if relation=='military_access' else c.air_access
+                if first(v,'active')=='yes':bucket.add(target.key)
+                else:bucket.discard(target.key)
+                continue
+            if k == 'add_dynamic_modifier':continue
             raise AssertionError(('unsupported effect',k,o,v,c.key))
     def accept(self,event,c='KUR',option=0):
         row=values(self.events[P+'events.'+str(event)],'option')[option]
@@ -204,6 +241,28 @@ def main():
         if path.endswith('.txt'):parse(body)
     checks=[]
     def done(label):checks.append(label)
+    from usa_module import native_timed_flag_values
+    w=World(out)
+    w.run(parse('set_country_flag = { flag = TEST_omitted days = 3 } set_country_flag = { flag = TEST_explicit value = 1 days = 3 }'),w.c['USA'])
+    assert not w.flag(w.c['USA'],'TEST_omitted') and w.flag(w.c['USA'],'TEST_explicit')
+    w.day=3;assert not w.flag(w.c['USA'],'TEST_explicit')
+    done('native-observed structured timed-flag default is zero; explicit value 1 is active and expires at its deadline')
+    from script_ast import walk
+    timed=0
+    for relative,text in out.items():
+        if relative.endswith('.txt'):
+            for k,_,v in walk(parse(text)):
+                if k=='set_country_flag' and isinstance(v,list) and first(v,'days') is not None:
+                    assert first(v,'value')=='1',(relative,v)
+                    timed+=1
+    assert timed>0
+    deliberate='set_country_flag = { flag = explicit_zero value = 0 days = 3 }'
+    assert native_timed_flag_values(deliberate)==deliberate
+    assert native_timed_flag_values(native_timed_flag_values('set_country_flag = { flag = missing days = 3 }'))==native_timed_flag_values('set_country_flag = { flag = missing days = 3 }')
+    done(f'all {timed} emitted timed country flags explicitly carry value 1; normalization is idempotent and preserves intentional explicit zero')
+    w=World(out)
+    assert [w.c['USA'].var[P+'prorated_'+s+'_daily_cost'] for s in ('005','0025','002')]==[.00714,.00357,.00285]
+    done('positive division matches native-observed daily costs 0.00714, 0.00357 and 0.00285 from weekly 0.05, 0.025 and 0.02')
     for cash,stock in [(.249,1000),(.25,999)]:
         w=World(out);w.c['USA'].var['treasury']=cash;w.c['USA'].stock=stock
         w.call(P+'initial_underground')
@@ -219,7 +278,7 @@ def main():
     done('exact funding succeeds once; at most two seeds; higher native resistance retained')
     w=World(out);w.call(P+'initial_underground');cash=w.c['USA'].var['treasury']
     for _ in range(90):w.tick()
-    assert math.isclose(w.c['USA'].var['treasury'],cash-90*.05/7,abs_tol=1e-9)
+    assert math.isclose(w.c['USA'].var['treasury'],cash-90*.00714,abs_tol=1e-9)
     assert w.c['USA'].var[P+'support_days']==0 and not w.s['164'].targets
     done('90 actual funded days debit exactly the prorated budget; expiry removes owned targets')
     w=World(out);w.call(P+'initial_underground');w.c['USA'].var['treasury']=.001;w.tick()
@@ -315,7 +374,7 @@ def main():
     w=World(out);w.c['USA'].flags['MD_skip_treasury_cost']=None;w.call(P+'initial_underground')
     assert w.c['USA'].stock==1000 and P+'cache' not in w.c['USA'].var
     done('native treasury-skip setup cannot generate unpaid cash or equipment grants')
-    report={'scope':'Static parsing and bounded emitted-AST execution; no HOI4 engine test','checks':checks,'passed':len(checks),'outputs':sorted(out)}
+    report={'project':'IMPERIA COLD WAR','scope':'Static parsing and bounded emitted-AST execution. Flag defaults and five-place division calibrated to the separate native 92-check passing probe; this harness is not an engine test.','checks':checks,'passed':len(checks),'timed_country_flags':timed,'native_observed_daily_costs':{'0.05':0.00714,'0.025':0.00357,'0.02':0.00285},'outputs':sorted(out)}
     path=ROOT/'tools/iraq_1970/staged/USA_GULF_TEST_REPORT.json';path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(report,indent=2))
 

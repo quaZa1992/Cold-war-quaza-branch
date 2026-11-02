@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: North Korea 1970 approval concept, never installs game files.
+# IMPERIA COLD WAR — Cold War: North Korea 1970 approval concept, never installs game files.
 """Canonical design data and review artifacts. Run only writes beside this script and the chat visualization root."""
 from pathlib import Path
 from collections import Counter, defaultdict
@@ -317,7 +317,7 @@ START_SPIRITS = [
       remedy='Keep Both Doors Open replaces it with strategic autonomy: +6% influence defence / -3% trade deal opinion; signed external cooperation offsets selected technical disadvantages.'),
 ]
 
-# IMPERIA CW — Cold War: independent concept-audit corrections and native labels.
+# IMPERIA COLD WAR — Cold War: independent concept-audit corrections and native labels.
 STATS['armyfuel'] = ('army_fuel_consumption_factor', 'Army fuel consumption')
 STATS['fuel'] = ('non_electric_fuel_consumption_modifier', 'Population non-electric fuel demand')
 STATS['interest'] = ('interest_rate_multiplier_modifier', 'Annual interest rate, percentage points')
@@ -477,7 +477,7 @@ if _short.exists():
     for _key, _title in json.loads(_short.read_text(encoding='utf-8-sig')).items():
         next(v for v in NODES if v['key'] == _key)['title'] = _title
 
-# IMPERIA CW — Cold War: native-width choice fans; semantic content unchanged.
+# IMPERIA COLD WAR — Cold War: native-width choice fans; semantic content unchanged.
 _roots={'wpk':(6,0),'economy':(16,0),'defence':(30,0),'diplomacy':(44,0),'atomic':(54,0),
         'kdp':(4,17),'chondo':(12,17),'cabinet':(20,17),'kpa':(28,17),
         'yanan':(36,17),'union':(44,17),'christian':(52,17)}

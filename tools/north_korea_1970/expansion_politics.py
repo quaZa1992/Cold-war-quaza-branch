@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: NKO political party continuation design data.
+# IMPERIA COLD WAR — Cold War: NKO political party continuation design data.
 """Bounded party-branch expansions for the North Korea 1970 design model.
 
 Each continuation adds a bridge, a reciprocal mutually exclusive policy pair,

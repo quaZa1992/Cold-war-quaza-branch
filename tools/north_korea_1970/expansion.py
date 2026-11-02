@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: national development, institutions and external programmes.
+# IMPERIA COLD WAR — Cold War: national development, institutions and external programmes.
 """Structured 1970 expansion; all monetary amounts are shares of GDP."""
 from copy import deepcopy
 

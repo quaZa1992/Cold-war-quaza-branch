@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: Export Imagegen masters and register category-matched selector badges.
+# IMPERIA COLD WAR — Export category-matched badges in native BGRA DDS format.
 from pathlib import Path
 import argparse
 import hashlib
@@ -87,6 +87,7 @@ def register(assets):
     write_if_changed(GFX, (gfx + '}\n').encode('utf-8'))
 
 
+# IMPERIA COLD WAR — Native A8R8G8B8 storage prevents red/blue swaps in the game.
 def export(asset):
     source = HERE / 'masters' / (asset['id'] + '.png')
     output = TEXTURES / (asset['id'] + '.png')
@@ -103,15 +104,15 @@ def export(asset):
         for corner in [(0, 0), (63, 0), (0, 63), (63, 63)]:
             assert im.getpixel(corner)[3] == 0, (asset['id'], 'opaque corner')
         pixels = im.tobytes()
-    header = [124, 4111, 64, 64, 256, 0, 0] + [0] * 11 + [32, 65, 0, 32, 255, 65280, 16711680, 4278190080, 4096, 0, 0, 0, 0]
+    header = [124, 4111, 64, 64, 256, 0, 0] + [0] * 11 + [32, 65, 0, 32, 16711680, 65280, 255, 4278190080, 4096, 0, 0, 0, 0]
     dds = output.with_suffix('.dds')
-    write_if_changed(dds, b'DDS ' + struct.pack('<31I', *header) + pixels)
+    write_if_changed(dds, b'DDS ' + struct.pack('<31I', *header) + im.tobytes('raw', 'BGRA'))
     assert Image.open(dds).convert('RGBA').tobytes() == pixels
     return dict(id=asset['id'], category=asset['category'], color=asset['color'],
                 master=str(source.relative_to(ROOT)), texture=str(dds.relative_to(ROOT)),
                 source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                 dds_sha256=hashlib.sha256(dds.read_bytes()).hexdigest(),
-                size=[64, 64], format='RGBA32 DDS', alpha_preserved=True)
+                size=[64, 64], format='BGRA8 DDS (A8R8G8B8)', pixel_order='BGRA', alpha_preserved=True)
 
 
 def preview(assets):
@@ -181,9 +182,10 @@ def main():
         return
     report = [export(asset) for asset in assets]
     preview(assets)
-    (HERE / 'validation.json').write_text(json.dumps(dict(comment='IMPERIA CW — Cold War: Built-in Imagegen asset export.',
+    # IMPERIA COLD WAR — Record the native texture format alongside source hashes.
+    (HERE / 'validation.json').write_text(json.dumps(dict(comment='IMPERIA COLD WAR — Native BGRA export of retained Imagegen masters.',
         engine_tested=False, assets=report), indent=2) + '\n', encoding='utf-8')
-    print(f'Exported and verified {len(report)} native 64x64 RGBA32 DDS badges.')
+    print(f'Exported and verified {len(report)} native 64x64 BGRA8 DDS badges.')
 
 
 if __name__ == '__main__':

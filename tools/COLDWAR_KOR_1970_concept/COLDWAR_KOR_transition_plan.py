@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: exact proposed state providers for the researched transition.
+# IMPERIA COLD WAR — Cold War: exact proposed state providers for the researched transition.
 """Approval-stage event, decision and ballot recipes; never installs content."""
 P='COLDWAR_KOR_'
 

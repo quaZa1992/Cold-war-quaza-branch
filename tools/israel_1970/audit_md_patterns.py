@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Israel 1970 authored-source verification.
 # IMPERIA CW — Cold War: israel 1970 — audit md patterns.
 """Audit the whole Israel module against actual MD definitions and reward forms."""
 from pathlib import Path
@@ -66,12 +67,19 @@ for p in (ROOT/'common/scripted_effects').glob('*.txt'):
     defined.update(re.findall(r'(?m)^([A-Za-z_]\w*)\s*=\s*\{',p.read_text(encoding='utf-8-sig')))
 
 calls=set()
+country_targets={c['host_target'] for c in data.get('settlement_presence',{}).get('contracts',[])}
+emitted_policy=(ROOT/'common/scripted_effects/ISR70_policy_effects.txt').read_text(encoding='utf-8')
+for target in country_targets:
+    check('save_global_event_target_as = '+target in emitted_policy,'Unregistered country event target: '+target)
 def effects(ast,scope='country'):
     for k,o,v in ast:
         if k.startswith('#') or k in ('limit','name','trigger','ai_chance'):continue
         if k in ('if','else_if','else','hidden_effect'):
             effects(v,scope);continue
         if k.isdigit():effects(v,'state');continue
+        if k.startswith('event_target:'):
+            check(k.removeprefix('event_target:') in country_targets,'Unknown country target scope: '+k)
+            effects(v,'country');continue
         if k in ('every_country','random_country','every_other_country'):effects(v,'country');continue
         if k in ('every_state','every_owned_state','every_controlled_state','random_owned_state'):effects(v,'state');continue
         if k in ('ROOT','FROM','PREV','THIS','CONTROLLER') or re.fullmatch('[A-Z]{3}',k):
@@ -107,7 +115,7 @@ for n in data['nodes']:
     if n['modifiers'] and not n['group'].startswith('party_'):
         check(data['idea_definitions'][n['id'].removeprefix('ISR70_')+'_idea']['treatment']==n['description'],'Spirit and focus descriptions disagree: '+n['id'])
 check('GEN_1970_change_tension' not in '\n'.join(n['reward'] for n in data['nodes']),'Israel still depends on the broken generic helper file')
-report={'status':'FAIL' if errors else 'PASS','errors':errors,'reference_trees':references,'verified_country_modifiers':len(evidence),'modifier_evidence':evidence,'effects_checked':sorted(calls),'generated_scripts_checked':generated,'narratives_checked':len(data['nodes']),'runtime_test':False}
+report={'project':'IMPERIA COLD WAR','status':'FAIL' if errors else 'PASS','errors':errors,'reference_trees':references,'verified_country_modifiers':len(evidence),'modifier_evidence':evidence,'effects_checked':sorted(calls),'generated_scripts_checked':generated,'narratives_checked':len(data['nodes']),'runtime_test':False}
 (ROOT/'docs/israel_1970_design/md_pattern_audit.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
 print(json.dumps({k:v for k,v in report.items() if k not in ('modifier_evidence','effects_checked','generated_scripts_checked')},indent=2))
 raise SystemExit(bool(errors))

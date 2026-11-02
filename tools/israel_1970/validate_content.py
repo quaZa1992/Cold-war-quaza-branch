@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Israel 1970 emitted integration verification.
 # IMPERIA CW — Cold War: israel 1970 — validate content.
 """Validate compiled scripts, localisation, assets and scenario integration."""
 from pathlib import Path
@@ -226,6 +227,8 @@ for rel,ast in asts.items():
             check(False,'Unsupported country reliability modifier: '+rel)
         if key=='set_politics' and isinstance(body,list):
             check(first(body,'ruling_party') in ('democratic','communism','neutrality','nationalist'),'Missing/invalid ideology group in politics tooltip: '+rel)
+# The explicit var/value/compare form is valid MD syntax, used by the live
+# affordability API. Only the unsupported compound operators are regressions.
 for rejected in ('check_variable = { treasury >= cost }','free_building_slots = { building = infrastructure size >= 1 }'):
     try:
         parse(rejected)
@@ -255,7 +258,7 @@ for i in (8,9,10,11):
 # must not reappear as authored programme/focus content or live paths.
 focus_text=[localisation.get(fid+suffix,'') for fid in focusmap for suffix in ('','_desc')]
 check(not any(re.search(r'\b(?:Shiite|Shia|Salafist|Salafism)\b',v,re.I) for v in focus_text),'Excluded ideology appears in authored focus content')
-result={'status':'PASS' if not issues else 'FAIL','issues':issues,'focuses':len(focusmap),'decisions':decision_count,'events':len(event_defs),'party_slots':manifest['party_slots'],'party_variants':manifest['party_variants'],'party_icons':len(manifest['party_icons']),'policy_combinations_checked':choice_checks,'localisation_keys':len(localisation),'language':'English only','validation':'Static parsing, references, assets and integration. No running HOI4 session was used.'}
+result={'project':'IMPERIA COLD WAR','status':'PASS' if not issues else 'FAIL','issues':issues,'focuses':len(focusmap),'decisions':decision_count,'events':len(event_defs),'party_slots':manifest['party_slots'],'party_variants':manifest['party_variants'],'party_icons':len(manifest['party_icons']),'policy_combinations_checked':choice_checks,'localisation_keys':len(localisation),'language':'English only','validation':'Static parsing, references, assets and integration. No running HOI4 session was used.'}
 (ROOT/'docs/israel_1970_design/implementation_validation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps(result,ensure_ascii=False,indent=2))
 raise SystemExit(bool(issues))

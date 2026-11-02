@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: native readiness verification in an owned, unsaved test campaign.
+# IMPERIA COLD WAR — Cold War: native readiness verification in an owned, unsaved test campaign.
 from pathlib import Path
 import argparse
 import json
@@ -9,14 +9,15 @@ from build import expand
 
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
-PROFILE=Path('C:/Users/sonyz/.codex/visualizations/2026/10/25/01a17278-9784-74c0-b852-08f09d128edf/readiness-runtime')
-GAME=Path('C:/Program Files (x86)/Steam/steamapps/common/Hearts of Iron IV')
+PROFILE=Path('E:/HOI4_Mod_Tools/mdcoldwar/runtime/quaza_eastasia_20261027/readiness')
+GAME=Path('E:/SteamLibrary/steamapps/common/Hearts of Iron IV')
 
 def write(path,text):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(text,encoding='utf-8',newline='\n')
 
 def launch(hold=False,live_fixture=False,presentation=False):
+    if live_fixture:raise RuntimeError('Use the private addon profile; in-place game-file fixtures are disabled.')
     if (PROFILE/'process.json').exists():
         old=json.loads((PROFILE/'process.json').read_text())
         # A new probe must not silently replace a previously recorded process.
@@ -28,7 +29,7 @@ def launch(hold=False,live_fixture=False,presentation=False):
     write(PROFILE/'fixture/descriptor.mod',addon)
     write(PROFILE/'dlc_load.json',json.dumps({'enabled_mods':['mod/mdcoldwar.mod','mod/probe.mod'],'disabled_dlcs':[]}))
     write(PROFILE/'settings.txt','language="l_english"\ngraphics={size={x=1280 y=900} fullScreen=no borderless=no}\nmaster_volume=0\n')
-    hook='# IMPERIA CW — Cold War: temporary native readiness verification.\non_actions = { on_startup = { effect = { USA = { country_event = { id = nr_probe.1 hours = 1 } } } } }\n'
+    hook='# IMPERIA COLD WAR — Cold War: temporary native readiness verification.\non_actions = { on_startup = { effect = { USA = { country_event = { id = nr_probe.1 hours = 1 } } } } }\n'
     write(PROFILE/'fixture/common/on_actions/readiness_probe.txt',hook)
     fixture='''
 add_namespace = nr_probe
@@ -108,7 +109,7 @@ country_event = { id = nr_probe.1 hidden = yes is_triggered_only = yes immediate
     } else = { log = "READINESS_PROBE FAIL counterforce_reserve" }
     set_country_flag = COLDWAR_nr_open
     COLDWAR_nr_refresh = yes
-    # IMPERIA CW — Cold War: reset only the owned fixture's earlier stand-down.
+    # IMPERIA COLD WAR — Cold War: reset only the owned fixture's earlier stand-down.
     clr_country_flag = COLDWAR_nr_standdown
     clear_variable = COLDWAR_nr_cooldown@SOV
     set_variable = { COLDWAR_nr_level = 1 }
@@ -167,7 +168,7 @@ country_event = { id = nr_probe.2 hidden = yes is_triggered_only = yes immediate
     log = "READINESS_PROBE COMPLETE"
 } }
 '''
-    # IMPERIA CW — Cold War: optional visual scene, after all mechanical checks finish.
+    # IMPERIA COLD WAR — Cold War: optional visual scene, after all mechanical checks finish.
     if presentation:
         fixture=fixture.replace('log = "READINESS_PROBE COMPLETE"', '''log = "READINESS_PROBE COMPLETE"
     set_variable = { COLDWAR_nr_level = 5 }
@@ -178,7 +179,7 @@ country_event = { id = nr_probe.2 hidden = yes is_triggered_only = yes immediate
     log = "READINESS_PRESENTATION preparing: current=5 order=1 days=8"
 ''')
     fixture=expand(fixture.replace('COLDWAR_nr_','nr_')).replace('nr_','COLDWAR_nr_').replace('COLDWAR_nr_probe','nr_probe')
-    fixture='# IMPERIA CW — Cold War: temporary native readiness verification.\n'+fixture
+    fixture='# IMPERIA COLD WAR — Cold War: temporary native readiness verification.\n'+fixture
     write(PROFILE/'fixture/events/readiness_probe.txt',fixture)
     temporary=[]
     if live_fixture:
@@ -190,8 +191,8 @@ country_event = { id = nr_probe.2 hidden = yes is_triggered_only = yes immediate
     for name in ['game.log','error.log']:
         path=PROFILE/'logs'/name
         if path.exists():write(path,'')
-    args=[str(GAME/'hoi4.exe'),'-debug','-noasserts','-assertsdialog=no','userdir='+PROFILE.as_posix()+'/', '-start_tag=USA','-start_speed=1']
-    startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=1
+    args=[str(GAME/'hoi4.exe'),'-debug','-noasserts','-assertsdialog=no','-userdir='+PROFILE.as_posix()+'/', '-start_tag=USA','-start_speed=1']
+    startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
     output=(PROFILE/'process_output.txt').open('w',encoding='utf-8')
     try:
         process=subprocess.Popen(args,cwd=GAME,startupinfo=startup,stdout=output,stderr=subprocess.STDOUT)

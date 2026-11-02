@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — German leadership and Eastern portrait integration.
+# IMPERIA COLD WAR — USA and Soviet political leadership integration.
 # IMPERIA CW — Cold War: Historical parties, leaders and national identities.
 """Build the historical party registry and extend MD's native leader pools.
 
@@ -167,6 +169,16 @@ class Builder:
         self.loc[key] = value
 
     def write(self, path, text):
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        from europe_1970_leaders.integration import adapt as europe_leadership
+        text = europe_leadership(path, text)
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        from superpower_1970_leaders.integration import adapt as superpower_leadership
+        text = superpower_leadership(path, text)
+        from lukashenko_1970.integration import adapt as lukashenko_leadership
+        text = lukashenko_leadership(path, text)
         assert path not in self.outputs, path
         self.outputs[path] = text
 

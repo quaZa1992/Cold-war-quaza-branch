@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: emitted-tree preview entry point.
+# IMPERIA COLD WAR — Cold War: emitted-tree preview entry point.
 """Render current emitted positions, native focus art and all sections."""
 from pathlib import Path
 import runpy

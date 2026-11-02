@@ -1,4 +1,5 @@
 # IMPERIA CW — Cold War: German Democratic Republic 1970 content generator.
+# IMPERIA COLD WAR — DDR focus effects no longer generate Moscow-trust changes.
 # COLDWAR | Compiles the effect dicts of the GDR design into Clausewitz code (MD 2000 style, like the Soviet generator).
 import re
 from dg_common import *
@@ -156,16 +157,6 @@ def receive(share):
 def credit(share):
     """a Western or Soviet credit: money now, debt of the same size"""
     return receive(share) + [_gdp_share("debt_change", share), "modify_debt_effect = yes"]
-
-
-def trust(v):
-    """Moscow's Trust (0-100): the number in the tooltip is fixed, the change itself is clamped"""
-    v = int(v)
-    key = f"trust_{'plus' if v >= 0 else 'minus'}_{abs(v)}"
-    col = "G" if v > 0 else "R"
-    LOC[f"{PFX}{key}_tt"] = f"Moscow's Trust: §{col}{v:+d}§!"
-    return [f"custom_effect_tooltip = {PFX}{key}_tt",
-            f"hidden_effect = {{ set_temp_variable = {{ {PFX}trust_delta = {v} }} {PFX}change_trust = yes }}"]
 
 
 COURSE_BOP = f"{PFX}german_course_bop"
@@ -335,8 +326,6 @@ def compile_effect(e, f, i=None):
         if e.get("ladder"):
             return ladder(e)
         return [f"if = {{ limit = {{ has_idea = {e['id']} }} remove_ideas = {e['id']} }}"]
-    if k == "trust":
-        return trust(e["v"])
     if k == "course":
         return course(e["v"])
     if k == "tension":

@@ -1,0 +1,796 @@
+# IMPERIA COLD WAR — Israel V2 domestic projects and reserve actions.
+ISR2_domestic_refresh_prices = {
+	set_variable = { ISR2_domestic_quote_grant = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_grant = 0.04 }
+	set_variable = { ISR2_domestic_quote_match = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_match = 0.005 }
+	set_variable = { ISR2_domestic_quote_match_total = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_match_total = 0.01 }
+	set_variable = { ISR2_domestic_quote_tender = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_tender = 0.0075 }
+	set_variable = { ISR2_domestic_quote_repayment = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_repayment = 0.02 }
+	set_variable = { ISR2_domestic_quote_exercise = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_exercise = 0.002 }
+	set_variable = { ISR2_domestic_quote_calendar = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_calendar = 0.006 }
+	set_variable = { ISR2_domestic_quote_procurement = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_procurement = 0.003 }
+	set_variable = { ISR2_domestic_quote_homefront = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_homefront = 0.008 }
+	set_variable = { ISR2_domestic_quote_reserve_weekly = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_reserve_weekly = 0.0004 }
+	set_variable = { ISR2_domestic_quote_homefront_weekly = gdp_total }
+	multiply_variable = { ISR2_domestic_quote_homefront_weekly = 0.0001 }
+	set_variable = { ISR2_domestic_anonymous_debt = debt }
+	subtract_from_variable = { ISR2_domestic_anonymous_debt = ISR2_bilateral_loan_outstanding }
+	clamp_variable = { var = ISR2_domestic_anonymous_debt min = 0 }
+}
+ISR2_project_support_quote = {
+	set_variable = { ISR2_project_net_cost = ISR2_project_cost }
+	clamp_variable = { var = ISR2_project_net_cost min = 0 }
+	set_variable = { ISR2_project_absorption_used = 0 }
+	set_variable = { ISR2_project_match_used = 0 }
+	set_variable = { ISR2_project_procurement_used = 0 }
+	set_variable = { ISR2_project_support_cap = ISR2_project_quote }
+	multiply_variable = { ISR2_project_support_cap = 0.005 }
+	if = {
+		limit = {
+			check_variable = { ISR2_project_class = 1 }
+		}
+		set_variable = { ISR2_project_absorption_used = ISR2_project_net_cost }
+		if = {
+			limit = {
+				check_variable = { ISR2_project_absorption_used > ISR2_domestic_absorption_balance }
+			}
+			set_variable = { ISR2_project_absorption_used = ISR2_domestic_absorption_balance }
+		}
+		clamp_variable = { var = ISR2_project_absorption_used min = 0 }
+		subtract_from_variable = { ISR2_project_net_cost = ISR2_project_absorption_used }
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_civilian_projects > 0 }
+			}
+			set_variable = { ISR2_project_match_used = ISR2_project_net_cost }
+			if = {
+				limit = {
+					check_variable = { ISR2_project_match_used > ISR2_domestic_civilian_balance }
+				}
+				set_variable = { ISR2_project_match_used = ISR2_domestic_civilian_balance }
+			}
+			clamp_variable = { var = ISR2_project_match_used min = 0 }
+			if = {
+				limit = {
+					check_variable = { ISR2_project_match_used > ISR2_project_support_cap }
+				}
+				set_variable = { ISR2_project_match_used = ISR2_project_support_cap }
+			}
+			subtract_from_variable = { ISR2_project_net_cost = ISR2_project_match_used }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_project_class = 2 }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_settlement_projects > 0 }
+			}
+			set_variable = { ISR2_project_match_used = ISR2_project_net_cost }
+			if = {
+				limit = {
+					check_variable = { ISR2_project_match_used > ISR2_domestic_settlement_balance }
+				}
+				set_variable = { ISR2_project_match_used = ISR2_domestic_settlement_balance }
+			}
+			clamp_variable = { var = ISR2_project_match_used min = 0 }
+			if = {
+				limit = {
+					check_variable = { ISR2_project_match_used > ISR2_project_support_cap }
+				}
+				set_variable = { ISR2_project_match_used = ISR2_project_support_cap }
+			}
+			subtract_from_variable = { ISR2_project_net_cost = ISR2_project_match_used }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_project_class = 0 }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_project_procurement = 1 }
+				has_country_flag = ISR2_domestic_tank_coupon
+			}
+			set_variable = { ISR2_project_procurement_used = ISR2_project_net_cost }
+			if = {
+				limit = {
+					check_variable = { ISR2_project_procurement_used > ISR2_project_support_cap }
+				}
+				set_variable = { ISR2_project_procurement_used = ISR2_project_support_cap }
+			}
+			subtract_from_variable = { ISR2_project_net_cost = ISR2_project_procurement_used }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_project_procurement = 2 }
+				has_country_flag = ISR2_domestic_aircraft_coupon
+			}
+			set_variable = { ISR2_project_procurement_used = ISR2_project_net_cost }
+			if = {
+				limit = {
+					check_variable = { ISR2_project_procurement_used > ISR2_project_support_cap }
+				}
+				set_variable = { ISR2_project_procurement_used = ISR2_project_support_cap }
+			}
+			subtract_from_variable = { ISR2_project_net_cost = ISR2_project_procurement_used }
+		}
+	}
+}
+ISR2_project_support_commit = {
+	ISR2_project_support_quote = yes
+	if = {
+		limit = {
+			check_variable = { ISR2_project_absorption_used > 0 }
+		}
+		subtract_from_variable = { ISR2_domestic_absorption_balance = ISR2_project_absorption_used }
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_project_class = 1 }
+			check_variable = { ISR2_project_match_used > 0 }
+		}
+		subtract_from_variable = { ISR2_domestic_civilian_balance = ISR2_project_match_used }
+		subtract_from_variable = { ISR2_domestic_civilian_projects = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_project_class = 2 }
+			check_variable = { ISR2_project_match_used > 0 }
+		}
+		subtract_from_variable = { ISR2_domestic_settlement_balance = ISR2_project_match_used }
+		subtract_from_variable = { ISR2_domestic_settlement_projects = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_project_procurement = 1 }
+			check_variable = { ISR2_project_procurement_used > 0 }
+		}
+		clr_country_flag = ISR2_domestic_tank_coupon
+	}
+	if = {
+		limit = {
+			check_variable = { ISR2_project_procurement = 2 }
+			check_variable = { ISR2_project_procurement_used > 0 }
+		}
+		clr_country_flag = ISR2_domestic_aircraft_coupon
+	}
+}
+ISR2_domestic_complete_absorption_appeal = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_absorption_appeal = yes }
+		set_variable = { ISR2_domestic_absorption_balance = ISR2_domestic_quote_grant }
+		set_country_flag = ISR2_domestic_done_absorption_appeal
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_absorption_appeal }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_absorption_appeal
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_national_bargain = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_national_bargain = yes }
+		set_variable = { ISR2_private_required = ISR2_domestic_quote_match }
+		ISR2_private_commit = yes
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_match }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		set_variable = { ISR2_domestic_civilian_balance = ISR2_domestic_quote_match_total }
+		set_variable = { ISR2_domestic_civilian_projects = 2 }
+		set_country_flag = ISR2_domestic_done_national_bargain
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_national_bargain }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_national_bargain
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_gahal_settlement_match = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_gahal_settlement_match = yes }
+		set_variable = { ISR2_private_required = ISR2_domestic_quote_match }
+		ISR2_private_commit = yes
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_match }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		set_variable = { ISR2_domestic_settlement_balance = ISR2_domestic_quote_match_total }
+		set_variable = { ISR2_domestic_settlement_projects = 2 }
+		set_country_flag = ISR2_domestic_done_gahal_settlement_match
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_gahal_settlement_match }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_gahal_settlement_match
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_sapir_book = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_sapir_book = yes }
+		set_variable = { ISR2_private_required = ISR2_domestic_quote_tender }
+		ISR2_private_commit = yes
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_tender }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		205 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+		set_country_flag = ISR2_domestic_done_sapir_book
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_sapir_book }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_sapir_book
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_sapir_negev = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_sapir_negev = yes }
+		set_variable = { ISR2_private_required = ISR2_domestic_quote_tender }
+		ISR2_private_commit = yes
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_tender }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		206 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+		set_country_flag = ISR2_domestic_done_sapir_negev
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_sapir_negev }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_sapir_negev
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_quote_repayment = {
+	set_variable = { ISR2_domestic_anonymous_payment = ISR2_domestic_quote_repayment }
+	if = {
+		limit = {
+			check_variable = { ISR2_domestic_anonymous_payment > ISR2_domestic_anonymous_debt }
+		}
+		set_variable = { ISR2_domestic_anonymous_payment = ISR2_domestic_anonymous_debt }
+	}
+	set_variable = { ISR2_domestic_named_payment = ISR2_domestic_quote_repayment }
+	subtract_from_variable = { ISR2_domestic_named_payment = ISR2_domestic_anonymous_payment }
+}
+ISR2_domestic_complete_development_repayment = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_development_repayment = yes }
+		ISR2_domestic_quote_repayment = yes
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_named_payment > 0 }
+			}
+			set_temp_variable = { ISR2_bilateral_early_repayment = ISR2_domestic_named_payment }
+			ISR2_bilateral_loan_early_repay = yes
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_anonymous_payment > 0 }
+			}
+			set_temp_variable = { treasury_change = ISR2_domestic_anonymous_payment }
+			multiply_temp_variable = { treasury_change = -1 }
+			modify_treasury_effect = yes
+			set_temp_variable = { debt_change = ISR2_domestic_anonymous_payment }
+			multiply_temp_variable = { debt_change = -1 }
+			modify_debt_effect = yes
+		}
+		set_country_flag = ISR2_domestic_done_development_repayment
+		set_country_flag = { flag = ISR2_domestic_cooldown_development_repayment value = 1 days = 182 }
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_cooldown_development_repayment }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_development_repayment
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_end_callup = {
+	set_variable = { ISR2_domestic_callup_days = 0 }
+	remove_dynamic_modifier = { modifier = ISR2_domestic_callup }
+	remove_dynamic_modifier = { modifier = ISR2_domestic_callup_calendar }
+}
+ISR2_domestic_complete_reserve_exercise = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_reserve_exercise = yes }
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_exercise }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		army_experience = 20
+		if = {
+			limit = { has_country_flag = ISR2_domestic_done_bounded_callup }
+			set_variable = { ISR2_domestic_exercise_days = 28 }
+		}
+		else = {
+			set_variable = { ISR2_domestic_exercise_days = 35 }
+		}
+		set_country_flag = ISR2_domestic_done_reserve_exercise
+		set_country_flag = { flag = ISR2_domestic_cooldown_reserve_exercise value = 1 days = 182 }
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_cooldown_reserve_exercise }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_reserve_exercise
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_security_emergency = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_security_emergency = yes }
+		add_political_power = -30
+		add_stability = -0.03
+		set_country_flag = { flag = ISR2_domestic_security_emergency value = 1 days = 70 }
+		set_country_flag = ISR2_domestic_done_security_emergency
+		set_country_flag = { flag = ISR2_domestic_cooldown_security_emergency value = 1 days = 180 }
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_cooldown_security_emergency }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_security_emergency
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_reserve_callup = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_reserve_callup = yes }
+		set_variable = { ISR2_domestic_exercise_days = 0 }
+		remove_dynamic_modifier = { modifier = ISR2_domestic_exercise }
+		set_variable = { ISR2_domestic_callup_days = 70 }
+		set_country_flag = ISR2_domestic_done_reserve_callup
+		set_country_flag = { flag = ISR2_domestic_cooldown_reserve_callup value = 1 days = 70 }
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_cooldown_reserve_callup }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_reserve_callup
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_reserve_release = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_reserve_release = yes }
+		ISR2_domestic_end_callup = yes
+		set_country_flag = ISR2_domestic_done_reserve_release
+		set_country_flag = { flag = ISR2_domestic_cooldown_reserve_release value = 1 days = 70 }
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_cooldown_reserve_release }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_reserve_release
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_bounded_callup = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_bounded_callup = yes }
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_calendar }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_exercise_days > 0 }
+			}
+			subtract_from_variable = { ISR2_domestic_exercise_days = 7 }
+			clamp_variable = { var = ISR2_domestic_exercise_days min = 0 }
+		}
+		set_country_flag = ISR2_domestic_done_bounded_callup
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_bounded_callup }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_bounded_callup
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_labor_procurement_ceiling = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_labor_procurement_ceiling = yes }
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_procurement }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		if = {
+			limit = {
+				NOT = { has_completed_focus = ISR2_tal_tank }
+			}
+			set_country_flag = ISR2_domestic_tank_coupon
+		}
+		if = {
+			limit = {
+				NOT = { has_completed_focus = ISR2_nesher }
+			}
+			set_country_flag = ISR2_domestic_aircraft_coupon
+		}
+		set_country_flag = ISR2_domestic_done_labor_procurement_ceiling
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_labor_procurement_ceiling }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_labor_procurement_ceiling
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_complete_home_front = {
+	ISR2_domestic_refresh_prices = yes
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_domestic_can_home_front = yes }
+		set_temp_variable = { treasury_change = ISR2_domestic_quote_homefront }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		204 = {
+			add_extra_state_shared_building_slots = 1
+			add_dynamic_modifier = { modifier = ISR2_domestic_civil_defence_204 scope = ISR }
+		}
+		set_technology = { ISR2_homefront_medical_protocol = 1 }
+		set_country_flag = ISR2_domestic_done_home_front
+		ISR2_domestic_refresh = yes
+		update_money_dirty_variable = yes
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_domestic_done_home_front }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_home_front
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+	}
+}
+ISR2_domestic_refresh = {
+	if = {
+		limit = { ISR2_is_scenario = yes }
+		ISR2_domestic_refresh_prices = yes
+		set_variable = { ISR2_domestic_previous_expense = ISR2_domestic_weekly_expense }
+		set_variable = { ISR2_domestic_weekly_income = 0 }
+		set_variable = { ISR2_domestic_weekly_expense = 0 }
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_exercise_days > 0 }
+				check_variable = { ISR2_domestic_callup_days < 1 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_domestic_exercise }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_domestic_exercise }
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_domestic_exercise }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_domestic_exercise }
+			}
+		}
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				check_variable = { ISR2_domestic_callup_days > 0 }
+				OR = { has_war = yes has_country_flag = ISR2_domestic_security_emergency }
+				NOT = { has_country_flag = ISR2_domestic_done_bounded_callup }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_domestic_callup }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_domestic_callup }
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_domestic_callup }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_domestic_callup }
+			}
+		}
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				check_variable = { ISR2_domestic_callup_days > 0 }
+				OR = { has_war = yes has_country_flag = ISR2_domestic_security_emergency }
+				has_country_flag = ISR2_domestic_done_bounded_callup
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dynamic_modifier = { modifier = ISR2_domestic_callup_calendar }
+					}
+				}
+				add_dynamic_modifier = { modifier = ISR2_domestic_callup_calendar }
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = ISR2_domestic_callup_calendar }
+				}
+				remove_dynamic_modifier = { modifier = ISR2_domestic_callup_calendar }
+			}
+		}
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				has_country_flag = ISR2_domestic_done_home_front
+				owns_state = 204
+				controls_state = 204
+				has_full_control_of_state = 204
+			}
+			add_to_variable = { ISR2_domestic_weekly_expense = ISR2_domestic_quote_homefront_weekly }
+			204 = {
+				if = {
+					limit = {
+						NOT = {
+							has_dynamic_modifier = { modifier = ISR2_domestic_civil_defence_204 }
+						}
+					}
+					add_dynamic_modifier = { modifier = ISR2_domestic_civil_defence_204 scope = ISR }
+				}
+			}
+		}
+		if = {
+			limit = {
+				ISR2_is_scenario = yes
+				check_variable = { ISR2_domestic_callup_days > 0 }
+				OR = { has_war = yes has_country_flag = ISR2_domestic_security_emergency }
+			}
+			add_to_variable = { ISR2_domestic_weekly_expense = ISR2_domestic_quote_reserve_weekly }
+		}
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { ISR2_domestic_weekly_expense = ISR2_domestic_previous_expense }
+				}
+			}
+			update_money_dirty_variable = yes
+		}
+	}
+}
+ISR2_domestic_daily = {
+	if = {
+		limit = { ISR2_is_scenario = yes }
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_exercise_days > 0 }
+			}
+			subtract_from_variable = { ISR2_domestic_exercise_days = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_domestic_callup_days > 0 }
+			}
+			subtract_from_variable = { ISR2_domestic_callup_days = 1 }
+			if = {
+				limit = {
+					OR = {
+						NOT = {
+							OR = { has_war = yes has_country_flag = ISR2_domestic_security_emergency }
+						}
+						check_variable = { ISR2_domestic_callup_days < 1 }
+					}
+				}
+				ISR2_domestic_end_callup = yes
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_development_repayment
+				NOT = { has_country_flag = ISR2_domestic_cooldown_development_repayment }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_development_repayment
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_reserve_exercise
+				NOT = { has_country_flag = ISR2_domestic_cooldown_reserve_exercise }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_reserve_exercise
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_security_emergency
+				NOT = { has_country_flag = ISR2_domestic_cooldown_security_emergency }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_security_emergency
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_reserve_callup
+				NOT = { has_country_flag = ISR2_domestic_cooldown_reserve_callup }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_reserve_callup
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		if = {
+			limit = {
+				has_completed_focus = ISR2_reserve_release
+				NOT = { has_country_flag = ISR2_domestic_cooldown_reserve_release }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_reserve_release
+				uncomplete_children = no
+				refund_political_power = no
+			}
+		}
+		ISR2_domestic_refresh = yes
+	}
+}
+ISR2_domestic_init = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			NOT = { has_country_flag = ISR2_domestic_initialized }
+		}
+		set_variable = { ISR2_domestic_absorption_balance = 0 }
+		set_variable = { ISR2_domestic_civilian_balance = 0 }
+		set_variable = { ISR2_domestic_civilian_projects = 0 }
+		set_variable = { ISR2_domestic_settlement_balance = 0 }
+		set_variable = { ISR2_domestic_settlement_projects = 0 }
+		set_variable = { ISR2_domestic_exercise_days = 0 }
+		set_variable = { ISR2_domestic_callup_days = 0 }
+		set_variable = { ISR2_domestic_weekly_income = 0 }
+		set_variable = { ISR2_domestic_weekly_expense = 0 }
+		set_country_flag = ISR2_domestic_initialized
+	}
+	ISR2_domestic_refresh = yes
+}

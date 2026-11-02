@@ -1,0 +1,15 @@
+IMPERIA COLD WAR: installed Cyprus focus artwork
+
+The compact Cyprus tree is installed in `common/national_focus/COLDWAR_CYP_1970_focus.txt`. Its coordinates were verified against the installed layout report before this change. The artwork revision preserves every gameplay field and every compact position.
+
+All 100 focuses now use 44 distinct icons. Three original Cyprus emblems were generated with the built-in `image_gen` tool: the independent republic, peacekeeping and communal safeguards, and civilian command of the National Guard. Ten suitable focuses use these three emblems. Exact final prompts, source output paths, saved workspace PNG sources and runtime DDS paths are recorded in `art_sources/sources.json`.
+
+Existing MD art provides the remaining themes: parliament, ballots, councils, medicine, infrastructure, water, agriculture, finance, construction, communications, entrenchment, infantry, reserves and diplomacy. The final native selections were reviewed from decoded images. Chinese- and Cyrillic-lettered art and a foreign-coded cooperative badge were excluded. Rural cooperatives, the cooperative sector, prepared positions and signals received distinct, specific neutral motifs.
+
+`art.py` is the canonical assignment and native sprite generator. `build_art_assets.py` makes country-local DDS copies without overwriting original MD art. Each icon fits a transparent 100 x 78 canvas with a maximum 96 x 74 image, preserving proportions and alpha. The native GUI's symbol center at y20 and title at y58 were inspected; every visible alpha bound ends at least one pixel above the title. Plain and matching native shine sprites are registered in `interface/COLDWAR_CYP_R2_focus_icons.gfx` and `interface/COLDWAR_CYP_R2_focus_shine.gfx`.
+
+`install_art.py` installs only the country tree and its two artwork registrations, after an AST equality check excluding the icon field and a separate position comparison. Other generated outputs must match the installed files exactly. It archives the previous tree, registrations, manifest and preview on E:. The main compiler uses the same art source, so regeneration retains the assignment.
+
+Verification: all 26 static integration checks passed. Every focus has a real texture and matching shine. All 100 images load in the browser reconstruction; every focus inspector works without script errors. `focus-icons-review.png` and `art-crisis-detail.png` were visually inspected. These are review compositions, not running-game screenshots. The new art was not separately relaunched in HOI4; prior native gameplay tests remain prior gameplay evidence.
+
+Provenance and rights: generated sources and mechanical conversion records are in `art_sources/sources.json`. Existing MD source paths, hashes, copy modifications, unknown individual authors and unknown separate redistribution permissions are in `NATIVE_ART_COPIES.json`. `gfx/interface/goals/coldwar_cyprus_r2/NOTICE.md` applies to all generated and normalized textures in that directory. Original MD artwork remains unchanged and retains its original rights. The project marker establishes no third-party rights.

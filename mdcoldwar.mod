@@ -1,4 +1,5 @@
-version="2.0.2"
+# IMPERIA COLD WAR — Launcher registration for the mdcoldwar-main installation.
+version="2.0.3"
 name="MD Cold War"
 tags={
 	"Alternative History"
@@ -90,5 +91,4 @@ replace_path = "common/doctrines/tracks"
 
 picture="thumbnail.png"
 replace_path="common/bookmarks"
-# IMPERIA CW — Cold War: Local launcher content directory
 path="mod/mdcoldwar-main"

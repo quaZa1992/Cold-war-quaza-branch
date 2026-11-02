@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Historical and localization review: NKO v2
 
 **Overall:** The design’s core historical framing is sound. It separates the 1970 Kim Il Sung government from counterfactual alternatives, makes bilateral offers recipient-controlled, and presents the nine packages as proposals rather than already signed new accords. The biggest terminology correction is the starting spirit titled **“Byungjin: Economy and Defence.”**

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: greece 1970 — validate.
+# IMPERIA COLD WAR — Greece 1970 source and transaction validation.
 """Structural checks and executable state-machine tests, not an engine test."""
 from pathlib import Path
 import importlib.util
@@ -43,13 +43,18 @@ class World:
         self.scheduled = []
         self.changes = []
         self.countries = {tag: dict(flags=set(), ideas=set(), timed=set(), done=set(), variables={'gdp_total': 100, 'treasury': 20, 'debt': 0, 'ruling_party': 22 if tag == 'GRE' else 1, 'imp_oil_factor_t': 20}, temp={}, pp=0, stability=0, xp=0, leader='Georgios Papadopoulos', builds=[], modifiers=set(), elections=False, tree=None, war=False) for tag in ('GRE', 'ENG', 'USA', 'CYP', 'TUR', 'SER', 'SOV')}
-        self.states = {str(s): dict(owner='GRE', controller='GRE', slots=True, modifiers=set(), builds=[]) for s in (139, 140, 141, 142, 143, 144, 974, 1062)}
+        self.states = {str(s): dict(owner='GRE', controller='GRE', slots=True, levels={}, modifiers=set(), builds=[], extra_slots=0) for s in (139, 140, 141, 142, 143, 144, 974, 1062)}
 
     def env(self, scope):
         return self.countries[scope] if scope in self.countries else self.states[scope]
 
     def value(self, value, scope):
         if isinstance(value, list): raise AssertionError('Unexpected expression ' + repr(value))
+        if value.startswith('building_level@'):
+            assert scope in self.states, ('Building level needs state scope', scope, value)
+            kind = value.split('@', 1)[1]
+            e = self.states[scope]
+            return e['levels'].get(kind, 0) + sum(float(first(b, 'level')) for b in e['builds'] if first(b, 'type') == kind and first(b, 'instant_build') == 'yes')
         try: return float(value)
         except ValueError: pass
         if '.' in value and value.split('.')[0] in self.countries:
@@ -63,6 +68,7 @@ class World:
             e = self.env(scope)
             if k == 'OR': return any(item(*x) for x in v)
             if k in ('AND','hidden_trigger'): return self.condition(v, scope)
+            if k == 'custom_trigger_tooltip': return self.condition([r for r in v if r[0] != 'tooltip'], scope)
             if k == 'NOT': return not self.condition(v, scope)
             if k in self.countries or k in self.states: return self.condition(v, k)
             if k == 'original_tag': return scope == v
@@ -101,6 +107,8 @@ class World:
                     self.execute([(a, b, c) for a, b, c in v if a != 'limit'], scope, depth + 1)
                     chain = True
             elif k in EFFECTS: self.execute(EFFECTS[k], scope, depth + 1)
+            elif k == 'hidden_effect': self.execute(v, scope, depth + 1)
+            elif k == 'effect_tooltip': pass
             elif k in self.countries or k in self.states: self.execute(v, k, depth + 1)
             elif k == 'set_country_flag': e['flags'].add(first(v, 'flag') if isinstance(v, list) else v)
             elif k == 'clr_country_flag': e['flags'].discard(v)
@@ -141,11 +149,12 @@ class World:
             elif k.endswith('_experience'): e['xp'] += float(v)
             elif k == 'load_focus_tree': e['tree'] = v
             elif k == 'add_building_construction': e['builds'].append(v)
+            elif k == 'add_extra_state_shared_building_slots': e['extra_slots'] += int(v)
             elif k == 'random_owned_controlled_state':
                 eligible=[identifier for identifier,state in self.states.items() if state['owner']==scope and state['controller']==scope and self.condition(first(v,'limit',[]),identifier)]
                 if eligible:self.execute([(a,b,c) for a,b,c in v if a!='limit'],eligible[0],depth+1)
             elif k == 'add_dynamic_modifier': e['modifiers'].add(first(v, 'modifier'))
-            elif k == 'remove_dynamic_modifier': e['modifiers'].discard(v)
+            elif k == 'remove_dynamic_modifier': e['modifiers'].discard(first(v, 'modifier') if isinstance(v, list) else v)
             elif k == 'clamp_variable':
                 a = first(v, 'var'); e['variables'][a] = max(float(first(v, 'min')), min(float(first(v, 'max')), self.value(a, scope)))
             elif k == 'COLDWAR_CYP_1970_GRE_publish_response':

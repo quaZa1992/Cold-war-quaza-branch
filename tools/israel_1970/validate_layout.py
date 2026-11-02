@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: israel 1970 — validate layout.
+# IMPERIA COLD WAR — Israel 1970 installed layout and roleplay routes.
 """Check compact layout, relative anchors and preserved gameplay dependencies."""
 from pathlib import Path
 from itertools import combinations
@@ -6,6 +6,7 @@ import json
 import re
 import sys
 from script_format import read
+from roleplay_routes import PREREQUISITES
 
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
@@ -34,6 +35,7 @@ for a,b in combinations(nodes.values(),2):
 for key,n in nodes.items():
     if key in old and not n.get('policy_extension'):
         expected=[[p for p in row if p not in data['removed_unlock_focuses']] for row in old[key]['prerequisites']]
+        expected=PREREQUISITES.get(key,expected)
         check(n['prerequisites']==[row for row in expected if row],'Policy prerequisites changed: '+key)
     else:
         check(all(parent in nodes for row in n['prerequisites'] for parent in row),'Missing policy prerequisite: '+key)
@@ -157,7 +159,7 @@ expected_focus_count=manifest.get('focuses',len(nodes))
 check(len(nodes)==expected_focus_count,'Design focus count differs from manifest: '+str(len(nodes))+'/'+str(expected_focus_count))
 check(sum(n['relative_position_id'] is None for n in nodes.values())==1,'Expected exactly one absolute focus root')
 russia=(ROOT/'common/national_focus/05_russia.txt').read_text(encoding='utf-8-sig')
-result={'status':'FAIL' if errors else 'PASS','errors':errors,'before':before,'after':after,
+result={'project':'IMPERIA COLD WAR','status':'FAIL' if errors else 'PASS','errors':errors,'before':before,'after':after,
         'width_reduction_percent':round((1-after['width']/before['width'])*100,1),
         'bounding_area_reduction_percent':round((1-after['width']*after['height']/(before['width']*before['height']))*100,1),
         'before_area_per_focus':round(before_density,2),

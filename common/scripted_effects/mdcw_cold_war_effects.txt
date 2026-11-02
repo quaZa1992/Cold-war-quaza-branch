@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Compact Cyprus 1970 integration.
 # IMPERIA CW — Cold War: effects — scripted effects.
 ###############################################################
 # MD Cold War - Cold War Equilibrium
@@ -1545,6 +1546,8 @@ mdcw_cw_update_oil_level = {
 		multiply_variable = { global.mdcw_cw_oil_level = 0.996 }
 	}
 	clamp_variable = { var = global.mdcw_cw_oil_level min = 0.5 max = 12 }
+	# COLDWAR: OPEC 1970 - a price freeze (A5) holds the level for 180 days
+	if = { limit = { has_global_flag = COLDWAR_OPEC_freeze has_variable = global.cwop_freeze_level } set_variable = { global.mdcw_cw_oil_level = global.cwop_freeze_level } } # COLDWAR
 	mdcw_cw_update_oil_ratio = yes
 	imp_update_oil_price_display = yes
 }
@@ -1568,6 +1571,8 @@ mdcw_cw_recalculate_oil_embargo_pressure = {
 		subtract_from_variable = { mdcw_cw_oil_import_dependency = resource_produced@oil }
 		divide_variable = { mdcw_cw_oil_import_dependency = resource_consumed@oil }
 	}
+	# COLDWAR: OPEC 1970 - the ban on indirect supply (E5) closes the leaks through third countries
+	if = { limit = { has_global_flag = COLDWAR_OPEC_no_leaks } multiply_variable = { mdcw_cw_oil_embargo_pressure = 1.25 } } # COLDWAR
 	clamp_variable = { var = mdcw_cw_oil_embargo_pressure min = 0 max = 0.8 }
 	set_variable = { mdcw_cw_oil_embargo_pressure_pct = mdcw_cw_oil_embargo_pressure }
 	multiply_variable = { mdcw_cw_oil_embargo_pressure_pct = 100 }
@@ -1684,6 +1689,9 @@ mdcw_cw_oil_effective_price = {
 		limit = { has_variable = global.mdcw_cw_oil_embargo_world_multiplier }
 		multiply_temp_variable = { imp_oil_factor_t = global.mdcw_cw_oil_embargo_world_multiplier }
 	}
+	# COLDWAR: OPEC 1970 - most favoured consumers (E3) are spared the world shortage, preferential ones half of it
+	if = { limit = { check_variable = { cwop_class = 1 } check_variable = { global.mdcw_cw_oil_embargo_world_multiplier > 1 } } divide_temp_variable = { imp_oil_factor_t = global.mdcw_cw_oil_embargo_world_multiplier } } # COLDWAR
+	if = { limit = { check_variable = { cwop_class = 2 } check_variable = { global.mdcw_cw_oil_embargo_world_multiplier > 1 } } set_temp_variable = { cwop_t_hm = global.mdcw_cw_oil_embargo_world_multiplier } add_to_temp_variable = { cwop_t_hm = 1 } multiply_temp_variable = { cwop_t_hm = 0.5 } divide_temp_variable = { imp_oil_factor_t = global.mdcw_cw_oil_embargo_world_multiplier } multiply_temp_variable = { imp_oil_factor_t = cwop_t_hm } } # COLDWAR
 	if = {
 		limit = { check_variable = { mdcw_cw_oil_embargo_pressure > 0 } }
 		set_temp_variable = { mdcw_cw_t_embargo_factor = mdcw_cw_oil_embargo_pressure }
@@ -2030,6 +2038,8 @@ mdcw_cw_calculate_switch_costs = {
 		}
 		add_to_temp_variable = { mdcw_cw_t_disc = 0.5 }
 	}
+	# COLDWAR: a Community programme with Western Alignment eases the move into the Western bloc
+	if = { limit = { check_variable = { cwec_west_disc > 0 } } add_to_temp_variable = { mdcw_cw_t_disc = cwec_west_disc } } # COLDWAR
 	clamp_temp_variable = { var = mdcw_cw_t_disc min = 0 max = 0.5 }
 	set_temp_variable = { mdcw_cw_t_mult = 1 }
 	subtract_from_temp_variable = { mdcw_cw_t_mult = mdcw_cw_t_disc }
@@ -2063,6 +2073,8 @@ mdcw_cw_calculate_switch_costs = {
 		}
 		add_to_temp_variable = { mdcw_cw_t_disc = 0.5 }
 	}
+	# COLDWAR: a COMECON programme with Eastern Alignment eases the move into the Soviet bloc
+	if = { limit = { check_variable = { cwcm_east_disc > 0 } } add_to_temp_variable = { mdcw_cw_t_disc = cwcm_east_disc } } # COLDWAR
 	clamp_temp_variable = { var = mdcw_cw_t_disc min = 0 max = 0.5 }
 	set_temp_variable = { mdcw_cw_t_mult = 1 }
 	subtract_from_temp_variable = { mdcw_cw_t_mult = mdcw_cw_t_disc }
@@ -2523,6 +2535,12 @@ mdcw_cw_recalculate_country = {
 			PREV = { add_to_variable = { mdcw_cw_n_pp_gain = -0.02 } }
 		}
 	}
+	# COLDWAR: Community assistance programmes count as received programmes (COLDWAR_EC_1970_programmes.txt)
+	COLDWAR_EC_cw_receiver = yes # COLDWAR
+	# COLDWAR: COMECON programmes abroad count as received programmes (COLDWAR_CMEA_1970_programmes.txt)
+	COLDWAR_CMEA_cw_receiver = yes # COLDWAR
+	# COLDWAR: OPEC Fund programmes count as received assistance (COLDWAR_OPEC_1970_market.txt)
+	COLDWAR_OPEC_cw_receiver = yes # COLDWAR
 	# Receiver caps, then net = received + given
 	# Receiving limits, raised by mdcw_cw_assistance_limit (national idea Open Door Aid Policy)
 	set_temp_variable = { mdcw_cw_t_capf = 1 }
@@ -4559,6 +4577,10 @@ mdcw_cw_on_sanction_imposed = {
 			}
 		}
 	}
+
+
+
+
 }
 
 # Hook in the Imperia lift actions. Same scopes. A bloc leader lifting its own sanction ends the call.
@@ -4665,6 +4687,19 @@ mdcw_cw_on_sanction_lifted = {
 			clr_country_flag = mdcw_cw_embargo_b3_t4
 		}
 	}
+
+
+
+
+# IMPERIA COLD WAR — Cyprus agreement sanction transition BEGIN
+if = { limit = {
+ country_exists = CYP
+ OR = { original_tag = CYP ROOT = { original_tag = CYP } }
+ CYP = { has_country_flag = COLDWAR_CYP_R2_initialized }
+ }
+ CYP = { COLDWAR_CYP_R2_agreements_reconcile = yes }
+}
+# IMPERIA COLD WAR — Cyprus agreement sanction transition END
 }
 
 ### Decisions ###

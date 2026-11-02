@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: independent concept graph, geometry and API checks.
+# IMPERIA COLD WAR — Cold War: independent concept graph, geometry and API checks.
 """Reads approval-stage output; writes reports only. Does not load HOI4."""
 from pathlib import Path
 from functools import lru_cache

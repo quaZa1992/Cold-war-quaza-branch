@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Soviet validation with the retained generic naval adaptation.
 # IMPERIA CW — Cold War: Soviet Union 1970 content generator.
 # COLDWAR | Static validation of the generated Soviet Union 1970 files. Run after cw_build.py: python3 validate_sov.py
 import re, os, json, collections, glob, sys
@@ -69,10 +70,12 @@ for f in glob.glob(os.path.join(MOD, "localisation/english/**/*.yml"), recursive
         m = re.match(r"^\s+([^\s:#]+):\d*\s", line)
         if m:
             MDLOC.add(m.group(1))
+naval_loc = F("localisation/english/COLDWAR_NAVY_1970_l_english.yml")
+LOC.update(dict(re.findall(r'^ ([^\s:]+):0 "(.*)"$', naval_loc, re.M)))
 ALLLOC = set(LOC) | MDLOC | {"modifies_dynamic_modifier_tt"}   # vanilla key, used by MD code
 focus = F("common/national_focus/COLDWAR_SOV_1970_focus.txt")
 ids = re.findall(r"^\t\tid = (\w+)", focus, re.M)
-if not (len(ids) == len(set(ids)) == 836):
+if not (len(ids) == len(set(ids)) == 856):
     err("focus count", len(ids), len(set(ids)))
 for i in ids:
     for k in (i, i + "_desc"):

@@ -1,0 +1,4927 @@
+# IMPERIA COLD WAR — Israel V2 bilateral agreements.
+ISR2_b_irrigation_exports_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_irrigation_exports_pending
+						has_country_flag = ISR2_b_irrigation_exports_signed
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_irrigation_exports_pv_partner_gdp = ISR2_b_irrigation_exports_partner_gdp
+				}
+				set_temp_variable = {
+					ISR2_b_irrigation_exports_pv_setup_partner = ISR2_b_irrigation_exports_setup_partner
+				}
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_setup_isr = ISR2_b_irrigation_exports_setup_isr }
+				set_temp_variable = {
+					ISR2_b_irrigation_exports_pv_weekly_partner = ISR2_b_irrigation_exports_weekly_partner
+				}
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_weekly_isr = ISR2_b_irrigation_exports_weekly_isr }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_gdp = ISR2_b_irrigation_exports_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_partner_gdp = ETH.gdp_total }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_irrigation_exports_pv_setup_isr = { value = ISR2_b_irrigation_exports_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_irrigation_exports_pv_setup_partner = {
+						value = ISR2_b_irrigation_exports_pv_partner_gdp
+						multiply = 0
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_irrigation_exports_pv_weekly_isr = { value = ISR2_b_irrigation_exports_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_irrigation_exports_pv_weekly_partner = {
+						value = ISR2_b_irrigation_exports_pv_partner_gdp
+						multiply = 0
+					}
+				}
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_setup_isr = 0.002 }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_setup_partner = 0.006 }
+				set_temp_variable = { ISR2_b_irrigation_exports_pv_weekly_isr = 0.00002 }
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_irrigation_exports_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_irrigation_exports_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_irrigation_exports_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_irrigation_exports_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			set_temp_variable = { treasury_change = ISR.ISR2_b_irrigation_exports_pv_setup_partner }
+			modify_treasury_effect = yes
+			add_opinion_modifier = { target = ETH modifier = ISR2_bilateral_opinion_10 }
+		}
+		ETH = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_irrigation_exports_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_irrigation_exports_partner_idea days = 728 }
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+	}
+}
+ISR2_b_irrigation_exports_offer = {
+	if = {
+		limit = { ISR2_b_irrigation_exports_can_offer = yes }
+		set_variable = { ISR2_b_irrigation_exports_gdp = gdp_total }
+		set_variable = { ISR2_b_irrigation_exports_partner_gdp = ETH.gdp_total }
+		set_variable = { ISR2_b_irrigation_exports_setup_isr = 0 }
+		set_variable = { ISR2_b_irrigation_exports_setup_partner = 0 }
+		set_variable = { ISR2_b_irrigation_exports_weekly_isr = 0 }
+		set_variable = { ISR2_b_irrigation_exports_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_irrigation_exports_setup_isr = { value = ISR2_b_irrigation_exports_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_irrigation_exports_setup_partner = {
+				value = ISR2_b_irrigation_exports_partner_gdp
+				multiply = 0
+			}
+		}
+		set_variable = {
+			ISR2_b_irrigation_exports_weekly_isr = { value = ISR2_b_irrigation_exports_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_irrigation_exports_weekly_partner = {
+				value = ISR2_b_irrigation_exports_partner_gdp
+				multiply = 0
+			}
+		}
+		set_variable = { ISR2_b_irrigation_exports_setup_isr = 0.002 }
+		set_variable = { ISR2_b_irrigation_exports_setup_partner = 0.006 }
+		set_variable = { ISR2_b_irrigation_exports_weekly_isr = 0.00002 }
+		set_country_flag = ISR2_b_irrigation_exports_pending
+		set_variable = { ISR2_b_irrigation_exports_pending_days = 30 }
+		ETH = {
+			set_country_flag = ISR2_b_irrigation_exports_pending
+			country_event = { id = ISR2_bilateral.1 days = 1 }
+		}
+	}
+}
+ISR2_b_irrigation_exports_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_irrigation_exports_pending }
+		clr_country_flag = ISR2_b_irrigation_exports_pending
+		set_variable = { ISR2_b_irrigation_exports_pending_days = 0 }
+		ETH = { clr_country_flag = ISR2_b_irrigation_exports_pending }
+		set_country_flag = { flag = ISR2_b_irrigation_exports_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_irrigation_exports_reopen
+	}
+}
+ISR2_b_irrigation_exports_accept = {
+	if = {
+		limit = { ISR2_b_irrigation_exports_accept_valid = yes }
+		clr_country_flag = ISR2_b_irrigation_exports_pending
+		set_variable = { ISR2_b_irrigation_exports_pending_days = 0 }
+		ETH = { clr_country_flag = ISR2_b_irrigation_exports_pending }
+		set_country_flag = ISR2_b_irrigation_exports_signed
+		set_variable = { ISR2_b_irrigation_exports_days = 728 }
+		set_variable = { ISR2_b_irrigation_exports_paid_days = 0 }
+		clr_country_flag = ISR2_b_irrigation_exports_reopen
+		ETH = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_irrigation_exports_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		ETH = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_irrigation_exports_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		set_temp_variable = { treasury_change = ISR2_b_irrigation_exports_setup_partner }
+		modify_treasury_effect = yes
+		add_opinion_modifier = { target = ETH modifier = ISR2_bilateral_opinion_10 }
+		ETH = {
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_irrigation_exports_decline = yes }
+}
+ISR2_b_irrigation_exports_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_irrigation_exports_signed }
+		clr_country_flag = ISR2_b_irrigation_exports_signed
+		set_variable = { ISR2_b_irrigation_exports_days = 0 }
+		ETH = { remove_ideas = ISR2_b_irrigation_exports_partner_idea }
+		set_country_flag = ISR2_b_irrigation_exports_reopen
+	}
+}
+ISR2_b_arms_exports_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = { has_country_flag = ISR2_b_arms_exports_pending has_country_flag = ISR2_b_arms_exports_signed }
+				}
+				set_temp_variable = { ISR2_b_arms_exports_pv_partner_gdp = ISR2_b_arms_exports_partner_gdp }
+				set_temp_variable = { ISR2_b_arms_exports_pv_setup_partner = ISR2_b_arms_exports_setup_partner }
+				set_temp_variable = { ISR2_b_arms_exports_pv_setup_isr = ISR2_b_arms_exports_setup_isr }
+				set_temp_variable = { ISR2_b_arms_exports_pv_weekly_partner = ISR2_b_arms_exports_weekly_partner }
+				set_temp_variable = { ISR2_b_arms_exports_pv_weekly_isr = ISR2_b_arms_exports_weekly_isr }
+				set_temp_variable = { ISR2_b_arms_exports_pv_gdp = ISR2_b_arms_exports_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_arms_exports_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_arms_exports_pv_partner_gdp = UGA.gdp_total }
+				set_temp_variable = { ISR2_b_arms_exports_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_arms_exports_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_arms_exports_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_arms_exports_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_arms_exports_pv_setup_isr = { value = ISR2_b_arms_exports_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_arms_exports_pv_setup_partner = { value = ISR2_b_arms_exports_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_arms_exports_pv_weekly_isr = { value = ISR2_b_arms_exports_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_arms_exports_pv_weekly_partner = { value = ISR2_b_arms_exports_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = { ISR2_b_arms_exports_pv_setup_isr = 0.004 }
+				set_temp_variable = { ISR2_b_arms_exports_pv_setup_partner = 0.01 }
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_arms_exports_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_arms_exports_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			add_timed_idea = { idea = ISR2_b_arms_exports_isr_idea days = 182 }
+			set_temp_variable = { treasury_change = ISR.ISR2_b_arms_exports_pv_setup_partner }
+			modify_treasury_effect = yes
+			send_equipment = { type = infantry_weapons_type amount = 1000 target = UGA }
+			army_experience = 5
+		}
+		UGA = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_arms_exports_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			custom_effect_tooltip = ISR2_b_arms_exports_delivery_tt
+			army_experience = 10
+		}
+	}
+}
+ISR2_b_arms_exports_offer = {
+	if = {
+		limit = { ISR2_b_arms_exports_can_offer = yes }
+		set_variable = { ISR2_b_arms_exports_gdp = gdp_total }
+		set_variable = { ISR2_b_arms_exports_partner_gdp = UGA.gdp_total }
+		set_variable = { ISR2_b_arms_exports_setup_isr = 0 }
+		set_variable = { ISR2_b_arms_exports_setup_partner = 0 }
+		set_variable = { ISR2_b_arms_exports_weekly_isr = 0 }
+		set_variable = { ISR2_b_arms_exports_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_arms_exports_setup_isr = { value = ISR2_b_arms_exports_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_arms_exports_setup_partner = { value = ISR2_b_arms_exports_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_arms_exports_weekly_isr = { value = ISR2_b_arms_exports_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_arms_exports_weekly_partner = { value = ISR2_b_arms_exports_partner_gdp multiply = 0 }
+		}
+		set_variable = { ISR2_b_arms_exports_setup_isr = 0.004 }
+		set_variable = { ISR2_b_arms_exports_setup_partner = 0.01 }
+		set_country_flag = ISR2_b_arms_exports_pending
+		set_variable = { ISR2_b_arms_exports_pending_days = 30 }
+		set_country_flag = ISR2_bilateral_arms_pending
+		UGA = {
+			set_country_flag = ISR2_b_arms_exports_pending
+			country_event = { id = ISR2_bilateral.2 days = 1 }
+		}
+	}
+}
+ISR2_b_arms_exports_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_arms_exports_pending }
+		clr_country_flag = ISR2_b_arms_exports_pending
+		set_variable = { ISR2_b_arms_exports_pending_days = 0 }
+		UGA = { clr_country_flag = ISR2_b_arms_exports_pending }
+		clr_country_flag = ISR2_bilateral_arms_pending
+		set_country_flag = { flag = ISR2_b_arms_exports_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_arms_exports_reopen
+	}
+}
+ISR2_b_arms_exports_accept = {
+	if = {
+		limit = { ISR2_b_arms_exports_accept_valid = yes }
+		clr_country_flag = ISR2_b_arms_exports_pending
+		set_variable = { ISR2_b_arms_exports_pending_days = 0 }
+		UGA = { clr_country_flag = ISR2_b_arms_exports_pending }
+		clr_country_flag = ISR2_bilateral_arms_pending
+		set_country_flag = ISR2_b_arms_exports_signed
+		set_variable = { ISR2_b_arms_exports_days = 182 }
+		set_variable = { ISR2_b_arms_exports_paid_days = 0 }
+		clr_country_flag = ISR2_b_arms_exports_reopen
+		UGA = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_arms_exports_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		UGA = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_arms_exports_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		set_temp_variable = { treasury_change = ISR2_b_arms_exports_setup_partner }
+		modify_treasury_effect = yes
+		set_country_flag = ISR2_bilateral_arms_pending
+		clr_country_flag = ISR2_b_arms_exports_delivered
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_arms_exports_decline = yes }
+}
+ISR2_b_arms_exports_return_invoice = {
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_arms_exports_invoice_refund_due
+			country_exists = UGA
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			UGA = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+		}
+		clr_country_flag = ISR2_b_arms_exports_invoice_refund_due
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_arms_exports_setup_partner multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		UGA = {
+			set_temp_variable = { treasury_change = ISR.ISR2_b_arms_exports_setup_partner }
+			modify_treasury_effect = yes
+		}
+	}
+}
+ISR2_b_arms_exports_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_arms_exports_signed }
+		clr_country_flag = ISR2_b_arms_exports_signed
+		set_variable = { ISR2_b_arms_exports_days = 0 }
+		remove_ideas = ISR2_b_arms_exports_isr_idea
+		clr_country_flag = ISR2_bilateral_arms_pending
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_b_arms_exports_delivered }
+			}
+			set_country_flag = ISR2_b_arms_exports_invoice_refund_due
+			ISR2_b_arms_exports_return_invoice = yes
+		}
+		set_country_flag = ISR2_b_arms_exports_reopen
+	}
+}
+ISR2_b_mashav_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = { has_country_flag = ISR2_b_mashav_pending has_country_flag = ISR2_b_mashav_signed }
+				}
+				set_temp_variable = { ISR2_b_mashav_pv_partner_gdp = ISR2_b_mashav_partner_gdp }
+				set_temp_variable = { ISR2_b_mashav_pv_setup_partner = ISR2_b_mashav_setup_partner }
+				set_temp_variable = { ISR2_b_mashav_pv_setup_isr = ISR2_b_mashav_setup_isr }
+				set_temp_variable = { ISR2_b_mashav_pv_weekly_partner = ISR2_b_mashav_weekly_partner }
+				set_temp_variable = { ISR2_b_mashav_pv_weekly_isr = ISR2_b_mashav_weekly_isr }
+				set_temp_variable = { ISR2_b_mashav_pv_gdp = ISR2_b_mashav_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_mashav_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_mashav_pv_partner_gdp = KEN.gdp_total }
+				set_temp_variable = { ISR2_b_mashav_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_mashav_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_mashav_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_mashav_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_mashav_pv_setup_isr = { value = ISR2_b_mashav_pv_gdp multiply = 0.003 }
+				}
+				set_temp_variable = {
+					ISR2_b_mashav_pv_setup_partner = { value = ISR2_b_mashav_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_mashav_pv_weekly_isr = { value = ISR2_b_mashav_pv_gdp multiply = 0.0001 }
+				}
+				set_temp_variable = {
+					ISR2_b_mashav_pv_weekly_partner = { value = ISR2_b_mashav_pv_partner_gdp multiply = 0 }
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_mashav_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_mashav_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_mashav_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_mashav_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			if = {
+				limit = {
+					NOT = { has_country_flag = ISR2_bilateral_mashav_lesson }
+				}
+				add_tech_bonus = { name = ISR2_b_mashav_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+			}
+			add_opinion_modifier = { target = KEN modifier = ISR2_bilateral_opinion_10 }
+		}
+		KEN = {
+			add_timed_idea = { idea = ISR2_b_mashav_partner_idea days = 364 }
+			add_tech_bonus = { name = ISR2_b_mashav_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+	}
+}
+ISR2_b_mashav_offer = {
+	if = {
+		limit = { ISR2_b_mashav_can_offer = yes }
+		set_variable = { ISR2_b_mashav_gdp = gdp_total }
+		set_variable = { ISR2_b_mashav_partner_gdp = KEN.gdp_total }
+		set_variable = { ISR2_b_mashav_setup_isr = 0 }
+		set_variable = { ISR2_b_mashav_setup_partner = 0 }
+		set_variable = { ISR2_b_mashav_weekly_isr = 0 }
+		set_variable = { ISR2_b_mashav_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_mashav_setup_isr = { value = ISR2_b_mashav_gdp multiply = 0.003 }
+		}
+		set_variable = {
+			ISR2_b_mashav_setup_partner = { value = ISR2_b_mashav_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_mashav_weekly_isr = { value = ISR2_b_mashav_gdp multiply = 0.0001 }
+		}
+		set_variable = {
+			ISR2_b_mashav_weekly_partner = { value = ISR2_b_mashav_partner_gdp multiply = 0 }
+		}
+		set_country_flag = ISR2_b_mashav_pending
+		set_variable = { ISR2_b_mashav_pending_days = 30 }
+		KEN = {
+			set_country_flag = ISR2_b_mashav_pending
+			country_event = { id = ISR2_bilateral.3 days = 1 }
+		}
+	}
+}
+ISR2_b_mashav_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_mashav_pending }
+		clr_country_flag = ISR2_b_mashav_pending
+		set_variable = { ISR2_b_mashav_pending_days = 0 }
+		KEN = { clr_country_flag = ISR2_b_mashav_pending }
+		set_country_flag = { flag = ISR2_b_mashav_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_mashav_reopen
+	}
+}
+ISR2_b_mashav_accept = {
+	if = {
+		limit = { ISR2_b_mashav_accept_valid = yes }
+		clr_country_flag = ISR2_b_mashav_pending
+		set_variable = { ISR2_b_mashav_pending_days = 0 }
+		KEN = { clr_country_flag = ISR2_b_mashav_pending }
+		set_country_flag = ISR2_b_mashav_signed
+		set_variable = { ISR2_b_mashav_days = 364 }
+		set_variable = { ISR2_b_mashav_paid_days = 0 }
+		clr_country_flag = ISR2_b_mashav_reopen
+		KEN = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_mashav_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_bilateral_mashav_lesson }
+			}
+			add_tech_bonus = { name = ISR2_b_mashav_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+			set_country_flag = ISR2_bilateral_mashav_lesson
+		}
+		KEN = {
+			add_tech_bonus = { name = ISR2_b_mashav_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+		}
+		add_opinion_modifier = { target = KEN modifier = ISR2_bilateral_opinion_10 }
+		KEN = {
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_mashav_decline = yes }
+}
+ISR2_b_mashav_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_mashav_signed }
+		clr_country_flag = ISR2_b_mashav_signed
+		set_variable = { ISR2_b_mashav_days = 0 }
+		KEN = { remove_ideas = ISR2_b_mashav_partner_idea }
+		set_country_flag = ISR2_b_mashav_reopen
+	}
+}
+ISR2_b_washington_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = { has_country_flag = ISR2_b_washington_pending has_country_flag = ISR2_b_washington_signed }
+				}
+				set_temp_variable = { ISR2_b_washington_pv_partner_gdp = ISR2_b_washington_partner_gdp }
+				set_temp_variable = { ISR2_b_washington_pv_setup_partner = ISR2_b_washington_setup_partner }
+				set_temp_variable = { ISR2_b_washington_pv_setup_isr = ISR2_b_washington_setup_isr }
+				set_temp_variable = { ISR2_b_washington_pv_weekly_partner = ISR2_b_washington_weekly_partner }
+				set_temp_variable = { ISR2_b_washington_pv_weekly_isr = ISR2_b_washington_weekly_isr }
+				set_temp_variable = { ISR2_b_washington_pv_gdp = ISR2_b_washington_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_washington_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_washington_pv_partner_gdp = USA.gdp_total }
+				set_temp_variable = { ISR2_b_washington_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_washington_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_washington_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_washington_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_washington_pv_setup_isr = { value = ISR2_b_washington_pv_gdp multiply = 0.008 }
+				}
+				set_temp_variable = {
+					ISR2_b_washington_pv_setup_partner = { value = ISR2_b_washington_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_washington_pv_weekly_isr = { value = ISR2_b_washington_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_washington_pv_weekly_partner = { value = ISR2_b_washington_pv_partner_gdp multiply = 0 }
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_washington_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_washington_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_washington_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_tech_bonus = { name = ISR2_b_washington_research bonus = 0.5 uses = 1 category = CAT_aircraft }
+			air_experience = 35
+			add_opinion_modifier = { target = USA modifier = ISR2_bilateral_opinion_15 }
+		}
+		USA = {
+			set_temp_variable = { treasury_change = ISR.ISR2_b_washington_pv_setup_isr }
+			modify_treasury_effect = yes
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_15 }
+		}
+	}
+}
+ISR2_b_washington_offer = {
+	if = {
+		limit = { ISR2_b_washington_can_offer = yes }
+		set_variable = { ISR2_b_washington_gdp = gdp_total }
+		set_variable = { ISR2_b_washington_partner_gdp = USA.gdp_total }
+		set_variable = { ISR2_b_washington_setup_isr = 0 }
+		set_variable = { ISR2_b_washington_setup_partner = 0 }
+		set_variable = { ISR2_b_washington_weekly_isr = 0 }
+		set_variable = { ISR2_b_washington_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_washington_setup_isr = { value = ISR2_b_washington_gdp multiply = 0.008 }
+		}
+		set_variable = {
+			ISR2_b_washington_setup_partner = { value = ISR2_b_washington_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_washington_weekly_isr = { value = ISR2_b_washington_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_washington_weekly_partner = { value = ISR2_b_washington_partner_gdp multiply = 0 }
+		}
+		set_country_flag = ISR2_b_washington_pending
+		set_variable = { ISR2_b_washington_pending_days = 30 }
+		USA = {
+			set_country_flag = ISR2_b_washington_pending
+			country_event = { id = ISR2_bilateral.4 days = 1 }
+		}
+	}
+}
+ISR2_b_washington_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_washington_pending }
+		clr_country_flag = ISR2_b_washington_pending
+		set_variable = { ISR2_b_washington_pending_days = 0 }
+		USA = { clr_country_flag = ISR2_b_washington_pending }
+		set_country_flag = { flag = ISR2_b_washington_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_washington_reopen
+	}
+}
+ISR2_b_washington_accept = {
+	if = {
+		limit = { ISR2_b_washington_accept_valid = yes }
+		clr_country_flag = ISR2_b_washington_pending
+		set_variable = { ISR2_b_washington_pending_days = 0 }
+		USA = { clr_country_flag = ISR2_b_washington_pending }
+		set_country_flag = ISR2_b_washington_signed
+		set_variable = { ISR2_b_washington_days = 364 }
+		set_variable = { ISR2_b_washington_paid_days = 0 }
+		clr_country_flag = ISR2_b_washington_reopen
+		USA = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_washington_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		USA = {
+			set_temp_variable = { treasury_change = ISR.ISR2_b_washington_setup_isr }
+			modify_treasury_effect = yes
+		}
+		add_tech_bonus = { name = ISR2_b_washington_research bonus = 0.5 uses = 1 category = CAT_aircraft }
+		air_experience = 35
+		add_opinion_modifier = { target = USA modifier = ISR2_bilateral_opinion_15 }
+		USA = {
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_15 }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_washington_decline = yes }
+}
+ISR2_b_washington_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_washington_signed }
+		clr_country_flag = ISR2_b_washington_signed
+		set_variable = { ISR2_b_washington_days = 0 }
+		set_country_flag = ISR2_b_washington_reopen
+	}
+}
+ISR2_b_european_orders_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_european_orders_pending
+						has_country_flag = ISR2_b_european_orders_signed
+					}
+				}
+				set_temp_variable = { ISR2_b_european_orders_pv_partner_gdp = ISR2_b_european_orders_partner_gdp }
+				set_temp_variable = { ISR2_b_european_orders_pv_setup_partner = ISR2_b_european_orders_setup_partner }
+				set_temp_variable = { ISR2_b_european_orders_pv_setup_isr = ISR2_b_european_orders_setup_isr }
+				set_temp_variable = {
+					ISR2_b_european_orders_pv_weekly_partner = ISR2_b_european_orders_weekly_partner
+				}
+				set_temp_variable = { ISR2_b_european_orders_pv_weekly_isr = ISR2_b_european_orders_weekly_isr }
+				set_temp_variable = { ISR2_b_european_orders_pv_gdp = ISR2_b_european_orders_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_european_orders_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_european_orders_pv_partner_gdp = ROM.gdp_total }
+				set_temp_variable = { ISR2_b_european_orders_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_european_orders_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_european_orders_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_european_orders_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_european_orders_pv_setup_isr = { value = ISR2_b_european_orders_pv_gdp multiply = 0.005 }
+				}
+				set_temp_variable = {
+					ISR2_b_european_orders_pv_setup_partner = {
+						value = ISR2_b_european_orders_pv_partner_gdp
+						multiply = 0.005
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_european_orders_pv_weekly_isr = { value = ISR2_b_european_orders_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_european_orders_pv_weekly_partner = {
+						value = ISR2_b_european_orders_pv_partner_gdp
+						multiply = 0
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_european_orders_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_european_orders_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_european_orders_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_european_orders_isr_idea days = 728 }
+			add_tech_bonus = { name = ISR2_b_european_orders_research bonus = 0.5 uses = 1 category = CAT_industry }
+			add_opinion_modifier = { target = ROM modifier = ISR2_bilateral_opinion_10 }
+		}
+		ROM = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_european_orders_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_european_orders_partner_idea days = 728 }
+			add_tech_bonus = { name = ISR2_b_european_orders_research bonus = 0.5 uses = 1 category = CAT_electronics }
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+	}
+}
+ISR2_b_european_orders_offer = {
+	if = {
+		limit = { ISR2_b_european_orders_can_offer = yes }
+		set_variable = { ISR2_b_european_orders_gdp = gdp_total }
+		set_variable = { ISR2_b_european_orders_partner_gdp = ROM.gdp_total }
+		set_variable = { ISR2_b_european_orders_setup_isr = 0 }
+		set_variable = { ISR2_b_european_orders_setup_partner = 0 }
+		set_variable = { ISR2_b_european_orders_weekly_isr = 0 }
+		set_variable = { ISR2_b_european_orders_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_european_orders_setup_isr = { value = ISR2_b_european_orders_gdp multiply = 0.005 }
+		}
+		set_variable = {
+			ISR2_b_european_orders_setup_partner = { value = ISR2_b_european_orders_partner_gdp multiply = 0.005 }
+		}
+		set_variable = {
+			ISR2_b_european_orders_weekly_isr = { value = ISR2_b_european_orders_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_european_orders_weekly_partner = { value = ISR2_b_european_orders_partner_gdp multiply = 0 }
+		}
+		set_country_flag = ISR2_b_european_orders_pending
+		set_variable = { ISR2_b_european_orders_pending_days = 30 }
+		ROM = {
+			set_country_flag = ISR2_b_european_orders_pending
+			country_event = { id = ISR2_bilateral.5 days = 1 }
+		}
+	}
+}
+ISR2_b_european_orders_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_european_orders_pending }
+		clr_country_flag = ISR2_b_european_orders_pending
+		set_variable = { ISR2_b_european_orders_pending_days = 0 }
+		ROM = { clr_country_flag = ISR2_b_european_orders_pending }
+		set_country_flag = { flag = ISR2_b_european_orders_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_european_orders_reopen
+	}
+}
+ISR2_b_european_orders_accept = {
+	if = {
+		limit = { ISR2_b_european_orders_accept_valid = yes }
+		clr_country_flag = ISR2_b_european_orders_pending
+		set_variable = { ISR2_b_european_orders_pending_days = 0 }
+		ROM = { clr_country_flag = ISR2_b_european_orders_pending }
+		set_country_flag = ISR2_b_european_orders_signed
+		set_variable = { ISR2_b_european_orders_days = 728 }
+		set_variable = { ISR2_b_european_orders_paid_days = 0 }
+		clr_country_flag = ISR2_b_european_orders_reopen
+		ROM = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_european_orders_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		ROM = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_european_orders_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		add_tech_bonus = { name = ISR2_b_european_orders_research bonus = 0.5 uses = 1 category = CAT_industry }
+		ROM = {
+			add_tech_bonus = { name = ISR2_b_european_orders_research bonus = 0.5 uses = 1 category = CAT_electronics }
+		}
+		add_opinion_modifier = { target = ROM modifier = ISR2_bilateral_opinion_10 }
+		ROM = {
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_european_orders_decline = yes }
+}
+ISR2_b_european_orders_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_european_orders_signed }
+		clr_country_flag = ISR2_b_european_orders_signed
+		set_variable = { ISR2_b_european_orders_days = 0 }
+		remove_ideas = ISR2_b_european_orders_isr_idea
+		ROM = { remove_ideas = ISR2_b_european_orders_partner_idea }
+		set_country_flag = ISR2_b_european_orders_reopen
+	}
+}
+ISR2_b_jarring_channel_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_jarring_channel_pending
+						has_country_flag = ISR2_b_jarring_channel_signed
+					}
+				}
+				set_temp_variable = { ISR2_b_jarring_channel_pv_partner_gdp = ISR2_b_jarring_channel_partner_gdp }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_setup_partner = ISR2_b_jarring_channel_setup_partner }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_setup_isr = ISR2_b_jarring_channel_setup_isr }
+				set_temp_variable = {
+					ISR2_b_jarring_channel_pv_weekly_partner = ISR2_b_jarring_channel_weekly_partner
+				}
+				set_temp_variable = { ISR2_b_jarring_channel_pv_weekly_isr = ISR2_b_jarring_channel_weekly_isr }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_gdp = ISR2_b_jarring_channel_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_jarring_channel_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_partner_gdp = EGY.gdp_total }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_jarring_channel_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_jarring_channel_pv_setup_isr = { value = ISR2_b_jarring_channel_pv_gdp multiply = 0.0015 }
+				}
+				set_temp_variable = {
+					ISR2_b_jarring_channel_pv_setup_partner = {
+						value = ISR2_b_jarring_channel_pv_partner_gdp
+						multiply = 0.0015
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_jarring_channel_pv_weekly_isr = { value = ISR2_b_jarring_channel_pv_gdp multiply = 0.00003 }
+				}
+				set_temp_variable = {
+					ISR2_b_jarring_channel_pv_weekly_partner = {
+						value = ISR2_b_jarring_channel_pv_partner_gdp
+						multiply = 0.00003
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_jarring_channel_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_jarring_channel_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_jarring_channel_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_jarring_channel_isr_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_jarring_channel_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+		EGY = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_jarring_channel_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_jarring_channel_partner_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_jarring_channel_pv_weekly_partner }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+	}
+}
+ISR2_b_jarring_channel_offer = {
+	if = {
+		limit = { ISR2_b_jarring_channel_can_offer = yes }
+		set_variable = { ISR2_b_jarring_channel_gdp = gdp_total }
+		set_variable = { ISR2_b_jarring_channel_partner_gdp = EGY.gdp_total }
+		set_variable = { ISR2_b_jarring_channel_setup_isr = 0 }
+		set_variable = { ISR2_b_jarring_channel_setup_partner = 0 }
+		set_variable = { ISR2_b_jarring_channel_weekly_isr = 0 }
+		set_variable = { ISR2_b_jarring_channel_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_jarring_channel_setup_isr = { value = ISR2_b_jarring_channel_gdp multiply = 0.0015 }
+		}
+		set_variable = {
+			ISR2_b_jarring_channel_setup_partner = { value = ISR2_b_jarring_channel_partner_gdp multiply = 0.0015 }
+		}
+		set_variable = {
+			ISR2_b_jarring_channel_weekly_isr = { value = ISR2_b_jarring_channel_gdp multiply = 0.00003 }
+		}
+		set_variable = {
+			ISR2_b_jarring_channel_weekly_partner = {
+				value = ISR2_b_jarring_channel_partner_gdp
+				multiply = 0.00003
+			}
+		}
+		set_country_flag = ISR2_b_jarring_channel_pending
+		set_variable = { ISR2_b_jarring_channel_pending_days = 30 }
+		EGY = {
+			set_country_flag = ISR2_b_jarring_channel_pending
+			country_event = { id = ISR2_bilateral.6 days = 1 }
+		}
+	}
+}
+ISR2_b_jarring_channel_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_jarring_channel_pending }
+		clr_country_flag = ISR2_b_jarring_channel_pending
+		set_variable = { ISR2_b_jarring_channel_pending_days = 0 }
+		EGY = { clr_country_flag = ISR2_b_jarring_channel_pending }
+		set_country_flag = { flag = ISR2_b_jarring_channel_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_jarring_channel_reopen
+	}
+}
+ISR2_b_jarring_channel_accept = {
+	if = {
+		limit = { ISR2_b_jarring_channel_accept_valid = yes }
+		clr_country_flag = ISR2_b_jarring_channel_pending
+		set_variable = { ISR2_b_jarring_channel_pending_days = 0 }
+		EGY = { clr_country_flag = ISR2_b_jarring_channel_pending }
+		set_country_flag = ISR2_b_jarring_channel_signed
+		set_variable = { ISR2_b_jarring_channel_days = 364 }
+		set_variable = { ISR2_b_jarring_channel_paid_days = 0 }
+		clr_country_flag = ISR2_b_jarring_channel_reopen
+		EGY = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_jarring_channel_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		EGY = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_jarring_channel_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_jarring_channel_decline = yes }
+}
+ISR2_b_jarring_channel_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_jarring_channel_signed }
+		clr_country_flag = ISR2_b_jarring_channel_signed
+		set_variable = { ISR2_b_jarring_channel_days = 0 }
+		remove_ideas = ISR2_b_jarring_channel_isr_idea
+		EGY = { remove_ideas = ISR2_b_jarring_channel_partner_idea }
+		set_country_flag = ISR2_b_jarring_channel_reopen
+	}
+}
+ISR2_b_liaison_limits_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_liaison_limits_pending
+						has_country_flag = ISR2_b_liaison_limits_signed
+					}
+				}
+				set_temp_variable = { ISR2_b_liaison_limits_pv_partner_gdp = ISR2_b_liaison_limits_partner_gdp }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_setup_partner = ISR2_b_liaison_limits_setup_partner }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_setup_isr = ISR2_b_liaison_limits_setup_isr }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_weekly_partner = ISR2_b_liaison_limits_weekly_partner }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_weekly_isr = ISR2_b_liaison_limits_weekly_isr }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_gdp = ISR2_b_liaison_limits_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_liaison_limits_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_partner_gdp = PER.gdp_total }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_liaison_limits_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_liaison_limits_pv_setup_isr = { value = ISR2_b_liaison_limits_pv_gdp multiply = 0.0025 }
+				}
+				set_temp_variable = {
+					ISR2_b_liaison_limits_pv_setup_partner = {
+						value = ISR2_b_liaison_limits_pv_partner_gdp
+						multiply = 0.0025
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_liaison_limits_pv_weekly_isr = { value = ISR2_b_liaison_limits_pv_gdp multiply = 0.00005 }
+				}
+				set_temp_variable = {
+					ISR2_b_liaison_limits_pv_weekly_partner = {
+						value = ISR2_b_liaison_limits_pv_partner_gdp
+						multiply = 0.00005
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_liaison_limits_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_liaison_limits_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_liaison_limits_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_liaison_limits_isr_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_liaison_limits_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			add_tech_bonus = { name = ISR2_b_liaison_limits_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		}
+		PER = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_liaison_limits_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_liaison_limits_partner_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_liaison_limits_pv_weekly_partner }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			add_tech_bonus = { name = ISR2_b_liaison_limits_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		}
+	}
+}
+ISR2_b_liaison_limits_offer = {
+	if = {
+		limit = { ISR2_b_liaison_limits_can_offer = yes }
+		set_variable = { ISR2_b_liaison_limits_gdp = gdp_total }
+		set_variable = { ISR2_b_liaison_limits_partner_gdp = PER.gdp_total }
+		set_variable = { ISR2_b_liaison_limits_setup_isr = 0 }
+		set_variable = { ISR2_b_liaison_limits_setup_partner = 0 }
+		set_variable = { ISR2_b_liaison_limits_weekly_isr = 0 }
+		set_variable = { ISR2_b_liaison_limits_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_liaison_limits_setup_isr = { value = ISR2_b_liaison_limits_gdp multiply = 0.0025 }
+		}
+		set_variable = {
+			ISR2_b_liaison_limits_setup_partner = { value = ISR2_b_liaison_limits_partner_gdp multiply = 0.0025 }
+		}
+		set_variable = {
+			ISR2_b_liaison_limits_weekly_isr = { value = ISR2_b_liaison_limits_gdp multiply = 0.00005 }
+		}
+		set_variable = {
+			ISR2_b_liaison_limits_weekly_partner = { value = ISR2_b_liaison_limits_partner_gdp multiply = 0.00005 }
+		}
+		set_country_flag = ISR2_b_liaison_limits_pending
+		set_variable = { ISR2_b_liaison_limits_pending_days = 30 }
+		PER = {
+			set_country_flag = ISR2_b_liaison_limits_pending
+			country_event = { id = ISR2_bilateral.7 days = 1 }
+		}
+	}
+}
+ISR2_b_liaison_limits_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_liaison_limits_pending }
+		clr_country_flag = ISR2_b_liaison_limits_pending
+		set_variable = { ISR2_b_liaison_limits_pending_days = 0 }
+		PER = { clr_country_flag = ISR2_b_liaison_limits_pending }
+		set_country_flag = { flag = ISR2_b_liaison_limits_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_liaison_limits_reopen
+	}
+}
+ISR2_b_liaison_limits_accept = {
+	if = {
+		limit = { ISR2_b_liaison_limits_accept_valid = yes }
+		clr_country_flag = ISR2_b_liaison_limits_pending
+		set_variable = { ISR2_b_liaison_limits_pending_days = 0 }
+		PER = { clr_country_flag = ISR2_b_liaison_limits_pending }
+		set_country_flag = ISR2_b_liaison_limits_signed
+		set_variable = { ISR2_b_liaison_limits_days = 364 }
+		set_variable = { ISR2_b_liaison_limits_paid_days = 0 }
+		clr_country_flag = ISR2_b_liaison_limits_reopen
+		PER = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_liaison_limits_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		PER = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_liaison_limits_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		add_tech_bonus = { name = ISR2_b_liaison_limits_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		PER = {
+			add_tech_bonus = { name = ISR2_b_liaison_limits_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_liaison_limits_decline = yes }
+}
+ISR2_b_liaison_limits_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_liaison_limits_signed }
+		clr_country_flag = ISR2_b_liaison_limits_signed
+		set_variable = { ISR2_b_liaison_limits_days = 0 }
+		remove_ideas = ISR2_b_liaison_limits_isr_idea
+		PER = { remove_ideas = ISR2_b_liaison_limits_partner_idea }
+		set_country_flag = ISR2_b_liaison_limits_reopen
+	}
+}
+ISR2_b_negotiated_terms_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_negotiated_terms_pending
+						has_country_flag = ISR2_b_negotiated_terms_signed
+					}
+				}
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_partner_gdp = ISR2_b_negotiated_terms_partner_gdp }
+				set_temp_variable = {
+					ISR2_b_negotiated_terms_pv_setup_partner = ISR2_b_negotiated_terms_setup_partner
+				}
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_setup_isr = ISR2_b_negotiated_terms_setup_isr }
+				set_temp_variable = {
+					ISR2_b_negotiated_terms_pv_weekly_partner = ISR2_b_negotiated_terms_weekly_partner
+				}
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_weekly_isr = ISR2_b_negotiated_terms_weekly_isr }
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_gdp = ISR2_b_negotiated_terms_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_partner_gdp = PAL.gdp_total }
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_negotiated_terms_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_negotiated_terms_pv_setup_isr = { value = ISR2_b_negotiated_terms_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_negotiated_terms_pv_setup_partner = {
+						value = ISR2_b_negotiated_terms_pv_partner_gdp
+						multiply = 0
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_negotiated_terms_pv_weekly_isr = { value = ISR2_b_negotiated_terms_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_negotiated_terms_pv_weekly_partner = {
+						value = ISR2_b_negotiated_terms_pv_partner_gdp
+						multiply = 0
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_negotiated_terms_pv_weekly_isr = { value = ISR2_b_negotiated_terms_pv_gdp multiply = 0.0002 }
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_negotiated_terms_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_negotiated_terms_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			add_timed_idea = { idea = ISR2_b_negotiated_terms_isr_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_negotiated_terms_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			add_opinion_modifier = { target = PAL modifier = ISR2_bilateral_opinion_10 }
+		}
+		PAL = {
+			custom_effect_tooltip = ISR2_bilateral_pal_pressure_tt
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_negotiated_terms_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_income_tt
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+	}
+}
+ISR2_b_negotiated_terms_offer = {
+	if = {
+		limit = { ISR2_b_negotiated_terms_can_offer = yes }
+		set_variable = { ISR2_b_negotiated_terms_gdp = gdp_total }
+		set_variable = { ISR2_b_negotiated_terms_partner_gdp = PAL.gdp_total }
+		set_variable = { ISR2_b_negotiated_terms_setup_isr = 0 }
+		set_variable = { ISR2_b_negotiated_terms_setup_partner = 0 }
+		set_variable = { ISR2_b_negotiated_terms_weekly_isr = 0 }
+		set_variable = { ISR2_b_negotiated_terms_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_negotiated_terms_setup_isr = { value = ISR2_b_negotiated_terms_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_negotiated_terms_setup_partner = { value = ISR2_b_negotiated_terms_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_negotiated_terms_weekly_isr = { value = ISR2_b_negotiated_terms_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_negotiated_terms_weekly_partner = { value = ISR2_b_negotiated_terms_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_negotiated_terms_weekly_isr = { value = ISR2_b_negotiated_terms_gdp multiply = 0.0002 }
+		}
+		set_country_flag = ISR2_b_negotiated_terms_pending
+		set_variable = { ISR2_b_negotiated_terms_pending_days = 30 }
+		PAL = {
+			set_country_flag = ISR2_b_negotiated_terms_pending
+			country_event = { id = ISR2_bilateral.8 days = 1 }
+		}
+	}
+}
+ISR2_b_negotiated_terms_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_negotiated_terms_pending }
+		clr_country_flag = ISR2_b_negotiated_terms_pending
+		set_variable = { ISR2_b_negotiated_terms_pending_days = 0 }
+		PAL = { clr_country_flag = ISR2_b_negotiated_terms_pending }
+		set_country_flag = { flag = ISR2_b_negotiated_terms_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_negotiated_terms_reopen
+	}
+}
+ISR2_b_negotiated_terms_accept = {
+	if = {
+		limit = { ISR2_b_negotiated_terms_accept_valid = yes }
+		clr_country_flag = ISR2_b_negotiated_terms_pending
+		set_variable = { ISR2_b_negotiated_terms_pending_days = 0 }
+		PAL = { clr_country_flag = ISR2_b_negotiated_terms_pending }
+		set_country_flag = ISR2_b_negotiated_terms_signed
+		set_variable = { ISR2_b_negotiated_terms_days = 364 }
+		set_variable = { ISR2_b_negotiated_terms_paid_days = 0 }
+		clr_country_flag = ISR2_b_negotiated_terms_reopen
+		PAL = { set_country_flag = ISR2_bilateral_recipient }
+		if = {
+			limit = {
+				check_variable = {
+					var = ISR2_territories_pressure_208
+					value = ISR2_territories_pressure_209
+					compare = greater_than_or_equals
+				}
+			}
+			set_variable = { ISR2_b_negotiated_terms_relief_state = 208 }
+		}
+		else = {
+			set_variable = { ISR2_b_negotiated_terms_relief_state = 209 }
+		}
+		add_opinion_modifier = { target = PAL modifier = ISR2_bilateral_opinion_10 }
+		PAL = {
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_negotiated_terms_decline = yes }
+}
+ISR2_b_negotiated_terms_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_negotiated_terms_signed }
+		clr_country_flag = ISR2_b_negotiated_terms_signed
+		set_variable = { ISR2_b_negotiated_terms_days = 0 }
+		remove_ideas = ISR2_b_negotiated_terms_isr_idea
+		set_country_flag = ISR2_b_negotiated_terms_reopen
+	}
+}
+ISR2_b_eastern_credit_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_eastern_credit_pending
+						has_country_flag = ISR2_b_eastern_credit_signed
+					}
+				}
+				set_temp_variable = { ISR2_b_eastern_credit_pv_partner_gdp = ISR2_b_eastern_credit_partner_gdp }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_setup_partner = ISR2_b_eastern_credit_setup_partner }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_setup_isr = ISR2_b_eastern_credit_setup_isr }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_weekly_partner = ISR2_b_eastern_credit_weekly_partner }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_weekly_isr = ISR2_b_eastern_credit_weekly_isr }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_gdp = ISR2_b_eastern_credit_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_eastern_credit_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_partner_gdp = SOV.gdp_total }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_eastern_credit_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_eastern_credit_pv_setup_isr = { value = ISR2_b_eastern_credit_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_eastern_credit_pv_setup_partner = { value = ISR2_b_eastern_credit_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_eastern_credit_pv_weekly_isr = { value = ISR2_b_eastern_credit_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_eastern_credit_pv_weekly_partner = { value = ISR2_b_eastern_credit_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_eastern_credit_pv_setup_partner = { value = ISR2_b_eastern_credit_pv_gdp multiply = 0.04 }
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_eastern_credit_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_eastern_credit_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = { treasury_change = ISR.ISR2_b_eastern_credit_pv_setup_partner }
+			modify_treasury_effect = yes
+			set_temp_variable = { debt_change = ISR.ISR2_b_eastern_credit_pv_setup_partner }
+			modify_debt_effect = yes
+			custom_effect_tooltip = ISR2_bilateral_loan_principal_tt
+			custom_effect_tooltip = ISR2_bilateral_loan_paid_tt
+			add_opinion_modifier = { target = SOV modifier = ISR2_bilateral_opinion_15 }
+		}
+		SOV = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_eastern_credit_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			custom_effect_tooltip = ISR2_bilateral_loan_received_tt
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_15 }
+		}
+	}
+}
+ISR2_b_eastern_credit_offer = {
+	if = {
+		limit = { ISR2_b_eastern_credit_can_offer = yes }
+		set_variable = { ISR2_b_eastern_credit_gdp = gdp_total }
+		set_variable = { ISR2_b_eastern_credit_partner_gdp = SOV.gdp_total }
+		set_variable = { ISR2_b_eastern_credit_setup_isr = 0 }
+		set_variable = { ISR2_b_eastern_credit_setup_partner = 0 }
+		set_variable = { ISR2_b_eastern_credit_weekly_isr = 0 }
+		set_variable = { ISR2_b_eastern_credit_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_eastern_credit_setup_isr = { value = ISR2_b_eastern_credit_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_eastern_credit_setup_partner = { value = ISR2_b_eastern_credit_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_eastern_credit_weekly_isr = { value = ISR2_b_eastern_credit_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_eastern_credit_weekly_partner = { value = ISR2_b_eastern_credit_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_eastern_credit_setup_partner = { value = ISR2_b_eastern_credit_gdp multiply = 0.04 }
+		}
+		set_country_flag = ISR2_b_eastern_credit_pending
+		set_variable = { ISR2_b_eastern_credit_pending_days = 30 }
+		SOV = {
+			set_country_flag = ISR2_b_eastern_credit_pending
+			country_event = { id = ISR2_bilateral.9 days = 1 }
+		}
+	}
+}
+ISR2_b_eastern_credit_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_eastern_credit_pending }
+		clr_country_flag = ISR2_b_eastern_credit_pending
+		set_variable = { ISR2_b_eastern_credit_pending_days = 0 }
+		SOV = { clr_country_flag = ISR2_b_eastern_credit_pending }
+		set_country_flag = { flag = ISR2_b_eastern_credit_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_eastern_credit_reopen
+	}
+}
+ISR2_b_eastern_credit_accept = {
+	if = {
+		limit = { ISR2_b_eastern_credit_accept_valid = yes }
+		clr_country_flag = ISR2_b_eastern_credit_pending
+		set_variable = { ISR2_b_eastern_credit_pending_days = 0 }
+		SOV = { clr_country_flag = ISR2_b_eastern_credit_pending }
+		set_country_flag = ISR2_b_eastern_credit_signed
+		set_variable = { ISR2_b_eastern_credit_days = 728 }
+		set_variable = { ISR2_b_eastern_credit_paid_days = 0 }
+		clr_country_flag = ISR2_b_eastern_credit_reopen
+		SOV = { set_country_flag = ISR2_bilateral_recipient }
+		SOV = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_eastern_credit_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		set_temp_variable = { treasury_change = ISR2_b_eastern_credit_setup_partner }
+		modify_treasury_effect = yes
+		set_temp_variable = { debt_change = ISR2_b_eastern_credit_setup_partner }
+		modify_debt_effect = yes
+		set_variable = { ISR2_bilateral_loan_outstanding = ISR2_b_eastern_credit_setup_partner }
+		set_variable = {
+			ISR2_b_eastern_credit_interest_remaining = {
+				value = ISR2_b_eastern_credit_setup_partner
+				multiply = 0.08
+			}
+		}
+		set_variable = { ISR2_b_eastern_credit_weeks_remaining = 104 }
+		set_variable = { ISR2_b_eastern_credit_payment_days = 0 }
+		set_variable = {
+			ISR2_b_eastern_credit_principal_instalment = {
+				value = ISR2_b_eastern_credit_setup_partner
+				divide = 104
+			}
+		}
+		set_variable = {
+			ISR2_b_eastern_credit_interest_instalment = {
+				value = ISR2_b_eastern_credit_interest_remaining
+				divide = 104
+			}
+		}
+		add_opinion_modifier = { target = SOV modifier = ISR2_bilateral_opinion_15 }
+		SOV = {
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_15 }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_eastern_credit_decline = yes }
+}
+ISR2_b_eastern_credit_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_eastern_credit_signed }
+		clr_country_flag = ISR2_b_eastern_credit_signed
+		set_variable = { ISR2_b_eastern_credit_days = 0 }
+		set_country_flag = ISR2_b_eastern_credit_reopen
+	}
+}
+ISR2_b_labor_jordanian_option_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_labor_jordanian_option_pending
+						has_country_flag = ISR2_b_labor_jordanian_option_signed
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_partner_gdp = ISR2_b_labor_jordanian_option_partner_gdp
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_setup_partner = ISR2_b_labor_jordanian_option_setup_partner
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_setup_isr = ISR2_b_labor_jordanian_option_setup_isr
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_weekly_partner = ISR2_b_labor_jordanian_option_weekly_partner
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_weekly_isr = ISR2_b_labor_jordanian_option_weekly_isr
+				}
+				set_temp_variable = { ISR2_b_labor_jordanian_option_pv_gdp = ISR2_b_labor_jordanian_option_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_labor_jordanian_option_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_labor_jordanian_option_pv_partner_gdp = JOR.gdp_total }
+				set_temp_variable = { ISR2_b_labor_jordanian_option_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_labor_jordanian_option_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_labor_jordanian_option_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_labor_jordanian_option_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_setup_isr = {
+						value = ISR2_b_labor_jordanian_option_pv_gdp
+						multiply = 0.003
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_setup_partner = {
+						value = ISR2_b_labor_jordanian_option_pv_partner_gdp
+						multiply = 0.003
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_weekly_isr = {
+						value = ISR2_b_labor_jordanian_option_pv_gdp
+						multiply = 0.00005
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_labor_jordanian_option_pv_weekly_partner = {
+						value = ISR2_b_labor_jordanian_option_pv_partner_gdp
+						multiply = 0.00005
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_labor_jordanian_option_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = {
+					value = ISR2_b_labor_jordanian_option_pv_setup_partner
+					divide = 104
+				}
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_labor_jordanian_option_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_labor_jordanian_option_isr_idea days = 728 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_labor_jordanian_option_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+		JOR = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_labor_jordanian_option_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_labor_jordanian_option_partner_idea days = 728 }
+			set_temp_variable = {
+				ISR2_bilateral_preview_weekly = ISR.ISR2_b_labor_jordanian_option_pv_weekly_partner
+			}
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+	}
+}
+ISR2_b_labor_jordanian_option_offer = {
+	if = {
+		limit = { ISR2_b_labor_jordanian_option_can_offer = yes }
+		set_variable = { ISR2_b_labor_jordanian_option_gdp = gdp_total }
+		set_variable = { ISR2_b_labor_jordanian_option_partner_gdp = JOR.gdp_total }
+		set_variable = { ISR2_b_labor_jordanian_option_setup_isr = 0 }
+		set_variable = { ISR2_b_labor_jordanian_option_setup_partner = 0 }
+		set_variable = { ISR2_b_labor_jordanian_option_weekly_isr = 0 }
+		set_variable = { ISR2_b_labor_jordanian_option_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_labor_jordanian_option_setup_isr = {
+				value = ISR2_b_labor_jordanian_option_gdp
+				multiply = 0.003
+			}
+		}
+		set_variable = {
+			ISR2_b_labor_jordanian_option_setup_partner = {
+				value = ISR2_b_labor_jordanian_option_partner_gdp
+				multiply = 0.003
+			}
+		}
+		set_variable = {
+			ISR2_b_labor_jordanian_option_weekly_isr = {
+				value = ISR2_b_labor_jordanian_option_gdp
+				multiply = 0.00005
+			}
+		}
+		set_variable = {
+			ISR2_b_labor_jordanian_option_weekly_partner = {
+				value = ISR2_b_labor_jordanian_option_partner_gdp
+				multiply = 0.00005
+			}
+		}
+		set_country_flag = ISR2_b_labor_jordanian_option_pending
+		set_variable = { ISR2_b_labor_jordanian_option_pending_days = 30 }
+		JOR = {
+			set_country_flag = ISR2_b_labor_jordanian_option_pending
+			country_event = { id = ISR2_bilateral.10 days = 1 }
+		}
+	}
+}
+ISR2_b_labor_jordanian_option_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_labor_jordanian_option_pending }
+		clr_country_flag = ISR2_b_labor_jordanian_option_pending
+		set_variable = { ISR2_b_labor_jordanian_option_pending_days = 0 }
+		JOR = { clr_country_flag = ISR2_b_labor_jordanian_option_pending }
+		set_country_flag = { flag = ISR2_b_labor_jordanian_option_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_labor_jordanian_option_reopen
+	}
+}
+ISR2_b_labor_jordanian_option_accept = {
+	if = {
+		limit = { ISR2_b_labor_jordanian_option_accept_valid = yes }
+		clr_country_flag = ISR2_b_labor_jordanian_option_pending
+		set_variable = { ISR2_b_labor_jordanian_option_pending_days = 0 }
+		JOR = { clr_country_flag = ISR2_b_labor_jordanian_option_pending }
+		set_country_flag = ISR2_b_labor_jordanian_option_signed
+		set_variable = { ISR2_b_labor_jordanian_option_days = 728 }
+		set_variable = { ISR2_b_labor_jordanian_option_paid_days = 0 }
+		clr_country_flag = ISR2_b_labor_jordanian_option_reopen
+		JOR = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_labor_jordanian_option_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		JOR = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_labor_jordanian_option_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_labor_jordanian_option_decline = yes }
+}
+ISR2_b_labor_jordanian_option_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_labor_jordanian_option_signed }
+		clr_country_flag = ISR2_b_labor_jordanian_option_signed
+		set_variable = { ISR2_b_labor_jordanian_option_days = 0 }
+		remove_ideas = ISR2_b_labor_jordanian_option_isr_idea
+		JOR = { remove_ideas = ISR2_b_labor_jordanian_option_partner_idea }
+		set_country_flag = ISR2_b_labor_jordanian_option_reopen
+	}
+}
+ISR2_b_gahal_local_autonomy_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_gahal_local_autonomy_pending
+						has_country_flag = ISR2_b_gahal_local_autonomy_signed
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_partner_gdp = ISR2_b_gahal_local_autonomy_partner_gdp
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_setup_partner = ISR2_b_gahal_local_autonomy_setup_partner
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_setup_isr = ISR2_b_gahal_local_autonomy_setup_isr
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_weekly_partner = ISR2_b_gahal_local_autonomy_weekly_partner
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_weekly_isr = ISR2_b_gahal_local_autonomy_weekly_isr
+				}
+				set_temp_variable = { ISR2_b_gahal_local_autonomy_pv_gdp = ISR2_b_gahal_local_autonomy_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_gahal_local_autonomy_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_gahal_local_autonomy_pv_partner_gdp = PAL.gdp_total }
+				set_temp_variable = { ISR2_b_gahal_local_autonomy_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_gahal_local_autonomy_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_gahal_local_autonomy_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_gahal_local_autonomy_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_setup_isr = {
+						value = ISR2_b_gahal_local_autonomy_pv_gdp
+						multiply = 0.004
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_setup_partner = {
+						value = ISR2_b_gahal_local_autonomy_pv_partner_gdp
+						multiply = 0.004
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_weekly_isr = {
+						value = ISR2_b_gahal_local_autonomy_pv_gdp
+						multiply = 0.00005
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_gahal_local_autonomy_pv_weekly_partner = {
+						value = ISR2_b_gahal_local_autonomy_pv_partner_gdp
+						multiply = 0.00005
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_gahal_local_autonomy_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = {
+					value = ISR2_b_gahal_local_autonomy_pv_setup_partner
+					divide = 104
+				}
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			if = {
+				limit = { has_idea = ISR2_b_haolam_joint_services_isr_idea }
+				remove_ideas = ISR2_b_haolam_joint_services_isr_idea
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_gahal_local_autonomy_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_gahal_local_autonomy_isr_idea days = 728 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_gahal_local_autonomy_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+		PAL = {
+			if = {
+				limit = { has_idea = ISR2_b_haolam_joint_services_partner_idea }
+				remove_ideas = ISR2_b_haolam_joint_services_partner_idea
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_gahal_local_autonomy_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_gahal_local_autonomy_partner_idea days = 728 }
+			set_temp_variable = {
+				ISR2_bilateral_preview_weekly = ISR.ISR2_b_gahal_local_autonomy_pv_weekly_partner
+			}
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+	}
+}
+ISR2_b_gahal_local_autonomy_offer = {
+	if = {
+		limit = { ISR2_b_gahal_local_autonomy_can_offer = yes }
+		set_variable = { ISR2_b_gahal_local_autonomy_gdp = gdp_total }
+		set_variable = { ISR2_b_gahal_local_autonomy_partner_gdp = PAL.gdp_total }
+		set_variable = { ISR2_b_gahal_local_autonomy_setup_isr = 0 }
+		set_variable = { ISR2_b_gahal_local_autonomy_setup_partner = 0 }
+		set_variable = { ISR2_b_gahal_local_autonomy_weekly_isr = 0 }
+		set_variable = { ISR2_b_gahal_local_autonomy_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_gahal_local_autonomy_setup_isr = { value = ISR2_b_gahal_local_autonomy_gdp multiply = 0.004 }
+		}
+		set_variable = {
+			ISR2_b_gahal_local_autonomy_setup_partner = {
+				value = ISR2_b_gahal_local_autonomy_partner_gdp
+				multiply = 0.004
+			}
+		}
+		set_variable = {
+			ISR2_b_gahal_local_autonomy_weekly_isr = { value = ISR2_b_gahal_local_autonomy_gdp multiply = 0.00005 }
+		}
+		set_variable = {
+			ISR2_b_gahal_local_autonomy_weekly_partner = {
+				value = ISR2_b_gahal_local_autonomy_partner_gdp
+				multiply = 0.00005
+			}
+		}
+		set_country_flag = ISR2_b_gahal_local_autonomy_pending
+		set_variable = { ISR2_b_gahal_local_autonomy_pending_days = 30 }
+		PAL = {
+			set_country_flag = ISR2_b_gahal_local_autonomy_pending
+			country_event = { id = ISR2_bilateral.11 days = 1 }
+		}
+	}
+}
+ISR2_b_gahal_local_autonomy_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_gahal_local_autonomy_pending }
+		clr_country_flag = ISR2_b_gahal_local_autonomy_pending
+		set_variable = { ISR2_b_gahal_local_autonomy_pending_days = 0 }
+		PAL = { clr_country_flag = ISR2_b_gahal_local_autonomy_pending }
+		set_country_flag = { flag = ISR2_b_gahal_local_autonomy_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_gahal_local_autonomy_reopen
+	}
+}
+ISR2_b_gahal_local_autonomy_accept = {
+	if = {
+		limit = { ISR2_b_gahal_local_autonomy_accept_valid = yes }
+		clr_country_flag = ISR2_b_gahal_local_autonomy_pending
+		set_variable = { ISR2_b_gahal_local_autonomy_pending_days = 0 }
+		PAL = { clr_country_flag = ISR2_b_gahal_local_autonomy_pending }
+		ISR2_b_haolam_joint_services_end = yes
+		set_country_flag = ISR2_b_gahal_local_autonomy_signed
+		set_variable = { ISR2_b_gahal_local_autonomy_days = 728 }
+		set_variable = { ISR2_b_gahal_local_autonomy_paid_days = 0 }
+		clr_country_flag = ISR2_b_gahal_local_autonomy_reopen
+		PAL = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_gahal_local_autonomy_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		PAL = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_gahal_local_autonomy_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_gahal_local_autonomy_decline = yes }
+}
+ISR2_b_gahal_local_autonomy_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_gahal_local_autonomy_signed }
+		clr_country_flag = ISR2_b_gahal_local_autonomy_signed
+		set_variable = { ISR2_b_gahal_local_autonomy_days = 0 }
+		remove_ideas = ISR2_b_gahal_local_autonomy_isr_idea
+		PAL = { remove_ideas = ISR2_b_gahal_local_autonomy_partner_idea }
+		set_country_flag = ISR2_b_gahal_local_autonomy_reopen
+	}
+}
+ISR2_b_haolam_joint_services_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_haolam_joint_services_pending
+						has_country_flag = ISR2_b_haolam_joint_services_signed
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_partner_gdp = ISR2_b_haolam_joint_services_partner_gdp
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_setup_partner = ISR2_b_haolam_joint_services_setup_partner
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_setup_isr = ISR2_b_haolam_joint_services_setup_isr
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_weekly_partner = ISR2_b_haolam_joint_services_weekly_partner
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_weekly_isr = ISR2_b_haolam_joint_services_weekly_isr
+				}
+				set_temp_variable = { ISR2_b_haolam_joint_services_pv_gdp = ISR2_b_haolam_joint_services_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_haolam_joint_services_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_haolam_joint_services_pv_partner_gdp = PAL.gdp_total }
+				set_temp_variable = { ISR2_b_haolam_joint_services_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_haolam_joint_services_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_haolam_joint_services_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_haolam_joint_services_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_setup_isr = {
+						value = ISR2_b_haolam_joint_services_pv_gdp
+						multiply = 0.004
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_setup_partner = {
+						value = ISR2_b_haolam_joint_services_pv_partner_gdp
+						multiply = 0.004
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_weekly_isr = {
+						value = ISR2_b_haolam_joint_services_pv_gdp
+						multiply = 0.00006
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_haolam_joint_services_pv_weekly_partner = {
+						value = ISR2_b_haolam_joint_services_pv_partner_gdp
+						multiply = 0.00006
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_haolam_joint_services_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = {
+					value = ISR2_b_haolam_joint_services_pv_setup_partner
+					divide = 104
+				}
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			if = {
+				limit = { has_idea = ISR2_b_gahal_local_autonomy_isr_idea }
+				remove_ideas = ISR2_b_gahal_local_autonomy_isr_idea
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_haolam_joint_services_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_haolam_joint_services_isr_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_haolam_joint_services_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+		PAL = {
+			if = {
+				limit = { has_idea = ISR2_b_gahal_local_autonomy_partner_idea }
+				remove_ideas = ISR2_b_gahal_local_autonomy_partner_idea
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_haolam_joint_services_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_haolam_joint_services_partner_idea days = 364 }
+			set_temp_variable = {
+				ISR2_bilateral_preview_weekly = ISR.ISR2_b_haolam_joint_services_pv_weekly_partner
+			}
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+		}
+	}
+}
+ISR2_b_haolam_joint_services_offer = {
+	if = {
+		limit = { ISR2_b_haolam_joint_services_can_offer = yes }
+		set_variable = { ISR2_b_haolam_joint_services_gdp = gdp_total }
+		set_variable = { ISR2_b_haolam_joint_services_partner_gdp = PAL.gdp_total }
+		set_variable = { ISR2_b_haolam_joint_services_setup_isr = 0 }
+		set_variable = { ISR2_b_haolam_joint_services_setup_partner = 0 }
+		set_variable = { ISR2_b_haolam_joint_services_weekly_isr = 0 }
+		set_variable = { ISR2_b_haolam_joint_services_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_haolam_joint_services_setup_isr = { value = ISR2_b_haolam_joint_services_gdp multiply = 0.004 }
+		}
+		set_variable = {
+			ISR2_b_haolam_joint_services_setup_partner = {
+				value = ISR2_b_haolam_joint_services_partner_gdp
+				multiply = 0.004
+			}
+		}
+		set_variable = {
+			ISR2_b_haolam_joint_services_weekly_isr = {
+				value = ISR2_b_haolam_joint_services_gdp
+				multiply = 0.00006
+			}
+		}
+		set_variable = {
+			ISR2_b_haolam_joint_services_weekly_partner = {
+				value = ISR2_b_haolam_joint_services_partner_gdp
+				multiply = 0.00006
+			}
+		}
+		set_country_flag = ISR2_b_haolam_joint_services_pending
+		set_variable = { ISR2_b_haolam_joint_services_pending_days = 30 }
+		PAL = {
+			set_country_flag = ISR2_b_haolam_joint_services_pending
+			country_event = { id = ISR2_bilateral.12 days = 1 }
+		}
+	}
+}
+ISR2_b_haolam_joint_services_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_haolam_joint_services_pending }
+		clr_country_flag = ISR2_b_haolam_joint_services_pending
+		set_variable = { ISR2_b_haolam_joint_services_pending_days = 0 }
+		PAL = { clr_country_flag = ISR2_b_haolam_joint_services_pending }
+		set_country_flag = { flag = ISR2_b_haolam_joint_services_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_haolam_joint_services_reopen
+	}
+}
+ISR2_b_haolam_joint_services_accept = {
+	if = {
+		limit = { ISR2_b_haolam_joint_services_accept_valid = yes }
+		clr_country_flag = ISR2_b_haolam_joint_services_pending
+		set_variable = { ISR2_b_haolam_joint_services_pending_days = 0 }
+		PAL = { clr_country_flag = ISR2_b_haolam_joint_services_pending }
+		ISR2_b_gahal_local_autonomy_end = yes
+		set_country_flag = ISR2_b_haolam_joint_services_signed
+		set_variable = { ISR2_b_haolam_joint_services_days = 364 }
+		set_variable = { ISR2_b_haolam_joint_services_paid_days = 0 }
+		clr_country_flag = ISR2_b_haolam_joint_services_reopen
+		PAL = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_haolam_joint_services_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		PAL = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_haolam_joint_services_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_haolam_joint_services_decline = yes }
+}
+ISR2_b_haolam_joint_services_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_haolam_joint_services_signed }
+		clr_country_flag = ISR2_b_haolam_joint_services_signed
+		set_variable = { ISR2_b_haolam_joint_services_days = 0 }
+		remove_ideas = ISR2_b_haolam_joint_services_isr_idea
+		PAL = { remove_ideas = ISR2_b_haolam_joint_services_partner_idea }
+		set_country_flag = ISR2_b_haolam_joint_services_reopen
+	}
+}
+ISR2_b_mashav_ethiopia_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_mashav_ethiopia_pending
+						has_country_flag = ISR2_b_mashav_ethiopia_signed
+					}
+				}
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_partner_gdp = ISR2_b_mashav_ethiopia_partner_gdp }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_setup_partner = ISR2_b_mashav_ethiopia_setup_partner }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_setup_isr = ISR2_b_mashav_ethiopia_setup_isr }
+				set_temp_variable = {
+					ISR2_b_mashav_ethiopia_pv_weekly_partner = ISR2_b_mashav_ethiopia_weekly_partner
+				}
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_weekly_isr = ISR2_b_mashav_ethiopia_weekly_isr }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_gdp = ISR2_b_mashav_ethiopia_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_partner_gdp = ETH.gdp_total }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_mashav_ethiopia_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_mashav_ethiopia_pv_setup_isr = { value = ISR2_b_mashav_ethiopia_pv_gdp multiply = 0.003 }
+				}
+				set_temp_variable = {
+					ISR2_b_mashav_ethiopia_pv_setup_partner = {
+						value = ISR2_b_mashav_ethiopia_pv_partner_gdp
+						multiply = 0
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_mashav_ethiopia_pv_weekly_isr = { value = ISR2_b_mashav_ethiopia_pv_gdp multiply = 0.0001 }
+				}
+				set_temp_variable = {
+					ISR2_b_mashav_ethiopia_pv_weekly_partner = {
+						value = ISR2_b_mashav_ethiopia_pv_partner_gdp
+						multiply = 0
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_mashav_ethiopia_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_mashav_ethiopia_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_mashav_ethiopia_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_mashav_ethiopia_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			if = {
+				limit = {
+					NOT = { has_country_flag = ISR2_bilateral_mashav_lesson }
+				}
+				add_tech_bonus = { name = ISR2_b_mashav_ethiopia_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+			}
+			add_opinion_modifier = { target = ETH modifier = ISR2_bilateral_opinion_10 }
+		}
+		ETH = {
+			add_timed_idea = { idea = ISR2_b_mashav_ethiopia_partner_idea days = 364 }
+			add_tech_bonus = { name = ISR2_b_mashav_ethiopia_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+	}
+}
+ISR2_b_mashav_ethiopia_offer = {
+	if = {
+		limit = { ISR2_b_mashav_ethiopia_can_offer = yes }
+		set_variable = { ISR2_b_mashav_ethiopia_gdp = gdp_total }
+		set_variable = { ISR2_b_mashav_ethiopia_partner_gdp = ETH.gdp_total }
+		set_variable = { ISR2_b_mashav_ethiopia_setup_isr = 0 }
+		set_variable = { ISR2_b_mashav_ethiopia_setup_partner = 0 }
+		set_variable = { ISR2_b_mashav_ethiopia_weekly_isr = 0 }
+		set_variable = { ISR2_b_mashav_ethiopia_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_mashav_ethiopia_setup_isr = { value = ISR2_b_mashav_ethiopia_gdp multiply = 0.003 }
+		}
+		set_variable = {
+			ISR2_b_mashav_ethiopia_setup_partner = { value = ISR2_b_mashav_ethiopia_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_mashav_ethiopia_weekly_isr = { value = ISR2_b_mashav_ethiopia_gdp multiply = 0.0001 }
+		}
+		set_variable = {
+			ISR2_b_mashav_ethiopia_weekly_partner = { value = ISR2_b_mashav_ethiopia_partner_gdp multiply = 0 }
+		}
+		set_country_flag = ISR2_b_mashav_ethiopia_pending
+		set_variable = { ISR2_b_mashav_ethiopia_pending_days = 30 }
+		ETH = {
+			set_country_flag = ISR2_b_mashav_ethiopia_pending
+			country_event = { id = ISR2_bilateral.13 days = 1 }
+		}
+	}
+}
+ISR2_b_mashav_ethiopia_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_mashav_ethiopia_pending }
+		clr_country_flag = ISR2_b_mashav_ethiopia_pending
+		set_variable = { ISR2_b_mashav_ethiopia_pending_days = 0 }
+		ETH = { clr_country_flag = ISR2_b_mashav_ethiopia_pending }
+		set_country_flag = { flag = ISR2_b_mashav_ethiopia_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_mashav_ethiopia_reopen
+	}
+}
+ISR2_b_mashav_ethiopia_accept = {
+	if = {
+		limit = { ISR2_b_mashav_ethiopia_accept_valid = yes }
+		clr_country_flag = ISR2_b_mashav_ethiopia_pending
+		set_variable = { ISR2_b_mashav_ethiopia_pending_days = 0 }
+		ETH = { clr_country_flag = ISR2_b_mashav_ethiopia_pending }
+		set_country_flag = ISR2_b_mashav_ethiopia_signed
+		set_variable = { ISR2_b_mashav_ethiopia_days = 364 }
+		set_variable = { ISR2_b_mashav_ethiopia_paid_days = 0 }
+		clr_country_flag = ISR2_b_mashav_ethiopia_reopen
+		ETH = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_mashav_ethiopia_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_bilateral_mashav_lesson }
+			}
+			add_tech_bonus = { name = ISR2_b_mashav_ethiopia_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+			set_country_flag = ISR2_bilateral_mashav_lesson
+		}
+		ETH = {
+			add_tech_bonus = { name = ISR2_b_mashav_ethiopia_research bonus = 0.5 uses = 1 category = CAT_agriculture }
+		}
+		add_opinion_modifier = { target = ETH modifier = ISR2_bilateral_opinion_10 }
+		ETH = {
+			add_opinion_modifier = { target = ISR modifier = ISR2_bilateral_opinion_10 }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_mashav_ethiopia_decline = yes }
+}
+ISR2_b_mashav_ethiopia_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_mashav_ethiopia_signed }
+		clr_country_flag = ISR2_b_mashav_ethiopia_signed
+		set_variable = { ISR2_b_mashav_ethiopia_days = 0 }
+		ETH = { remove_ideas = ISR2_b_mashav_ethiopia_partner_idea }
+		set_country_flag = ISR2_b_mashav_ethiopia_reopen
+	}
+}
+ISR2_b_arms_congo_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = { has_country_flag = ISR2_b_arms_congo_pending has_country_flag = ISR2_b_arms_congo_signed }
+				}
+				set_temp_variable = { ISR2_b_arms_congo_pv_partner_gdp = ISR2_b_arms_congo_partner_gdp }
+				set_temp_variable = { ISR2_b_arms_congo_pv_setup_partner = ISR2_b_arms_congo_setup_partner }
+				set_temp_variable = { ISR2_b_arms_congo_pv_setup_isr = ISR2_b_arms_congo_setup_isr }
+				set_temp_variable = { ISR2_b_arms_congo_pv_weekly_partner = ISR2_b_arms_congo_weekly_partner }
+				set_temp_variable = { ISR2_b_arms_congo_pv_weekly_isr = ISR2_b_arms_congo_weekly_isr }
+				set_temp_variable = { ISR2_b_arms_congo_pv_gdp = ISR2_b_arms_congo_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_arms_congo_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_arms_congo_pv_partner_gdp = DRC.gdp_total }
+				set_temp_variable = { ISR2_b_arms_congo_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_arms_congo_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_arms_congo_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_arms_congo_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_arms_congo_pv_setup_isr = { value = ISR2_b_arms_congo_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_arms_congo_pv_setup_partner = { value = ISR2_b_arms_congo_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_arms_congo_pv_weekly_isr = { value = ISR2_b_arms_congo_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_arms_congo_pv_weekly_partner = { value = ISR2_b_arms_congo_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = { ISR2_b_arms_congo_pv_setup_isr = 0.004 }
+				set_temp_variable = { ISR2_b_arms_congo_pv_setup_partner = 0.01 }
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_arms_congo_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_arms_congo_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			add_timed_idea = { idea = ISR2_b_arms_congo_isr_idea days = 182 }
+			set_temp_variable = { treasury_change = ISR.ISR2_b_arms_congo_pv_setup_partner }
+			modify_treasury_effect = yes
+			send_equipment = { type = infantry_weapons_type amount = 1000 target = DRC }
+			army_experience = 5
+		}
+		DRC = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_arms_congo_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			custom_effect_tooltip = ISR2_b_arms_congo_delivery_tt
+			army_experience = 10
+		}
+	}
+}
+ISR2_b_arms_congo_offer = {
+	if = {
+		limit = { ISR2_b_arms_congo_can_offer = yes }
+		set_variable = { ISR2_b_arms_congo_gdp = gdp_total }
+		set_variable = { ISR2_b_arms_congo_partner_gdp = DRC.gdp_total }
+		set_variable = { ISR2_b_arms_congo_setup_isr = 0 }
+		set_variable = { ISR2_b_arms_congo_setup_partner = 0 }
+		set_variable = { ISR2_b_arms_congo_weekly_isr = 0 }
+		set_variable = { ISR2_b_arms_congo_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_arms_congo_setup_isr = { value = ISR2_b_arms_congo_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_arms_congo_setup_partner = { value = ISR2_b_arms_congo_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_arms_congo_weekly_isr = { value = ISR2_b_arms_congo_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_arms_congo_weekly_partner = { value = ISR2_b_arms_congo_partner_gdp multiply = 0 }
+		}
+		set_variable = { ISR2_b_arms_congo_setup_isr = 0.004 }
+		set_variable = { ISR2_b_arms_congo_setup_partner = 0.01 }
+		set_country_flag = ISR2_b_arms_congo_pending
+		set_variable = { ISR2_b_arms_congo_pending_days = 30 }
+		set_country_flag = ISR2_bilateral_arms_pending
+		DRC = {
+			set_country_flag = ISR2_b_arms_congo_pending
+			country_event = { id = ISR2_bilateral.14 days = 1 }
+		}
+	}
+}
+ISR2_b_arms_congo_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_arms_congo_pending }
+		clr_country_flag = ISR2_b_arms_congo_pending
+		set_variable = { ISR2_b_arms_congo_pending_days = 0 }
+		DRC = { clr_country_flag = ISR2_b_arms_congo_pending }
+		clr_country_flag = ISR2_bilateral_arms_pending
+		set_country_flag = { flag = ISR2_b_arms_congo_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_arms_congo_reopen
+	}
+}
+ISR2_b_arms_congo_accept = {
+	if = {
+		limit = { ISR2_b_arms_congo_accept_valid = yes }
+		clr_country_flag = ISR2_b_arms_congo_pending
+		set_variable = { ISR2_b_arms_congo_pending_days = 0 }
+		DRC = { clr_country_flag = ISR2_b_arms_congo_pending }
+		clr_country_flag = ISR2_bilateral_arms_pending
+		set_country_flag = ISR2_b_arms_congo_signed
+		set_variable = { ISR2_b_arms_congo_days = 182 }
+		set_variable = { ISR2_b_arms_congo_paid_days = 0 }
+		clr_country_flag = ISR2_b_arms_congo_reopen
+		DRC = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_arms_congo_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		DRC = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_arms_congo_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		set_temp_variable = { treasury_change = ISR2_b_arms_congo_setup_partner }
+		modify_treasury_effect = yes
+		set_country_flag = ISR2_bilateral_arms_pending
+		clr_country_flag = ISR2_b_arms_congo_delivered
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_arms_congo_decline = yes }
+}
+ISR2_b_arms_congo_return_invoice = {
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_arms_congo_invoice_refund_due
+			country_exists = DRC
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			DRC = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+		}
+		clr_country_flag = ISR2_b_arms_congo_invoice_refund_due
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_arms_congo_setup_partner multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		DRC = {
+			set_temp_variable = { treasury_change = ISR.ISR2_b_arms_congo_setup_partner }
+			modify_treasury_effect = yes
+		}
+	}
+}
+ISR2_b_arms_congo_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_arms_congo_signed }
+		clr_country_flag = ISR2_b_arms_congo_signed
+		set_variable = { ISR2_b_arms_congo_days = 0 }
+		remove_ideas = ISR2_b_arms_congo_isr_idea
+		clr_country_flag = ISR2_bilateral_arms_pending
+		if = {
+			limit = {
+				NOT = { has_country_flag = ISR2_b_arms_congo_delivered }
+			}
+			set_country_flag = ISR2_b_arms_congo_invoice_refund_due
+			ISR2_b_arms_congo_return_invoice = yes
+		}
+		set_country_flag = ISR2_b_arms_congo_reopen
+	}
+}
+ISR2_b_liaison_turkey_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ISR2_b_liaison_turkey_pending
+						has_country_flag = ISR2_b_liaison_turkey_signed
+					}
+				}
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_partner_gdp = ISR2_b_liaison_turkey_partner_gdp }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_setup_partner = ISR2_b_liaison_turkey_setup_partner }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_setup_isr = ISR2_b_liaison_turkey_setup_isr }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_weekly_partner = ISR2_b_liaison_turkey_weekly_partner }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_weekly_isr = ISR2_b_liaison_turkey_weekly_isr }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_gdp = ISR2_b_liaison_turkey_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_partner_gdp = TUR.gdp_total }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_liaison_turkey_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_liaison_turkey_pv_setup_isr = { value = ISR2_b_liaison_turkey_pv_gdp multiply = 0.0025 }
+				}
+				set_temp_variable = {
+					ISR2_b_liaison_turkey_pv_setup_partner = {
+						value = ISR2_b_liaison_turkey_pv_partner_gdp
+						multiply = 0.0025
+					}
+				}
+				set_temp_variable = {
+					ISR2_b_liaison_turkey_pv_weekly_isr = { value = ISR2_b_liaison_turkey_pv_gdp multiply = 0.00005 }
+				}
+				set_temp_variable = {
+					ISR2_b_liaison_turkey_pv_weekly_partner = {
+						value = ISR2_b_liaison_turkey_pv_partner_gdp
+						multiply = 0.00005
+					}
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_liaison_turkey_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_liaison_turkey_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_liaison_turkey_pv_setup_isr multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_liaison_turkey_isr_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_liaison_turkey_pv_weekly_isr }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			add_tech_bonus = { name = ISR2_b_liaison_turkey_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		}
+		TUR = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_liaison_turkey_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			add_timed_idea = { idea = ISR2_b_liaison_turkey_partner_idea days = 364 }
+			set_temp_variable = { ISR2_bilateral_preview_weekly = ISR.ISR2_b_liaison_turkey_pv_weekly_partner }
+			custom_effect_tooltip = ISR2_bilateral_weekly_expense_tt
+			add_tech_bonus = { name = ISR2_b_liaison_turkey_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		}
+	}
+}
+ISR2_b_liaison_turkey_offer = {
+	if = {
+		limit = { ISR2_b_liaison_turkey_can_offer = yes }
+		set_variable = { ISR2_b_liaison_turkey_gdp = gdp_total }
+		set_variable = { ISR2_b_liaison_turkey_partner_gdp = TUR.gdp_total }
+		set_variable = { ISR2_b_liaison_turkey_setup_isr = 0 }
+		set_variable = { ISR2_b_liaison_turkey_setup_partner = 0 }
+		set_variable = { ISR2_b_liaison_turkey_weekly_isr = 0 }
+		set_variable = { ISR2_b_liaison_turkey_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_liaison_turkey_setup_isr = { value = ISR2_b_liaison_turkey_gdp multiply = 0.0025 }
+		}
+		set_variable = {
+			ISR2_b_liaison_turkey_setup_partner = { value = ISR2_b_liaison_turkey_partner_gdp multiply = 0.0025 }
+		}
+		set_variable = {
+			ISR2_b_liaison_turkey_weekly_isr = { value = ISR2_b_liaison_turkey_gdp multiply = 0.00005 }
+		}
+		set_variable = {
+			ISR2_b_liaison_turkey_weekly_partner = { value = ISR2_b_liaison_turkey_partner_gdp multiply = 0.00005 }
+		}
+		set_country_flag = ISR2_b_liaison_turkey_pending
+		set_variable = { ISR2_b_liaison_turkey_pending_days = 30 }
+		TUR = {
+			set_country_flag = ISR2_b_liaison_turkey_pending
+			country_event = { id = ISR2_bilateral.15 days = 1 }
+		}
+	}
+}
+ISR2_b_liaison_turkey_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_liaison_turkey_pending }
+		clr_country_flag = ISR2_b_liaison_turkey_pending
+		set_variable = { ISR2_b_liaison_turkey_pending_days = 0 }
+		TUR = { clr_country_flag = ISR2_b_liaison_turkey_pending }
+		set_country_flag = { flag = ISR2_b_liaison_turkey_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_liaison_turkey_reopen
+	}
+}
+ISR2_b_liaison_turkey_accept = {
+	if = {
+		limit = { ISR2_b_liaison_turkey_accept_valid = yes }
+		clr_country_flag = ISR2_b_liaison_turkey_pending
+		set_variable = { ISR2_b_liaison_turkey_pending_days = 0 }
+		TUR = { clr_country_flag = ISR2_b_liaison_turkey_pending }
+		set_country_flag = ISR2_b_liaison_turkey_signed
+		set_variable = { ISR2_b_liaison_turkey_days = 364 }
+		set_variable = { ISR2_b_liaison_turkey_paid_days = 0 }
+		clr_country_flag = ISR2_b_liaison_turkey_reopen
+		TUR = { set_country_flag = ISR2_bilateral_recipient }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_b_liaison_turkey_setup_isr multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		TUR = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_liaison_turkey_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		add_tech_bonus = { name = ISR2_b_liaison_turkey_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		TUR = {
+			add_tech_bonus = { name = ISR2_b_liaison_turkey_research bonus = 0.5 uses = 1 category = CAT_encryption }
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_liaison_turkey_decline = yes }
+}
+ISR2_b_liaison_turkey_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_liaison_turkey_signed }
+		clr_country_flag = ISR2_b_liaison_turkey_signed
+		set_variable = { ISR2_b_liaison_turkey_days = 0 }
+		remove_ideas = ISR2_b_liaison_turkey_isr_idea
+		TUR = { remove_ideas = ISR2_b_liaison_turkey_partner_idea }
+		set_country_flag = ISR2_b_liaison_turkey_reopen
+	}
+}
+ISR2_b_financing_usa_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = { has_country_flag = ISR2_b_financing_usa_pending has_country_flag = ISR2_b_financing_usa_signed }
+				}
+				set_temp_variable = { ISR2_b_financing_usa_pv_partner_gdp = ISR2_b_financing_usa_partner_gdp }
+				set_temp_variable = { ISR2_b_financing_usa_pv_setup_partner = ISR2_b_financing_usa_setup_partner }
+				set_temp_variable = { ISR2_b_financing_usa_pv_setup_isr = ISR2_b_financing_usa_setup_isr }
+				set_temp_variable = { ISR2_b_financing_usa_pv_weekly_partner = ISR2_b_financing_usa_weekly_partner }
+				set_temp_variable = { ISR2_b_financing_usa_pv_weekly_isr = ISR2_b_financing_usa_weekly_isr }
+				set_temp_variable = { ISR2_b_financing_usa_pv_gdp = ISR2_b_financing_usa_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_financing_usa_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_financing_usa_pv_partner_gdp = USA.gdp_total }
+				set_temp_variable = { ISR2_b_financing_usa_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_financing_usa_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_financing_usa_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_financing_usa_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_financing_usa_pv_setup_isr = { value = ISR2_b_financing_usa_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_usa_pv_setup_partner = { value = ISR2_b_financing_usa_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_usa_pv_weekly_isr = { value = ISR2_b_financing_usa_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_usa_pv_weekly_partner = { value = ISR2_b_financing_usa_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_usa_pv_setup_partner = { value = ISR2_b_financing_usa_pv_gdp multiply = 0.02 }
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_financing_usa_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_financing_usa_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_financing_usa_pv_setup_partner }
+			custom_effect_tooltip = ISR2_bilateral_capital_tt
+		}
+		USA = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_financing_usa_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			set_temp_variable = { int_investment_change = ISR.ISR2_b_financing_usa_pv_setup_partner }
+			modify_international_investment_effect = yes
+			set_temp_variable = {
+				ISR2_bilateral_preview_roi = {
+					value = 0.04
+					add = modifier@return_on_investment_modifier
+					clamp = { min = 0 max = global.roi_rate_cap }
+				}
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_return = {
+					value = ISR.ISR2_b_financing_usa_pv_setup_partner
+					multiply = ISR2_bilateral_preview_roi
+					multiply = 0.019
+				}
+			}
+			custom_effect_tooltip = ISR2_bilateral_investment_roi_tt
+			custom_effect_tooltip = ISR2_bilateral_finance_return_tt
+		}
+	}
+}
+ISR2_b_financing_usa_offer = {
+	if = {
+		limit = { ISR2_b_financing_usa_can_offer = yes }
+		set_variable = { ISR2_b_financing_usa_gdp = gdp_total }
+		set_variable = { ISR2_b_financing_usa_partner_gdp = USA.gdp_total }
+		set_variable = { ISR2_b_financing_usa_setup_isr = 0 }
+		set_variable = { ISR2_b_financing_usa_setup_partner = 0 }
+		set_variable = { ISR2_b_financing_usa_weekly_isr = 0 }
+		set_variable = { ISR2_b_financing_usa_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_financing_usa_setup_isr = { value = ISR2_b_financing_usa_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_usa_setup_partner = { value = ISR2_b_financing_usa_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_usa_weekly_isr = { value = ISR2_b_financing_usa_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_usa_weekly_partner = { value = ISR2_b_financing_usa_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_usa_setup_partner = { value = ISR2_b_financing_usa_gdp multiply = 0.02 }
+		}
+		set_country_flag = ISR2_b_financing_usa_pending
+		set_variable = { ISR2_b_financing_usa_pending_days = 30 }
+		USA = {
+			set_country_flag = ISR2_b_financing_usa_pending
+			country_event = { id = ISR2_bilateral.16 days = 1 }
+		}
+	}
+}
+ISR2_b_financing_usa_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_financing_usa_pending }
+		clr_country_flag = ISR2_b_financing_usa_pending
+		set_variable = { ISR2_b_financing_usa_pending_days = 0 }
+		USA = { clr_country_flag = ISR2_b_financing_usa_pending }
+		set_country_flag = { flag = ISR2_b_financing_usa_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_financing_usa_reopen
+	}
+}
+ISR2_b_financing_usa_accept = {
+	if = {
+		limit = { ISR2_b_financing_usa_accept_valid = yes }
+		clr_country_flag = ISR2_b_financing_usa_pending
+		set_variable = { ISR2_b_financing_usa_pending_days = 0 }
+		USA = { clr_country_flag = ISR2_b_financing_usa_pending }
+		set_country_flag = ISR2_b_financing_usa_signed
+		set_variable = { ISR2_b_financing_usa_days = 364 }
+		set_variable = { ISR2_b_financing_usa_paid_days = 0 }
+		clr_country_flag = ISR2_b_financing_usa_reopen
+		USA = { set_country_flag = ISR2_bilateral_recipient }
+		USA = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_financing_usa_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		set_variable = { ISR2_b_financing_usa_unallocated = ISR2_b_financing_usa_setup_partner }
+		USA = {
+			set_temp_variable = { int_investment_change = ISR.ISR2_b_financing_usa_setup_partner }
+			modify_international_investment_effect = yes
+		}
+		ISR2_private_recalculate = yes
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_financing_usa_decline = yes }
+}
+ISR2_b_financing_usa_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_financing_usa_signed }
+		clr_country_flag = ISR2_b_financing_usa_signed
+		set_variable = { ISR2_b_financing_usa_days = 0 }
+		if = {
+			limit = {
+				check_variable = { ISR2_b_financing_usa_unallocated > 0 }
+			}
+			set_country_flag = ISR2_b_financing_usa_refund_due
+			ISR2_b_financing_usa_return_unused = yes
+		}
+		set_country_flag = ISR2_b_financing_usa_reopen
+	}
+}
+ISR2_b_financing_ger_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = { has_country_flag = ISR2_b_financing_ger_pending has_country_flag = ISR2_b_financing_ger_signed }
+				}
+				set_temp_variable = { ISR2_b_financing_ger_pv_partner_gdp = ISR2_b_financing_ger_partner_gdp }
+				set_temp_variable = { ISR2_b_financing_ger_pv_setup_partner = ISR2_b_financing_ger_setup_partner }
+				set_temp_variable = { ISR2_b_financing_ger_pv_setup_isr = ISR2_b_financing_ger_setup_isr }
+				set_temp_variable = { ISR2_b_financing_ger_pv_weekly_partner = ISR2_b_financing_ger_weekly_partner }
+				set_temp_variable = { ISR2_b_financing_ger_pv_weekly_isr = ISR2_b_financing_ger_weekly_isr }
+				set_temp_variable = { ISR2_b_financing_ger_pv_gdp = ISR2_b_financing_ger_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_financing_ger_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_financing_ger_pv_partner_gdp = GER.gdp_total }
+				set_temp_variable = { ISR2_b_financing_ger_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_financing_ger_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_financing_ger_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_financing_ger_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_financing_ger_pv_setup_isr = { value = ISR2_b_financing_ger_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_ger_pv_setup_partner = { value = ISR2_b_financing_ger_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_ger_pv_weekly_isr = { value = ISR2_b_financing_ger_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_ger_pv_weekly_partner = { value = ISR2_b_financing_ger_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_ger_pv_setup_partner = { value = ISR2_b_financing_ger_pv_gdp multiply = 0.02 }
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_financing_ger_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_financing_ger_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_financing_ger_pv_setup_partner }
+			custom_effect_tooltip = ISR2_bilateral_capital_tt
+		}
+		GER = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_financing_ger_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			set_temp_variable = { int_investment_change = ISR.ISR2_b_financing_ger_pv_setup_partner }
+			modify_international_investment_effect = yes
+			set_temp_variable = {
+				ISR2_bilateral_preview_roi = {
+					value = 0.04
+					add = modifier@return_on_investment_modifier
+					clamp = { min = 0 max = global.roi_rate_cap }
+				}
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_return = {
+					value = ISR.ISR2_b_financing_ger_pv_setup_partner
+					multiply = ISR2_bilateral_preview_roi
+					multiply = 0.019
+				}
+			}
+			custom_effect_tooltip = ISR2_bilateral_investment_roi_tt
+			custom_effect_tooltip = ISR2_bilateral_finance_return_tt
+		}
+	}
+}
+ISR2_b_financing_ger_offer = {
+	if = {
+		limit = { ISR2_b_financing_ger_can_offer = yes }
+		set_variable = { ISR2_b_financing_ger_gdp = gdp_total }
+		set_variable = { ISR2_b_financing_ger_partner_gdp = GER.gdp_total }
+		set_variable = { ISR2_b_financing_ger_setup_isr = 0 }
+		set_variable = { ISR2_b_financing_ger_setup_partner = 0 }
+		set_variable = { ISR2_b_financing_ger_weekly_isr = 0 }
+		set_variable = { ISR2_b_financing_ger_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_financing_ger_setup_isr = { value = ISR2_b_financing_ger_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_ger_setup_partner = { value = ISR2_b_financing_ger_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_ger_weekly_isr = { value = ISR2_b_financing_ger_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_ger_weekly_partner = { value = ISR2_b_financing_ger_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_ger_setup_partner = { value = ISR2_b_financing_ger_gdp multiply = 0.02 }
+		}
+		set_country_flag = ISR2_b_financing_ger_pending
+		set_variable = { ISR2_b_financing_ger_pending_days = 30 }
+		GER = {
+			set_country_flag = ISR2_b_financing_ger_pending
+			country_event = { id = ISR2_bilateral.17 days = 1 }
+		}
+	}
+}
+ISR2_b_financing_ger_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_financing_ger_pending }
+		clr_country_flag = ISR2_b_financing_ger_pending
+		set_variable = { ISR2_b_financing_ger_pending_days = 0 }
+		GER = { clr_country_flag = ISR2_b_financing_ger_pending }
+		set_country_flag = { flag = ISR2_b_financing_ger_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_financing_ger_reopen
+	}
+}
+ISR2_b_financing_ger_accept = {
+	if = {
+		limit = { ISR2_b_financing_ger_accept_valid = yes }
+		clr_country_flag = ISR2_b_financing_ger_pending
+		set_variable = { ISR2_b_financing_ger_pending_days = 0 }
+		GER = { clr_country_flag = ISR2_b_financing_ger_pending }
+		set_country_flag = ISR2_b_financing_ger_signed
+		set_variable = { ISR2_b_financing_ger_days = 364 }
+		set_variable = { ISR2_b_financing_ger_paid_days = 0 }
+		clr_country_flag = ISR2_b_financing_ger_reopen
+		GER = { set_country_flag = ISR2_bilateral_recipient }
+		GER = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_financing_ger_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		set_variable = { ISR2_b_financing_ger_unallocated = ISR2_b_financing_ger_setup_partner }
+		GER = {
+			set_temp_variable = { int_investment_change = ISR.ISR2_b_financing_ger_setup_partner }
+			modify_international_investment_effect = yes
+		}
+		ISR2_private_recalculate = yes
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_financing_ger_decline = yes }
+}
+ISR2_b_financing_ger_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_financing_ger_signed }
+		clr_country_flag = ISR2_b_financing_ger_signed
+		set_variable = { ISR2_b_financing_ger_days = 0 }
+		if = {
+			limit = {
+				check_variable = { ISR2_b_financing_ger_unallocated > 0 }
+			}
+			set_country_flag = ISR2_b_financing_ger_refund_due
+			ISR2_b_financing_ger_return_unused = yes
+		}
+		set_country_flag = ISR2_b_financing_ger_reopen
+	}
+}
+ISR2_b_financing_rom_preview = {
+	effect_tooltip = {
+		ISR = {
+			if = {
+				limit = {
+					OR = { has_country_flag = ISR2_b_financing_rom_pending has_country_flag = ISR2_b_financing_rom_signed }
+				}
+				set_temp_variable = { ISR2_b_financing_rom_pv_partner_gdp = ISR2_b_financing_rom_partner_gdp }
+				set_temp_variable = { ISR2_b_financing_rom_pv_setup_partner = ISR2_b_financing_rom_setup_partner }
+				set_temp_variable = { ISR2_b_financing_rom_pv_setup_isr = ISR2_b_financing_rom_setup_isr }
+				set_temp_variable = { ISR2_b_financing_rom_pv_weekly_partner = ISR2_b_financing_rom_weekly_partner }
+				set_temp_variable = { ISR2_b_financing_rom_pv_weekly_isr = ISR2_b_financing_rom_weekly_isr }
+				set_temp_variable = { ISR2_b_financing_rom_pv_gdp = ISR2_b_financing_rom_gdp }
+			}
+			else = {
+				set_temp_variable = { ISR2_b_financing_rom_pv_gdp = gdp_total }
+				set_temp_variable = { ISR2_b_financing_rom_pv_partner_gdp = ROM.gdp_total }
+				set_temp_variable = { ISR2_b_financing_rom_pv_setup_isr = 0 }
+				set_temp_variable = { ISR2_b_financing_rom_pv_setup_partner = 0 }
+				set_temp_variable = { ISR2_b_financing_rom_pv_weekly_isr = 0 }
+				set_temp_variable = { ISR2_b_financing_rom_pv_weekly_partner = 0 }
+				set_temp_variable = {
+					ISR2_b_financing_rom_pv_setup_isr = { value = ISR2_b_financing_rom_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_rom_pv_setup_partner = { value = ISR2_b_financing_rom_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_rom_pv_weekly_isr = { value = ISR2_b_financing_rom_pv_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_rom_pv_weekly_partner = { value = ISR2_b_financing_rom_pv_partner_gdp multiply = 0 }
+				}
+				set_temp_variable = {
+					ISR2_b_financing_rom_pv_setup_partner = { value = ISR2_b_financing_rom_pv_gdp multiply = 0.02 }
+				}
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_financing_rom_pv_setup_partner }
+			set_temp_variable = {
+				ISR2_bilateral_preview_principal = { value = ISR2_b_financing_rom_pv_setup_partner divide = 104 }
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_interest = { value = ISR2_bilateral_preview_principal multiply = 0.08 }
+			}
+			set_temp_variable = { ISR2_bilateral_preview_amount = ISR2_b_financing_rom_pv_setup_partner }
+			custom_effect_tooltip = ISR2_bilateral_capital_tt
+		}
+		ROM = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_financing_rom_pv_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+			set_temp_variable = { int_investment_change = ISR.ISR2_b_financing_rom_pv_setup_partner }
+			modify_international_investment_effect = yes
+			set_temp_variable = {
+				ISR2_bilateral_preview_roi = {
+					value = 0.04
+					add = modifier@return_on_investment_modifier
+					clamp = { min = 0 max = global.roi_rate_cap }
+				}
+			}
+			set_temp_variable = {
+				ISR2_bilateral_preview_return = {
+					value = ISR.ISR2_b_financing_rom_pv_setup_partner
+					multiply = ISR2_bilateral_preview_roi
+					multiply = 0.019
+				}
+			}
+			custom_effect_tooltip = ISR2_bilateral_investment_roi_tt
+			custom_effect_tooltip = ISR2_bilateral_finance_return_tt
+		}
+	}
+}
+ISR2_b_financing_rom_offer = {
+	if = {
+		limit = { ISR2_b_financing_rom_can_offer = yes }
+		set_variable = { ISR2_b_financing_rom_gdp = gdp_total }
+		set_variable = { ISR2_b_financing_rom_partner_gdp = ROM.gdp_total }
+		set_variable = { ISR2_b_financing_rom_setup_isr = 0 }
+		set_variable = { ISR2_b_financing_rom_setup_partner = 0 }
+		set_variable = { ISR2_b_financing_rom_weekly_isr = 0 }
+		set_variable = { ISR2_b_financing_rom_weekly_partner = 0 }
+		set_variable = {
+			ISR2_b_financing_rom_setup_isr = { value = ISR2_b_financing_rom_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_rom_setup_partner = { value = ISR2_b_financing_rom_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_rom_weekly_isr = { value = ISR2_b_financing_rom_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_rom_weekly_partner = { value = ISR2_b_financing_rom_partner_gdp multiply = 0 }
+		}
+		set_variable = {
+			ISR2_b_financing_rom_setup_partner = { value = ISR2_b_financing_rom_gdp multiply = 0.02 }
+		}
+		set_country_flag = ISR2_b_financing_rom_pending
+		set_variable = { ISR2_b_financing_rom_pending_days = 30 }
+		ROM = {
+			set_country_flag = ISR2_b_financing_rom_pending
+			country_event = { id = ISR2_bilateral.18 days = 1 }
+		}
+	}
+}
+ISR2_b_financing_rom_decline = {
+	if = {
+		limit = { has_country_flag = ISR2_b_financing_rom_pending }
+		clr_country_flag = ISR2_b_financing_rom_pending
+		set_variable = { ISR2_b_financing_rom_pending_days = 0 }
+		ROM = { clr_country_flag = ISR2_b_financing_rom_pending }
+		set_country_flag = { flag = ISR2_b_financing_rom_cooldown value = 1 days = 14 }
+		set_country_flag = ISR2_b_financing_rom_reopen
+	}
+}
+ISR2_b_financing_rom_accept = {
+	if = {
+		limit = { ISR2_b_financing_rom_accept_valid = yes }
+		clr_country_flag = ISR2_b_financing_rom_pending
+		set_variable = { ISR2_b_financing_rom_pending_days = 0 }
+		ROM = { clr_country_flag = ISR2_b_financing_rom_pending }
+		set_country_flag = ISR2_b_financing_rom_signed
+		set_variable = { ISR2_b_financing_rom_days = 364 }
+		set_variable = { ISR2_b_financing_rom_paid_days = 0 }
+		clr_country_flag = ISR2_b_financing_rom_reopen
+		ROM = { set_country_flag = ISR2_bilateral_recipient }
+		ROM = {
+			set_temp_variable = {
+				treasury_change = { value = ISR.ISR2_b_financing_rom_setup_partner multiply = -1 }
+			}
+			modify_treasury_effect = yes
+		}
+		set_variable = { ISR2_b_financing_rom_unallocated = ISR2_b_financing_rom_setup_partner }
+		ROM = {
+			set_temp_variable = { int_investment_change = ISR.ISR2_b_financing_rom_setup_partner }
+			modify_international_investment_effect = yes
+		}
+		ISR2_private_recalculate = yes
+		ISR2_bilateral_reconcile = yes
+	}
+	else = { ISR2_b_financing_rom_decline = yes }
+}
+ISR2_b_financing_rom_end = {
+	if = {
+		limit = { has_country_flag = ISR2_b_financing_rom_signed }
+		clr_country_flag = ISR2_b_financing_rom_signed
+		set_variable = { ISR2_b_financing_rom_days = 0 }
+		if = {
+			limit = {
+				check_variable = { ISR2_b_financing_rom_unallocated > 0 }
+			}
+			set_country_flag = ISR2_b_financing_rom_refund_due
+			ISR2_b_financing_rom_return_unused = yes
+		}
+		set_country_flag = ISR2_b_financing_rom_reopen
+	}
+}
+ISR2_bilateral_reconcile = {
+	set_variable = { ISR2_bilateral_weekly_income = 0 }
+	set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	clr_country_flag = ISR2_pal_service_relief_active
+	ETH = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	UGA = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	KEN = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	USA = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	ROM = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	EGY = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	PER = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	PAL = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	SOV = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	JOR = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	DRC = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	TUR = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	GER = {
+		set_variable = { ISR2_bilateral_weekly_income = 0 }
+		set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_irrigation_exports_signed
+			ISR2_b_irrigation_exports_pair_clear = yes
+			check_variable = { ISR2_b_irrigation_exports_days > 0 }
+		}
+		set_country_flag = ISR2_b_irrigation_exports_active
+		ETH = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_irrigation_exports_partner_idea }
+				}
+				add_ideas = ISR2_b_irrigation_exports_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_irrigation_exports_weekly_isr }
+		ETH = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_irrigation_exports_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_irrigation_exports_active
+		ETH = { remove_ideas = ISR2_b_irrigation_exports_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_arms_exports_signed
+			ISR2_b_arms_exports_pair_clear = yes
+			check_variable = { ISR2_b_arms_exports_days > 0 }
+		}
+		set_country_flag = ISR2_b_arms_exports_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_arms_exports_isr_idea }
+			}
+			add_ideas = ISR2_b_arms_exports_isr_idea
+		}
+	}
+	else = { clr_country_flag = ISR2_b_arms_exports_active remove_ideas = ISR2_b_arms_exports_isr_idea }
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_mashav_signed
+			ISR2_b_mashav_pair_clear = yes
+			check_variable = { ISR2_b_mashav_days > 0 }
+		}
+		set_country_flag = ISR2_b_mashav_active
+		KEN = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_mashav_partner_idea }
+				}
+				add_ideas = ISR2_b_mashav_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_mashav_weekly_isr }
+		KEN = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_mashav_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_mashav_active
+		KEN = { remove_ideas = ISR2_b_mashav_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_washington_signed
+			ISR2_b_washington_pair_clear = yes
+			check_variable = { ISR2_b_washington_days > 0 }
+		}
+		set_country_flag = ISR2_b_washington_active
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_washington_weekly_isr }
+		USA = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_washington_weekly_partner }
+		}
+	}
+	else = { clr_country_flag = ISR2_b_washington_active }
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_european_orders_signed
+			ISR2_b_european_orders_pair_clear = yes
+			check_variable = { ISR2_b_european_orders_days > 0 }
+		}
+		set_country_flag = ISR2_b_european_orders_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_european_orders_isr_idea }
+			}
+			add_ideas = ISR2_b_european_orders_isr_idea
+		}
+		ROM = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_european_orders_partner_idea }
+				}
+				add_ideas = ISR2_b_european_orders_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_european_orders_weekly_isr }
+		ROM = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_european_orders_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_european_orders_active
+		remove_ideas = ISR2_b_european_orders_isr_idea
+		ROM = { remove_ideas = ISR2_b_european_orders_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_jarring_channel_signed
+			ISR2_b_jarring_channel_pair_clear = yes
+			check_variable = { ISR2_b_jarring_channel_days > 0 }
+		}
+		set_country_flag = ISR2_b_jarring_channel_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_jarring_channel_isr_idea }
+			}
+			add_ideas = ISR2_b_jarring_channel_isr_idea
+		}
+		EGY = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_jarring_channel_partner_idea }
+				}
+				add_ideas = ISR2_b_jarring_channel_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_jarring_channel_weekly_isr }
+		EGY = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_jarring_channel_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_jarring_channel_active
+		remove_ideas = ISR2_b_jarring_channel_isr_idea
+		EGY = { remove_ideas = ISR2_b_jarring_channel_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_liaison_limits_signed
+			ISR2_b_liaison_limits_pair_clear = yes
+			check_variable = { ISR2_b_liaison_limits_days > 0 }
+		}
+		set_country_flag = ISR2_b_liaison_limits_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_liaison_limits_isr_idea }
+			}
+			add_ideas = ISR2_b_liaison_limits_isr_idea
+		}
+		PER = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_liaison_limits_partner_idea }
+				}
+				add_ideas = ISR2_b_liaison_limits_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_liaison_limits_weekly_isr }
+		PER = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_liaison_limits_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_liaison_limits_active
+		remove_ideas = ISR2_b_liaison_limits_isr_idea
+		PER = { remove_ideas = ISR2_b_liaison_limits_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_negotiated_terms_signed
+			ISR2_b_negotiated_terms_pair_clear = yes
+			check_variable = { ISR2_b_negotiated_terms_days > 0 }
+			OR = {
+				AND = {
+					check_variable = { ISR2_b_negotiated_terms_relief_state = 208 }
+					check_variable = { ISR2_territories_pressure_208 > 0 }
+				}
+				AND = {
+					check_variable = { ISR2_b_negotiated_terms_relief_state = 209 }
+					check_variable = { ISR2_territories_pressure_209 > 0 }
+				}
+			}
+		}
+		set_country_flag = ISR2_b_negotiated_terms_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_negotiated_terms_isr_idea }
+			}
+			add_ideas = ISR2_b_negotiated_terms_isr_idea
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_negotiated_terms_weekly_isr }
+		PAL = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_negotiated_terms_weekly_partner }
+		}
+		set_country_flag = ISR2_pal_service_relief_active
+		set_variable = { ISR2_pal_service_relief_state = ISR2_b_negotiated_terms_relief_state }
+		PAL = {
+			add_to_variable = { ISR2_bilateral_weekly_income = ISR.ISR2_b_negotiated_terms_weekly_isr }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_negotiated_terms_active
+		remove_ideas = ISR2_b_negotiated_terms_isr_idea
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_eastern_credit_signed
+			ISR2_b_eastern_credit_pair_clear = yes
+			check_variable = { ISR2_bilateral_loan_outstanding > 0 }
+		}
+		set_country_flag = ISR2_b_eastern_credit_active
+	}
+	else = { clr_country_flag = ISR2_b_eastern_credit_active }
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_labor_jordanian_option_signed
+			ISR2_b_labor_jordanian_option_pair_clear = yes
+			check_variable = { ISR2_b_labor_jordanian_option_days > 0 }
+		}
+		set_country_flag = ISR2_b_labor_jordanian_option_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_labor_jordanian_option_isr_idea }
+			}
+			add_ideas = ISR2_b_labor_jordanian_option_isr_idea
+		}
+		JOR = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_labor_jordanian_option_partner_idea }
+				}
+				add_ideas = ISR2_b_labor_jordanian_option_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_labor_jordanian_option_weekly_isr }
+		JOR = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_labor_jordanian_option_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_labor_jordanian_option_active
+		remove_ideas = ISR2_b_labor_jordanian_option_isr_idea
+		JOR = { remove_ideas = ISR2_b_labor_jordanian_option_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_gahal_local_autonomy_signed
+			ISR2_b_gahal_local_autonomy_pair_clear = yes
+			check_variable = { ISR2_b_gahal_local_autonomy_days > 0 }
+		}
+		set_country_flag = ISR2_b_gahal_local_autonomy_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_gahal_local_autonomy_isr_idea }
+			}
+			add_ideas = ISR2_b_gahal_local_autonomy_isr_idea
+		}
+		PAL = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_gahal_local_autonomy_partner_idea }
+				}
+				add_ideas = ISR2_b_gahal_local_autonomy_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_gahal_local_autonomy_weekly_isr }
+		PAL = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_gahal_local_autonomy_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_gahal_local_autonomy_active
+		remove_ideas = ISR2_b_gahal_local_autonomy_isr_idea
+		PAL = { remove_ideas = ISR2_b_gahal_local_autonomy_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_haolam_joint_services_signed
+			ISR2_b_haolam_joint_services_pair_clear = yes
+			check_variable = { ISR2_b_haolam_joint_services_days > 0 }
+		}
+		set_country_flag = ISR2_b_haolam_joint_services_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_haolam_joint_services_isr_idea }
+			}
+			add_ideas = ISR2_b_haolam_joint_services_isr_idea
+		}
+		PAL = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_haolam_joint_services_partner_idea }
+				}
+				add_ideas = ISR2_b_haolam_joint_services_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_haolam_joint_services_weekly_isr }
+		PAL = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_haolam_joint_services_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_haolam_joint_services_active
+		remove_ideas = ISR2_b_haolam_joint_services_isr_idea
+		PAL = { remove_ideas = ISR2_b_haolam_joint_services_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_mashav_ethiopia_signed
+			ISR2_b_mashav_ethiopia_pair_clear = yes
+			check_variable = { ISR2_b_mashav_ethiopia_days > 0 }
+		}
+		set_country_flag = ISR2_b_mashav_ethiopia_active
+		ETH = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_mashav_ethiopia_partner_idea }
+				}
+				add_ideas = ISR2_b_mashav_ethiopia_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_mashav_ethiopia_weekly_isr }
+		ETH = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_mashav_ethiopia_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_mashav_ethiopia_active
+		ETH = { remove_ideas = ISR2_b_mashav_ethiopia_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_arms_congo_signed
+			ISR2_b_arms_congo_pair_clear = yes
+			check_variable = { ISR2_b_arms_congo_days > 0 }
+		}
+		set_country_flag = ISR2_b_arms_congo_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_arms_congo_isr_idea }
+			}
+			add_ideas = ISR2_b_arms_congo_isr_idea
+		}
+	}
+	else = { clr_country_flag = ISR2_b_arms_congo_active remove_ideas = ISR2_b_arms_congo_isr_idea }
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_liaison_turkey_signed
+			ISR2_b_liaison_turkey_pair_clear = yes
+			check_variable = { ISR2_b_liaison_turkey_days > 0 }
+		}
+		set_country_flag = ISR2_b_liaison_turkey_active
+		if = {
+			limit = {
+				NOT = { has_idea = ISR2_b_liaison_turkey_isr_idea }
+			}
+			add_ideas = ISR2_b_liaison_turkey_isr_idea
+		}
+		TUR = {
+			if = {
+				limit = {
+					NOT = { has_idea = ISR2_b_liaison_turkey_partner_idea }
+				}
+				add_ideas = ISR2_b_liaison_turkey_partner_idea
+			}
+		}
+		add_to_variable = { ISR2_bilateral_weekly_expense = ISR2_b_liaison_turkey_weekly_isr }
+		TUR = {
+			add_to_variable = { ISR2_bilateral_weekly_expense = ISR.ISR2_b_liaison_turkey_weekly_partner }
+		}
+	}
+	else = {
+		clr_country_flag = ISR2_b_liaison_turkey_active
+		remove_ideas = ISR2_b_liaison_turkey_isr_idea
+		TUR = { remove_ideas = ISR2_b_liaison_turkey_partner_idea }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_usa_signed
+			ISR2_b_financing_usa_pair_clear = yes
+			check_variable = { ISR2_b_financing_usa_days > 0 }
+		}
+		set_country_flag = ISR2_b_financing_usa_active
+	}
+	else = { clr_country_flag = ISR2_b_financing_usa_active }
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_ger_signed
+			ISR2_b_financing_ger_pair_clear = yes
+			check_variable = { ISR2_b_financing_ger_days > 0 }
+		}
+		set_country_flag = ISR2_b_financing_ger_active
+	}
+	else = { clr_country_flag = ISR2_b_financing_ger_active }
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_rom_signed
+			ISR2_b_financing_rom_pair_clear = yes
+			check_variable = { ISR2_b_financing_rom_days > 0 }
+		}
+		set_country_flag = ISR2_b_financing_rom_active
+	}
+	else = { clr_country_flag = ISR2_b_financing_rom_active }
+	ISR2_private_recalculate = yes
+}
+ISR2_bilateral_daily = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			NOT = { has_country_flag = ISR2_bilateral_day_processed }
+		}
+		set_country_flag = { flag = ISR2_bilateral_day_processed value = 1 days = 1 }
+		ISR2_bilateral_init = yes
+		ISR2_private_claim_settle = yes
+		if = {
+			limit = { has_country_flag = ISR2_b_irrigation_exports_pending }
+			subtract_from_variable = { ISR2_b_irrigation_exports_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_irrigation_exports_pending_days < 1 }
+				}
+				ISR2_b_irrigation_exports_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_irrigation_exports_reopen
+				NOT = { has_country_flag = ISR2_b_irrigation_exports_cooldown }
+				NOT = { has_country_flag = ISR2_b_irrigation_exports_signed }
+				NOT = { has_country_flag = ISR2_b_irrigation_exports_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_irrigation_exports
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_irrigation_exports_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_irrigation_exports_signed }
+			subtract_from_variable = { ISR2_b_irrigation_exports_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_irrigation_exports_days < 1 }
+				}
+				ISR2_b_irrigation_exports_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_arms_exports_pending }
+			subtract_from_variable = { ISR2_b_arms_exports_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_arms_exports_pending_days < 1 }
+				}
+				ISR2_b_arms_exports_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_arms_exports_reopen
+				NOT = { has_country_flag = ISR2_b_arms_exports_cooldown }
+				NOT = { has_country_flag = ISR2_b_arms_exports_signed }
+				NOT = { has_country_flag = ISR2_b_arms_exports_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_arms_exports
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_arms_exports_reopen
+		}
+		ISR2_b_arms_exports_return_invoice = yes
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_arms_exports_signed
+				ISR2_b_arms_exports_pair_clear = yes
+				has_equipment = { infantry_weapons_type > 999 }
+			}
+			send_equipment = { type = infantry_weapons_type amount = 1000 target = UGA }
+			army_experience = 5
+			UGA = { army_experience = 10 }
+			set_country_flag = ISR2_b_arms_exports_delivered
+			set_country_flag = { flag = ISR2_b_arms_exports_cooldown value = 1 days = 364 }
+			ISR2_b_arms_exports_end = yes
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_arms_exports_signed }
+			subtract_from_variable = { ISR2_b_arms_exports_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_arms_exports_days < 1 }
+				}
+				ISR2_b_arms_exports_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_mashav_pending }
+			subtract_from_variable = { ISR2_b_mashav_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_mashav_pending_days < 1 }
+				}
+				ISR2_b_mashav_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_mashav_reopen
+				NOT = { has_country_flag = ISR2_b_mashav_cooldown }
+				NOT = { has_country_flag = ISR2_b_mashav_signed }
+				NOT = { has_country_flag = ISR2_b_mashav_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_mashav
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_mashav_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_mashav_signed }
+			subtract_from_variable = { ISR2_b_mashav_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_mashav_days < 1 }
+				}
+				ISR2_b_mashav_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_washington_pending }
+			subtract_from_variable = { ISR2_b_washington_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_washington_pending_days < 1 }
+				}
+				ISR2_b_washington_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_washington_reopen
+				NOT = { has_country_flag = ISR2_b_washington_cooldown }
+				NOT = { has_country_flag = ISR2_b_washington_signed }
+				NOT = { has_country_flag = ISR2_b_washington_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_washington
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_washington_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_washington_signed }
+			subtract_from_variable = { ISR2_b_washington_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_washington_days < 1 }
+				}
+				ISR2_b_washington_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_european_orders_pending }
+			subtract_from_variable = { ISR2_b_european_orders_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_european_orders_pending_days < 1 }
+				}
+				ISR2_b_european_orders_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_european_orders_reopen
+				NOT = { has_country_flag = ISR2_b_european_orders_cooldown }
+				NOT = { has_country_flag = ISR2_b_european_orders_signed }
+				NOT = { has_country_flag = ISR2_b_european_orders_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_european_orders
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_european_orders_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_european_orders_signed }
+			subtract_from_variable = { ISR2_b_european_orders_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_european_orders_days < 1 }
+				}
+				ISR2_b_european_orders_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_jarring_channel_pending }
+			subtract_from_variable = { ISR2_b_jarring_channel_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_jarring_channel_pending_days < 1 }
+				}
+				ISR2_b_jarring_channel_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_jarring_channel_reopen
+				NOT = { has_country_flag = ISR2_b_jarring_channel_cooldown }
+				NOT = { has_country_flag = ISR2_b_jarring_channel_signed }
+				NOT = { has_country_flag = ISR2_b_jarring_channel_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_jarring_channel
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_jarring_channel_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_jarring_channel_signed }
+			subtract_from_variable = { ISR2_b_jarring_channel_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_jarring_channel_days < 1 }
+				}
+				ISR2_b_jarring_channel_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_liaison_limits_pending }
+			subtract_from_variable = { ISR2_b_liaison_limits_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_liaison_limits_pending_days < 1 }
+				}
+				ISR2_b_liaison_limits_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_liaison_limits_reopen
+				NOT = { has_country_flag = ISR2_b_liaison_limits_cooldown }
+				NOT = { has_country_flag = ISR2_b_liaison_limits_signed }
+				NOT = { has_country_flag = ISR2_b_liaison_limits_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_liaison_limits
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_liaison_limits_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_liaison_limits_signed }
+			subtract_from_variable = { ISR2_b_liaison_limits_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_liaison_limits_days < 1 }
+				}
+				ISR2_b_liaison_limits_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_negotiated_terms_pending }
+			subtract_from_variable = { ISR2_b_negotiated_terms_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_negotiated_terms_pending_days < 1 }
+				}
+				ISR2_b_negotiated_terms_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_negotiated_terms_reopen
+				NOT = { has_country_flag = ISR2_b_negotiated_terms_cooldown }
+				NOT = { has_country_flag = ISR2_b_negotiated_terms_signed }
+				NOT = { has_country_flag = ISR2_b_negotiated_terms_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_negotiated_terms
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_negotiated_terms_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_negotiated_terms_signed }
+			subtract_from_variable = { ISR2_b_negotiated_terms_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_negotiated_terms_days < 1 }
+				}
+				ISR2_b_negotiated_terms_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_eastern_credit_pending }
+			subtract_from_variable = { ISR2_b_eastern_credit_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_eastern_credit_pending_days < 1 }
+				}
+				ISR2_b_eastern_credit_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_eastern_credit_reopen
+				NOT = { has_country_flag = ISR2_b_eastern_credit_cooldown }
+				NOT = { has_country_flag = ISR2_b_eastern_credit_signed }
+				NOT = { has_country_flag = ISR2_b_eastern_credit_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_eastern_credit
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_eastern_credit_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_eastern_credit_signed }
+			ISR2_bilateral_loan_tick = yes
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_labor_jordanian_option_pending }
+			subtract_from_variable = { ISR2_b_labor_jordanian_option_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_labor_jordanian_option_pending_days < 1 }
+				}
+				ISR2_b_labor_jordanian_option_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_labor_jordanian_option_reopen
+				NOT = { has_country_flag = ISR2_b_labor_jordanian_option_cooldown }
+				NOT = { has_country_flag = ISR2_b_labor_jordanian_option_signed }
+				NOT = { has_country_flag = ISR2_b_labor_jordanian_option_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_labor_jordanian_option
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_labor_jordanian_option_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_labor_jordanian_option_signed }
+			subtract_from_variable = { ISR2_b_labor_jordanian_option_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_labor_jordanian_option_days < 1 }
+				}
+				ISR2_b_labor_jordanian_option_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_gahal_local_autonomy_pending }
+			subtract_from_variable = { ISR2_b_gahal_local_autonomy_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_gahal_local_autonomy_pending_days < 1 }
+				}
+				ISR2_b_gahal_local_autonomy_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_gahal_local_autonomy_reopen
+				NOT = { has_country_flag = ISR2_b_gahal_local_autonomy_cooldown }
+				NOT = { has_country_flag = ISR2_b_gahal_local_autonomy_signed }
+				NOT = { has_country_flag = ISR2_b_gahal_local_autonomy_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_gahal_local_autonomy
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_gahal_local_autonomy_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_gahal_local_autonomy_signed }
+			subtract_from_variable = { ISR2_b_gahal_local_autonomy_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_gahal_local_autonomy_days < 1 }
+				}
+				ISR2_b_gahal_local_autonomy_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_haolam_joint_services_pending }
+			subtract_from_variable = { ISR2_b_haolam_joint_services_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_haolam_joint_services_pending_days < 1 }
+				}
+				ISR2_b_haolam_joint_services_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_haolam_joint_services_reopen
+				NOT = { has_country_flag = ISR2_b_haolam_joint_services_cooldown }
+				NOT = { has_country_flag = ISR2_b_haolam_joint_services_signed }
+				NOT = { has_country_flag = ISR2_b_haolam_joint_services_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_haolam_joint_services
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_haolam_joint_services_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_haolam_joint_services_signed }
+			subtract_from_variable = { ISR2_b_haolam_joint_services_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_haolam_joint_services_days < 1 }
+				}
+				ISR2_b_haolam_joint_services_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_mashav_ethiopia_pending }
+			subtract_from_variable = { ISR2_b_mashav_ethiopia_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_mashav_ethiopia_pending_days < 1 }
+				}
+				ISR2_b_mashav_ethiopia_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_mashav_ethiopia_reopen
+				NOT = { has_country_flag = ISR2_b_mashav_ethiopia_cooldown }
+				NOT = { has_country_flag = ISR2_b_mashav_ethiopia_signed }
+				NOT = { has_country_flag = ISR2_b_mashav_ethiopia_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_mashav_ethiopia
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_mashav_ethiopia_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_mashav_ethiopia_signed }
+			subtract_from_variable = { ISR2_b_mashav_ethiopia_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_mashav_ethiopia_days < 1 }
+				}
+				ISR2_b_mashav_ethiopia_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_arms_congo_pending }
+			subtract_from_variable = { ISR2_b_arms_congo_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_arms_congo_pending_days < 1 }
+				}
+				ISR2_b_arms_congo_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_arms_congo_reopen
+				NOT = { has_country_flag = ISR2_b_arms_congo_cooldown }
+				NOT = { has_country_flag = ISR2_b_arms_congo_signed }
+				NOT = { has_country_flag = ISR2_b_arms_congo_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_arms_congo
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_arms_congo_reopen
+		}
+		ISR2_b_arms_congo_return_invoice = yes
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_arms_congo_signed
+				ISR2_b_arms_congo_pair_clear = yes
+				has_equipment = { infantry_weapons_type > 999 }
+			}
+			send_equipment = { type = infantry_weapons_type amount = 1000 target = DRC }
+			army_experience = 5
+			DRC = { army_experience = 10 }
+			set_country_flag = ISR2_b_arms_congo_delivered
+			set_country_flag = { flag = ISR2_b_arms_congo_cooldown value = 1 days = 364 }
+			ISR2_b_arms_congo_end = yes
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_arms_congo_signed }
+			subtract_from_variable = { ISR2_b_arms_congo_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_arms_congo_days < 1 }
+				}
+				ISR2_b_arms_congo_end = yes
+			}
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_liaison_turkey_pending }
+			subtract_from_variable = { ISR2_b_liaison_turkey_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_liaison_turkey_pending_days < 1 }
+				}
+				ISR2_b_liaison_turkey_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_liaison_turkey_reopen
+				NOT = { has_country_flag = ISR2_b_liaison_turkey_cooldown }
+				NOT = { has_country_flag = ISR2_b_liaison_turkey_signed }
+				NOT = { has_country_flag = ISR2_b_liaison_turkey_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_liaison_turkey
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_liaison_turkey_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_liaison_turkey_signed }
+			subtract_from_variable = { ISR2_b_liaison_turkey_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_liaison_turkey_days < 1 }
+				}
+				ISR2_b_liaison_turkey_end = yes
+			}
+		}
+		ISR2_b_financing_usa_return_unused = yes
+		if = {
+			limit = { has_country_flag = ISR2_b_financing_usa_pending }
+			subtract_from_variable = { ISR2_b_financing_usa_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_financing_usa_pending_days < 1 }
+				}
+				ISR2_b_financing_usa_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_usa_reopen
+				NOT = { has_country_flag = ISR2_b_financing_usa_cooldown }
+				NOT = { has_country_flag = ISR2_b_financing_usa_signed }
+				NOT = { has_country_flag = ISR2_b_financing_usa_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_financing_usa
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_financing_usa_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_financing_usa_signed }
+			subtract_from_variable = { ISR2_b_financing_usa_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_financing_usa_days < 1 }
+				}
+				ISR2_b_financing_usa_end = yes
+			}
+		}
+		ISR2_b_financing_ger_return_unused = yes
+		if = {
+			limit = { has_country_flag = ISR2_b_financing_ger_pending }
+			subtract_from_variable = { ISR2_b_financing_ger_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_financing_ger_pending_days < 1 }
+				}
+				ISR2_b_financing_ger_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_ger_reopen
+				NOT = { has_country_flag = ISR2_b_financing_ger_cooldown }
+				NOT = { has_country_flag = ISR2_b_financing_ger_signed }
+				NOT = { has_country_flag = ISR2_b_financing_ger_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_financing_ger
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_financing_ger_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_financing_ger_signed }
+			subtract_from_variable = { ISR2_b_financing_ger_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_financing_ger_days < 1 }
+				}
+				ISR2_b_financing_ger_end = yes
+			}
+		}
+		ISR2_b_financing_rom_return_unused = yes
+		if = {
+			limit = { has_country_flag = ISR2_b_financing_rom_pending }
+			subtract_from_variable = { ISR2_b_financing_rom_pending_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_financing_rom_pending_days < 1 }
+				}
+				ISR2_b_financing_rom_decline = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_rom_reopen
+				NOT = { has_country_flag = ISR2_b_financing_rom_cooldown }
+				NOT = { has_country_flag = ISR2_b_financing_rom_signed }
+				NOT = { has_country_flag = ISR2_b_financing_rom_pending }
+			}
+			uncomplete_national_focus = {
+				focus = ISR2_financing_rom
+				uncomplete_children = no
+				refund_political_power = no
+			}
+			clr_country_flag = ISR2_b_financing_rom_reopen
+		}
+		if = {
+			limit = { has_country_flag = ISR2_b_financing_rom_signed }
+			subtract_from_variable = { ISR2_b_financing_rom_days = 1 }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_financing_rom_days < 1 }
+				}
+				ISR2_b_financing_rom_end = yes
+			}
+		}
+		ISR2_bilateral_reconcile = yes
+	}
+}
+ISR2_b_financing_usa_return_unused = {
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_usa_refund_due
+			country_exists = USA
+			USA = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+		}
+		USA = {
+			set_temp_variable = { treasury_change = ISR.ISR2_b_financing_usa_unallocated }
+			modify_treasury_effect = yes
+			set_temp_variable = {
+				int_investment_change = { value = ISR.ISR2_b_financing_usa_unallocated multiply = -1 }
+			}
+			modify_international_investment_effect = yes
+			clamp_variable = { var = int_investments min = 0 }
+		}
+		set_variable = { ISR2_b_financing_usa_unallocated = 0 }
+		clr_country_flag = ISR2_b_financing_usa_refund_due
+		ISR2_private_recalculate = yes
+	}
+}
+ISR2_b_financing_ger_return_unused = {
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_ger_refund_due
+			country_exists = GER
+			GER = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+		}
+		GER = {
+			set_temp_variable = { treasury_change = ISR.ISR2_b_financing_ger_unallocated }
+			modify_treasury_effect = yes
+			set_temp_variable = {
+				int_investment_change = { value = ISR.ISR2_b_financing_ger_unallocated multiply = -1 }
+			}
+			modify_international_investment_effect = yes
+			clamp_variable = { var = int_investments min = 0 }
+		}
+		set_variable = { ISR2_b_financing_ger_unallocated = 0 }
+		clr_country_flag = ISR2_b_financing_ger_refund_due
+		ISR2_private_recalculate = yes
+	}
+}
+ISR2_b_financing_rom_return_unused = {
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_rom_refund_due
+			country_exists = ROM
+			ROM = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+		}
+		ROM = {
+			set_temp_variable = { treasury_change = ISR.ISR2_b_financing_rom_unallocated }
+			modify_treasury_effect = yes
+			set_temp_variable = {
+				int_investment_change = { value = ISR.ISR2_b_financing_rom_unallocated multiply = -1 }
+			}
+			modify_international_investment_effect = yes
+			clamp_variable = { var = int_investments min = 0 }
+		}
+		set_variable = { ISR2_b_financing_rom_unallocated = 0 }
+		clr_country_flag = ISR2_b_financing_rom_refund_due
+		ISR2_private_recalculate = yes
+	}
+}
+ISR2_private_recalculate = {
+	set_variable = { ISR2_private_available = 0 }
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_usa_signed
+			ISR2_b_financing_usa_pair_clear = yes
+			check_variable = { ISR2_b_financing_usa_days > 0 }
+		}
+		add_to_variable = { ISR2_private_available = ISR2_b_financing_usa_unallocated }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_ger_signed
+			ISR2_b_financing_ger_pair_clear = yes
+			check_variable = { ISR2_b_financing_ger_days > 0 }
+		}
+		add_to_variable = { ISR2_private_available = ISR2_b_financing_ger_unallocated }
+	}
+	if = {
+		limit = {
+			has_country_flag = ISR2_b_financing_rom_signed
+			ISR2_b_financing_rom_pair_clear = yes
+			check_variable = { ISR2_b_financing_rom_days > 0 }
+		}
+		add_to_variable = { ISR2_private_available = ISR2_b_financing_rom_unallocated }
+	}
+}
+ISR2_private_commit = {
+	set_variable = { ISR2_private_paid = 0 }
+	set_variable = { ISR2_private_paid_USA = 0 }
+	set_variable = { ISR2_private_paid_GER = 0 }
+	set_variable = { ISR2_private_paid_ROM = 0 }
+	ISR2_private_recalculate = yes
+	if = {
+		limit = { ISR2_private_ready = yes }
+		set_variable = { ISR2_private_oldest_days = 99999 }
+		set_variable = { ISR2_private_oldest_index = 0 }
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_usa_signed
+				ISR2_b_financing_usa_pair_clear = yes
+				check_variable = { ISR2_b_financing_usa_days > 0 }
+				check_variable = { ISR2_b_financing_usa_unallocated > 0 }
+				check_variable = { ISR2_b_financing_usa_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_usa_days }
+			set_variable = { ISR2_private_oldest_index = 1 }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_ger_signed
+				ISR2_b_financing_ger_pair_clear = yes
+				check_variable = { ISR2_b_financing_ger_days > 0 }
+				check_variable = { ISR2_b_financing_ger_unallocated > 0 }
+				check_variable = { ISR2_b_financing_ger_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_ger_days }
+			set_variable = { ISR2_private_oldest_index = 2 }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_rom_signed
+				ISR2_b_financing_rom_pair_clear = yes
+				check_variable = { ISR2_b_financing_rom_days > 0 }
+				check_variable = { ISR2_b_financing_rom_unallocated > 0 }
+				check_variable = { ISR2_b_financing_rom_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_rom_days }
+			set_variable = { ISR2_private_oldest_index = 3 }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 1 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_usa_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_usa_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_usa_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_USA = ISR2_private_take }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 2 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_ger_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_ger_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_ger_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_GER = ISR2_private_take }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 3 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_rom_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_rom_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_rom_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_ROM = ISR2_private_take }
+		}
+		set_variable = { ISR2_private_oldest_days = 99999 }
+		set_variable = { ISR2_private_oldest_index = 0 }
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_usa_signed
+				ISR2_b_financing_usa_pair_clear = yes
+				check_variable = { ISR2_b_financing_usa_days > 0 }
+				check_variable = { ISR2_b_financing_usa_unallocated > 0 }
+				check_variable = { ISR2_b_financing_usa_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_usa_days }
+			set_variable = { ISR2_private_oldest_index = 1 }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_ger_signed
+				ISR2_b_financing_ger_pair_clear = yes
+				check_variable = { ISR2_b_financing_ger_days > 0 }
+				check_variable = { ISR2_b_financing_ger_unallocated > 0 }
+				check_variable = { ISR2_b_financing_ger_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_ger_days }
+			set_variable = { ISR2_private_oldest_index = 2 }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_rom_signed
+				ISR2_b_financing_rom_pair_clear = yes
+				check_variable = { ISR2_b_financing_rom_days > 0 }
+				check_variable = { ISR2_b_financing_rom_unallocated > 0 }
+				check_variable = { ISR2_b_financing_rom_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_rom_days }
+			set_variable = { ISR2_private_oldest_index = 3 }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 1 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_usa_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_usa_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_usa_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_USA = ISR2_private_take }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 2 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_ger_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_ger_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_ger_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_GER = ISR2_private_take }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 3 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_rom_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_rom_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_rom_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_ROM = ISR2_private_take }
+		}
+		set_variable = { ISR2_private_oldest_days = 99999 }
+		set_variable = { ISR2_private_oldest_index = 0 }
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_usa_signed
+				ISR2_b_financing_usa_pair_clear = yes
+				check_variable = { ISR2_b_financing_usa_days > 0 }
+				check_variable = { ISR2_b_financing_usa_unallocated > 0 }
+				check_variable = { ISR2_b_financing_usa_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_usa_days }
+			set_variable = { ISR2_private_oldest_index = 1 }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_ger_signed
+				ISR2_b_financing_ger_pair_clear = yes
+				check_variable = { ISR2_b_financing_ger_days > 0 }
+				check_variable = { ISR2_b_financing_ger_unallocated > 0 }
+				check_variable = { ISR2_b_financing_ger_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_ger_days }
+			set_variable = { ISR2_private_oldest_index = 2 }
+		}
+		if = {
+			limit = {
+				has_country_flag = ISR2_b_financing_rom_signed
+				ISR2_b_financing_rom_pair_clear = yes
+				check_variable = { ISR2_b_financing_rom_days > 0 }
+				check_variable = { ISR2_b_financing_rom_unallocated > 0 }
+				check_variable = { ISR2_b_financing_rom_days < ISR2_private_oldest_days }
+			}
+			set_variable = { ISR2_private_oldest_days = ISR2_b_financing_rom_days }
+			set_variable = { ISR2_private_oldest_index = 3 }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 1 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_usa_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_usa_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_usa_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_USA = ISR2_private_take }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 2 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_ger_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_ger_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_ger_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_GER = ISR2_private_take }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_oldest_index = 3 }
+			}
+			set_variable = { ISR2_private_take = ISR2_private_required }
+			subtract_from_variable = { ISR2_private_take = ISR2_private_paid }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_take > ISR2_b_financing_rom_unallocated }
+				}
+				set_variable = { ISR2_private_take = ISR2_b_financing_rom_unallocated }
+			}
+			subtract_from_variable = { ISR2_b_financing_rom_unallocated = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid = ISR2_private_take }
+			add_to_variable = { ISR2_private_paid_ROM = ISR2_private_take }
+		}
+		ISR2_private_recalculate = yes
+	}
+}
+ISR2_private_claim_settle = {
+	if = {
+		limit = {
+			country_exists = USA
+			USA = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+			OR = {
+				check_variable = { ISR2_private_claim_due_USA > 0 }
+				check_variable = { ISR2_private_retire_due_USA > 0 }
+			}
+		}
+		USA = {
+			set_temp_variable = { treasury_change = ISR.ISR2_private_claim_due_USA }
+			modify_treasury_effect = yes
+			set_temp_variable = {
+				int_investment_change = { value = ISR.ISR2_private_retire_due_USA multiply = -1 }
+			}
+			modify_international_investment_effect = yes
+			clamp_variable = { var = int_investments min = 0 }
+		}
+		set_variable = { ISR2_private_claim_due_USA = 0 }
+		set_variable = { ISR2_private_retire_due_USA = 0 }
+	}
+	if = {
+		limit = {
+			country_exists = GER
+			GER = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+			OR = {
+				check_variable = { ISR2_private_claim_due_GER > 0 }
+				check_variable = { ISR2_private_retire_due_GER > 0 }
+			}
+		}
+		GER = {
+			set_temp_variable = { treasury_change = ISR.ISR2_private_claim_due_GER }
+			modify_treasury_effect = yes
+			set_temp_variable = {
+				int_investment_change = { value = ISR.ISR2_private_retire_due_GER multiply = -1 }
+			}
+			modify_international_investment_effect = yes
+			clamp_variable = { var = int_investments min = 0 }
+		}
+		set_variable = { ISR2_private_claim_due_GER = 0 }
+		set_variable = { ISR2_private_retire_due_GER = 0 }
+	}
+	if = {
+		limit = {
+			country_exists = ROM
+			ROM = {
+				NOT = { has_country_flag = MD_skip_treasury_cost }
+			}
+			OR = {
+				check_variable = { ISR2_private_claim_due_ROM > 0 }
+				check_variable = { ISR2_private_retire_due_ROM > 0 }
+			}
+		}
+		ROM = {
+			set_temp_variable = { treasury_change = ISR.ISR2_private_claim_due_ROM }
+			modify_treasury_effect = yes
+			set_temp_variable = {
+				int_investment_change = { value = ISR.ISR2_private_retire_due_ROM multiply = -1 }
+			}
+			modify_international_investment_effect = yes
+			clamp_variable = { var = int_investments min = 0 }
+		}
+		set_variable = { ISR2_private_claim_due_ROM = 0 }
+		set_variable = { ISR2_private_retire_due_ROM = 0 }
+	}
+}
+ISR2_private_claim_credit = {
+	set_variable = { ISR2_private_claim_registered_amount = 0 }
+	set_variable = { ISR2_private_claim_total_share = 0 }
+	add_to_variable = { ISR2_private_claim_total_share = ISR2_private_claim_share_USA }
+	add_to_variable = { ISR2_private_claim_total_share = ISR2_private_claim_share_GER }
+	add_to_variable = { ISR2_private_claim_total_share = ISR2_private_claim_share_ROM }
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			check_variable = { ISR2_private_claim_amount > 0 }
+			check_variable = { ISR2_private_claim_total_share > 0 }
+			check_variable = { var = ISR2_private_claim_share_USA value = 0 compare = greater_than_or_equals }
+			check_variable = { var = ISR2_private_claim_share_GER value = 0 compare = greater_than_or_equals }
+			check_variable = { var = ISR2_private_claim_share_ROM value = 0 compare = greater_than_or_equals }
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_claim_id = 1 }
+				NOT = { has_country_flag = ISR2_private_claim_registered_1 }
+			}
+			set_country_flag = ISR2_private_claim_registered_1
+			set_variable = { ISR2_private_claim_remainder = ISR2_private_claim_amount }
+			set_variable = { ISR2_private_claim_last_index = 0 }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_USA > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_GER > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 2 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_ROM > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 3 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_USA > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 1 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_USA
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_USA = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_USA = ISR2_private_claim_share_USA }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_GER > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 2 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_GER
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_GER = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_GER = ISR2_private_claim_share_GER }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_ROM > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 3 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_ROM
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_ROM = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_ROM = ISR2_private_claim_share_ROM }
+			}
+			set_variable = { ISR2_private_claim_registered_amount = ISR2_private_claim_amount }
+			ISR2_private_claim_settle = yes
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_claim_id = 2 }
+				NOT = { has_country_flag = ISR2_private_claim_registered_2 }
+			}
+			set_country_flag = ISR2_private_claim_registered_2
+			set_variable = { ISR2_private_claim_remainder = ISR2_private_claim_amount }
+			set_variable = { ISR2_private_claim_last_index = 0 }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_USA > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_GER > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 2 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_ROM > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 3 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_USA > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 1 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_USA
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_USA = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_USA = ISR2_private_claim_share_USA }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_GER > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 2 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_GER
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_GER = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_GER = ISR2_private_claim_share_GER }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_ROM > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 3 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_ROM
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_ROM = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_ROM = ISR2_private_claim_share_ROM }
+			}
+			set_variable = { ISR2_private_claim_registered_amount = ISR2_private_claim_amount }
+			ISR2_private_claim_settle = yes
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_private_claim_id = 3 }
+				NOT = { has_country_flag = ISR2_private_claim_registered_3 }
+			}
+			set_country_flag = ISR2_private_claim_registered_3
+			set_variable = { ISR2_private_claim_remainder = ISR2_private_claim_amount }
+			set_variable = { ISR2_private_claim_last_index = 0 }
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_USA > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_GER > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 2 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_ROM > 0 }
+				}
+				set_variable = { ISR2_private_claim_last_index = 3 }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_USA > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 1 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_USA
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_USA = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_USA = ISR2_private_claim_share_USA }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_GER > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 2 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_GER
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_GER = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_GER = ISR2_private_claim_share_GER }
+			}
+			if = {
+				limit = {
+					check_variable = { ISR2_private_claim_share_ROM > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ISR2_private_claim_last_index = 3 }
+					}
+					set_variable = { ISR2_private_claim_portion = ISR2_private_claim_remainder }
+				}
+				else = {
+					set_variable = {
+						ISR2_private_claim_portion = {
+							value = ISR2_private_claim_amount
+							multiply = ISR2_private_claim_share_ROM
+							divide = ISR2_private_claim_total_share
+						}
+					}
+				}
+				subtract_from_variable = { ISR2_private_claim_remainder = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_claim_due_ROM = ISR2_private_claim_portion }
+				add_to_variable = { ISR2_private_retire_due_ROM = ISR2_private_claim_share_ROM }
+			}
+			set_variable = { ISR2_private_claim_registered_amount = ISR2_private_claim_amount }
+			ISR2_private_claim_settle = yes
+		}
+	}
+}
+ISR2_bilateral_apply_principal_reduction = {
+	set_country_flag = ISR2_bilateral_authorized_principal
+	set_temp_variable = {
+		debt_change = { value = ISR2_bilateral_principal_reduction multiply = -1 }
+	}
+	modify_debt_effect = yes
+	clr_country_flag = ISR2_bilateral_authorized_principal
+}
+ISR2_bilateral_loan_tick = {
+	if = {
+		limit = { ISR2_b_eastern_credit_pair_clear = yes }
+		add_to_variable = { ISR2_b_eastern_credit_payment_days = 1 }
+		if = {
+			limit = {
+				check_variable = {
+					var = ISR2_b_eastern_credit_payment_days
+					value = 7
+					compare = greater_than_or_equals
+				}
+			}
+			set_variable = { ISR2_bilateral_loan_principal_due = ISR2_b_eastern_credit_principal_instalment }
+			set_variable = { ISR2_bilateral_loan_interest_due = ISR2_b_eastern_credit_interest_instalment }
+			if = {
+				limit = {
+					check_variable = { ISR2_b_eastern_credit_weeks_remaining < 2 }
+				}
+				set_variable = { ISR2_bilateral_loan_principal_due = ISR2_bilateral_loan_outstanding }
+				set_variable = { ISR2_bilateral_loan_interest_due = ISR2_b_eastern_credit_interest_remaining }
+			}
+			set_variable = { ISR2_bilateral_loan_bill = ISR2_bilateral_loan_principal_due }
+			add_to_variable = { ISR2_bilateral_loan_bill = ISR2_bilateral_loan_interest_due }
+			if = {
+				limit = {
+					check_variable = { var = treasury value = ISR2_bilateral_loan_bill compare = greater_than_or_equals }
+				}
+				set_temp_variable = {
+					treasury_change = { value = ISR2_bilateral_loan_bill multiply = -1 }
+				}
+				modify_treasury_effect = yes
+				SOV = {
+					set_temp_variable = { treasury_change = ISR.ISR2_bilateral_loan_bill }
+					modify_treasury_effect = yes
+				}
+				set_variable = { ISR2_bilateral_principal_reduction = ISR2_bilateral_loan_principal_due }
+				ISR2_bilateral_apply_principal_reduction = yes
+				subtract_from_variable = { ISR2_bilateral_loan_outstanding = ISR2_bilateral_loan_principal_due }
+				subtract_from_variable = {
+					ISR2_b_eastern_credit_interest_remaining = ISR2_bilateral_loan_interest_due
+				}
+				subtract_from_variable = { ISR2_b_eastern_credit_weeks_remaining = 1 }
+				set_variable = { ISR2_b_eastern_credit_payment_days = 0 }
+				if = {
+					limit = {
+						check_variable = { ISR2_b_eastern_credit_weeks_remaining < 1 }
+					}
+					set_variable = { ISR2_bilateral_loan_outstanding = 0 }
+					set_variable = { ISR2_b_eastern_credit_interest_remaining = 0 }
+					ISR2_b_eastern_credit_end = yes
+				}
+			}
+		}
+	}
+}
+ISR2_bilateral_loan_early_repay = {
+	set_variable = { ISR2_bilateral_early_paid = 0 }
+	set_variable = { ISR2_bilateral_early_due = ISR2_bilateral_early_repayment }
+	if = {
+		limit = {
+			check_variable = { ISR2_bilateral_early_due > ISR2_bilateral_loan_outstanding }
+		}
+		set_variable = { ISR2_bilateral_early_due = ISR2_bilateral_loan_outstanding }
+	}
+	if = {
+		limit = {
+			ISR2_b_eastern_credit_pair_clear = yes
+			check_variable = { ISR2_bilateral_early_due > 0 }
+			check_variable = { var = treasury value = ISR2_bilateral_early_due compare = greater_than_or_equals }
+		}
+		set_variable = { ISR2_bilateral_loan_old_principal = ISR2_bilateral_loan_outstanding }
+		set_temp_variable = {
+			treasury_change = { value = ISR2_bilateral_early_due multiply = -1 }
+		}
+		modify_treasury_effect = yes
+		SOV = {
+			set_temp_variable = { treasury_change = ISR.ISR2_bilateral_early_due }
+			modify_treasury_effect = yes
+		}
+		set_variable = { ISR2_bilateral_principal_reduction = ISR2_bilateral_early_due }
+		ISR2_bilateral_apply_principal_reduction = yes
+		subtract_from_variable = { ISR2_bilateral_loan_outstanding = ISR2_bilateral_early_due }
+		set_variable = { ISR2_bilateral_early_paid = ISR2_bilateral_early_due }
+		set_variable = {
+			ISR2_b_eastern_credit_interest_remaining = {
+				value = ISR2_b_eastern_credit_interest_remaining
+				multiply = ISR2_bilateral_loan_outstanding
+				divide = ISR2_bilateral_loan_old_principal
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { ISR2_bilateral_loan_outstanding < .00001 }
+			}
+			set_variable = { ISR2_bilateral_loan_outstanding = 0 }
+			set_variable = { ISR2_b_eastern_credit_interest_remaining = 0 }
+			ISR2_b_eastern_credit_end = yes
+		}
+		else = {
+			set_variable = {
+				ISR2_b_eastern_credit_principal_instalment = {
+					value = ISR2_bilateral_loan_outstanding
+					divide = ISR2_b_eastern_credit_weeks_remaining
+				}
+			}
+			set_variable = {
+				ISR2_b_eastern_credit_interest_instalment = {
+					value = ISR2_b_eastern_credit_interest_remaining
+					divide = ISR2_b_eastern_credit_weeks_remaining
+				}
+			}
+		}
+	}
+}
+ISR2_bilateral_orphan_cleanup = {
+	set_variable = { ISR2_bilateral_weekly_income = 0 }
+	set_variable = { ISR2_bilateral_weekly_expense = 0 }
+	if = {
+		limit = { tag = ETH }
+		remove_ideas = ISR2_b_irrigation_exports_partner_idea
+	}
+	if = {
+		limit = { tag = KEN }
+		remove_ideas = ISR2_b_mashav_partner_idea
+	}
+	if = {
+		limit = { tag = ROM }
+		remove_ideas = ISR2_b_european_orders_partner_idea
+	}
+	if = {
+		limit = { tag = EGY }
+		remove_ideas = ISR2_b_jarring_channel_partner_idea
+	}
+	if = {
+		limit = { tag = PER }
+		remove_ideas = ISR2_b_liaison_limits_partner_idea
+	}
+	if = {
+		limit = { tag = JOR }
+		remove_ideas = ISR2_b_labor_jordanian_option_partner_idea
+	}
+	if = {
+		limit = { tag = PAL }
+		remove_ideas = ISR2_b_gahal_local_autonomy_partner_idea
+	}
+	if = {
+		limit = { tag = PAL }
+		remove_ideas = ISR2_b_haolam_joint_services_partner_idea
+	}
+	if = {
+		limit = { tag = ETH }
+		remove_ideas = ISR2_b_mashav_ethiopia_partner_idea
+	}
+	if = {
+		limit = { tag = TUR }
+		remove_ideas = ISR2_b_liaison_turkey_partner_idea
+	}
+}
+ISR2_bilateral_init = {
+	if = {
+		limit = {
+			ISR2_is_scenario = yes
+			NOT = { has_country_flag = ISR2_bilateral_initialized }
+		}
+		set_country_flag = ISR2_bilateral_initialized
+		set_variable = { ISR2_bilateral_loan_outstanding = 0 }
+		set_variable = { ISR2_private_available = 0 }
+		set_variable = { ISR2_private_paid = 0 }
+		set_variable = { ISR2_b_irrigation_exports_days = 0 }
+		set_variable = { ISR2_b_arms_exports_days = 0 }
+		set_variable = { ISR2_b_mashav_days = 0 }
+		set_variable = { ISR2_b_washington_days = 0 }
+		set_variable = { ISR2_b_european_orders_days = 0 }
+		set_variable = { ISR2_b_jarring_channel_days = 0 }
+		set_variable = { ISR2_b_liaison_limits_days = 0 }
+		set_variable = { ISR2_b_negotiated_terms_days = 0 }
+		set_variable = { ISR2_b_eastern_credit_days = 0 }
+		set_variable = { ISR2_b_labor_jordanian_option_days = 0 }
+		set_variable = { ISR2_b_gahal_local_autonomy_days = 0 }
+		set_variable = { ISR2_b_haolam_joint_services_days = 0 }
+		set_variable = { ISR2_b_mashav_ethiopia_days = 0 }
+		set_variable = { ISR2_b_arms_congo_days = 0 }
+		set_variable = { ISR2_b_liaison_turkey_days = 0 }
+		set_variable = { ISR2_b_financing_usa_days = 0 }
+		set_variable = { ISR2_b_financing_ger_days = 0 }
+		set_variable = { ISR2_b_financing_rom_days = 0 }
+		set_variable = { ISR2_b_irrigation_exports_pending_days = 0 }
+		set_variable = { ISR2_b_arms_exports_pending_days = 0 }
+		set_variable = { ISR2_b_mashav_pending_days = 0 }
+		set_variable = { ISR2_b_washington_pending_days = 0 }
+		set_variable = { ISR2_b_european_orders_pending_days = 0 }
+		set_variable = { ISR2_b_jarring_channel_pending_days = 0 }
+		set_variable = { ISR2_b_liaison_limits_pending_days = 0 }
+		set_variable = { ISR2_b_negotiated_terms_pending_days = 0 }
+		set_variable = { ISR2_b_eastern_credit_pending_days = 0 }
+		set_variable = { ISR2_b_labor_jordanian_option_pending_days = 0 }
+		set_variable = { ISR2_b_gahal_local_autonomy_pending_days = 0 }
+		set_variable = { ISR2_b_haolam_joint_services_pending_days = 0 }
+		set_variable = { ISR2_b_mashav_ethiopia_pending_days = 0 }
+		set_variable = { ISR2_b_arms_congo_pending_days = 0 }
+		set_variable = { ISR2_b_liaison_turkey_pending_days = 0 }
+		set_variable = { ISR2_b_financing_usa_pending_days = 0 }
+		set_variable = { ISR2_b_financing_ger_pending_days = 0 }
+		set_variable = { ISR2_b_financing_rom_pending_days = 0 }
+		ISR2_bilateral_reconcile = yes
+	}
+}

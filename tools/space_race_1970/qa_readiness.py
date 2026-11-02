@@ -1,4 +1,5 @@
-# IMPERIA CW — Cold War: real launch gates, reachable progression and modifier snapshots.
+# IMPERIA COLD WAR — qa readiness validation.
+# COLDWAR 2025-cut: test fixtures use tier 6, the highest remaining OLV/GNSS/COMSAT/SPYSAT research.
 import json
 from pathlib import Path
 import validate as V
@@ -10,6 +11,7 @@ def run():
     for ident,groups in REQUIREMENTS.items():
         n=ids[ident];p=ps[n-1];m=V.Machine(('SAU',));m.init();year=1984 if ident=='vega' else max(1995,p['minYear']);m.date=f'{year}.12.1';m.g.update(year=V.D(year),month=V.D(12),cw_sr_window_mars=V.D(0),cw_sr_window_venus=V.D(0))
         m.c.flags.update('cw_sr_cap_'+k.replace('-','_') for k in p['capabilityRequirements'])
+        m.c.technologies.update(['OLV6','GNSS6','COMSAT6','SPYSAT6'])
         V.check(m.test(V.TRIGGERS[f'cw_sr_p{n}_start_allowed']),ident+' prevents parallel development before flight qualifications')
         m.put(f'cw_sr_p{n}_state',3);m.put(f'cw_sr_p{n}_work',100)
         V.check(not m.test(V.TRIGGERS[f'cw_sr_p{n}_launch_allowed']),ident+' permits launch with no precursor successes')
@@ -60,7 +62,7 @@ def run():
     source=(V.ROOT/'interface/COLDWAR_space_race.gui').read_text(encoding='utf-8')
     for name in ['cw_sr_campaign','cw_sr_country_label','name = "cw_sr_country"','cw_sr_standings_note']:
         V.check(name not in source,'Removed header widget regenerated: '+name)
-    result={'checks':V.CHECKS,'status':'passed','gated_programmes':len(REQUIREMENTS),'profiles_reachable':17,'historical_qualifications':'no campaign rewards','modifier_components':'actual calculation; frozen in flight','in_game_tested':False}
+    result={'project':'IMPERIA COLD WAR','checks':V.CHECKS,'status':'passed','gated_programmes':len(REQUIREMENTS),'profiles_reachable':17,'historical_qualifications':'no campaign rewards','modifier_components':'actual calculation; frozen in flight','in_game_tested':False}
     Path(__file__).with_name('readiness_validation.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(result))
 
 

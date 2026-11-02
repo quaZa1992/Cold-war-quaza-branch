@@ -1,0 +1,3 @@
+# IMPERIA COLD WAR: Cuba event-picture packaging
+
+Existing Millennium Dawn photographs are packaged in the exact 217 x 163 MD country-event frame, with a proportional central crop into its 180 x 150 photograph area. The frame comes from main MD generic/elections/political_deal.dds. The Soviet meeting picture is the existing user-supplied, restored project photograph; see tools/event_art/export_politburo_session.py and its source records. Individual original MD photographers/authors and applicable licences are unknown here; consult MD and game credits. This record asserts no ownership or redistribution rights. No generated replacement artwork or new historical photograph is claimed. Source paths and hashes are recorded in EVENT_ART_EXPORT.json.

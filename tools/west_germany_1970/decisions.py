@@ -1,4 +1,6 @@
+# IMPERIA COLD WAR — Native diplomatic recognition and UN membership.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Remove retired Western integration and Moscow backing mechanics.
 """Decisions for West Germany 1970 (and a small GDR category for an East German player)."""
 from cw_lib import *
 from tooltips import nice, hide_vars
@@ -71,7 +73,7 @@ def M(cat, key, name, desc, icon, activation, available, days, complete="", time
 
 def ddr_meters():
     return ("GDR crisis index: §Y[?DDR.cwddr_crisis|0]§! | exit pressure: §Y[?DDR.cwddr_exit_pressure|0]§! | hard-currency shortage: §Y[?DDR.cwddr_hard_currency|0]§!\n"
-            "Dependence on Bonn: §Y[?DDR.cwddr_west_dependency|0]§! | SED control: §Y[?DDR.cwddr_sed_control|0]§! | Moscow's guarantee: §Y[?DDR.cwddr_moscow_backing|0]§!")
+            "Dependence on Bonn: §Y[?DDR.cwddr_west_dependency|0]§! | SED control: §Y[?DDR.cwddr_sed_control|0]§!")
 
 
 # ================================================================= DEUTSCHLANDPOLITIK
@@ -98,12 +100,6 @@ D(DP, "currency_two_to_one", "Conversion Rate: Two to One",
   cost=50, once=True,
   effect=J(f"set_country_flag = {P}_currency_rate_set", v("cwger_unity", 4), v("cwger_east_burden", 5), v("cwger_bundesbank", -10),
            dv("cwddr_exit_pressure", 5), dv("cwddr_opposition", 4)), ai=40)
-D(DP, "reopen_unity", "Reopen Unity Talks",
-  "The moment has passed once. Try again: new proposals for East Berlin and the Four Powers.",
-  "GFX_decision_germany", visible=f"has_country_flag = {P}_unity_postponed country_exists = DDR {f'NOT = {{ has_global_flag = {P}_unity_achieved }}'}",
-  available=f"DDR = {{ check_variable = {{ cwddr_wende_stage > 3 }} check_variable = {{ cwddr_wende_stage < 9 }} }} OR = {{ NOT = {{ has_country_flag = {P}_soviets_refused }} DDR = {{ check_variable = {{ cwddr_moscow_backing < 30 }} }} }}",
-  cost=75, re_enable=180,
-  effect=J(f"clr_country_flag = {P}_unity_postponed", f"clr_country_flag = {P}_soviets_refused", f"country_event = {{ id = {EVG}.135 days = 1 }}"), ai=30)
 D(DP, "aufbau_ost_programme", "Aufbau Ost Investment Programme",
   "Motorways, telephone lines and sewage works for the new Länder, paid for on credit.",
   "GFX_decision_generic_factory", visible=f"has_global_flag = {P}_unity_achieved",
@@ -136,9 +132,10 @@ D(PO, "vote_of_confidence", "Ask for a Vote of Confidence",
   "GFX_decision_elections_button", visible="always = yes",
   available="NOT = { has_country_flag = elections_in_progress } NOT = { has_country_flag = generic_election_killswitch }",
   cost=100, re_enable=720, effect=f"country_event = {{ id = {EVG}.23 days = 1 }}", ai=1)
+# IMPERIA COLD WAR — Compact native police icon for the decision row.
 D(PO, "clean_house", "Clean House",
   "Parliamentary inquiries, a new code on party financing and a few resignations before the magazines force them.",
-  "GFX_decisions_police", visible="check_variable = { cwger_scandal > 25 }", cost=60, re_enable=365,
+  "GFX_decision_generic_police_action", visible="check_variable = { cwger_scandal > 25 }", cost=60, re_enable=365,
   effect=J(v("cwger_scandal", -20), pp(-25), v("cwger_rechtsstaat", 2), corruption(False)), ai=15)
 D(PO, "concerted_action", "Concerted Action",
   "Unions, employers, the Bundesbank and the government at one table: wage guidelines in return for jobs.",
@@ -152,13 +149,14 @@ SE = C("internal_security", "Internal Security",
        "RAF generation §Y[?cwger_raf_gen|0]§!, active cadre §Y[?cwger_raf_cadre|0]§!, sympathiser milieu §Y[?cwger_raf_milieu|0]§!, prisoners §Y[?cwger_raf_prisoners|0]§!\n"
        "BKA capability §Y[?cwger_bka_level|0]§! | GSG 9 tier §Y[?cwger_gsg9_tier|0]§! | Counter-intelligence §Y[?cwger_counterintel|0]§! vs Stasi penetration §Y[?cwger_stasi_penetration|0]§!",
        "GFX_decision_category_generic_political_actions", GER_VIS, priority=185)
+# IMPERIA COLD WAR — Compact native police icon for the security-window launcher.
 D(SE, "open_security_window", "Open the Internal Security Window",
   "The wanted list, the RAF's targets and protection details, the prisons and the crisis staff are run from the §YInternal Security§! window (also on the top bar).",
-  "GFX_decisions_police", visible="has_country_flag = cwsec_initialized", cost=0,
+  "GFX_decision_generic_police_action", visible="has_country_flag = cwsec_initialized", cost=0,
   effect=J("set_country_flag = cwsec_open", "set_variable = { cwsec_tab = 1 }", f"{P}_sec_gui_refresh = yes"), ai=0)
 # ===================================================================== ECONOMY / DEFENCE
 EC = C("economy_defence", "Economy and Defence",
-       "Imperia Arms Demand: §Y[?global.mdcw_cw_arms|0]§! | Cold War world tension: §Y[?global.mdcw_cw_tension|0]§! | Western integration: §Y[?cwger_westbindung|0]§! | Peace movement: §Y[?cwger_peace_movement|0]§!",
+       "Imperia Arms Demand: §Y[?global.mdcw_cw_arms|0]§! | Cold War world tension: §Y[?global.mdcw_cw_tension|0]§! | Peace movement: §Y[?cwger_peace_movement|0]§!",
        "GFX_decisions_category_dept", GER_VIS, priority=180)
 D(EC, "approve_arms_export", "Approve an Arms Export",
   "Leopards, Type 209 submarines, frigates: the Federal Security Council meets in secret. Revenue follows Imperia Arms Demand.",
@@ -173,7 +171,7 @@ D(EC, "approve_arms_export", "Approve an Arms Export",
 D(EC, "bundestag_mandate", "Bundestag Mandate for a Deployment",
   "Ask the Bundestag to approve an armed mission under a UN or NATO mandate.",
   "GFX_decision_nato", visible=f"has_country_flag = {P}_deployments_allowed", cost=50, re_enable=730,
-  effect=J("army_experience = 10", v("cwger_westbindung", 4), v("cwger_peace_movement", 4), money_gdp(-0.0008)), ai=10)
+  effect=J("army_experience = 10", v("cwger_peace_movement", 4), money_gdp(-0.0008)), ai=10)
 D(EC, "energy_security", "Strategic Oil Reserve",
   "Fill the salt caverns of Etzel with crude oil against the next embargo.",
   "GFX_decision_oil", visible=f"has_country_flag = {P}_oil_shock_seen", cost=40, once=True,
@@ -185,7 +183,7 @@ for tag, name in [("POL", "Poland"), ("HUN", "Hungary"), ("ROM", "Romania"), ("B
       "GFX_decision_attract_foreign_investor", visible=f"country_exists = {tag} {tag} = {{ is_in_array = {{ imp_mil_sanc_on_us = ROOT }} }}",
       available="check_variable = { cwger_ostpolitik > 45 }", cost=50, once=True,
       effect=J(f"{tag} = {{ ROOT = {{ {P}_lift_mil_sanction_on_prev = yes }} add_opinion_modifier = {{ target = ROOT modifier = medium_increase }} }}",
-               "USA = { add_opinion_modifier = { target = ROOT modifier = small_decrease } }", v("cwger_westbindung", -2), faction("bdi", 4)), ai=10)
+               "USA = { add_opinion_modifier = { target = ROOT modifier = small_decrease } }", faction("bdi", 4)), ai=10)
 
 # ===================================================================== FOREIGN
 FO = C("foreign_policy", "Germany in the World",
@@ -224,8 +222,8 @@ D(DR, "ddr_koko", "Commercial Coordination",
   effect=J(dv_self("cwddr_hard_currency", -6), dv_self("cwddr_west_dependency", 3)), ai=15)
 D(DR, "ddr_border_regime", "Tighten the Border Regime",
   "More mines, more dogs, more watchtowers - and an order to shoot.",
-  "GFX_decision_break_treaty", visible="always = yes", available="check_variable = { cwddr_wende_stage < 3 }", cost=50, re_enable=365,
-  effect=J(dv_self("cwddr_exit_pressure", -5), dv_self("cwddr_sed_control", 3), dv_self("cwddr_recognition", -4)), ai=15)
+  "GFX_decision_break_treaty", visible="always = yes", available="always = yes", cost=50, re_enable=365,
+  effect=J(dv_self("cwddr_exit_pressure", -5), dv_self("cwddr_sed_control", 3)), ai=15)
 D(DR, "ddr_stasi_sweep", "Operation Against the Groups",
   "The Ministry for State Security infiltrates and decomposes ('Zersetzung') the peace and environment groups.",
   "GFX_decision_generic_intelligence_operation", visible="always = yes", cost=50, re_enable=365,
@@ -234,9 +232,10 @@ D(DR, "ddr_consumer_imports", "Import Consumer Goods",
   "Jeans, coffee and VW Golfs bought in the West to quiet the people - on credit.",
   "GFX_decision_attract_foreign_investor", visible="always = yes", cost=30, re_enable=365,
   effect=J(dv_self("cwddr_exit_pressure", -3), dv_self("cwddr_hard_currency", 5), "add_stability = 0.02"), ai=10)
+# IMPERIA CW — Cold War: East Berlin can choose political opening without waiting for a calendar year.
 D(DR, "ddr_reform_course", "A Socialist Glasnost",
-  "Follow Moscow's new course: open the press a little, let the dissidents speak.",
-  "GFX_decision_propaganda", visible="date > 1985.1.1", available="check_variable = { cwddr_moscow_backing < 60 }", cost=75, once=True,
+  "Open the press and give dissidents room to speak while preserving a socialist government.",
+  "GFX_decision_propaganda", visible="always = yes", cost=75, once=True,
   effect=J(dv_self("cwddr_opposition", 3), dv_self("cwddr_sed_control", -6), dv_self("cwddr_exit_pressure", -6), dv_self("cwddr_west_media", 3)), ai=5)
 
 
@@ -259,8 +258,9 @@ WP = C("ddr_westpolitik", "Policy Towards Bonn",
        "GFX_decision_category_coms_cat",
        f"{DDR_VIS} is_ai = no country_exists = GER GER = {{ has_country_flag = cwgg_initialized }} NOT = {{ has_global_flag = {P}_unity_achieved }}",
        tag="DDR", priority=210)
+# IMPERIA COLD WAR — Match the visible round cadence to the shared two-month crisis clock.
 D(WP, "ddr_crisis_course", "Set Our Course in the Crisis",
-  "Decide how East Berlin answers in the next round of the crisis. Rounds are resolved every six months.",
+  "Decide how East Berlin answers in the next round of the crisis. Rounds are resolved every two months.",
   "GFX_decision_negotiate_icon",
   visible="GER = { check_variable = { cwgg_krise_typ > 0 } }", available="GER = { check_variable = { cwgg_countdown = 0 } }",
   cost=0, re_enable=30, effect=f"country_event = {{ id = {_EVR}.200 }}", ai=0)
@@ -298,7 +298,7 @@ D(WP, "ddr_transit_checks", "Harass the Transit Routes",
            tt(f"{P}_tt_ddr_transit", "Costs §Y2§! initiative. Climate §R-5§!, escalation pressure §R+12§!, West Berlin's access §R-5§!.")), ai=0)
 D(WP, "ddr_tighten_border", "Strengthen the Border Installations",
   "New fences, mines and SM-70 spring guns along the state border.",
-  "GFX_decision_break_treaty", visible="always = yes", available=_INIT2 + " GER = { check_variable = { cwgg_dhebel_grenze < 3 } } check_variable = { cwddr_wende_stage < 3 }", cost=25, re_enable=365,
+  "GFX_decision_break_treaty", visible="always = yes", available=_INIT2 + " GER = { check_variable = { cwgg_dhebel_grenze < 3 } }", cost=25, re_enable=365,
   effect=J(_ger("add_to_variable = { cwgg_init_ddr = -2 }", _lever("grenze", 1, ddr=True, show=False), _dr(8, False),
                 f"country_event = {{ id = {_EVR}.122 days = 1 }}"),
            dv_self("cwddr_exit_pressure", -3),
@@ -309,15 +309,14 @@ D(WP, "ddr_hva_offensive", "HVA Offensive in Bonn",
   effect=J(_ger("add_to_variable = { cwgg_init_ddr = -2 }", "add_to_variable = { cwger_stasi_penetration = 5 }",
                 "clamp_variable = { var = cwger_stasi_penetration min = 0 max = 100 }"),
            tt(f"{P}_tt_ddr_hva", "Costs §Y2§! initiative. Stasi penetration of Bonn §R+5§!.")), ai=0)
-D(WP, "ddr_recognition_drive", "Win Another Recognition",
-  "Credits, advisers and solidarity: persuade another state in the Third World to recognise the GDR.",
-  "GFX_decision_hol_draw_up_staff_plans", visible="GER = { NOT = { check_variable = { cwgg_vertrag_3 = 1 } } }",
-  available=_INIT2 + " check_variable = { cwddr_recognition < 80 }", cost=50, re_enable=365,
-  effect=J(_ger("add_to_variable = { cwgg_init_ddr = -2 }", _kl(-3, False),
-                _log("ddr_recog", "Another state in the Third World recognises the GDR."),
-                f"if = {{ limit = {{ check_variable = {{ cwgg_hebel_recht > 1 }} }} set_temp_variable = {{ cwgg_t_typ = 5 }} {_R}_start_crisis = yes }}"),
-           dv_self("cwddr_recognition", 4),
-           tt(f"{P}_tt_ddr_recog", "Costs §Y2§! initiative. Our recognition §G+4§!, climate §R-3§!. While Bonn still insists on its legal position, this starts a §YRecognition Crisis§!.")), ai=0)
+# IMPERIA COLD WAR — Keep saved report identifiers stable while using native recognition.
+_log("ddr_recog", "East Berlin requests diplomatic recognition.")
+# IMPERIA COLD WAR — Recognition is requested through MD's recipient-owned diplomacy.
+D(WP, "ddr_recognition_drive", "Campaign for Recognition",
+  "Request diplomatic recognition from UN member states. Each government decides whether to accept.",
+  "GFX_decision_hol_draw_up_staff_plans", visible="always = yes",
+  available="NOT = { has_country_flag = recent_global_recog_request_campaign } has_civil_war = no", cost=200, re_enable=365,
+  effect="COLDWAR_Germany_campaign_recognition = yes", ai=0)
 D(WP, "ddr_goodwill", "A Gesture of Goodwill",
   "Lower the compulsory exchange for pensioners, dismantle a stretch of spring guns - and let the diplomats talk about it.",
   "GFX_decision_negotiate_icon", visible="always = yes", available=_INIT2, cost=25, re_enable=180,
@@ -352,4 +351,6 @@ def decisions_file():
         out.append(f"{cid} = {{")
         out.extend(items)
         out.append("}\n")
-    return "\n".join(out)
+    # IMPERIA CW — Cold War: native DDR decisions and dossier share one action.
+    import ddr_relations
+    return ddr_relations.adapt_decisions("\n".join(out))

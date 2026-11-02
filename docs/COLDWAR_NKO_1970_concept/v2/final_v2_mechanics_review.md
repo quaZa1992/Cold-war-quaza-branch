@@ -1,3 +1,5 @@
+IMPERIA COLD WAR
+
 # Final v2 mechanics audit
 
 **Result:** source-backed concept; new adapters remain unimplemented. The generated structural check reports 189 nodes, 212 edges, 33 exclusions, 10 building records and no data errors, but explicitly says `engine_tested: false` (`structural_validation_v2.json`). This audit validates the concept contract against the checked-in MD/Imperia sources; it does not certify script parsing or runtime behavior.

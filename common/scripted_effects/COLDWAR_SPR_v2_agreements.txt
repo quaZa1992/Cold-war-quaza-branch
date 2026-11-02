@@ -207,7 +207,7 @@ SPR = { add_timed_idea = { idea = COLDWAR_SPR_v2_commercial_project days = 720 }
 }
 
 COLDWAR_SPR_v2_european_trade_offer_send = {
-if = { limit = { COLDWAR_SPR_v2_european_trade_offer_sender_live = yes FROM = { exists = yes has_idea = EU_member NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_european_trade_offer_pending@FROM } NOT = { has_country_flag = COLDWAR_SPR_v2_european_trade_offer_accepted@FROM } }
+if = { limit = { COLDWAR_SPR_v2_european_trade_offer_sender_live = yes FROM = { exists = yes COLDWAR_EC_is_member = yes NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_european_trade_offer_pending@FROM } NOT = { has_country_flag = COLDWAR_SPR_v2_european_trade_offer_accepted@FROM } }
 set_country_flag = { flag = COLDWAR_SPR_v2_european_trade_offer_pending@FROM days = 90 }
 set_country_flag = COLDWAR_SPR_v2_european_trade_offer_awaiting@FROM
 FROM = { country_event = { id = COLDWAR_SPR_v2_agreements.104 hours = 1 } } }
@@ -220,7 +220,7 @@ hidden_effect = { SPR = { set_country_flag = COLDWAR_SPR_v2_european_trade_offer
 }
 
 COLDWAR_SPR_v2_eec_application_send = {
-if = { limit = { COLDWAR_SPR_v2_eec_application_sender_live = yes FROM = { exists = yes has_idea = EU_member NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_eec_application_pending@FROM } NOT = { has_country_flag = COLDWAR_SPR_v2_eec_application_accepted@FROM } }
+if = { limit = { COLDWAR_SPR_v2_eec_application_sender_live = yes FROM = { exists = yes COLDWAR_EC_is_member = yes NOT = { has_war_with = SPR } } NOT = { has_country_flag = COLDWAR_SPR_v2_eec_application_pending@FROM } NOT = { has_country_flag = COLDWAR_SPR_v2_eec_application_accepted@FROM } }
 set_country_flag = { flag = COLDWAR_SPR_v2_eec_application_pending@FROM days = 90 }
 set_country_flag = COLDWAR_SPR_v2_eec_application_awaiting@FROM
 FROM = { country_event = { id = COLDWAR_SPR_v2_agreements.105 hours = 1 } } }
@@ -312,9 +312,9 @@ calculate_new_bonds_owed = yes
 
 COLDWAR_SPR_v2_ec_update_candidate = {
 if = { limit = { tag = SPR has_country_flag = COLDWAR_SPR_v2_ec_legal_ready has_government = democratic has_elections = yes
-any_other_country = { has_idea = EU_member }
-NOT = { any_other_country = { has_idea = EU_member OR = { has_war_with = SPR NOT = { SPR = { has_country_flag = COLDWAR_SPR_v2_eec_application_accepted@PREV } } } } } }
-set_country_flag = EU_candidate set_country_flag = COLDWAR_SPR_v2_ec_consent_complete set_eu_candidate_europeanism_floor = yes }
+any_other_country = { COLDWAR_EC_is_member = yes }
+NOT = { any_other_country = { COLDWAR_EC_is_member = yes OR = { has_war_with = SPR NOT = { SPR = { has_country_flag = COLDWAR_SPR_v2_eec_application_accepted@PREV } } } } } }
+set_country_flag = EU_candidate set_country_flag = COLDWAR_SPR_v2_ec_consent_complete }
 }
 
 COLDWAR_SPR_v2_sahara_update = {
@@ -357,8 +357,8 @@ SPR = { clr_country_flag = COLDWAR_SPR_v2_maghreb_commerce_awaiting@PREV country
 every_other_country = { limit = { SPR = { has_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_awaiting@PREV NOT = { has_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_pending@PREV } } }
 SPR = { clr_country_flag = COLDWAR_SPR_v2_iberoamerican_credit_awaiting@PREV country_event = { id = COLDWAR_SPR_v2_agreements.1002 hours = 1 } } }
 COLDWAR_SPR_v2_ec_update_candidate = yes
-if = { limit = { has_idea = EU_member has_country_flag = COLDWAR_SPR_v2_ec_consent_complete has_country_flag = COLDWAR_SPR_v2_ec_legal_ready NOT = { has_idea = COLDWAR_SPR_eec_membership } } add_ideas = COLDWAR_SPR_eec_membership }
-if = { limit = { has_idea = COLDWAR_SPR_eec_membership NOT = { has_idea = EU_member } } remove_ideas = COLDWAR_SPR_eec_membership }
+if = { limit = { COLDWAR_EC_is_member = yes has_country_flag = COLDWAR_SPR_v2_ec_consent_complete has_country_flag = COLDWAR_SPR_v2_ec_legal_ready NOT = { has_idea = COLDWAR_SPR_eec_membership } } add_ideas = COLDWAR_SPR_eec_membership }
+if = { limit = { has_idea = COLDWAR_SPR_eec_membership NOT = { COLDWAR_EC_is_member = yes } } remove_ideas = COLDWAR_SPR_eec_membership }
 COLDWAR_SPR_v2_sahara_update = yes
 if = { limit = { date > 1973.10.15 date < 1974.1.1 NOT = { has_country_flag = COLDWAR_SPR_v2_oil1973_seen } } set_country_flag = COLDWAR_SPR_v2_oil1973_seen add_timed_idea = { idea = COLDWAR_SPR_v2_oil_shock days = 180 } }
 if = { limit = { date > 1979.7.1 date < 1980.1.1 NOT = { has_country_flag = COLDWAR_SPR_v2_oil1979_seen } } set_country_flag = COLDWAR_SPR_v2_oil1979_seen

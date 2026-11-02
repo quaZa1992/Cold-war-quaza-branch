@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: independently read the emitted Japan focus presentation.
+# IMPERIA COLD WAR — Cold War: independently read the emitted Japan focus presentation.
 """Resolve the actual script, including relative anchors, for audits and images."""
 from functools import lru_cache
 from check_script_grammar import parse

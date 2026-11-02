@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Scripted national building-grant integration.
 # IMPERIA CW — Cold War: libya 1970 — national focus tree.
 # Libya, 1970-2000: the Revolutionary Republic and the Jamahiriya.
 # This tree is deliberately isolated from the 1985 and 2000 Libya tree.
@@ -133,22 +134,69 @@ focus_tree = {
 		x = 12
 		y = 3
 		cost = 10
-		prerequisite = { focus = LBA_1970_the_arab_socialist_union }
-		available = { original_tag = LBA }
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_revolutionary_administration"
-			LBA_1970_improve_administration = yes
-			391 = {
-				add_building_construction = { type = offices level = 1 instant_build = yes }
-				if = {
-					limit = { free_building_slots = { building = internet_station size > 0 } }
-					add_building_construction = { type = internet_station level = 1 instant_build = yes }
+		prerequisite = {
+			focus = LBA_1970_the_arab_socialist_union
+		}
+		available = {
+			original_tag = LBA
+			hidden_trigger = {
+				NOT = {
+					has_country_flag = COLDWAR_GRANT_done_LBA_1970_a_revolutionary_administration
 				}
 			}
-			set_temp_variable = { treasury_change = -5.00 }
-			modify_treasury_effect = yes
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_GRANT_focus_capacity_LBA_1970_a_revolutionary_administration_tt
+				COLDWAR_GRANT_capacity_LBA_1970_a_revolutionary_administration = yes
+			}
 		}
-		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+		completion_reward = {
+			effect_tooltip = {
+				log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_revolutionary_administration"
+				LBA_1970_improve_administration = yes
+				391 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = offices
+						level = 1
+						instant_build = yes
+					}
+					if = {
+						limit = {
+							custom_trigger_tooltip = {
+								tooltip = COLDWAR_GRANT_capacity_internet_station_1_tt
+								check_variable = {
+									var = building_level@internet_station
+									value = 10
+									compare = less_than_or_equals
+								}
+							}
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = internet_station
+							level = 1
+							instant_build = yes
+						}
+					}
+				}
+				set_temp_variable = {
+					treasury_change = -5.00
+				}
+				modify_treasury_effect = yes
+			}
+			hidden_effect = {
+				COLDWAR_GRANT_complete_LBA_1970_a_revolutionary_administration = yes
+			}
+		}
+		ai_will_do = {
+			base = 350
+			modifier = {
+				add = 650
+				is_historical_focus_on = yes
+			}
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
 	}
 
 	# Oil sovereignty

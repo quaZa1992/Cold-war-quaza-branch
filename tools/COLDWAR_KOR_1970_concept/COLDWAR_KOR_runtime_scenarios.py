@@ -1,17 +1,25 @@
-# IMPERIA CW — Cold War: bounded scenarios executing emitted Korean scripts.
+# IMPERIA COLD WAR — Cold War: bounded scenarios executing emitted Korean scripts.
 """A fail-closed source interpreter, not the game engine or network simulator."""
 from pathlib import Path
 from copy import deepcopy
+from datetime import date
 import argparse,json,sys
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];DOC=ROOT/'docs/design/COLDWAR_KOR_1970'
+STAGE=Path(r'E:\HOI4_Mod_Tools\mdcoldwar\runtime\quaza_eastasia_20261027\kor_stage')
 sys.path.insert(0,str(ROOT/'tools/vietnam_1970'))
 from script_ast import parse,first,values,walk
+from COLDWAR_KOR_alliance_revision import load_design
+from COLDWAR_KOR_runtime_politics import build as build_politics
+from COLDWAR_KOR_reward_revision import BUILDING_METADATA
 P='COLDWAR_KOR_'
 
 class World:
     def __init__(self,base):
-        self.e={};self.t={};self.dm={};self.events={};self.decisions={};self.day=0;self.wars=set();self.queue=[];self.scopes=[]
-        self.c={tag:{'v':{'ruling_party':0 if tag=='KOR' else 1,'treasury':0,'current_term':0},'tmp':{},'flags':{},'ideas':set(),'idea_until':{},'access':set(),'dm':set(),'leader':'Park Chung Hee' if tag=='KOR' else tag,'elections':False,'subject':False} for tag in ('KOR','NKO','USA','JAP','SOV','CHI','SVN','GER','SAU','IRQ')}
+        self.e={};self.t={};self.dm={};self.events={};self.decisions={};self.day=0;self.current_date='1970.1.1';self.wars=set();self.queue=[];self.scopes=[]
+        self.c={tag:{'v':{'ruling_party':0 if tag=='KOR' else 1,'treasury':0,'current_term':0},'tmp':{},'flags':{},'ideas':set(),'idea_until':{},'access':set(),'dm':set(),'leader':'Park Chung Hee' if tag=='KOR' else tag,'elections':False,'subject':False,'slot_grants':{},'pending_slots':{},'buildings':{},'state_buildings':{},'equipment_bonuses':[],'tech_bonuses':[],'doctrine_bonuses':[]} for tag in ('KOR','NKO','USA','JAP','SOV','CHI','SVN','GER','SAU','IRQ')}
+        # GDP-backed national focus charges use a round 100B scenario fixture;
+        # tests for missing GDP explicitly remove this variable.
+        self.c['KOR']['v']['gdp_total']=100
         self.c['KOR']['flags'][P+'initialized']=None
         for folder,target in [('scripted_effects',self.e),('scripted_triggers',self.t),('dynamic_modifiers',self.dm)]:
             for path in (base/'common'/folder).glob('COLDWAR_KOR_1970*.txt'):
@@ -42,19 +50,21 @@ class World:
                 scope,name=x.split('.',1)
                 if scope in self.c:return self.value(name,scope)
             return self.c[tag]['tmp'].get(x,self.c[tag]['v'].get(x,0))
-    def trigger(self,rows,tag='KOR'):
+    def trigger(self,rows,tag='KOR',state=None):
         for k,op,v in rows:
             c=self.c[tag]
-            if k in self.t:r=self.trigger(self.t[k],tag)==(v=='yes')
-            elif k in self.c:r=self.trigger(v,k)
-            elif k=='AND' or k=='hidden_trigger':r=self.trigger(v,tag)
-            elif k=='OR':r=any(self.trigger([a],tag) for a in v)
-            elif k=='NOT':r=not self.trigger(v,tag)
+            if k in self.t:r=self.trigger(self.t[k],tag,state)==(v=='yes')
+            elif k in self.c:r=self.trigger(v,k,None)
+            elif k=='AND' or k=='hidden_trigger':r=self.trigger(v,tag,state)
+            elif k=='OR':r=any(self.trigger([a],tag,state) for a in v)
+            elif k=='NOT':r=not self.trigger(v,tag,state)
             elif k in ('tag','original_tag'):r=tag==v
             elif k=='IMP_is_1970_scenario':r=v=='yes'
             elif k=='exists':r=v=='yes'
             elif k=='country_exists':r=v in self.c
             elif k=='is_subject':r=c['subject']==(v=='yes')
+            elif k in ('is_owned_by','is_controlled_by'):r=v=='ROOT'
+            elif k=='free_building_slots':r=True
             elif k=='has_war_with':r=frozenset((tag,v)) in self.wars
             elif k=='has_country_flag':r=self.flag(tag,v)
             elif k=='has_idea':r=v in c['ideas'] and c['idea_until'].get(v,1e20)>self.day
@@ -68,6 +78,17 @@ class World:
                 r=count>float(b) if compare=='>' else count<float(b)
             elif k=='has_stability':r=c['v'].get('stability',.5)<float(v) if op=='<' else c['v'].get('stability',.5)>float(v)
             elif k=='always':r=v=='yes'
+            elif k.isdigit():r=self.trigger(v,tag,k)
+            elif k in BUILDING_METADATA and state is not None:
+                spec=BUILDING_METADATA[k]
+                current=c['state_buildings'].get((state,k),0)+c['buildings'].get((state,k),0)
+                group=spec['group_by']
+                if group:
+                    current=sum(amount for (building_state,building),amount in c['state_buildings'].items()
+                                if building_state==state and BUILDING_METADATA.get(building,{}).get('group_by')==group)
+                    current+=sum(amount for (building_state,building),amount in c['buildings'].items()
+                                 if building_state==state and BUILDING_METADATA.get(building,{}).get('group_by')==group)
+                r=current>float(v) if op=='>' else current<float(v)
             elif k=='check_variable':
                 if first(v,'var') is not None:
                     lhs=self.value(first(v,'var'),tag);rhs=self.value(first(v,'value'),tag);cmp=first(v,'compare','equals')
@@ -75,9 +96,11 @@ class World:
                 else:
                     a,cmp,b=v[0];lhs=self.value(a,tag);rhs=self.value(b,tag)
                 r={'=':lhs==rhs,'!=':lhs!=rhs,'>':lhs>rhs,'<':lhs<rhs,'>=':lhs>=rhs,'<=':lhs<=rhs}[cmp]
-            elif k=='custom_trigger_tooltip':r=self.trigger([a for a in v if a[0] not in ('tooltip','not_tooltip')],tag)
+            elif k=='custom_trigger_tooltip':r=self.trigger([a for a in v if a[0] not in ('tooltip','not_tooltip')],tag,state)
             elif k=='is_special_project_completed':r=False
-            elif k=='date':r=False
+            elif k=='date':
+                lhs=date(*map(int,self.current_date.split('.')));rhs=date(*map(int,v.split('.')))
+                r={'>':lhs>rhs,'<':lhs<rhs,'=':lhs==rhs,'>=':lhs>=rhs,'<=':lhs<=rhs}.get(op,False)
             else:raise ValueError('Unmodelled trigger '+k+' in '+tag)
             if not r:return False
         return True
@@ -102,9 +125,9 @@ class World:
             elif k=='set_country_flag':
                 self.addflag(tag,v if isinstance(v,str) else first(v,'flag'),None if isinstance(v,str) else int(first(v,'days','0')))
             elif k=='clr_country_flag':c['flags'].pop(v,None)
-            elif k in ('set_variable','set_temp_variable','add_to_variable','add_to_temp_variable','subtract_from_variable','multiply_variable','divide_variable'):
+            elif k in ('set_variable','set_temp_variable','add_to_variable','add_to_temp_variable','subtract_from_variable','subtract_from_temp_variable','multiply_variable','divide_variable'):
                 a,o,b=v[0];target=c['tmp'] if 'temp' in k else c['v'];val=self.value(b,tag)
-                target[a]=target.get(a,0)+val if k.startswith('add_') else target.get(a,0)-val if k.startswith('subtract_') else target.get(a,0)*val if k.startswith('multiply_') else target.get(a,0)/val if k.startswith('divide_') else val
+                target[a]=target.get(a,0)+val if k.startswith('add_') else target.get(a,0)-val if k.startswith(('subtract_','subtract_from_')) else target.get(a,0)*val if k.startswith('multiply_') else target.get(a,0)/val if k.startswith('divide_') else val
             elif k=='modify_treasury_effect':c['v']['treasury']+=self.value('treasury_change',tag)
             elif k=='add_dynamic_modifier':c['dm'].add(first(v,'modifier'))
             elif k=='remove_dynamic_modifier':c['dm'].discard(first(v,'modifier'))
@@ -114,6 +137,12 @@ class World:
             elif k=='remove_ideas':c['ideas'].discard(v);c['idea_until'].pop(v,None)
             elif k=='add_timed_idea':
                 id=first(v,'idea');c['ideas'].add(id);c['idea_until'][id]=self.day+int(first(v,'days','0'))
+            elif k=='add_equipment_bonus':
+                c['equipment_bonuses'].append((first(v,'name'),deepcopy(first(v,'bonus',[]))))
+            elif k=='add_tech_bonus':
+                c['tech_bonuses'].append({key:value for key,_,value in v})
+            elif k=='add_doctrine_cost_reduction':
+                c['doctrine_bonuses'].append({key:value for key,_,value in v})
             elif k=='country_event':self.queue.append((tag,first(v,'id'),self.day+int(first(v,'days','0'))))
             elif k=='give_military_access':self.c[v]['access'].add(tag)
             elif k=='diplomatic_relation':
@@ -135,13 +164,37 @@ class World:
                 c['v']['ruling_party']=self.value('rul_party_temp',tag)
                 c['elections']=self.value('disable_elections',tag)==0
                 self.call('1970_set_leader',tag)
+            elif k.isdigit():
+                for effect,_,body in v:
+                    if effect=='add_extra_state_shared_building_slots':
+                        level=int(body);assert level>0,(tag,k,effect,body)
+                        c['slot_grants'][k]=c['slot_grants'].get(k,0)+level
+                        c['pending_slots'][k]=c['pending_slots'].get(k,0)+level
+                    elif effect=='add_building_construction':
+                        level=int(first(body,'level','1'))
+                        assert c['pending_slots'].get(k,0)>=level,(tag,k,first(body,'type'),level,c['pending_slots'])
+                        c['pending_slots'][k]-=level
+                        key=(k,first(body,'type'))
+                        c['buildings'][key]=c['buildings'].get(key,0)+level
+                    else:raise ValueError('Unmodelled state effect '+effect+' in '+tag)
             else:raise ValueError('Unmodelled effect '+k+' in '+tag)
     def call(self,name,tag='KOR'):self.execute(self.e[P+name],tag)
     def event_immediate(self,id,tag='KOR'):self.execute(first(self.events[id],'immediate',[]),tag)
+    def deliver_due_events(self):
+        fired=[];pending=[]
+        for tag,event_id,due in self.queue:
+            if due>self.day:
+                pending.append((tag,event_id,due));continue
+            event=self.events.get(event_id)
+            if event and self.trigger(first(event,'trigger',[]),tag):
+                self.execute(first(event,'immediate',[]),tag);fired.append(event_id)
+        self.queue=pending
+        return fired
     def option(self,id,index=0,tag='KOR'):
         b=values(self.events[id],'option')[index]
         assert self.trigger(first(b,'trigger',[]),tag),(id,index,'option unavailable')
         self.execute([a for a in b if a[0] not in ('name','trigger')],tag)
+        self.queue=[item for item in self.queue if not (item[0]==tag and item[1]==id)]
     def snapshot_cash(self):return {tag:c['v']['treasury'] for tag,c in self.c.items()}
     def can_decide(self,key):return self.trigger(first(self.decisions[P+key],'available',[]))
     def decide(self,key):
@@ -152,6 +205,13 @@ class World:
         self.c[tag]['v']['additional_expenses_rate']=0;self.c[tag]['v']['additional_income_rate']=0
         self.call('contract_expenses',tag);self.call('contract_income',tag)
         return (self.c[tag]['v']['additional_expenses_rate'],self.c[tag]['v']['additional_income_rate'])
+    def use_generated_politics(self):
+        files,_=build_politics(load_design())
+        effect_path='common/scripted_effects/COLDWAR_KOR_1970_politics.txt'
+        for key,_,body in parse(files[effect_path]):self.e[key]=body
+        event_path='events/COLDWAR_KOR_1970_politics.txt'
+        for event in values(parse(files[event_path]),'country_event'):
+            self.events[first(event,'id')]=event
 
 def run(base):
     tests=[]
@@ -295,11 +355,147 @@ def run(base):
         w=World(base);w.c['KOR']['v']['labour_unions_opinion']=23;w.addflag('KOR',P+'lawful_labour_bargaining');w.call('ensure_labour_representation');assert w.c['KOR']['v']['labour_unions_opinion']==33
         w.call('ensure_labour_representation');assert w.c['KOR']['v']['labour_unions_opinion']==33
     test('native labour representation preserves prior opinion and applies the recognition change once',labour)
+    def building_slots():
+        w=World(base);c=w.c['KOR'];c['v']['gdp_total']=100
+        w.call('complete_balanced_provinces')
+        assert c['v']['treasury']==-.5,c['v']['treasury']
+        assert c['slot_grants']=={'606':1,'607':1},c['slot_grants']
+        assert c['pending_slots']=={'606':0,'607':0},c['pending_slots']
+        assert c['buildings']=={('606','infrastructure'):1,('607','infrastructure'):1},c['buildings']
+        paid=(c['v']['treasury'],deepcopy(c['slot_grants']),deepcopy(c['pending_slots']),deepcopy(c['buildings']))
+        w.call('complete_balanced_provinces')
+        assert paid==(c['v']['treasury'],c['slot_grants'],c['pending_slots'],c['buildings'])
+    test('balanced provinces charges 0.5B at GDP 100; per-level state slots precede each construction and replay grants nothing twice',building_slots)
+    def project_gdp_transaction():
+        w=World(base);c=w.c['KOR'];c['v']['gdp_total']=100
+        c['state_buildings'][('605','industrial_complex')]=48
+        assert w.trigger(w.t[P+'can_pohang_foundry'])
+        w.call('complete_pohang_foundry')
+        assert abs(c['v']['treasury']+1.75)<1e-8,c['v']['treasury']
+        assert c['slot_grants']=={'605':2},c['slot_grants']
+        assert c['pending_slots']=={'605':0},c['pending_slots']
+        assert c['buildings']=={('605','industrial_complex'):2},c['buildings']
+        assert c['state_buildings'][('605','industrial_complex')]+c['buildings'][('605','industrial_complex')]==50
+        paid=(c['v']['treasury'],deepcopy(c['slot_grants']),deepcopy(c['buildings']))
+        w.call('complete_pohang_foundry')
+        assert paid==(c['v']['treasury'],c['slot_grants'],c['buildings'])
+        capped=World(base);crowded=capped.c['KOR'];crowded['v']['gdp_total']=100
+        crowded['state_buildings'][('605','industrial_complex')]=49
+        assert not capped.trigger(capped.t[P+'can_pohang_foundry'])
+        capped.call('complete_pohang_foundry')
+        assert crowded['v']['treasury']==0 and not capped.flag('KOR',P+'pohang_foundry_paid')
+        assert crowded['slot_grants']=={} and crowded['buildings']=={}
+        no_gdp=World(base);empty=no_gdp.c['KOR'];empty['v'].pop('gdp_total')
+        no_gdp.call('complete_pohang_foundry')
+        assert empty['v']['treasury']==0,empty['v']['treasury']
+        assert not no_gdp.flag('KOR',P+'pohang_foundry_paid')
+        assert empty['slot_grants']=={} and empty['pending_slots']=={} and empty['buildings']=={}
+        assert empty['equipment_bonuses']==[] and empty['tech_bonuses']==[] and empty['doctrine_bonuses']==[]
+        base_only=World(base);base_country=base_only.c['KOR'];base_country['v'].pop('gdp_total')
+        assert not base_only.trigger(base_only.t[P+'can_third_plan'])
+        base_only.call('complete_third_plan')
+        assert base_country['v']['treasury']==0 and not base_only.flag('KOR',P+'third_plan_paid')
+        assert not any(k.startswith(P+'third_plan_') for k in base_country['v'])
+    test('emitted Pohang trigger accepts 48/50 and rejects 49/50 before its 1.75B GDP-based charge, two factory levels, and two slots; zero GDP withholds the entire transaction',project_gdp_transaction)
+    def equipment_bonus_party_cycle():
+        w=World(base);c=w.c['KOR']
+        c['v']['gdp_total']=100
+        w.call('complete_changwon_production')
+        assert len(c['equipment_bonuses'])==1 and c['equipment_bonuses'][0][0]==P+'changwon_production',c['equipment_bonuses']
+        equipment=c['equipment_bonuses'][0][1]
+        families={key:value for key,_,value in equipment}
+        assert first(families['infantry_weapons_type'],'build_cost_ic')=='-0.06'
+        assert first(families['artillery_equipment'],'build_cost_ic')=='-0.04'
+        assert [b['name'] for b in c['tech_bonuses']]==[P+'changwon_small_arms',P+'changwon_artillery']
+        assert all(b.get('uses')=='1' and b.get('bonus')=='0.5' for b in c['tech_bonuses'])
+        w.call('complete_changwon_production')
+        assert len(c['equipment_bonuses'])==1 and len(c['tech_bonuses'])==2
+        w.call('complete_chaebol_compact');assert P+'chaebol_compact_programme' in c['dm']
+        paid=(c['v']['treasury'],deepcopy(c['slot_grants']),deepcopy(c['buildings']),deepcopy(c['equipment_bonuses']),deepcopy(c['tech_bonuses']))
+        c['v']['ruling_party']=1;w.call('refresh_programmes')
+        assert P+'chaebol_compact_programme' not in c['dm']
+        assert len(c['equipment_bonuses'])==1 and len(c['tech_bonuses'])==2
+        c['v']['ruling_party']=0;w.call('refresh_programmes')
+        assert P+'chaebol_compact_programme' in c['dm']
+        w.call('complete_changwon_production')
+        assert paid==(c['v']['treasury'],c['slot_grants'],c['buildings'],c['equipment_bonuses'],c['tech_bonuses'])
+    test('emitted Changwon cost and finite research bonuses persist once across replay and a party programme departure/return',equipment_bonus_party_cycle)
+    def generated_political_dispatch():
+        generated_files,_=build_politics(load_design())
+        political_events={first(event,'id'):event for event in values(parse(generated_files['events/COLDWAR_KOR_1970_politics.txt']),'country_event')}
+        political_effects={key:body for key,_,body in parse(generated_files['common/scripted_effects/COLDWAR_KOR_1970_politics.txt'])}
+        daily=political_effects[P+'politics_daily'];dispatch_rows=[]
+        def find_dispatch(rows):
+            for key,_,body in rows:
+                if key=='if':
+                    limit=first(body,'limit',[]);actions=[row for row in body if row[0]!='limit']
+                    ids=[first(effect,'id') for action,_,effect in actions if action=='country_event' and isinstance(effect,list)]
+                    for event_id in ids:dispatch_rows.append((event_id,limit,actions))
+                    find_dispatch(actions)
+                elif isinstance(body,list):find_dispatch(body)
+        find_dispatch(daily)
+        auto_ids=['COLDWAR_KOR_transition.100']+[f'COLDWAR_KOR_transition.{i}' for i in range(101,115)]
+        for event_id in auto_ids:
+            event=political_events[event_id];number=event_id.rsplit('.',1)[1]
+            queue=f'COLDWAR_KOR_transition_{number}_dispatch_queued';delivered=f'COLDWAR_KOR_transition_{number}_delivered'
+            assert first(event,'is_triggered_only')=='yes' and first(event,'mean_time_to_happen') is None,event_id
+            scheduled=[(limit,actions) for eid,limit,actions in dispatch_rows if eid==event_id]
+            assert len(scheduled)==1,(event_id,len(scheduled))
+            limit,actions=scheduled[0]
+            limit_without_receipts=[row for row in limit if not (row[0]=='NOT' and first(row[2],'has_country_flag') in (queue,delivered))]
+            assert limit_without_receipts==first(event,'trigger',[]),event_id
+            assert any(key=='set_country_flag' and first(body,'flag')==queue and first(body,'days')=='2' for key,_,body in actions),event_id
+            call=next(body for key,_,body in actions if key=='country_event' and first(body,'id')==event_id)
+            assert first(call,'days')=='1',event_id
+            options=values(event,'option')
+            assert first(first(event,'immediate',[]),'set_country_flag')==delivered,event_id
+            assert len(options)==2 and all(all(any(key=='clr_country_flag' and body==flag for key,_,body in walk(option)) for flag in (queue,delivered)) for option in options),event_id
+        assert not [event_id for event_id,event in political_events.items() if first(event,'mean_time_to_happen') is not None]
+        def ready(date_value='1971.4.28'):
+            w=World(base);w.use_generated_politics();w.current_date=date_value
+            w.c['KOR']['leader']='Park Chung Hee';w.c['KOR']['v']['stability']=.5
+            return w
+        def queued(w,eid):return [item for item in w.queue if item[1]==eid]
+        empty=ready('1971.4.27');empty.call('politics_daily')
+        assert not queued(empty,'COLDWAR_KOR_transition.102')
+        human=ready();before=(human.c['KOR']['v'].get('add_political_power',0),human.c['KOR']['v']['stability'])
+        human.call('politics_daily');first_queue=queued(human,'COLDWAR_KOR_transition.102')
+        assert len(first_queue)==1 and first_queue[0][2]==1 and human.flag('KOR','COLDWAR_KOR_transition_102_dispatch_queued')
+        assert not human.flag('KOR','COLDWAR_KOR_transition_1971_recorded')
+        assert before==(human.c['KOR']['v'].get('add_political_power',0),human.c['KOR']['v']['stability'])
+        human.call('politics_daily');assert len(queued(human,'COLDWAR_KOR_transition.102'))==1
+        human.day=1;human.current_date='1971.4.29';assert human.deliver_due_events()==['COLDWAR_KOR_transition.102']
+        assert human.flag('KOR','COLDWAR_KOR_transition_102_delivered')
+        human.day=4;human.current_date='1971.5.2';human.call('politics_daily')
+        assert not queued(human,'COLDWAR_KOR_transition.102')
+        assert not human.flag('KOR','COLDWAR_KOR_transition_1971_recorded')
+        human.option('COLDWAR_KOR_transition.102',0)
+        assert human.flag('KOR','COLDWAR_KOR_transition_1971_recorded')
+        assert human.flag('KOR','COLDWAR_KOR_electoral_opening') and human.c['KOR']['v']['add_stability']==.03
+        assert not human.flag('KOR','COLDWAR_KOR_transition_102_dispatch_queued') and not human.flag('KOR','COLDWAR_KOR_transition_102_delivered')
+        human.call('politics_daily');assert not queued(human,'COLDWAR_KOR_transition.102')
+        ai=ready();ai.call('politics_daily');assert len(queued(ai,'COLDWAR_KOR_transition.102'))==1
+        ai.day=1;ai.current_date='1971.4.29';assert ai.deliver_due_events()==['COLDWAR_KOR_transition.102'];ai.option('COLDWAR_KOR_transition.102',1)
+        assert ai.flag('KOR','COLDWAR_KOR_transition_1971_recorded') and ai.flag('KOR','COLDWAR_KOR_executive_emergency_proposed')
+        assert ai.c['KOR']['v']['add_stability']==-.05 and not ai.flag('KOR','COLDWAR_KOR_transition_102_dispatch_queued') and not ai.flag('KOR','COLDWAR_KOR_transition_102_delivered')
+        dropped=ready();dropped.call('politics_daily');assert len(queued(dropped,'COLDWAR_KOR_transition.102'))==1
+        dropped.day=1;dropped.current_date='1971.4.29';dropped.c['KOR']['flags'].pop('COLDWAR_KOR_1971_contest_pending')
+        assert dropped.deliver_due_events()==[] and not dropped.flag('KOR','COLDWAR_KOR_transition_102_delivered')
+        dropped.day=2;dropped.c['KOR']['flags']['COLDWAR_KOR_1971_contest_pending']=None;dropped.call('politics_daily')
+        assert len(queued(dropped,'COLDWAR_KOR_transition.102'))==1 and dropped.flag('KOR','COLDWAR_KOR_transition_102_dispatch_queued')
+        replay=ready('1979.10.26');replay.addflag('KOR','COLDWAR_KOR_park_succession_unresolved');replay.call('politics_daily')
+        first100=queued(replay,'COLDWAR_KOR_transition.100');assert len(first100)==1 and first100[0][2]==1
+        replay.call('politics_daily');assert len(queued(replay,'COLDWAR_KOR_transition.100'))==1
+        assert replay.flag('KOR','COLDWAR_KOR_park_succession_unresolved')
+        replay.day=1;replay.current_date='1979.10.27';assert replay.deliver_due_events()==['COLDWAR_KOR_transition.100'];replay.option('COLDWAR_KOR_transition.100',1)
+        assert not replay.flag('KOR','COLDWAR_KOR_park_succession_unresolved')
+        assert replay.flag('KOR','COLDWAR_KOR_officer_council_contest') and not replay.flag('KOR','COLDWAR_KOR_transition_100_dispatch_queued') and not replay.flag('KOR','COLDWAR_KOR_transition_100_delivered')
+    test('generated dated politics dispatch: exact trigger, next-day queue, empty and replay safety, human choice and AI option outcomes',generated_political_dispatch)
     return tests
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--installed',action='store_true');a=ap.parse_args();base=ROOT if a.installed else HERE/'runtime_staged'
-    tests=run(base);report={'status':'PASS','target':'installed' if a.installed else 'staged','tests':tests,'scope':'Executes emitted effects/triggers through a bounded source model with explicit native helper stand-ins; not an HOI4 engine, multiplayer transport or save test'}
+    ap=argparse.ArgumentParser();ap.add_argument('--installed',action='store_true');a=ap.parse_args();base=ROOT if a.installed else STAGE
+    tests=run(base);report={'project':'IMPERIA COLD WAR','status':'PASS','target':'installed' if a.installed else 'staged','tests':tests,'scope':'Executes emitted effects/triggers through a bounded source model with explicit native helper stand-ins; not an HOI4 engine, multiplayer transport or save test'}
     (DOC/'COLDWAR_KOR_runtime_scenarios.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report))
 
 if __name__=='__main__':main()

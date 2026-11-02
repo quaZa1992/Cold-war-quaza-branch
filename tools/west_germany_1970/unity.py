@@ -1,7 +1,9 @@
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
+# IMPERIA COLD WAR — Resolve unity chapters only after both human governments choose.
+# IMPERIA COLD WAR — Remove retired Western integration and Moscow backing mechanics.
 """Peaceful unity through détente: the fifth tab of the inner-German relations window (multiplayer roleplay).
 
-Not the collapse of the GDR (that path stays in events_ddr.py), but two German states that get on well
+Two German states that get on well
 enough to negotiate one state. Hard by design:
 
   1. Détente first: a focus (A European Peace Order), the Basic Treaty, the Permanent Representations and
@@ -106,14 +108,16 @@ _NEWS = [
 
 # ------------------------------------------------------------------ triggers
 def triggers():
+    # IMPERIA CW — Cold War: Unity talks depend on achieved détente and treaties, with no calendar lock.
     conds = [phase_is(0), "NOT = { has_country_flag = cwgg_unity_cd }", f"has_completed_focus = {P}_european_peace_order",
              "check_variable = { cwgg_klima > 69 }", "check_variable = { cwgg_stufe = 0 }", "check_variable = { cwgg_krise_typ = 0 }",
              "check_variable = { cwgg_detente_m > 35 }", "check_variable = { cwgg_vertrag_3 = 1 }", "check_variable = { cwgg_vertrag_5 = 1 }",
              "check_variable = { cwgg_vertrag_6 = 1 }", "OR = { check_variable = { cwgg_vertrag_7 = 1 } check_variable = { cwgg_vertrag_8 = 1 } }",
-             "country_exists = DDR", f"NOT = {{ has_global_flag = {P}_unity_achieved }}", f"NOT = {{ has_global_flag = {P}_confederation }}",
-             f"NOT = {{ has_country_flag = {P}_dark_regime }}", "NOT = { has_war_with = DDR }", "date > 1975.1.1"]
+             "country_exists = DDR", f"NOT = {{ has_global_flag = {P}_unity_achieved }}",
+             f"NOT = {{ has_country_flag = {P}_dark_regime }}", "NOT = { has_war_with = DDR }"]
     out = [f"\n# ---------------------------------------------------------------- unity through détente",
            f"{U}_ready = {{\n\t" + "\n\t".join(conds) + "\n}\n",
+           f"{U}_pending = {{\n\t" + "\n\t".join([phase_is(1)]+conds[1:]) + "\n}\n",
            f"{U}_can_propose = {{\n\t{U}_ready = yes\n\tcheck_variable = {{ cwgg_init_brd > 2 }}\n\thas_political_power > 99\n}}\n",
            f"{U}_can_ddr_propose = {{\n\tGER = {{ {U}_ready = yes check_variable = {{ cwgg_init_ddr > 2 }} }}\n\thas_political_power > 99\n}}\n",
            f"{U}_talking = {{\n\tcheck_variable = {{ cwgg_u_phase > 1 }}\n}}\n"]
@@ -131,10 +135,10 @@ def effects():
         for p in range(1, 4):
             hard, mid, reform, free = (5, 25, 70)[p - 1], (10, 40, 50)[p - 1], (25, 55, 20)[p - 1], (50, 40, 10)[p - 1]
             entries.append(f"""			10 = {{
-				modifier = {{ add = {hard} DDR = {{ check_variable = {{ cwddr_leader < 2 }} check_variable = {{ cwddr_wende_stage < 3 }} }} }}
-				modifier = {{ add = {mid} DDR = {{ check_variable = {{ cwddr_leader = 2 }} check_variable = {{ cwddr_wende_stage < 3 }} }} }}
-				modifier = {{ add = {reform} DDR = {{ check_variable = {{ cwddr_leader = 3 }} check_variable = {{ cwddr_wende_stage < 3 }} }} }}
-				modifier = {{ add = {free} DDR = {{ OR = {{ check_variable = {{ cwddr_leader > 3 }} check_variable = {{ cwddr_wende_stage > 2 }} }} }} }}
+                modifier = {{ add = {hard} DDR = {{ check_variable = {{ cwddr_sed_control > 70 }} }} }}
+                modifier = {{ add = {mid} DDR = {{ check_variable = {{ cwddr_sed_control > 50 }} check_variable = {{ cwddr_sed_control < 71 }} }} }}
+                modifier = {{ add = {reform} DDR = {{ check_variable = {{ cwddr_sed_control > 30 }} check_variable = {{ cwddr_sed_control < 51 }} }} }}
+                modifier = {{ add = {free} DDR = {{ check_variable = {{ cwddr_sed_control < 31 }} }} }}
 				{"modifier = { add = 10 DDR = { check_variable = { cwddr_west_dependency > 60 } } }" if p < 3 else "modifier = { add = 10 DDR = { check_variable = { cwddr_sed_control > 70 } } }"}
 				modifier = {{ add = 15 check_variable = {{ cwgg_u_pos = {p} }} check_variable = {{ cwgg_u_shift_{k} > 0 }} }}
 				modifier = {{ add = 15 check_variable = {{ cwgg_u_pos = {p} }} check_variable = {{ cwgg_u_shift_{k} > 1 }} }}
@@ -148,15 +152,21 @@ def effects():
 		}}
 	}}""")
     next_open = "\n".join(f"\t{'if' if k == 1 else 'else_if'} = {{ limit = {{ check_variable = {{ cwgg_u_ch_{k} = 0 }} }} set_variable = {{ cwgg_u_cur = {k} }} }}" for k in range(1, 6))
+    # IMPERIA COLD WAR — Neutrality is Bonn's declared position in chapter three.
+    next_open += f"\n\tif = {{ limit = {{ check_variable = {{ cwgg_u_cur = 3 }} has_country_flag = {P}_neutrality_accepted check_variable = {{ cwgg_u_pos = 0 }} }} set_variable = {{ cwgg_u_pos = 2 }} }}"
     agree = "\n".join(f"\t\tif = {{ limit = {{ check_variable = {{ cwgg_u_cur = {k} }} }} set_variable = {{ cwgg_u_ch_{k} = cwgg_u_pos }} }}" for k in range(1, 6))
     shift = "\n".join(f"\t\tif = {{ limit = {{ check_variable = {{ cwgg_u_cur = {k} }} }} add_to_variable = {{ cwgg_u_shift_{k} = 1 }} }}" for k in range(1, 6))
-    ddr_round_ev = "\n".join(f"\t\tif = {{ limit = {{ check_variable = {{ cwgg_u_cur = {k} }} }} DDR = {{ country_event = {{ id = {EVU}.{30 + k} days = 1 }} }} }}" for k in range(1, 6))
+    ddr_round_ev = "\n".join(f"\t\tif = {{ limit = {{ check_variable = {{ cwgg_u_cur = {k} }} }} DDR = {{ set_country_flag = cwgg_u_ddr_dialogue_open country_event = {{ id = {EVU}.{30 + k} days = 1 }} }} }}" for k in range(1, 6))
     reset = "\n".join(f"\tset_variable = {{ cwgg_u_ch_{k} = 0 }}\n\tset_variable = {{ cwgg_u_shift_{k} = 0 }}" for k in range(1, 6))
     reset_fp = "\n".join(f"\tset_variable = {{ cwgg_fp_{k} = 0 }}" for _t, k, _n in POWERS)
-    ask_fp = "\n".join(f"""	if = {{ limit = {{ country_exists = {t} }} set_variable = {{ cwgg_fp_{k} = 1 }} {t} = {{ country_event = {{ id = {EVU}.{41 + i} days = 3 }} }} }}
-	else = {{ set_variable = {{ cwgg_fp_{k} = 2 }} }}""" for i, (t, k, _n) in enumerate(POWERS))
+    ask_fp = "\n".join(f"""	if = {{ limit = {{ country_exists = {t} }} set_variable = {{ cwgg_fp_{k} = 1 }} {t} = {{ set_country_flag = cwgg_u_fp_dialogue_open_{k} country_event = {{ id = {EVU}.{41 + i} days = 3 }} }} }}
+	else = {{ set_variable = {{ cwgg_fp_{k} = 0 }} }}""" for i, (t, k, _n) in enumerate(POWERS))
     any_pending = " ".join(f"check_variable = {{ cwgg_fp_{k} = 1 }}" for _t, k, _n in POWERS)
     any_veto = " ".join(f"check_variable = {{ cwgg_fp_{k} = 3 }}" for _t, k, _n in POWERS)
+    all_power_consent = " ".join(f"check_variable = {{ cwgg_fp_{k} = 2 }}" for _t, k, _n in POWERS)
+    all_chapters_agreed = " ".join(f"check_variable = {{ cwgg_u_ch_{k} > 0 }}" for k in range(1, 6))
+    all_powers_exist = " ".join(f"country_exists = {t}" for t, _k, _n in POWERS)
+    execute_guard = f"{phase_is(4)} has_country_flag = cwgg_u_rat_brd has_country_flag = cwgg_u_rat_ddr {all_powers_exist} {all_power_consent} {all_chapters_agreed} NOT = {{ has_global_flag = {P}_unity_achieved }}"
     reopen = "\n".join(f"\t\tif = {{ limit = {{ check_variable = {{ cwgg_u_reopen_{k} = 1 }} }} set_variable = {{ cwgg_u_ch_{k} = 0 }} set_variable = {{ cwgg_u_reopen_{k} = 0 }} }}" for k in range(1, 6))
     return f"""
 # ======================================================================== unity through détente
@@ -194,12 +204,18 @@ def effects():
 	}}
 	else_if = {{ limit = {{ {phase_is(2)} check_variable = {{ cwgg_stufe < 3 }} }}
 		add_to_variable = {{ cwgg_u_m = 1 }}
-		if = {{ limit = {{ check_variable = {{ cwgg_u_m > 2 }} }} {U}_resolve_round = yes }}
+		if = {{ limit = {{ check_variable = {{ cwgg_u_m > 2 }}
+			OR = {{ NOT = {{ is_ai = no }} check_variable = {{ cwgg_u_pos > 0 }} }}
+			OR = {{ NOT = {{ DDR = {{ is_ai = no }} }} check_variable = {{ cwgg_u_dpos > 0 }} }} }}
+			{U}_resolve_round = yes
+		}}
+		else_if = {{ limit = {{ check_variable = {{ cwgg_u_m > 2 }} }} set_variable = {{ cwgg_u_m = 3 }} }}
 	}}
 	{R}_gui_refresh = yes
 }}
 
 {U}_propose = {{
+	if = {{ limit = {{ {U}_can_propose = yes }}
 	add_to_variable = {{ cwgg_init_brd = -3 }}
 	add_political_power = -100
 	set_variable = {{ cwgg_u_phase = 1 }}
@@ -208,22 +224,20 @@ def effects():
 	else = {{
 		random_list = {{
 			10 = {{
-				modifier = {{ add = 20 DDR = {{ check_variable = {{ cwddr_leader > 2 }} }} }}
-				modifier = {{ add = 30 DDR = {{ check_variable = {{ cwddr_wende_stage > 2 }} }} }}
 				modifier = {{ add = 15 DDR = {{ check_variable = {{ cwddr_west_dependency > 60 }} }} }}
 				modifier = {{ add = 10 DDR = {{ check_variable = {{ cwddr_hard_currency > 60 }} }} }}
-				modifier = {{ add = 10 DDR = {{ check_variable = {{ cwddr_moscow_backing < 40 }} }} }}
 				modifier = {{ factor = 0.5 DDR = {{ check_variable = {{ cwddr_sed_control > 70 }} }} }}
-				modifier = {{ factor = 0.5 DDR = {{ check_variable = {{ cwddr_leader = 0 }} }} }}
 				{U}_start = yes
 			}}
 			40 = {{ country_event = {{ id = {EVU}.3 days = 1 }} }}
 		}}
 	}}
 	{R}_gui_refresh = yes
+	}}
 }}
 
 {U}_start = {{
+	if = {{ limit = {{ {U}_pending = yes }}
 	set_variable = {{ cwgg_u_phase = 2 }}
 	set_variable = {{ cwgg_u_cur = 1 }}
 	set_variable = {{ cwgg_u_pos = 0 }}
@@ -236,12 +250,16 @@ def effects():
 	clr_country_flag = cwgg_u_rat_brd
 	clr_country_flag = cwgg_u_rat_ddr
 	country_event = {{ id = {EVU}.4 days = 1 }}
-	if = {{ limit = {{ DDR = {{ is_ai = no }} }} DDR = {{ country_event = {{ id = {EVU}.31 days = 2 }} }} }}
+	if = {{ limit = {{ DDR = {{ is_ai = no }} }} DDR = {{ set_country_flag = cwgg_u_ddr_dialogue_open country_event = {{ id = {EVU}.31 days = 2 }} }} }}
 	{_NEWS[0]}
 	{log("u_started", "The unity talks open. First chapter: the constitution.")}
+	}}
 }}
 
 {U}_resolve_round = {{
+	if = {{ limit = {{ {phase_is(2)}
+		OR = {{ NOT = {{ is_ai = no }} check_variable = {{ cwgg_u_pos > 0 }} }}
+		OR = {{ NOT = {{ DDR = {{ is_ai = no }} }} check_variable = {{ cwgg_u_dpos > 0 }} }} }}
 	set_variable = {{ cwgg_u_m = 0 }}
 	# an AI Bonn takes the Western line and moves to the compromise after two failed rounds
 	if = {{ limit = {{ is_ai = yes check_variable = {{ cwgg_u_pos = 0 }} }}
@@ -285,6 +303,7 @@ def effects():
 {ddr_round_ev}
 		}}
 	}}
+	}}
 }}
 
 # All five chapters agreed: the treaty is initialled and goes to the Four Powers.
@@ -323,11 +342,12 @@ def effects():
 				{log("u_veto", "A veto by the Four Powers reopens a chapter of the unity treaty.")}
 			}}
 		}}
-		else = {{
+		else_if = {{ limit = {{ {all_powers_exist} {all_power_consent} }}
 			set_variable = {{ cwgg_u_phase = 4 }}
 			{log("u_consent", "All Four Powers consent. The parliaments must ratify.")}
+			set_country_flag = cwgg_u_rat_brd_dialogue_open
 			country_event = {{ id = {EVU}.50 days = 2 }}
-			if = {{ limit = {{ DDR = {{ is_ai = no }} }} DDR = {{ country_event = {{ id = {EVU}.51 days = 2 }} }} }}
+			if = {{ limit = {{ DDR = {{ is_ai = no }} }} DDR = {{ set_country_flag = cwgg_u_rat_ddr_dialogue_open country_event = {{ id = {EVU}.51 days = 2 }} }} }}
 			else = {{ set_country_flag = cwgg_u_rat_ddr }}
 		}}
 	}}
@@ -353,6 +373,7 @@ def effects():
 
 # The united Germany, as negotiated (GER scope).
 {U}_execute = {{
+	if = {{ limit = {{ {execute_guard} }}
 	set_variable = {{ cwgg_u_phase = 5 }}
 	set_global_flag = {P}_unity_by_detente
 	{_NEWS[2]}
@@ -382,6 +403,7 @@ def effects():
 		if = {{ limit = {{ {ch_is(5, 1)} }} {opinion("POL", "large_decrease")} set_global_flag = {P}_border_reserved }}
 		else = {{ {opinion("POL", "large_increase")} }}
 		if = {{ limit = {{ {ch_is(5, 3)} }} {opinion("SOV", "medium_increase")} }}
+	}}
 	}}
 }}
 
@@ -415,21 +437,33 @@ def effects():
 """
 
 
+# IMPERIA COLD WAR — Four-Power consent and ratification remain explicit, with safe timeout choices.
 # ------------------------------------------------------------------ events
 def events():
     yes_start = f"GER = {{ {U}_start = yes }}"
+
+    def fp_reply(key, value, extra=""):
+        return (f"if = {{ limit = {{ GER = {{ {phase_is(3)} check_variable = {{ cwgg_fp_{key} = 1 }} }} }} "
+                f"clr_country_flag = cwgg_u_fp_dialogue_open_{key} GER = {{ set_variable = {{ cwgg_fp_{key} = {value} }} {extra} {U}_powers_check = yes }} }}")
+
+    def fp_pending(key):
+        return f"GER = {{ {phase_is(3)} check_variable = {{ cwgg_fp_{key} = 1 }} }}"
     E(f"{EVU}.1", "Bonn Proposes Unity Talks",
       "The Federal Chancellor has proposed formal negotiations on the unity of Germany - not as an annexation, Bonn insists, but as a treaty between equals. Five chapters would be on the table: the constitution, the economic order, the alliance, the capital and the borders. Every one of the Four Powers would have to agree.",
       "GFX_handshake_black",
-      [O("We will negotiate - on equal terms.", J(yes_start, "add_political_power = 25"), ai=50),
-       O("The GDR is a sovereign socialist state. No.", J(f"GER = {{ set_variable = {{ cwgg_u_phase = 0 }} set_country_flag = {{ flag = cwgg_unity_cd days = 730 value = 1 }} country_event = {{ id = {EVU}.3 days = 1 }} }}"), ai=50)],
-      scope="DDR")
+      [O("Defer our answer.", f"country_event = {{ id = {EVU}.1 days = 30 }}", ai=0),
+       O("We will negotiate - on equal terms.", f"if = {{ limit = {{ GER = {{ {U}_pending = yes }} }} {yes_start} add_political_power = 25 }}", ai=50,
+         trig=f"GER = {{ {U}_pending = yes }}"),
+       O("The GDR is a sovereign socialist state. No.", f"if = {{ limit = {{ GER = {{ {phase_is(1)} }} }} GER = {{ set_variable = {{ cwgg_u_phase = 0 }} set_country_flag = {{ flag = cwgg_unity_cd days = 730 value = 1 }} country_event = {{ id = {EVU}.3 days = 1 }} }} }}", ai=50,
+         trig=f"GER = {{ {phase_is(1)} }}")],
+      scope="DDR", trig=f"is_ai = no GER = {{ {phase_is(1)} }}")
     E(f"{EVU}.2", "East Berlin Proposes Unity Talks",
       "The GDR's government has proposed formal negotiations on the unity of Germany. Some in Bonn call it a trap, some the chance of a century. If we accept, every chapter - the constitution, the economy, the alliance, the capital, the borders - is open.",
       "GFX_handshake_black",
-      [O("We accept.", J(f"{U}_start = yes", "add_political_power = 25"), ai=70),
-       O("Not under these conditions.", J("set_variable = { cwgg_u_phase = 0 }", "set_country_flag = { flag = cwgg_unity_cd days = 730 value = 1 }",
-                                           "DDR = { add_political_power = -25 }"), ai=30)])
+      [O("Defer our answer.", f"country_event = {{ id = {EVU}.2 days = 30 }}", ai=0, trig=phase_is(1)),
+       O("We accept.", f"if = {{ limit = {{ {U}_pending = yes }} {U}_start = yes add_political_power = 25 }}", ai=70, trig=f"{U}_pending = yes"),
+       O("Not under these conditions.", f"if = {{ limit = {{ {phase_is(1)} }} set_variable = {{ cwgg_u_phase = 0 }} set_country_flag = {{ flag = cwgg_unity_cd days = 730 value = 1 }} }}", ai=30, trig=phase_is(1))],
+      trig=phase_is(1))
     E(f"{EVU}.3", "East Berlin Says No",
       "The GDR has rejected unity talks. 'Socialism and imperialism cannot be united, any more than fire and water,' says the Politburo's statement. For two years the subject is closed.",
       "GFX_egon_krenz_ddr",
@@ -456,24 +490,29 @@ def events():
           f"{desc} The round is decided in three months. Bonn's delegation will state its own position; if both are the same, the chapter is agreed.\n\n"
           + "\n".join(f"§Y{pn}§!: {pd}" for pn, pd in pos),
           "GFX_politics_talks",
-          [O(pos[p - 1][0], f"GER = {{ set_variable = {{ cwgg_u_dpos = {p} }} }}", ai=10) for p in (1, 2, 3)]
-          + [O("We refuse to discuss this chapter now.", "GER = { set_variable = { cwgg_u_dpos = 0 } }", ai=1)],
-          scope="DDR")
+          [O("Defer our position.", f"country_event = {{ id = {EVU}.{30 + k} days = 30 }}", ai=0,
+             trig=f"GER = {{ {phase_is(2)} check_variable = {{ cwgg_u_cur = {k} }} check_variable = {{ cwgg_u_dpos = 0 }} }}")]
+          + [O(pos[p - 1][0], f"clr_country_flag = cwgg_u_ddr_dialogue_open GER = {{ if = {{ limit = {{ {phase_is(2)} check_variable = {{ cwgg_u_cur = {k} }} check_variable = {{ cwgg_u_dpos = 0 }} }} set_variable = {{ cwgg_u_dpos = {p} }} }} }}", ai=10,
+             trig=f"GER = {{ {phase_is(2)} check_variable = {{ cwgg_u_cur = {k} }} check_variable = {{ cwgg_u_dpos = 0 }} }}") for p in (1, 2, 3)]
+          + [O("We refuse to discuss this chapter now.", f"clr_country_flag = cwgg_u_ddr_dialogue_open GER = {{ if = {{ limit = {{ {phase_is(2)} check_variable = {{ cwgg_u_cur = {k} }} check_variable = {{ cwgg_u_dpos = 0 }} }} set_variable = {{ cwgg_u_dpos = 4 }} }} }}", ai=1,
+               trig=f"GER = {{ {phase_is(2)} check_variable = {{ cwgg_u_cur = {k} }} check_variable = {{ cwgg_u_dpos = 0 }} }}")],
+          scope="DDR", trig=f"is_ai = no GER = {{ {phase_is(2)} check_variable = {{ cwgg_u_cur = {k} }} check_variable = {{ cwgg_u_dpos = 0 }} }}")
     # the Four Powers
     ally_nato = ch_is(3, 1)
     E(f"{EVU}.41", "The Germans Want to Unite",
       "Bonn and East Berlin have initialled a treaty on German unity. As one of the Four Powers responsible for Germany as a whole, the Soviet Union must agree - or say what it demands.\n\nThe treaty: constitution §Y[U_ChG1]§!, economy §Y[U_ChG2]§!, alliance §Y[U_ChG3]§!, capital §Y[U_ChG4]§!, borders §Y[U_ChG5]§!.",
       "GFX_gdratwarsov",
-      [O("We consent.", "GER = { set_variable = { cwgg_fp_sov = 2 } " + U + "_powers_check = yes }",
+      [O("Defer the decision.", f"country_event = {{ id = {EVU}.41 days = 30 }}", ai=0, trig=fp_pending("sov")),
+       O("We consent.", fp_reply("sov", 2),
          ai=("base = 20 modifier = { add = 30 " + ger_ch_is(3, 2) + " } modifier = { add = 60 " + ger_ch_is(3, 3) + " } modifier = { factor = 0.3 " + ger_ch_is(3, 1) + " } "
-             "modifier = { add = 20 date > 1986.12.31 } modifier = { add = 30 " + ger_ch_is(1, 3) + " } modifier = { add = 20 GER = { check_variable = { cwgg_fpb_sov > 19 } } } "
+             "modifier = { add = 30 " + ger_ch_is(1, 3) + " } modifier = { add = 20 GER = { check_variable = { cwgg_fpb_sov > 19 } } } "
              "modifier = { add = 10 has_global_flag = mdcw_cw_initialized check_variable = { global.mdcw_cw_tension < 40 } }")),
-       O("Veto: a united Germany cannot stay in NATO.", "GER = { set_variable = { cwgg_fp_sov = 3 } set_variable = { cwgg_u_reopen_3 = 1 } " + U + "_powers_check = yes }",
-         trig=ger_ch_is(3, 1), ai="base = 50 modifier = { factor = 0.4 date > 1986.12.31 } modifier = { factor = 0.5 GER = { check_variable = { cwgg_fpb_sov > 19 } } }"),
-       O("Veto: we will not hand the GDR to capitalism.", "GER = { set_variable = { cwgg_fp_sov = 3 } set_variable = { cwgg_u_reopen_2 = 1 } set_variable = { cwgg_u_reopen_1 = 1 } " + U + "_powers_check = yes }",
-         trig=f"OR = {{ {ger_ch_is(1, 1)} {ger_ch_is(2, 1)} }}", ai="base = 15 modifier = { factor = 0.3 date > 1986.12.31 }"),
-       O("Veto outright: two German states, now and for ever.", "GER = { set_variable = { cwgg_fp_sov = 3 } set_country_flag = cwgg_u_outright " + U + "_powers_check = yes }", ai="base = 5")],
-      scope="ANY", trig="original_tag = SOV")
+       O("Veto: a united Germany cannot stay in NATO.", fp_reply("sov", 3, "set_variable = { cwgg_u_reopen_3 = 1 }"),
+         trig=f"AND = {{ {fp_pending('sov')} {ger_ch_is(3, 1)} }}", ai="base = 50 modifier = { factor = 0.5 GER = { check_variable = { cwgg_fpb_sov > 19 } } }"),
+       O("Veto: we will not hand the GDR to capitalism.", fp_reply("sov", 3, "set_variable = { cwgg_u_reopen_2 = 1 } set_variable = { cwgg_u_reopen_1 = 1 }"),
+         trig=f"AND = {{ {fp_pending('sov')} OR = {{ {ger_ch_is(1, 1)} {ger_ch_is(2, 1)} }} }}", ai="base = 15"),
+       O("Veto outright: two German states, now and for ever.", fp_reply("sov", 3, "set_country_flag = cwgg_u_outright"), ai="base = 5")],
+      scope="ANY", trig=f"original_tag = SOV {fp_pending('sov')}")
     west_power = [("USA", "usa", 42, "GFX_decision_nato", "the United States"), ("ENG", "eng", 43, "GFX_politics_talks", "the United Kingdom"), ("FRA", "fra", 44, "GFX_politics_talks", "France")]
     for tag, k, n, pic, nm in west_power:
         opts = []
@@ -482,42 +521,48 @@ def events():
                 "fra": "base = 40 modifier = { add = 20 GER = { OR = { has_completed_focus = " + P + "_ems has_completed_focus = " + P + "_maastricht has_completed_focus = " + P + "_euro_founder } } } "
                        "modifier = { add = 10 GER = { check_variable = { cwgg_u_ch_5 > 1 } } } modifier = { add = 10 " + ger_ch_is(3, 1) + " }"}[k]
         base += f" modifier = {{ factor = 0.1 {ger_ch_is(3, 3)} }} modifier = {{ factor = 0.05 {ger_ch_is(1, 3)} }} modifier = {{ add = 20 GER = {{ check_variable = {{ cwgg_fpb_{k} > 19 }} }} }}"
-        opts.append(O("We consent.", f"GER = {{ set_variable = {{ cwgg_fp_{k} = 2 }} {U}_powers_check = yes }}", ai=base))
-        opts.append(O("Veto: Germany must stay in the Western alliance.", f"GER = {{ set_variable = {{ cwgg_fp_{k} = 3 }} set_variable = {{ cwgg_u_reopen_3 = 1 }} {U}_powers_check = yes }}",
-                      trig="NOT = { " + ger_ch_is(3, 1) + " }", ai="base = 60" if k == "usa" else "base = 35"))
+        opts.append(O("Defer the decision.", f"country_event = {{ id = {EVU}.{n} days = 30 }}", ai=0, trig=fp_pending(k)))
+        opts.append(O("We consent.", fp_reply(k, 2), ai=base, trig=fp_pending(k)))
+        opts.append(O("Veto: Germany must stay in the Western alliance.", fp_reply(k, 3, "set_variable = { cwgg_u_reopen_3 = 1 }"),
+                      trig=f"AND = {{ {fp_pending(k)} NOT = {{ {ger_ch_is(3, 1)} }} }}", ai="base = 60" if k == "usa" else "base = 35"))
         if k == "usa":
-            opts.append(O("Veto: no socialist Germany.", f"GER = {{ set_variable = {{ cwgg_fp_{k} = 3 }} set_variable = {{ cwgg_u_reopen_1 = 1 }} set_variable = {{ cwgg_u_reopen_2 = 1 }} {U}_powers_check = yes }}",
-                          trig=f"OR = {{ {ger_ch_is(1, 3)} {ger_ch_is(2, 3)} }}", ai="base = 80"))
+            opts.append(O("Veto: no socialist Germany.", fp_reply(k, 3, "set_variable = { cwgg_u_reopen_1 = 1 } set_variable = { cwgg_u_reopen_2 = 1 }"),
+                          trig=f"AND = {{ {fp_pending(k)} OR = {{ {ger_ch_is(1, 3)} {ger_ch_is(2, 3)} }} }}", ai="base = 80"))
         else:
-            opts.append(O("Veto: the border must be settled for good first.", f"GER = {{ set_variable = {{ cwgg_fp_{k} = 3 }} set_variable = {{ cwgg_u_reopen_5 = 1 }} {U}_powers_check = yes }}",
-                          trig=ger_ch_is(5, 1), ai="base = 50" if k == "eng" else "base = 30"))
-        opts.append(O("Veto outright: we prefer two Germanies.", f"GER = {{ set_variable = {{ cwgg_fp_{k} = 3 }} set_country_flag = cwgg_u_outright {U}_powers_check = yes }}", ai="base = 3"))
+            opts.append(O("Veto: the border must be settled for good first.", fp_reply(k, 3, "set_variable = { cwgg_u_reopen_5 = 1 }"),
+                          trig=f"AND = {{ {fp_pending(k)} {ger_ch_is(5, 1)} }}", ai="base = 50" if k == "eng" else "base = 30"))
+        opts.append(O("Veto outright: we prefer two Germanies.", fp_reply(k, 3, "set_country_flag = cwgg_u_outright"), ai="base = 3", trig=fp_pending(k)))
         E(f"{EVU}.{n}", "The Germans Want to Unite",
           f"Bonn and East Berlin have initialled a treaty on German unity. As one of the Four Powers that still hold rights for Germany as a whole and Berlin, {nm} must agree - or say what it demands.\n\n"
           "The treaty: constitution §Y[U_ChG1]§!, economy §Y[U_ChG2]§!, alliance §Y[U_ChG3]§!, capital §Y[U_ChG4]§!, borders §Y[U_ChG5]§!.",
-          pic, opts, scope="ANY", trig=f"original_tag = {tag}")
+          pic, opts, scope="ANY", trig=f"original_tag = {tag} {fp_pending(k)}")
     E(f"{EVU}.45", "The Powers Demand Changes",
       "One of the Four Powers has vetoed the treaty and named its price. The chapter it objects to is open again - the delegations must go back to the table. A third veto would end the talks.",
       "GFX_treaty", [O("Back to the table.")], scope="ANY")
     # ratification
     two_thirds = f"custom_trigger_tooltip = {{ tooltip = {P}_tt_two_thirds check_variable = {{ cwger_seats_gov > cwger_two_thirds }} }}"
     majority = f"OR = {{ AND = {{ {ch_is(1, 2)} {two_thirds} }} AND = {{ NOT = {{ {ch_is(1, 2)} }} check_variable = {{ cwger_margin > -1 }} }} }}"
-    rat = J("set_country_flag = cwgg_u_rat_brd", f"{U}_ratify_check = yes")
+    pending_rat = f"{phase_is(4)} NOT = {{ has_country_flag = cwgg_u_rat_brd }}"
+    rat = f"if = {{ limit = {{ {pending_rat} }} clr_country_flag = cwgg_u_rat_brd_dialogue_open set_country_flag = cwgg_u_rat_brd {U}_ratify_check = yes }}"
     E(f"{EVU}.50", "The Bundestag and the Unity Treaty",
       "The Four Powers have agreed. Now the Bundestag must ratify the treaty - with a simple majority, or with two thirds if Germany is to receive a new constitution.",
       "GFX_german_parliament_bundestag",
-      [O("The Bundestag ratifies.", rat, trig=majority, ai=90),
-       O("Pay the opposition's price for its votes.", J("add_political_power = -75",
-                                                         f"if = {{ limit = {{ {SPD} }} {party('cdu', 0.01)} }} else_if = {{ limit = {{ {UNION} }} {party('spd', 0.01)} }}", rat),
-         trig=f"NOT = {{ {majority} }} has_political_power > 74", ai=60),
-       O("Let the people decide: a referendum on unity.", J(stab(0.03), rat), trig=f"has_completed_focus = {P}_both_peoples_decide", ai=80),
-       O("The Bundestag rejects the treaty.", f"{U}_collapse = yes", ai=1)])
+      [O("Defer ratification.", f"country_event = {{ id = {EVU}.50 days = 30 }}", ai=0, trig=phase_is(4)),
+       O("The Bundestag ratifies.", f"if = {{ limit = {{ {majority} }} {rat} }}", trig=f"{pending_rat} {majority}", ai=90),
+       O("Pay the opposition's price for its votes.", f"if = {{ limit = {{ {pending_rat} has_political_power > 74 NOT = {{ {majority} }} }} add_political_power = -75 " +
+          f"if = {{ limit = {{ {SPD} }} {party('cdu', 0.01)} }} else_if = {{ limit = {{ {UNION} }} {party('spd', 0.01)} }} {rat} }}",
+         trig=f"{pending_rat} NOT = {{ {majority} }} has_political_power > 74", ai=60),
+       O("Let the people decide: a referendum on unity.", f"if = {{ limit = {{ {pending_rat} has_completed_focus = {P}_both_peoples_decide }} {stab(0.03)} {rat} }}", trig=f"{pending_rat} has_completed_focus = {P}_both_peoples_decide", ai=80),
+       O("The Bundestag rejects the treaty.", f"if = {{ limit = {{ {phase_is(4)} }} clr_country_flag = cwgg_u_rat_brd_dialogue_open {U}_collapse = yes }}", ai=1)], trig=phase_is(4))
     E(f"{EVU}.51", "The Volkskammer and the Unity Treaty",
       "The Four Powers have agreed. The People's Chamber must now ratify the treaty that ends the German Democratic Republic as a separate state.",
       "GFX_gdrfromexitsov",
-      [O("The People's Chamber ratifies.", f"GER = {{ set_country_flag = cwgg_u_rat_ddr {U}_ratify_check = yes }}", ai=90),
-       O("The People's Chamber rejects it.", f"GER = {{ {U}_collapse = yes }}", ai=10)],
-      scope="DDR")
+      [O("Defer ratification.", f"country_event = {{ id = {EVU}.51 days = 30 }}", ai=0, trig=f"GER = {{ {phase_is(4)} }}"),
+       O("The People's Chamber ratifies.", f"GER = {{ if = {{ limit = {{ {phase_is(4)} NOT = {{ has_country_flag = cwgg_u_rat_ddr }} }} clr_country_flag = cwgg_u_rat_ddr_dialogue_open set_country_flag = cwgg_u_rat_ddr {U}_ratify_check = yes }} }}", ai=90,
+         trig=f"GER = {{ {phase_is(4)} NOT = {{ has_country_flag = cwgg_u_rat_ddr }} }}"),
+       O("The People's Chamber rejects it.", f"GER = {{ if = {{ limit = {{ {phase_is(4)} }} clr_country_flag = cwgg_u_rat_ddr_dialogue_open {U}_collapse = yes }} }}", ai=10,
+         trig=f"GER = {{ {phase_is(4)} }}")],
+      scope="DDR", trig=f"is_ai = no GER = {{ {phase_is(4)} }}")
     E(f"{EVU}.60", "The Unity Talks Have Failed",
       "The negotiations on German unity have ended without a treaty. Both governments blame each other; the climate between the two states suffers. The subject is closed for at least three years.",
       "GFX_politics_talks", [O("History has not finished with us.")], scope="ANY")
@@ -595,7 +640,8 @@ def gui_tab(w, DT):
         w.text(f"u_{k}", f"cwgg_u_{k}", 36, 172 + i * 24, 540, h=22 if i < 2 else 40, tab=T, vis=vis)
         L(f"cwgg_u_{k}", text)
     w.refresh.append("set_variable = { cwgg_g_u_left = 3 }\nsubtract_from_variable = { cwgg_g_u_left = cwgg_u_m }")
-    w.refresh.append(f"{U}_count_agreed = yes")
+    # IMPERIA CW — Cold War: Agreement totals also serve decisions while the window is closed.
+    w.runtime_refresh.append(f"{U}_count_agreed = yes")
     w.button("u_break", "GFX_mdcw_cw_button_160", 590, 186, "cwgg_u_break", f"{U}_collapse = yes", tab=T,
              vis="check_variable = { cwgg_u_phase > 1 } check_variable = { cwgg_u_phase < 5 }", tip="cwgg_u_break_tt")
     L("cwgg_u_break", "Break Off")
@@ -640,11 +686,11 @@ def gui_tab(w, DT):
     L("cwgg_u_none", "-")
     L("cwgg_u_choose", "Propose")
     w.text("u_pos_hint", "cwgg_u_pos_hint", 36, 604, 700, h=40, tab=T, vis=phase_is(2))
-    L("cwgg_u_pos_hint", "Our position: §Y[U_OurPos]§!. East Berlin's delegation reveals its own only when the round closes - guided by its leadership, its instructions from Moscow and how often this chapter has already failed.")
+    L("cwgg_u_pos_hint", "Our position: §Y[U_OurPos]§!. East Berlin's delegation reveals its own only when the round closes - chosen by its government; a human player must submit an explicit instruction.")
     DT("U_OurPos", [(f"check_variable = {{ cwgg_u_pos = {p} }}", f"cwgg_u_our_{p}") for p in (1, 2, 3)], "cwgg_u_our_0")
     for p in (1, 2, 3):
         L(f"cwgg_u_our_{p}", "[U_PosName" + str(p) + "]")
-    L("cwgg_u_our_0", "§Rnone yet - a round without a position fails§!")
+    L("cwgg_u_our_0", "§Ynone yet - the round waits for an instruction§!")
     # the Four Powers (phase 3/4)
     L("cwgg_u_hpow", "THE FOUR POWERS")
     w.text("u_before", "cwgg_u_before", 36, 494, 700, h=110, tab=T, vis=phase_is(0))
@@ -700,7 +746,8 @@ F("social_union", "european_peace_order", -1, 1, cost=3, avail=_TALK, icon="unio
 F("berlin_pledge", "european_peace_order", 1, 1, cost=2, avail=_TALK, icon="brandenburg_gate", name="Berlin, Capital of Germany",
   desc="Bonn was always meant to be provisional. A pledge that the united Germany will govern from Berlin wins hearts in the East - and loses some on the Rhine.",
   reward=J(bias(4, 2), party("cdu", -0.002), core("bonn", stab=0.01)))
-F("withdrawal_fund", "social_union", 0, 1, cost=3, avail=f"{_TALK} date > 1979.12.31", icon="soviet", name="A Fund for the Soviet Withdrawal",
+# IMPERIA CW — Cold War: The withdrawal fund follows active unity talks, without a calendar lock.
+F("withdrawal_fund", "social_union", 0, 1, cost=3, avail=_TALK, icon="soviet", name="A Fund for the Soviet Withdrawal",
   desc="Barracks, flats and pensions for the soldiers of the Group of Soviet Forces - paid by Bonn, in advance. A price for Moscow's signature.",
   reward=J(money_gdp(-0.004), consent("sov", 20), opinion("SOV", "medium_increase")))
 F("four_power_conference", "berlin_pledge", 0, 1, cost=3, avail=_TALK, icon="diplomacy", name="A Conference of the Four Powers",

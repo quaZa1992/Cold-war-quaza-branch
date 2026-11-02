@@ -1,19 +1,23 @@
-# IMPERIA CW — Cold War: diplomatic delivery, USFK consent and preservation checks.
+# IMPERIA COLD WAR — Cold War: diplomatic delivery, USFK consent and preservation checks.
 from pathlib import Path
 import argparse,json,sys,hashlib
 HERE=Path(__file__).parent;ROOT=HERE.parents[1];DOC=ROOT/'docs/design/COLDWAR_KOR_1970'
 sys.path.insert(0,str(ROOT/'tools/vietnam_1970'))
-from script_ast import parse,first,values
+from script_ast import parse,first,values,walk
 from COLDWAR_KOR_alliance_revision import load_design
+from COLDWAR_KOR_reward_revision import OVERLAY
 from COLDWAR_KOR_runtime_scenarios import World,P
 from COLDWAR_KOR_presentation_validate import executable,predicate,digest
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--installed',action='store_true');a=ap.parse_args();base=ROOT if a.installed else HERE/'runtime_staged'
- d=load_design();w=World(base);errors=[];checks=[]
+ d=load_design();pre_reward=load_design(apply_rewards=False);w=World(base);errors=[];checks=[]
  def ck(ok,text):
   if not ok:errors.append(text)
  by={n['id']:n for n in d['nodes']};old=json.loads((DOC/'COLDWAR_KOR_design.json').read_text(encoding='utf-8'))
+ pre_reward_by_key={n['key']:n for n in pre_reward['nodes']}
+ reward_revision=json.loads(OVERLAY.read_text(encoding='utf-8'))
+ authorized_reward_ids={P+key for key in reward_revision['entries']} | {P+key for key in reward_revision.get('projects',{})}
  ck(len(by)==300 and all(n['id'] in by for n in old['nodes']),'300 cap and all original IDs preserved')
  ck(sum(n['group']=='usfk' for n in d['nodes'])==12,'USFK branch depth')
  for i,n in enumerate(d['nodes']):
@@ -27,13 +31,110 @@ def main():
   e={k:v for k,o,v in parse((base/'common/scripted_effects/COLDWAR_KOR_1970_focus.txt').read_text(encoding='utf-8'))}
   t={k:v for k,o,v in parse((base/'common/scripted_triggers/COLDWAR_KOR_1970_focus.txt').read_text(encoding='utf-8'))}
   for n in old['nodes']:
-   if n['group'] in ('defence','foreign','korea'):continue
+   if n['group'] in ('defence','foreign','korea') or n['id'] in authorized_reward_ids:continue
    for key,body in ((P+'complete_'+n['key'],e[P+'complete_'+n['key']]),):result[key]=digest(executable(body,t))
   return result
  if not baseline.exists():
   assert not a.installed,'Capture pre-install baseline first'
   baseline.write_text(json.dumps({'protected_political_effects':protected(ROOT)},indent=2)+'\n',encoding='utf-8')
  ck(protected(base)==json.loads(baseline.read_text())['protected_political_effects'],'Unrelated political focus effects changed')
+ ck(d.get('reward_revision',{}).get('entries')==len(reward_revision['entries']),
+    'Effective design records the complete reward overlay')
+ ck(d.get('reward_revision',{}).get('projects')==len(reward_revision.get('projects',{})),
+    'Effective design records the complete tangible-project overlay')
+ # Every authorized overlay leaf must carry the concrete final slot values used by
+ # both catalogue previews and later emission. All other gate/graph checks remain
+ # against the immutable baseline above.
+ for key,entry in reward_revision['entries'].items():
+  node=next((n for n in d['nodes'] if n['key']==key),None)
+  policy=next((p for p in node.get('effects',{}).get('policies',[]) if p['slot']==entry['slot']),None) if node else None
+  ck(bool(policy),'Missing effective reward policy '+key)
+  if policy:
+   ck(all(policy['modifiers'].get(k)==v for k,v in entry['modifiers'].items()),
+      'Overlay reward values missing from preview data '+key)
+   leaf=node.get('native_leaf_effects','')
+   ck(all(f"{node['id']}_{entry['slot']}_{k} = {v:g}" in leaf for k,v in entry['modifiers'].items()),
+      'Overlay reward values missing from native leaf data '+key)
+  for bonus in entry.get('equipment_bonuses',[]):
+   ck(bonus in node.get('effects',{}).get('equipment_bonuses',[]),
+      'Equipment bonus missing from effect preview '+key)
+   ck('name = '+bonus['name'] in node.get('native_leaf_effects','') and
+      all(f'{equipment_type} = {{' in node['native_leaf_effects'] and
+          all(f'{modifier} = {value:g}' in node['native_leaf_effects'] for modifier,value in values.items())
+          for equipment_type,values in bonus['types'].items()),
+      'Equipment bonus missing from native reward '+key)
+  for bonus in entry.get('tech_bonuses',[]):
+   ck(bonus in node.get('effects',{}).get('tech_bonuses',[]),
+      'Research bonus missing from effect preview '+key)
+   text=f"name = {bonus['name']}"
+   ck(text in node.get('native_leaf_effects','') and
+      f"bonus = {bonus['bonus']:g}" in node['native_leaf_effects'] and
+      f"uses = {bonus['uses']}" in node['native_leaf_effects'] and
+      f"category = {bonus['category']}" in node['native_leaf_effects'],
+      'Research bonus missing from native reward '+key)
+  for bonus in entry.get('doctrine_bonuses',[]):
+   ck(bonus in node.get('effects',{}).get('doctrine_bonuses',[]),
+      'Doctrine bonus missing from effect preview '+key)
+   ck(f"name = {bonus['name']}" in node.get('native_leaf_effects','') and
+      f"cost_reduction = {bonus['cost_reduction']:g}" in node['native_leaf_effects'] and
+      f"uses = {bonus['uses']}" in node['native_leaf_effects'] and
+      f"category = {bonus['category']}" in node['native_leaf_effects'],
+      'Doctrine bonus missing from native reward '+key)
+ for key,project in reward_revision.get('projects',{}).items():
+  node=next((n for n in d['nodes'] if n['key']==key),None)
+  ck(bool(node),'Missing tangible project focus '+key)
+  if not node:continue
+  effects=node.get('effects',{});leaf=node.get('native_leaf_effects','')
+  fixed_cost=pre_reward_by_key[key]['effects'].get('cost',0)
+  base_fraction=min(fixed_cost*reward_revision['domestic_gdp_cost_scale']['basis_per_legacy_billion'],
+                    reward_revision['domestic_gdp_cost_scale']['maximum_base_fraction']) if fixed_cost>0 else 0
+  ck(effects.get('cost',0)==0,
+     'Domestic project focus retained a flat Treasury charge '+key)
+  ck(effects.get('legacy_fixed_cost_bn',0)==fixed_cost and
+     abs(effects.get('gdp_base_cost_fraction',0)-base_fraction)<1e-9,
+     'Domestic project focus has the wrong converted base GDP charge '+key)
+  fraction=project.get('gdp_cost_fraction',0)
+  total_fraction=base_fraction+fraction
+  ck(effects.get('gdp_project_cost_fraction',0)==fraction and
+     abs(effects.get('gdp_share_cost_fraction',0)-total_fraction)<1e-9,
+     'Project and converted base GDP fractions do not match total cost '+key)
+  for building in project.get('buildings',[]):
+   ck(building in effects.get('buildings',[]),'Project building missing from preview data '+key)
+   expected=(f"{building['state']} = {{ add_building_construction = {{ type = {building['type']} "
+             f"level = {building['level']} instant_build = yes }} }}")
+   ck(expected in leaf,'Project building missing from native reward '+key)
+  for field in ('equipment_bonuses','tech_bonuses','doctrine_bonuses'):
+   for bonus in project.get(field,[]):
+    ck(bonus in effects.get(field,[]),'Project '+field+' missing from effect preview '+key)
+    ck('name = '+bonus['name'] in leaf,'Project '+field+' missing from native reward '+key)
+ # Every positive domestic base focus cost uses one combined GDP formula in its
+ # effective leaf. Bilateral terms live in contracts and are untouched.
+ ck(d['contracts']==pre_reward['contracts'],
+    'Domestic cost conversion changed bilateral agreement or recipient terms')
+ def gdp_multipliers(rows):
+  result=[]
+  for row,_,body in walk(rows):
+   if row!='set_temp_variable' or not isinstance(body,list):continue
+   change=first(body,'treasury_change')
+   if isinstance(change,list) and first(change,'value')=='gdp_total' and first(change,'multiply') is not None:
+    result.append(float(first(change,'multiply')))
+  return result
+ scale=reward_revision['domestic_gdp_cost_scale']
+ for node in d['nodes']:
+  old=pre_reward_by_key[node['key']]['effects'].get('cost',0)
+  base=min(old*scale['basis_per_legacy_billion'],scale['maximum_base_fraction']) if old>0 else 0
+  project=reward_revision.get('projects',{}).get(node['key'],{}).get('gdp_cost_fraction',0)
+  total=base+project
+  effects=node.get('effects',{})
+  if old>0:
+   ck(effects.get('cost',0)==0 and effects.get('legacy_fixed_cost_bn')==old,
+      'Legacy domestic flat cost not converted '+node['key'])
+  if total:
+   ck(abs(effects.get('gdp_share_cost_fraction',0)-total)<1e-9,
+      'Effective total GDP fraction mismatch '+node['key'])
+   multipliers=gdp_multipliers(parse(node.get('native_leaf_effects','')))
+   ck(len(multipliers)==1 and abs(multipliers[0]+total)<1e-8,
+      'Native cost leaf is not one total GDP-based charge '+node['key'])
  ideas={}
  for path in (base/'common/ideas').glob('COLDWAR_KOR_1970*.txt'):
   for key,o,body in first(first(parse(path.read_text(encoding='utf-8')),'ideas',[]),'country',[]):ideas[key]=body

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: strategic readiness and bilateral nuclear diplomacy.
+# IMPERIA COLD WAR — Cold War: strategic readiness and bilateral nuclear diplomacy.
 """Author the independent readiness module; shared integrations are applied separately."""
 from pathlib import Path
 import json
@@ -12,7 +12,7 @@ from event_art import EVENT_ART, registry_source
 import escalation
 import command_ui
 
-MARK = '# IMPERIA CW — Cold War: nuclear readiness and crisis diplomacy.\n'
+MARK = '# IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.\n'
 FILES = {}
 LOC = {}
 MACROS = {
@@ -79,7 +79,7 @@ nr_can_change = {
     custom_trigger_tooltip = { tooltip = nr_tt_arsenal nr_nuclear_power = yes }
     custom_trigger_tooltip = { tooltip = nr_tt_transition check_variable = { nr_build_days = 0 } }
     custom_trigger_tooltip = { tooltip = nr_tt_standdown NOT = { has_country_flag = nr_standdown } }
-    has_political_power > 24
+    NOT = { has_political_power < 25 }
 }
 nr_pair_valid = {
     if = { limit = { has_variable = nr_opponent has_capitulated = no }
@@ -176,7 +176,7 @@ nr_strategic_ready = {
 }
 ''')
 
-# IMPERIA CW — Cold War: peacetime nuclear release is a separate, target-bound procedure.
+# IMPERIA COLD WAR — Cold War: peacetime nuclear release is a separate, target-bound procedure.
 source('common/scripted_triggers/COLDWAR_nuclear_escalation.txt', escalation.TRIGGERS)
 source('common/scripted_effects/COLDWAR_nuclear_escalation.txt', escalation.EFFECTS)
 source('common/opinion_modifiers/COLDWAR_nuclear_escalation.txt', '''
@@ -283,7 +283,7 @@ nr_stand_down = {
 }
 nr_start_civil = {
     if = { limit = { nr_enabled = yes is_ai = no has_capitulated = no
-        has_political_power > 24 NOT = { has_country_flag = nr_civil_active }
+        NOT = { has_political_power < 25 } NOT = { has_country_flag = nr_civil_active }
         check_variable = { nr_civil_days = 0 }
     }
         nr_init = yes
@@ -296,7 +296,9 @@ nr_start_civil = {
 nr_end_civil = {
     clr_country_flag = nr_civil_active
     set_variable = { nr_civil_days = 0 }
-    remove_dynamic_modifier = { modifier = nr_civil_defence }
+    if = { limit = { has_dynamic_modifier = { modifier = nr_civil_defence } }
+        remove_dynamic_modifier = { modifier = nr_civil_defence }
+    }
     nr_refresh = yes
 }
 nr_daily = {
@@ -520,25 +522,27 @@ nr_assess_prev = {
     PREV = { save_event_target_as = nr_subject }
     set_variable = { nr_assessment = 0 }
     set_variable = { nr_assessed_level = 0 }
-    if = { limit = { intel_level_over = { target = PREV airforce_intel > 0.65 } }
-        set_variable = { nr_assessment = 2 }
-        set_variable = { nr_assessed_level = PREV.nr_level }
-        if = { limit = { check_variable = { nr_assessed_level = 0 } } set_variable = { nr_assessed_level = 5 } }
-        if = { limit = { PREV = { check_variable = { nr_level < 3 } NOT = { has_country_flag = nr_public } NOT = { has_country_flag = nr_exposed_cd } } }
-            nr_tension = { DELTA = 1 }
-            PREV = { set_country_flag = { flag = nr_exposed_cd days = 30 } }
+    if = { limit = { PREV = { nr_nuclear_power = yes } }
+        if = { limit = { intel_level_over = { target = PREV airforce_intel > 0.65 } }
+            set_variable = { nr_assessment = 2 }
+            set_variable = { nr_assessed_level = PREV.nr_level }
+            if = { limit = { check_variable = { nr_assessed_level = 0 } } set_variable = { nr_assessed_level = 5 } }
+            if = { limit = { PREV = { check_variable = { nr_level < 3 } NOT = { has_country_flag = nr_public } NOT = { has_country_flag = nr_exposed_cd } } }
+                nr_tension = { DELTA = 1 }
+                PREV = { set_country_flag = { flag = nr_exposed_cd days = 30 } }
+            }
         }
-    }
-    else_if = { limit = {
-        OR = { is_in_faction_with = PREV nr_is_opponent_prev = yes
-            PREV = { has_country_flag = nr_public }
-            intel_level_over = { target = PREV airforce_intel > 0.35 }
+        else_if = { limit = {
+            OR = { is_in_faction_with = PREV nr_is_opponent_prev = yes
+                PREV = { has_country_flag = nr_public }
+                intel_level_over = { target = PREV airforce_intel > 0.35 }
+            }
         }
-    }
-        set_variable = { nr_assessment = 1 }
-        if = { limit = { PREV = { check_variable = { nr_level > 3 } } } set_variable = { nr_assessed_level = 5 } }
-        else_if = { limit = { PREV = { check_variable = { nr_level > 1 } } } set_variable = { nr_assessed_level = 3 } }
-        else_if = { limit = { PREV = { check_variable = { nr_level = 1 } } } set_variable = { nr_assessed_level = 1 } }
+            set_variable = { nr_assessment = 1 }
+            if = { limit = { PREV = { check_variable = { nr_level > 3 } } } set_variable = { nr_assessed_level = 5 } }
+            else_if = { limit = { PREV = { check_variable = { nr_level > 1 } } } set_variable = { nr_assessed_level = 3 } }
+            else_if = { limit = { PREV = { check_variable = { nr_level = 1 } } } set_variable = { nr_assessed_level = 1 } }
+        }
     }
     country_event = { id = cw_nuclear.14 }
 }
@@ -623,13 +627,18 @@ def write_all():
     write_localisation()
     print(f'Wrote {len(FILES)} scripts and {len(LOC)} English strings.')
 
-# IMPERIA CW — Cold War: allow localisation repairs without rewriting gameplay scripts.
-def write_localisation():
-    path = ROOT / 'localisation/english/COLDWAR_nuclear_readiness_l_english.yml'
-    lines = ['l_english:', MARK.rstrip()]
+# IMPERIA COLD WAR — Cold War: allow localisation repairs without rewriting gameplay scripts.
+def localisation_source(marker=MARK):
+    """One native newline escape, shared by the compiler and integration writer."""
+    lines = ['l_english:', marker.rstrip()]
     for key, value in LOC.items():
         lines.append(' ' + key + ':0 ' + json.dumps(value.replace('\\n', '\n'), ensure_ascii=False))
-    path.write_text('\n'.join(lines) + '\n', encoding='utf-8-sig', newline='\n')
+    return '\n'.join(lines) + '\n'
+
+
+def write_localisation(marker=MARK):
+    path = ROOT / 'localisation/english/COLDWAR_nuclear_readiness_l_english.yml'
+    path.write_text(localisation_source(marker), encoding='utf-8-sig', newline='\n')
 
 def action(name, condition, effect, cost=0, acceptance=False, kind=None):
     visibility = {
@@ -700,7 +709,7 @@ actions += action('assess', '''
     set_variable = { nr_assess_cd@PREV = { value = global.num_days add = 14 } }
     nr_assess_prev = yes
 ''', 10)
-# IMPERIA CW — Cold War: public final ultimatums and unilateral revocation.
+# IMPERIA COLD WAR — Cold War: public final ultimatums and unilateral revocation.
 actions += action('ultimatum', '''
     custom_trigger_tooltip = { tooltip = nr_tt_ultimatum nr_can_ultimatum_prev = yes }
 ''', 'nr_issue_ultimatum = yes', 100)
@@ -745,7 +754,7 @@ EVENT_COPY = {
 }
 EVENT_COPY.update(escalation.EVENT_COPY)
 for ident, (title, desc) in EVENT_COPY.items():
-    # IMPERIA CW — Cold War: event localisation promotes saved targets by name.
+    # IMPERIA COLD WAR — Cold War: event localisation promotes saved targets by name.
     loc(f'cw_nuclear.{ident}.t', title)
     loc(f'cw_nuclear.{ident}.d', desc)
     events += f'''
@@ -760,7 +769,7 @@ for ident, (title, desc) in EVENT_COPY.items():
         option = {{ name = nr_acknowledge ai_chance = {{ base = 100 }} }}
     }}
     '''
-# IMPERIA CW — Cold War: one country-scoped hourly callback while a release procedure is active.
+# IMPERIA COLD WAR — Cold War: one country-scoped hourly callback while a release procedure is active.
 events += '''country_event = {
     id = cw_nuclear.90 hidden = yes is_triggered_only = yes
     immediate = { nr_first_use_tick = yes }
@@ -776,7 +785,7 @@ loc('nr_title', 'STRATEGIC COMMAND')
 loc('nr_subtitle', 'NATIONAL SECURITY COUNCIL  |  STRATEGIC FORCES DIRECTORATE')
 loc('nr_review_command', 'Convene the National Security Council.')
 loc('nr_acknowledge', 'Acknowledged.')
-# IMPERIA CW — Cold War: readable label for the native event debug overlay.
+# IMPERIA COLD WAR — Cold War: readable label for the native event debug overlay.
 loc('debug_event_scopes', 'Event context')
 loc('nr_strategic_forces', 'Strategic Forces')
 loc('nr_strategic_forces_desc', 'Maintaining nuclear forces at elevated readiness places sustained demands on personnel, equipment and the national budget.')
@@ -797,7 +806,7 @@ loc('nr_tt_standdown', 'No agreed stand-down is in force.')
 loc('nr_tt_standdown_offer', 'A direct communications channel is open. No proposal is pending. Proposals may be sent once every 21 days.')
 loc('nr_tt_assess', 'A strategic assessment of this government has not been requested in the last 14 days.')
 loc('nr_warning', 'Issue a Nuclear Warning')
-# IMPERIA CW — Cold War: scope-independent diplomatic descriptions.
+# IMPERIA COLD WAR — Cold War: scope-independent diplomatic descriptions.
 loc('nr_warning_send', 'Issue a formal nuclear warning to this government.\\n\\n§YCold War tension:§! §R+5§!\\n§YWorld tension:§! §R+2§!\\n§YDuration:§! 90 days\\n§YCooling-off period after closure:§! 90 days')
 loc('nr_warning_receive', '[Root.GetNameDefCap] has issued a formal nuclear warning to our government.')
 loc('nr_warning_accept_title', 'Nuclear Warning Delivered')
@@ -820,13 +829,13 @@ loc('nr_standdown_accept', 'Both governments have agreed to return to routine nu
 loc('nr_offer_reject_title', 'Proposal Declined')
 loc('nr_offer_reject', '[This.GetNameDefCap] has declined our proposal. Existing military postures remain in place.')
 loc('nr_withdraw', 'Withdraw the Nuclear Warning')
-# IMPERIA CW — Cold War: bounded withdrawal effects without scoped placeholders.
+# IMPERIA COLD WAR — Cold War: bounded withdrawal effects without scoped placeholders.
 loc('nr_withdraw_send', 'Withdraw our nuclear warning and return our forces to routine readiness.\\n\\n§YOur stand-down:§! 14 days\\n§YCold War tension reduction:§! §GUp to 2§!\\n§YCooling-off period:§! 90 days\\nThe reduction cannot exceed the tension added by this confrontation. The other government retains control of its readiness posture.')
 loc('nr_withdraw_receive', '[Root.GetNameDefCap] has ended the nuclear confrontation.')
 loc('nr_withdraw_accept_title', 'Warning Withdrawn')
 loc('nr_withdraw_accept', 'Our government has returned its strategic forces to routine readiness.')
 loc('nr_assess', 'Request a Strategic Intelligence Assessment')
-# IMPERIA CW — Cold War: concise strategic assessment wording.
+# IMPERIA COLD WAR — Cold War: concise strategic assessment wording.
 loc('nr_assess_send', 'Request a strategic intelligence assessment.\\n\\n§YBelow 35% air intelligence:§! Unconfirmed.\\n§Y35% air intelligence, allied liaison or a public warning:§! General posture.\\n§Y65% air intelligence:§! Confirmed readiness level.\\n§YDiscovery of a concealed strategic or maximum alert:§! §R+1 Cold War tension§!, once per government every 30 days.\\n§YNew assessment available in:§! 14 days')
 loc('nr_assess_receive', 'A strategic intelligence assessment has been requested.')
 loc('nr_assess_accept_title', 'Assessment Requested')
@@ -866,7 +875,7 @@ source('common/scripted_localisation/COLDWAR_nuclear_readiness.txt', texts)
 loc('nr_launcher_tt', '§YStrategic Command§!\\nCurrent posture: §Y[nr_level_L]§!\\n\\nReview strategic readiness, civil defence and nuclear crisis communications.')
 loc('nr_launcher_value', '[nr_digit_L]')
 loc('nr_current', '[nr_level_L]')
-# IMPERIA CW — Cold War: institutional instrument-panel labels and state annunciators.
+# IMPERIA COLD WAR — Cold War: institutional instrument-panel labels and state annunciators.
 loc('nr_posture_label', '01 / READINESS POSTURE')
 loc('nr_arsenal_title', '02 / ARSENAL & SUSTAINMENT')
 loc('nr_in_force', 'IN FORCE')
@@ -874,6 +883,7 @@ loc('nr_preparing', 'PREPARING')
 loc('nr_notice_standdown', '§YSTAND-DOWN IN FORCE§!')
 loc('nr_notice_orders', '§YPREPARATIONS UNDERWAY§!')
 loc('nr_notice_ready', 'POSTURE IN FORCE')
+loc('nr_notice_unarmed', 'NO MISSILES IN STORAGE')
 loc('nr_fatigue_high', '§R[?nr_fatigue|0] / 100§!')
 loc('nr_fatigue_elevated', '§Y[?nr_fatigue|0] / 100§!')
 loc('nr_stock_label', 'MISSILES IN STORAGE')
@@ -935,7 +945,7 @@ texts += escalation.SCRIPTED_TEXT
 texts += command_ui.SCRIPTED_TEXT
 source('common/scripted_localisation/COLDWAR_nuclear_readiness.txt', texts)
 
-# IMPERIA CW — Cold War: the command panel uses native, localised instrument widgets.
+# IMPERIA COLD WAR — Cold War: the command panel uses native, localised instrument widgets.
 source('interface/COLDWAR_nuclear_readiness.gui', command_ui.gui_source(loc, LEVELS))
 
 controller = '''scripted_gui = {
@@ -951,15 +961,15 @@ nr_launcher_gui = {
     } }
 }
 nr_command_gui = {
-    context_type = player_context window_name = "nr_window" dirty = nr_dirty
+    context_type = player_context window_name = "nr_window"
     ai_enabled = { always = no }
     visible = { is_ai = no nr_enabled = yes has_country_flag = nr_open }
     triggers = {
         nr_cancel_visible = { check_variable = { nr_build_days > 0 } }
-        nr_civil_start_click_enabled = { has_political_power > 24 has_capitulated = no NOT = { has_country_flag = nr_civil_active } check_variable = { nr_civil_days = 0 } }
+        nr_civil_start_click_enabled = { NOT = { has_political_power < 25 } has_capitulated = no NOT = { has_country_flag = nr_civil_active } check_variable = { nr_civil_days = 0 } }
         nr_civil_stop_click_enabled = { OR = { has_country_flag = nr_civil_active check_variable = { nr_civil_days > 0 } } }
         nr_consult_visible = { nr_pair_valid = yes }
-        nr_consult_click_enabled = { nr_pair_valid = yes is_in_faction = yes has_political_power > 19 NOT = { has_country_flag = nr_consulted } }
+        nr_consult_click_enabled = { nr_pair_valid = yes is_in_faction = yes NOT = { has_political_power < 20 } NOT = { has_country_flag = nr_consulted } }
         nr_hotline_status_visible = { nr_pair_valid = yes }
 '''
 for level in LEVELS:
@@ -976,7 +986,7 @@ controller += '''
         nr_civil_start_click = { nr_start_civil = yes }
         nr_civil_stop_click = { nr_end_civil = yes }
         nr_consult_click = {
-            if = { limit = { nr_pair_valid = yes is_in_faction = yes has_political_power > 19 NOT = { has_country_flag = nr_consulted } }
+            if = { limit = { nr_pair_valid = yes is_in_faction = yes NOT = { has_political_power < 20 } NOT = { has_country_flag = nr_consulted } }
                 add_political_power = -20 nr_consult_allies = yes
             }
         }
@@ -986,11 +996,11 @@ for level in LEVELS:
 controller += '} } }'
 source('common/scripted_guis/COLDWAR_nuclear_readiness.txt', controller)
 
-# IMPERIA CW — Cold War: export the command insignia, instruments and typography.
+# IMPERIA COLD WAR — Cold War: export the command insignia, instruments and typography.
 def artwork():
     source('interface/COLDWAR_nuclear_readiness.gfx', command_ui.artwork(ROOT))
 
-# IMPERIA CW — Cold War: native diplomatic-action titles and hover descriptions.
+# IMPERIA COLD WAR — Cold War: native diplomatic-action titles and hover descriptions.
 for action_name, title in {
     'warning': 'Issue a Nuclear Warning',
     'counter': 'Announce a Nuclear Counter-Alert',
@@ -1003,7 +1013,7 @@ for action_name, title in {
 }.items():
     native_key = f'COLDWAR_NR_{action_name.upper()}'
     LOC[native_key + '_TITLE'] = title
-    # IMPERIA CW — Cold War: diplomacy hover text has no event/country text context.
+    # IMPERIA COLD WAR — Cold War: diplomacy hover text has no event/country text context.
     hover = LOC[f'COLDWAR_nr_{action_name}_send']
     if action_name == 'standdown':
         hover = hover.replace(

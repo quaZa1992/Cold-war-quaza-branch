@@ -1,0 +1,77 @@
+<!-- IMPERIA COLD WAR — Individual MD 2.0.3 source-adoption review. -->
+<div id="md203-files">
+  <style>
+    #md203-files{color:var(--foreground);min-width:0}
+    #md203-files h3,#md203-files code,#md203-files .file-path{overflow-wrap:anywhere}
+    #md203-files .file-path{display:block;margin-top:1rem;margin-bottom:.5rem}
+    #md203-files .review-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+    #md203-files .review-pair>div{min-width:0}
+    #md203-files pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+    #md203-files details{margin-top:1rem}
+    #md203-files .review-detail{margin-top:1rem}
+    #md203-files .review-caption{color:var(--muted-foreground)}
+    @media(max-width:580px){#md203-files .review-pair{grid-template-columns:minmax(0,1fr)}}
+  </style>
+  <h2>MD 2.0.3: Datei für Datei</h2>
+  <label class="form-label" for="md203-file">Datei auswählen</label>
+  <select id="md203-file" class="form-select" aria-label="Datei auswählen"></select>
+  <div class="viz-row">
+    <button type="button" class="btn" id="md203-prev">Vorherige Datei</button>
+    <span id="md203-counter" class="tabular-nums"></span>
+    <button type="button" class="btn" id="md203-next">Nächste Datei</button>
+  </div>
+  <div id="md203-current" class="review-detail" aria-live="polite">
+    <code class="file-path" id="md203-path"></code>
+    <p id="md203-purpose"></p>
+    <div class="review-pair">
+      <div><h3>Bei uns aktuell</h3><p id="md203-ours"></p></div>
+      <div><h3>MD 2.0.3</h3><p id="md203-md"></p></div>
+    </div>
+    <h3>Mein Vorschlag</h3>
+    <p id="md203-proposal"></p>
+    <p id="md203-impact" class="review-caption"></p>
+    <details id="md203-current-wrap"><summary>Aktuellen Dateiinhalt ansehen</summary><pre><code id="md203-content"></code></pre></details>
+    <details id="md203-proposal-wrap"><summary>Genau vorgesehene Änderung</summary><pre><code id="md203-proposal-diff"></code></pre></details>
+    <details id="md203-up-wrap"><summary>Originaler MD-Patch: 2.0.2 zu 2.0.3</summary><pre><code id="md203-up-diff"></code></pre></details>
+    <details id="md203-local-wrap"><summary>Unsere zusätzlichen Unterschiede zu MD 2.0.3</summary><pre><code id="md203-local-diff"></code></pre></details>
+  </div>
+  <!-- MD203_DATA -->
+  <script>
+  (()=>{
+    const root=document.getElementById('md203-files');
+    const rows=JSON.parse(root.querySelector('#md203-data').textContent);
+    const $=id=>root.querySelector('#md203-'+id);
+    const select=$('file');
+    const groups=new Map();
+    for(const row of rows){
+      let group=groups.get(row.group);
+      if(!group){group=document.createElement('optgroup');group.label=row.group;select.append(group);groups.set(row.group,group);}
+      const opt=document.createElement('option');opt.value=row.path;opt.textContent=row.path;group.append(opt);
+    }
+    function remember(row){
+      if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{selectedFile:row.path,category:row.group,proposal:row.proposal},privateContent:{revision:1,path:row.path}}).catch(()=>{});
+    }
+    function show(path,save=false){
+      const row=rows.find(r=>r.path===path)||rows[0];const index=rows.indexOf(row);select.value=row.path;
+      $('counter').textContent=(index+1)+' / '+rows.length;
+      for(const field of ['path','purpose','ours','md','proposal','impact'])$(field).textContent=row[field];
+      for(const [field,key] of [['content','content'],['proposal-diff','proposal_diff'],['up-diff','upstream_diff'],['local-diff','local_diff']])$(field).textContent=row[key]||'Keine Änderung.';
+      $('current-wrap').hidden=!row.content;
+      $('proposal-wrap').hidden=!row.proposal_diff;
+      $('up-wrap').hidden=!row.upstream_diff;
+      $('local-wrap').hidden=!row.local_diff;
+      $('current-wrap').open=row.group==='Leere Altdateien entfernen';
+      $('proposal-wrap').open=row.group==='Versionen und Beschreibung';
+      for(const id of ['up-wrap','local-wrap'])$(id).open=false;
+      $('prev').disabled=index===0;$('next').disabled=index===rows.length-1;
+      if(save)remember(row);
+    }
+    select.addEventListener('change',()=>show(select.value,true));
+    $('prev').addEventListener('click',()=>show(rows[Math.max(0,rows.findIndex(r=>r.path===select.value)-1)].path,true));
+    $('next').addEventListener('click',()=>show(rows[Math.min(rows.length-1,rows.findIndex(r=>r.path===select.value)+1)].path,true));
+    function restore(state){const saved=state?.privateContent;if(saved?.revision===1)show(saved.path);}
+    window.addEventListener('openai:set_globals',e=>{if(e.detail?.globals?.widgetState)restore(e.detail.globals.widgetState);});
+    show(window.openai?.widgetState?.privateContent?.path||rows[0].path);
+  })();
+  </script>
+</div>

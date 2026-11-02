@@ -1,3 +1,4 @@
+# IMPERIA CW — Cold War: Player-paced focus availability preserves political and treaty conditions.
 # IMPERIA CW — Cold War: West Germany integration from quaZa e45483ff.
 """The dark path: the Bonn Republic collapses into an authoritarian nationalist regime.
 
@@ -40,7 +41,7 @@ def erosion(n):
 
 
 # ------------------------------------------------------------------ availability (with readable tooltips)
-AV_ENTRY = J(HUMAN, NO_FAIL, f"NOT = {{ has_completed_focus = {P}_liberal_state }}", "date > 1970.6.1",
+AV_ENTRY = J(HUMAN, NO_FAIL, f"NOT = {{ has_completed_focus = {P}_liberal_state }}",
              ctt(f"{P}_tt_av_dark_entry", "The far right (NPD, DVU, Republikaner) polls above §Y6%§! together, or the right-wing terror threat is above §Y30§!",
                  "OR = { check_variable = { cwger_far_right_pop > 0.06 } check_variable = { cwger_terror_right > 30 } }"))
 AV_GATE = J(HUMAN, NO_FAIL,

@@ -22,7 +22,7 @@ class Fixture:
     def __init__(self,node=None):
         self.flags={'COLDWAR_SPR_v2_core_initialized','COLDWAR_SPR_franco_departed','COLDWAR_SPR_legal_representative'}
         self.vars=defaultdict(float,treasury=100,ruling_party=22)
-        self.ideas=set();self.dyn=set();self.completed=set();self.scope=None;self.elections=True
+        self.ideas=set();self.dyn=set();self.completed=set();self.scope=None;self.elections=True;self.ec_member=False
         self.states=defaultdict(lambda:{'controlled':True,'owned':True,'coastal':True,'buildings':defaultdict(int),'slots':0})
         self.tx=defaultdict(float);self.bonuses=[]
         if node:
@@ -48,6 +48,7 @@ class Fixture:
             elif k=='has_country_flag':result=v in self.flags
             elif k=='has_completed_focus':result=v in self.completed
             elif k=='has_idea':result=v in self.ideas
+            elif k=='COLDWAR_EC_is_member':result=self.ec_member==(v=='yes')
             elif k=='has_elections':result=self.elections==(v=='yes')
             elif k=='has_country_leader':result=False
             elif k=='has_dynamic_modifier':result=first(v,'modifier') in self.dyn
@@ -154,16 +155,16 @@ def main():
     n=C.nodes['COLDWAR_SPR_nonbloc_doctrine'];f=Fixture(n);f.complete(n);before=f.snapshot();f.ideas.add('NATO_member');f.sync();assert f.vars[compiler.backing('foreign','supply_consumption_factor')]==0
     assert f.snapshot()==before
     results.append('NATO member/nonmember conditional rewards and modifier removal never replay XP or treasury')
-    # A delayed Spanish receipt cannot substitute for genuine current native EC membership.
+    # A delayed Spanish receipt cannot substitute for current membership of the European Communities (COLDWAR_EC).
     n=C.nodes['COLDWAR_SPR_community_standards'];f=Fixture(n);f.complete(n)
     assert compiler.applied(n['id']) not in f.flags
-    f.ideas.add('EU_member');f.complete(n);before=f.snapshot()
+    f.ec_member=True;f.complete(n);before=f.snapshot()
     assert f.vars[compiler.backing('foreign','civilian_factories_productivity')]==.10
-    f.ideas.remove('EU_member');f.sync()
+    f.ec_member=False;f.sync()
     assert 'COLDWAR_SPR_eec_membership' in f.ideas and f.vars[compiler.backing('foreign','civilian_factories_productivity')]==0
-    f.ideas.add('EU_member');f.sync()
+    f.ec_member=True;f.sync()
     assert f.vars[compiler.backing('foreign','civilian_factories_productivity')]==.10 and f.snapshot()==before
-    results.append('EC rewards require both the accepted Spanish accession receipt and actual native membership, including a stale-receipt gap')
+    results.append('EC rewards require both the accepted Spanish accession receipt and actual EC membership, including a stale-receipt gap')
     # Education executes the actual native helper; its endpoint 150 PP must remain unreachable.
     n=C.nodes['COLDWAR_SPR_technical_universities']
     for existing in ['edu_01','edu_04','edu_05',None]:

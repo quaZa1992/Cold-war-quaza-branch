@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: declared native-code recipes for the uninstalled concept.
+# IMPERIA COLD WAR — Cold War: declared native-code recipes for the uninstalled concept.
 """Keep existing engine/MD APIs distinct from new Korean content definitions."""
 import re
 P='COLDWAR_KOR_'

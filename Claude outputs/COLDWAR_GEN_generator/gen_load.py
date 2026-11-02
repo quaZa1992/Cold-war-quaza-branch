@@ -1,9 +1,25 @@
+# IMPERIA COLD WAR — Generic focus loading with retained Cyprus shared imports.
 # IMPERIA CW — Cold War: Generic 1970 national focus content generator.
 """COLDWAR | load the current generic focus file: header, sections, focus blocks (fields kept as raw text)."""
 import re
 from gen_common import read, block_end, F_FOCUS, P
 
 SECTION_RE = re.compile(r'^\t### (.+?) ###[ \t]*$', re.M)
+
+
+def without_cyprus_import_tail(source):
+    """The owning final writer reapplies this marked shared-focus integration."""
+    begin = '# IMPERIA COLD WAR — Cyprus guarantor imports BEGIN'
+    end = '# IMPERIA COLD WAR — Cyprus guarantor imports END'
+    if begin not in source and end not in source:
+        return source
+    if source.count(begin) != 1 or source.count(end) != 1:
+        raise ValueError('Expected one complete Cyprus guarantor import tail')
+    pattern = re.compile(r'^' + re.escape(begin) + r'\r?\n.*?^' + re.escape(end) + r'[ \t]*\r?\n?', re.M | re.S)
+    match = pattern.search(source)
+    if match is None or source[match.end():].strip() != '}':
+        raise ValueError('Cyprus guarantor imports must be the final marked tree tail')
+    return source[:match.start()] + source[match.end():]
 
 
 def parse_fields(block):
@@ -38,6 +54,8 @@ def parse_fields(block):
 
 def load_focus_file(mod_root):
     s, bom = read(f'{mod_root}/{F_FOCUS}')
+    source = s
+    s = without_cyprus_import_tail(s)
     first = SECTION_RE.search(s)
     header = s[:first.start()]
     secs = list(SECTION_RE.finditer(s))
@@ -66,7 +84,7 @@ def load_focus_file(mod_root):
         sections.append((m.group(1), foci))
     tail = s[s.rindex('}'):]
     assert tail.strip() == '}', 'file must end with the closing brace of focus_tree'
-    return dict(header=header, sections=sections, bom=bom, text=s)
+    return dict(header=header, sections=sections, bom=bom, text=source)
 
 
 def abs_positions(foci_by_id, extra=None):

@@ -1,4 +1,4 @@
-# IMPERIA CW — Cold War: independent installed Colonial Affairs source checks.
+# IMPERIA COLD WAR — Independent installed Colonial Affairs source checks.
 """Inspect generated providers and native contracts; this is not an engine test."""
 from pathlib import Path
 from collections import defaultdict
@@ -18,6 +18,20 @@ def check_click_geometry(parsed, errors):
     """Use native sprite frame sizes, not the texture strip's full width."""
     gui = parsed['interface/COLDWAR_colonial_affairs.gui']
     gfx = parsed['interface/COLDWAR_colonial_affairs.gfx']
+    scripts=first(parsed['common/scripted_guis/COLDWAR_colonial_affairs_gui.txt'],'scripted_gui')
+    guards=first(first(scripts,'COLDWAR_colonial_affairs_gui'),'triggers')
+    def contexts_overlap(a,b):
+        # Tabs and IRA/RAF cases are exclusive; runtime tests exercise those
+        # native predicates. Read the actual emitted widget guards here.
+        def context(name):
+            guard=first(guards,name+'_visible',[])
+            page=next((k for k,o,v in guard if k in ('COLDWAR_COL_tab_territory','COLDWAR_COL_tab_internal','COLDWAR_COL_tab_contacts') and v=='yes'),None)
+            case='ira' if any((k,'=','yes') in guard for k in ('COLDWAR_COL_case_target_available','COLDWAR_COL_measure_ira_available')) else 'raf' if any((k,'=','yes') in guard for k in ('COLDWAR_COL_own_raf','COLDWAR_COL_measure_raf_available')) else None
+            mode=True if ('has_country_flag','=','COLDWAR_COL_measures_open') in guard else False if any(k=='NOT' and ('has_country_flag','=','COLDWAR_COL_measures_open') in v for k,o,v in guard if isinstance(v,list)) else None
+            sheet=1 if any(k=='check_variable' and ('COLDWAR_COL_measure_page','=','1') in v for k,o,v in guard if isinstance(v,list)) else 0 if any(k=='NOT' and any(x=='check_variable' and ('COLDWAR_COL_measure_page','=','1') in z for x,y,z in v if isinstance(z,list)) for k,o,v in guard if isinstance(v,list)) else None
+            return page,case,mode,sheet
+        ap,ac,am,asheet=context(a);bp,bc,bm,bsheet=context(b)
+        return not ((ap and bp and ap!=bp) or (ac and bc and ac!=bc) or (am is not None and bm is not None and am!=bm) or (asheet is not None and bsheet is not None and asheet!=bsheet))
     sprites = {}
     for kind, _, node in first(gfx, 'spriteTypes'):
         if kind != 'spriteType':
@@ -49,7 +63,7 @@ def check_click_geometry(parsed, errors):
             if x < 0 or y < 0 or x+w > width or y+h > height:
                 errors.append('Button exceeds window ' + button)
             for other, previous in boxes:
-                if max(x, previous[0]) < min(x+w, previous[2]) and max(y, previous[1]) < min(y+h, previous[3]):
+                if max(x, previous[0]) < min(x+w, previous[2]) and max(y, previous[1]) < min(y+h, previous[3]) and (name!='COLDWAR_colonial_affairs_window' or contexts_overlap(button,other)):
                     errors.append('Overlapping buttons ' + button + ' / ' + other)
             boxes.append((button, box))
             buttons += 1
@@ -89,7 +103,8 @@ def check():
             if blob.startswith(b'\xef\xbb\xbf'):
                 errors.append('Forbidden script BOM ' + rel)
             text = blob.decode('utf-8')
-            if not text.startswith('# IMPERIA CW'):
+            # IMPERIA COLD WAR — Accept the current marker alongside existing legacy outputs.
+            if not text.startswith(('# IMPERIA COLD WAR — ', '# IMPERIA CW')):
                 errors.append('Missing Cold War source marker ' + rel)
             if re.search(r'(?<!\w)\d+\.\d{6,}(?!\w)', text):
                 errors.append('Native fixed-point precision ' + rel)

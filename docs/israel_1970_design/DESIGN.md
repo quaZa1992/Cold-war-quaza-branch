@@ -1,10 +1,12 @@
-# Israel 1970: Implemented Focus Tree
+# IMPERIA COLD WAR: Israel 1970 Implemented Focus Tree
 
-389 focuses, 161 decisions, 67 events, twenty political families and thirty-seven named party/list variants. All new game localisation is English.
+399 focuses, 182 decisions, 77 events, twenty political families and thirty-seven named party/list variants. All new game localisation is English.
 
 The compact layout uses relative-position anchors as in the MD Russia tree. Each political family starts directly when its exact party governs. The twelve outlook unlocks and twenty government-mandate focuses have been removed. No party entry requires a focus or a foundation flag. Internal policy choices remain connected within their branches. Shared achievements survive changes of government; party programme modifiers apply only while that party governs.
 
-Rewards were rewritten individually in revision 2. Party policies combine visible MD-style modifier changes with buildings, research, experience, interest-group approval and real constitutional choices. Descriptions contain narrative text; the game shows rewards through completion-effect tooltips. There is no generic 65/35 modifier split.
+The 27 October 2026 revision adds distinct institutional rewards, stronger civilian productivity and diaspora finance, a shared workforce route capped at +15%, and three bounded settlement extensions. Ceasefire talks are player-initiated and territorial administration opens independently of military outcomes. See REWORK_20261027.md for history, numerical routes, provenance and validation limits.
+
+The corrected settlement-presence extension separates unilateral footholds under foreign control from controlled-state construction, with regional occupation costs. The affected controller receives production, stability and budget penalties without a consent decision or payment. An existing Palestine also receives bounded West Bank/Gaza institutional and commercial pressure from actual settlement programmes, with selected funded compensation relief. See UNILATERAL_SETTLEMENTS.md, PRESENCE_AND_OCCUPATION.md and PALESTINIAN_PRESSURE.md for conditions, numeric terms, period sources and verification limits.
 
 The retained outlooks are Western, Emerging, Non-Aligned and Nationalist. There are no Shiite or Salafist paths, foundations, campaigns or government programmes. Their four native slots are disabled for the 1970 Israel scenario.
 
@@ -60,7 +62,7 @@ A shared state branch whose institutional achievements survive changes of govern
 
 ### Israel in January 1970
 
-`ISR70_january_1970` | x=34, y=0 | 14 days
+`ISR70_january_1970` | x=53, y=0 | 14 days
 
 Prerequisites: Entry focus.
 
@@ -76,7 +78,7 @@ add_political_power = 100
 
 ### The Seventh Knesset
 
-`ISR70_knesset` | x=34, y=1 | 35 days
+`ISR70_knesset` | x=53, y=1 | 35 days
 
 Prerequisites: (ISR70_january_1970).
 
@@ -92,9 +94,9 @@ add_political_power = 100
 add_stability = 0.02
 ```
 
-### Negotiate a Unity Cabinet
+### A Cabinet across the Party Lines
 
-`ISR70_unity_cabinet` | x=32, y=2 | 35 days
+`ISR70_unity_cabinet` | x=50, y=2 | 35 days
 
 Prerequisites: (ISR70_knesset).
 
@@ -102,14 +104,15 @@ Exclusive with: ISR70_narrow_cabinet.
 
 Artwork: `gfx/interface/goals/coldwar/generic_union_agreement.png`.
 
-Replace the fragile starting coalition with a negotiated unity agreement. Its broader support improves stability and military confidence.
+A broad coalition can distribute responsibility for national security across the major parties. Its members will expect a say in appointments and spending, slowing the passage of a common legislative programme.
 
 - The Military Opinion: +5.
 - Removes the national spirit "The Unity Government of 1969".
 - Removes the national spirit "The Unity Government of 1969".
 - National spirit:
 - Stability: +5%
-- Political Power Gain: +5%
+- Political Power Gain: -3%
+- Planning Speed: +5%
 - Opens the corresponding cabinet or municipal event.
 
 ```hoi4
@@ -122,9 +125,9 @@ ISR70_form_unity_coalition = yes
 country_event = { id = ISR70.1 days = 1 }
 ```
 
-### A Parliamentary Working Majority
+### A Disciplined Parliamentary Majority
 
-`ISR70_narrow_cabinet` | x=36, y=2 | 35 days
+`ISR70_narrow_cabinet` | x=56, y=2 | 35 days
 
 Prerequisites: (ISR70_knesset).
 
@@ -132,7 +135,7 @@ Exclusive with: ISR70_unity_cabinet.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament.png`.
 
-A smaller working majority leaves the cabinet more political room and gives organized labor a clearer role.
+A smaller coalition gives ministers clearer authority over the legislative agenda. Dependence on fewer parliamentary partners leaves the government more exposed to every dispute within its majority.
 
 - Political Power: +75
 - Labor Unions Opinion: +10.
@@ -140,6 +143,7 @@ A smaller working majority leaves the cabinet more political room and gives orga
 - Removes the national spirit "The Unity Government of 1969".
 - National spirit:
 - Political Power Gain: +10%
+- Stability: -2%
 - Opens the corresponding cabinet or municipal event.
 
 ```hoi4
@@ -153,28 +157,29 @@ ISR70_form_working_coalition = yes
 country_event = { id = ISR70.1 days = 1 }
 ```
 
-### A Professional Civil Service
+### The Civil Service Commission
 
-`ISR70_civil_service` | x=34, y=3 | 35 days
+`ISR70_civil_service` | x=53, y=3 | 35 days
 
 Prerequisites: (ISR70_unity_cabinet OR ISR70_narrow_cabinet).
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-Professional recruitment and common procurement rules reduce the recurring cost of the civil service.
+Merit examinations and common personnel standards can make a young state less dependent on party appointments. Professional administration will be cheaper to sustain, but the coalition will lose some of the patronage through which it has held together.
 
-- Political Power: +50
+- 1 x 25% research bonus: Industry.
 - National spirit:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Political Power Gain: -2%
 
 ```hoi4
 add_ideas = ISR70_civil_service_idea
-add_political_power = 50
+add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.25 }
 ```
 
 ### The Comptroller and Parliamentary Oversight
 
-`ISR70_oversight` | x=34, y=4 | 35 days
+`ISR70_oversight` | x=53, y=4 | 35 days
 
 Prerequisites: (ISR70_civil_service).
 
@@ -191,9 +196,9 @@ add_ideas = ISR70_oversight_idea
 decrease_corruption = yes
 ```
 
-### Municipal Freedom of Action
+### Municipal Engineering Offices
 
-`ISR70_local_councils` | x=31, y=4 | 35 days
+`ISR70_local_councils` | x=49, y=4 | 35 days
 
 Prerequisites: (ISR70_civil_service).
 
@@ -201,12 +206,12 @@ Exclusive with: ISR70_central_planning.
 
 Artwork: `gfx/interface/goals/coldwar/generic_public_transport.png`.
 
-Let local councils deliver roads and services faster without increasing the central bureaucracy.
+Local councils know which roads and service connections their communities need. Permanent engineering offices will speed municipal works while adding a modest standing administrative commitment.
 
 - Small and Medium Business Owners Opinion: +5.
 - National spirit:
 - Infrastructure Construction Speed: +15%
-- Bureaucracy Cost: -5%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 add_ideas = ISR70_local_councils_idea
@@ -214,9 +219,9 @@ set_temp_variable = { temp_opinion = 5 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### Coordinated State Planning
+### Sapir's Development Tenders
 
-`ISR70_central_planning` | x=37, y=4 | 35 days
+`ISR70_central_planning` | x=57, y=4 | 35 days
 
 Prerequisites: (ISR70_civil_service).
 
@@ -224,11 +229,12 @@ Exclusive with: ISR70_local_councils.
 
 Artwork: `gfx/interface/goals/coldwar/construction_engineering.png`.
 
-Coordinate national tenders and engineering standards for a faster state construction programme.
+Central tenders can concentrate scarce engineers and capital on projects that private investors would otherwise overlook. The same priority system gives established contractors greater protection from competition.
 
 - 1 x 50% research bonus: Construction.
 - National spirit:
-- Construction Speed: +5%
+- Construction Speed: +7%
+- Incoming Investment Cost: +4%
 
 ```hoi4
 add_ideas = ISR70_central_planning_idea
@@ -237,7 +243,7 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_construction u
 
 ### The Unfinished Basic Laws
 
-`ISR70_basic_laws` | x=34, y=5 | 35 days
+`ISR70_basic_laws` | x=53, y=5 | 35 days
 
 Prerequisites: (ISR70_oversight).
 
@@ -262,7 +268,7 @@ Parliamentary religious Zionism links public institutions, national service and 
 
 ### Religion in the Public State
 
-`ISR70_p0_institution` | x=11, y=17 | 35 days
+`ISR70_p0_institution` | x=12, y=18 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -283,9 +289,9 @@ set_temp_variable = { temp_opinion = 10 }
 change_the_priesthood_opinion = yes
 ```
 
-### Religious Study and Vocational Education
+### Religious Workshops and Technical Schools
 
-`ISR70_p0_ea` | x=8, y=18 | 35 days
+`ISR70_p0_ea` | x=9, y=19 | 35 days
 
 Prerequisites: (ISR70_p0_institution).
 
@@ -293,48 +299,50 @@ Exclusive with: ISR70_p0_eb.
 
 Artwork: `gfx/interface/goals/coldwar/BEL_prioritizetechnicaleducation.dds`.
 
-Connect religious study to vocational education and industrial qualifications.
+Mafdal will connect religious study to industrial qualifications. Technical training can broaden skilled employment, while separate educational institutions require additional funding.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
-- Research Speed: +2%
+- Research Speed: +1.5%
+- Education Cost: +3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p0_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p0_research_speed_factor = 0.02 tooltip = ISR70_research_speed_factor_tt }
+add_to_variable = { ISR70_p0_research_speed_factor = 0.015 tooltip = ISR70_research_speed_factor_tt }
+add_to_variable = { ISR70_p0_education_cost_multiplier_modifier = 0.03 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Religious Study and Vocational Education: Implementation
+### Teachers for Religious Vocational Schools
 
-`ISR70_p0_ea_deepen` | x=8, y=19 | 49 days
+`ISR70_p0_ea_deepen` | x=9, y=20 | 49 days
 
 Prerequisites: (ISR70_p0_ea).
 
 Artwork: `gfx/interface/goals/coldwar/School_is_in.tga`.
 
-Train technical teachers and improve the productivity of religious vocational graduates.
+Religious vocational schools need instructors who can teach industrial skills without abandoning their communities' educational commitments. Preparing those teachers will connect workshop qualifications to the institutions through which Mafdal already organises public life.
 
 - Religious Institutions Opinion: +10.
 - While this party governs:
 - Monthly Productivity Growth: +0.05
-- Education Cost: -5%
+- Education Cost: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p0_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p0_productivity_growth_modifier = 0.05 tooltip = productivity_growth_modifier_tt }
-add_to_variable = { ISR70_p0_education_cost_multiplier_modifier = -0.05 tooltip = education_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p0_education_cost_multiplier_modifier = -0.015 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_the_priesthood_opinion = yes
 ```
 
-### Municipal Religious Welfare
+### Community Welfare through Religious Councils
 
-`ISR70_p0_eb` | x=10, y=18 | 35 days
+`ISR70_p0_eb` | x=11, y=19 | 35 days
 
 Prerequisites: (ISR70_p0_institution).
 
@@ -342,30 +350,32 @@ Exclusive with: ISR70_p0_ea.
 
 Artwork: `gfx/interface/goals/israel_palestine/Orthodox_jew.dds`.
 
-Expand municipal religious welfare institutions and community provision.
+Mafdal will use religious councils to coordinate community welfare. Social provision can become less costly, at the price of maintaining a larger local administrative network.
 
 - Religious Institutions Opinion: +10.
 - While this party governs:
-- Social Spending Cost: -5%
+- Social Spending Cost: -6%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p0_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p0_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p0_social_cost_multiplier_modifier = -0.06 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p0_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_the_priesthood_opinion = yes
 ```
 
-### Municipal Religious Welfare: Implementation
+### Services for the Southern Communities
 
-`ISR70_p0_eb_deepen` | x=10, y=19 | 49 days
+`ISR70_p0_eb_deepen` | x=11, y=20 | 49 days
 
 Prerequisites: (ISR70_p0_eb).
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Fund a development-town service network and infrastructure in the Negev.
+Religious welfare organisations cannot serve the development towns without dependable roads and local facilities. Connecting these communities to public services will give the municipal network a practical foundation beyond charitable appeals.
 
 - Stability: +2%
 - +1 Infrastructure level in the Negev.
@@ -373,15 +383,16 @@ Fund a development-town service network and infrastructure in the Negev.
 
 ```hoi4
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 add_stability = 0.02
 ```
 
-### Bnei Akiva and National Service
+### Bnei Akiva and Prepared National Service
 
-`ISR70_p0_ca` | x=12, y=18 | 35 days
+`ISR70_p0_ca` | x=13, y=19 | 35 days
 
 Prerequisites: (ISR70_p0_institution).
 
@@ -389,47 +400,49 @@ Exclusive with: ISR70_p0_cb.
 
 Artwork: `gfx/interface/goals/coldwar/conscription.png`.
 
-Link Bnei Akiva and national service to military preparation.
+Religious-Zionist youth organisations can prepare recruits for national service. Quicker mobilisation gives the state trained cadres while increasing expenditure on preparation and personnel.
 
 - Army Experience: +25
 - While this party governs:
 - Mobilization Speed: +10%
+- Personnel Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p0_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p0_mobilization_speed = 0.1 tooltip = mobilization_speed_tt }
+add_to_variable = { ISR70_p0_personnel_cost_multiplier_modifier = 0.02 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 25
 ```
 
-### Bnei Akiva and National Service: Implementation
+### A Trained National-Service Cadre
 
-`ISR70_p0_ca_deepen` | x=12, y=19 | 49 days
+`ISR70_p0_ca_deepen` | x=13, y=20 | 49 days
 
 Prerequisites: (ISR70_p0_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_army_training.png`.
 
-Professionalize the service framework and reduce the time needed for army training.
+Bnei Akiva and the service institutions must prepare young people for responsibilities that extend beyond mobilisation. Common training standards will make the religious-Zionist service framework a more dependable part of national defence.
 
 - Army Experience: +20
 - While this party governs:
 - Army Training Time: -5%
-- Recruitable Population Factor: +3%
+- Recruitable Population Factor: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p0_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p0_training_time_army_factor = -0.05 tooltip = training_time_army_factor_tt }
-add_to_variable = { ISR70_p0_recruitable_population_factor = 0.03 tooltip = recruitable_population_factor_tt }
+add_to_variable = { ISR70_p0_recruitable_population_factor = 0.02 tooltip = recruitable_population_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 20
 ```
 
-### Religious Settlement Policy
+### A Religious Settlement Security Network
 
-`ISR70_p0_cb` | x=14, y=18 | 35 days
+`ISR70_p0_cb` | x=15, y=19 | 35 days
 
 Prerequisites: (ISR70_p0_institution).
 
@@ -440,50 +453,57 @@ Artwork: `gfx/interface/goals/israel_palestine/Jewish_sites_isr.dds`.
 Religious Zionist organizations seek a lasting place in the settlement movement. Local organization and defense preparations will shape their contribution to national policy.
 
 - Political Power: +75
+- Small and Medium Business Owners Opinion: -5.
 - While this party governs:
-- Division Defense: +5%
+- Division Defense: +4%
+- Supply Consumption: +2%
+- Personnel Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p0_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p0_army_defence_factor = 0.05 tooltip = army_defence_factor_tt }
+add_to_variable = { ISR70_p0_army_defence_factor = 0.04 tooltip = army_defence_factor_tt }
+add_to_variable = { ISR70_p0_supply_consumption_factor = 0.02 tooltip = supply_consumption_factor_tt }
+add_to_variable = { ISR70_p0_personnel_cost_multiplier_modifier = 0.015 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
+set_temp_variable = { temp_opinion = -5 }
+change_small_medium_business_owners_opinion = yes
 ```
 
-### Religious Settlement Policy: Implementation
+### Supply the Border Communities
 
-`ISR70_p0_cb_deepen` | x=14, y=19 | 49 days
+`ISR70_p0_cb_deepen` | x=15, y=20 | 49 days
 
 Prerequisites: (ISR70_p0_cb).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Coordinate the defense and supply of border communities.
+Border communities need reliable connections to the forces responsible for their defence. Coordinating supplies and local preparations will turn the settlement movement's security claims into an organisation that can sustain its responsibilities.
 
 - Army Experience: +25
 - While this party governs:
-- Division Organization: +3%
-- Supply Consumption: -5%
+- Division Organization: +2.5%
+- Supply Consumption: -3.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p0_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p0_army_org_factor = 0.03 tooltip = ISR70_army_org_factor_tt }
-add_to_variable = { ISR70_p0_supply_consumption_factor = -0.05 tooltip = supply_consumption_factor_tt }
+add_to_variable = { ISR70_p0_army_org_factor = 0.025 tooltip = ISR70_army_org_factor_tt }
+add_to_variable = { ISR70_p0_supply_consumption_factor = -0.035 tooltip = supply_consumption_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 25
 ```
 
 ### Religion and the Republic
 
-`ISR70_p0_finish` | x=11, y=20 | 70 days
+`ISR70_p0_finish` | x=12, y=21 | 70 days
 
 Prerequisites: (ISR70_p0_ea_deepen OR ISR70_p0_eb_deepen) AND (ISR70_p0_ca_deepen OR ISR70_p0_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/FocusElectHapoelHaMizrachi.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+Mafdal must show that religious education, community organisation and national service can support the same state. The cabinet's chosen settlement will determine how those obligations are shared without dissolving the movement's distinctive institutions into the larger parties.
 
 - Political Power: +75
 - Stability: +3%
@@ -505,7 +525,7 @@ Begin must hold together the revisionist and liberal wings of Gahal. A later Lik
 
 ### Hold Herut and the Liberals Together
 
-`ISR70_p1_institution` | x=21, y=10 | 35 days
+`ISR70_p1_institution` | x=29, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -528,9 +548,9 @@ set_temp_variable = { temp_opinion = 5 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### An Entrepreneurial Israel
+### The Liberal Wing's Commercial Programme
 
-`ISR70_p1_ea` | x=18, y=11 | 35 days
+`ISR70_p1_ea` | x=26, y=11 | 35 days
 
 Prerequisites: (ISR70_p1_institution).
 
@@ -538,30 +558,32 @@ Exclusive with: ISR70_p1_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_privatization.png`.
 
-Make private enterprise and commercial employment the engine of development.
+Gahal's Liberals will open more opportunities for private enterprise. Incoming investment can expand commerce, while a greater reliance on overseas capital increases exposure to external markets.
 
 - Small and Medium Business Owners Opinion: +10.
 - While this party governs:
 - Incoming Investment Cost: -10%
+- World-Market Exposure: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p1_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p1_receiving_investment_cost_modifier = -0.1 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p1_mdcw_cw_market_exposure = 0.04 tooltip = ISR70_mdcw_cw_market_exposure_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### An Entrepreneurial Israel: Implementation
+### Commerce on the Tel Aviv Model
 
-`ISR70_p1_ea_deepen` | x=18, y=12 | 49 days
+`ISR70_p1_ea_deepen` | x=26, y=12 | 49 days
 
 Prerequisites: (ISR70_p1_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Build a funded commercial office district in Tel Aviv.
+The Liberal wing of Gahal sees commercial employment as a route to prosperity beyond protected enterprises. A new office district in Tel Aviv will give that argument a concrete base of firms, services and technical work.
 
 - +1 Office District in Tel Aviv.
 - 1 x 50% research bonus: Industry.
@@ -576,9 +598,9 @@ ISR70_pay_0_0120 = yes
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Retain Strategic State Enterprises
+### Herut's Strategic Public Enterprises
 
-`ISR70_p1_eb` | x=20, y=11 | 35 days
+`ISR70_p1_eb` | x=28, y=11 | 35 days
 
 Prerequisites: (ISR70_p1_institution).
 
@@ -586,29 +608,31 @@ Exclusive with: ISR70_p1_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_takeover_industries.png`.
 
-Retain strategic public enterprises while improving their industrial methods.
+Herut will retain selected public enterprises as instruments of national development. Protected production can sustain industrial capacity while making competing commercial investment more difficult.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
 - Factory Output: +5%
+- Incoming Investment Cost: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p1_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p1_industrial_capacity_factory = 0.05 tooltip = industrial_capacity_factory_tt }
+add_to_variable = { ISR70_p1_receiving_investment_cost_modifier = 0.04 tooltip = receiving_investment_cost_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Retain Strategic State Enterprises: Implementation
+### Strategic Industry in Haifa
 
-`ISR70_p1_eb_deepen` | x=20, y=12 | 49 days
+`ISR70_p1_eb_deepen` | x=28, y=12 | 49 days
 
 Prerequisites: (ISR70_p1_eb).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Expand Haifa's civilian industrial base under strategic state ownership.
+Gahal's economic debate need not end with the disposal of every public enterprise. Investment in Haifa will demonstrate whether strategic state ownership can coexist with a cabinet otherwise committed to greater scope for private initiative.
 
 - +1 Civilian Factory in Haifa.
 - Labor Unions Opinion: +5.
@@ -624,9 +648,9 @@ set_temp_variable = { temp_opinion = 5 }
 change_labour_unions_opinion = yes
 ```
 
-### The Rule of Law and Opposition
+### The Opposition's Parliamentary Safeguards
 
-`ISR70_p1_ca` | x=22, y=11 | 35 days
+`ISR70_p1_ca` | x=30, y=11 | 35 days
 
 Prerequisites: (ISR70_p1_institution).
 
@@ -634,25 +658,36 @@ Exclusive with: ISR70_p1_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Defend the rule of law and subject the government to effective scrutiny.
+Gahal can carry its opposition experience into government by defending parliamentary scrutiny. Independent scrutiny will make administration more credible while limiting the executive's immediate political freedom.
 
 - Political Power: +75
+- The Military Opinion: -5.
 - Reduces existing MD corruption by one level, down to its minimum.
+- While this party governs:
+- Corruption Cost: -3%
+- Political Power Gain: -1.5%
 
 ```hoi4
+custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p1_programme }
+custom_effect_tooltip = ISR70_programme_scope_tt
+add_to_variable = { ISR70_p1_corruption_cost_factor = -0.03 tooltip = corruption_cost_factor_tt }
+add_to_variable = { ISR70_p1_political_power_factor = -0.015 tooltip = political_power_factor_tt }
+hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 add_political_power = 75
+set_temp_variable = { temp_opinion = -5 }
+change_the_military_opinion = yes
 ```
 
-### The Rule of Law and Opposition: Implementation
+### Parliamentary Scrutiny of the Executive
 
-`ISR70_p1_ca_deepen` | x=22, y=12 | 49 days
+`ISR70_p1_ca_deepen` | x=30, y=12 | 49 days
 
 Prerequisites: (ISR70_p1_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament2.png`.
 
-Entrench parliamentary safeguards and a more efficient civilian administration.
+Herut's experience in opposition gives parliamentary scrutiny a particular importance within Gahal. Stronger safeguards and a more capable civil administration will require ministers to accept procedures that constrain their own government as well as its opponents.
 
 - Political Power: +50
 - While this party governs:
@@ -668,9 +703,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 50
 ```
 
-### Indivisible Security Interests
+### A Cabinet of Security Priorities
 
-`ISR70_p1_cb` | x=24, y=11 | 35 days
+`ISR70_p1_cb` | x=32, y=11 | 35 days
 
 Prerequisites: (ISR70_p1_institution).
 
@@ -678,53 +713,55 @@ Exclusive with: ISR70_p1_ca.
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Make security interests the center of the government's civic mandate.
+Gahal will give military readiness a larger share of the cabinet's attention and budget. Units gain a clearer mandate, while permanent security commitments make military personnel more expensive.
 
 - Army Experience: +30
 - While this party governs:
 - War Support: +5%
+- Personnel Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p1_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p1_war_support_factor = 0.05 tooltip = war_support_factor_tt }
+add_to_variable = { ISR70_p1_personnel_cost_multiplier_modifier = 0.025 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 30
 ```
 
-### Indivisible Security Interests: Implementation
+### A Cohesive Security Establishment
 
-`ISR70_p1_cb_deepen` | x=24, y=12 | 49 days
+`ISR70_p1_cb_deepen` | x=32, y=12 | 49 days
 
 Prerequisites: (ISR70_p1_cb).
 
 Artwork: `gfx/interface/goals/coldwar/Improve_supply_distribution_methods.tga`.
 
-Fund a more cohesive force with better operational supply.
+A firm security policy requires units that can remain organised and supplied in the field. Gahal will direct attention towards the daily work of sustaining the force, giving its political commitments an operational foundation.
 
 - Army Experience: +20
 - While this party governs:
-- Division Organization: +5%
-- Supply Consumption: -5%
+- Production Efficiency Growth: +5%
+- Supply Consumption: -3.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p1_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p1_army_org_factor = 0.05 tooltip = ISR70_army_org_factor_tt }
-add_to_variable = { ISR70_p1_supply_consumption_factor = -0.05 tooltip = supply_consumption_factor_tt }
+add_to_variable = { ISR70_p1_production_factory_efficiency_gain_factor = 0.05 tooltip = ISR70_production_factory_efficiency_gain_factor_tt }
+add_to_variable = { ISR70_p1_supply_consumption_factor = -0.035 tooltip = supply_consumption_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 20
 ```
 
 ### The Conservative Transfer of Power
 
-`ISR70_p1_finish` | x=21, y=13 | 70 days
+`ISR70_p1_finish` | x=29, y=13 | 70 days
 
 Prerequisites: (ISR70_p1_ea_deepen OR ISR70_p1_eb_deepen) AND (ISR70_p1_ca_deepen OR ISR70_p1_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/FocusElectHerut.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+Herut and the Liberals must turn an opposition alliance into a government that can endure. Their chosen economic programme and civic settlement will shape a common record of administration, while their separate traditions continue to test the cabinet's cohesion.
 
 - Political Power: +75
 - Army Experience: +25
@@ -742,7 +779,7 @@ add_political_power = 75
 
 ### Herut and the Liberals: The Identity Question
 
-`ISR70_gahal_identity` | x=15, y=11 | 35 days
+`ISR70_gahal_identity` | x=23, y=11 | 35 days
 
 Prerequisites: (ISR70_p1_institution).
 
@@ -766,7 +803,7 @@ unlock_decision_tooltip = ISR70_decision_roster_likud
 
 ### Retain Gahal as a Broad Alliance
 
-`ISR70_gahal_coalition` | x=14, y=12 | 35 days
+`ISR70_gahal_coalition` | x=22, y=12 | 35 days
 
 Prerequisites: (ISR70_gahal_identity).
 
@@ -790,7 +827,7 @@ add_political_power = 75
 
 ### Found a United Likud List
 
-`ISR70_likud_foundation` | x=16, y=12 | 35 days
+`ISR70_likud_foundation` | x=24, y=12 | 35 days
 
 Prerequisites: (ISR70_gahal_identity).
 
@@ -818,7 +855,7 @@ An independent liberal cabinet can promote small business, civil rights or a pra
 
 ### Liberal Government Responsibility
 
-`ISR70_p2_institution` | x=19, y=17 | 35 days
+`ISR70_p2_institution` | x=25, y=18 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -835,9 +872,9 @@ set_temp_variable = { temp_opinion = 10 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### Small Business over Monopolies
+### Independent Credit for Small Firms
 
-`ISR70_p2_ea` | x=16, y=18 | 35 days
+`ISR70_p2_ea` | x=22, y=19 | 35 days
 
 Prerequisites: (ISR70_p2_institution).
 
@@ -845,30 +882,35 @@ Exclusive with: ISR70_p2_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_banking_legislation.png`.
 
-Prioritize small businesses over protected monopolies.
+The Independent Liberals will favour small firms over protected concentrations of capital. Broader access to investment requires officials to supervise a larger number of borrowers and guarantees.
 
 - Small and Medium Business Owners Opinion: +15.
+- Industrial Conglomerates Opinion: -5.
 - While this party governs:
 - Incoming Investment Cost: -10%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p2_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p2_receiving_investment_cost_modifier = -0.1 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p2_bureaucracy_cost_multiplier_modifier = 0.015 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_small_medium_business_owners_opinion = yes
+set_temp_variable = { temp_opinion = -5 }
+change_industrial_conglomerates_opinion = yes
 ```
 
-### Small Business over Monopolies: Implementation
+### Room for Independent Businesses
 
-`ISR70_p2_ea_deepen` | x=16, y=19 | 49 days
+`ISR70_p2_ea_deepen` | x=22, y=20 | 49 days
 
 Prerequisites: (ISR70_p2_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Build a Tel Aviv office district serving small firms and local commerce.
+Independent shopkeepers and service firms need commercial space that is not reserved for the largest political or economic organisations. A Tel Aviv office district will support the Liberals' promise to broaden access to productive private enterprise.
 
 - +1 Office District in Tel Aviv.
 - Treasury cost on completion: 1.2% of annual GDP.
@@ -881,9 +923,9 @@ Build a Tel Aviv office district serving small firms and local commerce.
 ISR70_pay_0_0120 = yes
 ```
 
-### Capital and Export Industry
+### Manufacturers in Overseas Markets
 
-`ISR70_p2_eb` | x=18, y=18 | 35 days
+`ISR70_p2_eb` | x=24, y=19 | 35 days
 
 Prerequisites: (ISR70_p2_institution).
 
@@ -891,29 +933,31 @@ Exclusive with: ISR70_p2_ea.
 
 Artwork: `gfx/interface/goals/coldwar/export_factories.tga`.
 
-Support capital formation and manufacturers that compete in export markets.
+Export-oriented manufacturers will receive the Liberals' support for capital formation. Better returns will connect productive firms more closely to foreign orders and international market risk.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
 - Return on Investment: +0.5%
+- World-Market Exposure: +5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p2_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p2_return_on_investment_modifier = 0.005 tooltip = return_on_investment_modifier_tt }
+add_to_variable = { ISR70_p2_mdcw_cw_market_exposure = 0.05 tooltip = ISR70_mdcw_cw_market_exposure_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Capital and Export Industry: Implementation
+### Export Production in Haifa
 
-`ISR70_p2_eb_deepen` | x=18, y=19 | 49 days
+`ISR70_p2_eb_deepen` | x=24, y=20 | 49 days
 
 Prerequisites: (ISR70_p2_eb).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Build a civilian factory in Haifa and modernize production methods.
+Liberal support for enterprise must also reach firms that manufacture rather than merely trade. A modern industrial investment in Haifa will connect capital formation to production methods capable of sustaining competitive export employment.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -932,9 +976,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### Entrench Civil Rights
+### Civil Rights with Independent Review
 
-`ISR70_p2_ca` | x=20, y=18 | 35 days
+`ISR70_p2_ca` | x=26, y=19 | 35 days
 
 Prerequisites: (ISR70_p2_institution).
 
@@ -942,31 +986,33 @@ Exclusive with: ISR70_p2_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_female_rights.png`.
 
-Entrench civil rights through accountable parliamentary institutions.
+Liberal ministers will accept review of their own decisions as the price of enforceable civil rights. More accountable institutions will be harder to direct as a single partisan instrument.
 
 - Political Power: +50
 - Stability: +3%
 - While this party governs:
-- Political Power Gain: +5%
+- Stability: +2.5%
+- Political Power Gain: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p2_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p2_political_power_factor = 0.05 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p2_stability_factor = 0.025 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p2_political_power_factor = -0.015 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 add_political_power = 50
 ```
 
-### Entrench Civil Rights: Implementation
+### An Accountable Liberal Civil Service
 
-`ISR70_p2_ca_deepen` | x=20, y=19 | 49 days
+`ISR70_p2_ca_deepen` | x=26, y=20 | 49 days
 
 Prerequisites: (ISR70_p2_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Enforce those rights through audits and a lower-cost civil service.
+Civil rights need officials who apply public rules consistently. Auditing the administration will bring the Independent Liberals' constitutional commitments into everyday dealings with the state and reduce the burden of unnecessary bureaucracy.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
@@ -980,9 +1026,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### A Liberal Security State
+### A Professional Liberal Defence Policy
 
-`ISR70_p2_cb` | x=22, y=18 | 35 days
+`ISR70_p2_cb` | x=28, y=19 | 35 days
 
 Prerequisites: (ISR70_p2_institution).
 
@@ -990,51 +1036,55 @@ Exclusive with: ISR70_p2_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_army_training.png`.
 
-A liberal security policy emphasizes professional planning and trained reserves.
+A liberal security policy will rely on trained planners and carefully assessed missions. Better staff preparation will require a small but continuing commitment to professional personnel.
 
 - Army Experience: +30
 - While this party governs:
 - Planning Speed: +10%
+- Personnel Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p2_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p2_planning_speed = 0.1 tooltip = planning_speed_tt }
+add_to_variable = { ISR70_p2_personnel_cost_multiplier_modifier = 0.015 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 30
 ```
 
-### A Liberal Security State: Implementation
+### Defensive Analysis and Secure Communications
 
-`ISR70_p2_cb_deepen` | x=22, y=19 | 49 days
+`ISR70_p2_cb_deepen` | x=28, y=20 | 49 days
 
 Prerequisites: (ISR70_p2_cb).
 
 Artwork: `gfx/interface/goals/israel_palestine/the_research_department.dds`.
 
-Invest in defensive analysis and secure communications.
+A liberal government cannot neglect national defence, but it can insist on careful assessment rather than political reflex. Technical preparation and secure communications will support a security policy grounded in professional judgement.
 
 - 1 x 50% research bonus: Encryption.
 - While this party governs:
-- Foreign Influence Defense: +10%
+- Foreign Influence Defense: +8%
+- Reconnaissance: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p2_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p2_foreign_influence_defense_modifier = 0.1 tooltip = foreign_influence_defense_modifier_tt }
+add_to_variable = { ISR70_p2_foreign_influence_defense_modifier = 0.08 tooltip = foreign_influence_defense_modifier_tt }
+add_to_variable = { ISR70_p2_recon_factor = 0.04 tooltip = recon_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_encryption uses = 1 bonus = 0.5 }
 ```
 
 ### A Liberal Republic
 
-`ISR70_p2_finish` | x=19, y=20 | 70 days
+`ISR70_p2_finish` | x=25, y=21 | 70 days
 
 Prerequisites: (ISR70_p2_ea_deepen OR ISR70_p2_eb_deepen) AND (ISR70_p2_ca_deepen OR ISR70_p2_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament2.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The Independent Liberals seek a place for rights, research and productive enterprise outside the larger political blocs. Their programme must demonstrate that an independent parliamentary voice can administer the state and sustain confidence without surrendering its principles to coalition convenience.
 
 - Stability: +3%
 - 1 x 50% research bonus: Electronics.
@@ -1056,7 +1106,7 @@ The Labor Party and Mapam share the Alignment. Golda Meir governs through a broa
 
 ### The Labor Zionist Alliance
 
-`ISR70_p3_institution` | x=9, y=10 | 35 days
+`ISR70_p3_institution` | x=14, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -1077,9 +1127,9 @@ set_temp_variable = { temp_opinion = 15 }
 change_labour_unions_opinion = yes
 ```
 
-### Modernize the Histadrut
+### The Histadrut Industrial Bargain
 
-`ISR70_p3_ea` | x=6, y=11 | 35 days
+`ISR70_p3_ea` | x=11, y=11 | 35 days
 
 Prerequisites: (ISR70_p3_institution).
 
@@ -1087,40 +1137,42 @@ Exclusive with: ISR70_p3_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_union_agreement.png`.
 
-Modernize Histadrut enterprises through negotiated production and workplace reform.
+The Alignment will modernise Histadrut enterprises through negotiated changes in production. Factory efficiency can improve while a stronger role for organised labour limits unilateral ministerial decisions.
 
 - Labor Unions Opinion: +15.
 - While this party governs:
 - Production Efficiency Cap: +5%
+- Political Power Gain: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p3_production_factory_max_efficiency_factor = 0.05 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
+add_to_variable = { ISR70_p3_political_power_factor = -0.015 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_labour_unions_opinion = yes
 ```
 
-### Modernize the Histadrut: Implementation
+### Modern Workshops for the Histadrut Economy
 
-`ISR70_p3_ea_deepen` | x=6, y=12 | 49 days
+`ISR70_p3_ea_deepen` | x=11, y=12 | 49 days
 
 Prerequisites: (ISR70_p3_ea).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Add a modern civilian industrial complex in Haifa as the programme's concrete investment.
+The institutions of Labor Zionism must adapt their industrial base to a changing economy. Investment in Haifa will give workers and managers a practical test of modernisation within the enterprises around which the Alignment's social influence has grown.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
 - While this party governs:
-- Monthly Productivity Growth: +0.05
+- Monthly Productivity Growth: +0.04
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p3_productivity_growth_modifier = 0.05 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p3_productivity_growth_modifier = 0.04 tooltip = productivity_growth_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 205 = {
 	add_extra_state_shared_building_slots = 1
@@ -1129,9 +1181,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### Kibbutzim as Development Centers
+### Kibbutz Workshops and Irrigation
 
-`ISR70_p3_eb` | x=8, y=11 | 35 days
+`ISR70_p3_eb` | x=13, y=11 | 35 days
 
 Prerequisites: (ISR70_p3_institution).
 
@@ -1139,42 +1191,44 @@ Exclusive with: ISR70_p3_ea.
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Modernization.dds`.
 
-Use kibbutzim as agricultural development and technical-training centers.
+Cooperative farms can combine agricultural production with technical instruction. Faster rural investment requires maintenance, extension staff and a lasting public commitment to the cooperative network.
 
 - 1 x 50% research bonus: Agriculture.
 - Farmers Opinion: +10.
 - While this party governs:
 - Agricultural District Construction Speed: +15%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p3_production_speed_agriculture_district_factor = 0.15 tooltip = production_speed_agriculture_district_factor_tt }
+add_to_variable = { ISR70_p3_bureaucracy_cost_multiplier_modifier = 0.015 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_agriculture uses = 1 bonus = 0.5 }
 set_temp_variable = { temp_opinion = 10 }
 change_farmers_opinion = yes
 ```
 
-### Kibbutzim as Development Centers: Implementation
+### Irrigation for Cooperative Development
 
-`ISR70_p3_eb_deepen` | x=8, y=12 | 49 days
+`ISR70_p3_eb_deepen` | x=13, y=12 | 49 days
 
 Prerequisites: (ISR70_p3_eb).
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
 
-Create an irrigated agricultural district in the Negev and improve rural productivity.
+Cooperative settlement depends on productive land and dependable water rather than political symbolism alone. An irrigated district in the Negev will connect the Alignment's rural institutions to a renewed programme of agricultural development.
 
 - +1 Agricultural District in the Negev.
 - Treasury cost on completion: 0.8% of annual GDP.
 - While this party governs:
-- Monthly Productivity Growth: +0.05
+- Production Efficiency Growth: +3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p3_productivity_growth_modifier = 0.05 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p3_production_factory_efficiency_gain_factor = 0.03 tooltip = ISR70_production_factory_efficiency_gain_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
 	add_extra_state_shared_building_slots = 1
@@ -1183,9 +1237,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0080 = yes
 ```
 
-### Social Balance in the Cities
+### Development-Town Services before Prestige Projects
 
-`ISR70_p3_ca` | x=10, y=11 | 35 days
+`ISR70_p3_ca` | x=15, y=11 | 35 days
 
 Prerequisites: (ISR70_p3_institution).
 
@@ -1193,29 +1247,31 @@ Exclusive with: ISR70_p3_cb.
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Make urban social balance and development-town provision a cabinet priority.
+The Alignment will direct greater attention to municipal services in the periphery. Dependable services can ease social expenditure, while redirecting engineering capacity slows the expansion of military industry.
 
 - Stability: +3%
 - While this party governs:
 - Social Spending Cost: -5%
+- Military Factory Construction Speed: -3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p3_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p3_production_speed_arms_factory_factor = -0.03 tooltip = production_speed_arms_factory_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 ```
 
-### Social Balance in the Cities: Implementation
+### Public Services in the Development Towns
 
-`ISR70_p3_ca_deepen` | x=10, y=12 | 49 days
+`ISR70_p3_ca_deepen` | x=15, y=12 | 49 days
 
 Prerequisites: (ISR70_p3_ca).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Fund local services and development-town infrastructure.
+The social compact must reach households beyond the established metropolitan centres. Better local connections and public-service provision will give the development towns a more tangible share in the prosperity promised by the Alignment.
 
 - +1 Infrastructure level in the Negev.
 - Treasury cost on completion: 0.6% of annual GDP.
@@ -1228,14 +1284,15 @@ custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p3_health_cost_multiplier_modifier = -0.05 tooltip = health_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 ```
 
-### Security through Negotiating Strength
+### Negotiations from a Prepared Reserve
 
-`ISR70_p3_cb` | x=12, y=11 | 35 days
+`ISR70_p3_cb` | x=17, y=11 | 35 days
 
 Prerequisites: (ISR70_p3_institution).
 
@@ -1243,29 +1300,31 @@ Exclusive with: ISR70_p3_ca.
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Use organized military readiness as the basis for negotiations from strength.
+The Alignment will sustain military readiness as the basis for its negotiating position. Better organised units give the cabinet options, at the cost of more expensive reserve preparation.
 
 - Army Experience: +30
 - While this party governs:
-- Division Organization: +5%
+- Division Organization: +4%
+- Personnel Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p3_army_org_factor = 0.05 tooltip = ISR70_army_org_factor_tt }
+add_to_variable = { ISR70_p3_army_org_factor = 0.04 tooltip = ISR70_army_org_factor_tt }
+add_to_variable = { ISR70_p3_personnel_cost_multiplier_modifier = 0.025 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 30
 ```
 
-### Security through Negotiating Strength: Implementation
+### Room for Negotiating Strength
 
-`ISR70_p3_cb_deepen` | x=12, y=12 | 49 days
+`ISR70_p3_cb_deepen` | x=17, y=12 | 49 days
 
 Prerequisites: (ISR70_p3_cb).
 
 Artwork: `gfx/interface/goals/israel_palestine/olive_branch.dds`.
 
-Strengthen diplomatic independence and give the cabinet political room to negotiate.
+A cabinet that relies on negotiating strength must retain the freedom to choose its own position. Political consolidation and greater diplomatic independence will help the Alignment conduct talks without treating every outside preference as an instruction.
 
 - Political Power: +100
 - While this party governs:
@@ -1281,13 +1340,13 @@ add_political_power = 100
 
 ### A Second Building of Israel
 
-`ISR70_p3_finish` | x=9, y=13 | 70 days
+`ISR70_p3_finish` | x=14, y=13 | 70 days
 
 Prerequisites: (ISR70_p3_ea_deepen OR ISR70_p3_eb_deepen) AND (ISR70_p3_ca_deepen OR ISR70_p3_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/FocusElectMapai.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+Labor and Mapam must reconcile industrial modernisation, cooperative traditions and the needs of communities that feel excluded from both. The government will be judged on whether its chosen programme renews the institutions of Labor Zionism rather than merely preserving their authority.
 
 - Political Power: +100
 - Stability: +3%
@@ -1305,7 +1364,7 @@ add_stability = 0.03
 
 ### Labor and Mapam in the Alliance
 
-`ISR70_alignment_balance` | x=3, y=11 | 35 days
+`ISR70_alignment_balance` | x=8, y=11 | 35 days
 
 Prerequisites: (ISR70_p3_institution).
 
@@ -1328,9 +1387,9 @@ set_temp_variable = { temp_opinion = 10 }
 change_labour_unions_opinion = yes
 ```
 
-### Include the Unions in Modernization
+### Renegotiate the Histadrut Production Compact
 
-`ISR70_golda_labour` | x=2, y=12 | 35 days
+`ISR70_golda_labour` | x=7, y=12 | 35 days
 
 Prerequisites: (ISR70_alignment_balance).
 
@@ -1338,26 +1397,28 @@ Exclusive with: ISR70_golda_manager.
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_rights.png`.
 
-Modernize Histadrut enterprises through negotiated workplace standards and worker training.
+The Alignment can ask Histadrut enterprises to modernise in exchange for negotiated wages and training. More efficient production will require ministers to share decisions with organised labour rather than direct the enterprises alone.
 
 - Labor Unions Opinion: +15.
 - While this party governs:
 - Production Efficiency Cap: +5%
-- Monthly Productivity Growth: +0.1
+- Monthly Productivity Growth: +0.06
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p3_production_factory_max_efficiency_factor = 0.05 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
-add_to_variable = { ISR70_p3_productivity_growth_modifier = 0.1 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p3_productivity_growth_modifier = 0.06 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p3_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_labour_unions_opinion = yes
 ```
 
-### Professional Enterprise Management
+### Commercial Accounts for Public Enterprises
 
-`ISR70_golda_manager` | x=4, y=12 | 35 days
+`ISR70_golda_manager` | x=9, y=12 | 35 days
 
 Prerequisites: (ISR70_alignment_balance).
 
@@ -1365,32 +1426,35 @@ Exclusive with: ISR70_golda_labour.
 
 Artwork: `gfx/interface/goals/coldwar/generic_improve_industry.png`.
 
-Give professional managers clearer production targets and invest in modern industrial methods.
+Professional managers can give public enterprises clearer responsibility for production and investment. Stronger commercial discipline will improve output while testing the cabinet's relationship with workers who expect political protection.
 
 - 1 x 50% research bonus: Industry.
 - Industrial Conglomerates Opinion: +10.
+- Labor Unions Opinion: -5.
 - While this party governs:
-- Factory Output: +5%
+- Factory Output: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p3_industrial_capacity_factory = 0.05 tooltip = industrial_capacity_factory_tt }
+add_to_variable = { ISR70_p3_industrial_capacity_factory = 0.04 tooltip = industrial_capacity_factory_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 set_temp_variable = { temp_opinion = 10 }
 change_industrial_conglomerates_opinion = yes
+set_temp_variable = { temp_opinion = -5 }
+change_labour_unions_opinion = yes
 ```
 
-### Take the Social Protest Seriously
+### Hear Development-Town Representatives
 
-`ISR70_golda_panthers` | x=3, y=13 | 35 days
+`ISR70_golda_panthers` | x=8, y=13 | 35 days
 
 Prerequisites: (ISR70_golda_labour OR ISR70_golda_manager).
 
 Artwork: `gfx/interface/goals/coldwar/Fund_social_integration_Programs.tga`.
 
-The development towns demand a hearing on housing, schools and access to work. The cabinet must decide how to respond to a growing protest movement.
+Housing, education and employment grievances give municipal activists reason to approach the cabinet. A hearing can respond to those demands before frustration grows into a wider political confrontation.
 
 - Political Power: +50
 - Stability: +3%
@@ -1402,41 +1466,44 @@ add_stability = 0.03
 country_event = { id = ISR70.20 days = 1 }
 ```
 
-### Housing for the Development Towns
+### Housing with Municipal Services
 
-`ISR70_golda_housing` | x=3, y=14 | 35 days
+`ISR70_golda_housing` | x=8, y=14 | 35 days
 
 Prerequisites: (ISR70_golda_panthers).
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Fund development-town housing and local infrastructure, reducing the cost of future social provision.
+New housing must be connected to work, schools and treatment rather than standing alone at the edge of a development town. Maintaining those services will cost more, but dependable links give the next building programme a stronger base.
 
 - +1 Infrastructure level in the Negev.
 - Treasury cost on completion: 0.6% of annual GDP.
 - While this party governs:
-- Social Spending Cost: -5%
+- Infrastructure Construction Speed: +8%
+- Social Spending Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p3_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p3_production_speed_infrastructure_factor = 0.08 tooltip = ISR70_production_speed_infrastructure_factor_tt }
+add_to_variable = { ISR70_p3_social_cost_multiplier_modifier = 0.02 tooltip = social_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 ```
 
-### Leadership after Golda
+### Choose the Alignment Leadership
 
-`ISR70_golda_succession` | x=9, y=14 | 35 days
+`ISR70_golda_succession` | x=14, y=14 | 35 days
 
 Prerequisites: (ISR70_p3_finish).
 
 Artwork: `gfx/interface/goals/israel_palestine/knesset_speech.dds`.
 
-Golda Meir holds the Alignment together, but Rabin and Peres offer different visions for its future. The party must settle who will lead its next cabinet.
+The governing Alignment can retain Golda Meir or seek a cabinet led by Yitzhak Rabin or Shimon Peres. Parliamentary and party support determine the choice; the government need not wait for a historical succession date.
 
 - Political Power: +75
 - Opens a leadership event: retain Golda Meir, choose Yitzhak Rabin, or choose Shimon Peres.
@@ -1447,9 +1514,9 @@ country_event = { id = ISR70.30 days = 1 }
 custom_effect_tooltip = ISR70_golda_succession_outcome_tt
 ```
 
-### Rabin's Reform Cabinet
+### Rabin's Professional Cabinet
 
-`ISR70_rabin_cabinet` | x=8, y=15 | 35 days
+`ISR70_rabin_cabinet` | x=13, y=15 | 35 days
 
 Prerequisites: (ISR70_golda_succession).
 
@@ -1457,25 +1524,29 @@ Exclusive with: ISR70_peres_cabinet.
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-A Rabin cabinet emphasizes professional administration and readiness, with a one-level anti-corruption reform.
+A Rabin cabinet will place professional responsibility and reserve readiness above a wider system of political appointments. Administrative savings and faster mobilisation will come with a larger continuing personnel commitment.
 
 - Army Experience: +25
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
 - Bureaucracy Cost: -5%
+- Mobilization Speed: +5%
+- Personnel Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p3_bureaucracy_cost_multiplier_modifier = -0.05 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p3_mobilization_speed = 0.05 tooltip = mobilization_speed_tt }
+add_to_variable = { ISR70_p3_personnel_cost_multiplier_modifier = 0.015 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 army_experience = 25
 ```
 
-### Peres and the Industrial Future
+### Peres's Industrial Cabinet
 
-`ISR70_peres_cabinet` | x=10, y=15 | 35 days
+`ISR70_peres_cabinet` | x=15, y=15 | 35 days
 
 Prerequisites: (ISR70_golda_succession).
 
@@ -1483,20 +1554,24 @@ Exclusive with: ISR70_rabin_cabinet.
 
 Artwork: `gfx/interface/goals/coldwar/generic_artillery_factories.png`.
 
-A Peres cabinet emphasizes industrial modernization and domestic defense engineering.
+A Peres cabinet will give domestic defence engineering a larger place in national investment. Faster military-industrial construction will require funds and contracts that might otherwise have expanded civilian commercial activity.
 
 - 1 x 50% research bonus: Armor.
 - 1 x 50% research bonus: Aircraft.
+- Treasury cost on completion: 0.4% of annual GDP.
 - While this party governs:
 - Military Factory Construction Speed: +10%
+- Office Construction Speed: -4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p3_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p3_production_speed_arms_factory_factor = 0.1 tooltip = production_speed_arms_factory_factor_tt }
+add_to_variable = { ISR70_p3_production_speed_offices_factor = -0.04 tooltip = production_speed_offices_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_armor uses = 1 bonus = 0.5 }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_aircraft uses = 1 bonus = 0.5 }
+ISR70_pay_0_0040 = yes
 ```
 
 ## Rakah - The Communist Course
@@ -1505,7 +1580,7 @@ A Jewish-Arab communist government is an alternative electoral outcome. Parliame
 
 ### A Jewish-Arab Class Alliance
 
-`ISR70_p4_institution` | x=32, y=7 | 35 days
+`ISR70_p4_institution` | x=44, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -1522,9 +1597,9 @@ change_labour_unions_opinion = yes
 add_stability = 0.02
 ```
 
-### Parliamentary Communism
+### An Accountable Public-Enterprise Sector
 
-`ISR70_p4_ea` | x=29, y=8 | 35 days
+`ISR70_p4_ea` | x=41, y=11 | 35 days
 
 Prerequisites: (ISR70_p4_institution).
 
@@ -1532,46 +1607,48 @@ Exclusive with: ISR70_p4_eb.
 
 Artwork: `gfx/interface/goals/coldwar/Democratic_Socialism.tga`.
 
-Commit parliamentary communism to organized labor and accountable public production.
+The communist parliamentary cabinet will invest in public enterprises with organised worker representation. Improved industrial routines will require ministers to negotiate rather than issue every instruction directly.
 
 - Labor Unions Opinion: +15.
 - While this party governs:
 - Production Efficiency Cap: +5%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p4_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p4_production_factory_max_efficiency_factor = 0.05 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
+add_to_variable = { ISR70_p4_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_labour_unions_opinion = yes
 ```
 
-### Parliamentary Communism: Implementation
+### Workers Trained for Public Enterprise
 
-`ISR70_p4_ea_deepen` | x=29, y=9 | 49 days
+`ISR70_p4_ea_deepen` | x=41, y=12 | 49 days
 
 Prerequisites: (ISR70_p4_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_rights.png`.
 
-Train workers and strengthen the productivity of parliamentary public enterprises.
+Parliamentary communism must show that public ownership can improve work as well as change its formal direction. Technical education and stronger enterprise productivity will give the Jewish-Arab workers' alliance a practical economic record.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
-- Monthly Productivity Growth: +0.1
+- Monthly Productivity Growth: +0.07
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p4_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p4_productivity_growth_modifier = 0.1 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p4_productivity_growth_modifier = 0.07 tooltip = productivity_growth_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### A Central Economic Plan
+### A State Plan for Industrial Construction
 
-`ISR70_p4_eb` | x=31, y=8 | 35 days
+`ISR70_p4_eb` | x=43, y=11 | 35 days
 
 Prerequisites: (ISR70_p4_institution).
 
@@ -1579,29 +1656,31 @@ Exclusive with: ISR70_p4_ea.
 
 Artwork: `gfx/interface/goals/coldwar/Centrally_Planned_Economy.tga`.
 
-Coordinate industrial construction through a central economic plan.
+Central planners will concentrate engineering and credit on industrial construction. New production capacity comes ahead of the commercial services that independent firms would otherwise have expanded.
 
 - 1 x 50% research bonus: Construction.
 - While this party governs:
-- Civilian Industry Construction Speed: +10%
+- Civilian Industry Construction Speed: +12%
+- Office Construction Speed: -5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p4_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p4_production_speed_industrial_complex_factor = 0.1 tooltip = production_speed_industrial_complex_factor_tt }
+add_to_variable = { ISR70_p4_production_speed_industrial_complex_factor = 0.12 tooltip = production_speed_industrial_complex_factor_tt }
+add_to_variable = { ISR70_p4_production_speed_offices_factor = -0.05 tooltip = production_speed_offices_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_construction uses = 1 bonus = 0.5 }
 ```
 
-### A Central Economic Plan: Implementation
+### A Public Industrial Base in Haifa
 
-`ISR70_p4_eb_deepen` | x=31, y=9 | 49 days
+`ISR70_p4_eb_deepen` | x=43, y=12 | 49 days
 
 Prerequisites: (ISR70_p4_eb).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Build a funded public industrial complex in Haifa.
+Central planning requires factories capable of carrying out its priorities. A public industrial investment in Haifa will place responsibility for employment and production directly on the government and the workers' organisations that support it.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -1620,9 +1699,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### Equal Citizens
+### Common Citizenship and Public Provision
 
-`ISR70_p4_ca` | x=33, y=8 | 35 days
+`ISR70_p4_ca` | x=45, y=11 | 35 days
 
 Prerequisites: (ISR70_p4_institution).
 
@@ -1630,29 +1709,31 @@ Exclusive with: ISR70_p4_cb.
 
 Artwork: `gfx/interface/goals/israel_palestine/one_state_isr_pal.dds`.
 
-Make equal citizenship the legal basis of the Jewish-Arab class alliance.
+Equal citizenship will be supported through common public provision. Stable civic institutions require a greater educational commitment if formal equality is to become practical access.
 
 - Political Power: +75
 - While this party governs:
 - Stability: +4%
+- Education Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p4_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p4_stability_factor = 0.04 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p4_education_cost_multiplier_modifier = 0.025 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Equal Citizens: Implementation
+### Equal Access to Municipal Services
 
-`ISR70_p4_ca_deepen` | x=33, y=9 | 49 days
+`ISR70_p4_ca_deepen` | x=45, y=12 | 49 days
 
 Prerequisites: (ISR70_p4_ca).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Improve equal access to municipal social provision.
+Equal citizenship will remain an abstraction if neighbourhoods receive unequal public services. The communist cabinet will strengthen municipal provision so that cooperation between Jewish and Arab workers has an everyday institutional basis.
 
 - Stability: +2%
 - While this party governs:
@@ -1666,9 +1747,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.02
 ```
 
-### Soviet Security Cooperation
+### Training for a Soviet Supply Relationship
 
-`ISR70_p4_cb` | x=35, y=8 | 35 days
+`ISR70_p4_cb` | x=47, y=11 | 35 days
 
 Prerequisites: (ISR70_p4_institution).
 
@@ -1676,29 +1757,31 @@ Exclusive with: ISR70_p4_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_army_cooperation.png`.
 
-Pursue Soviet-oriented security cooperation through contemporary training and assistance capacity.
+A Soviet-oriented security programme will prepare technical personnel for foreign equipment and assistance. Improved support capacity also makes the army more dependent on the continuing foreign relationship.
 
 - Army Experience: +25
 - While this party governs:
 - Cold War Assistance Effectiveness: +10%
+- Imperia Sanction Resistance: -4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p4_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p4_mdcw_cw_support_effectiveness = 0.1 tooltip = ISR70_mdcw_cw_support_effectiveness_tt }
+add_to_variable = { ISR70_p4_imp_sanction_resistance = -0.04 tooltip = ISR70_imp_sanction_resistance_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 25
 ```
 
-### Soviet Security Cooperation: Implementation
+### Technical Preparation for Soviet Armour
 
-`ISR70_p4_cb_deepen` | x=35, y=9 | 49 days
+`ISR70_p4_cb_deepen` | x=47, y=12 | 49 days
 
 Prerequisites: (ISR70_p4_cb).
 
 Artwork: `gfx/interface/goals/coldwar/FocusImportSovietTanks.dds`.
 
-Prepare the armored force for contemporary foreign designs without granting a free tank model.
+Closer military cooperation with Moscow requires crews and technical organisations able to understand contemporary armoured designs. Research preparation will develop that competence without assuming that a diplomatic orientation alone delivers finished equipment.
 
 - Army Experience: +20
 - 2 x 50% research bonus: Armor.
@@ -1710,13 +1793,13 @@ army_experience = 20
 
 ### A Socialist Peace Settlement
 
-`ISR70_p4_finish` | x=32, y=10 | 70 days
+`ISR70_p4_finish` | x=44, y=13 | 70 days
 
 Prerequisites: (ISR70_p4_ea_deepen OR ISR70_p4_eb_deepen) AND (ISR70_p4_ca_deepen OR ISR70_p4_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_democracy.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+Rakah's government must hold together its class programme, Jewish-Arab equality and the security choices made during its term. A socialist settlement will depend on capable public institutions and services that make cooperation more durable than a parliamentary declaration.
 
 - Political Power: +75
 - 1 x 50% research bonus: Industry.
@@ -1738,7 +1821,7 @@ An explicitly alternative council-socialist movement can decentralize production
 
 ### Communes over Party Headquarters
 
-`ISR70_p5_institution` | x=40, y=7 | 35 days
+`ISR70_p5_institution` | x=55, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -1761,9 +1844,9 @@ set_temp_variable = { temp_opinion = 10 }
 change_labour_unions_opinion = yes
 ```
 
-### Autonomous Producers' Councils
+### Producers' Councils in the Workshops
 
-`ISR70_p5_ea` | x=37, y=8 | 35 days
+`ISR70_p5_ea` | x=52, y=11 | 35 days
 
 Prerequisites: (ISR70_p5_institution).
 
@@ -1771,46 +1854,48 @@ Exclusive with: ISR70_p5_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_democracy.png`.
 
-Give producers' councils practical control of workplace training and production.
+The council left will place workplace training in producers' hands. Sharing practical knowledge can improve industrial efficiency, while negotiating between autonomous workplaces slows central direction.
 
 - Labor Unions Opinion: +15.
 - While this party governs:
 - Production Efficiency Cap: +5%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p5_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p5_production_factory_max_efficiency_factor = 0.05 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
+add_to_variable = { ISR70_p5_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_labour_unions_opinion = yes
 ```
 
-### Autonomous Producers' Councils: Implementation
+### Technical Knowledge between Councils
 
-`ISR70_p5_ea_deepen` | x=37, y=9 | 49 days
+`ISR70_p5_ea_deepen` | x=52, y=12 | 49 days
 
 Prerequisites: (ISR70_p5_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_market_socialism.png`.
 
-Spread council-led technical training and industrial research.
+Autonomous producers' councils need ways to share expertise without surrendering every decision to a central ministry. Joint technical training and industrial research will help local workplaces learn from one another's experience.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
-- Monthly Productivity Growth: +0.1
+- Monthly Productivity Growth: +0.07
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p5_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p5_productivity_growth_modifier = 0.1 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p5_productivity_growth_modifier = 0.07 tooltip = productivity_growth_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### A Coordinated Cooperative Federation
+### A Cooperative Investment Federation
 
-`ISR70_p5_eb` | x=39, y=8 | 35 days
+`ISR70_p5_eb` | x=54, y=11 | 35 days
 
 Prerequisites: (ISR70_p5_institution).
 
@@ -1818,29 +1903,31 @@ Exclusive with: ISR70_p5_ea.
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Modernization.dds`.
 
-Coordinate the cooperative federation's agricultural and industrial investment.
+The federation will pool investment for projects that individual cooperatives cannot undertake. Faster construction requires a standing organisation to settle priorities among its members.
 
 - 1 x 50% research bonus: Agriculture.
 - While this party governs:
-- Construction Speed: +5%
+- Construction Speed: +6%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p5_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p5_production_speed_buildings_factor = 0.05 tooltip = production_speed_buildings_factor_tt }
+add_to_variable = { ISR70_p5_production_speed_buildings_factor = 0.06 tooltip = production_speed_buildings_factor_tt }
+add_to_variable = { ISR70_p5_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_agriculture uses = 1 bonus = 0.5 }
 ```
 
-### A Coordinated Cooperative Federation: Implementation
+### Cooperative Cultivation in the Negev
 
-`ISR70_p5_eb_deepen` | x=39, y=9 | 49 days
+`ISR70_p5_eb_deepen` | x=54, y=12 | 49 days
 
 Prerequisites: (ISR70_p5_eb).
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
 
-Fund a cooperative agricultural district in the Negev.
+A cooperative federation needs a rural economy alongside its municipal councils. Investment in a Negev agricultural district will give producers a common project whose operation depends on sustained coordination rather than a hierarchy of ministerial orders.
 
 - +1 Agricultural District in the Negev.
 - Farmers Opinion: +10.
@@ -1856,9 +1943,9 @@ set_temp_variable = { temp_opinion = 10 }
 change_farmers_opinion = yes
 ```
 
-### Jewish-Arab Federalism
+### Municipal Powers in a Federal Charter
 
-`ISR70_p5_ca` | x=41, y=8 | 35 days
+`ISR70_p5_ca` | x=56, y=11 | 35 days
 
 Prerequisites: (ISR70_p5_institution).
 
@@ -1866,29 +1953,31 @@ Exclusive with: ISR70_p5_cb.
 
 Artwork: `gfx/interface/goals/israel_palestine/one_state_isr_pal.dds`.
 
-Define Jewish-Arab federalism through accountable municipal powers.
+A federal charter will place defined powers in local institutions. Less routine work falls on the central administration, while national construction programmes must accept additional local negotiation.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Construction Speed: -3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p5_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p5_bureaucracy_cost_multiplier_modifier = -0.1 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p5_bureaucracy_cost_multiplier_modifier = -0.08 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p5_production_speed_buildings_factor = -0.03 tooltip = production_speed_buildings_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Jewish-Arab Federalism: Implementation
+### Local Representation within the Federation
 
-`ISR70_p5_ca_deepen` | x=41, y=9 | 49 days
+`ISR70_p5_ca_deepen` | x=56, y=12 | 49 days
 
 Prerequisites: (ISR70_p5_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament2.png`.
 
-Protect local representation and the stability of the federal settlement.
+A federal settlement will endure only if communities trust the bodies that represent them. Clear local responsibilities and dependable institutions can protect the agreement against the suspicion that one centre will eventually take back the authority it has promised.
 
 - Political Power: +75
 - While this party governs:
@@ -1902,9 +1991,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### A Common Civic Republic
+### Shared Civic Services across Communities
 
-`ISR70_p5_cb` | x=43, y=8 | 35 days
+`ISR70_p5_cb` | x=58, y=11 | 35 days
 
 Prerequisites: (ISR70_p5_institution).
 
@@ -1912,29 +2001,31 @@ Exclusive with: ISR70_p5_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_female_rights.png`.
 
-Build a common civic republic through equal public institutions.
+Common civic services will give the federation a practical national role. Shared provision can reduce social costs, while coordination across autonomous councils requires more public administration.
 
 - Stability: +3%
 - While this party governs:
-- Political Power Gain: +5%
+- Social Spending Cost: -6%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p5_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p5_political_power_factor = 0.05 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p5_social_cost_multiplier_modifier = -0.06 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p5_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 ```
 
-### A Common Civic Republic: Implementation
+### Shared Services for a Common Republic
 
-`ISR70_p5_cb_deepen` | x=43, y=9 | 49 days
+`ISR70_p5_cb_deepen` | x=58, y=12 | 49 days
 
 Prerequisites: (ISR70_p5_cb).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Deliver common civic services rather than merely proclaiming them.
+A common civic republic must provide services that residents can use regardless of community. Building that administrative capacity will give the council left's constitutional ambitions a practical test in daily public provision.
 
 - Stability: +2%
 - Treasury cost on completion: 0.5% of annual GDP.
@@ -1952,13 +2043,13 @@ add_stability = 0.02
 
 ### A Federation of Municipalities
 
-`ISR70_p5_finish` | x=40, y=10 | 70 days
+`ISR70_p5_finish` | x=55, y=13 | 70 days
 
 Prerequisites: (ISR70_p5_ea_deepen OR ISR70_p5_eb_deepen) AND (ISR70_p5_ca_deepen OR ISR70_p5_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_democracy.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The council left seeks a federation held together by cooperation among producers and municipalities. Its chosen economic and civic institutions must provide enough coordination to sustain development while leaving local bodies with a meaningful role in their own affairs.
 
 - Political Power: +75
 - Stability: +4%
@@ -1980,7 +2071,7 @@ An alternative traditionalist movement gives development towns an independent vo
 
 ### Represent the Periphery
 
-`ISR70_p6_institution` | x=32, y=12 | 35 days
+`ISR70_p6_institution` | x=44, y=17 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -1997,9 +2088,9 @@ set_temp_variable = { temp_opinion = 10 }
 change_the_priesthood_opinion = yes
 ```
 
-### Crafts and Family Businesses
+### Family Workshops in the Development Towns
 
-`ISR70_p6_ea` | x=29, y=13 | 35 days
+`ISR70_p6_ea` | x=41, y=18 | 35 days
 
 Prerequisites: (ISR70_p6_institution).
 
@@ -2007,30 +2098,32 @@ Exclusive with: ISR70_p6_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_banking_legislation.png`.
 
-Give craftspeople and family businesses access to productive credit.
+The traditionalist alliance will broaden credit for family businesses and craftspeople. Local enterprise gains room to grow while small-loan supervision places new demands on the municipal administration.
 
 - Small and Medium Business Owners Opinion: +15.
 - While this party governs:
 - Incoming Investment Cost: -10%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p6_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p6_receiving_investment_cost_modifier = -0.1 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p6_bureaucracy_cost_multiplier_modifier = 0.015 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### Crafts and Family Businesses: Implementation
+### Commercial Space in the Negev
 
-`ISR70_p6_ea_deepen` | x=29, y=14 | 49 days
+`ISR70_p6_ea_deepen` | x=41, y=19 | 49 days
 
 Prerequisites: (ISR70_p6_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Create a municipal commercial office district in the Negev.
+Family firms in the development towns need premises and business services as well as political recognition. A municipal office district will give the traditionalist alliance a concrete investment in the southern communities it claims to represent.
 
 - +1 Office District in the Negev.
 - Treasury cost on completion: 1.2% of annual GDP.
@@ -2043,9 +2136,9 @@ Create a municipal commercial office district in the Negev.
 ISR70_pay_0_0120 = yes
 ```
 
-### Municipal Development Funds
+### Municipal Services for the Periphery
 
-`ISR70_p6_eb` | x=31, y=13 | 35 days
+`ISR70_p6_eb` | x=43, y=18 | 35 days
 
 Prerequisites: (ISR70_p6_institution).
 
@@ -2053,29 +2146,31 @@ Exclusive with: ISR70_p6_ea.
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Direct development funds toward municipal services in the periphery.
+Southern municipalities will receive priority for public works and services. Faster local connections will require a greater continuing commitment to social provision.
 
 - Stability: +3%
 - While this party governs:
-- Social Spending Cost: -5%
+- Infrastructure Construction Speed: +12%
+- Social Spending Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p6_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p6_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p6_production_speed_infrastructure_factor = 0.12 tooltip = ISR70_production_speed_infrastructure_factor_tt }
+add_to_variable = { ISR70_p6_social_cost_multiplier_modifier = 0.02 tooltip = social_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 ```
 
-### Municipal Development Funds: Implementation
+### Connect the Southern Development Towns
 
-`ISR70_p6_eb_deepen` | x=31, y=14 | 49 days
+`ISR70_p6_eb_deepen` | x=43, y=19 | 49 days
 
 Prerequisites: (ISR70_p6_eb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_road_construction.png`.
 
-Fund an additional infrastructure level for southern development towns.
+Municipal development funds must reach communities whose distance from established centres raises the cost of work and public services. Better infrastructure will make those towns a more practical base for households and local employers.
 
 - +1 Infrastructure level in the Negev.
 - Treasury cost on completion: 0.6% of annual GDP.
@@ -2088,14 +2183,15 @@ custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p6_production_speed_infrastructure_factor = 0.1 tooltip = ISR70_production_speed_infrastructure_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 ```
 
-### Tradition and Shared Education
+### A Traditional Path into Skilled Work
 
-`ISR70_p6_ca` | x=33, y=13 | 35 days
+`ISR70_p6_ca` | x=45, y=18 | 35 days
 
 Prerequisites: (ISR70_p6_institution).
 
@@ -2103,46 +2199,48 @@ Exclusive with: ISR70_p6_cb.
 
 Artwork: `gfx/interface/goals/israel_palestine/Orthodox_jew.dds`.
 
-Combine traditional institutions with shared vocational education.
+Community teachers and technical schools will offer qualifications without requiring young people to leave their social institutions. The resulting skills will require sustained expenditure on education.
 
 - Religious Institutions Opinion: +10.
 - While this party governs:
-- Research Speed: +2%
+- Research Speed: +1.5%
+- Education Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p6_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p6_research_speed_factor = 0.02 tooltip = ISR70_research_speed_factor_tt }
+add_to_variable = { ISR70_p6_research_speed_factor = 0.015 tooltip = ISR70_research_speed_factor_tt }
+add_to_variable = { ISR70_p6_education_cost_multiplier_modifier = 0.025 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_the_priesthood_opinion = yes
 ```
 
-### Tradition and Shared Education: Implementation
+### Teachers and Trades for the Periphery
 
-`ISR70_p6_ca_deepen` | x=33, y=14 | 49 days
+`ISR70_p6_ca_deepen` | x=45, y=19 | 49 days
 
 Prerequisites: (ISR70_p6_ca).
 
 Artwork: `gfx/interface/goals/coldwar/BEL_prioritizetechnicaleducation.dds`.
 
-Train teachers and skilled workers for the development towns.
+Young people in traditional communities should not have to choose between retaining their social ties and acquiring useful qualifications. Teacher preparation and vocational education will broaden their opportunities within the development towns.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
-- Monthly Productivity Growth: +0.1
+- Monthly Productivity Growth: +0.07
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p6_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p6_productivity_growth_modifier = 0.1 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p6_productivity_growth_modifier = 0.07 tooltip = productivity_growth_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Traditional Social Partnership
+### Community Institutions at the Bargaining Table
 
-`ISR70_p6_cb` | x=35, y=13 | 35 days
+`ISR70_p6_cb` | x=47, y=18 | 35 days
 
 Prerequisites: (ISR70_p6_institution).
 
@@ -2150,30 +2248,32 @@ Exclusive with: ISR70_p6_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_union_agreement.png`.
 
-Negotiate a traditional social partnership between employers, workers and religious institutions.
+Workers, employers and religious institutions will negotiate the social partnership together. A stable settlement gives each institution influence and leaves the cabinet less freedom to act alone.
 
 - Labor Unions Opinion: +10.
 - While this party governs:
 - Stability: +4%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p6_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p6_stability_factor = 0.04 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p6_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_labour_unions_opinion = yes
 ```
 
-### Traditional Social Partnership: Implementation
+### Community Welfare Administration
 
-`ISR70_p6_cb_deepen` | x=35, y=14 | 49 days
+`ISR70_p6_cb_deepen` | x=47, y=19 | 49 days
 
 Prerequisites: (ISR70_p6_cb).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Use that partnership to improve community welfare administration.
+Traditional social partnership needs organisations that can administer help reliably. Strengthening community welfare will allow local institutions to respond to households without making every need depend on a personal connection to a political intermediary.
 
 - Religious Institutions Opinion: +5.
 - While this party governs:
@@ -2190,13 +2290,13 @@ change_the_priesthood_opinion = yes
 
 ### The Rise of the Development Towns
 
-`ISR70_p6_finish` | x=32, y=15 | 70 days
+`ISR70_p6_finish` | x=44, y=20 | 70 days
 
 Prerequisites: (ISR70_p6_ea_deepen OR ISR70_p6_eb_deepen) AND (ISR70_p6_ca_deepen OR ISR70_p6_cb_deepen).
 
 Artwork: `gfx/interface/goals/israel_palestine/menorah.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The traditionalist alliance must turn the periphery's political voice into dependable work and services. Its programme will be judged by whether development towns gain institutions of their own, rather than another channel through which established centres distribute favours.
 
 - Political Power: +75
 - Small and Medium Business Owners Opinion: +10.
@@ -2219,7 +2319,7 @@ An explicitly alternative emergency directorate must choose between professional
 
 ### A Limited Directorate
 
-`ISR70_p7_institution` | x=40, y=12 | 35 days
+`ISR70_p7_institution` | x=55, y=17 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -2239,9 +2339,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### A Technocratic Development Plan
+### Procurement under Engineering Standards
 
-`ISR70_p7_ea` | x=37, y=13 | 35 days
+`ISR70_p7_ea` | x=52, y=18 | 35 days
 
 Prerequisites: (ISR70_p7_institution).
 
@@ -2249,29 +2349,31 @@ Exclusive with: ISR70_p7_eb.
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-Build a technocratic development plan around transparent procurement and engineering.
+The directorate will use professional engineering rules to reduce administrative waste. Transparent tendering can make the state less costly while slowing contracts that previously moved through favoured channels.
 
 - 1 x 50% research bonus: Construction.
 - While this party governs:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Construction Speed: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p7_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p7_bureaucracy_cost_multiplier_modifier = -0.1 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p7_bureaucracy_cost_multiplier_modifier = -0.08 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p7_production_speed_buildings_factor = -0.02 tooltip = production_speed_buildings_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_construction uses = 1 bonus = 0.5 }
 ```
 
-### A Technocratic Development Plan: Implementation
+### Industry under Professional Direction
 
-`ISR70_p7_ea_deepen` | x=37, y=14 | 49 days
+`ISR70_p7_ea_deepen` | x=52, y=19 | 49 days
 
 Prerequisites: (ISR70_p7_ea).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Deliver a funded public industrial complex in Haifa.
+The directorate's claim to competence will be tested by the enterprises it develops. A public industrial investment in Haifa will give its planners a clear responsibility for production and employment beyond the language of emergency administration.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -2290,9 +2392,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### Patronage through State Corporations
+### Corporations for Accelerated Construction
 
-`ISR70_p7_eb` | x=39, y=13 | 35 days
+`ISR70_p7_eb` | x=54, y=18 | 35 days
 
 Prerequisites: (ISR70_p7_institution).
 
@@ -2300,32 +2402,32 @@ Exclusive with: ISR70_p7_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_takeover_industries.png`.
 
-Use state corporations and favored contractors for rapid construction. Patronage increases corruption-related costs.
+The directorate will concentrate construction in state corporations and favoured contractors. Faster industrial development makes the state more dependent on politically protected suppliers.
 
 - Industrial Conglomerates Opinion: +10.
 - While this party governs:
 - Civilian Industry Construction Speed: +15%
-- Corruption Cost: +5%
+- Corruption Cost: +6%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p7_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p7_production_speed_industrial_complex_factor = 0.15 tooltip = production_speed_industrial_complex_factor_tt }
-add_to_variable = { ISR70_p7_corruption_cost_factor = 0.05 tooltip = corruption_cost_factor_tt }
+add_to_variable = { ISR70_p7_corruption_cost_factor = 0.06 tooltip = corruption_cost_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_industrial_conglomerates_opinion = yes
 ```
 
-### Patronage through State Corporations: Implementation
+### The State Corporations' Building Programme
 
-`ISR70_p7_eb_deepen` | x=39, y=14 | 49 days
+`ISR70_p7_eb_deepen` | x=54, y=19 | 49 days
 
 Prerequisites: (ISR70_p7_eb).
 
 Artwork: `gfx/interface/goals/coldwar/industrial_subsidies.tga`.
 
-Deliver the state-corporation industrial programme and reward its sponsors.
+The directorate will channel industrial investment through the corporations and interests that sustain its authority. New capacity can strengthen production, but the distribution of its benefits will also expose the relationship between economic development and political patronage.
 
 - +1 Civilian Factory in the Negev.
 - Industrial Conglomerates Opinion: +10.
@@ -2341,9 +2443,9 @@ set_temp_variable = { temp_opinion = 10 }
 change_industrial_conglomerates_opinion = yes
 ```
 
-### Return to Parliamentary Government
+### Return the Budget to Parliament
 
-`ISR70_p7_ca` | x=41, y=13 | 35 days
+`ISR70_p7_ca` | x=56, y=18 | 35 days
 
 Prerequisites: (ISR70_p7_institution).
 
@@ -2351,31 +2453,33 @@ Exclusive with: ISR70_p7_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament.png`.
 
-Restore elections and commit the directorate to parliamentary government.
+Restored elections will give public expenditure a broader mandate and expose it to parliamentary scrutiny. Civilian legitimacy will limit the speed with which the directorate can command new projects.
 
 - Political Power: +75
 - Enables ordinary elections.
 - While this party governs:
 - Stability: +4%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p7_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p7_stability_factor = 0.04 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p7_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = communism elections_allowed = yes }
 add_political_power = 75
 ```
 
-### Return to Parliamentary Government: Implementation
+### Audit the Civilian Transition
 
-`ISR70_p7_ca_deepen` | x=41, y=14 | 49 days
+`ISR70_p7_ca_deepen` | x=56, y=19 | 49 days
 
 Prerequisites: (ISR70_p7_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Submit the civilian transition to an effective audit and strengthen public confidence.
+A promised return to civilian government needs credible scrutiny of the administration that manages it. An effective audit will test the directorate's willingness to submit its record to standards that are independent of its own claims.
 
 - Stability: +3%
 - Reduces existing MD corruption by one level, down to its minimum.
@@ -2385,9 +2489,9 @@ decrease_corruption = yes
 add_stability = 0.03
 ```
 
-### Permanent Presidential Rule
+### The Permanent Presidential Planning Office
 
-`ISR70_p7_cb` | x=43, y=13 | 35 days
+`ISR70_p7_cb` | x=58, y=18 | 35 days
 
 Prerequisites: (ISR70_p7_institution).
 
@@ -2395,55 +2499,57 @@ Exclusive with: ISR70_p7_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_stable_government.png`.
 
-Establish permanent presidential rule and suspend ordinary elections.
+A permanent presidency can concentrate authority over appointments and planning. Clearer command will be accompanied by a larger protected administrative establishment.
 
 - Political Power: +75
 - Disables ordinary elections.
 - While this party governs:
 - Political Power Gain: +10%
+- Bureaucracy Cost: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p7_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p7_political_power_factor = 0.1 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p7_bureaucracy_cost_multiplier_modifier = 0.04 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = communism elections_allowed = no }
 add_political_power = 75
 ```
 
-### Permanent Presidential Rule: Implementation
+### The Presidential Planning Office
 
-`ISR70_p7_cb_deepen` | x=43, y=14 | 49 days
+`ISR70_p7_cb_deepen` | x=58, y=19 | 49 days
 
 Prerequisites: (ISR70_p7_cb).
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-Centralize presidential administration and construction planning.
+An enduring presidency will bring administration and construction planning closer to the executive. Ministers and technical staff will work through a more concentrated centre, tying the development programme to the president's continued authority. Presidential discretion also leaves more room for politically favoured contracts.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -5%
-- Construction Speed: +5%
+- Construction Speed: +6%
+- Corruption Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p7_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p7_bureaucracy_cost_multiplier_modifier = -0.05 tooltip = bureaucracy_cost_multiplier_modifier_tt }
-add_to_variable = { ISR70_p7_production_speed_buildings_factor = 0.05 tooltip = production_speed_buildings_factor_tt }
+add_to_variable = { ISR70_p7_production_speed_buildings_factor = 0.06 tooltip = production_speed_buildings_factor_tt }
+add_to_variable = { ISR70_p7_corruption_cost_factor = 0.015 tooltip = corruption_cost_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
 ### The Directorate State
 
-`ISR70_p7_finish` | x=40, y=15 | 70 days
+`ISR70_p7_finish` | x=55, y=20 | 70 days
 
 Prerequisites: (ISR70_p7_ea_deepen OR ISR70_p7_eb_deepen) AND (ISR70_p7_ca_deepen OR ISR70_p7_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The directorate must now answer for the institutions built under its exceptional authority. Its economic priorities and constitutional choice will determine whether technical administration prepares a civilian settlement or becomes the foundation of a lasting presidential order.
 
 - Political Power: +75
 - 1 x 50% research bonus: Construction.
@@ -2465,7 +2571,7 @@ A parliamentary organization of Arab municipalities can prioritize trade, charit
 
 ### Municipal Interests in the Knesset
 
-`ISR70_p12_institution` | x=49, y=7 | 35 days
+`ISR70_p12_institution` | x=71, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -2481,9 +2587,9 @@ add_stability = 0.03
 add_political_power = 75
 ```
 
-### Arab Commercial Centers
+### Commercial Credit for Arab Municipalities
 
-`ISR70_p12_ea` | x=46, y=8 | 35 days
+`ISR70_p12_ea` | x=68, y=11 | 35 days
 
 Prerequisites: (ISR70_p12_institution).
 
@@ -2491,30 +2597,32 @@ Exclusive with: ISR70_p12_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Build Arab commercial centers around local enterprise and parliamentary representation.
+Municipal representatives will connect local firms to commercial credit. More investment can support employment while requiring additional offices to supervise a wider network of borrowers.
 
 - Small and Medium Business Owners Opinion: +10.
 - While this party governs:
 - Incoming Investment Cost: -10%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p12_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p12_receiving_investment_cost_modifier = -0.1 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p12_bureaucracy_cost_multiplier_modifier = 0.015 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### Arab Commercial Centers: Implementation
+### Commerce for the Northern Municipalities
 
-`ISR70_p12_ea_deepen` | x=46, y=9 | 49 days
+`ISR70_p12_ea_deepen` | x=68, y=12 | 49 days
 
 Prerequisites: (ISR70_p12_ea).
 
 Artwork: `gfx/interface/goals/coldwar/collaborate_local_elites.png`.
 
-Fund an office district serving northern municipal commerce.
+Arab municipalities need a stronger commercial base alongside their public institutions. New office capacity in the north will support local firms and give municipal representatives a practical answer to the demand for productive employment.
 
 - +1 Office District in Haifa.
 - Treasury cost on completion: 1.2% of annual GDP.
@@ -2527,9 +2635,9 @@ Fund an office district serving northern municipal commerce.
 ISR70_pay_0_0120 = yes
 ```
 
-### Social Endowments and Municipal Aid
+### Local Endowments and Welfare Boards
 
-`ISR70_p12_eb` | x=48, y=8 | 35 days
+`ISR70_p12_eb` | x=70, y=11 | 35 days
 
 Prerequisites: (ISR70_p12_institution).
 
@@ -2537,29 +2645,31 @@ Exclusive with: ISR70_p12_ea.
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Use social endowments for municipal welfare and charitable provision.
+Community endowments will help councils organise welfare services. Lower social costs will be accompanied by the administrative work of coordinating public and charitable provision.
 
 - Stability: +2%
 - While this party governs:
-- Social Spending Cost: -10%
+- Social Spending Cost: -8%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p12_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p12_social_cost_multiplier_modifier = -0.1 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p12_social_cost_multiplier_modifier = -0.08 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p12_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.02
 ```
 
-### Social Endowments and Municipal Aid: Implementation
+### Roads between Communities and Services
 
-`ISR70_p12_eb_deepen` | x=48, y=9 | 49 days
+`ISR70_p12_eb_deepen` | x=70, y=12 | 49 days
 
 Prerequisites: (ISR70_p12_eb).
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Improve the roads and public-service links used by municipal institutions.
+Municipal welfare organisations cannot compensate indefinitely for weak physical connections. Improvements to roads and service links will help local institutions reach residents and make their public responsibilities easier to sustain.
 
 - Stability: +2%
 - +1 Infrastructure level in Haifa.
@@ -2567,15 +2677,16 @@ Improve the roads and public-service links used by municipal institutions.
 
 ```hoi4
 205 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 add_stability = 0.02
 ```
 
-### Integration into the Civic Order
+### A Place in Common Civic Institutions
 
-`ISR70_p12_ca` | x=50, y=8 | 35 days
+`ISR70_p12_ca` | x=72, y=11 | 35 days
 
 Prerequisites: (ISR70_p12_institution).
 
@@ -2583,31 +2694,33 @@ Exclusive with: ISR70_p12_cb.
 
 Artwork: `gfx/interface/goals/israel_palestine/one_state_isr_pal.dds`.
 
-Integrate the municipal reform movement into common civic institutions.
+Municipal representatives will seek enforceable participation in national institutions. Civic confidence can improve, while ministers must accept a more negotiated parliamentary agenda.
 
 - Political Power: +75
 - Stability: +2%
 - While this party governs:
-- Political Power Gain: +5%
+- Stability: +3%
+- Political Power Gain: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p12_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p12_political_power_factor = 0.05 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p12_stability_factor = 0.03 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p12_political_power_factor = -0.015 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 add_stability = 0.02
 ```
 
-### Integration into the Civic Order: Implementation
+### Public Scrutiny of Civic Institutions
 
-`ISR70_p12_ca_deepen` | x=50, y=9 | 49 days
+`ISR70_p12_ca_deepen` | x=72, y=12 | 49 days
 
 Prerequisites: (ISR70_p12_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Make common civic institutions accountable through a public audit.
+Participation in common civic institutions must include the power to question their administration. Public scrutiny will give municipal representatives a way to insist that equal citizenship is reflected in the state's everyday conduct.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
@@ -2621,9 +2734,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### Autonomous Municipal Institutions
+### Autonomous Municipal Administration
 
-`ISR70_p12_cb` | x=52, y=8 | 35 days
+`ISR70_p12_cb` | x=74, y=11 | 35 days
 
 Prerequisites: (ISR70_p12_institution).
 
@@ -2631,51 +2744,55 @@ Exclusive with: ISR70_p12_ca.
 
 Artwork: `gfx/interface/goals/israel_palestine/gaza_civic_organizations.dds`.
 
-Give municipal institutions greater administrative autonomy.
+Councils will take responsibility for more routine administration. Central costs can fall while national infrastructure planning must accommodate a larger number of local decisions.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Infrastructure Construction Speed: -4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p12_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p12_bureaucracy_cost_multiplier_modifier = -0.1 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p12_bureaucracy_cost_multiplier_modifier = -0.08 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p12_production_speed_infrastructure_factor = -0.04 tooltip = ISR70_production_speed_infrastructure_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Autonomous Municipal Institutions: Implementation
+### Capable Autonomous Municipal Services
 
-`ISR70_p12_cb_deepen` | x=52, y=9 | 49 days
+`ISR70_p12_cb_deepen` | x=74, y=12 | 49 days
 
 Prerequisites: (ISR70_p12_cb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_public_transport.png`.
 
-Improve autonomous municipal services and community confidence.
+Local autonomy requires more than a legal boundary around municipal powers. Better organised services will give councils the capacity to exercise those powers and build residents' confidence in their community institutions.
 
 - Stability: +4%
 - While this party governs:
 - Social Spending Cost: -5%
+- Infrastructure Construction Speed: +5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p12_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p12_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p12_production_speed_infrastructure_factor = 0.05 tooltip = ISR70_production_speed_infrastructure_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.04
 ```
 
 ### A Political Voice for the Municipalities
 
-`ISR70_p12_finish` | x=49, y=10 | 70 days
+`ISR70_p12_finish` | x=71, y=13 | 70 days
 
 Prerequisites: (ISR70_p12_ea_deepen OR ISR70_p12_eb_deepen) AND (ISR70_p12_ca_deepen OR ISR70_p12_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament2.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The municipal reform list must translate parliamentary influence into institutions that residents can rely on. Its chosen settlement between common citizenship and local authority will define how Arab municipalities participate in the wider political order.
 
 - Political Power: +75
 - Small and Medium Business Owners Opinion: +10.
@@ -2698,7 +2815,7 @@ The Orthodox parties defend their communities through parliamentary bargaining, 
 
 ### The Orthodox Parliamentary Bloc
 
-`ISR70_p13_institution` | x=57, y=7 | 35 days
+`ISR70_p13_institution` | x=82, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -2715,9 +2832,9 @@ change_the_priesthood_opinion = yes
 add_political_power = 50
 ```
 
-### Vocational Education and Religious Study
+### Trades alongside the Yeshiva
 
-`ISR70_p13_ea` | x=54, y=8 | 35 days
+`ISR70_p13_ea` | x=79, y=11 | 35 days
 
 Prerequisites: (ISR70_p13_institution).
 
@@ -2725,30 +2842,32 @@ Exclusive with: ISR70_p13_eb.
 
 Artwork: `gfx/interface/goals/israel_palestine/Orthodox_jew.dds`.
 
-Connect religious study and vocational qualifications without treating Orthodox representation as a dictatorship.
+Orthodox representatives will connect religious learning with practical qualifications. New skills can serve community employment, with separate training arrangements raising educational expenditure.
 
 - Religious Institutions Opinion: +10.
 - While this party governs:
-- Research Speed: +2%
+- Research Speed: +1.5%
+- Education Cost: +3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p13_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p13_research_speed_factor = 0.02 tooltip = ISR70_research_speed_factor_tt }
+add_to_variable = { ISR70_p13_research_speed_factor = 0.015 tooltip = ISR70_research_speed_factor_tt }
+add_to_variable = { ISR70_p13_education_cost_multiplier_modifier = 0.03 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_the_priesthood_opinion = yes
 ```
 
-### Vocational Education and Religious Study: Implementation
+### Trades alongside Religious Learning
 
-`ISR70_p13_ea_deepen` | x=54, y=9 | 49 days
+`ISR70_p13_ea_deepen` | x=79, y=12 | 49 days
 
 Prerequisites: (ISR70_p13_ea).
 
 Artwork: `gfx/interface/goals/coldwar/BEL_prioritizetechnicaleducation.dds`.
 
-Fund technical training alongside religious study.
+Orthodox families need ways to acquire technical qualifications without abandoning religious study. A sustained training framework will allow community institutions to support productive work while retaining the educational commitments at the heart of the parliamentary bloc.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
@@ -2762,9 +2881,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Community Social Provision
+### Community Welfare and Charitable Accounts
 
-`ISR70_p13_eb` | x=56, y=8 | 35 days
+`ISR70_p13_eb` | x=81, y=11 | 35 days
 
 Prerequisites: (ISR70_p13_institution).
 
@@ -2772,46 +2891,50 @@ Exclusive with: ISR70_p13_ea.
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Working_Class_Family.tga`.
 
-Expand community social provision and local welfare institutions.
+Religious welfare organisations will receive a larger role under published accounts. More efficient social provision will require officials to coordinate a more complex network of institutions.
 
 - Religious Institutions Opinion: +10.
 - While this party governs:
-- Social Spending Cost: -10%
+- Social Spending Cost: -8%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p13_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p13_social_cost_multiplier_modifier = -0.1 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p13_social_cost_multiplier_modifier = -0.08 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p13_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_the_priesthood_opinion = yes
 ```
 
-### Community Social Provision: Implementation
+### Professional Community Care
 
-`ISR70_p13_eb_deepen` | x=56, y=9 | 49 days
+`ISR70_p13_eb_deepen` | x=81, y=12 | 49 days
 
 Prerequisites: (ISR70_p13_eb).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Professionalize community healthcare and charitable administration.
+Charitable provision must manage increasingly complex health and welfare needs. Better administration will help community organisations use their resources consistently and reduce dependence on improvised arrangements when households require continuing assistance.
 
 - Stability: +3%
 - While this party governs:
 - Healthcare Cost: -5%
+- Education Cost: +1%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p13_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p13_health_cost_multiplier_modifier = -0.05 tooltip = health_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p13_education_cost_multiplier_modifier = 0.01 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 ```
 
-### The Religious Status Quo
+### Protect the Parliamentary Status Quo
 
-`ISR70_p13_ca` | x=58, y=8 | 35 days
+`ISR70_p13_ca` | x=83, y=11 | 35 days
 
 Prerequisites: (ISR70_p13_institution).
 
@@ -2819,30 +2942,32 @@ Exclusive with: ISR70_p13_cb.
 
 Artwork: `gfx/interface/goals/israel_palestine/menorah.dds`.
 
-Renew the religious status quo through parliamentary negotiation.
+The bloc will negotiate religious accommodation through parliament. A steadier coalition will require the state to sustain the separate educational institutions protected by the settlement.
 
 - Religious Institutions Opinion: +15.
 - While this party governs:
 - Stability: +5%
+- Education Cost: +3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p13_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p13_stability_factor = 0.05 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p13_education_cost_multiplier_modifier = 0.03 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_the_priesthood_opinion = yes
 ```
 
-### The Religious Status Quo: Implementation
+### A Parliamentary Religious Settlement
 
-`ISR70_p13_ca_deepen` | x=58, y=9 | 49 days
+`ISR70_p13_ca_deepen` | x=83, y=12 | 49 days
 
 Prerequisites: (ISR70_p13_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament.png`.
 
-Give the compromise a durable parliamentary settlement.
+The religious status quo needs a workable agreement among parties that disagree about the state's character. A durable parliamentary settlement will give Orthodox representatives a basis for defending their institutions while sustaining the government they have helped to form.
 
 - Political Power: +75
 - While this party governs:
@@ -2856,9 +2981,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Voluntary Civilian Service
+### Voluntary Service through Community Institutions
 
-`ISR70_p13_cb` | x=60, y=8 | 35 days
+`ISR70_p13_cb` | x=85, y=11 | 35 days
 
 Prerequisites: (ISR70_p13_institution).
 
@@ -2866,29 +2991,31 @@ Exclusive with: ISR70_p13_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_rights.png`.
 
-Develop voluntary civilian service that respects the movement's religious institutions.
+Community organisations will provide civilian placements and local supervision. The programme can support social services while requiring a continuing administrative commitment.
 
 - Stability: +3%
 - While this party governs:
-- Bureaucracy Cost: -5%
+- Social Spending Cost: -4%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p13_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p13_bureaucracy_cost_multiplier_modifier = -0.05 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p13_social_cost_multiplier_modifier = -0.04 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p13_bureaucracy_cost_multiplier_modifier = 0.015 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 ```
 
-### Voluntary Civilian Service: Implementation
+### Civilian Service Links for Communities
 
-`ISR70_p13_cb_deepen` | x=60, y=9 | 49 days
+`ISR70_p13_cb_deepen` | x=85, y=12 | 49 days
 
 Prerequisites: (ISR70_p13_cb).
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Fund service links for development-town communities.
+Voluntary service will be useful only if it connects participants to real local needs. Better links between development-town communities and their service organisations will give the Orthodox compromise a practical public purpose.
 
 - +1 Infrastructure level in the Negev.
 - Treasury cost on completion: 0.6% of annual GDP.
@@ -2901,6 +3028,7 @@ custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p13_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
@@ -2908,13 +3036,13 @@ ISR70_pay_0_0060 = yes
 
 ### A Sustainable Religious Compromise
 
-`ISR70_p13_finish` | x=57, y=10 | 70 days
+`ISR70_p13_finish` | x=82, y=13 | 70 days
 
 Prerequisites: (ISR70_p13_ea_deepen OR ISR70_p13_eb_deepen) AND (ISR70_p13_ca_deepen OR ISR70_p13_cb_deepen).
 
 Artwork: `gfx/interface/goals/israel_palestine/Orthodox_jew.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+Agudat Israel and Poalei Agudat must defend their communities while meeting the responsibilities of parliamentary government. Their chosen balance of education, welfare and public service will determine whether religious accommodation can sustain confidence beyond the immediate coalition bargain.
 
 - Political Power: +75
 - Stability: +4%
@@ -2936,7 +3064,7 @@ A pragmatic cabinet can professionalize public enterprises or encourage private 
 
 ### Pragmatic State Leadership
 
-`ISR70_p14_institution` | x=65, y=7 | 35 days
+`ISR70_p14_institution` | x=93, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -2956,9 +3084,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 100
 ```
 
-### Professional State Enterprises
+### Commercial Discipline in Public Enterprises
 
-`ISR70_p14_ea` | x=62, y=8 | 35 days
+`ISR70_p14_ea` | x=90, y=11 | 35 days
 
 Prerequisites: (ISR70_p14_institution).
 
@@ -2966,30 +3094,33 @@ Exclusive with: ISR70_p14_eb.
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-Professionalize state enterprises through clear procurement and production rules.
+The State List will ask public managers to answer for production and costs. Efficient industrial routines will come with fewer political guarantees for the workers and interests accustomed to them.
 
 - Industrial Conglomerates Opinion: +10.
+- Labor Unions Opinion: -5.
 - While this party governs:
-- Production Efficiency Cap: +5%
+- Production Efficiency Growth: +7%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p14_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p14_production_factory_max_efficiency_factor = 0.05 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
+add_to_variable = { ISR70_p14_production_factory_efficiency_gain_factor = 0.07 tooltip = ISR70_production_factory_efficiency_gain_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_industrial_conglomerates_opinion = yes
+set_temp_variable = { temp_opinion = -5 }
+change_labour_unions_opinion = yes
 ```
 
-### Professional State Enterprises: Implementation
+### Professional Management in Haifa
 
-`ISR70_p14_ea_deepen` | x=62, y=9 | 49 days
+`ISR70_p14_ea_deepen` | x=90, y=12 | 49 days
 
 Prerequisites: (ISR70_p14_ea).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Expand the civilian industrial base in Haifa under professional management.
+Public enterprises need managers able to answer for production rather than political sponsorship. Industrial investment in Haifa will give the pragmatic right an opportunity to demonstrate that the state's economic role can be administered with clear commercial responsibilities.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -3002,9 +3133,9 @@ Expand the civilian industrial base in Haifa under professional management.
 ISR70_pay_0_0150 = yes
 ```
 
-### Promote Private Enterprise
+### A Competitive Private Sector
 
-`ISR70_p14_eb` | x=64, y=8 | 35 days
+`ISR70_p14_eb` | x=92, y=11 | 35 days
 
 Prerequisites: (ISR70_p14_institution).
 
@@ -3012,30 +3143,32 @@ Exclusive with: ISR70_p14_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_privatization.png`.
 
-Promote private enterprise and competitive investment.
+A pragmatic cabinet will open commercial opportunities beyond the established enterprises. Foreign investment can become more attractive while a greater part of development depends on external market conditions.
 
 - Small and Medium Business Owners Opinion: +15.
 - While this party governs:
 - Incoming Investment Cost: -10%
+- World-Market Exposure: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p14_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p14_receiving_investment_cost_modifier = -0.1 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p14_mdcw_cw_market_exposure = 0.04 tooltip = ISR70_mdcw_cw_market_exposure_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### Promote Private Enterprise: Implementation
+### Commercial Initiative in Tel Aviv
 
-`ISR70_p14_eb_deepen` | x=64, y=9 | 49 days
+`ISR70_p14_eb_deepen` | x=92, y=12 | 49 days
 
 Prerequisites: (ISR70_p14_eb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Fund a Tel Aviv office district for private commerce.
+Private commerce offers the pragmatic cabinet another route to employment and development. A Tel Aviv office district will create room for that initiative while testing the government's ability to support enterprise without extending unnecessary administrative control.
 
 - +1 Office District in Tel Aviv.
 - Treasury cost on completion: 1.2% of annual GDP.
@@ -3054,9 +3187,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0120 = yes
 ```
 
-### Security Pragmatism
+### A Sustainable Defensive Posture
 
-`ISR70_p14_ca` | x=66, y=8 | 35 days
+`ISR70_p14_ca` | x=94, y=11 | 35 days
 
 Prerequisites: (ISR70_p14_institution).
 
@@ -3064,45 +3197,49 @@ Exclusive with: ISR70_p14_cb.
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Pursue pragmatic security through trained forces and defensive planning.
+Professional preparation will support a defensive posture with limited objectives. Better coordination improves defence, while trained readiness continues to cost money between crises.
 
 - Army Experience: +30
 - While this party governs:
 - Division Defense: +5%
+- Personnel Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p14_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p14_army_defence_factor = 0.05 tooltip = army_defence_factor_tt }
+add_to_variable = { ISR70_p14_personnel_cost_multiplier_modifier = 0.02 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 30
 ```
 
-### Security Pragmatism: Implementation
+### Sustain a Defensive Posture
 
-`ISR70_p14_ca_deepen` | x=66, y=9 | 49 days
+`ISR70_p14_ca_deepen` | x=94, y=12 | 49 days
 
 Prerequisites: (ISR70_p14_ca).
 
 Artwork: `gfx/interface/goals/coldwar/Improve_supply_distribution_methods.tga`.
 
-Improve the practical supply burden of that defensive posture.
+A restrained security policy still requires reliable supplies and a force organised for its assigned tasks. Reducing the practical burden of sustaining that posture will help the cabinet keep readiness within its economic means.
 
 - Army Experience: +20
 - While this party governs:
-- Supply Consumption: -8%
+- Supply Consumption: -6%
+- Planning Speed: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p14_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p14_supply_consumption_factor = -0.08 tooltip = supply_consumption_factor_tt }
+add_to_variable = { ISR70_p14_supply_consumption_factor = -0.06 tooltip = supply_consumption_factor_tt }
+add_to_variable = { ISR70_p14_planning_speed = 0.04 tooltip = planning_speed_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 20
 ```
 
-### Territorial Negotiations
+### Cabinet Authority for Territorial Talks
 
-`ISR70_p14_cb` | x=68, y=8 | 35 days
+`ISR70_p14_cb` | x=96, y=11 | 35 days
 
 Prerequisites: (ISR70_p14_institution).
 
@@ -3110,29 +3247,31 @@ Exclusive with: ISR70_p14_ca.
 
 Artwork: `gfx/interface/goals/coldwar/BeginNegotiations.dds`.
 
-Give territorial negotiators a pragmatic cabinet mandate. This does not impose an agreement on a neighbor.
+Negotiators will receive a clear cabinet mandate to explore territorial agreements. Diplomatic freedom will require a domestic political effort that leaves less room for unrelated legislation.
 
 - Political Power: +100
 - While this party governs:
-- Foreign Influence Defense: +10%
+- Foreign Influence Defense: +8%
+- Political Power Gain: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p14_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p14_foreign_influence_defense_modifier = 0.1 tooltip = foreign_influence_defense_modifier_tt }
+add_to_variable = { ISR70_p14_foreign_influence_defense_modifier = 0.08 tooltip = foreign_influence_defense_modifier_tt }
+add_to_variable = { ISR70_p14_political_power_factor = -0.015 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 100
 ```
 
-### Territorial Negotiations: Implementation
+### Public Confidence for Negotiations
 
-`ISR70_p14_cb_deepen` | x=68, y=9 | 49 days
+`ISR70_p14_cb_deepen` | x=96, y=12 | 49 days
 
 Prerequisites: (ISR70_p14_cb).
 
 Artwork: `gfx/interface/goals/israel_palestine/olive_branch.dds`.
 
-Build public confidence around a negotiated territorial policy.
+Territorial negotiations require a domestic political foundation as well as diplomatic contacts. The pragmatic cabinet will build confidence in its approach so that talks can proceed without every concession becoming a crisis of authority.
 
 - Political Power: +75
 - While this party governs:
@@ -3148,13 +3287,13 @@ add_political_power = 75
 
 ### Pragmatism as Statecraft
 
-`ISR70_p14_finish` | x=65, y=10 | 70 days
+`ISR70_p14_finish` | x=93, y=13 | 70 days
 
 Prerequisites: (ISR70_p14_ea_deepen OR ISR70_p14_eb_deepen) AND (ISR70_p14_ca_deepen OR ISR70_p14_cb_deepen).
 
 Artwork: `gfx/interface/goals/israel_palestine/knesset_speech.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The State List and its partners seek a government judged by workable administration rather than a comprehensive ideological programme. Their record in enterprise management and security policy will determine whether pragmatism can command a stable parliamentary constituency.
 
 - Political Power: +75
 - Army Experience: +20
@@ -3176,7 +3315,7 @@ An explicitly alternative alliance of entrepreneurs and municipal notables must 
 
 ### An Elite Development Alliance
 
-`ISR70_p15_institution` | x=73, y=7 | 35 days
+`ISR70_p15_institution` | x=104, y=10 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -3199,9 +3338,9 @@ change_small_medium_business_owners_opinion = yes
 add_political_power = 50
 ```
 
-### Diaspora Capital with Oversight
+### Published Contracts for Diaspora Capital
 
-`ISR70_p15_ea` | x=70, y=8 | 35 days
+`ISR70_p15_ea` | x=101, y=11 | 35 days
 
 Prerequisites: (ISR70_p15_institution).
 
@@ -3209,30 +3348,32 @@ Exclusive with: ISR70_p15_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_banking_legislation.png`.
 
-Channel diaspora capital through supervised and published investment contracts.
+Investors will receive clear contracts and public reporting. Better use of development capital requires officials to supervise the terms instead of leaving them to personal connections.
 
 - Small and Medium Business Owners Opinion: +10.
 - While this party governs:
 - Imperia Investment Reward: +10%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p15_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p15_imp_investment_reward = 0.1 tooltip = ISR70_imp_investment_reward_tt }
+add_to_variable = { ISR70_p15_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### Diaspora Capital with Oversight: Implementation
+### Supervised Investment in Tel Aviv
 
-`ISR70_p15_ea_deepen` | x=70, y=9 | 49 days
+`ISR70_p15_ea_deepen` | x=101, y=12 | 49 days
 
 Prerequisites: (ISR70_p15_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Build a supervised commercial office district in Tel Aviv.
+Diaspora investment must create productive facilities under terms the state can supervise. A new Tel Aviv office district will test whether the development alliance can attract capital while keeping public responsibilities separate from the interests of its sponsors.
 
 - +1 Office District in Tel Aviv.
 - 1 x 50% research bonus: Industry.
@@ -3247,9 +3388,9 @@ ISR70_pay_0_0120 = yes
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Privileged Concessions
+### Concessions for the Development Sponsors
 
-`ISR70_p15_eb` | x=72, y=8 | 35 days
+`ISR70_p15_eb` | x=103, y=11 | 35 days
 
 Prerequisites: (ISR70_p15_institution).
 
@@ -3257,32 +3398,32 @@ Exclusive with: ISR70_p15_ea.
 
 Artwork: `gfx/interface/goals/coldwar/collaborate_local_elites.png`.
 
-Accelerate investment through privileged concessions. The price is higher corruption-related expenditure.
+The alliance will accelerate development through favoured investors and concessions. Attractive terms will bring investment while raising the public cost of politically protected business.
 
 - Industrial Conglomerates Opinion: +15.
 - While this party governs:
 - Incoming Investment Cost: -15%
-- Corruption Cost: +5%
+- Corruption Cost: +6%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p15_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p15_receiving_investment_cost_modifier = -0.15 tooltip = receiving_investment_cost_modifier_tt }
-add_to_variable = { ISR70_p15_corruption_cost_factor = 0.05 tooltip = corruption_cost_factor_tt }
+add_to_variable = { ISR70_p15_corruption_cost_factor = 0.06 tooltip = corruption_cost_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_industrial_conglomerates_opinion = yes
 ```
 
-### Privileged Concessions: Implementation
+### The Haifa Industrial Concession
 
-`ISR70_p15_eb_deepen` | x=72, y=9 | 49 days
+`ISR70_p15_eb_deepen` | x=103, y=12 | 49 days
 
 Prerequisites: (ISR70_p15_eb).
 
 Artwork: `gfx/interface/goals/coldwar/industrial_subsidies.tga`.
 
-Fund an industrial concession in Haifa and improve the sponsors' production methods.
+Privileged concessions will be justified by their supporters as a faster route to industrial development. Investment in Haifa will give the sponsors new productive capacity while making the political distribution of opportunity increasingly visible.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -3301,9 +3442,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### Transparent Investment Contracts
+### Independent Review of Investment Contracts
 
-`ISR70_p15_ca` | x=74, y=8 | 35 days
+`ISR70_p15_ca` | x=105, y=11 | 35 days
 
 Prerequisites: (ISR70_p15_institution).
 
@@ -3311,29 +3452,31 @@ Exclusive with: ISR70_p15_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_investigate_corruption.png`.
 
-Require public oversight of investment contracts and concession income.
+Independent reviewers will inspect the alliance's contracts. Lower corruption costs will require governing politicians to surrender some control over the allocation of favours.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
 - Corruption Cost: -5%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p15_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p15_corruption_cost_factor = -0.05 tooltip = corruption_cost_factor_tt }
+add_to_variable = { ISR70_p15_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### Transparent Investment Contracts: Implementation
+### A Professional Contract Administration
 
-`ISR70_p15_ca_deepen` | x=74, y=9 | 49 days
+`ISR70_p15_ca_deepen` | x=105, y=12 | 49 days
 
 Prerequisites: (ISR70_p15_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Professionalize contract administration and lower recurring bureaucratic costs.
+Transparent investment contracts depend on officials who can inspect and enforce them. A more capable administration will reduce routine burdens while giving the development alliance a credible alternative to informal bargains with favoured investors.
 
 - Political Power: +75
 - While this party governs:
@@ -3347,9 +3490,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Political Patronage Networks
+### The Notables' Investment Network
 
-`ISR70_p15_cb` | x=76, y=8 | 35 days
+`ISR70_p15_cb` | x=107, y=11 | 35 days
 
 Prerequisites: (ISR70_p15_institution).
 
@@ -3357,41 +3500,43 @@ Exclusive with: ISR70_p15_ca.
 
 Artwork: `gfx/interface/goals/coldwar/collaborate_local_elites2.png`.
 
-Build patronage networks that secure political capacity at the expense of clean public spending.
+The alliance will use municipal notables and investors to consolidate its governing network. Stronger political organisation will carry the cost of public spending shaped by patronage.
 
 - Political Power: +75
 - While this party governs:
 - Political Power Gain: +10%
-- Corruption Cost: +5%
+- Corruption Cost: +6%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p15_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p15_political_power_factor = 0.1 tooltip = political_power_factor_tt }
-add_to_variable = { ISR70_p15_corruption_cost_factor = 0.05 tooltip = corruption_cost_factor_tt }
+add_to_variable = { ISR70_p15_corruption_cost_factor = 0.06 tooltip = corruption_cost_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Political Patronage Networks: Implementation
+### Construction through the Patronage Network
 
-`ISR70_p15_cb_deepen` | x=76, y=9 | 49 days
+`ISR70_p15_cb_deepen` | x=107, y=12 | 49 days
 
 Prerequisites: (ISR70_p15_cb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_stable_government.png`.
 
-Consolidate the political investment network and its construction programme.
+The alliance will consolidate the network of notables and investors through which its building programme operates. This can strengthen its political organisation and delivery capacity, while tying development more closely to continued access to the governing coalition. The privileged network increases the cost of patronage as its reach expands.
 
 - Political Power: +50
 - Industrial Conglomerates Opinion: +10.
 - While this party governs:
 - Office Construction Speed: +10%
+- Corruption Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p15_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p15_production_speed_offices_factor = 0.1 tooltip = production_speed_offices_factor_tt }
+add_to_variable = { ISR70_p15_corruption_cost_factor = 0.02 tooltip = corruption_cost_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_industrial_conglomerates_opinion = yes
@@ -3400,13 +3545,13 @@ add_political_power = 50
 
 ### The Investment State
 
-`ISR70_p15_finish` | x=73, y=10 | 70 days
+`ISR70_p15_finish` | x=104, y=13 | 70 days
 
 Prerequisites: (ISR70_p15_ea_deepen OR ISR70_p15_eb_deepen) AND (ISR70_p15_ca_deepen OR ISR70_p15_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/collaborate_local_elites.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The development alliance must decide what its investment record says about the state it governs. Supervised capital and privileged concessions lead to different relationships between public authority and private wealth, even when both promise growth and new employment.
 
 - Political Power: +75
 - 1 x 50% research bonus: Industry.
@@ -3428,7 +3573,7 @@ A secular civil-rights movement can defend a free press and equal citizenship. R
 
 ### A Free Press and Political Public Life
 
-`ISR70_p16_institution` | x=49, y=12 | 35 days
+`ISR70_p16_institution` | x=71, y=17 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -3444,9 +3589,9 @@ add_political_power = 100
 add_stability = 0.02
 ```
 
-### A Civil-Rights Reform Economy
+### Education for a Civilian Economy
 
-`ISR70_p16_ea` | x=46, y=13 | 35 days
+`ISR70_p16_ea` | x=68, y=18 | 35 days
 
 Prerequisites: (ISR70_p16_institution).
 
@@ -3454,30 +3599,32 @@ Exclusive with: ISR70_p16_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_rights.png`.
 
-Combine a civil-rights reform economy with investment access and public education.
+The civil-rights movement will connect investment access to public technical education. Civilian opportunity will broaden, while educational expenditure rises to support the new qualifications.
 
 - Small and Medium Business Owners Opinion: +10.
 - While this party governs:
-- Incoming Investment Cost: -10%
+- Incoming Investment Cost: -8%
+- Education Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p16_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p16_receiving_investment_cost_modifier = -0.1 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p16_receiving_investment_cost_modifier = -0.08 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p16_education_cost_multiplier_modifier = 0.025 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### A Civil-Rights Reform Economy: Implementation
+### Qualifications for Civilian Electronics
 
-`ISR70_p16_ea_deepen` | x=46, y=14 | 49 days
+`ISR70_p16_ea_deepen` | x=68, y=19 | 49 days
 
 Prerequisites: (ISR70_p16_ea).
 
 Artwork: `gfx/interface/goals/coldwar/BEL_prioritizetechnicaleducation.dds`.
 
-Improve technical qualifications and research in civilian electronics.
+A civil-rights economy needs productive opportunities alongside constitutional promises. Technical qualifications and research in civilian electronics will give the Free Citizens movement a development programme that reaches beyond the defence establishment and established political enterprises.
 
 - 1 x 50% research bonus: Electronics.
 - While this party governs:
@@ -3491,9 +3638,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_electronics uses = 1 bonus = 0.5 }
 ```
 
-### Radical Debureaucratization
+### Service Firms beyond Party Patronage
 
-`ISR70_p16_eb` | x=48, y=13 | 35 days
+`ISR70_p16_eb` | x=70, y=18 | 35 days
 
 Prerequisites: (ISR70_p16_institution).
 
@@ -3501,39 +3648,41 @@ Exclusive with: ISR70_p16_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_privatization.png`.
 
-Cut routine bureaucracy and let private firms enter services more easily.
+The movement will simplify entry into services and commercial work. A cheaper central administration will leave municipalities with more responsibility for maintaining local provision.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Social Spending Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p16_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p16_bureaucracy_cost_multiplier_modifier = -0.1 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p16_bureaucracy_cost_multiplier_modifier = -0.08 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p16_social_cost_multiplier_modifier = 0.015 tooltip = social_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Radical Debureaucratization: Implementation
+### Commercial Capacity without the Old Bureaucracy
 
-`ISR70_p16_eb_deepen` | x=48, y=14 | 49 days
+`ISR70_p16_eb_deepen` | x=70, y=19 | 49 days
 
 Prerequisites: (ISR70_p16_eb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Create commercial capacity through a funded Tel Aviv office district.
+Removing administrative barriers must be followed by opportunities for firms to operate. New commercial offices in Tel Aviv will give the movement's economic alternative a practical base rather than leaving reform confined to the repeal of rules.
 
 - +1 Office District in Tel Aviv.
 - Treasury cost on completion: 1.2% of annual GDP.
 - While this party governs:
-- Office Construction Speed: +5%
+- Office Construction Speed: +8%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p16_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p16_production_speed_offices_factor = 0.05 tooltip = production_speed_offices_factor_tt }
+add_to_variable = { ISR70_p16_production_speed_offices_factor = 0.08 tooltip = production_speed_offices_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 204 = {
 	add_extra_state_shared_building_slots = 1
@@ -3542,9 +3691,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0120 = yes
 ```
 
-### A Secular Civic State
+### A Secular Public Sphere
 
-`ISR70_p16_ca` | x=50, y=13 | 35 days
+`ISR70_p16_ca` | x=72, y=18 | 35 days
 
 Prerequisites: (ISR70_p16_institution).
 
@@ -3552,29 +3701,32 @@ Exclusive with: ISR70_p16_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_female_rights.png`.
 
-Establish secular civic institutions and a free public sphere.
+A free public sphere will let citizens challenge ministers and religious authorities. Greater political initiative will provoke resistance among institutions that regard the change as a threat to their established role.
 
 - Stability: +3%
+- Religious Institutions Opinion: -10.
 - While this party governs:
-- Political Power Gain: +10%
+- Political Power Gain: +8%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p16_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p16_political_power_factor = 0.1 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p16_political_power_factor = 0.08 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
+set_temp_variable = { temp_opinion = -10 }
+change_the_priesthood_opinion = yes
 ```
 
-### A Secular Civic State: Implementation
+### Independent Scrutiny of the Secular State
 
-`ISR70_p16_ca_deepen` | x=50, y=14 | 49 days
+`ISR70_p16_ca_deepen` | x=72, y=19 | 49 days
 
 Prerequisites: (ISR70_p16_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Enforce secular accountability through an independent public audit.
+Secular government must be accountable in practice, including when its ministers claim to act in the name of civil freedom. An independent public audit will test the administration against standards that do not depend on loyalty to the movement.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
@@ -3588,9 +3740,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### Decentralized Municipalities
+### Power to the Elected Municipalities
 
-`ISR70_p16_cb` | x=52, y=13 | 35 days
+`ISR70_p16_cb` | x=74, y=18 | 35 days
 
 Prerequisites: (ISR70_p16_institution).
 
@@ -3598,29 +3750,31 @@ Exclusive with: ISR70_p16_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament2.png`.
 
-Decentralize public decisions to elected municipalities.
+Elected municipalities will receive more responsibility for local decisions. Less central administration will be offset by slower agreement on construction that crosses municipal boundaries.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Construction Speed: -3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p16_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p16_bureaucracy_cost_multiplier_modifier = -0.1 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p16_bureaucracy_cost_multiplier_modifier = -0.08 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p16_production_speed_buildings_factor = -0.03 tooltip = production_speed_buildings_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Decentralized Municipalities: Implementation
+### Municipal Connections in the Negev
 
-`ISR70_p16_cb_deepen` | x=52, y=14 | 49 days
+`ISR70_p16_cb_deepen` | x=74, y=19 | 49 days
 
 Prerequisites: (ISR70_p16_cb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_public_transport.png`.
 
-Fund municipal links and practical local services in the Negev.
+Decentralisation will fail if local institutions lack the means to deliver services. Better municipal connections in the Negev will give councils practical responsibilities and resources, rather than merely transferring obligations away from the centre.
 
 - Stability: +2%
 - +1 Infrastructure level in the Negev.
@@ -3628,6 +3782,7 @@ Fund municipal links and practical local services in the Negev.
 
 ```hoi4
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
@@ -3636,13 +3791,13 @@ add_stability = 0.02
 
 ### A State of Free Citizens
 
-`ISR70_p16_finish` | x=49, y=15 | 70 days
+`ISR70_p16_finish` | x=71, y=20 | 70 days
 
 Prerequisites: (ISR70_p16_ea_deepen OR ISR70_p16_eb_deepen) AND (ISR70_p16_ca_deepen OR ISR70_p16_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_female_rights.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+HaOlam HaZeh's programme seeks a political public life in which citizens can question the state without losing their place in it. Its chosen economic and municipal institutions must show that civil freedom can also support competent government and useful development.
 
 - Political Power: +75
 - 1 x 50% research bonus: Electronics.
@@ -3664,7 +3819,7 @@ An alternative early environmental organization addresses the real development c
 
 ### Development and Landscape Protection
 
-`ISR70_p17_institution` | x=57, y=12 | 35 days
+`ISR70_p17_institution` | x=82, y=17 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -3680,9 +3835,9 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_agriculture us
 add_political_power = 50
 ```
 
-### Water-Efficient Agriculture
+### Water Budgets for Cultivation
 
-`ISR70_p17_ea` | x=54, y=13 | 35 days
+`ISR70_p17_ea` | x=79, y=18 | 35 days
 
 Prerequisites: (ISR70_p17_institution).
 
@@ -3690,29 +3845,31 @@ Exclusive with: ISR70_p17_eb.
 
 Artwork: `gfx/interface/goals/coldwar/Irrigation_Pipes.dds`.
 
-Use water-efficient agriculture as the basis of landscape protection.
+Conservation planners will favour cultivation that can justify its water requirements. Faster agricultural investment will depend on a standing service of surveyors and extension officers.
 
 - 1 x 50% research bonus: Agriculture.
 - While this party governs:
 - Agricultural District Construction Speed: +15%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p17_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p17_production_speed_agriculture_district_factor = 0.15 tooltip = production_speed_agriculture_district_factor_tt }
+add_to_variable = { ISR70_p17_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_agriculture uses = 1 bonus = 0.5 }
 ```
 
-### Water-Efficient Agriculture: Implementation
+### Planned Cultivation in the Negev
 
-`ISR70_p17_ea_deepen` | x=54, y=14 | 49 days
+`ISR70_p17_ea_deepen` | x=79, y=19 | 49 days
 
 Prerequisites: (ISR70_p17_ea).
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Modernization.dds`.
 
-Fund a carefully planned agricultural district in the Negev.
+Agricultural expansion must account for water and land constraints before new districts are laid out. A carefully planned Negev investment will test whether productive cultivation can proceed without treating the landscape as an unlimited reserve for development.
 
 - +1 Agricultural District in the Negev.
 - Treasury cost on completion: 0.8% of annual GDP.
@@ -3731,9 +3888,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0080 = yes
 ```
 
-### Clean Industry and Research
+### Engineering for Energy Efficiency
 
-`ISR70_p17_eb` | x=56, y=13 | 35 days
+`ISR70_p17_eb` | x=81, y=18 | 35 days
 
 Prerequisites: (ISR70_p17_institution).
 
@@ -3741,47 +3898,49 @@ Exclusive with: ISR70_p17_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_electricity.png`.
 
-Invest in cleaner industrial methods and energy-efficiency research.
+Cleaner industrial methods will become a technical research priority. Better efficiency will require dedicated laboratories and higher expenditure on scientific education.
 
 - 1 x 50% research bonus: Energy Efficiency.
 - While this party governs:
 - Research Speed: +2%
+- Education Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p17_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p17_research_speed_factor = 0.02 tooltip = ISR70_research_speed_factor_tt }
+add_to_variable = { ISR70_p17_education_cost_multiplier_modifier = 0.025 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_energy_efficiency uses = 1 bonus = 0.5 }
 ```
 
-### Clean Industry and Research: Implementation
+### Industrial Repair and Resource Efficiency
 
-`ISR70_p17_eb_deepen` | x=56, y=14 | 49 days
+`ISR70_p17_eb_deepen` | x=81, y=19 | 49 days
 
 Prerequisites: (ISR70_p17_eb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_improve_industry.png`.
 
-Improve industrial repair and efficient production rather than simply increasing land use.
+An environmental programme can improve existing industry rather than simply oppose further building. Better repair and production methods will seek more useful output from the facilities already in place and strengthen the case for technically informed conservation.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
-- Industry Repair Speed: +15%
-- Production Efficiency Cap: +5%
+- Industry Repair Speed: +12%
+- Production Efficiency Cap: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p17_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p17_industry_repair_factor = 0.15 tooltip = ISR70_industry_repair_factor_tt }
-add_to_variable = { ISR70_p17_production_factory_max_efficiency_factor = 0.05 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
+add_to_variable = { ISR70_p17_industry_repair_factor = 0.12 tooltip = ISR70_industry_repair_factor_tt }
+add_to_variable = { ISR70_p17_production_factory_max_efficiency_factor = 0.04 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Municipal Conservation Planning
+### Landscape Review before Construction
 
-`ISR70_p17_ca` | x=58, y=13 | 35 days
+`ISR70_p17_ca` | x=83, y=18 | 35 days
 
 Prerequisites: (ISR70_p17_institution).
 
@@ -3789,29 +3948,31 @@ Exclusive with: ISR70_p17_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_agriculture.png`.
 
-Give municipalities professional conservation and land-use planning.
+Municipal planners will review land use before approving major works. More careful public administration can improve repair and maintenance, while slowing new construction.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -5%
+- Industry Repair Speed: +10%
+- Construction Speed: -3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p17_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p17_bureaucracy_cost_multiplier_modifier = -0.05 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p17_industry_repair_factor = 0.1 tooltip = ISR70_industry_repair_factor_tt }
+add_to_variable = { ISR70_p17_production_speed_buildings_factor = -0.03 tooltip = production_speed_buildings_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Municipal Conservation Planning: Implementation
+### Conservation in Public Works
 
-`ISR70_p17_ca_deepen` | x=58, y=14 | 49 days
+`ISR70_p17_ca_deepen` | x=83, y=19 | 49 days
 
 Prerequisites: (ISR70_p17_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_road_construction.png`.
 
-Apply conservation planning to public infrastructure delivery.
+Municipal conservation plans need to influence how infrastructure is actually delivered. Applying them to public works will connect the environmental league's proposals to the decisions through which towns use land, services and building resources.
 
 - 1 x 50% research bonus: Infrastructure.
 - While this party governs:
@@ -3825,9 +3986,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_infrastructure uses = 1 bonus = 0.5 }
 ```
 
-### Social and Environmental Infrastructure
+### Public Transport and Healthy Communities
 
-`ISR70_p17_cb` | x=60, y=13 | 35 days
+`ISR70_p17_cb` | x=85, y=18 | 35 days
 
 Prerequisites: (ISR70_p17_institution).
 
@@ -3835,29 +3996,31 @@ Exclusive with: ISR70_p17_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_public_transport.png`.
 
-Combine environmental goals with social and public-transport provision.
+The environmental alternative will connect public transport to local health and social provision. Services can become less costly when coordinated, but the network needs additional public administration.
 
 - Stability: +3%
 - While this party governs:
 - Social Spending Cost: -5%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p17_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p17_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p17_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 ```
 
-### Social and Environmental Infrastructure: Implementation
+### Healthier Services for the Development Towns
 
-`ISR70_p17_cb_deepen` | x=60, y=14 | 49 days
+`ISR70_p17_cb_deepen` | x=85, y=19 | 49 days
 
 Prerequisites: (ISR70_p17_cb).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Fund healthier local services and development-town infrastructure.
+The quality of local services is part of the environment in which people live. Investment in development-town infrastructure and health administration will give the league's social programme a practical connection to household needs.
 
 - +1 Infrastructure level in the Negev.
 - Treasury cost on completion: 0.6% of annual GDP.
@@ -3870,6 +4033,7 @@ custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p17_health_cost_multiplier_modifier = -0.05 tooltip = health_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
@@ -3877,13 +4041,13 @@ ISR70_pay_0_0060 = yes
 
 ### A Livable Development Strategy
 
-`ISR70_p17_finish` | x=57, y=15 | 70 days
+`ISR70_p17_finish` | x=82, y=20 | 70 days
 
 Prerequisites: (ISR70_p17_ea_deepen OR ISR70_p17_eb_deepen) AND (ISR70_p17_ca_deepen OR ISR70_p17_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_agriculture.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The environmental league must show that protection of land and water can guide development rather than suspend it. Its record in agriculture, industrial methods and municipal provision will determine whether conservation becomes a dependable part of public administration.
 
 - Stability: +3%
 - 1 x 50% research bonus: Energy Efficiency.
@@ -3905,7 +4069,7 @@ Mapam brings the cooperative movement, organized workers and a commitment to Jew
 
 ### An Independent Socialist Left
 
-`ISR70_p18_institution` | x=65, y=12 | 35 days
+`ISR70_p18_institution` | x=93, y=17 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -3922,9 +4086,9 @@ change_labour_unions_opinion = yes
 add_political_power = 50
 ```
 
-### A Cooperative Welfare State
+### Mapam's Cooperative Social Compact
 
-`ISR70_p18_ea` | x=62, y=13 | 35 days
+`ISR70_p18_ea` | x=90, y=18 | 35 days
 
 Prerequisites: (ISR70_p18_institution).
 
@@ -3932,30 +4096,32 @@ Exclusive with: ISR70_p18_eb.
 
 Artwork: `gfx/interface/goals/coldwar/Democratic_Socialism.tga`.
 
-Build a cooperative welfare economy around organized labor.
+An independent Mapam will defend cooperative production and a broad welfare commitment. Efficient social provision will depend on collective bargaining that limits unilateral cabinet action.
 
 - Labor Unions Opinion: +15.
 - While this party governs:
-- Social Spending Cost: -10%
+- Social Spending Cost: -8%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p18_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p18_social_cost_multiplier_modifier = -0.1 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p18_social_cost_multiplier_modifier = -0.08 tooltip = social_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p18_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_labour_unions_opinion = yes
 ```
 
-### A Cooperative Welfare State: Implementation
+### Cooperative Production in the Negev
 
-`ISR70_p18_ea_deepen` | x=62, y=14 | 49 days
+`ISR70_p18_ea_deepen` | x=90, y=19 | 49 days
 
 Prerequisites: (ISR70_p18_ea).
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Modernization.dds`.
 
-Fund a cooperative agricultural district in the Negev.
+Mapam's cooperative commitments require investment in the institutions that sustain rural work. A Negev agricultural district will give the independent left a concrete project through which shared ownership can be judged by practical production and local development.
 
 - +1 Agricultural District in the Negev.
 - Treasury cost on completion: 0.8% of annual GDP.
@@ -3974,9 +4140,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0080 = yes
 ```
 
-### Municipal Development and Education
+### Schools and Services in the Periphery
 
-`ISR70_p18_eb` | x=64, y=13 | 35 days
+`ISR70_p18_eb` | x=92, y=18 | 35 days
 
 Prerequisites: (ISR70_p18_institution).
 
@@ -3984,29 +4150,31 @@ Exclusive with: ISR70_p18_ea.
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Prioritize municipal development and education over expanding the cooperative production sector.
+Mapam will favour municipal services and education over another round of prestige industrial projects. Administrative savings will accompany a greater educational commitment.
 
 - Political Power: +75
 - While this party governs:
 - Bureaucracy Cost: -5%
+- Education Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p18_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p18_bureaucracy_cost_multiplier_modifier = -0.05 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p18_education_cost_multiplier_modifier = 0.025 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Municipal Development and Education: Implementation
+### Applied Education for the Development Towns
 
-`ISR70_p18_eb_deepen` | x=64, y=14 | 49 days
+`ISR70_p18_eb_deepen` | x=92, y=19 | 49 days
 
 Prerequisites: (ISR70_p18_eb).
 
 Artwork: `gfx/interface/goals/coldwar/Universities.dds`.
 
-Fund applied education and local infrastructure in the development towns.
+Education must connect neglected communities to the skills and services needed for productive work. Applied teaching and local infrastructure will give Mapam's municipal programme a stronger foundation in the development towns.
 
 - +1 Infrastructure level in the Negev.
 - 1 x 50% research bonus: Construction.
@@ -4020,15 +4188,16 @@ custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p18_research_speed_factor = 0.02 tooltip = ISR70_research_speed_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 add_tech_bonus = { name = ISR70_research_programme category = CAT_construction uses = 1 bonus = 0.5 }
 ```
 
-### A Negotiated Peace
+### A Parliamentary Mandate for Peace
 
-`ISR70_p18_ca` | x=66, y=13 | 35 days
+`ISR70_p18_ca` | x=94, y=18 | 35 days
 
 Prerequisites: (ISR70_p18_institution).
 
@@ -4036,29 +4205,31 @@ Exclusive with: ISR70_p18_cb.
 
 Artwork: `gfx/interface/goals/israel_palestine/olive_branch.dds`.
 
-Give negotiated peace a clear parliamentary mandate.
+The government will establish a negotiating mandate through public and parliamentary debate. Greater diplomatic independence will cost political attention before an agreement is within reach.
 
 - Political Power: +100
 - While this party governs:
-- Foreign Influence Defense: +10%
+- Foreign Influence Defense: +8%
+- Political Power Gain: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p18_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p18_foreign_influence_defense_modifier = 0.1 tooltip = foreign_influence_defense_modifier_tt }
+add_to_variable = { ISR70_p18_foreign_influence_defense_modifier = 0.08 tooltip = foreign_influence_defense_modifier_tt }
+add_to_variable = { ISR70_p18_political_power_factor = -0.015 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 100
 ```
 
-### A Negotiated Peace: Implementation
+### Elected Scrutiny of a Peace Settlement
 
-`ISR70_p18_ca_deepen` | x=66, y=14 | 49 days
+`ISR70_p18_ca_deepen` | x=94, y=19 | 49 days
 
 Prerequisites: (ISR70_p18_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament.png`.
 
-Build confidence in the elected institutions that will scrutinize any peace agreement.
+A negotiated peace must rest on public institutions able to scrutinise its terms. Strengthening confidence in elected government will give the independent left a domestic basis for diplomacy without assuming that negotiations themselves guarantee agreement.
 
 - Political Power: +75
 - While this party governs:
@@ -4072,9 +4243,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### A Binational Constitutional Convention
+### Equal Institutions before a Binational Convention
 
-`ISR70_p18_cb` | x=68, y=13 | 35 days
+`ISR70_p18_cb` | x=96, y=18 | 35 days
 
 Prerequisites: (ISR70_p18_institution).
 
@@ -4087,48 +4258,50 @@ A binational constitutional convention would require equal civic institutions an
 - Political Power: +100
 - While this party governs:
 - Political Power Gain: +5%
+- Education Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p18_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p18_political_power_factor = 0.05 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p18_education_cost_multiplier_modifier = 0.025 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 100
 ```
 
-### A Binational Constitutional Convention: Implementation
+### Municipal Rights in the Constitutional Convention
 
-`ISR70_p18_cb_deepen` | x=68, y=14 | 49 days
+`ISR70_p18_cb_deepen` | x=96, y=19 | 49 days
 
 Prerequisites: (ISR70_p18_cb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Put civil rights and municipal accountability into the proposed constitutional settlement.
+A binational constitutional project must address who can question public officials and how communities are represented. Civil rights and municipal accountability will give the proposed settlement a practical institutional content beyond its founding declaration.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
-- Bureaucracy Cost: -5%
-- Stability: +3%
+- Bureaucracy Cost: -4%
+- Stability: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p18_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p18_bureaucracy_cost_multiplier_modifier = -0.05 tooltip = bureaucracy_cost_multiplier_modifier_tt }
-add_to_variable = { ISR70_p18_stability_factor = 0.03 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p18_bureaucracy_cost_multiplier_modifier = -0.04 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p18_stability_factor = 0.025 tooltip = stability_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
 ### Socialism and Equal Rights
 
-`ISR70_p18_finish` | x=65, y=15 | 70 days
+`ISR70_p18_finish` | x=93, y=20 | 70 days
 
 Prerequisites: (ISR70_p18_ea_deepen OR ISR70_p18_eb_deepen) AND (ISR70_p18_ca_deepen OR ISR70_p18_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/FocusElectMapam.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+Mapam's independent programme links cooperative production to Jewish-Arab equality and an alternative diplomatic course. It must demonstrate that these commitments can support the same government, rather than leave social policy, citizenship and peace as separate aspirations.
 
 - Political Power: +75
 - Stability: +4%
@@ -4150,7 +4323,7 @@ An independent communist cabinet chooses its own relationship between workers' i
 
 ### Independent Workers' Politics
 
-`ISR70_p19_institution` | x=73, y=12 | 35 days
+`ISR70_p19_institution` | x=104, y=17 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -4167,9 +4340,9 @@ change_labour_unions_opinion = yes
 add_political_power = 75
 ```
 
-### Jewish-Arab Industrial Enterprises
+### Joint Jewish-Arab Industrial Training
 
-`ISR70_p19_ea` | x=70, y=13 | 35 days
+`ISR70_p19_ea` | x=101, y=18 | 35 days
 
 Prerequisites: (ISR70_p19_institution).
 
@@ -4177,30 +4350,32 @@ Exclusive with: ISR70_p19_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_rights.png`.
 
-Support Jewish-Arab industrial enterprises through common worker training.
+Independent communist institutions will organise common worker training across community lines. Factory routines can improve while industrial education becomes a larger public commitment.
 
 - Labor Unions Opinion: +15.
 - While this party governs:
 - Production Efficiency Cap: +5%
+- Education Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p19_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p19_production_factory_max_efficiency_factor = 0.05 tooltip = ISR70_production_factory_max_efficiency_factor_tt }
+add_to_variable = { ISR70_p19_education_cost_multiplier_modifier = 0.025 tooltip = education_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_labour_unions_opinion = yes
 ```
 
-### Jewish-Arab Industrial Enterprises: Implementation
+### Workers' Industry in Haifa
 
-`ISR70_p19_ea_deepen` | x=70, y=14 | 49 days
+`ISR70_p19_ea_deepen` | x=101, y=19 | 49 days
 
 Prerequisites: (ISR70_p19_ea).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Build a civilian industrial complex in Haifa under the independent workers' programme.
+Independent communist policy must create productive work without relying on another bloc's industrial institutions. A Haifa complex will provide a practical base for the workers' programme and expose its managers to the responsibilities of sustained production.
 
 - +1 Civilian Factory in Haifa.
 - 1 x 50% research bonus: Industry.
@@ -4215,9 +4390,9 @@ ISR70_pay_0_0150 = yes
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Democratic Economic Planning
+### Public Investment through an Elected Plan
 
-`ISR70_p19_eb` | x=72, y=13 | 35 days
+`ISR70_p19_eb` | x=103, y=18 | 35 days
 
 Prerequisites: (ISR70_p19_institution).
 
@@ -4225,45 +4400,47 @@ Exclusive with: ISR70_p19_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_market_socialism.png`.
 
-Use democratic economic planning to coordinate public investment.
+An elected planning process will coordinate public investment. Faster building requires additional staff to reconcile enterprise and municipal priorities.
 
 - 1 x 50% research bonus: Construction.
 - While this party governs:
-- Construction Speed: +5%
+- Construction Speed: +6%
+- Bureaucracy Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p19_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p19_production_speed_buildings_factor = 0.05 tooltip = production_speed_buildings_factor_tt }
+add_to_variable = { ISR70_p19_production_speed_buildings_factor = 0.06 tooltip = production_speed_buildings_factor_tt }
+add_to_variable = { ISR70_p19_bureaucracy_cost_multiplier_modifier = 0.02 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_construction uses = 1 bonus = 0.5 }
 ```
 
-### Democratic Economic Planning: Implementation
+### Planning Skills for Public Enterprises
 
-`ISR70_p19_eb_deepen` | x=72, y=14 | 49 days
+`ISR70_p19_eb_deepen` | x=103, y=19 | 49 days
 
 Prerequisites: (ISR70_p19_eb).
 
 Artwork: `gfx/interface/goals/coldwar/BEL_prioritizetechnicaleducation.dds`.
 
-Improve planning skills and the productivity of public enterprises.
+Democratic planning requires information and technical judgement as well as assemblies. Improving those skills will help public enterprises coordinate production while giving workers a clearer understanding of the decisions made in their name.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
-- Monthly Productivity Growth: +0.1
+- Monthly Productivity Growth: +0.07
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p19_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p19_productivity_growth_modifier = 0.1 tooltip = productivity_growth_modifier_tt }
+add_to_variable = { ISR70_p19_productivity_growth_modifier = 0.07 tooltip = productivity_growth_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Parliamentary Workers' Rights
+### Workers' Rights under Ordinary Elections
 
-`ISR70_p19_ca` | x=74, y=13 | 35 days
+`ISR70_p19_ca` | x=105, y=18 | 35 days
 
 Prerequisites: (ISR70_p19_institution).
 
@@ -4271,31 +4448,33 @@ Exclusive with: ISR70_p19_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament.png`.
 
-Entrench parliamentary workers' rights and open elections.
+Workers' rights will be secured through parliament and ordinary elections. Accountable government can be more stable while leaving ministers less freedom to bypass negotiated procedures.
 
 - Stability: +3%
 - Enables ordinary elections.
 - While this party governs:
-- Political Power Gain: +5%
+- Stability: +3.5%
+- Political Power Gain: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p19_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p19_political_power_factor = 0.05 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p19_stability_factor = 0.035 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p19_political_power_factor = -0.015 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = neutrality elections_allowed = yes }
 add_stability = 0.03
 ```
 
-### Parliamentary Workers' Rights: Implementation
+### Accountable Workers' Representation
 
-`ISR70_p19_ca_deepen` | x=74, y=14 | 49 days
+`ISR70_p19_ca_deepen` | x=105, y=19 | 49 days
 
 Prerequisites: (ISR70_p19_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_democracy.png`.
 
-Enforce accountable worker representation and audit the state administration.
+Workers' representatives need institutions through which they can question administrators rather than merely endorse them. Auditing the state will test the independent communist commitment to parliamentary rights and the accountability of its own officeholders.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
@@ -4309,9 +4488,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### Constitutionally Limited Councils
+### Limited Powers for Workers' Councils
 
-`ISR70_p19_cb` | x=76, y=13 | 35 days
+`ISR70_p19_cb` | x=107, y=18 | 35 days
 
 Prerequisites: (ISR70_p19_institution).
 
@@ -4319,29 +4498,31 @@ Exclusive with: ISR70_p19_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_democracy.png`.
 
-Give workers' councils constitutionally limited administrative powers.
+Workers' councils will receive defined administrative powers alongside the elected legislature. Less central bureaucracy will be accompanied by slower coordination of national building priorities.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Construction Speed: -3%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p19_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p19_bureaucracy_cost_multiplier_modifier = -0.1 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p19_bureaucracy_cost_multiplier_modifier = -0.08 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p19_production_speed_buildings_factor = -0.03 tooltip = production_speed_buildings_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Constitutionally Limited Councils: Implementation
+### Councils and the Elected Legislature
 
-`ISR70_p19_cb_deepen` | x=76, y=14 | 49 days
+`ISR70_p19_cb_deepen` | x=107, y=19 | 49 days
 
 Prerequisites: (ISR70_p19_cb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_union_agreement.png`.
 
-Negotiate a durable balance between councils and the elected legislature.
+Councils cannot provide a durable constitutional alternative if their authority remains undefined. A negotiated division of responsibilities with the elected legislature will give the workers' institutions a place within government while limiting rival claims to unrestricted power.
 
 - Labor Unions Opinion: +10.
 - While this party governs:
@@ -4358,13 +4539,13 @@ change_labour_unions_opinion = yes
 
 ### An Independent Workers' Republic
 
-`ISR70_p19_finish` | x=73, y=15 | 70 days
+`ISR70_p19_finish` | x=104, y=20 | 70 days
 
 Prerequisites: (ISR70_p19_ea_deepen OR ISR70_p19_eb_deepen) AND (ISR70_p19_ca_deepen OR ISR70_p19_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_rights.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+Maki's independent course must reconcile workers' organisation with the practical demands of governing a divided society. Its economic and constitutional choices will determine whether public enterprise and political accountability can reinforce one another without submitting to an outside model.
 
 - Stability: +3%
 - 1 x 50% research bonus: Industry.
@@ -4386,7 +4567,7 @@ A national opposition can remain parliamentary or seek a presidential mandate. I
 
 ### A New National Opposition
 
-`ISR70_p20_institution` | x=82, y=7 | 35 days
+`ISR70_p20_institution` | x=119, y=18 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -4402,9 +4583,9 @@ add_political_power = 100
 army_experience = 15
 ```
 
-### Small Business in Development Towns
+### Local Enterprise as a National Programme
 
-`ISR70_p20_ea` | x=79, y=8 | 35 days
+`ISR70_p20_ea` | x=116, y=19 | 35 days
 
 Prerequisites: (ISR70_p20_institution).
 
@@ -4412,30 +4593,32 @@ Exclusive with: ISR70_p20_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_banking_legislation.png`.
 
-Use development-town small businesses as a national economic base.
+The national opposition will promote workshops and small businesses in the development towns. New investment opportunities will require a larger network of credit supervision.
 
 - Small and Medium Business Owners Opinion: +15.
 - While this party governs:
 - Incoming Investment Cost: -10%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p20_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p20_receiving_investment_cost_modifier = -0.1 tooltip = receiving_investment_cost_modifier_tt }
+add_to_variable = { ISR70_p20_bureaucracy_cost_multiplier_modifier = 0.015 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 15 }
 change_small_medium_business_owners_opinion = yes
 ```
 
-### Small Business in Development Towns: Implementation
+### Enterprise in the Development Towns
 
-`ISR70_p20_ea_deepen` | x=79, y=9 | 49 days
+`ISR70_p20_ea_deepen` | x=116, y=20 | 49 days
 
 Prerequisites: (ISR70_p20_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Build a commercial office district in the Negev.
+The national opposition's economic promises must reach smaller firms outside established centres. A commercial office district in the Negev will give the development towns a concrete stake in the proposed national majority.
 
 - +1 Office District in the Negev.
 - Treasury cost on completion: 1.2% of annual GDP.
@@ -4454,9 +4637,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0120 = yes
 ```
 
-### A National Industrial Pact
+### A National Pact for Industrial Production
 
-`ISR70_p20_eb` | x=81, y=8 | 35 days
+`ISR70_p20_eb` | x=118, y=19 | 35 days
 
 Prerequisites: (ISR70_p20_institution).
 
@@ -4464,17 +4647,19 @@ Exclusive with: ISR70_p20_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_union_agreement.png`.
 
-Negotiate a national industrial pact with workers and manufacturers.
+Workers and manufacturers will be brought into a national production pact. Better output depends on negotiated obligations that reduce the cabinet's freedom to settle industrial disputes alone.
 
 - Labor Unions Opinion: +10.
 - Industrial Conglomerates Opinion: +10.
 - While this party governs:
 - Factory Output: +5%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p20_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p20_industrial_capacity_factory = 0.05 tooltip = industrial_capacity_factory_tt }
+add_to_variable = { ISR70_p20_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_labour_unions_opinion = yes
@@ -4482,15 +4667,15 @@ set_temp_variable = { temp_opinion = 10 }
 change_industrial_conglomerates_opinion = yes
 ```
 
-### A National Industrial Pact: Implementation
+### The Haifa Industrial Pact
 
-`ISR70_p20_eb_deepen` | x=81, y=9 | 49 days
+`ISR70_p20_eb_deepen` | x=118, y=20 | 49 days
 
 Prerequisites: (ISR70_p20_eb).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Deliver the pact through an industrial complex in Haifa.
+A national industrial pact needs productive capacity behind its political commitments. Investment in Haifa will test whether employers and public authorities can carry a common development programme beyond campaign declarations.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -4503,9 +4688,9 @@ Deliver the pact through an industrial complex in Haifa.
 ISR70_pay_0_0150 = yes
 ```
 
-### Parliamentary National Populism
+### A National Opposition under Parliamentary Rules
 
-`ISR70_p20_ca` | x=83, y=8 | 35 days
+`ISR70_p20_ca` | x=120, y=19 | 35 days
 
 Prerequisites: (ISR70_p20_institution).
 
@@ -4513,31 +4698,33 @@ Exclusive with: ISR70_p20_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament2.png`.
 
-Keep national populism within a parliamentary system with ordinary elections.
+National populism will accept ordinary elections and parliamentary accountability. A stable constitutional position requires ministers to share power with institutions outside the movement.
 
 - Political Power: +75
 - Enables ordinary elections.
 - While this party governs:
 - Stability: +4%
+- Political Power Gain: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p20_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p20_stability_factor = 0.04 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p20_political_power_factor = -0.015 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = yes }
 add_political_power = 75
 ```
 
-### Parliamentary National Populism: Implementation
+### Oversight of a National Parliamentary Cabinet
 
-`ISR70_p20_ca_deepen` | x=83, y=9 | 49 days
+`ISR70_p20_ca_deepen` | x=120, y=20 | 49 days
 
 Prerequisites: (ISR70_p20_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Professionalize the parliamentary government and its oversight.
+A national majority can strengthen government without removing parliamentary restraints. More professional administration and oversight will require the cabinet to accept scrutiny even when it claims a broad popular mandate.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
@@ -4551,9 +4738,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### A Presidential Popular Mandate
+### An Elected Presidency with a Popular Mandate
 
-`ISR70_p20_cb` | x=85, y=8 | 35 days
+`ISR70_p20_cb` | x=122, y=19 | 35 days
 
 Prerequisites: (ISR70_p20_institution).
 
@@ -4561,41 +4748,45 @@ Exclusive with: ISR70_p20_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_stable_government.png`.
 
-Seek an elected presidential mandate while preserving elections.
+The movement will seek an elected president while preserving competition for office. Concentrated political authority requires a larger presidency and administrative staff.
 
 - Political Power: +100
 - Enables ordinary elections.
 - While this party governs:
 - Political Power Gain: +10%
+- Bureaucracy Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p20_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p20_political_power_factor = 0.1 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p20_bureaucracy_cost_multiplier_modifier = 0.025 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = yes }
 add_political_power = 100
 ```
 
-### A Presidential Popular Mandate: Implementation
+### Institutions for the Popular Mandate
 
-`ISR70_p20_cb_deepen` | x=85, y=9 | 49 days
+`ISR70_p20_cb_deepen` | x=122, y=20 | 49 days
 
 Prerequisites: (ISR70_p20_cb).
 
 Artwork: `gfx/interface/goals/israel_palestine/ISR_independence.dds`.
 
-Consolidate the popular mandate and national mobilization institutions.
+A presidential popular mandate needs organisations able to sustain national mobilisation beyond an election campaign. Consolidating those institutions will strengthen the executive's political reach and bind its programme more closely to continuing popular support.
 
 - Stability: +3%
 - Army Experience: +20
 - While this party governs:
-- War Support: +5%
+- War Support: +4%
+- Mobilization Speed: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p20_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p20_war_support_factor = 0.05 tooltip = war_support_factor_tt }
+add_to_variable = { ISR70_p20_war_support_factor = 0.04 tooltip = war_support_factor_tt }
+add_to_variable = { ISR70_p20_mobilization_speed = 0.04 tooltip = mobilization_speed_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 army_experience = 20
@@ -4603,13 +4794,13 @@ army_experience = 20
 
 ### A National Majority Movement
 
-`ISR70_p20_finish` | x=82, y=10 | 70 days
+`ISR70_p20_finish` | x=119, y=21 | 70 days
 
 Prerequisites: (ISR70_p20_ea_deepen OR ISR70_p20_eb_deepen) AND (ISR70_p20_ca_deepen OR ISR70_p20_cb_deepen).
 
 Artwork: `gfx/interface/goals/israel_palestine/ISR_independence.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The Free Center and its partners seek to turn a national opposition into a governing majority. Their chosen relationship between industry, small enterprise and executive authority will determine whether that majority remains a parliamentary coalition or becomes a presidential movement.
 
 - Political Power: +75
 - Stability: +3%
@@ -4631,7 +4822,7 @@ An explicit alternative radicalization precedes this movement. Autarky, mobiliza
 
 ### Form a Radical Alliance
 
-`ISR70_p21_institution` | x=90, y=7 | 35 days
+`ISR70_p21_institution` | x=130, y=18 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -4647,9 +4838,9 @@ army_experience = 30
 add_political_power = 50
 ```
 
-### An Autonomous Defense Industry
+### A Domestic Arms-Supply Network
 
-`ISR70_p21_ea` | x=87, y=8 | 35 days
+`ISR70_p21_ea` | x=127, y=19 | 35 days
 
 Prerequisites: (ISR70_p21_institution).
 
@@ -4657,29 +4848,31 @@ Exclusive with: ISR70_p21_eb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_artillery_factories.png`.
 
-Build an autonomous domestic defense industry to reduce external dependence.
+The radical national alliance will support domestic suppliers to resist external pressure. Greater resilience will protect strategic work while making foreign commercial investment less attractive.
 
 - 1 x 50% research bonus: Infantry Weapons.
 - While this party governs:
 - Imperia Sanction Resistance: +10%
+- Incoming Investment Cost: +5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p21_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p21_imp_sanction_resistance = 0.1 tooltip = ISR70_imp_sanction_resistance_tt }
+add_to_variable = { ISR70_p21_receiving_investment_cost_modifier = 0.05 tooltip = receiving_investment_cost_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_infantry_weapons uses = 1 bonus = 0.5 }
 ```
 
-### An Autonomous Defense Industry: Implementation
+### Domestic Arms Production in Tel Aviv
 
-`ISR70_p21_ea_deepen` | x=87, y=9 | 49 days
+`ISR70_p21_ea_deepen` | x=127, y=20 | 49 days
 
 Prerequisites: (ISR70_p21_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_artillery_factories.png`.
 
-Add a military factory in Tel Aviv under a funded domestic-arms programme.
+An autonomous defence economy requires factories as well as political resolve. A funded arms facility in Tel Aviv will give the radical alliance a concrete industrial commitment, with resources that cannot simultaneously be spent on civilian development.
 
 - +1 Military Factory in Tel Aviv.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -4698,9 +4891,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### A National Mobilization Fund
+### The Reserve Mobilisation Fund
 
-`ISR70_p21_eb` | x=89, y=8 | 35 days
+`ISR70_p21_eb` | x=129, y=19 | 35 days
 
 Prerequisites: (ISR70_p21_institution).
 
@@ -4708,29 +4901,31 @@ Exclusive with: ISR70_p21_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_paramilitary.png`.
 
-Create a mobilization fund for reserve training and military production.
+The alliance will keep more of the reserve establishment ready for mobilisation. Faster call-ups require recurring expenditure on personnel and training.
 
 - Army Experience: +35
 - While this party governs:
 - Mobilization Speed: +15%
+- Personnel Cost: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p21_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p21_mobilization_speed = 0.15 tooltip = mobilization_speed_tt }
+add_to_variable = { ISR70_p21_personnel_cost_multiplier_modifier = 0.04 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 35
 ```
 
-### A National Mobilization Fund: Implementation
+### Training for National Mobilisation
 
-`ISR70_p21_eb_deepen` | x=89, y=9 | 49 days
+`ISR70_p21_eb_deepen` | x=129, y=20 | 49 days
 
 Prerequisites: (ISR70_p21_eb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_army_training.png`.
 
-Expand the practical training programme and support arms-factory construction.
+A mobilisation fund must prepare people and production to meet its demands. Practical training and support for arms construction will strengthen the radical movement's capacity to organise the country around its military priorities.
 
 - Army Experience: +25
 - Treasury cost on completion: 0.8% of annual GDP.
@@ -4748,9 +4943,9 @@ ISR70_pay_0_0080 = yes
 army_experience = 25
 ```
 
-### Radical Politics within Legal Limits
+### Legal Limits on the National Movement
 
-`ISR70_p21_ca` | x=91, y=8 | 35 days
+`ISR70_p21_ca` | x=131, y=19 | 35 days
 
 Prerequisites: (ISR70_p21_institution).
 
@@ -4758,31 +4953,33 @@ Exclusive with: ISR70_p21_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament.png`.
 
-Accept legal limits on radical political organization and retain ordinary elections.
+The alliance will accept ordinary elections and legal limits on political organisation. Civilian confidence can improve, but its leaders will lose some freedom to act through the movement alone.
 
 - Political Power: +75
 - Enables ordinary elections.
 - While this party governs:
 - Stability: +4%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p21_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p21_stability_factor = 0.04 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p21_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = yes }
 add_political_power = 75
 ```
 
-### Radical Politics within Legal Limits: Implementation
+### Civil Authority over Radical Politics
 
-`ISR70_p21_ca_deepen` | x=91, y=9 | 49 days
+`ISR70_p21_ca_deepen` | x=131, y=20 | 49 days
 
 Prerequisites: (ISR70_p21_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Give civilian institutions the authority to enforce those limits.
+Legal limits require civilian institutions with the authority to enforce them. Strengthening those bodies will test whether the radical alliance accepts constitutional restraint when it obstructs the ambitions of its own supporters.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
@@ -4796,9 +4993,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### An Authoritarian Security State
+### A Permanent Security Executive
 
-`ISR70_p21_cb` | x=93, y=8 | 35 days
+`ISR70_p21_cb` | x=133, y=19 | 35 days
 
 Prerequisites: (ISR70_p21_institution).
 
@@ -4806,43 +5003,50 @@ Exclusive with: ISR70_p21_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_police_state.png`.
 
-Establish an authoritarian security order and suspend elections. The constitutional confrontation causes an immediate stability loss.
+An authoritarian security executive will suspend ordinary political competition. Concentrated authority will make the government more forceful while the expanded apparatus consumes public funds.
 
 - Stability: -3%
 - Army Experience: +25
+- Labor Unions Opinion: -10.
 - Disables ordinary elections.
 - While this party governs:
 - Political Power Gain: +10%
+- Bureaucracy Cost: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p21_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p21_political_power_factor = 0.1 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p21_bureaucracy_cost_multiplier_modifier = 0.04 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = no }
 add_stability = -0.03
 army_experience = 25
+set_temp_variable = { temp_opinion = -10 }
+change_labour_unions_opinion = yes
 ```
 
-### An Authoritarian Security State: Implementation
+### The Security Apparatus of the Radical State
 
-`ISR70_p21_cb_deepen` | x=93, y=9 | 49 days
+`ISR70_p21_cb_deepen` | x=133, y=20 | 49 days
 
 Prerequisites: (ISR70_p21_cb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_officer.png`.
 
-Consolidate the security apparatus and its military organization.
+An authoritarian security course will concentrate attention on the institutions that organise and protect the regime. Military coordination and the security apparatus will become a stronger foundation of political authority, binding mobilisation to the survival of the governing movement. Permanent exceptional powers continue to erode civilian confidence.
 
 - Political Power: +75
 - The Military Opinion: +10.
 - While this party governs:
-- Division Organization: +5%
+- Division Organization: +4%
+- Stability: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p21_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p21_army_org_factor = 0.05 tooltip = ISR70_army_org_factor_tt }
+add_to_variable = { ISR70_p21_army_org_factor = 0.04 tooltip = ISR70_army_org_factor_tt }
+add_to_variable = { ISR70_p21_stability_factor = -0.015 tooltip = stability_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_temp_variable = { temp_opinion = 10 }
 change_the_military_opinion = yes
@@ -4851,13 +5055,13 @@ add_political_power = 75
 
 ### The Radical State Order
 
-`ISR70_p21_finish` | x=90, y=10 | 70 days
+`ISR70_p21_finish` | x=130, y=21 | 70 days
 
 Prerequisites: (ISR70_p21_ea_deepen OR ISR70_p21_eb_deepen) AND (ISR70_p21_ca_deepen OR ISR70_p21_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/generic_paramilitary.png`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The radical alliance has chosen how far mobilisation should reshape public authority and the economy. Its final settlement must give that choice institutional form, whether through accepted legal limits or an enduring security order centred on the movement itself.
 
 - Political Power: +75
 - Army Experience: +30
@@ -4879,7 +5083,7 @@ A genuine constitutional emergency is required. The armed forces are not treated
 
 ### The Emergency Mandate
 
-`ISR70_p22_institution` | x=82, y=12 | 35 days
+`ISR70_p22_institution` | x=119, y=22 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -4899,9 +5103,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 35
 ```
 
-### Centralize Defense Logistics
+### One Emergency Logistics Command
 
-`ISR70_p22_ea` | x=79, y=13 | 35 days
+`ISR70_p22_ea` | x=116, y=23 | 35 days
 
 Prerequisites: (ISR70_p22_institution).
 
@@ -4909,29 +5113,31 @@ Exclusive with: ISR70_p22_eb.
 
 Artwork: `gfx/interface/goals/coldwar/Improve_supply_distribution_methods.tga`.
 
-Centralize defense logistics to reduce the supply burden of the emergency force.
+The emergency cabinet will centralise logistics and procurement. More efficient field supply will rely on a professional establishment with a larger continuing personnel bill.
 
 - Army Experience: +30
 - While this party governs:
-- Supply Consumption: -10%
+- Supply Consumption: -8%
+- Personnel Cost: +2.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p22_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p22_supply_consumption_factor = -0.1 tooltip = supply_consumption_factor_tt }
+add_to_variable = { ISR70_p22_supply_consumption_factor = -0.08 tooltip = supply_consumption_factor_tt }
+add_to_variable = { ISR70_p22_personnel_cost_multiplier_modifier = 0.025 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 30
 ```
 
-### Centralize Defense Logistics: Implementation
+### Emergency Procurement at Home
 
-`ISR70_p22_ea_deepen` | x=79, y=14 | 49 days
+`ISR70_p22_ea_deepen` | x=116, y=24 | 49 days
 
 Prerequisites: (ISR70_p22_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_artillery_factories.png`.
 
-Create a military factory in Tel Aviv for the emergency procurement programme.
+The emergency cabinet cannot rely entirely on supply decisions made abroad. A military factory in Tel Aviv will strengthen the domestic procurement base while committing resources to the priorities set by the armed forces.
 
 - +1 Military Factory in Tel Aviv.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -4950,9 +5156,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### Bring in Civilian Technocrats
+### Civilian Technocrats in the Emergency Cabinet
 
-`ISR70_p22_eb` | x=81, y=13 | 35 days
+`ISR70_p22_eb` | x=118, y=23 | 35 days
 
 Prerequisites: (ISR70_p22_institution).
 
@@ -4960,29 +5166,31 @@ Exclusive with: ISR70_p22_ea.
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-Bring civilian technocrats into the emergency government and reduce administrative waste.
+Civilian specialists will take responsibility for procurement and industrial planning. A cheaper administration will come with more review before new projects are authorised.
 
 - Political Power: +75
 - While this party governs:
-- Bureaucracy Cost: -10%
+- Bureaucracy Cost: -8%
+- Construction Speed: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p22_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p22_bureaucracy_cost_multiplier_modifier = -0.1 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p22_bureaucracy_cost_multiplier_modifier = -0.08 tooltip = bureaucracy_cost_multiplier_modifier_tt }
+add_to_variable = { ISR70_p22_production_speed_buildings_factor = -0.02 tooltip = production_speed_buildings_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Bring in Civilian Technocrats: Implementation
+### Civilian Standards for Emergency Industry
 
-`ISR70_p22_eb_deepen` | x=81, y=14 | 49 days
+`ISR70_p22_eb_deepen` | x=118, y=24 | 49 days
 
 Prerequisites: (ISR70_p22_eb).
 
 Artwork: `gfx/interface/goals/coldwar/generic_improve_industry.png`.
 
-Apply civilian technical standards to industrial and construction planning.
+Civilian engineers bring methods that the emergency administration cannot provide through command alone. Applying their standards to industrial and construction planning will help the cabinet turn urgent orders into projects that can be reliably delivered.
 
 - 1 x 50% research bonus: Industry.
 - 1 x 50% research bonus: Construction.
@@ -4998,9 +5206,9 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses 
 add_tech_bonus = { name = ISR70_research_programme category = CAT_construction uses = 1 bonus = 0.5 }
 ```
 
-### A Limited Emergency with Elections
+### Return the Emergency Budget to Civilian Control
 
-`ISR70_p22_ca` | x=83, y=13 | 35 days
+`ISR70_p22_ca` | x=120, y=23 | 35 days
 
 Prerequisites: (ISR70_p22_institution).
 
@@ -5008,31 +5216,33 @@ Exclusive with: ISR70_p22_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament.png`.
 
-Limit the emergency and restore ordinary elections.
+Ordinary elections will restore a civilian mandate for the emergency budget. Confidence can recover while officers and ministers accept limits on unilateral action.
 
 - Political Power: +75
 - Enables ordinary elections.
 - While this party governs:
 - Stability: +5%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p22_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p22_stability_factor = 0.05 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p22_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = yes }
 add_political_power = 75
 ```
 
-### A Limited Emergency with Elections: Implementation
+### Scrutinise Emergency Procurement
 
-`ISR70_p22_ca_deepen` | x=83, y=14 | 49 days
+`ISR70_p22_ca_deepen` | x=120, y=24 | 49 days
 
 Prerequisites: (ISR70_p22_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Audit emergency procurement and strengthen civilian confidence.
+Emergency authority must not make procurement immune to inspection. An audit of contracts and administration will help restore civilian confidence and test whether the cabinet is preparing to return exceptional powers rather than make them permanent.
 
 - Stability: +2%
 - Reduces existing MD corruption by one level, down to its minimum.
@@ -5048,9 +5258,9 @@ decrease_corruption = yes
 add_stability = 0.02
 ```
 
-### Permanent Military Rule
+### Permanent Rule by the Command Council
 
-`ISR70_p22_cb` | x=85, y=13 | 35 days
+`ISR70_p22_cb` | x=122, y=23 | 35 days
 
 Prerequisites: (ISR70_p22_institution).
 
@@ -5058,56 +5268,63 @@ Exclusive with: ISR70_p22_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_officer.png`.
 
-Make military rule permanent and suspend ordinary elections.
+The command council will retain authority beyond the emergency. Concentrated political control will require a standing military and administrative establishment.
 
 - The Military Opinion: +10.
+- Small and Medium Business Owners Opinion: -10.
 - Disables ordinary elections.
 - While this party governs:
 - Political Power Gain: +10%
+- Personnel Cost: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p22_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p22_political_power_factor = 0.1 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p22_personnel_cost_multiplier_modifier = 0.04 tooltip = personnel_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = no }
 set_temp_variable = { temp_opinion = 10 }
 change_the_military_opinion = yes
+set_temp_variable = { temp_opinion = -10 }
+change_small_medium_business_owners_opinion = yes
 ```
 
-### Permanent Military Rule: Implementation
+### A Standing Military Command Structure
 
-`ISR70_p22_cb_deepen` | x=85, y=14 | 49 days
+`ISR70_p22_cb_deepen` | x=122, y=24 | 49 days
 
 Prerequisites: (ISR70_p22_cb).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Consolidate the standing command structure and military mobilization programme.
+Permanent military rule requires a command system able to govern beyond the immediate crisis. Consolidating that structure and its mobilisation programme will strengthen the armed forces' hold on responsibilities normally exercised by civilian institutions. Prolonged military government continues to weaken civilian confidence.
 
 - Army Experience: +35
 - While this party governs:
-- Division Organization: +5%
-- Mobilization Speed: +10%
+- Division Organization: +4%
+- Mobilization Speed: +8%
+- Stability: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p22_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p22_army_org_factor = 0.05 tooltip = ISR70_army_org_factor_tt }
-add_to_variable = { ISR70_p22_mobilization_speed = 0.1 tooltip = mobilization_speed_tt }
+add_to_variable = { ISR70_p22_army_org_factor = 0.04 tooltip = ISR70_army_org_factor_tt }
+add_to_variable = { ISR70_p22_mobilization_speed = 0.08 tooltip = mobilization_speed_tt }
+add_to_variable = { ISR70_p22_stability_factor = -0.015 tooltip = stability_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 army_experience = 35
 ```
 
 ### The Future of the Emergency Cabinet
 
-`ISR70_p22_finish` | x=82, y=15 | 70 days
+`ISR70_p22_finish` | x=119, y=25 | 70 days
 
 Prerequisites: (ISR70_p22_ea_deepen OR ISR70_p22_eb_deepen) AND (ISR70_p22_ca_deepen OR ISR70_p22_cb_deepen).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The emergency cabinet must now give effect to its constitutional choice. A return to civilian rule and a permanent military order require different institutions, but neither can avoid answering for the procurement and mobilisation programme conducted under exceptional authority.
 
 - Political Power: +75
 - Army Experience: +25
@@ -5129,7 +5346,7 @@ A freely selected constitutional founding process is required. A crown is an exp
 
 ### A Constituent Crown Assembly
 
-`ISR70_p23_institution` | x=90, y=12 | 35 days
+`ISR70_p23_institution` | x=130, y=22 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -5145,9 +5362,9 @@ add_political_power = 100
 add_stability = 0.02
 ```
 
-### Endowments and Public Works
+### Public Endowments for Local Works
 
-`ISR70_p23_ea` | x=87, y=13 | 35 days
+`ISR70_p23_ea` | x=127, y=23 | 35 days
 
 Prerequisites: (ISR70_p23_institution).
 
@@ -5155,29 +5372,31 @@ Exclusive with: ISR70_p23_eb.
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Use public endowments for local works rather than private royal industrial corporations.
+Under the alternate crown settlement, public endowments will finance local works. Faster infrastructure development will bring a continuing commitment to social provision.
 
 - Political Power: +75
 - While this party governs:
 - Infrastructure Construction Speed: +15%
+- Social Spending Cost: +2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p23_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p23_production_speed_infrastructure_factor = 0.15 tooltip = ISR70_production_speed_infrastructure_factor_tt }
+add_to_variable = { ISR70_p23_social_cost_multiplier_modifier = 0.02 tooltip = social_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_political_power = 75
 ```
 
-### Endowments and Public Works: Implementation
+### Public Works for the Southern Communities
 
-`ISR70_p23_ea_deepen` | x=87, y=14 | 49 days
+`ISR70_p23_ea_deepen` | x=127, y=24 | 49 days
 
 Prerequisites: (ISR70_p23_ea).
 
 Artwork: `gfx/interface/goals/coldwar/generic_road_construction.png`.
 
-Fund a public-works infrastructure level in the Negev.
+The proposed crown must establish a public purpose beyond its ceremonial foundation. Infrastructure in the Negev will give its endowments and public-works programme a concrete connection to communities whose support cannot be secured by constitutional symbolism alone.
 
 - +1 Infrastructure level in the Negev.
 - Treasury cost on completion: 0.6% of annual GDP.
@@ -5190,14 +5409,15 @@ custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p23_social_cost_multiplier_modifier = -0.05 tooltip = social_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 ```
 
-### Royal Industrial Companies
+### Industrial Companies under the Crown
 
-`ISR70_p23_eb` | x=89, y=13 | 35 days
+`ISR70_p23_eb` | x=129, y=23 | 35 days
 
 Prerequisites: (ISR70_p23_institution).
 
@@ -5205,29 +5425,31 @@ Exclusive with: ISR70_p23_ea.
 
 Artwork: `gfx/interface/goals/coldwar/generic_takeover_industries.png`.
 
-Create professionally run royal industrial companies under the new constitutional settlement.
+The crown's industrial alternative will concentrate investment in public companies. Faster industrial construction will compete with private commercial development for capital.
 
 - 1 x 50% research bonus: Industry.
 - While this party governs:
-- Civilian Industry Construction Speed: +10%
+- Civilian Industry Construction Speed: +12%
+- Incoming Investment Cost: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p23_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p23_production_speed_industrial_complex_factor = 0.1 tooltip = production_speed_industrial_complex_factor_tt }
+add_to_variable = { ISR70_p23_production_speed_industrial_complex_factor = 0.12 tooltip = production_speed_industrial_complex_factor_tt }
+add_to_variable = { ISR70_p23_receiving_investment_cost_modifier = 0.04 tooltip = receiving_investment_cost_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.5 }
 ```
 
-### Royal Industrial Companies: Implementation
+### Royal Industry in Haifa
 
-`ISR70_p23_eb_deepen` | x=89, y=14 | 49 days
+`ISR70_p23_eb_deepen` | x=129, y=24 | 49 days
 
 Prerequisites: (ISR70_p23_eb).
 
 Artwork: `gfx/interface/goals/coldwar/factory_complex.png`.
 
-Build the royal industrial programme's civilian complex in Haifa.
+Royal industrial companies will be expected to support the new settlement through productive investment. A Haifa complex will test whether enterprises associated with the crown can serve a national development purpose rather than merely provide another source of patronage.
 
 - +1 Civilian Factory in Haifa.
 - Treasury cost on completion: 1.5% of annual GDP.
@@ -5246,9 +5468,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 ISR70_pay_0_0150 = yes
 ```
 
-### A Parliamentary Crown
+### A Crown Responsible to Parliament
 
-`ISR70_p23_ca` | x=91, y=13 | 35 days
+`ISR70_p23_ca` | x=131, y=23 | 35 days
 
 Prerequisites: (ISR70_p23_institution).
 
@@ -5256,31 +5478,33 @@ Exclusive with: ISR70_p23_cb.
 
 Artwork: `gfx/interface/goals/coldwar/generic_parliament2.png`.
 
-Establish a parliamentary crown with ordinary elections and a responsible cabinet.
+A parliamentary crown will accept ordinary elections and a responsible cabinet. A stable constitutional settlement will limit the executive's freedom to direct public affairs alone.
 
 - Political Power: +75
 - Enables ordinary elections.
 - While this party governs:
 - Stability: +5%
+- Political Power Gain: -2%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p23_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p23_stability_factor = 0.05 tooltip = stability_factor_tt }
+add_to_variable = { ISR70_p23_political_power_factor = -0.02 tooltip = political_power_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = yes }
 add_political_power = 75
 ```
 
-### A Parliamentary Crown: Implementation
+### Parliamentary Scrutiny of Crown Expenditure
 
-`ISR70_p23_ca_deepen` | x=91, y=14 | 49 days
+`ISR70_p23_ca_deepen` | x=131, y=24 | 49 days
 
 Prerequisites: (ISR70_p23_ca).
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Place crown expenditure and administration under parliamentary scrutiny.
+A parliamentary crown must accept scrutiny of the money and officials attached to it. Clear oversight will make the constitutional settlement credible by applying public standards to the institutions through which royal authority is exercised.
 
 - Reduces existing MD corruption by one level, down to its minimum.
 - While this party governs:
@@ -5294,9 +5518,9 @@ hidden_effect = { ISR70_refresh_programmes = yes }
 decrease_corruption = yes
 ```
 
-### Personal Royal Government
+### Personal Government from the Crown
 
-`ISR70_p23_cb` | x=93, y=13 | 35 days
+`ISR70_p23_cb` | x=133, y=23 | 35 days
 
 Prerequisites: (ISR70_p23_institution).
 
@@ -5304,41 +5528,45 @@ Exclusive with: ISR70_p23_ca.
 
 Artwork: `gfx/interface/goals/coldwar/generic_stable_government.png`.
 
-Establish personal royal government and suspend ordinary elections.
+Personal royal government will suspend ordinary elections and concentrate executive power. A larger household and central administration will make that authority more costly to sustain.
 
 - Political Power: +100
 - Disables ordinary elections.
 - While this party governs:
 - Political Power Gain: +10%
+- Bureaucracy Cost: +4%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p23_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
 add_to_variable = { ISR70_p23_political_power_factor = 0.1 tooltip = political_power_factor_tt }
+add_to_variable = { ISR70_p23_bureaucracy_cost_multiplier_modifier = 0.04 tooltip = bureaucracy_cost_multiplier_modifier_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 set_politics = { ruling_party = nationalist elections_allowed = no }
 add_political_power = 100
 ```
 
-### Personal Royal Government: Implementation
+### The Crown's Executive Institutions
 
-`ISR70_p23_cb_deepen` | x=93, y=14 | 49 days
+`ISR70_p23_cb_deepen` | x=133, y=24 | 49 days
 
 Prerequisites: (ISR70_p23_cb).
 
 Artwork: `gfx/interface/goals/israel_palestine/menorah.dds`.
 
-Consolidate the crown's executive institutions and national-service mandate.
+Personal royal government requires an administration that answers directly to the sovereign. Consolidating executive institutions and national service will give that choice practical force, while making the crown responsible for the results of its own governing programme. Personal executive authority continues to divide public opinion.
 
 - Political Power: +50
 - Stability: +3%
 - While this party governs:
-- Mobilization Speed: +10%
+- Mobilization Speed: +8%
+- Stability: -1.5%
 
 ```hoi4
 custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = ISR70_p23_programme }
 custom_effect_tooltip = ISR70_programme_scope_tt
-add_to_variable = { ISR70_p23_mobilization_speed = 0.1 tooltip = mobilization_speed_tt }
+add_to_variable = { ISR70_p23_mobilization_speed = 0.08 tooltip = mobilization_speed_tt }
+add_to_variable = { ISR70_p23_stability_factor = -0.015 tooltip = stability_factor_tt }
 hidden_effect = { ISR70_refresh_programmes = yes }
 add_stability = 0.03
 add_political_power = 50
@@ -5346,13 +5574,13 @@ add_political_power = 50
 
 ### The Crown and Israeli Statehood
 
-`ISR70_p23_finish` | x=90, y=15 | 70 days
+`ISR70_p23_finish` | x=130, y=25 | 70 days
 
 Prerequisites: (ISR70_p23_ea_deepen OR ISR70_p23_eb_deepen) AND (ISR70_p23_ca_deepen OR ISR70_p23_cb_deepen).
 
 Artwork: `gfx/interface/goals/israel_palestine/menorah.dds`.
 
-Consolidate the institutions and the economic and civic choices made in this programme.
+The new crown must live within the constitutional settlement chosen at its foundation. Its economic and public-service record will determine whether it becomes an institution sustained by parliamentary confidence or the centre of a more personal form of government.
 
 - Political Power: +100
 - Stability: +3%
@@ -5374,7 +5602,7 @@ A shared state branch whose institutional achievements survive changes of govern
 
 ### An Economic Plan for the Seventies
 
-`ISR70_economic_plan` | x=13, y=1 | 35 days
+`ISR70_economic_plan` | x=15, y=0 | 35 days
 
 Prerequisites: (ISR70_january_1970).
 
@@ -5384,37 +5612,45 @@ Industry, agriculture and public infrastructure must keep pace with a growing po
 
 - Political Power: +50
 - 2 x 50% research bonus: Industry.
+- National spirit:
+- Factory Output: +5%
+- Civilian Industry Productivity: +8%
 
 ```hoi4
+add_ideas = ISR70_economic_plan_idea
 add_political_power = 50
 add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 2 bonus = 0.5 }
 ```
 
-### Water as a Basis for Development
+### Pumps for the National Water Carrier
 
-`ISR70_water` | x=7, y=2 | 35 days
+`ISR70_water` | x=8, y=1 | 35 days
 
 Prerequisites: (ISR70_economic_plan).
 
 Artwork: `gfx/interface/goals/coldwar/Irrigation_Pipes.dds`.
 
-Improve the National Water Carrier and irrigation engineering. Agricultural research supports the next stage.
+The National Water Carrier already links northern water sources to the south. New pumping equipment and irrigation connections can support more cultivation, provided the treasury accepts the cost of operating an increasingly complex network.
 
 - 1 x 50% research bonus: Agriculture.
+- Treasury cost on completion: 0.4% of annual GDP.
 - National spirit:
 - Agricultural District Construction Speed: +15%
+- Industry Repair Speed: +5%
+- Bureaucracy Cost: +1.5%
 - Unlocks decisions: Agricultural Advice in Galilee.
 
 ```hoi4
 add_ideas = ISR70_water_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_agriculture uses = 1 bonus = 0.5 }
+ISR70_pay_0_0040 = yes
 
 unlock_decision_tooltip = ISR70_decision_galilee_productivity
 ```
 
 ### Irrigation and Agronomy in the Negev
 
-`ISR70_negev_agriculture` | x=8, y=3 | 49 days
+`ISR70_negev_agriculture` | x=9, y=2 | 49 days
 
 Prerequisites: (ISR70_water).
 
@@ -5425,8 +5661,11 @@ Water and agricultural engineering can give southern communities a more secure l
 - +1 Agricultural District in the Negev.
 - Farmers Opinion: +10.
 - Treasury cost on completion: 0.8% of annual GDP.
+- National spirit:
+- Agricultural Productivity: +12%
 
 ```hoi4
+add_ideas = ISR70_negev_agriculture_idea
 206 = {
 	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
@@ -5436,29 +5675,34 @@ set_temp_variable = { temp_opinion = 10 }
 change_farmers_opinion = yes
 ```
 
-### Maintain the Water Network
+### Mekorot's Workshops and Reservoirs
 
-`ISR70_water_maintenance` | x=5, y=3 | 35 days
+`ISR70_water_maintenance` | x=6, y=2 | 35 days
 
 Prerequisites: (ISR70_water).
 
 Artwork: `gfx/interface/goals/coldwar/Irrigation_Canals.tga`.
 
-Fund pumps, workshops and repairs so farms and public utilities recover more quickly.
+A water network is only as dependable as its pumps, repair crews and reserve storage. Dedicated workshops will restore damaged utilities more quickly and protect investment in irrigation, at the price of a continuing maintenance establishment.
 
+- 1 x 25% research bonus: Energy Efficiency.
 - Farmers Opinion: +10.
 - National spirit:
 - Industry Repair Speed: +15%
+- Agricultural District Construction Speed: +5%
+- Bureaucracy Cost: +1%
+- Agricultural Productivity: +6%
 
 ```hoi4
 add_ideas = ISR70_water_maintenance_idea
 set_temp_variable = { temp_opinion = 10 }
 change_farmers_opinion = yes
+add_tech_bonus = { name = ISR70_research_programme category = CAT_energy_efficiency uses = 1 bonus = 0.25 }
 ```
 
 ### Haifa as an Industrial Center
 
-`ISR70_haifa_industry` | x=13, y=2 | 49 days
+`ISR70_haifa_industry` | x=15, y=1 | 49 days
 
 Prerequisites: (ISR70_economic_plan).
 
@@ -5469,8 +5713,12 @@ Expand the civilian industrial base in Haifa and give the new plant a funded cap
 - +1 Civilian Factory in Haifa.
 - 1 x 50% research bonus: Industry.
 - Treasury cost on completion: 1.5% of annual GDP.
+- National spirit:
+- Factory Output: +5%
+- Civilian Industry Productivity: +10%
 
 ```hoi4
+add_ideas = ISR70_haifa_industry_idea
 205 = {
 	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -5481,19 +5729,22 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses 
 
 ### Services in Tel Aviv
 
-`ISR70_tel_aviv_offices` | x=19, y=2 | 49 days
+`ISR70_tel_aviv_offices` | x=22, y=1 | 49 days
 
 Prerequisites: (ISR70_economic_plan).
 
 Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 
-Add a commercial office district in Tel Aviv for services, export finance and municipal employment.
+Commercial offices in Tel Aviv will bring export finance, technical services and accounting into a more productive urban network. The investment strengthens the service economy while competing with industrial and peripheral projects for capital.
 
 - +1 Office District in Tel Aviv.
 - Small and Medium Business Owners Opinion: +10.
 - Treasury cost on completion: 1.2% of annual GDP.
+- National spirit:
+- Office Productivity: +12%
 
 ```hoi4
+add_ideas = ISR70_tel_aviv_offices_idea
 204 = {
 	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -5505,7 +5756,7 @@ change_small_medium_business_owners_opinion = yes
 
 ### Roads to the Development Towns
 
-`ISR70_negev_roads` | x=8, y=4 | 49 days
+`ISR70_negev_roads` | x=9, y=3 | 49 days
 
 Prerequisites: (ISR70_negev_agriculture).
 
@@ -5519,6 +5770,7 @@ Connect southern development towns with an additional infrastructure level in th
 
 ```hoi4
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
@@ -5527,7 +5779,7 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_infrastructure
 
 ### A Reliable Electricity Network
 
-`ISR70_power_grid` | x=13, y=3 | 49 days
+`ISR70_power_grid` | x=15, y=2 | 49 days
 
 Prerequisites: (ISR70_haifa_industry).
 
@@ -5541,26 +5793,29 @@ Expand fossil electricity generation to serve the growing industrial and office 
 
 ```hoi4
 204 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
 }
 ISR70_pay_0_0120 = yes
 add_tech_bonus = { name = ISR70_research_programme category = CAT_energy_efficiency uses = 1 bonus = 0.5 }
 ```
 
-### Diamonds, Tools and Export Orders
+### Diamonds, Citrus and Precision Workshops
 
-`ISR70_exports` | x=19, y=3 | 35 days
+`ISR70_exports` | x=22, y=2 | 35 days
 
 Prerequisites: (ISR70_tel_aviv_offices).
 
 Artwork: `gfx/interface/goals/coldwar/DiamondsAre4ever.dds`.
 
-Support diamond cutting, precision tools and export finance. Local businesses gain confidence and offices expand faster.
+Established exporters can introduce smaller workshops to overseas orders and commercial credit. A stronger export network will draw investment into services while making those firms more sensitive to conditions beyond Israel.
 
 - Small and Medium Business Owners Opinion: +10.
 - National spirit:
 - Office Construction Speed: +10%
-- Incoming Investment Cost: -10%
+- Incoming Investment Cost: -6%
+- World-Market Exposure: +4%
+- Office Productivity: +10%
 - Unlocks decisions: Send an Export Delegation.
 
 ```hoi4
@@ -5571,9 +5826,9 @@ change_small_medium_business_owners_opinion = yes
 unlock_decision_tooltip = ISR70_decision_export_mission
 ```
 
-### Strategic Import Substitution
+### Produce What the Embargo Denies
 
-`ISR70_import_substitution` | x=11, y=3 | 35 days
+`ISR70_import_substitution` | x=13, y=2 | 35 days
 
 Prerequisites: (ISR70_haifa_industry).
 
@@ -5583,20 +5838,23 @@ Artwork: `gfx/interface/goals/coldwar/Economic_Protectionism.dds`.
 
 Foreign embargoes expose the vulnerabilities of an economy dependent on imported machinery. Domestic production must be able to sustain essential industries under pressure.
 
+- 1 x 25% research bonus: Industry.
 - Industrial Conglomerates Opinion: +5.
 - National spirit:
 - Imperia Sanction Resistance: +15%
-- Factory Output: +5%
+- Production Efficiency Cap: +5%
+- Incoming Investment Cost: +6%
 
 ```hoi4
 add_ideas = ISR70_import_substitution_idea
 set_temp_variable = { temp_opinion = 5 }
 change_industrial_conglomerates_opinion = yes
+add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.25 }
 ```
 
-### Specialize for Export Markets
+### An Economy of Specialist Exporters
 
-`ISR70_export_specialization` | x=15, y=3 | 35 days
+`ISR70_export_specialization` | x=17, y=2 | 35 days
 
 Prerequisites: (ISR70_haifa_industry).
 
@@ -5604,23 +5862,26 @@ Exclusive with: ISR70_import_substitution.
 
 Artwork: `gfx/interface/goals/coldwar/export_factories.tga`.
 
-Specialize in higher-value exports and foreign investment. Greater world-market exposure makes external market swings more consequential.
+A small domestic market cannot absorb every product of modern engineering. Specialised exporters will gain from international investment and orders, while relying more heavily on access to foreign customers.
 
+- 1 x 25% research bonus: Electronics.
 - Small and Medium Business Owners Opinion: +10.
 - National spirit:
-- Return on Investment: +0.5%
+- Return on Investment: +1%
 - Incoming Investment Cost: -10%
-- World-Market Exposure: +10%
+- World-Market Exposure: +12%
+- Office Productivity: +8%
 
 ```hoi4
 add_ideas = ISR70_export_specialization_idea
 set_temp_variable = { temp_opinion = 10 }
 change_small_medium_business_owners_opinion = yes
+add_tech_bonus = { name = ISR70_research_programme category = CAT_electronics uses = 1 bonus = 0.25 }
 ```
 
-### Diaspora Capital for Real Projects
+### Israel Bonds Development Offices
 
-`ISR70_diaspora_bonds` | x=19, y=4 | 35 days
+`ISR70_diaspora_bonds` | x=22, y=3 | 35 days
 
 Prerequisites: (ISR70_exports).
 
@@ -5628,18 +5889,30 @@ Artwork: `gfx/interface/goals/coldwar/agricultural_banks.dds`.
 
 Diaspora savings can support public investment through a credible bond programme. Transparent administration and durable projects will be essential to retaining investors' confidence.
 
-- Political Power: +75
+- Small and Medium Business Owners Opinion: +10.
 - National spirit:
 - Imperia Investment Reward: +10%
+- Bureaucracy Cost: +1.5%
+- Unlocks Israel Bonds: Treasury +8% of annual GDP and debt +8% of annual GDP, once. Normal MD debt interest applies.
 
 ```hoi4
 add_ideas = ISR70_diaspora_bonds_idea
-add_political_power = 75
+set_temp_variable = { temp_opinion = 10 }
+change_small_medium_business_owners_opinion = yes
+unlock_decision_tooltip = ISR70_policy_decision_diaspora_development_bonds
+effect_tooltip = {
+set_temp_variable = { treasury_change = gdp_total }
+multiply_temp_variable = { treasury_change = 0.08 }
+modify_treasury_effect = yes
+set_temp_variable = { debt_change = gdp_total }
+multiply_temp_variable = { debt_change = 0.08 }
+modify_debt_effect = yes
+}
 ```
 
 ### Scrutinize Investment Contracts
 
-`ISR70_investment_scrutiny` | x=19, y=5 | 35 days
+`ISR70_investment_scrutiny` | x=22, y=4 | 35 days
 
 Prerequisites: (ISR70_diaspora_bonds).
 
@@ -5656,9 +5929,9 @@ add_ideas = ISR70_investment_scrutiny_idea
 decrease_corruption = yes
 ```
 
-### Civilian Electronics and Skilled Workers
+### ELTA's Civilian Suppliers
 
-`ISR70_civil_electronics` | x=13, y=5 | 49 days
+`ISR70_civil_electronics` | x=15, y=3 | 49 days
 
 Prerequisites: (ISR70_power_grid).
 
@@ -5667,47 +5940,56 @@ Artwork: `gfx/interface/goals/israel_palestine/isr_computer.dds`.
 Technical workshops and civilian electronics can become a new foundation for industrial development. Skilled engineers will connect university research with practical manufacturing.
 
 - 2 x 50% research bonus: Electronics.
+- Treasury cost on completion: 0.5% of annual GDP.
 - National spirit:
-- Monthly Productivity Growth: +0.1
+- Monthly Productivity Growth: +0.2
+- Production Efficiency Growth: +8%
+- Military Factory Construction Speed: -3%
 
 ```hoi4
 add_ideas = ISR70_civil_electronics_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_electronics uses = 2 bonus = 0.5 }
+ISR70_pay_0_0050 = yes
 ```
 
-### Technion and Applied Research
+### The Technion's New Computing Faculty
 
-`ISR70_technion` | x=13, y=6 | 35 days
+`ISR70_technion` | x=15, y=4 | 35 days
 
 Prerequisites: (ISR70_civil_electronics).
 
 Artwork: `gfx/interface/goals/coldwar/Universities.dds`.
 
-Fund applied research at the Technion. Construction research and a permanent national research improvement support civilian and defense engineering.
+The new computer-science faculty gives Israel a place to train specialists for research and industrial work. Sustained support for laboratories and academic staff will broaden technical capability, with higher education becoming a larger public commitment.
 
-- 2 x 50% research bonus: Construction.
+- 2 x 50% research bonus: Electronics.
+- Treasury cost on completion: 0.6% of annual GDP.
 - National spirit:
-- Research Speed: +3%
+- Research Speed: +2.5%
+- Education Cost: +4%
 
 ```hoi4
 add_ideas = ISR70_technion_idea
-add_tech_bonus = { name = ISR70_research_programme category = CAT_construction uses = 2 bonus = 0.5 }
+ISR70_pay_0_0060 = yes
+add_tech_bonus = { name = ISR70_research_programme category = CAT_electronics uses = 2 bonus = 0.5 }
 ```
 
-### Credit for Productive Small Businesses
+### Credit beyond the Large Enterprises
 
-`ISR70_sme_credit` | x=19, y=6 | 35 days
+`ISR70_sme_credit` | x=22, y=5 | 35 days
 
 Prerequisites: (ISR70_investment_scrutiny).
 
 Artwork: `gfx/interface/goals/coldwar/generic_banking_legislation.png`.
 
-Guarantee productive small-business credit and reduce the cost of incoming investment.
+Small workshops and family firms need credit outside the networks of the largest public and private employers. Loan guarantees can broaden commercial opportunity, while exposing the public administration to supervision and recovery costs.
 
 - Small and Medium Business Owners Opinion: +15.
 - National spirit:
-- Incoming Investment Cost: -10%
-- Office Construction Speed: +5%
+- Incoming Investment Cost: -8%
+- Office Construction Speed: +8%
+- Bureaucracy Cost: +1.5%
+- Office Productivity: +6%
 - Unlocks decisions: A Municipal Service Center.
 
 ```hoi4
@@ -5720,7 +6002,7 @@ unlock_decision_tooltip = ISR70_decision_office_project
 
 ### Further Industrial Development
 
-`ISR70_civil_plant` | x=13, y=7 | 70 days
+`ISR70_civil_plant` | x=15, y=5 | 70 days
 
 Prerequisites: (ISR70_technion).
 
@@ -5744,31 +6026,30 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses 
 unlock_decision_tooltip = ISR70_decision_civil_industry
 ```
 
-### Growth and Public Finances
+### Sapir's Budget Conference
 
-`ISR70_fiscal_review` | x=19, y=7 | 35 days
+`ISR70_fiscal_review` | x=22, y=6 | 35 days
 
 Prerequisites: (ISR70_sme_credit).
 
 Artwork: `gfx/interface/goals/coldwar/generic_banking_legislation.png`.
 
-Prepare a fiscal review and give the cabinet political capital for its budget choice.
+Defence orders, immigrant housing and industrial investment all compete for the same public funds. A common budget conference will identify priorities before the cabinet chooses between credit restraint and accelerated development.
 
-- Political Power: +100
-- Small and Medium Business Owners Opinion: +5.
+- Political Power: +50
+- 1 x 25% research bonus: Industry.
 - Unlocks decisions: Targeted Debt Repayment.
 
 ```hoi4
-add_political_power = 100
-set_temp_variable = { temp_opinion = 5 }
-change_small_medium_business_owners_opinion = yes
+add_political_power = 50
+add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses = 1 bonus = 0.25 }
 
 unlock_decision_tooltip = ISR70_decision_debt_repayment
 ```
 
-### Gradual Fiscal Consolidation
+### Credit before New Commitments
 
-`ISR70_steady_budget` | x=18, y=8 | 35 days
+`ISR70_steady_budget` | x=21, y=7 | 35 days
 
 Prerequisites: (ISR70_fiscal_review).
 
@@ -5776,21 +6057,22 @@ Exclusive with: ISR70_development_budget.
 
 Artwork: `gfx/interface/goals/coldwar/generic_tackle_corruption.png`.
 
-Improve sovereign credit through a credible consolidation programme. Interest rates fall without forcing new cuts into unrelated policies.
+A credible budget can improve the state's borrowing terms and protect essential services. Restraining new commitments also slows public construction, making the cabinet choose which projects can wait.
 
 - Political Power: +50
 - National spirit:
 - Interest Rate: -0.5 percentage points
-- Bureaucracy Cost: -5%
+- Construction Speed: -4%
+- Bureaucracy Cost: -3%
 
 ```hoi4
 add_ideas = ISR70_steady_budget_idea
 add_political_power = 50
 ```
 
-### Development before Short-Term Consolidation
+### A Treasury for Development
 
-`ISR70_development_budget` | x=20, y=8 | 35 days
+`ISR70_development_budget` | x=23, y=7 | 35 days
 
 Prerequisites: (ISR70_fiscal_review).
 
@@ -5798,12 +6080,13 @@ Exclusive with: ISR70_steady_budget.
 
 Artwork: `gfx/interface/goals/coldwar/construction.png`.
 
-Commit a funded development budget to construction and industrial research.
+The treasury will sustain a faster programme of housing, infrastructure and industrial construction. The productive assets will take time to earn their keep, while the new commitments make public credit more expensive.
 
 - 1 x 50% research bonus: Construction.
 - Treasury cost on completion: 0.8% of annual GDP.
 - National spirit:
 - Construction Speed: +10%
+- Interest Rate: +0.2 percentage points
 
 ```hoi4
 add_ideas = ISR70_development_budget_idea
@@ -5815,42 +6098,47 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_construction u
 
 A shared state branch whose institutional achievements survive changes of government.
 
-### A Social Development Compact
+### Wages, Prices and the Histadrut
 
-`ISR70_social_contract` | x=59, y=1 | 35 days
+`ISR70_social_contract` | x=37, y=0 | 35 days
 
 Prerequisites: (ISR70_january_1970).
 
 Artwork: `gfx/interface/goals/coldwar/generic_union_agreement.png`.
 
-Agree a social compact between workers, employers and municipalities.
+Ministers, employers and the Histadrut can settle wage disputes before they interrupt production. A negotiated compact will make industrial change more predictable, while narrowing the cabinet's freedom to impose a settlement of its own. Agreed recruitment and working arrangements will also bring more adults into regular employment.
 
-- Political Power: +75
-- Labor Unions Opinion: +5.
-- Small and Medium Business Owners Opinion: +5.
+- Labor Unions Opinion: +10.
+- Industrial Conglomerates Opinion: +5.
+- National spirit:
+- Production Efficiency Growth: +4%
+- Political Power Gain: -1.5%
+- Available Workforce: +2%
 
 ```hoi4
-add_political_power = 75
-set_temp_variable = { temp_opinion = 5 }
+add_ideas = ISR70_social_contract_idea
+set_temp_variable = { temp_opinion = 10 }
 change_labour_unions_opinion = yes
 set_temp_variable = { temp_opinion = 5 }
-change_small_medium_business_owners_opinion = yes
+change_industrial_conglomerates_opinion = yes
 ```
 
-### Vocational Education for New Citizens
+### ORT Workshops for a Changing Economy
 
-`ISR70_vocational` | x=54, y=2 | 35 days
+`ISR70_vocational` | x=33, y=1 | 35 days
 
 Prerequisites: (ISR70_social_contract).
 
 Artwork: `gfx/interface/goals/coldwar/BEL_prioritizetechnicaleducation.dds`.
 
-Expand vocational schools for new immigrants and industrial workers. Training improves productivity and industrial research.
+Practical instruction can help immigrants and development-town residents enter skilled industrial work. Teacher preparation and workshop equipment will cost more than a general promise of employment, but they give modernisation a broader social foundation. Retraining women and adults outside skilled employment will expand the available labour force.
 
 - 1 x 50% research bonus: Industry.
 - Labor Unions Opinion: +10.
 - National spirit:
-- Monthly Productivity Growth: +0.1
+- Monthly Productivity Growth: +0.08
+- Education Cost: +3%
+- Available Workforce: +3%
 - Unlocks decisions: A Negev Vocational Training Project.
 
 ```hoi4
@@ -5862,50 +6150,65 @@ change_labour_unions_opinion = yes
 unlock_decision_tooltip = ISR70_decision_negev_productivity
 ```
 
-### Connect the Development Towns
+### Work within Reach of the Development Towns
 
-`ISR70_development_towns` | x=54, y=3 | 35 days
+`ISR70_development_towns` | x=33, y=2 | 35 days
 
 Prerequisites: (ISR70_vocational).
 
 Artwork: `gfx/interface/goals/coldwar/focus_public_housing.dds`.
 
-Connect development towns to employment and public services with funded infrastructure in the Negev.
+Roads can connect the development towns to jobs and public services instead of leaving housing isolated from the wider economy. The cabinet must fund and maintain those links even where the immediate commercial return is modest. Bringing jobs within reach allows more residents to enter paid employment.
 
 - +1 Infrastructure level in the Negev.
 - Treasury cost on completion: 0.6% of annual GDP.
 - National spirit:
 - Infrastructure Construction Speed: +10%
+- Social Spending Cost: +1.5%
+- Available Workforce: +2%
 
 ```hoi4
 add_ideas = ISR70_development_towns_idea
 206 = {
+	add_extra_state_shared_building_slots = 1
 	add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
 ```
 
-### Integrate Immigration for the Long Term
+### Ulpan, Qualifications and a First Job
 
-`ISR70_absorption_reform` | x=54, y=4 | 49 days
+`ISR70_absorption_reform` | x=33, y=3 | 49 days
 
 Prerequisites: (ISR70_development_towns).
 
 Artwork: `gfx/interface/goals/coldwar/Fund_social_integration_Programs.tga`.
 
-Replace the starting immigration bottleneck with integrated housing, employment and education. Population growth remains while the starting social-cost surcharge is removed.
+Language instruction and recognition of qualifications will connect immigrants to work that uses their skills. Housing, job placement and bridging courses can turn an absorption system into a route to regular employment, while the state accepts continuing educational obligations.
 
 - Stability: +3%
 - Replaces "Immigration and Development Gaps" with "Integrated Immigration"; removes its +5% social-cost surcharge while retaining population growth.
+- National spirit:
+- Available Workforce: +4%
+- Education Cost: +2.5%
+- Unlocks the United Jewish Appeal campaign: Treasury +4% of annual GDP once; social costs +3%, education costs +2%. Requires the diaspora financing programme.
 
 ```hoi4
+add_ideas = ISR70_absorption_reform_idea
 swap_ideas = { remove_idea = ISR70_absorption add_idea = ISR70_integrated_immigration }
 add_stability = 0.03
+unlock_decision_tooltip = ISR70_policy_decision_uja_absorption_campaign
+effect_tooltip = {
+set_temp_variable = { treasury_change = gdp_total }
+multiply_temp_variable = { treasury_change = 0.04 }
+modify_treasury_effect = yes
+add_ideas = ISR70_policy_diaspora_absorption_services
+}
 ```
 
 ### Negotiate Religion and the State
 
-`ISR70_religion_state` | x=64, y=2 | 35 days
+`ISR70_religion_state` | x=41, y=1 | 35 days
 
 Prerequisites: (ISR70_social_contract).
 
@@ -5922,9 +6225,9 @@ set_temp_variable = { temp_opinion = 5 }
 change_the_priesthood_opinion = yes
 ```
 
-### Renew the Religious Compromise
+### Renew the Status Quo Agreement
 
-`ISR70_religious_compromise` | x=63, y=3 | 35 days
+`ISR70_religious_compromise` | x=40, y=2 | 35 days
 
 Prerequisites: (ISR70_religion_state).
 
@@ -5932,11 +6235,12 @@ Exclusive with: ISR70_civil_marriage.
 
 Artwork: `gfx/interface/goals/israel_palestine/Orthodox_jew.dds`.
 
-Renew the parliamentary religious compromise. Religious institutions gain confidence and a more stable settlement supports government.
+Religious parties will accept a parliamentary settlement that protects their institutions and communal services. The compromise can steady the coalition, while support for separate educational provision places a lasting claim on public funds.
 
 - Religious Institutions Opinion: +15.
 - National spirit:
 - Stability: +5%
+- Education Cost: +3%
 
 ```hoi4
 add_ideas = ISR70_religious_compromise_idea
@@ -5944,9 +6248,9 @@ set_temp_variable = { temp_opinion = 15 }
 change_the_priesthood_opinion = yes
 ```
 
-### Civil Personal-Status Options
+### A Civil Personal-Status Register
 
-`ISR70_civil_marriage` | x=65, y=3 | 35 days
+`ISR70_civil_marriage` | x=42, y=2 | 35 days
 
 Prerequisites: (ISR70_religion_state).
 
@@ -5954,22 +6258,26 @@ Exclusive with: ISR70_religious_compromise.
 
 Artwork: `gfx/interface/goals/coldwar/generic_female_rights.png`.
 
-Introduce civilian personal-status options and strengthen secular civic institutions. This political reform grants a distinct gain in political capacity.
+A civil register would let households settle their personal status outside religious jurisdiction. It will broaden civil choice while bringing the government into direct conflict with those who regard religious authority as part of the founding compact.
 
 - Political Power: +100
 - Stability: +3%
+- Religious Institutions Opinion: -15.
 - National spirit:
 - Political Power Gain: +5%
+- Stability: -1.5%
 
 ```hoi4
 add_ideas = ISR70_civil_marriage_idea
 add_political_power = 100
 add_stability = 0.03
+set_temp_variable = { temp_opinion = -15 }
+change_the_priesthood_opinion = yes
 ```
 
 ### The Question of Shared Service
 
-`ISR70_national_service` | x=64, y=4 | 35 days
+`ISR70_national_service` | x=41, y=3 | 35 days
 
 Prerequisites: (ISR70_religious_compromise OR ISR70_civil_marriage).
 
@@ -5985,9 +6293,9 @@ add_political_power = 75
 army_experience = 15
 ```
 
-### Voluntary Municipal Civilian Service
+### Municipal Volunteers and Emergency Aid
 
-`ISR70_volunteer_service` | x=63, y=5 | 35 days
+`ISR70_volunteer_service` | x=40, y=4 | 35 days
 
 Prerequisites: (ISR70_national_service).
 
@@ -5995,21 +6303,24 @@ Exclusive with: ISR70_service_expansion.
 
 Artwork: `gfx/interface/goals/coldwar/generic_workers_rights.png`.
 
-Organize voluntary municipal civilian service. Social administration becomes cheaper and the civic settlement gains confidence.
+Volunteer placements can strengthen local emergency and welfare services without extending military obligation. Councils will need supervisors and dependable placements if the programme is to deliver more than a symbolic national gesture.
 
 - Stability: +3%
+- Labor Unions Opinion: +5.
 - National spirit:
 - Social Spending Cost: -5%
-- Bureaucracy Cost: -5%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 add_ideas = ISR70_volunteer_service_idea
 add_stability = 0.03
+set_temp_variable = { temp_opinion = 5 }
+change_labour_unions_opinion = yes
 ```
 
-### Expand Military Training
+### A Wider Call-Up and Training System
 
-`ISR70_service_expansion` | x=65, y=5 | 35 days
+`ISR70_service_expansion` | x=42, y=4 | 35 days
 
 Prerequisites: (ISR70_national_service).
 
@@ -6017,32 +6328,35 @@ Exclusive with: ISR70_volunteer_service.
 
 Artwork: `gfx/interface/goals/coldwar/generic_army_training.png`.
 
-Expand training facilities and improve military call-up speed, with immediate army experience.
+A broader service framework can bring trained recruits to their units more quickly. Larger training establishments and more frequent call-ups will also increase the continuing cost of military personnel.
 
 - Army Experience: +35
 - National spirit:
 - Mobilization Speed: +15%
 - Army Training Time: -5%
+- Personnel Cost: +3.5%
 
 ```hoi4
 add_ideas = ISR70_service_expansion_idea
 army_experience = 35
 ```
 
-### Research between Jerusalem and Haifa
+### Laboratories beyond the Defence Establishment
 
-`ISR70_universities` | x=52, y=3 | 49 days
+`ISR70_universities` | x=30, y=2 | 49 days
 
 Prerequisites: (ISR70_vocational).
 
 Artwork: `gfx/interface/goals/coldwar/expand_research_funding.tga`.
 
-Increase university capacity in Jerusalem and Haifa, financing research staff and two electronics projects.
+Universities in Jerusalem and Haifa need laboratories capable of supporting an independent civilian research agenda. Greater academic capacity will widen the country's technical choices while increasing the cost of maintaining its education system. Qualifications and specialist conversion courses will broaden access to professional work.
 
 - 2 x 50% research bonus: Electronics.
 - Treasury cost on completion: 0.8% of annual GDP.
 - National spirit:
-- Research Speed: +3%
+- Research Speed: +2.5%
+- Education Cost: +3.5%
+- Available Workforce: +2%
 
 ```hoi4
 add_ideas = ISR70_universities_idea
@@ -6050,20 +6364,22 @@ ISR70_pay_0_0080 = yes
 add_tech_bonus = { name = ISR70_research_programme category = CAT_electronics uses = 2 bonus = 0.5 }
 ```
 
-### Healthcare beyond the Metropolises
+### Clinics and the New Medical Faculties
 
-`ISR70_public_health` | x=56, y=4 | 35 days
+`ISR70_public_health` | x=36, y=3 | 35 days
 
 Prerequisites: (ISR70_development_towns).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Extend clinics and professional healthcare administration beyond the largest cities.
+More clinics and medical training can bring qualified care beyond the largest urban centres. Better administration will make treatment less costly, but training the additional professionals requires a stronger educational commitment. Dependable treatment and community care also help more adults remain in paid work.
 
 - Stability: +2%
 - Treasury cost on completion: 0.6% of annual GDP.
 - National spirit:
-- Healthcare Cost: -10%
+- Healthcare Cost: -8%
+- Education Cost: +2%
+- Available Workforce: +2%
 
 ```hoi4
 add_ideas = ISR70_public_health_idea
@@ -6077,7 +6393,7 @@ A shared state branch whose institutional achievements survive changes of govern
 
 ### The General Staff and the Security Situation
 
-`ISR70_staff` | x=110, y=1 | 14 days
+`ISR70_staff` | x=83, y=0 | 14 days
 
 Prerequisites: (ISR70_january_1970).
 
@@ -6094,21 +6410,22 @@ set_temp_variable = { temp_opinion = 10 }
 change_the_military_opinion = yes
 ```
 
-### Keep the Reserve Ready
+### Miluim: A Trained Reserve
 
-`ISR70_reserve_system` | x=101, y=2 | 35 days
+`ISR70_reserve_system` | x=71, y=1 | 35 days
 
 Prerequisites: (ISR70_staff).
 
 Artwork: `gfx/interface/goals/coldwar/AST_upgrade_reserves.png`.
 
-Replace the starting citizen-army spirit with an organized reserve system. Mobilization and unit cohesion improve.
+The reserve system depends on civilian specialists arriving at the right units with usable equipment and current training. Reliable mobilisation improves readiness, while employers and the defence budget must absorb more frequent periods of service.
 
 - Army Experience: +25
 - Removes the national spirit "Citizen Army and Reserve".
 - National spirit:
-- Mobilization Speed: +25%
-- Division Organization: +5%
+- Mobilization Speed: +20%
+- Division Organization: +4%
+- Personnel Cost: +4%
 - Unlocks decisions: Conduct a Reserve Exercise, Temporary Reserve Readiness.
 
 ```hoi4
@@ -6120,9 +6437,9 @@ unlock_decision_tooltip = ISR70_decision_reserve_exercise
 unlock_decision_tooltip = ISR70_decision_reserve_mobilize
 ```
 
-### Defense in Depth
+### A Fortified Screen and Local Reserves
 
-`ISR70_defensive_depth` | x=99, y=3 | 49 days
+`ISR70_defensive_depth` | x=69, y=2 | 49 days
 
 Prerequisites: (ISR70_reserve_system).
 
@@ -6130,21 +6447,22 @@ Exclusive with: ISR70_maneuver.
 
 Artwork: `gfx/interface/goals/coldwar/generic_army_training.png`.
 
-Train layered defenses and improve defensive coordination.
+Prepared positions and rehearsed relief plans can hold a front while reserves assemble. A force organised around that screen will dig in effectively, but its planning routines will be less suited to sudden changes of axis.
 
 - Army Experience: +30
 - National spirit:
-- Division Defense: +8%
+- Division Defense: +7%
 - Maximum Entrenchment: +2
+- Planning Speed: -6%
 
 ```hoi4
 add_ideas = ISR70_defensive_depth_idea
 army_experience = 30
 ```
 
-### Mobile Operational Reserves
+### Operational Reserves for Mobile War
 
-`ISR70_maneuver` | x=101, y=3 | 49 days
+`ISR70_maneuver` | x=71, y=2 | 49 days
 
 Prerequisites: (ISR70_reserve_system).
 
@@ -6152,21 +6470,22 @@ Exclusive with: ISR70_defensive_depth.
 
 Artwork: `gfx/interface/goals/coldwar/doctrine_tank_warfare.png`.
 
-Build mobile operational reserves around staff exercises and rapid planning.
+Mobile reserves must practise changing direction and concentrating before an opponent can react. Faster planning and armoured movement will give the staff more options, at the cost of a heavier field-supply requirement.
 
 - Army Experience: +40
 - National spirit:
 - Planning Speed: +15%
-- Division Organization: +5%
+- Armor Division Speed: +5%
+- Supply Consumption: +4%
 
 ```hoi4
 add_ideas = ISR70_maneuver_idea
 army_experience = 40
 ```
 
-### Tal and the Domestic Tank Programme
+### Tal's Tank Development Directorate
 
-`ISR70_armour_programme` | x=107, y=2 | 49 days
+`ISR70_armour_programme` | x=81, y=1 | 49 days
 
 Prerequisites: (ISR70_staff).
 
@@ -6176,18 +6495,20 @@ Israel Tal advocates a tank designed around the needs of Israeli crews and the l
 
 - Army Experience: +25
 - 2 x 50% research bonus: Armor.
+- Treasury cost on completion: 1.2% of annual GDP.
 - Unlocks decisions: Domestic Equipment Trials.
 
 ```hoi4
 add_tech_bonus = { name = ISR70_research_programme category = CAT_armor uses = 2 bonus = 0.5 }
 army_experience = 25
+ISR70_pay_0_0120 = yes
 
 unlock_decision_tooltip = ISR70_decision_equipment_trials
 ```
 
-### Crew Protection and Maintenance
+### The Crew Comes First
 
-`ISR70_survivability` | x=106, y=3 | 35 days
+`ISR70_survivability` | x=80, y=2 | 35 days
 
 Prerequisites: (ISR70_armour_programme).
 
@@ -6195,20 +6516,21 @@ Exclusive with: ISR70_armour_mobility.
 
 Artwork: `gfx/interface/goals/coldwar/generic_tank_destroyer.png`.
 
-Prioritize crew protection, repairability and standardized maintenance in the armored force.
+Armour design and field repair will prioritise keeping experienced crews alive. Additional protection can strengthen the force's staying power, with weight and servicing demands limiting its tactical speed.
 
 - 1 x 50% research bonus: Armor.
 - National spirit:
 - Armor Division Defense: +10%
+- Armor Division Speed: -4%
 
 ```hoi4
 add_ideas = ISR70_survivability_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_armor uses = 1 bonus = 0.5 }
 ```
 
-### Mobility and Tactical Employment
+### Armoured Tempo and Recovery Teams
 
-`ISR70_armour_mobility` | x=108, y=3 | 35 days
+`ISR70_armour_mobility` | x=82, y=2 | 35 days
 
 Prerequisites: (ISR70_armour_programme).
 
@@ -6216,12 +6538,13 @@ Exclusive with: ISR70_survivability.
 
 Artwork: `gfx/interface/goals/coldwar/generic_army_tanks2.png`.
 
-Prioritize tactical mobility and armored coordination rather than the alternative protection package.
+A mobile armoured force needs crews and recovery teams able to sustain rapid movement. Faster vehicles and planning give the staff a different instrument from heavier protection, while consuming more supplies on campaign.
 
 - Army Experience: +35
 - National spirit:
-- Division Organization: +5%
-- Planning Speed: +10%
+- Armor Division Speed: +8%
+- Planning Speed: +8%
+- Supply Consumption: +2.5%
 
 ```hoi4
 add_ideas = ISR70_armour_mobility_idea
@@ -6230,7 +6553,7 @@ army_experience = 35
 
 ### IMI and Domestic Manufacturing
 
-`ISR70_imi` | x=107, y=4 | 70 days
+`ISR70_imi` | x=81, y=3 | 70 days
 
 Prerequisites: (ISR70_survivability OR ISR70_armour_mobility).
 
@@ -6256,7 +6579,7 @@ unlock_decision_tooltip = ISR70_decision_armi_project
 
 ### Artillery and Counter-Battery Reconnaissance
 
-`ISR70_artillery` | x=103, y=3 | 35 days
+`ISR70_artillery` | x=77, y=2 | 35 days
 
 Prerequisites: (ISR70_reserve_system).
 
@@ -6272,47 +6595,54 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_towed_artiller
 army_experience = 20
 ```
 
-### Engineers and Combat Supply
+### Bridging Columns and Field Workshops
 
-`ISR70_engineers` | x=103, y=4 | 35 days
+`ISR70_engineers` | x=77, y=3 | 35 days
 
 Prerequisites: (ISR70_artillery).
 
 Artwork: `gfx/interface/goals/coldwar/Improve_supply_distribution_methods.tga`.
 
-Improve field engineering, reconnaissance and combat supply rather than simply expanding the force.
+Bridging crews and field workshops can keep a small army moving through damaged routes and difficult terrain. Concentrating specialists on those tasks improves supply economy, while leaving fewer resources for rapid entrenchment.
 
 - Army Experience: +25
 - National spirit:
-- Reconnaissance: +10%
-- Supply Consumption: -8%
+- Reconnaissance: +8%
+- Supply Consumption: -6%
+- Maximum Entrenchment: -1
 
 ```hoi4
 add_ideas = ISR70_engineers_idea
 army_experience = 25
 ```
 
-### Special Forces with Clear Missions
+### Selection and Long-Range Patrol Schools
 
-`ISR70_special_forces` | x=103, y=5 | 35 days
+`ISR70_special_forces` | x=77, y=4 | 35 days
 
 Prerequisites: (ISR70_engineers).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_israel_defense_forces.dds`.
 
-Fund specialist training and contemporary special-forces equipment research.
+Specialist patrols need careful selection, language preparation and sustained field training. Their experience will improve the army's specialist capability, while small professional establishments carry a higher personnel cost.
 
 - Army Experience: +30
 - 2 x 50% research bonus: Special Forces Equipment.
+- Treasury cost on completion: 0.4% of annual GDP.
+- National spirit:
+- Special Forces Capacity: +2%
+- Personnel Cost: +1.5%
 
 ```hoi4
+add_ideas = ISR70_special_forces_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_special_forces_equipment uses = 2 bonus = 0.5 }
 army_experience = 30
+ISR70_pay_0_0040 = yes
 ```
 
 ### The Air Force after the Embargo
 
-`ISR70_air_staff` | x=115, y=2 | 14 days
+`ISR70_air_staff` | x=90, y=1 | 14 days
 
 Prerequisites: (ISR70_staff).
 
@@ -6329,9 +6659,9 @@ set_temp_variable = { temp_opinion = 5 }
 change_the_military_opinion = yes
 ```
 
-### Delivery Contracts over Domestic Development
+### Conversion Schools for American Aircraft
 
-`ISR70_foreign_aircraft` | x=114, y=3 | 49 days
+`ISR70_foreign_aircraft` | x=89, y=2 | 49 days
 
 Prerequisites: (ISR70_air_staff).
 
@@ -6343,15 +6673,21 @@ A reliable American supply channel allows the air force to plan its next generat
 
 - Air Experience: +25
 - 2 x 50% research bonus: Medium Aircraft.
+- Treasury cost on completion: 0.4% of annual GDP.
+- National spirit:
+- Air Mission Efficiency: +4%
+- Imperia Sanction Resistance: -4%
 
 ```hoi4
+add_ideas = ISR70_foreign_aircraft_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_medium_aircraft uses = 2 bonus = 0.5 }
 air_experience = 25
+ISR70_pay_0_0040 = yes
 ```
 
-### IAI and a Domestic Aircraft Industry
+### From Bedek Workshops to Israeli Designs
 
-`ISR70_local_aircraft` | x=116, y=3 | 49 days
+`ISR70_local_aircraft` | x=91, y=2 | 49 days
 
 Prerequisites: (ISR70_air_staff).
 
@@ -6363,26 +6699,34 @@ Israel Aircraft Industries can reduce dependence on foreign suppliers. Domestic 
 
 - Air Experience: +20
 - 2 x 50% research bonus: Aircraft.
+- Treasury cost on completion: 1% of annual GDP.
+- National spirit:
+- Imperia Sanction Resistance: +5%
+- Military Factory Construction Speed: -3%
 
 ```hoi4
+add_ideas = ISR70_local_aircraft_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_aircraft uses = 2 bonus = 0.5 }
 air_experience = 20
 set_country_flag = ISR70_local_aircraft_programme
+ISR70_pay_0_0100 = yes
 ```
 
-### Training, Maintenance and Spare Parts
+### Spare Engines and Dispersed Workshops
 
-`ISR70_air_maintenance` | x=115, y=4 | 35 days
+`ISR70_air_maintenance` | x=90, y=3 | 35 days
 
 Prerequisites: (ISR70_foreign_aircraft OR ISR70_local_aircraft).
 
 Artwork: `gfx/interface/goals/coldwar/generic_support_equipment.png`.
 
-Improve training, spare parts and maintenance. A completed domestic aircraft programme removes the starting embargo penalty.
+Spare engines and dispersed workshops can turn aircraft on the inventory into aircraft ready for missions. Better servicing will improve operational availability, while the air force must maintain a larger technical establishment.
 
 - Treasury cost on completion: 0.6% of annual GDP.
 - National spirit:
-- Air Mission Efficiency: +8%
+- Air Mission Efficiency: +6%
+- Air Accident Chance: -8%
+- Air Force Personnel Cost: +4%
 
 ```hoi4
 add_ideas = ISR70_air_maintenance_idea
@@ -6392,7 +6736,7 @@ if = { limit = { has_country_flag = ISR70_local_aircraft_programme } remove_idea
 
 ### A Resilient Airfield Network
 
-`ISR70_airfield` | x=115, y=5 | 35 days
+`ISR70_airfield` | x=90, y=4 | 35 days
 
 Prerequisites: (ISR70_air_maintenance).
 
@@ -6406,6 +6750,7 @@ Expand the southern airfield network by two levels and improve its engineering.
 
 ```hoi4
 206 = {
+	add_extra_state_shared_building_slots = 2
 	add_building_construction = { type = air_base level = 2 instant_build = yes }
 }
 ISR70_pay_0_0080 = yes
@@ -6414,7 +6759,7 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_construction u
 
 ### Radar and Contemporary Air Defense
 
-`ISR70_air_defense` | x=118, y=3 | 35 days
+`ISR70_air_defense` | x=74, y=2 | 35 days
 
 Prerequisites: (ISR70_air_staff).
 
@@ -6434,7 +6779,7 @@ air_experience = 15
 
 ### Secure the Coast and Sea Lanes
 
-`ISR70_naval_staff` | x=122, y=2 | 14 days
+`ISR70_naval_staff` | x=97, y=1 | 14 days
 
 Prerequisites: (ISR70_staff).
 
@@ -6451,9 +6796,9 @@ set_temp_variable = { temp_opinion = 5 }
 change_the_military_opinion = yes
 ```
 
-### Missile Boats and Coastal Operations
+### Gabriel and the Missile-Boat Flotilla
 
-`ISR70_missile_boats` | x=121, y=3 | 49 days
+`ISR70_missile_boats` | x=96, y=2 | 49 days
 
 Prerequisites: (ISR70_naval_staff).
 
@@ -6461,19 +6806,26 @@ Exclusive with: ISR70_submarines.
 
 Artwork: `gfx/interface/goals/israel_palestine/isr_navy.dds`.
 
-Develop missile-boat tactics and contemporary corvette research.
+Small missile boats need coordinated manoeuvre and crews able to fight in coastal waters. Concentrating the navy on this flotilla will improve its tactical organisation while requiring intensive training and specialist upkeep.
 
 - Navy Experience: +30
 - 2 x 50% research bonus: Corvettes.
+- Treasury cost on completion: 0.6% of annual GDP.
+- National spirit:
+- Fleet Coordination: +6%
+- Naval Positioning: +4%
+- Navy Personnel Cost: +4%
 
 ```hoi4
+add_ideas = ISR70_missile_boats_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_corvettes uses = 2 bonus = 0.5 }
 navy_experience = 30
+ISR70_pay_0_0060 = yes
 ```
 
-### Submarines and Covert Reconnaissance
+### A School for Submarine Crews
 
-`ISR70_submarines` | x=123, y=3 | 49 days
+`ISR70_submarines` | x=98, y=2 | 49 days
 
 Prerequisites: (ISR70_naval_staff).
 
@@ -6481,19 +6833,25 @@ Exclusive with: ISR70_missile_boats.
 
 Artwork: `gfx/interface/goals/coldwar/generic_submarine_base.png`.
 
-Train covert naval reconnaissance and support submarine development.
+Submarine operations demand a long apprenticeship in navigation, machinery and concealment. Dedicated instruction will support contemporary submarine research, with the navy accepting higher personnel expenditure for a small force.
 
 - Navy Experience: +30
 - 2 x 50% research bonus: Submarines.
+- Treasury cost on completion: 0.5% of annual GDP.
+- National spirit:
+- Fleet Coordination: +4%
+- Navy Personnel Cost: +2.5%
 
 ```hoi4
+add_ideas = ISR70_submarines_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_submarines uses = 2 bonus = 0.5 }
 navy_experience = 30
+ISR70_pay_0_0050 = yes
 ```
 
 ### Shipbuilding Capacity in Haifa
 
-`ISR70_shipyards` | x=122, y=4 | 70 days
+`ISR70_shipyards` | x=97, y=3 | 70 days
 
 Prerequisites: (ISR70_missile_boats OR ISR70_submarines).
 
@@ -6516,7 +6874,7 @@ navy_experience = 20
 
 ### Mossad and Military Intelligence
 
-`ISR70_intelligence` | x=110, y=6 | 35 days
+`ISR70_intelligence` | x=83, y=5 | 35 days
 
 Prerequisites: (ISR70_staff).
 
@@ -6536,9 +6894,9 @@ if = { limit = { has_dlc = "La Resistance" NOT = { has_intelligence_agency = yes
 custom_effect_tooltip = ISR70_intelligence_outcome_tt
 ```
 
-### Analysis before Easy Certainties
+### An Independent Assessment Desk
 
-`ISR70_intelligence_analysis` | x=108, y=7 | 35 days
+`ISR70_intelligence_analysis` | x=80, y=6 | 35 days
 
 Prerequisites: (ISR70_intelligence).
 
@@ -6546,21 +6904,22 @@ Exclusive with: ISR70_intelligence_operations.
 
 Artwork: `gfx/interface/goals/israel_palestine/the_research_department.dds`.
 
-Prioritize assessment, language training and independent analysis over operational expansion.
+Language specialists and competing assessments can give the cabinet a less complacent picture of its neighbours. Careful evaluation improves reconnaissance and planning, while independent review slows the immediate political use of intelligence.
 
 - 1 x 50% research bonus: Decryption.
 - National spirit:
 - Reconnaissance: +10%
-- Planning Speed: +10%
+- Planning Speed: +8%
+- Political Power Gain: -2%
 
 ```hoi4
 add_ideas = ISR70_intelligence_analysis_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_decryption uses = 1 bonus = 0.5 }
 ```
 
-### Operational Intelligence Networks
+### Networks beyond the Frontier
 
-`ISR70_intelligence_operations` | x=112, y=7 | 35 days
+`ISR70_intelligence_operations` | x=86, y=6 | 35 days
 
 Prerequisites: (ISR70_intelligence).
 
@@ -6568,12 +6927,13 @@ Exclusive with: ISR70_intelligence_analysis.
 
 Artwork: `gfx/interface/goals/coldwar/generic_secret_documents.png`.
 
-Build operational networks and secure communications. Foreign influence becomes harder to exert.
+Operational stations and secure communications can strengthen foreign networks and protect the state from outside influence. The cabinet must sustain the administrative cost and political responsibility of a larger clandestine establishment.
 
 - 1 x 50% research bonus: Encryption.
 - Intelligence Community Opinion: +10.
 - National spirit:
 - Foreign Influence Defense: +15%
+- Bureaucracy Cost: +2.5%
 
 ```hoi4
 add_ideas = ISR70_intelligence_operations_idea
@@ -6584,7 +6944,7 @@ change_intelligence_community_opinion = yes
 
 ### Civil Defense for Border Communities
 
-`ISR70_civil_defense` | x=95, y=3 | 35 days
+`ISR70_civil_defense` | x=66, y=2 | 35 days
 
 Prerequisites: (ISR70_reserve_system).
 
@@ -6599,6 +6959,7 @@ Build two civilian shelter levels for northern border communities.
 
 ```hoi4
 205 = {
+	add_extra_state_shared_building_slots = 2
 	add_building_construction = { type = civilian_shelter level = 2 instant_build = yes }
 }
 ISR70_pay_0_0060 = yes
@@ -6607,22 +6968,23 @@ add_stability = 0.02
 unlock_decision_tooltip = ISR70_decision_shelters
 ```
 
-### A Coordinated Readiness Plan
+### Readiness within the National Budget
 
-`ISR70_preparedness` | x=100, y=6 | 35 days
+`ISR70_preparedness` | x=71, y=4 | 35 days
 
 Prerequisites: (ISR70_defensive_depth OR ISR70_maneuver) AND (ISR70_air_defense).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Integrate the reserve, maintenance and civil-defense programmes into one readiness plan.
+The General Staff must bring reserve call-ups, servicing and civilian protection into one sustainable plan. Better coordination reduces waste in field supply, while the commitment to keep trained forces ready continues in peacetime.
 
 - Army Experience: +30
 - Air Experience: +20
 - Navy Experience: +15
 - National spirit:
-- Division Organization: +3%
-- Supply Consumption: -5%
+- Division Organization: +2.5%
+- Supply Consumption: -3.5%
+- Personnel Cost: +2%
 
 ```hoi4
 add_ideas = ISR70_preparedness_idea
@@ -6637,7 +6999,7 @@ A shared state branch whose institutional achievements survive changes of govern
 
 ### The Foreign-Policy Situation of 1970
 
-`ISR70_foreign_policy` | x=83, y=1 | 35 days
+`ISR70_foreign_policy` | x=121, y=0 | 35 days
 
 Prerequisites: (ISR70_january_1970).
 
@@ -6653,7 +7015,7 @@ add_political_power = 100
 
 ### Strengthen the Washington Channel
 
-`ISR70_us_channel` | x=74, y=2 | 35 days
+`ISR70_us_channel` | x=111, y=1 | 35 days
 
 Prerequisites: (ISR70_foreign_policy).
 
@@ -6673,7 +7035,7 @@ unlock_decision_tooltip = ISR70_decision_talks_us
 
 ### Negotiate Security Cooperation
 
-`ISR70_us_security` | x=73, y=3 | 35 days
+`ISR70_us_security` | x=110, y=2 | 35 days
 
 Prerequisites: (ISR70_us_channel).
 
@@ -6696,7 +7058,7 @@ air_experience = 25
 
 ### Negotiate Civilian Economic Cooperation
 
-`ISR70_us_civil` | x=75, y=3 | 35 days
+`ISR70_us_civil` | x=112, y=2 | 35 days
 
 Prerequisites: (ISR70_us_channel).
 
@@ -6717,7 +7079,7 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_industry uses 
 
 ### Approach Paris Again
 
-`ISR70_france_channel` | x=79, y=2 | 35 days
+`ISR70_france_channel` | x=116, y=1 | 35 days
 
 Prerequisites: (ISR70_foreign_policy).
 
@@ -6737,7 +7099,7 @@ custom_effect_tooltip = ISR70_france_channel_outcome_tt
 
 ### Develop European Export Markets
 
-`ISR70_european_trade` | x=79, y=3 | 35 days
+`ISR70_european_trade` | x=116, y=2 | 35 days
 
 Prerequisites: (ISR70_france_channel).
 
@@ -6758,7 +7120,7 @@ change_small_medium_business_owners_opinion = yes
 
 ### A Cautious Opening to Moscow
 
-`ISR70_soviet_channel` | x=83, y=2 | 35 days
+`ISR70_soviet_channel` | x=121, y=1 | 35 days
 
 Prerequisites: (ISR70_foreign_policy).
 
@@ -6778,7 +7140,7 @@ unlock_decision_tooltip = ISR70_decision_talks_sov
 
 ### Emigration and Diplomatic Contacts
 
-`ISR70_soviet_dialogue` | x=83, y=3 | 35 days
+`ISR70_soviet_dialogue` | x=121, y=2 | 35 days
 
 Prerequisites: (ISR70_soviet_channel).
 
@@ -6796,7 +7158,7 @@ add_political_power = 50
 
 ### An Independent Diplomacy
 
-`ISR70_independent_diplomacy` | x=88, y=2 | 35 days
+`ISR70_independent_diplomacy` | x=126, y=1 | 35 days
 
 Prerequisites: (ISR70_foreign_policy).
 
@@ -6815,7 +7177,7 @@ add_political_power = 75
 
 ### Maintain African Contacts
 
-`ISR70_africa_contacts` | x=87, y=3 | 35 days
+`ISR70_africa_contacts` | x=125, y=2 | 35 days
 
 Prerequisites: (ISR70_independent_diplomacy).
 
@@ -6836,7 +7198,7 @@ add_tech_bonus = { name = ISR70_research_programme category = CAT_agriculture us
 
 ### Confidential Talks with Amman
 
-`ISR70_jordan_backchannel` | x=93, y=2 | 35 days
+`ISR70_jordan_backchannel` | x=131, y=1 | 35 days
 
 Prerequisites: (ISR70_foreign_policy).
 
@@ -6856,7 +7218,7 @@ custom_effect_tooltip = ISR70_jordan_backchannel_outcome_tt
 
 ### Relations with the Shah's Iran
 
-`ISR70_iran_contacts` | x=97, y=2 | 35 days
+`ISR70_iran_contacts` | x=135, y=1 | 35 days
 
 Prerequisites: (ISR70_foreign_policy).
 
@@ -6874,28 +7236,32 @@ if = { limit = { PER = { exists = yes } } PER = { country_event = { id = ISR70.7
 custom_effect_tooltip = ISR70_iran_contacts_outcome_tt
 ```
 
-### Contractual Oil-Supply Security
+### Stocks for the Iranian Supply Route
 
-`ISR70_oil_security` | x=97, y=3 | 35 days
+`ISR70_oil_security` | x=135, y=2 | 35 days
 
 Prerequisites: (ISR70_iran_contacts).
 
 Artwork: `gfx/interface/goals/coldwar/Oil_Pipelines.tga`.
 
-Implement the accepted Iranian supply agreement, improving resilience against sanctions and fuel vulnerability.
+An accepted Iranian arrangement can support fuel stocks and more reliable supply planning. Storage and distribution reduce vulnerability to interruption, but dedicated facilities will require continuing administration.
 
 - 1 x 50% research bonus: Fuel Refining.
+- Treasury cost on completion: 0.4% of annual GDP.
 - National spirit:
-- Imperia Sanction Resistance: +10%
+- Imperia Sanction Resistance: +8%
+- Fuel Gain: +5%
+- Bureaucracy Cost: +1.5%
 
 ```hoi4
 add_ideas = ISR70_oil_security_idea
 add_tech_bonus = { name = ISR70_research_programme category = CAT_fuel_refining uses = 1 bonus = 0.5 }
+ISR70_pay_0_0040 = yes
 ```
 
 ### Ambiguity or International Transparency
 
-`ISR70_nuclear_policy` | x=90, y=3 | 35 days
+`ISR70_nuclear_policy` | x=128, y=2 | 35 days
 
 Prerequisites: (ISR70_independent_diplomacy).
 
@@ -6909,9 +7275,9 @@ Review the diplomatic implications of ambiguity and international transparency b
 add_political_power = 75
 ```
 
-### Preserve Nuclear Ambiguity
+### Amimut and Cabinet Discipline
 
-`ISR70_keep_ambiguity` | x=89, y=4 | 35 days
+`ISR70_keep_ambiguity` | x=127, y=3 | 35 days
 
 Prerequisites: (ISR70_nuclear_policy).
 
@@ -6924,7 +7290,8 @@ Discretion preserves freedom of action in a hostile region. The cabinet will rea
 - Political Power: +50
 - Removes the national spirit "Nuclear Ambiguity".
 - National spirit:
-- Foreign Influence Defense: +15%
+- Foreign Influence Defense: +12%
+- Research Speed: -1%
 
 ```hoi4
 add_ideas = ISR70_keep_ambiguity_idea
@@ -6932,9 +7299,9 @@ remove_ideas = ISR70_ambiguity
 add_political_power = 50
 ```
 
-### Offer International Transparency
+### A Civilian Research Accounting
 
-`ISR70_nuclear_transparency` | x=91, y=4 | 35 days
+`ISR70_nuclear_transparency` | x=129, y=3 | 35 days
 
 Prerequisites: (ISR70_nuclear_policy).
 
@@ -6947,7 +7314,8 @@ Civilian nuclear cooperation offers a different diplomatic course. Greater openn
 - 2 x 50% research bonus: Nuclear Reactors.
 - Removes the national spirit "Nuclear Ambiguity".
 - National spirit:
-- Research Speed: +2%
+- Research Speed: +2.5%
+- Foreign Influence Defense: -5%
 
 ```hoi4
 add_ideas = ISR70_nuclear_transparency_idea
@@ -6961,7 +7329,7 @@ A shared state branch whose institutional achievements survive changes of govern
 
 ### Assess the Suez Front
 
-`ISR70_suez` | x=110, y=9 | 35 days
+`ISR70_suez` | x=111, y=7 | 35 days
 
 Prerequisites: (ISR70_january_1970).
 
@@ -6979,7 +7347,7 @@ add_political_power = 75
 
 ### Limit the Conflict
 
-`ISR70_limited_attrition` | x=108, y=10 | 35 days
+`ISR70_limited_attrition` | x=106, y=8 | 35 days
 
 Prerequisites: (ISR70_suez).
 
@@ -7001,7 +7369,7 @@ army_experience = 20
 
 ### Increase Military Pressure
 
-`ISR70_deep_raids` | x=112, y=10 | 35 days
+`ISR70_deep_raids` | x=110, y=8 | 35 days
 
 Prerequisites: (ISR70_suez).
 
@@ -7025,18 +7393,18 @@ custom_effect_tooltip = ISR70_cold_war_tension_tt
 hidden_effect = { mdcw_cw_add_tension = yes }
 ```
 
-### Respond to the Rogers Initiative
+### Open Ceasefire Negotiations
 
-`ISR70_rogers` | x=110, y=11 | 35 days
+`ISR70_rogers` | x=114, y=8 | 35 days
 
-Prerequisites: (ISR70_limited_attrition OR ISR70_deep_raids).
+Prerequisites: (ISR70_suez).
 
 Artwork: `gfx/interface/goals/coldwar/BeginNegotiations.dds`.
 
-Choose a response to the Rogers Initiative. An Egyptian reply determines whether a ceasefire can be implemented.
+The cabinet can propose a ceasefire on terms it is willing to defend. A military posture and negotiations can proceed in parallel. Egypt decides whether to accept the proposal; broader territorial questions remain for separate talks.
 
 - Political Power: +50
-- Opens the Rogers Initiative event. An Egyptian acceptance unlocks the ceasefire route; a proposal alone does not end the War of Attrition.
+- Opens a cabinet proposal for ceasefire negotiations. Egyptian acceptance is required for the agreement.
 
 ```hoi4
 add_political_power = 50
@@ -7047,11 +7415,9 @@ custom_effect_tooltip = ISR70_rogers_outcome_tt
 
 ### A Controlled Ceasefire
 
-`ISR70_ceasefire` | x=108, y=12 | 35 days
+`ISR70_ceasefire` | x=114, y=9 | 35 days
 
 Prerequisites: (ISR70_rogers).
-
-Exclusive with: ISR70_armed_stalemate.
 
 Artwork: `gfx/interface/goals/israel_palestine/olive_branch.dds`.
 
@@ -7068,36 +7434,35 @@ add_political_power = 50
 ISR70_end_attrition = yes
 ```
 
-### Maintain the Armed Stalemate
+### Forward Defensive Readiness
 
-`ISR70_armed_stalemate` | x=112, y=12 | 35 days
+`ISR70_armed_stalemate` | x=108, y=9 | 35 days
 
-Prerequisites: (ISR70_rogers).
-
-Exclusive with: ISR70_ceasefire.
+Prerequisites: (ISR70_limited_attrition OR ISR70_deep_raids).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Focus_Israeli_Army.dds`.
 
-Maintain a fortified military posture instead of the negotiated ceasefire route. The War of Attrition burden remains.
+Prepared positions, supply reserves and trained headquarters can support the cabinet during a confrontation or while negotiations proceed. Maintaining the posture demands a continuing personnel commitment.
 
 - Army Experience: +30
 - National spirit:
 - Division Defense: +8%
+- Personnel Cost: +3%
 
 ```hoi4
 add_ideas = ISR70_armed_stalemate_idea
 army_experience = 30
 ```
 
-### The Question of the Controlled Territories
+### Set the Territorial Programme
 
-`ISR70_territorial_policy` | x=110, y=13 | 35 days
+`ISR70_territorial_policy` | x=125, y=7 | 35 days
 
-Prerequisites: (ISR70_ceasefire OR ISR70_armed_stalemate).
+Prerequisites: (ISR70_january_1970).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Israel.dds`.
 
-Prepare the cabinet's territorial policy. The next choice determines which negotiated or administrative route can proceed.
+The cabinet must decide how to administer the territories under its control and what it is prepared to negotiate. Civil administration, development and diplomacy can begin alongside the military policy at the Suez front.
 
 - Political Power: +100
 
@@ -7105,9 +7470,9 @@ Prepare the cabinet's territorial policy. The next choice determines which negot
 add_political_power = 100
 ```
 
-### Defensible Borders: An Allon-Oriented Plan
+### Defensible Frontiers and Negotiating Reserves
 
-`ISR70_all_on` | x=105, y=14 | 35 days
+`ISR70_all_on` | x=121, y=8 | 35 days
 
 Prerequisites: (ISR70_territorial_policy).
 
@@ -7115,7 +7480,7 @@ Exclusive with: ISR70_territorial_maximalism, ISR70_regional_compromise.
 
 Artwork: `gfx/interface/goals/coldwar/generic_road_construction.png`.
 
-Adopt an Allon-oriented security plan. Defensive planning improves while negotiations remain possible.
+Agricultural security zones and retained negotiating reserves offer one approach to territorial policy. Allon and other cabinet ministers have advanced competing proposals; the government must choose its own balance between a defensible frontier and room for agreement.
 
 - Army Experience: +20
 - National spirit:
@@ -7129,7 +7494,7 @@ set_country_flag = ISR70_allon_policy
 
 ### Permanent Territorial Control
 
-`ISR70_territorial_maximalism` | x=108, y=14 | 35 days
+`ISR70_territorial_maximalism` | x=125, y=8 | 35 days
 
 Prerequisites: (ISR70_territorial_policy).
 
@@ -7151,7 +7516,7 @@ set_country_flag = ISR70_territorial_policy
 
 ### Negotiate Territorial Compromises
 
-`ISR70_regional_compromise` | x=115, y=14 | 35 days
+`ISR70_regional_compromise` | x=131, y=8 | 35 days
 
 Prerequisites: (ISR70_territorial_policy).
 
@@ -7173,7 +7538,7 @@ set_country_flag = ISR70_peace_policy
 
 ### Sinai and Egyptian Security Interests
 
-`ISR70_sinai_negotiation` | x=104, y=15 | 35 days
+`ISR70_sinai_negotiation` | x=121, y=9 | 35 days
 
 Prerequisites: (ISR70_all_on OR ISR70_regional_compromise).
 
@@ -7193,7 +7558,7 @@ unlock_decision_tooltip = ISR70_decision_talks_egypt
 
 ### Autonomy in the West Bank
 
-`ISR70_westbank_autonomy` | x=107, y=15 | 35 days
+`ISR70_westbank_autonomy` | x=124, y=9 | 35 days
 
 Prerequisites: (ISR70_all_on OR ISR70_regional_compromise).
 
@@ -7213,7 +7578,7 @@ unlock_decision_tooltip = ISR70_decision_talks_pal
 
 ### A Security Settlement for the Golan
 
-`ISR70_golan_review` | x=113, y=16 | 35 days
+`ISR70_golan_review` | x=134, y=8 | 35 days
 
 Prerequisites: (ISR70_territorial_policy).
 
@@ -7233,7 +7598,7 @@ custom_effect_tooltip = ISR70_golan_review_outcome_tt
 
 ### A Civil Administration for Gaza
 
-`ISR70_gaza_services` | x=116, y=16 | 35 days
+`ISR70_gaza_services` | x=137, y=8 | 35 days
 
 Prerequisites: (ISR70_territorial_policy).
 
@@ -7256,7 +7621,7 @@ custom_effect_tooltip = ISR70_gaza_services_outcome_tt
 
 ### A Negotiated Peace with Egypt
 
-`ISR70_egypt_peace` | x=104, y=16 | 70 days
+`ISR70_egypt_peace` | x=121, y=10 | 70 days
 
 Prerequisites: (ISR70_sinai_negotiation).
 
@@ -7280,7 +7645,7 @@ ISR70_implement_egypt_peace = yes
 
 ### A Regional Peace Framework
 
-`ISR70_regional_normalization` | x=105, y=17 | 70 days
+`ISR70_regional_normalization` | x=123, y=11 | 70 days
 
 Prerequisites: (ISR70_egypt_peace) AND (ISR70_westbank_autonomy).
 
@@ -7301,7 +7666,7 @@ change_small_medium_business_owners_opinion = yes
 
 ### The Costs of Permanent Administration
 
-`ISR70_territory_administration` | x=110, y=15 | 35 days
+`ISR70_territory_administration` | x=127, y=9 | 35 days
 
 Prerequisites: (ISR70_territorial_maximalism).
 
@@ -7321,7 +7686,7 @@ ISR70_pay_0_0080 = yes
 
 ### Submit Annexation to Parliament
 
-`ISR70_annexation_review` | x=110, y=16 | 35 days
+`ISR70_annexation_review` | x=127, y=10 | 35 days
 
 Prerequisites: (ISR70_territory_administration).
 
@@ -7345,7 +7710,7 @@ Citizenship and Municipal Development. Each policy retains its own conditions an
 
 ### Arab Citizens and the State
 
-`ISR70_arab_citizens` | x=4, y=26 | 21 days
+`ISR70_arab_citizens` | x=12, y=26 | 21 days
 
 Prerequisites: (ISR70_social_contract).
 
@@ -7361,7 +7726,7 @@ ISR70_policy_complete_citizen_review = yes
 
 ### Equal Municipal Services
 
-`ISR70_equal_local_services` | x=-4, y=28 | 35 days
+`ISR70_equal_local_services` | x=4, y=28 | 35 days
 
 Prerequisites: (ISR70_arab_citizens).
 
@@ -7372,7 +7737,7 @@ Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 Fund municipal services and transport links in state 205. The stability and continuing service costs begin when the project is completed.
 
 - Fund municipal services and transport links in state 205. The stability and continuing service costs begin when the project is completed.
-- Reserve 0.6% of annual GDP at selection. Delivery after 180 days: +1 infrastructure levels in Haifa. Continuing effects: Stability: +2%; Social Spending Cost: +3%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.6% of annual GDP. Completion: 180 days. +1 infrastructure levels in Haifa; +1 shared building slots. Continuing effects: Stability: +2%; Social Spending Cost: +3%.
 
 ```hoi4
 ISR70_policy_complete_equal_services = yes
@@ -7380,7 +7745,7 @@ ISR70_policy_complete_equal_services = yes
 
 ### Open Public Employment
 
-`ISR70_equal_employment` | x=-4, y=29 | 35 days
+`ISR70_equal_employment` | x=4, y=29 | 35 days
 
 Prerequisites: (ISR70_equal_local_services).
 
@@ -7396,7 +7761,7 @@ ISR70_policy_complete_equal_employment = yes
 
 ### Equal Access to Land and Credit
 
-`ISR70_equal_access` | x=-4, y=30 | 49 days
+`ISR70_equal_access` | x=4, y=30 | 49 days
 
 Prerequisites: (ISR70_equal_employment).
 
@@ -7405,7 +7770,7 @@ Artwork: `gfx/interface/goals/coldwar/generic_female_rights.png`.
 Spend 50 political power and reserve 1.2% of GDP for a one-factory credit and enterprise programme in Haifa (state 205). Reform effects begin after delivery.
 
 - Spend 50 political power and reserve 1.2% of GDP for a one-factory credit and enterprise programme in Haifa (state 205). Reform effects begin after delivery.
-- Reserve 1.2% of annual GDP at selection. Delivery after 270 days: +1 civilian factories in Haifa. Continuing effects: Factory Output: +3%; Incoming Investment Cost: -5%; Bureaucracy Cost: +2%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.2% of annual GDP. Completion: 270 days. +1 civilian factories in Haifa; +1 shared building slots. Continuing effects: Factory Output: +3%; Incoming Investment Cost: -5%; Bureaucracy Cost: +2%.
 
 ```hoi4
 ISR70_policy_complete_equal_access = yes
@@ -7413,7 +7778,7 @@ ISR70_policy_complete_equal_access = yes
 
 ### Municipal Self-Government
 
-`ISR70_local_autonomy` | x=4, y=28 | 35 days
+`ISR70_local_autonomy` | x=12, y=28 | 35 days
 
 Prerequisites: (ISR70_arab_citizens).
 
@@ -7429,7 +7794,7 @@ ISR70_policy_complete_municipal_self = yes
 
 ### Municipal Infrastructure Grants
 
-`ISR70_municipal_pacts` | x=4, y=29 | 35 days
+`ISR70_municipal_pacts` | x=12, y=29 | 35 days
 
 Prerequisites: (ISR70_local_autonomy).
 
@@ -7438,7 +7803,7 @@ Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 Opens one joint 1.0% GDP grant programme for states 205 and 206. Both projects must remain deliverable; the shared social cost applies after completion.
 
 - Opens one joint 1.0% GDP grant programme for states 205 and 206. Both projects must remain deliverable; the shared social cost applies after completion.
-- Reserve 1% of annual GDP at selection. Delivery after 180 days: +1 infrastructure levels in Haifa; +1 infrastructure levels in the Negev. Continuing effects: Social Spending Cost: +2%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1% of annual GDP. Completion: 180 days. +1 infrastructure levels in Haifa; +1 infrastructure levels in the Negev; +2 shared building slots. Continuing effects: Social Spending Cost: +2%.
 
 ```hoi4
 ISR70_policy_complete_municipal_pacts = yes
@@ -7446,7 +7811,7 @@ ISR70_policy_complete_municipal_pacts = yes
 
 ### Municipal Development Funds
 
-`ISR70_municipal_representation` | x=4, y=30 | 49 days
+`ISR70_municipal_representation` | x=12, y=30 | 49 days
 
 Prerequisites: (ISR70_municipal_pacts).
 
@@ -7462,7 +7827,7 @@ ISR70_policy_complete_municipal_representation = yes
 
 ### Preferential Land and Budget Allocation
 
-`ISR70_preferential_allocations` | x=12, y=28 | 35 days
+`ISR70_preferential_allocations` | x=20, y=28 | 35 days
 
 Prerequisites: (ISR70_arab_citizens).
 
@@ -7473,7 +7838,7 @@ Artwork: `gfx/interface/goals/coldwar/construction_engineering.png`.
 Reserve 0.5% of GDP to open two building slots and deliver one infrastructure level in state 206. Stability falls by 2 percentage points on completion.
 
 - Reserve 0.5% of GDP to open two building slots and deliver one infrastructure level in state 206. Stability falls by 2 percentage points on completion.
-- Reserve 0.5% of annual GDP at selection. Delivery after 180 days: +2 building slots in the Negev; +1 infrastructure levels in the Negev. Continuing effects: Stability: -2%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.5% of annual GDP. Completion: 180 days. +2 building slots in the Negev; +1 infrastructure levels in the Negev; +3 shared building slots. Continuing effects: Stability: -2%.
 
 ```hoi4
 ISR70_policy_complete_preferential_allocations = yes
@@ -7481,7 +7846,7 @@ ISR70_policy_complete_preferential_allocations = yes
 
 ### Preferential Development Contracts
 
-`ISR70_restricted_employment` | x=12, y=29 | 35 days
+`ISR70_restricted_employment` | x=20, y=29 | 35 days
 
 Prerequisites: (ISR70_preferential_allocations).
 
@@ -7490,7 +7855,7 @@ Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 Reserve 1.2% of GDP for a factory in state 206. Preferential procurement raises corruption costs by 3%; industrial conglomerates gain 10 opinion if active after delivery.
 
 - Reserve 1.2% of GDP for a factory in state 206. Preferential procurement raises corruption costs by 3%; industrial conglomerates gain 10 opinion if active after delivery.
-- Reserve 1.2% of annual GDP at selection. Delivery after 270 days: +1 civilian factories in the Negev. Continuing effects: Corruption Cost: +3%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.2% of annual GDP. Completion: 270 days. +1 civilian factories in the Negev; +1 shared building slots. Continuing effects: Corruption Cost: +3%.
 
 ```hoi4
 ISR70_policy_complete_restricted_employment = yes
@@ -7498,7 +7863,7 @@ ISR70_policy_complete_restricted_employment = yes
 
 ### Separate Municipal Funding Rules
 
-`ISR70_separate_development` | x=12, y=30 | 49 days
+`ISR70_separate_development` | x=20, y=30 | 49 days
 
 Prerequisites: (ISR70_restricted_employment).
 
@@ -7516,41 +7881,41 @@ ISR70_policy_complete_separate_development = yes
 
 Settlement Projects and Palestinian Relations. Each policy retains its own conditions and consequences.
 
-### Survey Land and Existing Communities
+### The Interministerial Settlement Committee
 
-`ISR70_land_survey` | x=44, y=26 | 35 days
+`ISR70_land_survey` | x=67, y=26 | 35 days
 
-Prerequisites: (ISR70_territory_administration).
+Prerequisites: (ISR70_territorial_policy).
 
 Artwork: `gfx/interface/goals/coldwar/ISR_Israel.dds`.
 
-Survey one controlled Palestinian-owned project area. The survey costs 0.1% of GDP; it neither changes ownership nor predetermines Palestinian consent.
+The cabinet must reconcile agricultural development, military plans and the claims of Palestinian landowners. A survey of the West Bank or Gaza will define the area in which the government commits its settlement budget.
 
-- Survey one controlled Palestinian-owned project area. The survey costs 0.1% of GDP; it neither changes ownership nor predetermines Palestinian consent.
+- Treasury cost: 0.1% of annual GDP. Select the West Bank or Gaza as the project area.
 
 ```hoi4
 ISR70_policy_complete_land_survey = yes
 ```
 
-### A Budget for Territorial Policy
+### Land, Security and the Development Budget
 
-`ISR70_settlement_budget` | x=44, y=27 | 21 days
+`ISR70_settlement_budget` | x=67, y=27 | 21 days
 
 Prerequisites: (ISR70_land_survey).
 
 Artwork: `gfx/interface/goals/coldwar/generic_banking_legislation.png`.
 
-Choose the settlement project budget for the already selected area. Freeze, limited development and expansion are mutually exclusive; each has its own actual funding and Palestinian consequences.
+The settlement departments compete with development towns and immigrant housing for engineers, credit and public services. Choose a negotiated freeze, a limited group of agricultural sites or a larger civilian settlement network.
 
-- Choose the settlement project budget for the already selected area. Freeze, limited development and expansion are mutually exclusive; each has its own actual funding and Palestinian consequences.
+- Choose one programme: negotiated freeze, limited agricultural sites or civilian settlement expansion.
 
 ```hoi4
 ISR70_policy_complete_settlement_budget = yes
 ```
 
-### Suspend New Settlements
+### Offer a Settlement Freeze
 
-`ISR70_freeze_new` | x=36, y=29 | 35 days
+`ISR70_freeze_new` | x=59, y=29 | 35 days
 
 Prerequisites: (ISR70_settlement_budget).
 
@@ -7558,51 +7923,50 @@ Exclusive with: ISR70_designated_sites, ISR70_authorize_expansion.
 
 Artwork: `gfx/interface/goals/israel_palestine/olive_branch.dds`.
 
-Pay 75 political power and offer a settlement freeze. Only an accepted offer reduces the local resistance target by 5 points. Rejection changes neither control nor rights.
+A halt to new settlement construction would leave more room for civilian administration and negotiations with Palestinian representatives. The cabinet must secure acceptance before it can rely on a local administrative arrangement.
 
-- Pay 75 political power and offer a settlement freeze. Only an accepted offer reduces the local resistance target by 5 points. Rejection changes neither control nor rights.
+- Political Power: -75. Palestinian acceptance: local resistance target -5 points in the selected project area; Palestinian opinion of Israel +15.
 
 ```hoi4
 ISR70_policy_complete_freeze_new = yes
 ```
 
-### Joint Municipal Works
+### Municipal Works Across the Green Line
 
-`ISR70_municipal_works` | x=36, y=30 | 49 days
+`ISR70_municipal_works` | x=59, y=30 | 49 days
 
 Prerequisites: (ISR70_freeze_new).
 
 Artwork: `gfx/interface/goals/israel_palestine/gaza_civic_organizations.dds`.
 
-One selected Palestinian-owned target: the West Bank or Gaza. Reserve 1.5% of GDP for the chosen project; delivery takes 270 days. It is not a grant of ownership or a core.
+Roads, workshops and civilian services can support the existing population without opening another settlement frontier. This programme ties Israeli investment to the negotiated freeze and requires continuing public expenditure.
 
-- One selected Palestinian-owned target: the West Bank or Gaza. Reserve 1.5% of GDP for the chosen project; delivery takes 270 days. It is not a grant of ownership or a core.
-- Reserve 1.5% of annual GDP at selection. Delivery after 270 days: +1 civilian factories in the West Bank; +1 infrastructure levels in the West Bank. Continuing effects: Social Spending Cost: +2%. Local policy effects: Local Supplies for Controller: +10%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
-- Reserve 1.5% of annual GDP at selection. Delivery after 270 days: +1 civilian factories in Gaza; +1 infrastructure levels in Gaza. Continuing effects: Social Spending Cost: +2%. Local policy effects: Local Supplies for Controller: +10%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 civilian factories in the West Bank; +1 infrastructure levels in the West Bank; +2 shared building slots. Continuing effects: Social Spending Cost: +2%. Local effects: Local Supplies for Controller: +10%.
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 civilian factories in Gaza; +1 infrastructure levels in Gaza; +2 shared building slots. Continuing effects: Social Spending Cost: +2%. Local effects: Local Supplies for Controller: +10%.
 
 ```hoi4
 ISR70_policy_complete_municipal_works = yes
 ```
 
-### A Local Administration Compact
+### Negotiate a Civil Administration Compact
 
-`ISR70_land_compact` | x=36, y=31 | 70 days
+`ISR70_land_compact` | x=59, y=31 | 70 days
 
 Prerequisites: (ISR70_municipal_works).
 
 Artwork: `gfx/interface/goals/israel_palestine/olive_branch.dds`.
 
-Open a separate administrative agreement. The transfer and reductions in garrison and administrative costs require actual Palestinian acceptance and implementation.
+Palestinian representatives must decide whether to cooperate with a funded municipal administration. A practical agreement can reduce the burden on Israeli ministries and garrisons, while leaving the political dispute unresolved.
 
-- Open a separate administrative agreement. The transfer and reductions in garrison and administrative costs require actual Palestinian acceptance and implementation.
+- Palestinian acceptance unlocks the funded compact: Treasury -0.3% of annual GDP, transferred to Palestine; bureaucracy cost -5%, local garrison requirement -20%, resistance target -5 points.
 
 ```hoi4
 ISR70_policy_complete_land_compact = yes
 ```
 
-### Designate Agricultural-Security Sites
+### Nahal Agricultural Sites
 
-`ISR70_designated_sites` | x=44, y=29 | 35 days
+`ISR70_designated_sites` | x=67, y=29 | 35 days
 
 Prerequisites: (ISR70_settlement_budget).
 
@@ -7610,55 +7974,52 @@ Exclusive with: ISR70_freeze_new, ISR70_authorize_expansion.
 
 Artwork: `gfx/interface/goals/coldwar/generic_road_construction.png`.
 
-One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.8% of GDP for the chosen project; delivery takes 240 days. It is not a grant of ownership or a core.
+Nahal combines agricultural training with military service. A limited group of sites can improve irrigation practice and frontier supply, but even a geographically restrained programme requires land administration and strains relations with Palestinian institutions.
 
-- One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.8% of GDP for the chosen project; delivery takes 240 days. It is not a grant of ownership or a core.
-- Reserve 0.8% of annual GDP at selection. Delivery after 240 days: +1 building slots in the West Bank; +1 agricultural districts in the West Bank. Continuing effects: Bureaucracy Cost: +2%. Local policy effects: Relations toward Israel: -10 points. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
-- Reserve 0.8% of annual GDP at selection. Delivery after 240 days: +1 building slots in Gaza; +1 agricultural districts in Gaza. Continuing effects: Bureaucracy Cost: +2%. Local policy effects: Relations toward Israel: -10 points. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.8% of annual GDP. Completion: 240 days. +1 building slots in the West Bank; +1 agricultural districts in the West Bank; +2 shared building slots. Continuing effects: Agricultural Productivity: +6%; Bureaucracy Cost: +2%. Local effects: Relations toward Israel: -10 points. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -0.8% of annual GDP. Completion: 240 days. +1 building slots in Gaza; +1 agricultural districts in Gaza; +2 shared building slots. Continuing effects: Agricultural Productivity: +6%; Bureaucracy Cost: +2%. Local effects: Relations toward Israel: -10 points. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
 
 ```hoi4
 ISR70_policy_complete_designated_sites = yes
 ```
 
-### Roads, Water and Supply Links
+### Mekorot and Regional Service Roads
 
-`ISR70_settlement_services` | x=44, y=30 | 49 days
+`ISR70_settlement_services` | x=67, y=30 | 49 days
 
 Prerequisites: (ISR70_designated_sites).
 
 Artwork: `gfx/interface/goals/coldwar/generic_road_construction.png`.
 
-One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.6% of GDP for the chosen project; delivery takes 180 days. It is not a grant of ownership or a core.
+Water connections, repair crews and reliable road access turn isolated sites into workable communities. The logistical gain is real, while the extension of the settlement footprint increases local opposition.
 
-- One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.6% of GDP for the chosen project; delivery takes 180 days. It is not a grant of ownership or a core.
-- Reserve 0.6% of annual GDP at selection. Delivery after 180 days: +1 infrastructure levels in the West Bank. Local policy effects: Local Supplies for Controller: +15%; Local resistance target: +5 points. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
-- Reserve 0.6% of annual GDP at selection. Delivery after 180 days: +1 infrastructure levels in Gaza. Local policy effects: Local Supplies for Controller: +15%; Local resistance target: +5 points. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.6% of annual GDP. Completion: 180 days. +1 infrastructure levels in the West Bank; +1 shared building slots. Local effects: Local Supplies for Controller: +15%; Local resistance target: +5 points. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -0.6% of annual GDP. Completion: 180 days. +1 infrastructure levels in Gaza; +1 shared building slots. Local effects: Local Supplies for Controller: +15%; Local resistance target: +5 points. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
 
 ```hoi4
 ISR70_policy_complete_settlement_services = yes
 ```
 
-### Fortified Sites and a Binding Ceiling
+### Consolidate a Limited Settlement Perimeter
 
-`ISR70_settlement_ceiling` | x=44, y=31 | 49 days
+`ISR70_settlement_ceiling` | x=67, y=31 | 49 days
 
 Prerequisites: (ISR70_settlement_services).
 
 Artwork: `gfx/interface/goals/coldwar/generic_investigate_corruption.png`.
 
-One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.4% of GDP for the chosen project; delivery takes 180 days. It is not a grant of ownership or a core.
+Protect the existing sites and their workshops while ruling out another wave of expansion. A smaller perimeter is easier to maintain, although guarding civilian communities still adds to the security budget.
 
-- One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.4% of GDP for the chosen project; delivery takes 180 days. It is not a grant of ownership or a core.
-- Reserve 0.4% of annual GDP at selection. Delivery after 180 days: +1 land fort levels in the West Bank. Local policy effects: Local Garrison Requirement: +5%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
-- Reserve 0.4% of annual GDP at selection. Delivery after 180 days: +1 land fort levels in Gaza. Local policy effects: Local Garrison Requirement: +5%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.4% of annual GDP. Completion: 180 days. +1 land fort levels in the West Bank; +1 shared building slots. Continuing effects: Industry Repair Speed: +5%; Police Cost: +1%. Local effects: Local Garrison Requirement: +5%. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -0.4% of annual GDP. Completion: 180 days. +1 land fort levels in Gaza; +1 shared building slots. Continuing effects: Industry Repair Speed: +5%; Police Cost: +1%. Local effects: Local Garrison Requirement: +5%. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
 
 ```hoi4
 ISR70_policy_complete_settlement_ceiling = yes
 ```
 
-### Authorize Civilian Settlement Expansion
+### A Civilian Settlement Programme
 
-`ISR70_authorize_expansion` | x=52, y=29 | 35 days
+`ISR70_authorize_expansion` | x=75, y=29 | 35 days
 
 Prerequisites: (ISR70_settlement_budget).
 
@@ -7666,55 +8027,52 @@ Exclusive with: ISR70_freeze_new, ISR70_designated_sites.
 
 Artwork: `gfx/interface/goals/israel_palestine/Jewish_sites_isr.dds`.
 
-One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.3% of GDP for the chosen project; delivery takes 90 days. It is not a grant of ownership or a core.
+The cabinet can place the settlement departments behind a broader civilian programme. Preparing development land and access routes will accelerate construction, while increasing administrative commitments and the dispute over the territory.
 
-- One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.3% of GDP for the chosen project; delivery takes 90 days. It is not a grant of ownership or a core.
-- Reserve 0.3% of annual GDP at selection. Delivery after 90 days: +3 building slots in the West Bank. Continuing effects: Bureaucracy Cost: +2%. Local policy effects: Local Infrastructure Construction Speed: +15%; Relations toward Israel: -25 points. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
-- Reserve 0.3% of annual GDP at selection. Delivery after 90 days: +3 building slots in Gaza. Continuing effects: Bureaucracy Cost: +2%. Local policy effects: Local Infrastructure Construction Speed: +15%; Relations toward Israel: -25 points. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.3% of annual GDP. Completion: 90 days. +3 building slots in the West Bank; +3 shared building slots. Continuing effects: Bureaucracy Cost: +2%. Local effects: Local Infrastructure Construction Speed: +15%; Relations toward Israel: -25 points.
+- Treasury: -0.3% of annual GDP. Completion: 90 days. +3 building slots in Gaza; +3 shared building slots. Continuing effects: Bureaucracy Cost: +2%. Local effects: Local Infrastructure Construction Speed: +15%; Relations toward Israel: -25 points.
 
 ```hoi4
 ISR70_policy_complete_authorize_expansion = yes
 ```
 
-### Agricultural and Industrial Settlement Sites
+### Cooperative Farms and Settlement Workshops
 
-`ISR70_settlement_package` | x=52, y=30 | 70 days
+`ISR70_settlement_package` | x=75, y=30 | 70 days
 
 Prerequisites: (ISR70_authorize_expansion).
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
 
-One selected Palestinian-owned target: the West Bank or Gaza. Reserve 2.3% of GDP for the chosen project; delivery takes 300 days. It is not a grant of ownership or a core.
+Cooperative farms, packing facilities and workshops will connect the new communities to Israeli production networks. Agricultural and manufacturing gains come with subsidised housing, public services and a larger capital commitment.
 
-- One selected Palestinian-owned target: the West Bank or Gaza. Reserve 2.3% of GDP for the chosen project; delivery takes 300 days. It is not a grant of ownership or a core.
-- Reserve 2.3% of annual GDP at selection. Delivery after 300 days: +1 agricultural districts in the West Bank; +1 civilian factories in the West Bank. Continuing effects: Social Spending Cost: +3%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
-- Reserve 2.3% of annual GDP at selection. Delivery after 300 days: +1 agricultural districts in Gaza; +1 civilian factories in Gaza. Continuing effects: Social Spending Cost: +3%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -2.3% of annual GDP. Completion: 300 days. +1 agricultural districts in the West Bank; +1 civilian factories in the West Bank; +2 shared building slots. Continuing effects: Agricultural Productivity: +10%; Factory Output: +3%; Social Spending Cost: +4%. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -2.3% of annual GDP. Completion: 300 days. +1 agricultural districts in Gaza; +1 civilian factories in Gaza; +2 shared building slots. Continuing effects: Agricultural Productivity: +10%; Factory Output: +3%; Social Spending Cost: +4%. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
 
 ```hoi4
 ISR70_policy_complete_settlement_package = yes
 ```
 
-### Roads, Supply Depots and Fortified Positions
+### Regional Roads and Protected Supply Routes
 
-`ISR70_entrench_network` | x=52, y=31 | 70 days
+`ISR70_entrench_network` | x=75, y=31 | 70 days
 
 Prerequisites: (ISR70_settlement_package).
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.9% of GDP for the chosen project; delivery takes 240 days. It is not a grant of ownership or a core.
+A connected road network and prepared defensive positions make the settlement programme easier to supply and repair. The same network extends the area that the government must administer and protect.
 
-- One selected Palestinian-owned target: the West Bank or Gaza. Reserve 0.9% of GDP for the chosen project; delivery takes 240 days. It is not a grant of ownership or a core.
-- Reserve 0.9% of annual GDP at selection. Delivery after 240 days: +2 infrastructure levels in the West Bank; +2 land fort levels in the West Bank. Continuing effects: Bureaucracy Cost: +3%. Local policy effects: Local Supplies for Controller: +25%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
-- Reserve 0.9% of annual GDP at selection. Delivery after 240 days: +2 infrastructure levels in Gaza; +2 land fort levels in Gaza. Continuing effects: Bureaucracy Cost: +3%. Local policy effects: Local Supplies for Controller: +25%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.9% of annual GDP. Completion: 240 days. +2 infrastructure levels in the West Bank; +2 land fort levels in the West Bank; +4 shared building slots. Continuing effects: Industry Repair Speed: +10%; Bureaucracy Cost: +3%; Police Cost: +2%. Local effects: Local Supplies for Controller: +25%. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -0.9% of annual GDP. Completion: 240 days. +2 infrastructure levels in Gaza; +2 land fort levels in Gaza; +4 shared building slots. Continuing effects: Industry Repair Speed: +10%; Bureaucracy Cost: +3%; Police Cost: +2%. Local effects: Local Supplies for Controller: +25%. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
 
 ```hoi4
 ISR70_policy_complete_entrench_network = yes
 ```
 
-### Negotiate Limits and Compensation
+### Negotiate a Settlement Ceiling and Compensation
 
-`ISR70_settlement_compensation` | x=50, y=32 | 49 days
+`ISR70_settlement_compensation` | x=73, y=32 | 49 days
 
 Prerequisites: (ISR70_entrench_network).
 
@@ -7722,17 +8080,18 @@ Exclusive with: ISR70_settlement_unilateral.
 
 Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 
-Pay 75 political power to negotiate a binding expansion ceiling. PAL can reject. An accepted arrangement requires a separate 0.6% GDP transfer; then resistance target rises 3 points and garrison need rises 5%, rather than the unilateral penalties.
+Offer an Israeli-funded property compensation programme and a binding ceiling on further settlement construction. Palestinian representatives decide whether the local terms are acceptable. The Israeli treasury funds the domestic compensation programme after acceptance. Funded compensation also eases the pressure on Palestinian administration and commerce.
 
-- Pay 75 political power to negotiate a binding expansion ceiling. PAL can reject. An accepted arrangement requires a separate 0.6% GDP transfer; then resistance target rises 3 points and garrison need rises 5%, rather than the unilateral penalties.
+- Political Power: -75. If accepted and funded: Treasury -0.6% of annual GDP; local garrison requirement +5%, resistance target +3 points. Further settlement extensions are barred.
+- Palestine, if present: the selected "West Bank: Territorial and Settlement Pressures" or "Gaza: Territorial and Settlement Pressures" programme retains Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%.
 
 ```hoi4
 ISR70_policy_complete_settlement_compensation = yes
 ```
 
-### Impose the Settlement Network Unilaterally
+### Maintain the Unilateral Settlement Programme
 
-`ISR70_settlement_unilateral` | x=54, y=32 | 35 days
+`ISR70_settlement_unilateral` | x=77, y=32 | 35 days
 
 Prerequisites: (ISR70_entrench_network).
 
@@ -7740,9 +8099,15 @@ Exclusive with: ISR70_settlement_compensation.
 
 Artwork: `gfx/interface/goals/israel_palestine/Jewish_sites_isr.dds`.
 
-Impose the network unilaterally. Pay 50 political power; local resistance target rises 10 points, garrison need 15% and garrison damage 10%. PAL receives an actual response event; war is not declared automatically.
+The government can keep building without an agreed territorial settlement. Further agricultural and workshop projects remain possible, at the price of a wider garrison commitment, persistent local opposition and continuing public subsidies.
 
-- Impose the network unilaterally. Pay 50 political power; local resistance target rises 10 points, garrison need 15% and garrison damage 10%. PAL receives an actual response event; war is not declared automatically.
+- Political Power: -50. Local garrison requirement +15%, damage to garrisons +10%, resistance target +10 points. Unlocks up to three additional paid settlement phases in the selected area.
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 agricultural districts in the West Bank; +1 infrastructure levels in the West Bank; +1 land fort levels in the West Bank; +3 shared building slots. Continuing effects: Agricultural Productivity: +4%; Factory Output: +1%; Social Spending Cost: +2%; Police Cost: +2%. Local effects: Local Supplies for Controller: +5%; Local Garrison Requirement: +5%; Local resistance target: +4 points. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -1.8% of annual GDP. Completion: 300 days. +1 agricultural districts in the West Bank; +1 infrastructure levels in the West Bank; +1 land fort levels in the West Bank; +3 shared building slots. Continuing effects: Agricultural Productivity: +4%; Factory Output: +1%; Social Spending Cost: +2%; Police Cost: +2%. Local effects: Local Supplies for Controller: +5%; Local Garrison Requirement: +5%; Local resistance target: +4 points. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -2.1% of annual GDP. Completion: 330 days. +1 agricultural districts in the West Bank; +1 infrastructure levels in the West Bank; +1 land fort levels in the West Bank; +3 shared building slots. Continuing effects: Agricultural Productivity: +4%; Factory Output: +1%; Social Spending Cost: +2%; Police Cost: +2%. Local effects: Local Supplies for Controller: +5%; Local Garrison Requirement: +5%; Local resistance target: +4 points. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 agricultural districts in Gaza; +1 infrastructure levels in Gaza; +1 land fort levels in Gaza; +3 shared building slots. Continuing effects: Agricultural Productivity: +4%; Factory Output: +1%; Social Spending Cost: +2%; Police Cost: +2%. Local effects: Local Supplies for Controller: +5%; Local Garrison Requirement: +5%; Local resistance target: +4 points. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -1.8% of annual GDP. Completion: 300 days. +1 agricultural districts in Gaza; +1 infrastructure levels in Gaza; +1 land fort levels in Gaza; +3 shared building slots. Continuing effects: Agricultural Productivity: +4%; Factory Output: +1%; Social Spending Cost: +2%; Police Cost: +2%. Local effects: Local Supplies for Controller: +5%; Local Garrison Requirement: +5%; Local resistance target: +4 points. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+- Treasury: -2.1% of annual GDP. Completion: 330 days. +1 agricultural districts in Gaza; +1 infrastructure levels in Gaza; +1 land fort levels in Gaza; +3 shared building slots. Continuing effects: Agricultural Productivity: +4%; Factory Output: +1%; Social Spending Cost: +2%; Police Cost: +2%. Local effects: Local Supplies for Controller: +5%; Local Garrison Requirement: +5%; Local resistance target: +4 points. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
 
 ```hoi4
 ISR70_policy_complete_settlement_unilateral = yes
@@ -7754,7 +8119,7 @@ Development Finance and Office Networks. Each policy retains its own conditions 
 
 ### Finance for National Development
 
-`ISR70_finance_links` | x=84, y=26 | 21 days
+`ISR70_finance_links` | x=39, y=26 | 21 days
 
 Prerequisites: (ISR70_diaspora_bonds).
 
@@ -7770,7 +8135,7 @@ ISR70_policy_complete_finance_links = yes
 
 ### Train Accountants and Office Staff
 
-`ISR70_clerical_training` | x=84, y=27 | 35 days
+`ISR70_clerical_training` | x=39, y=27 | 35 days
 
 Prerequisites: (ISR70_finance_links).
 
@@ -7786,7 +8151,7 @@ ISR70_policy_complete_clerical_training = yes
 
 ### Mechanized Clearing and Bookkeeping
 
-`ISR70_clearing_network` | x=84, y=28 | 49 days
+`ISR70_clearing_network` | x=39, y=28 | 49 days
 
 Prerequisites: (ISR70_clerical_training).
 
@@ -7802,7 +8167,7 @@ ISR70_policy_complete_clearing_network = yes
 
 ### Long-Term Development Bonds
 
-`ISR70_development_bonds` | x=76, y=30 | 35 days
+`ISR70_development_bonds` | x=31, y=30 | 35 days
 
 Prerequisites: (ISR70_clearing_network).
 
@@ -7820,7 +8185,7 @@ ISR70_policy_complete_development_bonds = yes
 
 ### Audit the Development Funds
 
-`ISR70_audited_funds` | x=76, y=31 | 35 days
+`ISR70_audited_funds` | x=31, y=31 | 35 days
 
 Prerequisites: (ISR70_development_bonds).
 
@@ -7836,7 +8201,7 @@ ISR70_policy_complete_audited_funds = yes
 
 ### Service Centers for New Towns
 
-`ISR70_development_offices` | x=76, y=32 | 70 days
+`ISR70_development_offices` | x=31, y=32 | 70 days
 
 Prerequisites: (ISR70_audited_funds).
 
@@ -7845,7 +8210,7 @@ Artwork: `gfx/interface/goals/coldwar/generic_financial_markets.png`.
 Reserve 1.2% of GDP for an office level in state 206. On delivery, office worker requirement falls a further 2%, making the route total 8%.
 
 - Reserve 1.2% of GDP for an office level in state 206. On delivery, office worker requirement falls a further 2%, making the route total 8%.
-- Reserve 1.2% of annual GDP at selection. Delivery after 240 days: +1 office levels in the Negev. Continuing effects: Office Worker Requirement: -2%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.2% of annual GDP. Completion: 240 days. +1 office levels in the Negev; +1 shared building slots. Continuing effects: Office Worker Requirement: -2%.
 
 ```hoi4
 ISR70_policy_complete_development_offices = yes
@@ -7853,7 +8218,7 @@ ISR70_policy_complete_development_offices = yes
 
 ### A Domestic Banking Consortium
 
-`ISR70_bank_consortium` | x=84, y=30 | 35 days
+`ISR70_bank_consortium` | x=39, y=30 | 35 days
 
 Prerequisites: (ISR70_clearing_network).
 
@@ -7871,7 +8236,7 @@ ISR70_policy_complete_bank_consortium = yes
 
 ### Shared Back Offices
 
-`ISR70_shared_services` | x=84, y=31 | 49 days
+`ISR70_shared_services` | x=39, y=31 | 49 days
 
 Prerequisites: (ISR70_bank_consortium).
 
@@ -7887,7 +8252,7 @@ ISR70_policy_complete_shared_services = yes
 
 ### Bank-Industry Investment Partnerships
 
-`ISR70_industrial_credit` | x=84, y=32 | 70 days
+`ISR70_industrial_credit` | x=39, y=32 | 70 days
 
 Prerequisites: (ISR70_shared_services).
 
@@ -7896,7 +8261,7 @@ Artwork: `gfx/interface/goals/coldwar/generic_improve_industry.png`.
 Reserve 1.2% of GDP for an office level in Tel Aviv (204). Office construction speed rises 5%; corruption costs rise a further 2% on delivery.
 
 - Reserve 1.2% of GDP for an office level in Tel Aviv (204). Office construction speed rises 5%; corruption costs rise a further 2% on delivery.
-- Reserve 1.2% of annual GDP at selection. Delivery after 240 days: +1 office levels in Tel Aviv. Continuing effects: Office Construction Speed: +5%; Corruption Cost: +2%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.2% of annual GDP. Completion: 240 days. +1 office levels in Tel Aviv; +1 shared building slots. Continuing effects: Office Construction Speed: +5%; Corruption Cost: +2%.
 
 ```hoi4
 ISR70_policy_complete_industrial_credit = yes
@@ -7904,7 +8269,7 @@ ISR70_policy_complete_industrial_credit = yes
 
 ### Negotiate Export Credit Lines
 
-`ISR70_export_credit` | x=92, y=30 | 35 days
+`ISR70_export_credit` | x=47, y=30 | 35 days
 
 Prerequisites: (ISR70_clearing_network).
 
@@ -7922,7 +8287,7 @@ ISR70_policy_complete_export_credit = yes
 
 ### Finance Imported Office Equipment
 
-`ISR70_equipment_finance` | x=92, y=31 | 49 days
+`ISR70_equipment_finance` | x=47, y=31 | 49 days
 
 Prerequisites: (ISR70_export_credit).
 
@@ -7938,7 +8303,7 @@ ISR70_policy_complete_equipment_finance = yes
 
 ### Build an Export Services Sector
 
-`ISR70_export_services` | x=92, y=32 | 70 days
+`ISR70_export_services` | x=47, y=32 | 70 days
 
 Prerequisites: (ISR70_equipment_finance).
 
@@ -7947,7 +8312,7 @@ Artwork: `gfx/interface/goals/coldwar/DiamondsAre4ever.dds`.
 Requires an accepted export-credit line. Reserve 1.2% of GDP for an office level in Haifa (205); office construction speed rises 10% and market exposure rises a further 5% on delivery.
 
 - Requires an accepted export-credit line. Reserve 1.2% of GDP for an office level in Haifa (205); office construction speed rises 10% and market exposure rises a further 5% on delivery.
-- Reserve 1.2% of annual GDP at selection. Delivery after 240 days: +1 office levels in Haifa. Continuing effects: Office Construction Speed: +10%; World-Market Exposure: +5%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.2% of annual GDP. Completion: 240 days. +1 office levels in Haifa; +1 shared building slots. Continuing effects: Office Construction Speed: +10%; World-Market Exposure: +5%.
 
 ```hoi4
 ISR70_policy_complete_export_services = yes
@@ -7959,7 +8324,7 @@ Greater Israel: Sinai Development and Integration. Each policy retains its own c
 
 ### A Greater Israel Mandate
 
-`ISR70_gi_mandate` | x=4, y=42 | 35 days
+`ISR70_gi_mandate` | x=92, y=26 | 35 days
 
 Prerequisites: (ISR70_territorial_maximalism).
 
@@ -7975,7 +8340,7 @@ ISR70_policy_complete_gi_mandate = yes
 
 ### Borders and Budgets for Sinai
 
-`ISR70_gi_frontier_review` | x=4, y=43 | 35 days
+`ISR70_gi_frontier_review` | x=92, y=27 | 35 days
 
 Prerequisites: (ISR70_gi_mandate).
 
@@ -7989,15 +8354,15 @@ Budget 0.2% of GDP to separate Sinai civilian development, coastal projects, and
 ISR70_policy_complete_gi_frontier_review = yes
 ```
 
-### A Permanent Sinai Administration
+### A Sinai Development Authority
 
-`ISR70_gi_sinai_admin` | x=0, y=45 | 35 days
+`ISR70_gi_sinai_admin` | x=88, y=29 | 35 days
 
 Prerequisites: (ISR70_gi_frontier_review).
 
 Artwork: `gfx/interface/goals/coldwar/civil_service.png`.
 
-Establish permanent Sinai administration at a cost of 0.3% of GDP. Local infrastructure builds 15% faster; bureaucracy costs rise 3%. Egyptian ownership remains until an actual territorial settlement.
+A permanent development authority can coordinate the roads and services required by the Sinai programme. Distance and the unresolved Egyptian territorial claim make the administrative commitment expensive.
 
 - Establish permanent Sinai administration at a cost of 0.3% of GDP. Local infrastructure builds 15% faster; bureaucracy costs rise 3%. Egyptian ownership remains until an actual territorial settlement.
 
@@ -8005,18 +8370,17 @@ Establish permanent Sinai administration at a cost of 0.3% of GDP. Local infrast
 ISR70_policy_complete_gi_sinai_admin = yes
 ```
 
-### Serviced Settlement Sites in Northern Sinai
+### Housing on the Sinai Frontier
 
-`ISR70_gi_sinai_housing` | x=0, y=46 | 49 days
+`ISR70_gi_sinai_housing` | x=88, y=30 | 49 days
 
 Prerequisites: (ISR70_gi_sinai_admin).
 
 Artwork: `gfx/interface/goals/coldwar/Irrigation_Pipes.dds`.
 
-Fund the specified project through decisions. Reserve 1% of GDP; delivery takes 240 days. Lost requirements refund the original reserved budget.
+Settlement housing requires access roads and serviced land before families can move. The construction programme commits resources that could otherwise serve development towns within Israel.
 
-- Fund the specified project through decisions. Reserve 1% of GDP; delivery takes 240 days. Lost requirements refund the original reserved budget.
-- Reserve 1% of annual GDP at selection. Delivery after 240 days: +2 building slots in Sinai; +1 infrastructure levels in Sinai. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1% of annual GDP. Completion: 240 days. +2 building slots in Sinai; +1 infrastructure levels in Sinai; +3 shared building slots.
 
 ```hoi4
 ISR70_policy_complete_gi_sinai_housing = yes
@@ -8024,7 +8388,7 @@ ISR70_policy_complete_gi_sinai_housing = yes
 
 ### Voluntary Settlement in the Sinai Towns
 
-`ISR70_gi_sinai_families` | x=0, y=47 | 70 days
+`ISR70_gi_sinai_families` | x=88, y=31 | 70 days
 
 Prerequisites: (ISR70_gi_sinai_housing).
 
@@ -8038,15 +8402,15 @@ Fund a voluntary internal movement of at most 20,000 people over 5 years. Every 
 ISR70_policy_complete_gi_sinai_families = yes
 ```
 
-### Family Services on the Frontier
+### Family Services for Frontier Communities
 
-`ISR70_gi_frontier_families` | x=0, y=48 | 49 days
+`ISR70_gi_frontier_families` | x=88, y=32 | 49 days
 
 Prerequisites: (ISR70_gi_sinai_families).
 
 Artwork: `gfx/interface/goals/coldwar/Generic_Healthcare.tga`.
 
-Fund 0.4% of GDP for a single five-year family-service idea: population-growth modifier +5%, healthcare costs +2%. It does not add 5% of the population each month and cannot stack with itself.
+Clinics and family services can make remote communities more viable. A five-year commitment supports household growth while increasing the healthcare budget.
 
 - Fund 0.4% of GDP for a single five-year family-service idea: population-growth modifier +5%, healthcare costs +2%. It does not add 5% of the population each month and cannot stack with itself.
 
@@ -8054,18 +8418,17 @@ Fund 0.4% of GDP for a single five-year family-service idea: population-growth m
 ISR70_policy_complete_gi_frontier_families = yes
 ```
 
-### Agriculture and Industry for the Sinai Towns
+### Sinai Farms and Civilian Workshops
 
-`ISR70_gi_sinai_economy` | x=0, y=49 | 70 days
+`ISR70_gi_sinai_economy` | x=88, y=33 | 70 days
 
 Prerequisites: (ISR70_gi_frontier_families).
 
 Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
 
-Fund the specified project through decisions. Reserve 1.8% of GDP; delivery takes 300 days. Lost requirements refund the original reserved budget.
+Agricultural sites and repair workshops offer a civilian economic base for the Sinai programme. Their viability depends on reliable supply links and continued Israeli control.
 
-- Fund the specified project through decisions. Reserve 1.8% of GDP; delivery takes 300 days. Lost requirements refund the original reserved budget.
-- Reserve 1.8% of annual GDP at selection. Delivery after 300 days: +1 agricultural districts in Sinai; +1 civilian factories in Sinai. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.8% of annual GDP. Completion: 300 days. +1 agricultural districts in Sinai; +1 civilian factories in Sinai; +2 shared building slots.
 
 ```hoi4
 ISR70_policy_complete_gi_sinai_economy = yes
@@ -8073,7 +8436,7 @@ ISR70_policy_complete_gi_sinai_economy = yes
 
 ### Settle Sovereignty over the Sinai
 
-`ISR70_gi_sinai_status` | x=0, y=50 | 70 days
+`ISR70_gi_sinai_status` | x=88, y=34 | 70 days
 
 Prerequisites: (ISR70_gi_sinai_economy).
 
@@ -8089,7 +8452,7 @@ ISR70_policy_complete_gi_sinai_status = yes
 
 ### Assert the Sinai Territorial Claim
 
-`ISR70_gi_canal_claim` | x=8, y=45 | 70 days
+`ISR70_gi_canal_claim` | x=96, y=29 | 70 days
 
 Prerequisites: (ISR70_gi_frontier_review).
 
@@ -8103,18 +8466,17 @@ Pay 150 political power for a Sinai territorial claim. Relations with Egypt fall
 ISR70_policy_complete_gi_canal_claim = yes
 ```
 
-### Develop Sinai Ports and Coastal Roads
+### Sinai Coastal Supply Stations
 
-`ISR70_gi_canal_repair` | x=8, y=46 | 70 days
+`ISR70_gi_canal_repair` | x=96, y=30 | 70 days
 
 Prerequisites: (ISR70_gi_canal_claim).
 
 Artwork: `gfx/interface/goals/coldwar/Drydock_Construction.tga`.
 
-Fund the specified project through decisions. Reserve 1.2% of GDP; delivery takes 240 days. Lost requirements refund the original reserved budget.
+Repair the coastal road and its supply stations so civilian and military traffic can reach remote communities. Protecting those links adds another duty for the regional garrison.
 
-- Fund the specified project through decisions. Reserve 1.2% of GDP; delivery takes 240 days. Lost requirements refund the original reserved budget.
-- Reserve 1.2% of annual GDP at selection. Delivery after 240 days: +1 infrastructure levels in Sinai; +1 naval base levels in Sinai. Local policy effects: Local Garrison Requirement: +10%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1.2% of annual GDP. Completion: 240 days. +1 infrastructure levels in Sinai; +1 naval base levels in Sinai; +2 shared building slots. Local effects: Local Garrison Requirement: +10%.
 
 ```hoi4
 ISR70_policy_complete_gi_canal_repair = yes
@@ -8122,7 +8484,7 @@ ISR70_policy_complete_gi_canal_repair = yes
 
 ### A Sinai Coastal Settlement Programme
 
-`ISR70_gi_canal_settlers` | x=8, y=47 | 70 days
+`ISR70_gi_canal_settlers` | x=96, y=31 | 70 days
 
 Prerequisites: (ISR70_gi_canal_repair).
 
@@ -8136,35 +8498,33 @@ Fund a voluntary internal movement of at most 15,000 people over 5 years. Every 
 ISR70_policy_complete_gi_canal_settlers = yes
 ```
 
-### Coastal Industry for Sinai
+### Sinai Coastal Workshops
 
-`ISR70_gi_canal_industry` | x=8, y=48 | 70 days
+`ISR70_gi_canal_industry` | x=96, y=32 | 70 days
 
 Prerequisites: (ISR70_gi_canal_settlers).
 
 Artwork: `gfx/interface/goals/coldwar/generic_improve_industry.png`.
 
-Fund the specified project through decisions. Reserve 2% of GDP; delivery takes 360 days. Lost requirements refund the original reserved budget.
+Civilian workshops and a small dockyard can maintain vehicles, vessels and coastal installations closer to where they operate. The programme requires a substantial capital budget and dependable control of the coast.
 
-- Fund the specified project through decisions. Reserve 2% of GDP; delivery takes 360 days. Lost requirements refund the original reserved budget.
-- Reserve 2% of annual GDP at selection. Delivery after 360 days: +2 building slots in Sinai; +1 civilian factories in Sinai; +1 naval dockyards in Sinai. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -2% of annual GDP. Completion: 360 days. +2 building slots in Sinai; +1 civilian factories in Sinai; +1 naval dockyards in Sinai; +4 shared building slots.
 
 ```hoi4
 ISR70_policy_complete_gi_canal_industry = yes
 ```
 
-### Organize Sinai Coastal Logistics
+### Sinai Coastal Logistics
 
-`ISR70_gi_canal_navigation` | x=8, y=49 | 70 days
+`ISR70_gi_canal_navigation` | x=96, y=33 | 70 days
 
 Prerequisites: (ISR70_gi_canal_industry).
 
 Artwork: `gfx/interface/goals/coldwar/DiamondsAre4ever.dds`.
 
-Fund the specified project through decisions. Reserve 0.8% of GDP; delivery takes 180 days. Lost requirements refund the original reserved budget.
+Coastal handling facilities and maintenance crews can improve local supply without depending on traffic through the Suez Canal. Running the service adds to the civil administration budget.
 
-- Fund the specified project through decisions. Reserve 0.8% of GDP; delivery takes 180 days. Lost requirements refund the original reserved budget.
-- Reserve 0.8% of annual GDP at selection. Delivery after 180 days: the specified clearance and operating works. Continuing effects: Bureaucracy Cost: +1%. Local policy effects: Local Supplies for Controller: +10%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.8% of annual GDP. Completion: 180 days. the specified clearance and operating works. Continuing effects: Bureaucracy Cost: +1%. Local effects: Local Supplies for Controller: +10%.
 
 ```hoi4
 ISR70_policy_complete_gi_canal_navigation = yes
@@ -8172,7 +8532,7 @@ ISR70_policy_complete_gi_canal_navigation = yes
 
 ### Unify Sinai District Administration
 
-`ISR70_gi_canal_province` | x=8, y=50 | 70 days
+`ISR70_gi_canal_province` | x=96, y=34 | 70 days
 
 Prerequisites: (ISR70_gi_canal_navigation).
 
@@ -8192,9 +8552,9 @@ Civil Rights and Occupation Status. Each policy retains its own conditions and c
 
 ### The Status of the Existing Residents
 
-`ISR70_gi_resident_status` | x=44, y=42 | 35 days
+`ISR70_gi_resident_status` | x=110, y=26 | 35 days
 
-Prerequisites: (ISR70_gi_frontier_review).
+Prerequisites: (ISR70_territorial_policy).
 
 Artwork: `gfx/interface/goals/israel_palestine/one_state_isr_pal.dds`.
 
@@ -8208,7 +8568,7 @@ ISR70_policy_complete_gi_resident_status = yes
 
 ### Equal Civil Status in Sinai
 
-`ISR70_gi_equal_status` | x=40, y=44 | 49 days
+`ISR70_gi_equal_status` | x=106, y=28 | 49 days
 
 Prerequisites: (ISR70_gi_resident_status).
 
@@ -8224,7 +8584,7 @@ ISR70_policy_complete_gi_equal_status = yes
 
 ### Local Councils and Common Services
 
-`ISR70_gi_canal_councils` | x=40, y=45 | 70 days
+`ISR70_gi_canal_councils` | x=106, y=29 | 70 days
 
 Prerequisites: (ISR70_gi_equal_status).
 
@@ -8240,7 +8600,7 @@ ISR70_policy_complete_gi_canal_councils = yes
 
 ### Resolve Property Claims and Displacement
 
-`ISR70_gi_property_settlement` | x=40, y=46 | 70 days
+`ISR70_gi_property_settlement` | x=106, y=30 | 70 days
 
 Prerequisites: (ISR70_gi_canal_councils).
 
@@ -8256,7 +8616,7 @@ ISR70_policy_complete_gi_property_settlement = yes
 
 ### Negotiate the Sinai Status
 
-`ISR70_gi_core_review` | x=40, y=47 | 70 days
+`ISR70_gi_core_review` | x=106, y=31 | 70 days
 
 Prerequisites: (ISR70_gi_property_settlement).
 
@@ -8272,7 +8632,7 @@ ISR70_policy_complete_gi_core_review = yes
 
 ### Integrate the Sinai
 
-`ISR70_gi_canal_core` | x=40, y=48 | 70 days
+`ISR70_gi_canal_core` | x=106, y=32 | 70 days
 
 Prerequisites: (ISR70_gi_core_review).
 
@@ -8288,7 +8648,7 @@ ISR70_policy_complete_gi_canal_core = yes
 
 ### Separate Legal Status for Occupied Residents
 
-`ISR70_occ_special_status` | x=48, y=44 | 35 days
+`ISR70_occ_special_status` | x=114, y=28 | 35 days
 
 Prerequisites: (ISR70_gi_resident_status).
 
@@ -8304,7 +8664,7 @@ ISR70_policy_complete_occ_special_status = yes
 
 ### Security Roads and Controlled Access
 
-`ISR70_occ_security_roads` | x=48, y=45 | 49 days
+`ISR70_occ_security_roads` | x=114, y=29 | 49 days
 
 Prerequisites: (ISR70_occ_special_status).
 
@@ -8313,7 +8673,7 @@ Artwork: `gfx/interface/goals/coldwar/ISR_Israel.dds`.
 Fund 0.8% of GDP for one infrastructure level after 180 days. Secured roads add 15% local supplies but also 5% garrison need under the unequal statute.
 
 - Fund 0.8% of GDP for one infrastructure level after 180 days. Secured roads add 15% local supplies but also 5% garrison need under the unequal statute.
-- Reserve 0.8% of annual GDP at selection. Delivery after 180 days: +1 infrastructure levels in Sinai. Local policy effects: Local Supplies for Controller: +15%; Local Garrison Requirement: +5%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -0.8% of annual GDP. Completion: 180 days. +1 infrastructure levels in Sinai; +1 shared building slots. Local effects: Local Supplies for Controller: +15%; Local Garrison Requirement: +5%.
 
 ```hoi4
 ISR70_policy_complete_occ_security_roads = yes
@@ -8321,7 +8681,7 @@ ISR70_policy_complete_occ_security_roads = yes
 
 ### Delegated Local Administration
 
-`ISR70_occ_delegated_administration` | x=48, y=46 | 49 days
+`ISR70_occ_delegated_administration` | x=114, y=30 | 49 days
 
 Prerequisites: (ISR70_occ_security_roads).
 
@@ -8337,7 +8697,7 @@ ISR70_policy_complete_occ_delegated_administration = yes
 
 ### Industrial Enclaves under Separate Law
 
-`ISR70_occ_occupation_industry` | x=48, y=47 | 70 days
+`ISR70_occ_occupation_industry` | x=114, y=31 | 70 days
 
 Prerequisites: (ISR70_occ_delegated_administration).
 
@@ -8346,7 +8706,7 @@ Artwork: `gfx/interface/goals/coldwar/construction_engineering.png`.
 Reserve 1.0% of GDP for one building slot and one factory on contractually acquired land. Delivery takes 270 days and adds 5% local garrison need. A local administrative refusal does not block this distinct project.
 
 - Reserve 1.0% of GDP for one building slot and one factory on contractually acquired land. Delivery takes 270 days and adds 5% local garrison need. A local administrative refusal does not block this distinct project.
-- Reserve 1% of annual GDP at selection. Delivery after 270 days: +1 building slots in Sinai; +1 civilian factories in Sinai. Local policy effects: Local Garrison Requirement: +5%. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1% of annual GDP. Completion: 270 days. +1 building slots in Sinai; +1 civilian factories in Sinai; +2 shared building slots. Local effects: Local Garrison Requirement: +5%.
 
 ```hoi4
 ISR70_policy_complete_occ_occupation_industry = yes
@@ -8354,7 +8714,7 @@ ISR70_policy_complete_occ_occupation_industry = yes
 
 ### A Permanent Occupation Statute
 
-`ISR70_occ_permanent_statute` | x=48, y=48 | 70 days
+`ISR70_occ_permanent_statute` | x=114, y=32 | 70 days
 
 Prerequisites: (ISR70_occ_occupation_industry).
 
@@ -8374,7 +8734,7 @@ Radical Territorial Programmes. Each policy retains its own conditions and conse
 
 ### A Radical Programme in Government
 
-`ISR70_rad_government` | x=84, y=42 | 35 days
+`ISR70_rad_government` | x=135, y=26 | 35 days
 
 Prerequisites: Entry focus.
 
@@ -8390,7 +8750,7 @@ ISR70_policy_complete_rad_government = yes
 
 ### An Indivisible Territorial Programme
 
-`ISR70_rad_herut_mandate` | x=76, y=44 | 35 days
+`ISR70_rad_herut_mandate` | x=127, y=28 | 35 days
 
 Prerequisites: (ISR70_rad_government).
 
@@ -8406,7 +8766,7 @@ ISR70_policy_complete_rad_herut_mandate = yes
 
 ### A National Territorial Development Authority
 
-`ISR70_rad_herut_authority` | x=76, y=45 | 49 days
+`ISR70_rad_herut_authority` | x=127, y=29 | 49 days
 
 Prerequisites: (ISR70_rad_herut_mandate).
 
@@ -8422,7 +8782,7 @@ ISR70_policy_complete_rad_herut_authority = yes
 
 ### Prepare to Hold the New Frontier
 
-`ISR70_rad_herut_preparation` | x=76, y=46 | 49 days
+`ISR70_rad_herut_preparation` | x=127, y=30 | 49 days
 
 Prerequisites: (ISR70_rad_herut_authority).
 
@@ -8438,7 +8798,7 @@ ISR70_policy_complete_rad_herut_preparation = yes
 
 ### Reject Territorial Withdrawal
 
-`ISR70_rad_herut_retention` | x=76, y=47 | 70 days
+`ISR70_rad_herut_retention` | x=127, y=31 | 70 days
 
 Prerequisites: (ISR70_rad_herut_preparation).
 
@@ -8454,7 +8814,7 @@ ISR70_policy_complete_rad_herut_retention = yes
 
 ### Religious Settlement Associations
 
-`ISR70_rad_mafdal_council` | x=84, y=44 | 35 days
+`ISR70_rad_mafdal_council` | x=135, y=28 | 35 days
 
 Prerequisites: (ISR70_rad_government).
 
@@ -8470,7 +8830,7 @@ ISR70_policy_complete_rad_mafdal_council = yes
 
 ### State Support for Settlement Communities
 
-`ISR70_rad_mafdal_settlers` | x=84, y=45 | 70 days
+`ISR70_rad_mafdal_settlers` | x=135, y=29 | 70 days
 
 Prerequisites: (ISR70_rad_mafdal_council).
 
@@ -8486,7 +8846,7 @@ ISR70_policy_complete_rad_mafdal_settlers = yes
 
 ### Compulsory Expropriation of Land
 
-`ISR70_rad_mafdal_land` | x=82, y=46 | 49 days
+`ISR70_rad_mafdal_land` | x=133, y=30 | 49 days
 
 Prerequisites: (ISR70_rad_mafdal_settlers).
 
@@ -8504,7 +8864,7 @@ ISR70_policy_complete_rad_mafdal_land = yes
 
 ### Negotiated Land Purchases
 
-`ISR70_rad_mafdal_purchase` | x=86, y=46 | 70 days
+`ISR70_rad_mafdal_purchase` | x=137, y=30 | 70 days
 
 Prerequisites: (ISR70_rad_mafdal_settlers).
 
@@ -8515,7 +8875,7 @@ Artwork: `gfx/interface/goals/coldwar/generic_civilian_oversight.png`.
 Seek a voluntary land purchase. Only accepted terms unlock the 1.0%-GDP, 270-day project for the same building slot. No expropriation or automatic resistance rise follows refusal.
 
 - Seek a voluntary land purchase. Only accepted terms unlock the 1.0%-GDP, 270-day project for the same building slot. No expropriation or automatic resistance rise follows refusal.
-- Reserve 1% of annual GDP at selection. Delivery after 270 days: +1 building slots in Sinai. Loss of required control or project conditions refunds the exact reserved sum. The project can be completed only once.
+- Treasury: -1% of annual GDP. Completion: 270 days. +1 building slots in Sinai; +1 shared building slots.
 
 ```hoi4
 ISR70_policy_complete_rad_mafdal_purchase = yes
@@ -8523,7 +8883,7 @@ ISR70_policy_complete_rad_mafdal_purchase = yes
 
 ### Declare the Settlement Land Inalienable
 
-`ISR70_rad_mafdal_lock` | x=82, y=47 | 70 days
+`ISR70_rad_mafdal_lock` | x=133, y=31 | 70 days
 
 Prerequisites: (ISR70_rad_mafdal_land OR ISR70_rad_mafdal_purchase).
 
@@ -8541,7 +8901,7 @@ ISR70_policy_complete_rad_mafdal_lock = yes
 
 ### Reviewable Leases and Land Registry
 
-`ISR70_rad_mafdal_review` | x=86, y=47 | 49 days
+`ISR70_rad_mafdal_review` | x=137, y=31 | 49 days
 
 Prerequisites: (ISR70_rad_mafdal_land OR ISR70_rad_mafdal_purchase).
 
@@ -8559,7 +8919,7 @@ ISR70_policy_complete_rad_mafdal_review = yes
 
 ### National Front: Radical Government Programme
 
-`ISR70_rad_kach_government` | x=92, y=44 | 35 days
+`ISR70_rad_kach_government` | x=143, y=28 | 35 days
 
 Prerequisites: (ISR70_rad_government).
 
@@ -8575,7 +8935,7 @@ ISR70_policy_complete_rad_kach_government = yes
 
 ### Deny Equal Civil Status
 
-`ISR70_rad_denial` | x=92, y=45 | 49 days
+`ISR70_rad_denial` | x=143, y=29 | 49 days
 
 Prerequisites: (ISR70_rad_kach_government).
 
@@ -8591,7 +8951,7 @@ ISR70_policy_complete_rad_denial = yes
 
 ### Retain Residents under Separate Administration
 
-`ISR70_rad_no_expulsion` | x=90, y=46 | 49 days
+`ISR70_rad_no_expulsion` | x=141, y=30 | 49 days
 
 Prerequisites: (ISR70_rad_denial).
 
@@ -8609,7 +8969,7 @@ ISR70_policy_complete_rad_no_expulsion = yes
 
 ### Forced Expulsion of Arab Residents
 
-`ISR70_rad_expulsion` | x=94, y=46 | 70 days
+`ISR70_rad_expulsion` | x=145, y=30 | 70 days
 
 Prerequisites: (ISR70_rad_denial).
 
@@ -8627,7 +8987,7 @@ ISR70_policy_complete_rad_expulsion = yes
 
 ### Security Powers with an Electoral Sunset
 
-`ISR70_rad_limited_emergency` | x=90, y=47 | 49 days
+`ISR70_rad_limited_emergency` | x=141, y=31 | 49 days
 
 Prerequisites: (ISR70_rad_no_expulsion OR ISR70_rad_expulsion).
 
@@ -8645,7 +9005,7 @@ ISR70_policy_complete_rad_limited_emergency = yes
 
 ### Expansion under Permanent Emergency
 
-`ISR70_rad_permanent_emergency` | x=94, y=47 | 70 days
+`ISR70_rad_permanent_emergency` | x=145, y=31 | 70 days
 
 Prerequisites: (ISR70_rad_no_expulsion OR ISR70_rad_expulsion).
 
@@ -8659,6 +9019,186 @@ Choose a permanent emergency explicitly. Suspend elections, gain 5 further point
 
 ```hoi4
 ISR70_policy_complete_rad_permanent_emergency = yes
+```
+
+## Settlement Presence and Territorial Development
+
+Unilateral settlement encroachment beyond Israeli control, or funded development under Israeli control.
+
+### Settlement Division Networks
+
+`ISR70_external_associations` | x=67, y=36 | 21 days
+
+Prerequisites: (ISR70_territorial_policy).
+
+Artwork: `gfx/interface/goals/coldwar/agricultural_banks.dds`.
+
+Settlement departments, cooperative associations and private patrons can finance civilian footholds beyond Israel's military perimeter. Unilateral expansion creates competing land claims and imposes costs on the affected administration.
+
+- Treasury: -0.2% of annual GDP.
+- Small and Medium Business Owners Opinion: +5.
+
+```hoi4
+ISR70_policy_complete_external_associations = yes
+```
+
+### Settlement Engineering Department
+
+`ISR70_controlled_settlement_engineering` | x=67, y=40 | 21 days
+
+Prerequisites: (ISR70_territorial_policy).
+
+Artwork: `gfx/interface/goals/coldwar/generic_road_construction.png`.
+
+Surveyors, water engineers and settlement departments can prepare funded agricultural sites and access roads in areas under Israeli control. Each project carries its own security and public-service commitment.
+
+- Treasury: -0.2% of annual GDP.
+- 1 x 25% construction research bonus.
+
+```hoi4
+ISR70_policy_complete_controlled_settlement_engineering = yes
+```
+
+### Establish a West Bank Settlement Foothold
+
+`ISR70_presence_west_bank` | x=61, y=38 | 35 days
+
+Prerequisites: (ISR70_external_associations).
+
+Artwork: `gfx/interface/goals/coldwar/agricultural_banks.dds`.
+
+Finance Israeli settlement holdings and protected commercial links in West Bank without the consent of the government controlling the area. These illegal settlements impose land, production and administrative burdens on that government. Israel assumes the financial and security commitment.
+
+- Israel: "West Bank: Israeli Settlement Holdings": Office Productivity +4%, Agricultural Productivity +3%, Social Costs +1%, Bureaucracy Cost +1%, Police Cost +2%, Personnel Cost +1%.
+- Affected government: "West Bank: Settlement Encroachment": Agricultural Productivity -3%, Bureaucracy Cost +2.5%, Police Cost +2%, Stability -1%.
+- West Bank: "Israeli Settlement Encroachment": Local Infrastructure Construction Speed -10%, Local Factory Access -5%, Local Supplies -5%.
+- Israel Treasury: -1% of annual GDP for initial establishment.
+- Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%.
+
+```hoi4
+ISR70_policy_complete_presence_west_bank = yes
+```
+
+### Develop Settlement Sites in West Bank
+
+`ISR70_develop_west_bank` | x=61, y=42 | 35 days
+
+Prerequisites: (ISR70_controlled_settlement_engineering).
+
+Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
+
+Fund an agricultural site, an access road and a protected local position in West Bank. The resulting assets remain in the state; their security perimeter adds to the burden of occupation.
+
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 agricultural districts in the West Bank; +1 infrastructure levels in the West Bank; +1 land fort levels in the West Bank; +3 shared building slots. Local effects: Local Supplies for Controller: +10%; Local Garrison Requirement: +10%. Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "West Bank: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+
+```hoi4
+ISR70_policy_complete_develop_west_bank = yes
+```
+
+### Establish a Gaza Settlement Foothold
+
+`ISR70_presence_gaza` | x=65, y=38 | 35 days
+
+Prerequisites: (ISR70_external_associations).
+
+Artwork: `gfx/interface/goals/coldwar/agricultural_banks.dds`.
+
+Finance Israeli settlement holdings and protected commercial links in Gaza without the consent of the government controlling the area. These illegal settlements impose land, production and administrative burdens on that government. Israel assumes the financial and security commitment.
+
+- Israel: "Gaza: Israeli Settlement Holdings": Office Productivity +4%, Agricultural Productivity +3%, Social Costs +1%, Bureaucracy Cost +1%, Police Cost +2%, Personnel Cost +1%.
+- Affected government: "Gaza: Settlement Encroachment": Agricultural Productivity -3%, Bureaucracy Cost +2.5%, Police Cost +2%, Stability -1%.
+- Gaza: "Israeli Settlement Encroachment": Local Infrastructure Construction Speed -10%, Local Factory Access -5%, Local Supplies -5%.
+- Israel Treasury: -1% of annual GDP for initial establishment.
+- Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%.
+
+```hoi4
+ISR70_policy_complete_presence_gaza = yes
+```
+
+### Develop Settlement Sites in Gaza
+
+`ISR70_develop_gaza` | x=65, y=42 | 35 days
+
+Prerequisites: (ISR70_controlled_settlement_engineering).
+
+Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
+
+Fund an agricultural site, an access road and a protected local position in Gaza. The resulting assets remain in the state; their security perimeter adds to the burden of occupation.
+
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 agricultural districts in Gaza; +1 infrastructure levels in Gaza; +1 land fort levels in Gaza; +3 shared building slots. Local effects: Local Supplies for Controller: +10%; Local Garrison Requirement: +10%. Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -2%, Political Power Gain -2.5%, Office Productivity -4%, Bureaucracy Cost +4%, Social Costs +3%. Extensive settlement network: Palestine, if present: "Gaza: Territorial and Settlement Pressures": Stability -4%, Political Power Gain -5%, Office Productivity -8%, Bureaucracy Cost +8%, Social Costs +6%.
+
+```hoi4
+ISR70_policy_complete_develop_gaza = yes
+```
+
+### Establish a Sinai Settlement Foothold
+
+`ISR70_presence_sinai` | x=69, y=38 | 35 days
+
+Prerequisites: (ISR70_external_associations).
+
+Artwork: `gfx/interface/goals/coldwar/agricultural_banks.dds`.
+
+Finance Israeli settlement holdings and protected commercial links in Sinai without the consent of the government controlling the area. These illegal settlements impose land, production and administrative burdens on that government. Israel assumes the financial and security commitment.
+
+- Israel: "Sinai: Israeli Settlement Holdings": Office Productivity +4%, Agricultural Productivity +3%, Social Costs +1%, Bureaucracy Cost +1%, Police Cost +2%, Personnel Cost +1%.
+- Affected government: "Sinai: Settlement Encroachment": Agricultural Productivity -3%, Bureaucracy Cost +2.5%, Police Cost +2%, Stability -1%.
+- Sinai: "Israeli Settlement Encroachment": Local Infrastructure Construction Speed -10%, Local Factory Access -5%, Local Supplies -5%.
+- Israel Treasury: -1% of annual GDP for initial establishment.
+
+```hoi4
+ISR70_policy_complete_presence_sinai = yes
+```
+
+### Develop Settlement Sites in Sinai
+
+`ISR70_develop_sinai` | x=69, y=42 | 35 days
+
+Prerequisites: (ISR70_controlled_settlement_engineering).
+
+Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
+
+Fund an agricultural site, an access road and a protected local position in Sinai. The resulting assets remain in the state; their security perimeter adds to the burden of occupation.
+
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 agricultural districts in Sinai; +1 infrastructure levels in Sinai; +1 land fort levels in Sinai; +3 shared building slots. Local effects: Local Supplies for Controller: +10%; Local Garrison Requirement: +10%.
+
+```hoi4
+ISR70_policy_complete_develop_sinai = yes
+```
+
+### Establish a Golan Settlement Foothold
+
+`ISR70_presence_golan` | x=73, y=38 | 35 days
+
+Prerequisites: (ISR70_external_associations).
+
+Artwork: `gfx/interface/goals/coldwar/agricultural_banks.dds`.
+
+Finance Israeli settlement holdings and protected commercial links in Golan without the consent of the government controlling the area. These illegal settlements impose land, production and administrative burdens on that government. Israel assumes the financial and security commitment.
+
+- Israel: "Golan: Israeli Settlement Holdings": Office Productivity +4%, Agricultural Productivity +3%, Social Costs +1%, Bureaucracy Cost +1%, Police Cost +2%, Personnel Cost +1%.
+- Affected government: "Golan: Settlement Encroachment": Agricultural Productivity -3%, Bureaucracy Cost +2.5%, Police Cost +2%, Stability -1%.
+- Golan: "Israeli Settlement Encroachment": Local Infrastructure Construction Speed -10%, Local Factory Access -5%, Local Supplies -5%.
+- Israel Treasury: -1% of annual GDP for initial establishment.
+
+```hoi4
+ISR70_policy_complete_presence_golan = yes
+```
+
+### Develop Settlement Sites in Golan
+
+`ISR70_develop_golan` | x=73, y=42 | 35 days
+
+Prerequisites: (ISR70_controlled_settlement_engineering).
+
+Artwork: `gfx/interface/goals/coldwar/Agricultural_Mechanization.dds`.
+
+Fund an agricultural site, an access road and a protected local position in Golan. The resulting assets remain in the state; their security perimeter adds to the burden of occupation.
+
+- Treasury: -1.5% of annual GDP. Completion: 270 days. +1 agricultural districts in 587; +1 infrastructure levels in 587; +1 land fort levels in 587; +3 shared building slots. Local effects: Local Supplies for Controller: +10%; Local Garrison Requirement: +10%.
+
+```hoi4
+ISR70_policy_complete_develop_golan = yes
 ```
 
 ## Validation

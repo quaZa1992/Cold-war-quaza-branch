@@ -1,13 +1,18 @@
-# IMPERIA CW — Cold War: Japan 1970 approved focus graph staging.
+# IMPERIA COLD WAR — Cold War: Japan 1970 approved focus graph staging.
 """Generate a non-loaded graph for structural review, not a playable tree."""
 import json
 from pathlib import Path
 import re
+import sys
 from layout import apply_layout, CONTINUOUS_POSITION
-from foreign_presentation import offer_tooltip
+from native_foreign_previews import build_preview_source
+from foreign_presentation import offer_context
+from reward_revision import effective_design, effective_inventory, effective_party_map, load_overlay, party_preview_overrides
 
 root = Path(__file__).resolve().parent
-design = apply_layout(json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design'])
+sys.path.insert(0, str(root.parents[1] / 'tools/reward_rework_20261027'))
+from focus_art import icon_for
+design = apply_layout(effective_design(json.loads((root / 'approved_design.json').read_text(encoding='utf-8'))['design']))
 out = root / 'staging' / 'graph'
 out.mkdir(parents=True, exist_ok=True)
 prefix = 'COLDWAR_JAP_1970_'
@@ -43,6 +48,9 @@ def focus_icon(node, section):
         'fuel_reserves': 'focus_JAP_resource_security',
         'national_8_disaster_response': 'focus_generic_field_hostpital',
     }
+    revised = icon_for('JAP', node['id'], '')
+    if revised:
+        return revised
     if node['id'] in overrides:
         return overrides[node['id']]
     name = (node['id'] + ' ' + node['name']).lower()
@@ -90,9 +98,53 @@ def focus_icon(node, section):
         (('shipyard', 'dockyard', 'naval industry'), 'naval_industry'),
     ]
     return next((icon for words, icon in rules if any(word in name for word in words)), icons[section['icon']])
-parties = {'LDP governs': (1, 'LDP'), 'Democratic Socialist Party governs': (2, 'DSP'),
-           'Japan Socialist Party governs': (3, 'JSP'), 'Japanese Communist Party governs': (4, 'JCP'),
-           'Kōmeitō governs': (14, 'Komeito')}
+party_slots = {'LDP governs': 1, 'Democratic Socialist Party governs': 2,
+               'Japan Socialist Party governs': 3, 'Japanese Communist Party governs': 4,
+               'Kōmeitō governs': 14}
+native_party_triggers = json.loads(
+    (root.parents[1] / 'tools' / 'ssr_1970' / 'approved_design.json').read_text(encoding='utf-8')
+)['party_triggers']
+parties = {gate: native_party_triggers[str(slot)] for gate, slot in party_slots.items()}
+DESCRIPTION_OVERRIDES = {
+    prefix + 'national_0_the_civilian_cabinet': (
+        "Prime Minister Eisaku Sato's cabinet directs the Self-Defence Forces through elected institutions "
+        "within Japan's postwar constitutional settlement."),
+    prefix + 'national_0_review_the_security_settlement': (
+        "Article 9, the US security treaty and the 1969 Sato-Nixon agreement on Okinawa shape debate over "
+        "Japan's postwar security policy."),
+    prefix + 'national_0_plan_the_self_defence_forces': (
+        "Set the Self-Defence Forces' scale and posture while the cabinet weighs domestic restraint against "
+        "alliance commitments."),
+    prefix + 'national_0_parliamentary_oversight': (
+        "Give the Diet oversight of defence plans and spending amid continuing debate over Article 9."),
+    prefix + 'national_0_a_restrained_defence_budget': (
+        "Keep a restrained defence budget while Japan prioritises living standards and postwar economic growth."),
+    prefix + 'national_0_expand_defence_appropriations': (
+        "Consider wider defence appropriations as Sato's government negotiates Okinawa's return and relies on "
+        "the US alliance."),
+    prefix + 'article9_debate': (
+        "The Diet debates whether Article 9 should continue to constrain Japan's security policy or be replaced "
+        "through constitutional amendment."),
+    prefix + 'article9_commission': (
+        "Examine the legal and civilian-control consequences of removing Article 9 from Japan's postwar constitution."),
+    prefix + 'national_5_the_costs_of_prosperity': (
+        "Rapid industrial growth has brought Minamata mercury poisoning, Yokkaichi air pollution and other "
+        "public-health crises. The Diet considers stronger controls."),
+    prefix + 'national_5_the_pollution_diet': (
+        "During the 1970 Pollution Diet, lawmakers consider stronger controls after years of industrial-health "
+        "cases such as Minamata and Yokkaichi."),
+    prefix + 'national_5_strict_emissions_standards': (
+        "Impose stricter emissions standards in response to severe urban pollution and pressure from affected residents."),
+    prefix + 'national_5_medical_certification': (
+        "Expand medical review for pollution-linked illness, including cases associated with Minamata and industrial "
+        "pollution."),
+    prefix + 'okinawa_return_terms': (
+        "Following the 1969 Sato-Nixon agreement, Tokyo and Washington negotiate Okinawa's return and the terms "
+        "for American facilities after reversion."),
+    prefix + 'okinawa_base_compact': (
+        "The 1969 reversion agreement leaves American bases in Okinawa after the transfer of administration. "
+        "Tokyo seeks consultation on their effects on local residents."),
+}
 article_rewards = {
     'debate': (-50, 0, 730, 15), 'commission': (-50, 0, 730, 10),
     'coalition': (0, 2, 730, 20), 'campaign': (30, 0, 730, 15),
@@ -101,6 +153,13 @@ article_rewards = {
     'diet': (-75, 0, 365, None), 'referendum': (-75, 2, None, None),
     'abolish': (0, 0, None, None), 'confirm': (0, 0, None, None),
 }
+for article_key, article_override in load_overlay().get('article9', {}).items():
+    if article_key not in article_rewards:
+        raise ValueError(f'Unknown Article 9 focus preview override: {article_key}')
+    old_pp, old_cost, old_days, old_support = article_rewards[article_key]
+    article_rewards[article_key] = (article_override.get('pp', old_pp),
+                                    article_override.get('treasury_cost', old_cost),
+                                    article_override.get('days', old_days), old_support)
 short_titles = {
     'national_0_review_the_security_settlement': 'Review Security Policy',
     'national_0_plan_the_self_defence_forces': 'Plan the Defence Forces',
@@ -149,10 +208,11 @@ def article_preview(ident):
     if name == 'abolish':
         preview.extend(['remove_ideas = COLDWAR_JAP_1970_article9_self_defence',
                         'add_ideas = COLDWAR_JAP_1970_revised_defence_constitution',
+                        'custom_effect_tooltip = COLDWAR_JAP_1970_article9_abolish_terms_tt',
                         'custom_effect_tooltip = COLDWAR_JAP_1970_article9_foreign_reactions_tt'])
     if name == 'confirm':
-        preview.extend(['add_political_power = 50',
-                        'add_timed_idea = { idea = COLDWAR_JAP_1970_article9_retained_mandate days = 730 }'])
+        preview.extend(['add_timed_idea = { idea = COLDWAR_JAP_1970_article9_retained_mandate days = 730 }',
+                        'custom_effect_tooltip = COLDWAR_JAP_1970_article9_confirm_terms_tt'])
     if support is not None:
         preview.append(f'custom_effect_tooltip = COLDWAR_JAP_1970_article9_support_{support}_tt')
     if name == 'debate':
@@ -161,11 +221,11 @@ def article_preview(ident):
         preview.append('custom_effect_tooltip = COLDWAR_JAP_1970_article9_referendum_tt')
     preview.append('}')
     return preview
-general = json.loads((root / 'effect_inventory.json').read_text(encoding='utf-8'))
+general = list(effective_inventory(json.loads((root / 'effect_inventory.json').read_text(encoding='utf-8'))).values())
 general_ids = {x['id'] for x in general}
 general_previews = {x['focus']: x['effect_tooltip'] for x in json.loads(
     (root / 'staging' / 'national_economy_focus_effect_previews.json').read_text(encoding='utf-8'))}
-party = json.loads((root / 'party_map.json').read_text(encoding='utf-8'))['focus_helpers']
+party = effective_party_map(json.loads((root / 'party_map.json').read_text(encoding='utf-8')))['focus_helpers']
 party_preview_file = root / 'party_effect_tooltip_previews.txt'
 party_previews = {}
 if party_preview_file.exists():
@@ -184,17 +244,24 @@ if party_preview_file.exists():
         if depth:
             raise ValueError('Unbalanced preview for ' + ident)
         party_previews[ident] = source[start:end-1].strip()
+party_previews.update(party_preview_overrides())
 foreign_path = root / 'staging' / 'foreign'
 domestic = json.loads((foreign_path / 'manifest.json').read_text(encoding='utf-8'))
 bilateral = [json.loads(line) for line in (foreign_path / 'bilateral_manifest.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
 foreign_registry = json.loads((foreign_path / 'foreign_helper_registry.json').read_text(encoding='utf-8'))
+foreign_preview_source, foreign_preview_helpers = build_preview_source()
+foreign_preview_path = foreign_path / 'scripted_effects' / 'COLDWAR_JAP70_native_foreign_previews.txt'
+foreign_preview_path.parent.mkdir(parents=True, exist_ok=True)
+foreign_preview_path.write_text(foreign_preview_source, encoding='utf-8')
 domestic_by_id = {x['focus']: x for x in domestic}
 foreign_by_id = {x['focus']: x for x in foreign_registry}
 foreign_helpers = {x['focus']: x['effect'] for x in domestic}
 foreign_helpers.update({x['focus']: x['helper'] for x in bilateral})
 foreign_offer_records = {x['focus']: x for x in bilateral}
+if set(foreign_offer_records) != set(foreign_preview_helpers):
+    raise ValueError('Native foreign preview coverage differs from bilateral focus registry')
 nodes = [n for section in design['sections'] for n in section['nodes']]
-lines = ['# IMPERIA CW — Cold War: Japan 1970 national focus tree.', 'focus_tree = {',
+lines = ['# IMPERIA COLD WAR — Cold War: Japan 1970 national focus tree.', 'focus_tree = {',
          '\tid = COLDWAR_JAP_1970_focus', '\tcountry = { factor = 0 }', '\tdefault = no',
          '\tinitial_show_position = { focus = COLDWAR_JAP_1970_national_0_the_civilian_cabinet }',
          f'\tcontinuous_focus_position = {{ x = {CONTINUOUS_POSITION[0]} y = {CONTINUOUS_POSITION[1]} }}']
@@ -233,8 +300,8 @@ for section in design['sections']:
             lines.append('\t\tmutually_exclusive = { ' + ' '.join('focus = ' + focus_id(p) for p in node['exclusive']) + ' }')
         lines += ['\t\tavailable = {', '\t\t\thidden_trigger = { original_tag = JAP IMP_is_1970_scenario = yes }']
         if node['gate'] in parties:
-            number, label = parties[node['gate']]
-            lines.append(f'\t\t\tcustom_trigger_tooltip = {{ tooltip = {prefix}governing_{label} check_variable = {{ ruling_party = {number} }} }}')
+            native_trigger = parties[node['gate']]
+            lines.append(f'\t\t\t{native_trigger} = yes')
         if ident in foreign_offer_records:
             offer = foreign_offer_records[ident]
             if offer.get('recipient'):
@@ -245,7 +312,20 @@ for section in design['sections']:
             from generate_staged_effects import INVENTORY, FOCUS_GUARDS, state_building_guard
             rec = INVENTORY[ident]
             lines.extend('\t\t\t' + guard for guard in FOCUS_GUARDS.get(ident, []))
-            lines.extend('\t\t\t' + state_building_guard(*building) for building in rec['buildings'])
+            if rec.get('cost_gdp_share', 0):
+                lines.append('\t\t\thidden_trigger = { check_variable = { gdp_total > 0 } }')
+            lines.extend('\t\t\t' + state_building_guard(state_id, building, level, level)
+                         for state_id, building, level, _recorded_slots in rec['buildings'])
+        elif ident in party:
+            from generate_staged_effects import state_building_guard
+            party_record = party[ident]
+            party_rewards = party_record.get('one_time_effects', [])
+            if any(reward.get('type') == 'treasury_gdp_share' for reward in party_rewards):
+                lines.append('\t\t\thidden_trigger = { check_variable = { gdp_total > 0 } }')
+            for reward in party_rewards:
+                if reward.get('type') == 'building':
+                    level = int(reward['level'])
+                    lines.append('\t\t\t' + state_building_guard(reward['state_id'], reward['building'], level, level))
         if ident in (prefix + 'article9_debate', prefix + 'article9_commission', prefix + 'article9_abolish', prefix + 'article9_confirm'):
             lines.append('\t\t\thas_idea = COLDWAR_JAP_1970_article9_self_defence')
         if ident == prefix + 'article9_diet':
@@ -272,7 +352,6 @@ for section in design['sections']:
                 lines.append('\t\t\t}')
             elif ident in party_previews:
                 lines.extend('\t\t\t' + line.strip() for line in party_previews[ident].splitlines())
-                lines.append('\t\t\tcustom_effect_tooltip = COLDWAR_JAP_1970_governing_programme_tt')
             elif ident.startswith(prefix + 'article9_'):
                 lines.extend('\t\t\t' + line for line in article_preview(ident))
             elif ident in domestic_by_id:
@@ -290,28 +369,58 @@ for section in design['sections']:
                         lines.append(f'\t\t\t\tadd_ideas = {idea}')
                 lines.append('\t\t\t}')
             elif ident in foreign_by_id:
-                lines.append(f'\t\t\tcustom_effect_tooltip = {fid}_agreement_tt')
-                body = offer_tooltip(foreign_by_id[ident], foreign_offer_records[ident])
-                loc.append(f' {fid}_agreement_tt: "{loc_value(body)}"')
+                if ident not in foreign_preview_helpers:
+                    raise ValueError('Missing native acceptance preview for ' + ident)
+                offer_record = foreign_offer_records[ident]
+                if offer_record.get('decision', '').endswith('_invite'):
+                    lines.extend(['\t\t\teffect_tooltip = {',
+                                  '\t\t\t\tunlock_decision_category_tooltip = COLDWAR_JAP70_multilateral_invites_category',
+                                  '\t\t\t}'])
+                context_key = fid + '_proposal_context_tt'
+                context = offer_context(foreign_by_id[ident], offer_record)
+                lines.append(f'\t\t\tcustom_effect_tooltip = {context_key}')
+                loc.append(f' {context_key}: "{loc_value(context)}"')
+                lines.extend(['\t\t\teffect_tooltip = {',
+                              f'\t\t\t\t{foreign_preview_helpers[ident]} = yes',
+                              '\t\t\t}'])
             lines += [f'\t\t\thidden_effect = {{ {helper} = yes }}', '\t\t}']
         lines += ['\t\tai_will_do = { base = 1 }', '\t}']
         loc.append(f' {fid}: "{loc_value(short_titles.get(ident, node["name"]))}"')
-        description = ('The electorate decides whether the approved amendment takes effect.'
-                       if ident == prefix + 'article9_referendum' else node['description'])
+        description = DESCRIPTION_OVERRIDES.get(ident, node['description'])
+        if ident == prefix + 'article9_referendum':
+            description = 'The electorate decides whether the approved amendment takes effect.'
         loc.append(f' {fid}_desc: "{loc_value(description)}"')
-for _, label in parties.values():
-    names = {'LDP':'Liberal Democratic Party', 'DSP':'Democratic Socialist Party', 'JSP':'Japan Socialist Party',
-             'JCP':'Japanese Communist Party', 'Komeito':'Komeito'}
-    loc.append(f' {prefix}governing_{label}: "The {names[label]} leads the government"')
-    loc.append(f' {prefix}governing_{label}_NOT: "The {names[label]} does not lead the government"')
-loc.append(' COLDWAR_JAP_1970_governing_programme_tt: "Programme modifiers apply while this party leads the government."')
 loc.append(' COLDWAR_JAP_1970_article9_support_requirement: "Constitutional reform support is at least 67"')
 loc.append(' COLDWAR_JAP_1970_article9_support_requirement_NOT: "Constitutional reform support is below 67"')
 for amount in (8, 10, 15, 20):
     loc.append(f' COLDWAR_JAP_1970_article9_support_{amount}_tt: "Constitutional reform support: §G+{amount}§!"')
 loc.append(' COLDWAR_JAP_1970_article9_campaign_unlocked_tt: "Unlock public revision campaigns"')
+loc.append(' COLDWAR_JAP70_foreign_accepting_country_tt: "Accepting country:"')
+loc.append(' COLDWAR_JAP70_foreign_recipient_selected_site_tt: "Recipient-selected site:"')
+loc.append(' COLDWAR_JAP70_foreign_dynamic_duration_1825_tt: "Duration: 5 years"')
+loc.append(' COLDWAR_JAP70_foreign_dynamic_duration_1095_tt: "Duration: 3 years"')
 loc.append(' COLDWAR_JAP_1970_article9_referendum_tt: "The electorate will decide the constitutional settlement"')
 loc.append(' COLDWAR_JAP_1970_article9_foreign_reactions_tt: "American opinion of Japan: §R−15§! for §Y730 days§!\\nSoviet opinion of Japan: §R−30§! for §Y730 days§!\\nBoth governments may take further diplomatic action."')
+terminal_ideas = load_overlay().get('terminal_ideas', {})
+terminal_labels = {
+    'stability_factor': 'Stability Factor',
+    'recruitable_population_factor': 'Recruitable Population Factor',
+    'army_attack_factor': 'Army Attack',
+    'army_personnel_cost_multiplier_modifier': 'Army Personnel Cost',
+}
+def terminal_effects(idea, inverse=False):
+    record = terminal_ideas[idea]
+    parts = []
+    for key, amount in record['modifiers'].items():
+        signed = -amount if inverse else amount
+        if signed:
+            parts.append(f"{terminal_labels[key]} {'+' if signed > 0 else '-'}{abs(signed) * 100:g}%")
+    return '; '.join(parts)
+old_terms = terminal_effects('COLDWAR_JAP_1970_article9_self_defence', inverse=True)
+new_terms = terminal_effects('COLDWAR_JAP_1970_revised_defence_constitution')
+confirm_terms = terminal_effects('COLDWAR_JAP_1970_article9_retained_mandate')
+loc.append(f' COLDWAR_JAP_1970_article9_abolish_terms_tt: "Remove Article 9 and Self-Defence: {old_terms}. Add Revised Defence Constitution: {new_terms}."')
+loc.append(f' COLDWAR_JAP_1970_article9_confirm_terms_tt: "Political power +75. Constitutional Mandate Renewed for 730 days: {confirm_terms}."')
 loc.append(' COLDWAR_JAP_1970_oil_contingency_tt: "While the §YOil Shock§! is active:\\n  Stability: §G+5%§!\\n  Tax income multiplier: §G+5%§!"')
 lines.append('}')
 (out / 'focus_tree.txt').write_text('\n'.join(lines) + '\n', encoding='utf-8')
