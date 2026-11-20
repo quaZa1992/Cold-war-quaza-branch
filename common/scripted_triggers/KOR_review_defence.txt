@@ -1,0 +1,162 @@
+# IMPERIA COLD WAR — South Korea defence programmes.
+KOR_review_defence_us_bilateral = {
+	country_exists = USA
+	is_subject = no
+	NOT = { has_war_with = USA }
+	NOT = { is_embargoing = USA }
+	NOT = { OR = {
+		is_in_array = { array = imp_dip_sanc_on_us value = USA }
+		is_in_array = { array = imp_dip_sanc_by_us value = USA }
+		is_in_array = { array = imp_fin_sanc_on_us value = USA }
+		is_in_array = { array = imp_fin_sanc_by_us value = USA }
+		is_in_array = { array = imp_eco_sanc_on_us value = USA }
+		is_in_array = { array = imp_eco_sanc_by_us value = USA }
+		is_in_array = { array = imp_mil_sanc_on_us value = USA }
+		is_in_array = { array = imp_mil_sanc_by_us value = USA }
+	} }
+	USA = {
+		is_subject = no
+		NOT = { has_war_with = KOR }
+		NOT = { is_embargoing = KOR }
+		NOT = { OR = {
+			is_in_array = { array = imp_dip_sanc_on_us value = KOR }
+			is_in_array = { array = imp_dip_sanc_by_us value = KOR }
+			is_in_array = { array = imp_fin_sanc_on_us value = KOR }
+			is_in_array = { array = imp_fin_sanc_by_us value = KOR }
+			is_in_array = { array = imp_eco_sanc_on_us value = KOR }
+			is_in_array = { array = imp_eco_sanc_by_us value = KOR }
+			is_in_array = { array = imp_mil_sanc_on_us value = KOR }
+			is_in_array = { array = imp_mil_sanc_by_us value = KOR }
+		} }
+	}
+}
+KOR_review_defence_us_stock_available = {
+	KOR_review_defence_us_bilateral = yes
+	USA = { has_equipment = { mdcw_infantry_weapons_1955 > 599 } }
+}
+KOR_review_defence_us_license_live = {
+	KOR_review_defence_us_bilateral = yes
+	has_idea = COLDWAR_ni_licensed_armaments_programme
+	USA = { is_licensing_any_to = KOR }
+}
+KOR_review_defence_new_garrison_open = {
+	KOR_review_defence_us_bilateral = yes
+	NOT = { OR = {
+		COLDWAR_KOR_usfk_cooperation_live = yes
+		has_country_flag = COLDWAR_KOR_us_garrison_pending
+		has_country_flag = COLDWAR_KOR_us_drawdown_pending
+		has_country_flag = KOR_review_signed_df_garrison_convention
+		has_country_flag = KOR_review_signed_df_force_posture_talks
+	} }
+}
+KOR_review_defence_garrison_active = {
+	KOR_review_defence_us_bilateral = yes
+	COLDWAR_KOR_usfk_cooperation_live = yes
+	has_idea = COLDWAR_KOR_usfk_member
+	has_country_flag = COLDWAR_KOR_us_garrison_signed
+	USA = {
+		has_idea = COLDWAR_KOR_usfk_member
+		has_country_flag = COLDWAR_KOR_us_garrison_signed
+	}
+	NOT = { has_country_flag = KOR_review_signed_df_force_posture_talks }
+	OR = {
+		AND = {
+			has_country_flag = KOR_review_signed_df_garrison_convention
+			USA = { has_country_flag = KOR_review_signed_df_garrison_convention }
+			has_dynamic_modifier = { modifier = KOR_review_programme_df_garrison_convention }
+			USA = { has_dynamic_modifier = { modifier = KOR_review_partner_df_garrison_convention_USA } }
+		}
+		AND = {
+			has_country_flag = COLDWAR_KOR_us_garrison_terms_v3
+			USA = { has_country_flag = COLDWAR_KOR_us_garrison_terms_v3 }
+		}
+	}
+}
+KOR_review_defence_combined_active = {
+	KOR_review_defence_garrison_active = yes
+	has_country_flag = KOR_review_signed_df_combined_command
+	has_dynamic_modifier = { modifier = KOR_review_programme_df_combined_command }
+	USA = {
+		has_country_flag = KOR_review_signed_df_combined_command
+		has_dynamic_modifier = { modifier = KOR_review_partner_df_combined_command_USA }
+	}
+}
+KOR_review_defence_civilian_cabinet = {
+	has_country_flag = COLDWAR_KOR_constitutional_order
+	has_country_flag = COLDWAR_KOR_civilian_control
+	NOT = { has_country_flag = COLDWAR_KOR_nationwide_martial_law }
+}
+KOR_review_defence_assembly_possible = {
+	KOR_review_defence_civilian_cabinet = yes
+	has_elections = yes
+}
+KOR_review_defence_personnel_possible = {
+	KOR_review_defence_civilian_cabinet = yes
+	has_dynamic_modifier = { modifier = KOR_review_programme_df_service_neutrality }
+}
+KOR_review_defence_inspection_possible = {
+	KOR_review_defence_assembly_possible = yes
+	has_dynamic_modifier = { modifier = KOR_review_programme_df_personnel_review }
+	has_dynamic_modifier = { modifier = KOR_review_programme_df_assembly_defence_committee }
+}
+KOR_review_defence_civil_nuclear_active = {
+	has_country_flag = KOR_review_enacted_df_npt_accession
+}
+KOR_review_defence_no_active_nuclear_project = {
+	NOT = { OR = {
+		is_special_project_being_researched = sp:sp_nuclear_bomb
+		is_special_project_being_researched = sp:sp_nuclear_warhead_program
+	} }
+}
+KOR_review_defence_civil_nuclear_possible = {
+	KOR_review_defence_no_active_nuclear_project = yes
+	NOT = { OR = {
+		imp_is_nuclear_power = yes
+		has_equipment = { nuclear_missile_equipment > 0 }
+		has_equipment = { nuclear_ballistic_missile_equipment > 0 }
+		has_country_flag = KOR_review_enacted_df_nuclear_reassessment
+		has_country_flag = KOR_review_defence_military_authorisation_issued
+	} }
+}
+KOR_review_defence_military_option_possible = {
+	NOT = { OR = {
+		KOR_review_defence_civil_nuclear_active = yes
+		has_country_flag = KOR_review_enacted_df_strategic_programme_freeze
+	} }
+}
+KOR_review_defence_military_mandate_active = {
+	KOR_review_defence_military_option_possible = yes
+	has_country_flag = KOR_review_enacted_df_nuclear_reassessment
+	has_dynamic_modifier = { modifier = KOR_review_programme_df_nuclear_reassessment }
+}
+KOR_review_defence_authorisation_possible = {
+	KOR_review_defence_military_mandate_active = yes
+	has_dynamic_modifier = { modifier = KOR_review_programme_df_strategic_institutions }
+}
+KOR_review_defence_assurance_possible = {
+	KOR_review_defence_civil_nuclear_active = yes
+	KOR_review_defence_combined_active = yes
+}
+KOR_review_defence_freeze_possible = {
+	KOR_review_defence_military_mandate_active = yes
+	KOR_review_defence_no_active_nuclear_project = yes
+}
+KOR_review_defence_nuclear_start_gate = {
+	if = {
+		limit = { tag = KOR original_tag = KOR IMP_is_1970_scenario = yes }
+		KOR_review_defence_authorisation_possible = yes
+		has_country_flag = KOR_review_enacted_df_strategic_authorisation
+		has_country_flag = KOR_review_defence_military_authorisation_issued
+	}
+}
+KOR_review_defence_arsenal_order_allowed = {
+	has_country_flag = KOR_review_enacted_df_defence_orders
+	has_idea = defense_industry
+	has_dynamic_modifier = { modifier = KOR_review_programme_df_defence_orders }
+	check_variable = { global.mdcw_cw_arms > 34.99999 }
+	check_variable = { gdp_total > 0 }
+	NOT = { OR = {
+		has_country_flag = KOR_review_defence_arsenal_order_placed
+		has_country_flag = MD_skip_treasury_cost
+	} }
+}

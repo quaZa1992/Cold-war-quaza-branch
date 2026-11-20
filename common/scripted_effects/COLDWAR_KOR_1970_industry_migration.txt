@@ -1,0 +1,46 @@
+# IMPERIA COLD WAR — South Korea 1970 Pohang save transition.
+COLDWAR_KOR_migrate_pohang_industry = {
+	if = {
+		limit = {
+			COLDWAR_KOR_campaign = yes
+			has_focus_tree = COLDWAR_KOR_1970_focus
+			NOT = { has_country_flag = COLDWAR_KOR_industry_pohang_migrated }
+		}
+		if = {
+			limit = {
+				OR = {
+					has_completed_focus = COLDWAR_KOR_pohang_foundry
+					has_country_flag = COLDWAR_KOR_pohang_foundry_paid
+				}
+			}
+			# Record settlement before the completion effect can invoke the new reward.
+			set_country_flag = COLDWAR_KOR_industry_paid_pohang_foundry
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_KOR_pohang_foundry_paid
+				NOT = { has_completed_focus = COLDWAR_KOR_pohang_foundry }
+			}
+			complete_national_focus = COLDWAR_KOR_pohang_foundry
+		}
+		if = {
+			limit = {
+				check_variable = { COLDWAR_KOR_slot_national_economy_industrial_model = 124 }
+			}
+			clear_variable = COLDWAR_KOR_slot_national_economy_industrial_model
+		}
+		if = {
+			limit = { has_dynamic_modifier = { modifier = COLDWAR_KOR_pohang_foundry_programme } }
+			remove_dynamic_modifier = { modifier = COLDWAR_KOR_pohang_foundry_programme }
+		}
+		if = {
+			limit = {
+				OR = {
+					has_completed_focus = COLDWAR_KOR_pohang_foundry
+					NOT = { has_country_flag = COLDWAR_KOR_pohang_foundry_paid }
+				}
+			}
+			set_country_flag = COLDWAR_KOR_industry_pohang_migrated
+		}
+	}
+}

@@ -1,19 +1,13 @@
 # IMPERIA CW — Cold War: infantry legacy on actions — event hooks.
-# Narrow startup integration for newly inserted infantry predecessor nodes.
+# The 1970 research comes from the history files (set_technology in 1970.1.1, like MD).
+# This hook only fills the new infantry predecessor nodes for later starts; it does not run in the 1970 scenario.
 on_actions = {
     on_startup = {
         effect = {
             if = {
-                limit = { date > 1969.12.31 }
+                limit = { date > 1984.12.31 NOT = { any_country = { IMP_is_1970_scenario = yes } } } # COLDWAR | hand patch 07.11.2026: on_startup has no scope, the check needs a country
                 every_country = {
-                    if = {
-                        limit = { date < 1970.1.2 }
-                        mdcw_apply_1970_infantry_research = yes
-                    }
-                    else_if = {
-                        limit = { date > 1984.12.31 }
-                        mdcw_inherit_early_infantry_technologies = yes
-                    }
+                    mdcw_inherit_early_infantry_technologies = yes
                 }
             }
         }

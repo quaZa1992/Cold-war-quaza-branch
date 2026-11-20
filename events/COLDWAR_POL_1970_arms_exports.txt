@@ -1,0 +1,125 @@
+# IMPERIA COLD WAR — Polish arms purchase choices for the four named recipients.
+add_namespace = COLDWAR_POL_ARMS
+
+country_event = {
+	id = COLDWAR_POL_ARMS.1
+	title = COLDWAR_POL_ARMS.1.t
+	desc = COLDWAR_POL_ARMS.1.desc
+	picture = GFX_COLDWAR_POL_1970_arms_cash
+	is_triggered_only = yes
+	trigger = {
+		OR = { tag = LBA tag = IRQ }
+		has_country_flag = COLDWAR_POL_arms_cash_pending
+	}
+
+	option = {
+		name = COLDWAR_POL_ARMS.1.option_accept
+		trigger = { COLDWAR_POL_arms_cash_can_accept = yes }
+		ai_chance = { base = 70 }
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_POL_arms_cash_price_payment_tt
+			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.01 } }
+			modify_treasury_effect = yes
+			POL = {
+				custom_effect_tooltip = COLDWAR_POL_arms_cash_price_income_tt
+				set_temp_variable = { treasury_change = { value = ROOT.gdp_total multiply = 0.01 } }
+				modify_treasury_effect = yes
+				send_equipment = { type = infantry_weapons_type amount = 1000 target = ROOT }
+				send_equipment = { type = medium_tank_chassis amount = 50 target = ROOT }
+			}
+		}
+		if = {
+			limit = { hidden_trigger = { POL = { NOT = { has_country_flag = COLDWAR_POL_arms_cash_bonus_paid } } } }
+			effect_tooltip = { POL = { COLDWAR_POL_arms_cash_bonus = yes } }
+		}
+		hidden_effect = { COLDWAR_POL_arms_cash_accept = yes }
+	}
+
+	option = {
+		name = COLDWAR_POL_ARMS.1.option_refuse
+		trigger = { COLDWAR_POL_arms_cash_can_accept = yes }
+		ai_chance = { base = 30 }
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_POL_arms_cash_pending NOT = { has_country_flag = COLDWAR_POL_arms_cash_accepted } }
+				clr_country_flag = COLDWAR_POL_arms_cash_pending
+				set_country_flag = COLDWAR_POL_arms_cash_refused
+			}
+		}
+	}
+
+	option = {
+		name = COLDWAR_POL_ARMS.1.option_unavailable
+		trigger = { NOT = { COLDWAR_POL_arms_cash_can_accept = yes } }
+		ai_chance = { base = 100 }
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_POL_arms_cash_pending NOT = { has_country_flag = COLDWAR_POL_arms_cash_accepted } NOT = { has_country_flag = COLDWAR_POL_arms_cash_refused } }
+				clr_country_flag = COLDWAR_POL_arms_cash_pending
+				set_country_flag = COLDWAR_POL_arms_cash_expired
+			}
+		}
+	}
+}
+
+country_event = {
+	id = COLDWAR_POL_ARMS.2
+	title = COLDWAR_POL_ARMS.2.t
+	desc = COLDWAR_POL_ARMS.2.desc
+	picture = GFX_COLDWAR_POL_1970_arms_friends
+	is_triggered_only = yes
+	trigger = {
+		OR = { tag = RAJ tag = SYR }
+		has_country_flag = COLDWAR_POL_arms_friends_pending
+	}
+
+	option = {
+		name = COLDWAR_POL_ARMS.2.option_accept
+		trigger = { COLDWAR_POL_arms_friends_can_accept = yes }
+		ai_chance = { base = 70 }
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_POL_arms_friends_price_payment_tt
+			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+			modify_treasury_effect = yes
+			POL = {
+				custom_effect_tooltip = COLDWAR_POL_arms_friends_price_income_tt
+				set_temp_variable = { treasury_change = { value = ROOT.gdp_total multiply = 0.005 } }
+				modify_treasury_effect = yes
+				send_equipment = { type = infantry_weapons_type amount = 1000 target = ROOT }
+				send_equipment = { type = medium_tank_chassis amount = 50 target = ROOT }
+			}
+		}
+		if = {
+			limit = { hidden_trigger = { POL = { NOT = { has_country_flag = COLDWAR_POL_arms_friends_bonus_paid } } } }
+			effect_tooltip = { POL = { COLDWAR_POL_arms_friends_bonus = yes } }
+		}
+		hidden_effect = { COLDWAR_POL_arms_friends_accept = yes }
+	}
+
+	option = {
+		name = COLDWAR_POL_ARMS.2.option_refuse
+		trigger = { COLDWAR_POL_arms_friends_can_accept = yes }
+		ai_chance = { base = 30 }
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_POL_arms_friends_pending NOT = { has_country_flag = COLDWAR_POL_arms_friends_accepted } }
+				clr_country_flag = COLDWAR_POL_arms_friends_pending
+				set_country_flag = COLDWAR_POL_arms_friends_refused
+			}
+		}
+	}
+
+	option = {
+		name = COLDWAR_POL_ARMS.2.option_unavailable
+		trigger = { NOT = { COLDWAR_POL_arms_friends_can_accept = yes } }
+		ai_chance = { base = 100 }
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = COLDWAR_POL_arms_friends_pending NOT = { has_country_flag = COLDWAR_POL_arms_friends_accepted } NOT = { has_country_flag = COLDWAR_POL_arms_friends_refused } }
+				clr_country_flag = COLDWAR_POL_arms_friends_pending
+				set_country_flag = COLDWAR_POL_arms_friends_expired
+			}
+		}
+	}
+}
+

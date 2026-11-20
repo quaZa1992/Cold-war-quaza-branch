@@ -1,5 +1,7 @@
-# IMPERIA COLD WAR — Brazil 1970 national programmes integration.
-# IMPERIA COLD WAR — Argentina 1970 custom integration.
+# IMPERIA COLD WAR — Czechoslovakia 1970 integration; existing content and attribution retained.
+# IMPERIA COLD WAR — Yugoslav national focus routing; existing integrations retained.
+# IMPERIA COLD WAR — South American 1970 import from quaZa; existing integrations retained.
+# IMPERIA COLD WAR — Turkey 1970 integration; original content retained.
 # IMPERIA COLD WAR — France 1970 national programme integration.
 # IMPERIA COLD WAR — France retired-tree fallback cleanup.
 # IMPERIA COLD WAR — Universal SSR focus programme integration.
@@ -8,6 +10,23 @@
 # 1970: countries without an authored tree get the generic 1970 tree (mdcw_1970_generic_focus);
 # a country that already runs it keeps its progress. Other start dates keep the empty tree.
 mdcw_load_1970_fallback_tree = {
+	# IMPERIA COLD WAR — Czechoslovak authored focus tree.
+	if = {
+		limit = { tag = CZE IMP_is_1970_scenario = yes }
+		if = { limit = { NOT = { has_focus_tree = COLDWAR_CZE_1970_focus } } load_focus_tree = COLDWAR_CZE_1970_focus }
+		COLDWAR_CZE_1970_init = yes
+	}
+
+	# IMPERIA COLD WAR — Yugoslav authored focus tree BEGIN
+	if = {
+		limit = { tag = SER IMP_is_1970_scenario = yes }
+		if = {
+			limit = { NOT = { has_focus_tree = COLDWAR_YUG_1970_focus } }
+			load_focus_tree = COLDWAR_YUG_1970_focus
+		}
+		COLDWAR_YUG_1970_init = yes
+	}
+	# IMPERIA COLD WAR — Yugoslav authored focus tree END
 	# IMPERIA COLD WAR — Brazil fallback routing BEGIN
 	if = {
 		limit = {
@@ -24,7 +43,41 @@ mdcw_load_1970_fallback_tree = {
 # IMPERIA COLD WAR — ARG AUTHORED FALLBACK BEGIN
 if = { limit = { tag = ARG IMP_is_1970_scenario = yes } COLDWAR_ARG_initialize = yes }
 # IMPERIA COLD WAR — ARG AUTHORED FALLBACK END
+	# IMPERIA COLD WAR — Chile authored-tree routing.
+	if = {
+		limit = { COLDWAR_CHL_is_scenario = yes NOT = { has_focus_tree = COLDWAR_CHL_1970_focus } }
+		load_focus_tree = COLDWAR_CHL_1970_focus
+		COLDWAR_CHL_initialize = yes
+	}
 
+	# IMPERIA COLD WAR — Turkey authored-tree routing BEGIN
+	if = {
+		limit = { original_tag = TUR IMP_is_1970_scenario = yes NOT = { has_focus_tree = COLDWAR_TUR_1970_focus } }
+		load_focus_tree = COLDWAR_TUR_1970_focus
+		COLDWAR_TUR_1970_initialize = yes
+	}
+	# IMPERIA COLD WAR — Turkey authored-tree routing END
+	# COLDWAR SVN 1970 - authored-tree routing BEGIN
+	if = {
+		limit = { original_tag = SVN IMP_is_1970_scenario = yes NOT = { has_focus_tree = COLDWAR_SVN_1970_focus } }
+		load_focus_tree = COLDWAR_SVN_1970_focus
+		COLDWAR_SVN_initialize = yes
+	}
+	# COLDWAR SVN 1970 - authored-tree routing END
+	# COLDWAR AFG 1970 - authored-tree routing BEGIN
+	if = {
+		limit = { original_tag = AFG IMP_is_1970_scenario = yes NOT = { has_focus_tree = COLDWAR_AFG_1970_focus } }
+		load_focus_tree = COLDWAR_AFG_1970_focus
+		COLDWAR_AFG_initialize = yes
+	}
+	# COLDWAR AFG 1970 - authored-tree routing END
+	# COLDWAR POL 1970 - authored-tree routing BEGIN
+	if = {
+		limit = { original_tag = POL IMP_is_1970_scenario = yes NOT = { has_focus_tree = COLDWAR_POL_1970_focus } }
+		load_focus_tree = COLDWAR_POL_1970_focus
+		COLDWAR_POL_initialize = yes
+	}
+	# COLDWAR POL 1970 - authored-tree routing END
 	# IMPERIA COLD WAR — France replacement routing BEGIN
 	if = {
 		limit = { tag = FRA IMP_is_1970_scenario = yes NOT = { has_focus_tree = COLDWAR_FRA2_1970_focus } }
@@ -33,6 +86,12 @@ if = { limit = { tag = ARG IMP_is_1970_scenario = yes } COLDWAR_ARG_initialize =
 	}
 	# IMPERIA COLD WAR — France replacement routing END
 
+	# IMPERIA COLD WAR — China 1970 authored tree routing. # COLDWAR CHI 1970
+	if = {
+		limit = { original_tag = CHI IMP_is_1970_scenario = yes NOT = { has_focus_tree = COLDWAR_CHI_1970_focus } } # COLDWAR CHI 1970
+		load_focus_tree = COLDWAR_CHI_1970_focus # COLDWAR CHI 1970
+		COLDWAR_CHI_initialize = yes # COLDWAR CHI 1970
+	} # COLDWAR CHI 1970
 	# IMPERIA COLD WAR — Cuba authored 1970 tree fallback routing.
 	if = {
 		limit = {
@@ -47,12 +106,12 @@ if = { limit = { tag = ARG IMP_is_1970_scenario = yes } COLDWAR_ARG_initialize =
 		limit = {
 			NOT = {
 				OR = {
-
-
-# IMPERIA COLD WAR — ARG FALLBACK EXEMPTION BEGIN
-AND = { tag = ARG IMP_is_1970_scenario = yes }
-# IMPERIA COLD WAR — ARG FALLBACK EXEMPTION END
-
+					AND = { tag = SER IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Yugoslav authored tree.
+					AND = { tag = CZE IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Czechoslovak authored-tree exemption.
+					AND = { original_tag = ARG IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Authored South American tree.
+					AND = { original_tag = BRA IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Authored South American tree.
+					AND = { original_tag = CHL IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Authored South American tree.
+					AND = { original_tag = TUR IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Turkey authored-tree exemption.
 					# IMPERIA COLD WAR — SSR authored-tree exemption BEGIN
 					AND = { IMP_is_1970_scenario = yes has_focus_tree = COLDWAR_SSR_1970_focus }
 					# IMPERIA COLD WAR — SSR authored-tree exemption END
@@ -60,7 +119,6 @@ AND = { tag = ARG IMP_is_1970_scenario = yes }
 					COLDWAR_UAE_1970_campaign = yes
 # COLDWAR UAE FALLBACK EXEMPTION END
 
-					AND = { tag = BRA IMP_is_1970_scenario = yes } # IMPERIA COLD WAR — Brazil authored tree
 					AND = { tag = FRA IMP_is_1970_scenario = yes } # COLDWAR_FRA2 authored tree
 					AND = { tag = CUB IMP_is_1970_scenario = yes } # COLDWAR | own 1970 tree
 					# IMPERIA COLD WAR — Cold War: North Korea 1970 national programme.
@@ -85,6 +143,10 @@ AND = { tag = ARG IMP_is_1970_scenario = yes }
 					AND = { original_tag = SYR IMP_is_1970_scenario = yes } # COLDWAR_SYR_1970_focus
 					AND = { original_tag = VIE IMP_is_1970_scenario = yes } # COLDWAR_VIE_1970_focus
 					AND = { original_tag = IRQ IMP_is_1970_scenario = yes } # COLDWAR IRQ authored exemption
+					AND = { original_tag = CHI IMP_is_1970_scenario = yes } # COLDWAR CHI 1970 authored tree
+					AND = { original_tag = SVN IMP_is_1970_scenario = yes } # COLDWAR SVN 1970 authored tree
+					AND = { original_tag = AFG IMP_is_1970_scenario = yes } # COLDWAR AFG 1970 authored tree
+					AND = { original_tag = POL IMP_is_1970_scenario = yes } # COLDWAR POL 1970 authored tree
 				}
 			}
 		}

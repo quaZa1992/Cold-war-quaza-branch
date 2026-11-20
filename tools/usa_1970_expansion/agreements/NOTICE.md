@@ -1,3 +1,0 @@
-IMPERIA COLD WAR
-
-USA agreement module: authored for this project from its approved 24 October 2026 proposal. No third-party source code was copied. The local Cuba agreement architecture was consulted. Existing Millennium Dawn national-spirit art and the unchanged GFX_political_deal event photograph are reused by reference. Original artwork authors and individual image licences: unknown; project integration does not establish ownership. Native image source: gfx/event_pictures/generic/elections/political_deal.dds, 217 x 163 RGBA, unchanged outer frame and alpha. Native bottom event window and adjacent option grid were inspected. native_event_donor.png is a decoded review copy, not a live game screenshot or new game asset.

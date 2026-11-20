@@ -1,0 +1,338 @@
+# IMPERIA COLD WAR — Czechoslovak domestic projects and federal settlement.
+
+COLDWAR_CZE_1970_unlock_civil_nuclear_investment = {
+	unlock_decision_tooltip = COLDWAR_CZE_1970_civil_nuclear_investment
+	hidden_effect = { set_country_flag = COLDWAR_CZE_1970_unlock_civil_nuclear_investment }
+}
+COLDWAR_CZE_1970_unlock_uranium_survey = {
+	unlock_decision_tooltip = COLDWAR_CZE_1970_uranium_survey
+	hidden_effect = { set_country_flag = COLDWAR_CZE_1970_unlock_uranium_survey }
+}
+COLDWAR_CZE_1970_unlock_uranium_development = {
+	unlock_decision_tooltip = COLDWAR_CZE_1970_uranium_development
+	hidden_effect = { set_country_flag = COLDWAR_CZE_1970_unlock_uranium_development }
+}
+COLDWAR_CZE_1970_unlock_defensive_positions = {
+	unlock_decision_tooltip = COLDWAR_CZE_1970_defensive_position_prague
+	unlock_decision_tooltip = COLDWAR_CZE_1970_defensive_position_brno
+	unlock_decision_tooltip = COLDWAR_CZE_1970_defensive_position_ostrava
+	unlock_decision_tooltip = COLDWAR_CZE_1970_defensive_position_plzen
+	unlock_decision_tooltip = COLDWAR_CZE_1970_defensive_position_bratislava
+	unlock_decision_tooltip = COLDWAR_CZE_1970_defensive_position_kosice
+	hidden_effect = { set_country_flag = COLDWAR_CZE_1970_unlock_defensive_positions }
+}
+COLDWAR_CZE_1970_unlock_separation_convention = {
+	unlock_decision_tooltip = COLDWAR_CZE_1970_separation_convention
+	hidden_effect = { set_country_flag = COLDWAR_CZE_1970_unlock_separation_convention }
+}
+COLDWAR_CZE_1970_unlock_partition_ledger = {
+	unlock_decision_tooltip = COLDWAR_CZE_1970_partition_ledger
+	hidden_effect = { set_country_flag = COLDWAR_CZE_1970_unlock_partition_ledger }
+}
+COLDWAR_CZE_1970_unlock_dual_ratification = {
+	unlock_decision_tooltip = COLDWAR_CZE_1970_dual_ratification
+	hidden_effect = { set_country_flag = COLDWAR_CZE_1970_unlock_dual_ratification }
+}
+
+COLDWAR_CZE_1970_projects_init = {
+	if = { limit = { NOT = { has_variable = COLDWAR_CZE_1970_projects_weekly_expense } } set_variable = { COLDWAR_CZE_1970_projects_weekly_expense = 0 } }
+	if = { limit = { NOT = { has_variable = COLDWAR_CZE_1970_nuclear_progress_days } } set_variable = { COLDWAR_CZE_1970_nuclear_progress_days = 0 } }
+	if = { limit = { NOT = { has_variable = COLDWAR_CZE_1970_ledger_version } } set_variable = { COLDWAR_CZE_1970_ledger_version = 0 } }
+	if = { limit = { NOT = { has_variable = COLDWAR_CZE_1970_ledger_transfer_119 } } set_variable = { COLDWAR_CZE_1970_ledger_transfer_119 = 0 } }
+	if = { limit = { NOT = { has_variable = COLDWAR_CZE_1970_ledger_transfer_120 } } set_variable = { COLDWAR_CZE_1970_ledger_transfer_120 = 0 } }
+	if = { limit = { tag = CZE }
+		set_variable = { COLDWAR_CZE_1970_defence_site_count = 0 }
+		if = { limit = { has_country_flag = COLDWAR_CZE_1970_defence_site_prague } add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } }
+		if = { limit = { has_country_flag = COLDWAR_CZE_1970_defence_site_brno } add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } }
+		if = { limit = { has_country_flag = COLDWAR_CZE_1970_defence_site_ostrava } add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } }
+		if = { limit = { has_country_flag = COLDWAR_CZE_1970_defence_site_plzen } add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } }
+		if = { limit = { has_country_flag = COLDWAR_CZE_1970_defence_site_bratislava } add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } }
+		if = { limit = { has_country_flag = COLDWAR_CZE_1970_defence_site_kosice } add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } }
+	}
+	119 = {
+		if = { limit = { NOT = { has_variable = COLDWAR_CZE_1970_nuclear_building_baseline } }
+			set_variable = { COLDWAR_CZE_1970_nuclear_building_baseline = building_level@nuclear_reactor }
+		}
+	}
+	120 = {
+		if = { limit = { NOT = { has_variable = COLDWAR_CZE_1970_uranium_building_baseline } }
+			set_variable = { COLDWAR_CZE_1970_uranium_building_baseline = building_level@uranium_mine }
+		}
+	}
+	COLDWAR_CZE_1970_projects_calculate_streams = yes
+}
+
+COLDWAR_CZE_1970_projects_refresh = {
+	COLDWAR_CZE_1970_projects_init = yes
+	if = {
+		limit = { tag = CZE has_country_flag = COLDWAR_CZE_1970_ledger_proposed NOT = { COLDWAR_CZE_1970_ledger_schedule_matches = yes } }
+		clr_country_flag = COLDWAR_CZE_1970_ledger_locked
+		clr_country_flag = COLDWAR_CZE_1970_ledger_cze_approved
+		clr_country_flag = COLDWAR_CZE_1970_ledger_slo_approved
+		clr_country_flag = COLDWAR_CZE_1970_dual_cze_approved
+		clr_country_flag = COLDWAR_CZE_1970_dual_slo_approved
+		SLO = {
+			clr_country_flag = COLDWAR_CZE_1970_ledger_locked
+			clr_country_flag = COLDWAR_CZE_1970_ledger_cze_approved
+			clr_country_flag = COLDWAR_CZE_1970_ledger_slo_approved
+			clr_country_flag = COLDWAR_CZE_1970_dual_cze_approved
+			clr_country_flag = COLDWAR_CZE_1970_dual_slo_approved
+		}
+	}
+	119 = {
+		if = {
+			limit = {
+				has_variable = COLDWAR_CZE_1970_nuclear_building_baseline
+				is_owned_by = CZE
+				is_controlled_by = CZE
+				check_variable = { var = building_level@nuclear_reactor value = COLDWAR_CZE_1970_nuclear_building_baseline compare = greater_than }
+				OWNER = { has_country_flag = COLDWAR_CZE_1970_nuclear_reactor_ordered }
+			}
+			OWNER = { set_country_flag = COLDWAR_CZE_1970_civil_reactor_commissioned }
+		}
+	}
+	120 = {
+		if = {
+			limit = {
+				has_variable = COLDWAR_CZE_1970_uranium_building_baseline
+				is_owned_by = CZE
+				is_controlled_by = CZE
+				check_variable = { var = building_level@uranium_mine value = COLDWAR_CZE_1970_uranium_building_baseline compare = greater_than }
+				OWNER = { has_country_flag = COLDWAR_CZE_1970_uranium_mine_ordered }
+			}
+			OWNER = { set_country_flag = COLDWAR_CZE_1970_uranium_mine_built }
+		}
+	}
+}
+
+COLDWAR_CZE_1970_projects_calculate_streams = {
+	set_variable = { COLDWAR_CZE_1970_projects_weekly_expense = 0 }
+	if = {
+		limit = { tag = CZE country_exists = SLO check_variable = { gdp_total > 0 } SLO = { check_variable = { gdp_total > 0 } } OR = { NOT = { has_country_flag = COLDWAR_CZE_1970_ledger_proposed } NOT = { COLDWAR_CZE_1970_ledger_schedule_matches = yes } } }
+		set_temp_variable = { COLDWAR_CZE_1970_ledger_preview_gdp_total = gdp_total }
+		add_to_temp_variable = { COLDWAR_CZE_1970_ledger_preview_gdp_total = SLO.gdp_total }
+		set_variable = { COLDWAR_CZE_1970_ledger_preview_cze_share = gdp_total }
+		divide_variable = { COLDWAR_CZE_1970_ledger_preview_cze_share = COLDWAR_CZE_1970_ledger_preview_gdp_total }
+		set_variable = { COLDWAR_CZE_1970_ledger_preview_slo_share = 1 }
+		subtract_from_variable = { COLDWAR_CZE_1970_ledger_preview_slo_share = COLDWAR_CZE_1970_ledger_preview_cze_share }
+	}
+}
+
+COLDWAR_CZE_1970_projects_weekly = {
+	COLDWAR_CZE_1970_projects_calculate_streams = yes
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_uranium_development_in_progress }
+		if = {
+			limit = { 120 = { COLDWAR_CZE_1970_can_finish_uranium_mine = yes } }
+			add_to_variable = { COLDWAR_CZE_1970_uranium_development_days = 7 }
+			if = {
+				limit = { check_variable = { var = COLDWAR_CZE_1970_uranium_development_days value = 365 compare = greater_than_or_equals } }
+				120 = {
+					if = { limit = { COLDWAR_CZE_1970_can_finish_uranium_mine = yes }
+						set_variable = { COLDWAR_CZE_1970_uranium_building_baseline = building_level@uranium_mine }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = uranium_mine level = 1 instant_build = no }
+						ROOT = { set_country_flag = COLDWAR_CZE_1970_uranium_mine_ordered }
+					}
+				}
+				clr_country_flag = COLDWAR_CZE_1970_uranium_development_in_progress
+			}
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			has_country_flag = COLDWAR_CZE_1970_nuclear_project_active
+			COLDWAR_CZE_1970_nuclear_design_active = yes
+			COLDWAR_CZE_1970_nuclear_fuel_active = yes
+			has_war = no
+			119 = {
+				is_owned_by = CZE
+				is_controlled_by = CZE
+				is_fully_controlled_by = CZE
+				can_construct_building = nuclear_reactor
+				free_building_slots = { building = nuclear_reactor size > 0 include_locked = no }
+			}
+			country_can_build_nuclear_reactors = yes
+		}
+		add_to_variable = { COLDWAR_CZE_1970_nuclear_progress_days = 7 }
+		if = {
+			limit = { check_variable = { var = COLDWAR_CZE_1970_nuclear_progress_days value = 1095 compare = greater_than_or_equals } }
+			if = {
+				limit = {
+					COLDWAR_CZE_1970_nuclear_design_active = yes
+					COLDWAR_CZE_1970_nuclear_fuel_active = yes
+					has_war = no
+					119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE can_construct_building = nuclear_reactor free_building_slots = { building = nuclear_reactor size > 0 include_locked = no } }
+					country_can_build_nuclear_reactors = yes
+				}
+				119 = {
+					set_variable = { COLDWAR_CZE_1970_nuclear_building_baseline = building_level@nuclear_reactor }
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = nuclear_reactor level = 1 instant_build = no }
+				}
+				set_country_flag = COLDWAR_CZE_1970_nuclear_reactor_ordered
+				clr_country_flag = COLDWAR_CZE_1970_nuclear_project_active
+			}
+		}
+	}
+	COLDWAR_CZE_1970_projects_refresh = yes
+}
+
+COLDWAR_CZE_1970_do_civil_nuclear_investment = {
+	if = {
+		limit = { COLDWAR_CZE_1970_can_civil_nuclear_investment = yes }
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.012 }
+		modify_treasury_effect = yes
+		set_variable = { COLDWAR_CZE_1970_nuclear_progress_days = 0 }
+		set_country_flag = COLDWAR_CZE_1970_nuclear_project_active
+	}
+}
+
+COLDWAR_CZE_1970_do_uranium_survey = {
+	if = {
+		limit = { COLDWAR_CZE_1970_can_uranium_survey = yes }
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.0008 }
+		modify_treasury_effect = yes
+		120 = { set_state_flag = COLDWAR_CZE_1970_uranium_surveyed }
+		set_country_flag = COLDWAR_CZE_1970_uranium_survey_120
+	}
+}
+
+COLDWAR_CZE_1970_do_uranium_development = {
+	if = {
+		limit = { COLDWAR_CZE_1970_can_uranium_development = yes }
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.007 }
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_uranium_development_in_progress
+		set_variable = { COLDWAR_CZE_1970_uranium_development_days = 0 }
+	}
+}
+
+COLDWAR_CZE_1970_do_defensive_position_prague = { if = { limit = { COLDWAR_CZE_1970_can_defensive_position_prague = yes } set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes 117 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = bunker province = 11542 level = 1 instant_build = no } } set_country_flag = COLDWAR_CZE_1970_defence_site_prague add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } } }
+COLDWAR_CZE_1970_do_defensive_position_brno = { if = { limit = { COLDWAR_CZE_1970_can_defensive_position_brno = yes } set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes 118 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = bunker province = 3569 level = 1 instant_build = no } } set_country_flag = COLDWAR_CZE_1970_defence_site_brno add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } } }
+COLDWAR_CZE_1970_do_defensive_position_ostrava = { if = { limit = { COLDWAR_CZE_1970_can_defensive_position_ostrava = yes } set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes 1018 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = bunker province = 9567 level = 1 instant_build = no } } set_country_flag = COLDWAR_CZE_1970_defence_site_ostrava add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } } }
+COLDWAR_CZE_1970_do_defensive_position_plzen = { if = { limit = { COLDWAR_CZE_1970_can_defensive_position_plzen = yes } set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes 1017 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = bunker province = 6418 level = 1 instant_build = no } } set_country_flag = COLDWAR_CZE_1970_defence_site_plzen add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } } }
+COLDWAR_CZE_1970_do_defensive_position_bratislava = { if = { limit = { COLDWAR_CZE_1970_can_defensive_position_bratislava = yes } set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes 119 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = bunker province = 9692 level = 1 instant_build = no } } set_country_flag = COLDWAR_CZE_1970_defence_site_bratislava add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } } }
+COLDWAR_CZE_1970_do_defensive_position_kosice = { if = { limit = { COLDWAR_CZE_1970_can_defensive_position_kosice = yes } set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes 120 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = bunker province = 6573 level = 1 instant_build = no } } set_country_flag = COLDWAR_CZE_1970_defence_site_kosice add_to_variable = { COLDWAR_CZE_1970_defence_site_count = 1 } } }
+
+COLDWAR_CZE_1970_do_separation_convention = {
+	if = { limit = { COLDWAR_CZE_1970_can_separation_convention = yes }
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.001 }
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_separation_proposed
+		unlock_decision_tooltip = COLDWAR_CZE_1970_partition_ledger
+		SLO = { set_country_flag = COLDWAR_CZE_1970_separation_proposed set_variable = { COLDWAR_CZE_1970_projects_weekly_expense = 0 } }
+	}
+}
+
+COLDWAR_CZE_1970_do_partition_ledger = {
+	if = {
+		limit = { tag = CZE COLDWAR_CZE_1970_can_partition_ledger = yes }
+		if = {
+			limit = { OR = { NOT = { has_country_flag = COLDWAR_CZE_1970_ledger_proposed } NOT = { COLDWAR_CZE_1970_ledger_schedule_matches = yes } } }
+			add_to_variable = { COLDWAR_CZE_1970_ledger_version = 1 }
+			set_temp_variable = { COLDWAR_CZE_1970_ledger_gdp_total = gdp_total }
+			add_to_temp_variable = { COLDWAR_CZE_1970_ledger_gdp_total = SLO.gdp_total }
+			set_variable = { COLDWAR_CZE_1970_ledger_cze_share = gdp_total }
+			divide_variable = { COLDWAR_CZE_1970_ledger_cze_share = COLDWAR_CZE_1970_ledger_gdp_total }
+			set_variable = { COLDWAR_CZE_1970_ledger_slo_share = 1 }
+			subtract_from_variable = { COLDWAR_CZE_1970_ledger_slo_share = COLDWAR_CZE_1970_ledger_cze_share }
+			set_variable = { COLDWAR_CZE_1970_ledger_preview_cze_share = COLDWAR_CZE_1970_ledger_cze_share }
+			set_variable = { COLDWAR_CZE_1970_ledger_preview_slo_share = COLDWAR_CZE_1970_ledger_slo_share }
+			set_variable = { COLDWAR_CZE_1970_ledger_transfer_119 = 0 }
+			set_variable = { COLDWAR_CZE_1970_ledger_transfer_120 = 0 }
+			if = { limit = { 119 = { is_owned_by = CZE is_controlled_by = CZE } } set_variable = { COLDWAR_CZE_1970_ledger_transfer_119 = 1 } }
+			if = { limit = { 120 = { is_owned_by = CZE is_controlled_by = CZE } } set_variable = { COLDWAR_CZE_1970_ledger_transfer_120 = 1 } }
+			SLO = {
+				set_variable = { COLDWAR_CZE_1970_ledger_version = CZE.COLDWAR_CZE_1970_ledger_version }
+				set_variable = { COLDWAR_CZE_1970_ledger_cze_share = CZE.COLDWAR_CZE_1970_ledger_cze_share }
+				set_variable = { COLDWAR_CZE_1970_ledger_slo_share = CZE.COLDWAR_CZE_1970_ledger_slo_share }
+				set_variable = { COLDWAR_CZE_1970_ledger_transfer_119 = CZE.COLDWAR_CZE_1970_ledger_transfer_119 }
+				set_variable = { COLDWAR_CZE_1970_ledger_transfer_120 = CZE.COLDWAR_CZE_1970_ledger_transfer_120 }
+			}
+			set_country_flag = COLDWAR_CZE_1970_ledger_proposed
+			set_country_flag = COLDWAR_CZE_1970_ledger_cze_approved
+			clr_country_flag = COLDWAR_CZE_1970_ledger_locked
+			clr_country_flag = COLDWAR_CZE_1970_dual_cze_approved
+			clr_country_flag = COLDWAR_CZE_1970_dual_slo_approved
+			SLO = { set_country_flag = COLDWAR_CZE_1970_ledger_proposed clr_country_flag = COLDWAR_CZE_1970_ledger_locked clr_country_flag = COLDWAR_CZE_1970_ledger_slo_approved clr_country_flag = COLDWAR_CZE_1970_dual_cze_approved clr_country_flag = COLDWAR_CZE_1970_dual_slo_approved }
+		}
+	}
+	else_if = {
+		limit = { tag = SLO COLDWAR_CZE_1970_can_partition_ledger = yes }
+		set_country_flag = COLDWAR_CZE_1970_ledger_slo_approved
+		if = {
+			limit = { CZE = { has_country_flag = COLDWAR_CZE_1970_ledger_cze_approved } COLDWAR_CZE_1970_ledger_schedule_matches = yes }
+			CZE = { set_country_flag = COLDWAR_CZE_1970_ledger_locked }
+			set_country_flag = COLDWAR_CZE_1970_ledger_locked
+		}
+	}
+}
+
+COLDWAR_CZE_1970_do_dual_ratification = {
+	if = {
+		limit = { COLDWAR_CZE_1970_can_dual_ratification = yes }
+		if = { limit = { tag = CZE } set_country_flag = COLDWAR_CZE_1970_dual_cze_approved }
+		if = { limit = { tag = SLO } set_country_flag = COLDWAR_CZE_1970_dual_slo_approved }
+		if = {
+			limit = {
+				CZE = { has_country_flag = COLDWAR_CZE_1970_dual_cze_approved }
+				SLO = { has_country_flag = COLDWAR_CZE_1970_dual_slo_approved }
+				CZE = { has_country_flag = COLDWAR_CZE_1970_ledger_locked }
+				SLO = { has_country_flag = COLDWAR_CZE_1970_ledger_locked }
+				COLDWAR_CZE_1970_ledger_schedule_matches = yes
+				COLDWAR_CZE_1970_separation_pair_clear = yes
+			}
+			CZE = {
+				set_variable = { COLDWAR_CZE_1970_exec_treasury_total = treasury }
+				add_to_variable = { COLDWAR_CZE_1970_exec_treasury_total = SLO.treasury }
+				set_variable = { COLDWAR_CZE_1970_exec_debt_total = debt }
+				add_to_variable = { COLDWAR_CZE_1970_exec_debt_total = SLO.debt }
+				set_variable = { COLDWAR_CZE_1970_exec_cze_treasury = COLDWAR_CZE_1970_exec_treasury_total }
+				multiply_variable = { COLDWAR_CZE_1970_exec_cze_treasury = COLDWAR_CZE_1970_ledger_cze_share }
+				set_variable = { COLDWAR_CZE_1970_exec_slo_treasury = COLDWAR_CZE_1970_exec_treasury_total }
+				subtract_from_variable = { COLDWAR_CZE_1970_exec_slo_treasury = COLDWAR_CZE_1970_exec_cze_treasury }
+				set_variable = { COLDWAR_CZE_1970_exec_cze_debt = COLDWAR_CZE_1970_exec_debt_total }
+				multiply_variable = { COLDWAR_CZE_1970_exec_cze_debt = COLDWAR_CZE_1970_ledger_cze_share }
+				set_variable = { COLDWAR_CZE_1970_exec_slo_debt = COLDWAR_CZE_1970_exec_debt_total }
+				subtract_from_variable = { COLDWAR_CZE_1970_exec_slo_debt = COLDWAR_CZE_1970_exec_cze_debt }
+			}
+			CZE = {
+				set_temp_variable = { treasury_change = COLDWAR_CZE_1970_exec_cze_treasury }
+				subtract_from_temp_variable = { treasury_change = treasury }
+				modify_treasury_effect = yes
+				set_temp_variable = { debt_change = COLDWAR_CZE_1970_exec_cze_debt }
+				subtract_from_temp_variable = { debt_change = debt }
+				modify_debt_effect = yes
+			}
+			SLO = {
+				set_temp_variable = { treasury_change = CZE.COLDWAR_CZE_1970_exec_slo_treasury }
+				subtract_from_temp_variable = { treasury_change = treasury }
+				modify_treasury_effect = yes
+				set_temp_variable = { debt_change = CZE.COLDWAR_CZE_1970_exec_slo_debt }
+				subtract_from_temp_variable = { debt_change = debt }
+				modify_debt_effect = yes
+			}
+			CZE = {
+				clear_variable = COLDWAR_CZE_1970_exec_treasury_total
+				clear_variable = COLDWAR_CZE_1970_exec_debt_total
+				clear_variable = COLDWAR_CZE_1970_exec_cze_treasury
+				clear_variable = COLDWAR_CZE_1970_exec_slo_treasury
+				clear_variable = COLDWAR_CZE_1970_exec_cze_debt
+				clear_variable = COLDWAR_CZE_1970_exec_slo_debt
+			}
+			SLO = {
+				if = { limit = { CZE = { check_variable = { COLDWAR_CZE_1970_ledger_transfer_119 = 1 } } 119 = { is_owned_by = CZE is_controlled_by = CZE } } transfer_state = 119 }
+				if = { limit = { CZE = { check_variable = { COLDWAR_CZE_1970_ledger_transfer_120 = 1 } } 120 = { is_owned_by = CZE is_controlled_by = CZE } } transfer_state = 120 }
+				set_country_flag = COLDWAR_CZE_1970_separation_ratified
+				set_country_flag = COLDWAR_CZE_1970_separation_complete
+			}
+			CZE = { set_cosmetic_tag = CZE set_country_flag = COLDWAR_CZE_1970_separation_ratified set_country_flag = COLDWAR_CZE_1970_separation_complete }
+		}
+	}
+}

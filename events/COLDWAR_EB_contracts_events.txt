@@ -1,0 +1,138 @@
+# IMPERIA COLD WAR — Eastern Bloc consumer goods contracts
+# COLDWAR | hand patch 01.11.2026 (Claude): requests are answered by the seller one day later by event; the seller can cancel too. Port to eb_diplo.py / eb_effects.py before the next EB build.
+add_namespace = COLDWAR_EBC
+
+# Seller: a request from the Eastern Bloc, answered one day after it was sent.
+country_event = {
+	id = COLDWAR_EBC.1
+	title = COLDWAR_EBC.1.t
+	desc = COLDWAR_EBC.1.d
+	picture = GFX_report_event_generic_sign_treaty1
+
+	is_triggered_only = yes
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.1"
+		hidden_effect = { COLDWAR_EB_contract_pop_request = yes }
+	}
+
+	option = {
+		name = COLDWAR_EBC.1.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.1 option a"
+		ai_chance = {
+			base = 75
+			modifier = { factor = 0.2 check_variable = { global.mdcw_cw_tension_tier > 3 } }
+		}
+		custom_effect_tooltip = COLDWAR_EBC_income_tt
+		hidden_effect = {
+			if = {
+				limit = { var:COLDWAR_EB_rq_cur_b = { exists = yes } }
+				COLDWAR_EB_contract_release_pending = yes
+			}
+		}
+		if = {
+			limit = { COLDWAR_EB_contract_request_valid = yes }
+			var:COLDWAR_EB_rq_cur_b = {
+				set_temp_variable = { COLDWAR_EB_t_csize = PREV.COLDWAR_EB_rq_cur_s }
+				COLDWAR_EB_contract_start = yes
+				set_variable = { COLDWAR_EB_rp_by = PREV.id }
+				set_variable = { COLDWAR_EB_rp_size = PREV.COLDWAR_EB_rq_cur_s }
+				if = { limit = { is_ai = no } country_event = { id = COLDWAR_EBC.2 } }
+			}
+		}
+		hidden_effect = { COLDWAR_EB_contract_next_request = yes }
+	}
+
+	option = {
+		name = COLDWAR_EBC.1.b
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.1 option b"
+		ai_chance = { base = 25 }
+		hidden_effect = {
+			if = {
+				limit = { var:COLDWAR_EB_rq_cur_b = { exists = yes } }
+				COLDWAR_EB_contract_release_pending = yes
+				var:COLDWAR_EB_rq_cur_b = {
+					set_variable = { COLDWAR_EB_rp_by = PREV.id }
+					if = { limit = { is_ai = no } country_event = { id = COLDWAR_EBC.3 } }
+				}
+			}
+			COLDWAR_EB_contract_next_request = yes
+		}
+	}
+}
+
+country_event = {
+	id = COLDWAR_EBC.2
+	title = COLDWAR_EBC.2.t
+	desc = COLDWAR_EBC.2.d
+	picture = GFX_report_event_generic_sign_treaty1
+
+	is_triggered_only = yes
+	trigger = { is_ai = no }
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.2"
+	}
+
+	option = {
+		name = COLDWAR_EBC.2.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.2 option a"
+	}
+}
+
+country_event = {
+	id = COLDWAR_EBC.3
+	title = COLDWAR_EBC.3.t
+	desc = COLDWAR_EBC.3.d
+	picture = GFX_report_event_generic_diplomacy
+
+	is_triggered_only = yes
+	trigger = { is_ai = no }
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.3"
+	}
+
+	option = {
+		name = COLDWAR_EBC.3.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.3 option a"
+	}
+}
+
+country_event = {
+	id = COLDWAR_EBC.4
+	title = COLDWAR_EBC.4.t
+	desc = COLDWAR_EBC.4.d
+	picture = GFX_report_event_generic_diplomacy
+
+	is_triggered_only = yes
+	trigger = { is_ai = no }
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.4"
+	}
+
+	option = {
+		name = COLDWAR_EBC.4.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.4 option a"
+	}
+}
+
+country_event = {
+	id = COLDWAR_EBC.5
+	title = COLDWAR_EBC.5.t
+	desc = COLDWAR_EBC.5.d
+	picture = GFX_report_event_generic_diplomacy
+
+	is_triggered_only = yes
+	trigger = { is_ai = no }
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.5"
+	}
+
+	option = {
+		name = COLDWAR_EBC.5.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_EBC.5 option a"
+	}
+}

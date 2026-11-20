@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Distributed nuclear maintenance and change-driven oil modifiers.
 # IMPERIA COLD WAR: Project-specific integration; preserve existing author credits.
 # COLDWAR | Kernenergie-Umbau – scripted effects
 # Player programme (maintenance, safety, accidents): only is_ai = no countries with reactors.
@@ -38,16 +39,13 @@ COLDWAR_nuc_monthly = {
 	COLDWAR_nuc_ensure_modifiers = yes
 	COLDWAR_cop_update = yes
 	if = {
-		limit = { COLDWAR_nuc_player_programme = yes }
-		if = {
-			limit = { NOT = { has_country_flag = COLDWAR_nuc_initialized } }
-			COLDWAR_nuc_init = yes
-		}
-		COLDWAR_nuc_update_fleet = yes
-		COLDWAR_nuc_update_safety = yes
-		COLDWAR_nuc_update_risk = yes
-		COLDWAR_nuc_roll = yes
-	}
+        limit = {
+            COLDWAR_nuc_player_programme = yes
+            NOT = { has_country_flag = COLDWAR_nuc_monthly_pending }
+        }
+        set_country_flag = { flag = COLDWAR_nuc_monthly_pending days = 30 value = 1 }
+        country_event = { id = COLDWAR_nuclear.40 days = 2 random_days = 20 }
+    }
 	if = {
 		limit = { has_variable = COLDWAR_fuel_supplier }
 		COLDWAR_fuel_buyer_monthly = yes
@@ -56,7 +54,6 @@ COLDWAR_nuc_monthly = {
 		limit = { check_variable = { COLDWAR_fuel_customers^num > 0 } }
 		COLDWAR_fuel_supplier_monthly = yes
 	}
-	force_update_dynamic_modifier = yes
 }
 
 ### Cheap Oil Power ###
@@ -66,6 +63,14 @@ COLDWAR_cop_update = {
 		limit = { has_variable = global.imp_global_oil_price }
 		set_temp_variable = { imp_oil_factor_t = global.imp_global_oil_price }
 		mdcw_cw_oil_effective_price = yes
+		if = {
+            limit = {
+                OR = {
+                    NOT = { has_country_flag = COLDWAR_cop_cache_initialized }
+                    NOT = { check_variable = { COLDWAR_cop_price_display = imp_oil_factor_t } }
+                }
+            }
+            set_country_flag = COLDWAR_cop_cache_initialized
 		set_variable = { COLDWAR_cop_price_display = imp_oil_factor_t }
 		set_temp_variable = { COLDWAR_t_cop_f = 75 }
 		subtract_from_temp_variable = { COLDWAR_t_cop_f = imp_oil_factor_t }
@@ -82,6 +87,8 @@ COLDWAR_cop_update = {
 			multiply_variable = { COLDWAR_cop_speed = 0.15 }
 			multiply_variable = { COLDWAR_cop_cost = -0.30 }
 		}
+            force_update_dynamic_modifier = yes
+        }
 	}
 }
 
@@ -295,4 +302,19 @@ COLDWAR_fuel_supplier_monthly = {
 			}
 		}
 	}
+}
+
+# Deferred maintenance only. Contract delivery and settlement retain their monthly calendar.
+COLDWAR_nuc_programme_monthly = {
+if = {
+	limit = {
+		NOT = { has_country_flag = COLDWAR_nuc_initialized }
+	}
+	COLDWAR_nuc_init = yes
+}
+COLDWAR_nuc_update_fleet = yes
+COLDWAR_nuc_update_safety = yes
+COLDWAR_nuc_update_risk = yes
+COLDWAR_nuc_roll = yes
+force_update_dynamic_modifier = yes
 }

@@ -1,0 +1,141 @@
+# IMPERIA COLD WAR — Turkey PKK organisation native core.
+add_namespace = COLDWAR_TUR_PKK
+country_event = {
+ id = COLDWAR_TUR_PKK.1
+ hidden = yes
+ is_triggered_only = yes
+ immediate = { COLDWAR_TUR_1970_PKK_resolve_assault = yes }
+}
+country_event = {
+ id = COLDWAR_TUR_PKK.2
+ title = COLDWAR_TUR_PKK.2.t
+ desc = COLDWAR_TUR_PKK.2.d
+ picture = GFX_political_deal
+ is_triggered_only = yes
+ option = { name = COLDWAR_TUR_PKK.2.b clr_country_flag = COLDWAR_TUR_1970_PKK_independence_pending ai_chance = { base = 100 } }
+ option = {
+  name = COLDWAR_TUR_PKK.2.a
+  trigger = { COLDWAR_TUR_1970_PKK_can_confirm_independence = yes }
+  hidden_effect = { COLDWAR_TUR_1970_PKK_confirm_independence = yes }
+  effect_tooltip = { COLDWAR_TUR_1970_PKK_preview_independence = yes }
+  ai_chance = { base = 0 }
+ }
+}
+
+# Adapted from MD events/Turkey.txt TUR_pkk.1-4. Each recipient decides independently.
+country_event = {
+ id = COLDWAR_TUR_PKK.3
+ title = COLDWAR_TUR_PKK.3.t
+ desc = COLDWAR_TUR_PKK.3.d
+ picture = GFX_political_deal
+ is_triggered_only = yes
+ option = { name = COLDWAR_TUR_PKK.3.a trigger = { COLDWAR_TUR_1970_PKK_can_choose_policy = yes } COLDWAR_TUR_1970_PKK_policy_conventional = yes }
+ option = { name = COLDWAR_TUR_PKK.3.b trigger = { COLDWAR_TUR_1970_PKK_can_choose_policy = yes } COLDWAR_TUR_1970_PKK_policy_unconventional = yes }
+ option = { name = COLDWAR_TUR_PKK.3.c trigger = { COLDWAR_TUR_1970_PKK_can_choose_policy = yes } COLDWAR_TUR_1970_PKK_policy_reconciliation = yes }
+ option = { name = COLDWAR_TUR_PKK.3.x clr_country_flag = COLDWAR_TUR_1970_PKK_policy_pending }
+}
+country_event = {
+ id = COLDWAR_TUR_PKK.4
+ title = COLDWAR_TUR_PKK.4.t
+ desc = COLDWAR_TUR_PKK.4.d
+ picture = GFX_political_deal
+ is_triggered_only = yes
+ option = { name = COLDWAR_TUR_PKK.4.a
+  TUR = { custom_effect_tooltip = TUR_DECREASE_PKK_STRENGTH_2 }
+  trigger = { has_country_flag = COLDWAR_TUR_1970_PKK_request_pending NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_answered } NOT = { has_war_with = TUR } TUR = { exists = yes COLDWAR_TUR_1970_PKK_armed_active = yes has_country_flag = TUR_PKK_conventional } }
+  if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_request_pending NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_answered } NOT = { has_war_with = TUR } TUR = { exists = yes COLDWAR_TUR_1970_PKK_armed_active = yes has_country_flag = TUR_PKK_conventional } }
+   TUR = { add_to_variable = { TUR_PKK_strength = -2 } clamp_variable = { var = TUR_PKK_strength min = 0 max = 100 } COLDWAR_TUR_1970_PKK_reconcile = yes }
+   clr_country_flag = COLDWAR_TUR_1970_PKK_request_pending set_country_flag = COLDWAR_TUR_1970_PKK_request_answered
+  }
+ }
+ option = { name = COLDWAR_TUR_PKK.4.b clr_country_flag = COLDWAR_TUR_1970_PKK_request_pending set_country_flag = COLDWAR_TUR_1970_PKK_request_answered }
+}
+# Adapted from MD events/Turkey.txt TUR_pkk.100; the selected base must still be valid.
+country_event = {
+ id = COLDWAR_TUR_PKK.5
+ title = COLDWAR_TUR_PKK.5.t
+ desc = COLDWAR_TUR_PKK.5.d
+ picture = GFX_political_deal
+ is_triggered_only = yes
+ option = { name = COLDWAR_TUR_PKK.5.a trigger = { COLDWAR_TUR_1970_PKK_can_preop_air = yes }
+  if = { limit = { COLDWAR_TUR_1970_PKK_can_preop_air = yes }
+  random_list = {
+   50 = {
+    custom_effect_tooltip = TUR_PKK_DAMAGE_300_TT
+    if = { limit = { has_country_flag = TUR_targeting_van } add_to_variable = { var_pkk_van = -300 } clamp_variable = { var = var_pkk_van min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_diyarbakir } add_to_variable = { var_pkk_diyarbakir = -300 } clamp_variable = { var = var_pkk_diyarbakir min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_euphrates } add_to_variable = { var_pkk_euphrates = -300 } clamp_variable = { var = var_pkk_euphrates min = 0 max = 5000 } }
+   }
+   50 = {
+    custom_effect_tooltip = TUR_PKK_DAMAGE_200_TT
+    if = { limit = { has_country_flag = TUR_targeting_van } add_to_variable = { var_pkk_van = -200 } clamp_variable = { var = var_pkk_van min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_diyarbakir } add_to_variable = { var_pkk_diyarbakir = -200 } clamp_variable = { var = var_pkk_diyarbakir min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_euphrates } add_to_variable = { var_pkk_euphrates = -200 } clamp_variable = { var = var_pkk_euphrates min = 0 max = 5000 } }
+   }
+  }
+  random_list = { 80 = { add_equipment_to_stockpile = { type = medium_plane_airframe amount = -3 } air_experience = -15 } 10 = { air_experience = -20 } 10 = { } }
+   clr_country_flag = COLDWAR_TUR_1970_PKK_preop_pending
+  }
+ }
+ option = { name = COLDWAR_TUR_PKK.5.b trigger = { COLDWAR_TUR_1970_PKK_preop_valid = yes }
+  if = { limit = { COLDWAR_TUR_1970_PKK_preop_valid = yes }
+  random_list = {
+   50 = {
+    custom_effect_tooltip = TUR_PKK_DAMAGE_300_TT
+    if = { limit = { has_country_flag = TUR_targeting_van } add_to_variable = { var_pkk_van = -300 } clamp_variable = { var = var_pkk_van min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_diyarbakir } add_to_variable = { var_pkk_diyarbakir = -300 } clamp_variable = { var = var_pkk_diyarbakir min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_euphrates } add_to_variable = { var_pkk_euphrates = -300 } clamp_variable = { var = var_pkk_euphrates min = 0 max = 5000 } }
+   }
+   50 = {
+    custom_effect_tooltip = TUR_PKK_DAMAGE_200_TT
+    if = { limit = { has_country_flag = TUR_targeting_van } add_to_variable = { var_pkk_van = -200 } clamp_variable = { var = var_pkk_van min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_diyarbakir } add_to_variable = { var_pkk_diyarbakir = -200 } clamp_variable = { var = var_pkk_diyarbakir min = 0 max = 5000 } }
+    if = { limit = { has_country_flag = TUR_targeting_euphrates } add_to_variable = { var_pkk_euphrates = -200 } clamp_variable = { var = var_pkk_euphrates min = 0 max = 5000 } }
+   }
+  }
+  random_list = { 80 = { add_stability = -0.05 set_temp_variable = { party_index = ruling_party } set_temp_variable = { party_popularity_increase = -0.035 } set_temp_variable = { temp_outlook_increase = -0.025 } change_relative_party_popularity = yes } 10 = { set_temp_variable = { party_index = ruling_party } set_temp_variable = { party_popularity_increase = -0.05 } set_temp_variable = { temp_outlook_increase = -0.05 } change_relative_party_popularity = yes } 10 = { } }
+   clr_country_flag = COLDWAR_TUR_1970_PKK_preop_pending
+  }
+ }
+ option = { name = COLDWAR_TUR_PKK.5.c trigger = { COLDWAR_TUR_1970_PKK_can_preop_artillery = yes }
+  if = { limit = { COLDWAR_TUR_1970_PKK_can_preop_artillery = yes }
+   random_list = {
+    80 = {
+     if = { limit = { has_country_flag = TUR_targeting_van 935 = { is_owned_and_controlled_by = TUR } } 935 = {
+      if = { limit = { infrastructure > 0 } damage_building = { type = infrastructure damage = 3.0 } }
+      if = { limit = { offices > 0 } damage_building = { type = offices damage = 3.0 } }
+      if = { limit = { industrial_complex > 0 } damage_building = { type = industrial_complex damage = 3.0 } }
+     } }
+     if = { limit = { has_country_flag = TUR_targeting_diyarbakir 162 = { is_owned_and_controlled_by = TUR } } 162 = {
+      if = { limit = { infrastructure > 0 } damage_building = { type = infrastructure damage = 3.0 } }
+      if = { limit = { offices > 0 } damage_building = { type = offices damage = 3.0 } }
+      if = { limit = { industrial_complex > 0 } damage_building = { type = industrial_complex damage = 3.0 } }
+     } }
+     if = { limit = { has_country_flag = TUR_targeting_euphrates 1205 = { is_owned_and_controlled_by = TUR } } 1205 = {
+      if = { limit = { infrastructure > 0 } damage_building = { type = infrastructure damage = 3.0 } }
+      if = { limit = { offices > 0 } damage_building = { type = offices damage = 3.0 } }
+      if = { limit = { industrial_complex > 0 } damage_building = { type = industrial_complex damage = 3.0 } }
+     } }
+     army_experience = -15
+    }
+    10 = { army_experience = -20 }
+    10 = { }
+   }
+   clr_country_flag = COLDWAR_TUR_1970_PKK_preop_pending
+  }
+ }
+ option = { name = COLDWAR_TUR_PKK.5.x clr_country_flag = COLDWAR_TUR_1970_PKK_preop_pending }
+}
+
+# Delayed native-style clear and victory completions, with execution-time guards.
+country_event = { id = COLDWAR_TUR_PKK.6 hidden = yes is_triggered_only = yes immediate = { COLDWAR_TUR_1970_PKK_resolve_clear = yes } }
+country_event = { id = COLDWAR_TUR_PKK.7 hidden = yes is_triggered_only = yes immediate = { COLDWAR_TUR_1970_PKK_resolve_victory = yes } }
+
+country_event = {
+ id = COLDWAR_TUR_PKK.8
+ title = COLDWAR_TUR_PKK.8.t
+ desc = COLDWAR_TUR_PKK.8.d
+ picture = GFX_political_deal
+ is_triggered_only = yes
+ option = { name = COLDWAR_TUR_PKK.8.a }
+}

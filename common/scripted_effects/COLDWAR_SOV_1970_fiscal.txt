@@ -1,0 +1,102 @@
+# IMPERIA COLD WAR — Soviet 1970 native weekly fiscal integration.
+# Canonical source: cw_sov01_fiscal.py, invoked with the explicit mod root.
+# Approved allocation: Mongolian garrison aid = 0.2% Soviet GDP annually.
+# Approved allocation: Afghan burden = 0.3% Soviet GDP monthly.
+# Convert with multiply/divide commands; never substitute a rounded weekly literal.
+# The shared weekly producer runs before every country's native convergence and
+# fiscal readers. Both sides consume one invoice based on refreshed Soviet state
+# data at the beginning of that weekly pass. Readers never reprice it.
+
+COLDWAR_SOV_fiscal_prepare_week = {
+	set_variable = { global.COLDWAR_SOV_fiscal_gdp = 0 }
+	set_variable = { global.COLDWAR_SOV_fiscal_mon_weekly = 0 }
+	set_variable = { global.COLDWAR_SOV_fiscal_afghan_weekly = 0 }
+	if = {
+		limit = {
+			OR = {
+				COLDWAR_SOV_fiscal_mongolian_enabled = yes
+				COLDWAR_SOV_fiscal_afghan_enabled = yes
+			}
+			SOV = { has_variable = last_quarter_gdp_total }
+		}
+		SOV = {
+			# Refresh only native GDP inputs, not the whole budget or convergence.
+			# Uninitialized nations remain at zero until their first native weekly pass.
+			update_state_variables = yes
+			set_variable = { global.COLDWAR_SOV_fiscal_gdp = gdp_total }
+			if = {
+				limit = { COLDWAR_SOV_fiscal_mongolian_enabled = yes }
+				set_variable = { global.COLDWAR_SOV_fiscal_mon_weekly = global.COLDWAR_SOV_fiscal_gdp }
+				multiply_variable = { global.COLDWAR_SOV_fiscal_mon_weekly = 0.002 }
+				divide_variable = { global.COLDWAR_SOV_fiscal_mon_weekly = 52 }
+			}
+			if = {
+				limit = { COLDWAR_SOV_fiscal_afghan_enabled = yes }
+				set_variable = { global.COLDWAR_SOV_fiscal_afghan_weekly = global.COLDWAR_SOV_fiscal_gdp }
+				multiply_variable = { global.COLDWAR_SOV_fiscal_afghan_weekly = 0.003 }
+				multiply_variable = { global.COLDWAR_SOV_fiscal_afghan_weekly = 12 }
+				divide_variable = { global.COLDWAR_SOV_fiscal_afghan_weekly = 52 }
+			}
+		}
+	}
+}
+
+# Each reader resets its own display variables and adds one cached contribution.
+# It must not reevaluate eligibility independently, or a cross-country refresh
+# could debit and credit different periods or different activation states.
+COLDWAR_SOV_fiscal_add_income = {
+	set_variable = { COLDWAR_SOV_fiscal_mon_income = 0 }
+	if = {
+		limit = { tag = MON }
+		set_variable = { COLDWAR_SOV_fiscal_mon_income = global.COLDWAR_SOV_fiscal_mon_weekly }
+	}
+	add_to_variable = { additional_income_rate = COLDWAR_SOV_fiscal_mon_income }
+}
+
+COLDWAR_SOV_fiscal_add_expense = {
+	set_variable = { COLDWAR_SOV_fiscal_mon_expense = 0 }
+	set_variable = { COLDWAR_SOV_fiscal_afghan_expense = 0 }
+	if = {
+		limit = { tag = SOV }
+		set_variable = { COLDWAR_SOV_fiscal_mon_expense = global.COLDWAR_SOV_fiscal_mon_weekly }
+		set_variable = { COLDWAR_SOV_fiscal_afghan_expense = global.COLDWAR_SOV_fiscal_afghan_weekly }
+	}
+	add_to_variable = { additional_expenses_rate = COLDWAR_SOV_fiscal_mon_expense }
+	add_to_variable = { additional_expenses_rate = COLDWAR_SOV_fiscal_afghan_expense }
+}
+
+# Prospective numeric rows use only temporary variables, independent of consent.
+# They never refresh native GDP, create an invoice, or alter any country ledger.
+COLDWAR_SOV_fiscal_prepare_mongolian_preview = {
+	set_temp_variable = { COLDWAR_SOV_fiscal_mon_preview = 0 }
+	if = {
+		limit = { country_exists = SOV }
+		set_temp_variable = { COLDWAR_SOV_fiscal_mon_preview = SOV.gdp_total }
+		multiply_temp_variable = { COLDWAR_SOV_fiscal_mon_preview = 0.002 }
+		divide_temp_variable = { COLDWAR_SOV_fiscal_mon_preview = 52 }
+	}
+}
+
+COLDWAR_SOV_fiscal_preview_mongolian_income = {
+	hidden_effect = { COLDWAR_SOV_fiscal_prepare_mongolian_preview = yes }
+	custom_effect_tooltip = COLDWAR_SOV_fiscal_mon_income_tt
+}
+
+COLDWAR_SOV_fiscal_preview_mongolian_expense = {
+	hidden_effect = { COLDWAR_SOV_fiscal_prepare_mongolian_preview = yes }
+	custom_effect_tooltip = COLDWAR_SOV_fiscal_mon_expense_tt
+}
+
+COLDWAR_SOV_fiscal_preview_afghan_expense = {
+	hidden_effect = {
+		set_temp_variable = { COLDWAR_SOV_fiscal_afghan_preview = 0 }
+		if = {
+			limit = { country_exists = SOV }
+			set_temp_variable = { COLDWAR_SOV_fiscal_afghan_preview = SOV.gdp_total }
+			multiply_temp_variable = { COLDWAR_SOV_fiscal_afghan_preview = 0.003 }
+			multiply_temp_variable = { COLDWAR_SOV_fiscal_afghan_preview = 12 }
+			divide_temp_variable = { COLDWAR_SOV_fiscal_afghan_preview = 52 }
+		}
+	}
+	custom_effect_tooltip = COLDWAR_SOV_fiscal_afghan_expense_tt
+}

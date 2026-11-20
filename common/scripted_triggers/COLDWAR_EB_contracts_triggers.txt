@@ -1,0 +1,28 @@
+# IMPERIA COLD WAR — Eastern Bloc consumer goods contracts
+# COLDWAR | hand patch 01.11.2026 (Claude): requests are answered by the seller one day later by event; the seller can cancel too. Port to eb_diplo.py / eb_effects.py before the next EB build.
+
+# Seller scope: the queued request can still be signed.
+COLDWAR_EB_contract_request_valid = {
+	var:COLDWAR_EB_rq_cur_b = {
+		exists = yes
+		has_country_flag = COLDWAR_EB_member
+		NOT = { has_war_with = PREV }
+		NOT = { check_variable = { COLDWAR_EB_info = 3 } }
+		NOT = { check_variable = { COLDWAR_EB_ct_end@PREV > global.num_days } }
+	}
+}
+
+# Buyer scope: at least one size step free under the cap.
+COLDWAR_EB_contract_has_room = {
+	check_variable = { COLDWAR_EB_contract_total < 3 }
+	OR = {
+		check_variable = { global.num_days > COLDWAR_EB_ct_pend_until }
+		check_variable = { COLDWAR_EB_ct_free > 0 }
+		NOT = { has_variable = COLDWAR_EB_ct_free }
+	}
+}
+
+# Buyer scope: the chosen size fits under the cap.
+COLDWAR_EB_contract_size_fits = {
+	NOT = { check_variable = { COLDWAR_EB_ct_send_size > COLDWAR_EB_ct_free } }
+}

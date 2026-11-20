@@ -1,21 +1,24 @@
-# IMPERIA COLD WAR — one monthly intelligence sweep; no daily or weekly checks.
+# IMPERIA COLD WAR — Player-only intelligence, with one distributed sweep per month.
 on_actions = {
-	on_startup = {
-		effect = {
-			every_country = {
-				limit = { COLDWAR_NI_relevant_country = yes }
-				COLDWAR_NI_initialize_country = yes
-			}
-		}
-	}
-	on_monthly = {
-		effect = {
-			# on_monthly is country-scoped. The first country builds one shared cache.
-			COLDWAR_NI_refresh_observer_cache = yes
-			if = {
-				limit = { COLDWAR_NI_relevant_country = yes }
-				COLDWAR_NI_monthly_country = yes
-			}
-		}
-	}
+    on_startup = {
+        effect = {
+            every_country = {
+                limit = { COLDWAR_NI_relevant_country = yes }
+                COLDWAR_NI_initialize_country = yes
+            }
+        }
+    }
+    on_monthly = {
+        effect = {
+            COLDWAR_NI_refresh_observer_cache = yes
+            if = {
+                limit = {
+                    COLDWAR_NI_relevant_country = yes
+                    NOT = { has_country_flag = COLDWAR_NI_sweep_pending }
+                }
+                set_country_flag = { flag = COLDWAR_NI_sweep_pending days = 30 value = 1 }
+                country_event = { id = COLDWAR_NI.10 days = 2 random_days = 20 }
+            }
+        }
+    }
 }

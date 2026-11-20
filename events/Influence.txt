@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — France November coercion integration; native MD event logic and attribution retained.
 # IMPERIA COLD WAR — Superpower dossier correspondence observer integration
 add_namespace = influence
 add_namespace = News_influence
@@ -1089,7 +1090,12 @@ country_event = {
 	#target outlook - biggest party
 	option = {
 		name = influence.5.a
+		# IMPERIA COLD WAR — France November paid-coup guard BEGIN
+		trigger = { if = { limit = { tag = FRA FROM = { has_country_flag = COLDWAR_FRA2_NOV_coup_pending } } has_political_power > 200 FROM = { COLDWAR_FRA2_NOV_paid_coup_still_valid = yes } } }
+		# IMPERIA COLD WAR — France November paid-coup guard END
 		log = "[GetDateText]: [This.GetName]: influence.5.a executed"
+		# IMPERIA COLD WAR — France November coercion hook: record native confirmation.
+		COLDWAR_FRA2_NOV_coup_dialogue_confirmed = yes
 		add_political_power = -200
 
 		add_threat = 2
@@ -1097,6 +1103,8 @@ country_event = {
 		random_list = {
 			#success
 			var:FROM.success_factor_biggest = {
+				# IMPERIA COLD WAR — France November coercion hook: paid sponsor only.
+				COLDWAR_FRA2_NOV_coup_success = yes
 				custom_effect_tooltip = influence_coup_largest_success_TT
 				#add tooltip
 
@@ -1166,6 +1174,8 @@ country_event = {
 			}
 			#discovered
 			var:FROM.fail_factor_biggest = {
+				# IMPERIA COLD WAR — France November coercion hook: paid sponsor only.
+				COLDWAR_FRA2_NOV_coup_failed = yes
 				custom_effect_tooltip = influence_coup_largest_discovered_TT
 				FROM = {
 					add_opinion_modifier = { target = ROOT modifier = failed_coup }
@@ -1225,6 +1235,8 @@ country_event = {
 						start_civil_war = {
 							ideology = democratic
 							size = 0.5
+							# IMPERIA COLD WAR — France November coercion hook: actual rebel identity.
+							COLDWAR_FRA2_NOV_record_civil_rebel = yes
 						}
 						#first setup some things for original tag
 						hidden_effect = {
@@ -1284,6 +1296,8 @@ country_event = {
 						start_civil_war = {
 							ideology = communism
 							size = 0.5
+							# IMPERIA COLD WAR — France November coercion hook: actual rebel identity.
+							COLDWAR_FRA2_NOV_record_civil_rebel = yes
 						}
 						#first setup some things for original tag
 						hidden_effect = {
@@ -1341,6 +1355,8 @@ country_event = {
 						start_civil_war = {
 							ideology = fascism
 							size = 0.5
+							# IMPERIA COLD WAR — France November coercion hook: actual rebel identity.
+							COLDWAR_FRA2_NOV_record_civil_rebel = yes
 						}
 						#first setup some things for original tag
 						hidden_effect = {
@@ -1397,6 +1413,8 @@ country_event = {
 						start_civil_war = {
 							ideology = neutrality
 							size = 0.5
+							# IMPERIA COLD WAR — France November coercion hook: actual rebel identity.
+							COLDWAR_FRA2_NOV_record_civil_rebel = yes
 						}
 						#first setup some things for original tag
 						hidden_effect = {
@@ -1456,6 +1474,8 @@ country_event = {
 						start_civil_war = {
 							ideology = nationalist
 							size = 0.5
+							# IMPERIA COLD WAR — France November coercion hook: actual rebel identity.
+							COLDWAR_FRA2_NOV_record_civil_rebel = yes
 						}
 						#first setup some things for original tag
 						hidden_effect = {
@@ -1551,6 +1571,8 @@ country_event = {
 	#abort planning
 	option = {
 		name = influence.5.c
+		# IMPERIA COLD WAR — France November coercion hook: cancellation has no war consequence.
+		COLDWAR_FRA2_NOV_coup_aborted = yes
 		log = "[GetDateText]: [This.GetName]: influence.5.c executed"
 		FROM = { clear_variable = influence_coup_party }
 	}

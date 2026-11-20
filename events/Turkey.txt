@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Turkey 1970 repeat-crisis integration; original MD events retained.
 add_namespace = Turkey
 add_namespace = TurkeyRandomEvents
 add_namespace = TurkeyFocusEvents
@@ -2575,9 +2576,13 @@ country_event = {
 	desc = Turkey.11.desc
 	picture = GFX_turkeycoup
 	is_triggered_only = yes
-	fire_only_once = yes
+	# IMPERIA COLD WAR — Repeated 1970 crises are guarded by their recovery latch.
 
 	immediate = {
+		# IMPERIA COLD WAR — Preserve the original one-shot behavior outside the 1970 scenario.
+		if = { limit = { NOT = { IMP_is_1970_scenario = yes } } set_country_flag = COLDWAR_TUR_modern_coup_fired }
+		# IMPERIA COLD WAR — T39: choose the strongest eligible civilian opposition.
+		if = { limit = { original_tag = TUR IMP_is_1970_scenario = yes } COLDWAR_TUR_1970_choose_council_target = yes }
 		#Determine the strength of the military (sum of pro-military Kemalists)
 		set_variable = { military_support = 0 }
 		add_to_variable = { military_support = party_pop_array^1 } #CHP
@@ -2726,6 +2731,19 @@ country_event = {
 			}
 		}
 	}
+	# IMPERIA COLD WAR — T39: civilian resignation under the existing Council.
+	option = {
+		name = COLDWAR_TUR_1970_council_terms
+		trigger = { hidden_trigger = { COLDWAR_TUR_1970_council_target_valid = yes } }
+		custom_effect_tooltip = COLDWAR_TUR_1970_council_terms_effect
+		effect_tooltip = {
+			if = { limit = { NOT = { has_idea = the_military } } add_ideas = the_military }
+			if = { limit = { NOT = { has_idea = TUR_guards_of_kemalism } } add_ideas = TUR_guards_of_kemalism }
+		}
+		hidden_effect = { COLDWAR_TUR_1970_apply_council_terms = yes }
+		ai_chance = { base = 0 }
+	}
+
 }
 
 news_event = { #Military Coup in Turkey Succeeds

@@ -1,11 +1,14 @@
+# IMPERIA COLD WAR — North Korea 1970 legacy succession compatibility.
 # IMPERIA COLD WAR — Cold War: NKO player-controlled 1994 succession.
 COLDWAR_NKO_succession_category = {
 	COLDWAR_NKO_confirm_kim_jong_il = {
 		icon = GFX_decision_generic_political_discourse
 		cost = 0
 		allowed = { original_tag = NKO }
-		visible = { tag = NKO IMP_is_1970_scenario = yes has_country_flag = COLDWAR_NKO_succession_pending }
+		# IMPERIA COLD WAR — The current paid succession action replaces the legacy appointment.
+		visible = { NOT = { ICW_NKO_V3_politics_active = yes } tag = NKO IMP_is_1970_scenario = yes has_country_flag = COLDWAR_NKO_succession_pending }
 		available = {
+			NOT = { ICW_NKO_V3_politics_active = yes }
 			hidden_trigger = {
 			tag = NKO
 			IMP_is_1970_scenario = yes
@@ -18,8 +21,10 @@ COLDWAR_NKO_succession_category = {
 			emerging_communist_state_are_in_power = yes
 		}
 		complete_effect = {
-			effect_tooltip = { create_country_leader = { name = "Kim Jong-il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state } }
-			hidden_effect = { COLDWAR_NKO_install_kim_jong_il = yes }
+			if = { limit = { NOT = { ICW_NKO_V3_politics_active = yes } }
+				effect_tooltip = { create_country_leader = { name = "Kim Jong-il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state } }
+				hidden_effect = { COLDWAR_NKO_install_kim_jong_il = yes }
+			}
 		}
 		fire_only_once = yes
 		ai_will_do = { base = 1 }

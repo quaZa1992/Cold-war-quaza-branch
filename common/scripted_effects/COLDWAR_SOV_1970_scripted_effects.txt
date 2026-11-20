@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — SOV01 diplomatic transaction repair.
 # IMPERIA COLD WAR — USA and Soviet political leadership integration.
 # IMPERIA CW — Cold War: SOV 1970 scripted effects — scripted effects.
 ## COLDWAR | Cold War mod (MD Imperia) - Soviet Union 1970
@@ -113,17 +114,7 @@ COLDWAR_SOV_transfer_gdp_share = {
 
 # monthly (on_monthly_SOV): the Mongolian garrison (0.2% of GDP a year) and the Afghan Burden (0.3% of GDP a month)
 COLDWAR_SOV_monthly_aid = {
-	if = {
-		limit = { country_exists = MON MON = { has_country_flag = COLDWAR_SOV_garrison_host } }
-		set_temp_variable = { COLDWAR_SOV_transfer_target = MON.id }
-		set_temp_variable = { COLDWAR_SOV_gdp_share = 0.000167 }
-		COLDWAR_SOV_transfer_gdp_share = yes
-	}
-	if = {
-		limit = { has_idea = COLDWAR_SOV_afghan_burden }
-		set_temp_variable = { COLDWAR_SOV_gdp_share = 0.003 }
-		COLDWAR_SOV_pay_gdp_share = yes
-	}
+	# Replaced by the native weekly fiscal ledger.
 }
 
 # monthly: The Comprehensive Programme refunds 25 PP of the Cold War decision "Comecon Integration Programme"
@@ -1549,68 +1540,184 @@ COLDWAR_SOV_next_queued_vote = {
 # THIS = the republic that gets the building; Moscow pays a share of its GDP:
 # base share x (1 + 0.5 x Union projects still weighing on Moscow's budget), and takes on one more burden
 COLDWAR_SOV_build_union_project = {
-	SOV = { set_temp_variable = { COLDWAR_SOV_burden_now = COLDWAR_SOV_republic_burden } }
-	set_temp_variable = { COLDWAR_SOV_burden_mult = COLDWAR_SOV_burden_now }
-	multiply_temp_variable = { COLDWAR_SOV_burden_mult = 0.5 }
-	add_to_temp_variable = { COLDWAR_SOV_burden_mult = 1 }
-	if = {
-		limit = { check_variable = { COLDWAR_SOV_prop_building = 1 } }
-		set_temp_variable = { skip_payment = 1 }
-		one_random_industrial_complex = yes
-		set_temp_variable = { skip_payment = 0 }
-		set_temp_variable = { COLDWAR_SOV_gdp_share = 0.02 }
-	}
-	else_if = {
-		limit = { check_variable = { COLDWAR_SOV_prop_building = 2 } }
-		set_temp_variable = { skip_payment = 1 }
-		one_random_infrastructure = yes
-		set_temp_variable = { skip_payment = 0 }
-		set_temp_variable = { COLDWAR_SOV_gdp_share = 0.015 }
-	}
-	else_if = {
-		limit = { check_variable = { COLDWAR_SOV_prop_building = 3 } }
-		set_temp_variable = { skip_payment = 1 }
-		one_random_fossil_fuel_powerplant = yes
-		set_temp_variable = { skip_payment = 0 }
-		set_temp_variable = { COLDWAR_SOV_gdp_share = 0.02 }
-	}
-	else_if = {
-		limit = { check_variable = { COLDWAR_SOV_prop_building = 4 } }
-		set_temp_variable = { skip_payment = 1 }
-		one_random_agriculture_district = yes
-		set_temp_variable = { skip_payment = 0 }
-		set_temp_variable = { COLDWAR_SOV_gdp_share = 0.015 }
-	}
-	else_if = {
-		limit = { check_variable = { COLDWAR_SOV_prop_building = 5 } }
-		set_temp_variable = { skip_payment = 1 }
-		one_random_arms_factory = yes
-		set_temp_variable = { skip_payment = 0 }
-		set_temp_variable = { COLDWAR_SOV_gdp_share = 0.03 }
-	}
-	multiply_temp_variable = { COLDWAR_SOV_gdp_share = COLDWAR_SOV_burden_mult }
-	set_temp_variable = { COLDWAR_SOV_price_pct = COLDWAR_SOV_gdp_share }
-	multiply_temp_variable = { COLDWAR_SOV_price_pct = 100 }
-	custom_effect_tooltip = COLDWAR_SOV_union_project_cost_tt
-	SOV = { COLDWAR_SOV_pay_gdp_share = yes COLDWAR_SOV_add_republic_burden = yes }
-	set_temp_variable = { COLDWAR_SOV_cohesion_delta = 1 }
-	SOV = { COLDWAR_SOV_change_union_cohesion = yes }
+    set_temp_variable = { COLDWAR_SOV_gdp_share = 0 }
+if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 1 } }
+            set_temp_variable = { COLDWAR_SOV_gdp_share = 0.02 }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 2 } }
+            set_temp_variable = { COLDWAR_SOV_gdp_share = 0.015 }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 3 } }
+            set_temp_variable = { COLDWAR_SOV_gdp_share = 0.02 }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 4 } }
+            set_temp_variable = { COLDWAR_SOV_gdp_share = 0.015 }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 5 } }
+            set_temp_variable = { COLDWAR_SOV_gdp_share = 0.03 }
+        }
+    set_temp_variable = { COLDWAR_SOV_burden_mult = SOV.COLDWAR_SOV_republic_burden }
+    multiply_temp_variable = { COLDWAR_SOV_burden_mult = 0.5 }
+    add_to_temp_variable = { COLDWAR_SOV_burden_mult = 1 }
+    multiply_temp_variable = { COLDWAR_SOV_gdp_share = COLDWAR_SOV_burden_mult }
+    SOV = {
+        set_temp_variable = { COLDWAR_SOV_project_cost = gdp_total }
+        multiply_temp_variable = { COLDWAR_SOV_project_cost = PREV.COLDWAR_SOV_gdp_share }
+    }
+if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 1 } }
+            random_owned_controlled_state = {
+                limit = {
+                    can_construct_building = industrial_complex
+                    SOV = {
+                        hidden_trigger = { check_variable = { COLDWAR_SOV_project_cost > 0 } }
+                        custom_trigger_tooltip = {
+                            tooltip = COLDWAR_SOV_project_funds_tt
+                            NOT = { check_variable = { treasury < COLDWAR_SOV_project_cost } }
+                        }
+                    }
+                }
+                # The debit, slot and asset are one guarded transaction.
+                SOV = {
+                    set_temp_variable = { treasury_change = COLDWAR_SOV_project_cost }
+                    multiply_temp_variable = { treasury_change = -1 }
+                    modify_treasury_effect = yes
+                    COLDWAR_SOV_add_republic_burden = yes
+                    set_temp_variable = { COLDWAR_SOV_cohesion_delta = 1 }
+                    COLDWAR_SOV_change_union_cohesion = yes
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+            }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 2 } }
+            random_owned_controlled_state = {
+                limit = {
+                    can_construct_building = infrastructure
+                    SOV = {
+                        hidden_trigger = { check_variable = { COLDWAR_SOV_project_cost > 0 } }
+                        custom_trigger_tooltip = {
+                            tooltip = COLDWAR_SOV_project_funds_tt
+                            NOT = { check_variable = { treasury < COLDWAR_SOV_project_cost } }
+                        }
+                    }
+                }
+                # The debit, slot and asset are one guarded transaction.
+                SOV = {
+                    set_temp_variable = { treasury_change = COLDWAR_SOV_project_cost }
+                    multiply_temp_variable = { treasury_change = -1 }
+                    modify_treasury_effect = yes
+                    COLDWAR_SOV_add_republic_burden = yes
+                    set_temp_variable = { COLDWAR_SOV_cohesion_delta = 1 }
+                    COLDWAR_SOV_change_union_cohesion = yes
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+            }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 3 } }
+            random_owned_controlled_state = {
+                limit = {
+                    can_construct_building = fossil_powerplant
+                    SOV = {
+                        hidden_trigger = { check_variable = { COLDWAR_SOV_project_cost > 0 } }
+                        custom_trigger_tooltip = {
+                            tooltip = COLDWAR_SOV_project_funds_tt
+                            NOT = { check_variable = { treasury < COLDWAR_SOV_project_cost } }
+                        }
+                    }
+                }
+                # The debit, slot and asset are one guarded transaction.
+                SOV = {
+                    set_temp_variable = { treasury_change = COLDWAR_SOV_project_cost }
+                    multiply_temp_variable = { treasury_change = -1 }
+                    modify_treasury_effect = yes
+                    COLDWAR_SOV_add_republic_burden = yes
+                    set_temp_variable = { COLDWAR_SOV_cohesion_delta = 1 }
+                    COLDWAR_SOV_change_union_cohesion = yes
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
+            }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 4 } }
+            random_owned_controlled_state = {
+                limit = {
+                    can_construct_building = agriculture_district
+                    SOV = {
+                        hidden_trigger = { check_variable = { COLDWAR_SOV_project_cost > 0 } }
+                        custom_trigger_tooltip = {
+                            tooltip = COLDWAR_SOV_project_funds_tt
+                            NOT = { check_variable = { treasury < COLDWAR_SOV_project_cost } }
+                        }
+                    }
+                }
+                # The debit, slot and asset are one guarded transaction.
+                SOV = {
+                    set_temp_variable = { treasury_change = COLDWAR_SOV_project_cost }
+                    multiply_temp_variable = { treasury_change = -1 }
+                    modify_treasury_effect = yes
+                    COLDWAR_SOV_add_republic_burden = yes
+                    set_temp_variable = { COLDWAR_SOV_cohesion_delta = 1 }
+                    COLDWAR_SOV_change_union_cohesion = yes
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
+            }
+        }
+else_if = {
+            limit = { check_variable = { COLDWAR_SOV_prop_building = 5 } }
+            random_owned_controlled_state = {
+                limit = {
+                    can_construct_building = arms_factory
+                    SOV = {
+                        hidden_trigger = { check_variable = { COLDWAR_SOV_project_cost > 0 } }
+                        custom_trigger_tooltip = {
+                            tooltip = COLDWAR_SOV_project_funds_tt
+                            NOT = { check_variable = { treasury < COLDWAR_SOV_project_cost } }
+                        }
+                    }
+                }
+                # The debit, slot and asset are one guarded transaction.
+                SOV = {
+                    set_temp_variable = { treasury_change = COLDWAR_SOV_project_cost }
+                    multiply_temp_variable = { treasury_change = -1 }
+                    modify_treasury_effect = yes
+                    COLDWAR_SOV_add_republic_burden = yes
+                    set_temp_variable = { COLDWAR_SOV_cohesion_delta = 1 }
+                    COLDWAR_SOV_change_union_cohesion = yes
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+            }
+        }
 }
 
 # THIS = SOV: one more Union project weighs on the budget for 90 days (event COLDWAR_SOV.30 lifts it again)
 COLDWAR_SOV_add_republic_burden = {
-	custom_effect_tooltip = COLDWAR_SOV_republic_burden_tt
-	hidden_effect = { add_to_variable = { COLDWAR_SOV_republic_burden = 1 } }
-	COLDWAR_SOV_update_republic_burden = yes
-	hidden_effect = { country_event = { id = COLDWAR_SOV.30 days = 90 } }
+    custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SOV_republic_investment_modifier }
+    add_to_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.02 tooltip = COLDWAR_SOV_mod_consumer_goods_factor_tt }
+    hidden_effect = {
+        add_to_variable = { COLDWAR_SOV_republic_burden = 1 }
+        COLDWAR_SOV_update_republic_burden = yes
+        country_event = { id = COLDWAR_SOV.30 days = 90 }
+    }
 }
 
-# THIS = SOV: Tax Cost Factor (Consumer Goods) +10% per active burden; the modifier goes away at zero
+# THIS = SOV: Tax Cost Factor (Consumer Goods) +2% per active burden; the modifier goes away at zero
 COLDWAR_SOV_update_republic_burden = {
 	hidden_effect = {
 		hidden_effect = { clamp_variable = { var = COLDWAR_SOV_republic_burden min = 0 } }
 		hidden_effect = { set_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = COLDWAR_SOV_republic_burden } }
-		hidden_effect = { multiply_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.1 } }
+		hidden_effect = { multiply_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.02 } }
 		if = { limit = { check_variable = { COLDWAR_SOV_republic_burden > 0 } NOT = { has_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier } } }
 			add_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier }
 		}
@@ -1623,12 +1730,16 @@ COLDWAR_SOV_update_republic_burden = {
 
 # THIS = proposing republic (variables COLDWAR_SOV_prop_type / _prop_building / _prop_benef)
 COLDWAR_SOV_execute_proposal = {
+if = {
+limit = { hidden_trigger = { NOT = { has_country_flag = COLDWAR_SOV_proposal_executed } } }
+hidden_effect = { set_country_flag = COLDWAR_SOV_proposal_executed }
+
 	if = {
 		limit = { check_variable = { COLDWAR_SOV_prop_type = 1 } }
 		set_temp_variable = { COLDWAR_SOV_prop_building = COLDWAR_SOV_prop_building }
 		if = {
 			limit = { has_variable = COLDWAR_SOV_prop_benef NOT = { check_variable = { COLDWAR_SOV_prop_benef = THIS.id } } }
-			var:COLDWAR_SOV_prop_benef = { COLDWAR_SOV_build_union_project = yes }
+			var:COLDWAR_SOV_prop_benef = { set_temp_variable = { COLDWAR_SOV_prop_building = PREV.COLDWAR_SOV_prop_building } COLDWAR_SOV_build_union_project = yes }
 		}
 		else = { COLDWAR_SOV_build_union_project = yes }
 	}
@@ -1642,6 +1753,8 @@ COLDWAR_SOV_execute_proposal = {
 		set_country_flag = COLDWAR_SOV_cadre_protection
 	}
 	clear_variable = COLDWAR_SOV_prop_benef
+
+}
 }
 
 # the chance that an investigation finds something (THIS = the republic; temp COLDWAR_SOV_chance, 0-90).
@@ -1711,8 +1824,31 @@ COLDWAR_SOV_federation_council = {
 }
 
 COLDWAR_SOV_withdraw_from_afghanistan = {
+	if = {
+		limit = {
+			country_exists = AFG
+		}
+		AFG = {
+			set_country_flag = COLDWAR_SOV_sov01_131_retired
+			clr_country_flag = COLDWAR_SOV_sov01_legacy_limited_contingent
+			clr_country_flag = COLDWAR_SOV_sov01_cohort_131_limited_contingent
+		}
+	}
+	set_country_flag = COLDWAR_SOV_sov01_131_retired
+	clr_country_flag = COLDWAR_SOV_sov01_legacy_afghan_burden
+	clr_country_flag = COLDWAR_SOV_sov01_cohort_131_afghan_burden
 	remove_ideas = COLDWAR_SOV_afghan_burden
-	if = { limit = { country_exists = AFG } AFG = { country_event = { id = COLDWAR_SOV.49 days = 1 } } }
+	if = {
+		limit = {
+			country_exists = AFG
+		}
+		AFG = {
+			country_event = {
+				id = COLDWAR_SOV.49
+				days = 1
+			}
+		}
+	}
 }
 
 # a new Five-Year Plan begins (from the session event): the old priority ends, every seat holder chooses a Union project
@@ -1745,372 +1881,2668 @@ COLDWAR_SOV_propose_to_politburo = {
 
 # ==== offers: the focus only sends the proposal; the partner decides ====================
 COLDWAR_SOV_offer_andropov_china = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_andropov_china_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_136_CHI = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CHI NOT = { tag = ROOT } } CHI = { country_event = { id = COLDWAR_SOV.136 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CHI
+				SOV = {
+					COLDWAR_SOV_sov01_136_mandate = yes
+				}
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_136_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_136_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_136_pending
+					country_event = {
+						id = COLDWAR_SOV.136
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_angola_support = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_angola_support_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_128_AGL = yes
 	hidden_effect = {
-		if = { limit = { country_exists = AGL NOT = { tag = ROOT } } AGL = { country_event = { id = COLDWAR_SOV.128 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = AGL
+				SOV = {
+					COLDWAR_SOV_sov01_128_mandate = yes
+				}
+			}
+			AGL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_128_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_128_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_128_pending
+					country_event = {
+						id = COLDWAR_SOV.128
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_arms_for_hanoi = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_arms_for_hanoi_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_124_VIE = yes
 	hidden_effect = {
-		if = { limit = { country_exists = VIE NOT = { tag = ROOT } } VIE = { country_event = { id = COLDWAR_SOV.124 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = VIE
+				SOV = {
+					COLDWAR_SOV_sov01_124_mandate = yes
+				}
+			}
+			VIE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_124_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_124_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_124_pending
+					country_event = {
+						id = COLDWAR_SOV.124
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_berlin_agreement = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_berlin_agreement_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_105_USA = yes
+	COLDWAR_SOV_sov01_preview_105_ENG = yes
+	COLDWAR_SOV_sov01_preview_105_FRA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.105 days = 1 } } }
-		if = { limit = { country_exists = ENG NOT = { tag = ROOT } } ENG = { country_event = { id = COLDWAR_SOV.105 days = 1 } } }
-		if = { limit = { country_exists = FRA NOT = { tag = ROOT } } FRA = { country_event = { id = COLDWAR_SOV.105 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_105_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_105_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_105_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_105_pending
+					country_event = {
+						id = COLDWAR_SOV.105
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = ENG
+				SOV = {
+					COLDWAR_SOV_sov01_105_mandate = yes
+				}
+			}
+			ENG = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_105_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_105_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_105_pending
+					country_event = {
+						id = COLDWAR_SOV.105
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = FRA
+				SOV = {
+					COLDWAR_SOV_sov01_105_mandate = yes
+				}
+			}
+			FRA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_105_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_105_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_105_pending
+					country_event = {
+						id = COLDWAR_SOV.105
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_border_talks = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_border_talks_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_112_CHI = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CHI NOT = { tag = ROOT } } CHI = { country_event = { id = COLDWAR_SOV.112 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CHI
+				SOV = {
+					COLDWAR_SOV_sov01_112_mandate = yes
+				}
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_112_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_112_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_112_pending
+					country_event = {
+						id = COLDWAR_SOV.112
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_brezhnev_visit = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_brezhnev_visit_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_132_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.132 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_132_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_132_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_132_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_132_pending
+					country_event = {
+						id = COLDWAR_SOV.132
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_chernenko_talks = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_chernenko_talks_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_138_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.138 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_138_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_138_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_138_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_138_pending
+					country_event = {
+						id = COLDWAR_SOV.138
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_cocom = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_cocom_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_142_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.142 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_142_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_142_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_142_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_142_pending
+					country_event = {
+						id = COLDWAR_SOV.142
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_convergence_treaty = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_convergence_treaty_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_143_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.143 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_143_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_143_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_143_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_143_pending
+					country_event = {
+						id = COLDWAR_SOV.143
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_credits_for_poland = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_credits_for_poland_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_120_POL = yes
 	hidden_effect = {
-		if = { limit = { country_exists = POL NOT = { tag = ROOT } } POL = { country_event = { id = COLDWAR_SOV.120 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = POL
+				SOV = {
+					COLDWAR_SOV_sov01_120_mandate = yes
+				}
+			}
+			POL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_120_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_120_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_120_pending
+					country_event = {
+						id = COLDWAR_SOV.120
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_damansky_settlement = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_damansky_settlement_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_117_CHI = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CHI NOT = { tag = ROOT } } CHI = { country_event = { id = COLDWAR_SOV.117 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CHI
+				SOV = {
+					COLDWAR_SOV_sov01_117_mandate = yes
+				}
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_117_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_117_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_117_pending
+					country_event = {
+						id = COLDWAR_SOV.117
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_egypt_treaty = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_egypt_treaty_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_123_EGY = yes
 	hidden_effect = {
-		if = { limit = { country_exists = EGY NOT = { tag = ROOT } } EGY = { country_event = { id = COLDWAR_SOV.123 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = EGY
+				SOV = {
+					COLDWAR_SOV_sov01_123_mandate = yes
+				}
+			}
+			EGY = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_123_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_123_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_123_pending
+					country_event = {
+						id = COLDWAR_SOV.123
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_ethiopia_airlift = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_ethiopia_airlift_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_129_ETH = yes
 	hidden_effect = {
-		if = { limit = { country_exists = ETH NOT = { tag = ROOT } } ETH = { country_event = { id = COLDWAR_SOV.129 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = ETH
+				SOV = {
+					COLDWAR_SOV_sov01_129_mandate = yes
+				}
+			}
+			ETH = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_129_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_129_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_129_pending
+					country_event = {
+						id = COLDWAR_SOV.129
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_gas_for_pipes = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_gas_for_pipes_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_100_GER = yes
 	hidden_effect = {
-		if = { limit = { country_exists = GER NOT = { tag = ROOT } } GER = { country_event = { id = COLDWAR_SOV.100 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = GER
+				SOV = {
+					COLDWAR_SOV_sov01_100_mandate = yes
+				}
+			}
+			GER = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_100_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_100_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_100_pending
+					country_event = {
+						id = COLDWAR_SOV.100
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_gre_advisers = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_gre_advisers_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_137_EGY = yes
+	COLDWAR_SOV_sov01_preview_137_SYR = yes
+	COLDWAR_SOV_sov01_preview_137_IRQ = yes
 	hidden_effect = {
-		if = { limit = { country_exists = EGY NOT = { tag = ROOT } } EGY = { country_event = { id = COLDWAR_SOV.137 days = 1 } } }
-		if = { limit = { country_exists = SYR NOT = { tag = ROOT } } SYR = { country_event = { id = COLDWAR_SOV.137 days = 1 } } }
-		if = { limit = { country_exists = IRQ NOT = { tag = ROOT } } IRQ = { country_event = { id = COLDWAR_SOV.137 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = EGY
+				SOV = {
+					COLDWAR_SOV_sov01_137_mandate = yes
+				}
+			}
+			EGY = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_137_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_137_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_137_pending
+					country_event = {
+						id = COLDWAR_SOV.137
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = SYR
+				SOV = {
+					COLDWAR_SOV_sov01_137_mandate = yes
+				}
+			}
+			SYR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_137_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_137_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_137_pending
+					country_event = {
+						id = COLDWAR_SOV.137
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = IRQ
+				SOV = {
+					COLDWAR_SOV_sov01_137_mandate = yes
+				}
+			}
+			IRQ = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_137_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_137_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_137_pending
+					country_event = {
+						id = COLDWAR_SOV.137
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_helsinki = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_helsinki_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_110_USA = yes
+	COLDWAR_SOV_sov01_preview_110_GER = yes
+	COLDWAR_SOV_sov01_preview_110_FRA = yes
+	COLDWAR_SOV_sov01_preview_110_ENG = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.110 days = 1 } } }
-		if = { limit = { country_exists = GER NOT = { tag = ROOT } } GER = { country_event = { id = COLDWAR_SOV.110 days = 1 } } }
-		if = { limit = { country_exists = FRA NOT = { tag = ROOT } } FRA = { country_event = { id = COLDWAR_SOV.110 days = 1 } } }
-		if = { limit = { country_exists = ENG NOT = { tag = ROOT } } ENG = { country_event = { id = COLDWAR_SOV.110 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_110_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_110_pending
+					country_event = {
+						id = COLDWAR_SOV.110
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = GER
+				SOV = {
+					COLDWAR_SOV_sov01_110_mandate = yes
+				}
+			}
+			GER = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_110_pending
+					country_event = {
+						id = COLDWAR_SOV.110
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = FRA
+				SOV = {
+					COLDWAR_SOV_sov01_110_mandate = yes
+				}
+			}
+			FRA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_110_pending
+					country_event = {
+						id = COLDWAR_SOV.110
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = ENG
+				SOV = {
+					COLDWAR_SOV_sov01_110_mandate = yes
+				}
+			}
+			ENG = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_110_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_110_pending
+					country_event = {
+						id = COLDWAR_SOV.110
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_india_treaty = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_india_treaty_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_114_RAJ = yes
 	hidden_effect = {
-		if = { limit = { country_exists = RAJ NOT = { tag = ROOT } } RAJ = { country_event = { id = COLDWAR_SOV.114 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = RAJ
+				SOV = {
+					COLDWAR_SOV_sov01_114_mandate = yes
+				}
+			}
+			RAJ = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_114_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_114_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_114_pending
+					country_event = {
+						id = COLDWAR_SOV.114
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_inf_treaty = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_inf_treaty_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_139_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.139 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_139_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_139_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_139_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_139_pending
+					country_event = {
+						id = COLDWAR_SOV.139
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_interkosmos = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_interkosmos_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_121_DDR = yes
+	COLDWAR_SOV_sov01_preview_121_POL = yes
+	COLDWAR_SOV_sov01_preview_121_CZE = yes
+	COLDWAR_SOV_sov01_preview_121_HUN = yes
+	COLDWAR_SOV_sov01_preview_121_ROM = yes
+	COLDWAR_SOV_sov01_preview_121_BUL = yes
+	COLDWAR_SOV_sov01_preview_121_CUB = yes
+	COLDWAR_SOV_sov01_preview_121_MON = yes
+	COLDWAR_SOV_sov01_preview_121_VIE = yes
 	hidden_effect = {
-		if = { limit = { country_exists = DDR NOT = { tag = ROOT } } DDR = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = POL NOT = { tag = ROOT } } POL = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = CZE NOT = { tag = ROOT } } CZE = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = HUN NOT = { tag = ROOT } } HUN = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = ROM NOT = { tag = ROOT } } ROM = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = BUL NOT = { tag = ROOT } } BUL = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = CUB NOT = { tag = ROOT } } CUB = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = MON NOT = { tag = ROOT } } MON = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
-		if = { limit = { country_exists = VIE NOT = { tag = ROOT } } VIE = { country_event = { id = COLDWAR_SOV.121 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = DDR
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			DDR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = POL
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			POL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = CZE
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			CZE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = HUN
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			HUN = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = ROM
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			ROM = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = BUL
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			BUL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = CUB
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			CUB = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = MON
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			MON = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = VIE
+				SOV = {
+					COLDWAR_SOV_sov01_121_mandate = yes
+				}
+			}
+			VIE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_121_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_121_pending
+					country_event = {
+						id = COLDWAR_SOV.121
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_iraq_treaty = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_iraq_treaty_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_126_IRQ = yes
 	hidden_effect = {
-		if = { limit = { country_exists = IRQ NOT = { tag = ROOT } } IRQ = { country_event = { id = COLDWAR_SOV.126 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = IRQ
+				SOV = {
+					COLDWAR_SOV_sov01_126_mandate = yes
+				}
+			}
+			IRQ = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_126_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_126_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_126_pending
+					country_event = {
+						id = COLDWAR_SOV.126
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_joint_exercises = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_joint_exercises_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_119_DDR = yes
+	COLDWAR_SOV_sov01_preview_119_POL = yes
+	COLDWAR_SOV_sov01_preview_119_CZE = yes
+	COLDWAR_SOV_sov01_preview_119_HUN = yes
+	COLDWAR_SOV_sov01_preview_119_ROM = yes
+	COLDWAR_SOV_sov01_preview_119_BUL = yes
 	hidden_effect = {
-		if = { limit = { country_exists = DDR NOT = { tag = ROOT } } DDR = { country_event = { id = COLDWAR_SOV.119 days = 1 } } }
-		if = { limit = { country_exists = POL NOT = { tag = ROOT } } POL = { country_event = { id = COLDWAR_SOV.119 days = 1 } } }
-		if = { limit = { country_exists = CZE NOT = { tag = ROOT } } CZE = { country_event = { id = COLDWAR_SOV.119 days = 1 } } }
-		if = { limit = { country_exists = HUN NOT = { tag = ROOT } } HUN = { country_event = { id = COLDWAR_SOV.119 days = 1 } } }
-		if = { limit = { country_exists = ROM NOT = { tag = ROOT } } ROM = { country_event = { id = COLDWAR_SOV.119 days = 1 } } }
-		if = { limit = { country_exists = BUL NOT = { tag = ROOT } } BUL = { country_event = { id = COLDWAR_SOV.119 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = DDR
+				SOV = {
+					COLDWAR_SOV_sov01_119_mandate = yes
+				}
+			}
+			DDR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_119_pending
+					country_event = {
+						id = COLDWAR_SOV.119
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = POL
+				SOV = {
+					COLDWAR_SOV_sov01_119_mandate = yes
+				}
+			}
+			POL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_119_pending
+					country_event = {
+						id = COLDWAR_SOV.119
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = CZE
+				SOV = {
+					COLDWAR_SOV_sov01_119_mandate = yes
+				}
+			}
+			CZE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_119_pending
+					country_event = {
+						id = COLDWAR_SOV.119
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = HUN
+				SOV = {
+					COLDWAR_SOV_sov01_119_mandate = yes
+				}
+			}
+			HUN = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_119_pending
+					country_event = {
+						id = COLDWAR_SOV.119
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = ROM
+				SOV = {
+					COLDWAR_SOV_sov01_119_mandate = yes
+				}
+			}
+			ROM = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_119_pending
+					country_event = {
+						id = COLDWAR_SOV.119
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = BUL
+				SOV = {
+					COLDWAR_SOV_sov01_119_mandate = yes
+				}
+			}
+			BUL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_119_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_119_pending
+					country_event = {
+						id = COLDWAR_SOV.119
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_komsomol_china = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_komsomol_china_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_141_CHI = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CHI NOT = { tag = ROOT } } CHI = { country_event = { id = COLDWAR_SOV.141 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CHI
+				SOV = {
+					COLDWAR_SOV_sov01_141_mandate = yes
+				}
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_141_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_141_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_141_pending
+					country_event = {
+						id = COLDWAR_SOV.141
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_kosygin_summit = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_kosygin_summit_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_134_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.134 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_134_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_134_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_134_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_134_pending
+					country_event = {
+						id = COLDWAR_SOV.134
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_limited_contingent = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_limited_contingent_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_131_AFG = yes
 	hidden_effect = {
-		if = { limit = { country_exists = AFG NOT = { tag = ROOT } } AFG = { country_event = { id = COLDWAR_SOV.131 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = AFG
+				SOV = {
+					COLDWAR_SOV_sov01_131_mandate = yes
+				}
+			}
+			AFG = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_131_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_131_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_131_pending
+					country_event = {
+						id = COLDWAR_SOV.131
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_mongolian_garrison = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_mongolian_garrison_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_113_MON = yes
 	hidden_effect = {
-		if = { limit = { country_exists = MON NOT = { tag = ROOT } } MON = { country_event = { id = COLDWAR_SOV.113 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = MON
+				SOV = {
+					COLDWAR_SOV_sov01_113_mandate = yes
+				}
+			}
+			MON = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_113_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_113_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_113_pending
+					country_event = {
+						id = COLDWAR_SOV.113
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_moscow_summit = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_moscow_summit_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_107_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.107 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_107_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_107_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_107_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_107_pending
+					country_event = {
+						id = COLDWAR_SOV.107
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_moscow_treaty = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_moscow_treaty_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_104_GER = yes
 	hidden_effect = {
-		if = { limit = { country_exists = GER NOT = { tag = ROOT } } GER = { country_event = { id = COLDWAR_SOV.104 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = GER
+				SOV = {
+					COLDWAR_SOV_sov01_104_mandate = yes
+				}
+			}
+			GER = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_104_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_104_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_104_pending
+					country_event = {
+						id = COLDWAR_SOV.104
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_naval_access = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_naval_access_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_103_SOM = yes
+	COLDWAR_SOV_sov01_preview_103_SYE = yes
+	COLDWAR_SOV_sov01_preview_103_VIE = yes
 	hidden_effect = {
-		if = { limit = { country_exists = SOM NOT = { tag = ROOT } } SOM = { country_event = { id = COLDWAR_SOV.103 days = 1 } } }
-		if = { limit = { country_exists = SYE NOT = { tag = ROOT } } SYE = { country_event = { id = COLDWAR_SOV.103 days = 1 } } }
-		if = { limit = { country_exists = VIE NOT = { tag = ROOT } } VIE = { country_event = { id = COLDWAR_SOV.103 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = SOM
+				SOV = {
+					COLDWAR_SOV_sov01_103_mandate = yes
+				}
+			}
+			SOM = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_103_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_103_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_103_pending
+					country_event = {
+						id = COLDWAR_SOV.103
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = SYE
+				SOV = {
+					COLDWAR_SOV_sov01_103_mandate = yes
+				}
+			}
+			SYE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_103_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_103_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_103_pending
+					country_event = {
+						id = COLDWAR_SOV.103
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = VIE
+				SOV = {
+					COLDWAR_SOV_sov01_103_mandate = yes
+				}
+			}
+			VIE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_103_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_103_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_103_pending
+					country_event = {
+						id = COLDWAR_SOV.103
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_operation_kavkaz = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_operation_kavkaz_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_122_EGY = yes
 	hidden_effect = {
-		if = { limit = { country_exists = EGY NOT = { tag = ROOT } } EGY = { country_event = { id = COLDWAR_SOV.122 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = EGY
+				SOV = {
+					COLDWAR_SOV_sov01_122_mandate = yes
+				}
+			}
+			EGY = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_122_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_122_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_122_pending
+					country_event = {
+						id = COLDWAR_SOV.122
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_paris_axis = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_paris_axis_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_108_FRA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = FRA NOT = { tag = ROOT } } FRA = { country_event = { id = COLDWAR_SOV.108 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = FRA
+				SOV = {
+					COLDWAR_SOV_sov01_108_mandate = yes
+				}
+			}
+			FRA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_108_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_108_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_108_pending
+					country_event = {
+						id = COLDWAR_SOV.108
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_pipelines_to_europe = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_pipelines_to_europe_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_133_GER = yes
+	COLDWAR_SOV_sov01_preview_133_ITA = yes
+	COLDWAR_SOV_sov01_preview_133_FRA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = GER NOT = { tag = ROOT } } GER = { country_event = { id = COLDWAR_SOV.133 days = 1 } } }
-		if = { limit = { country_exists = ITA NOT = { tag = ROOT } } ITA = { country_event = { id = COLDWAR_SOV.133 days = 1 } } }
-		if = { limit = { country_exists = FRA NOT = { tag = ROOT } } FRA = { country_event = { id = COLDWAR_SOV.133 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = GER
+				SOV = {
+					COLDWAR_SOV_sov01_133_mandate = yes
+				}
+			}
+			GER = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_133_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_133_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_133_pending
+					country_event = {
+						id = COLDWAR_SOV.133
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = ITA
+				SOV = {
+					COLDWAR_SOV_sov01_133_mandate = yes
+				}
+			}
+			ITA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_133_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_133_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_133_pending
+					country_event = {
+						id = COLDWAR_SOV.133
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = FRA
+				SOV = {
+					COLDWAR_SOV_sov01_133_mandate = yes
+				}
+			}
+			FRA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_133_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_133_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_133_pending
+					country_event = {
+						id = COLDWAR_SOV.133
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_royal_houses = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_royal_houses_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_147_ENG = yes
+	COLDWAR_SOV_sov01_preview_147_SPR = yes
 	hidden_effect = {
-		if = { limit = { country_exists = ENG NOT = { tag = ROOT } } ENG = { country_event = { id = COLDWAR_SOV.147 days = 1 } } }
-		if = { limit = { country_exists = SPR NOT = { tag = ROOT } } SPR = { country_event = { id = COLDWAR_SOV.147 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = ENG
+				SOV = {
+					COLDWAR_SOV_sov01_147_mandate = yes
+				}
+			}
+			ENG = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_147_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_147_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_147_pending
+					country_event = {
+						id = COLDWAR_SOV.147
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = SPR
+				SOV = {
+					COLDWAR_SOV_sov01_147_mandate = yes
+				}
+			}
+			SPR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_147_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_147_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_147_pending
+					country_event = {
+						id = COLDWAR_SOV.147
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_salt_i = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_salt_i_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_106_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.106 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_106_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_106_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_106_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_106_pending
+					country_event = {
+						id = COLDWAR_SOV.106
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_salt_ii = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_salt_ii_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_111_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.111 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_111_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_111_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_111_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_111_pending
+					country_event = {
+						id = COLDWAR_SOV.111
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_shelepin_china = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_shelepin_china_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_135_CHI = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CHI NOT = { tag = ROOT } } CHI = { country_event = { id = COLDWAR_SOV.135 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CHI
+				SOV = {
+					COLDWAR_SOV_sov01_135_mandate = yes
+				}
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_135_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_135_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_135_pending
+					country_event = {
+						id = COLDWAR_SOV.135
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_sino_soviet_truce = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_sino_soviet_truce_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_116_CHI = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CHI NOT = { tag = ROOT } } CHI = { country_event = { id = COLDWAR_SOV.116 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CHI
+				SOV = {
+					COLDWAR_SOV_sov01_116_mandate = yes
+				}
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_116_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_116_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_116_pending
+					country_event = {
+						id = COLDWAR_SOV.116
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_slavic_core = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_slavic_core_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_146_UKR = yes
+	COLDWAR_SOV_sov01_preview_146_BLR = yes
 	hidden_effect = {
-		if = { limit = { country_exists = UKR NOT = { tag = ROOT } } UKR = { country_event = { id = COLDWAR_SOV.146 days = 1 } } }
-		if = { limit = { country_exists = BLR NOT = { tag = ROOT } } BLR = { country_event = { id = COLDWAR_SOV.146 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = UKR
+				SOV = {
+					COLDWAR_SOV_sov01_146_mandate = yes
+				}
+			}
+			UKR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_146_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_146_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_146_pending
+					country_event = {
+						id = COLDWAR_SOV.146
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = BLR
+				SOV = {
+					COLDWAR_SOV_sov01_146_mandate = yes
+				}
+			}
+			BLR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_146_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_146_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_146_pending
+					country_event = {
+						id = COLDWAR_SOV.146
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_slavic_union = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_slavic_union_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_145_UKR = yes
+	COLDWAR_SOV_sov01_preview_145_BLR = yes
+	COLDWAR_SOV_sov01_preview_145_KAZ = yes
 	hidden_effect = {
-		if = { limit = { country_exists = UKR NOT = { tag = ROOT } } UKR = { country_event = { id = COLDWAR_SOV.145 days = 1 } } }
-		if = { limit = { country_exists = BLR NOT = { tag = ROOT } } BLR = { country_event = { id = COLDWAR_SOV.145 days = 1 } } }
-		if = { limit = { country_exists = KAZ NOT = { tag = ROOT } } KAZ = { country_event = { id = COLDWAR_SOV.145 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = UKR
+				SOV = {
+					COLDWAR_SOV_sov01_145_mandate = yes
+				}
+			}
+			UKR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_145_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_145_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_145_pending
+					country_event = {
+						id = COLDWAR_SOV.145
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = BLR
+				SOV = {
+					COLDWAR_SOV_sov01_145_mandate = yes
+				}
+			}
+			BLR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_145_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_145_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_145_pending
+					country_event = {
+						id = COLDWAR_SOV.145
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = KAZ
+				SOV = {
+					COLDWAR_SOV_sov01_145_mandate = yes
+				}
+			}
+			KAZ = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_145_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_145_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_145_pending
+					country_event = {
+						id = COLDWAR_SOV.145
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_social_democratic_partners = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_social_democratic_partners_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_144_GER = yes
+	COLDWAR_SOV_sov01_preview_144_SWE = yes
 	hidden_effect = {
-		if = { limit = { country_exists = GER NOT = { tag = ROOT } } GER = { country_event = { id = COLDWAR_SOV.144 days = 1 } } }
-		if = { limit = { country_exists = SWE NOT = { tag = ROOT } } SWE = { country_event = { id = COLDWAR_SOV.144 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = GER
+				SOV = {
+					COLDWAR_SOV_sov01_144_mandate = yes
+				}
+			}
+			GER = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_144_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_144_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_144_pending
+					country_event = {
+						id = COLDWAR_SOV.144
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = SWE
+				SOV = {
+					COLDWAR_SOV_sov01_144_mandate = yes
+				}
+			}
+			SWE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_144_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_144_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_144_pending
+					country_event = {
+						id = COLDWAR_SOV.144
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_somalia_support = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_somalia_support_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_130_SOM = yes
 	hidden_effect = {
-		if = { limit = { country_exists = SOM NOT = { tag = ROOT } } SOM = { country_event = { id = COLDWAR_SOV.130 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = SOM
+				SOV = {
+					COLDWAR_SOV_sov01_130_mandate = yes
+				}
+			}
+			SOM = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_130_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_130_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_130_pending
+					country_event = {
+						id = COLDWAR_SOV.130
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_soyuz_apollo = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_soyuz_apollo_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_101_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.101 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_101_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_101_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_101_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_101_pending
+					country_event = {
+						id = COLDWAR_SOV.101
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_soyuz_pipeline = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_soyuz_pipeline_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_118_DDR = yes
+	COLDWAR_SOV_sov01_preview_118_POL = yes
+	COLDWAR_SOV_sov01_preview_118_CZE = yes
+	COLDWAR_SOV_sov01_preview_118_HUN = yes
+	COLDWAR_SOV_sov01_preview_118_ROM = yes
+	COLDWAR_SOV_sov01_preview_118_BUL = yes
 	hidden_effect = {
-		if = { limit = { country_exists = DDR NOT = { tag = ROOT } } DDR = { country_event = { id = COLDWAR_SOV.118 days = 1 } } }
-		if = { limit = { country_exists = POL NOT = { tag = ROOT } } POL = { country_event = { id = COLDWAR_SOV.118 days = 1 } } }
-		if = { limit = { country_exists = CZE NOT = { tag = ROOT } } CZE = { country_event = { id = COLDWAR_SOV.118 days = 1 } } }
-		if = { limit = { country_exists = HUN NOT = { tag = ROOT } } HUN = { country_event = { id = COLDWAR_SOV.118 days = 1 } } }
-		if = { limit = { country_exists = ROM NOT = { tag = ROOT } } ROM = { country_event = { id = COLDWAR_SOV.118 days = 1 } } }
-		if = { limit = { country_exists = BUL NOT = { tag = ROOT } } BUL = { country_event = { id = COLDWAR_SOV.118 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = DDR
+				SOV = {
+					COLDWAR_SOV_sov01_118_mandate = yes
+				}
+			}
+			DDR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_118_pending
+					country_event = {
+						id = COLDWAR_SOV.118
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = POL
+				SOV = {
+					COLDWAR_SOV_sov01_118_mandate = yes
+				}
+			}
+			POL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_118_pending
+					country_event = {
+						id = COLDWAR_SOV.118
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = CZE
+				SOV = {
+					COLDWAR_SOV_sov01_118_mandate = yes
+				}
+			}
+			CZE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_118_pending
+					country_event = {
+						id = COLDWAR_SOV.118
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = HUN
+				SOV = {
+					COLDWAR_SOV_sov01_118_mandate = yes
+				}
+			}
+			HUN = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_118_pending
+					country_event = {
+						id = COLDWAR_SOV.118
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = ROM
+				SOV = {
+					COLDWAR_SOV_sov01_118_mandate = yes
+				}
+			}
+			ROM = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_118_pending
+					country_event = {
+						id = COLDWAR_SOV.118
+						days = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_exists = BUL
+				SOV = {
+					COLDWAR_SOV_sov01_118_mandate = yes
+				}
+			}
+			BUL = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_118_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_118_pending
+					country_event = {
+						id = COLDWAR_SOV.118
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_stalinist_reconciliation = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_stalinist_reconciliation_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_140_CHI = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CHI NOT = { tag = ROOT } } CHI = { country_event = { id = COLDWAR_SOV.140 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CHI
+				SOV = {
+					COLDWAR_SOV_sov01_140_mandate = yes
+				}
+			}
+			CHI = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_140_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_140_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_140_pending
+					country_event = {
+						id = COLDWAR_SOV.140
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_sugar_for_oil = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_sugar_for_oil_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_125_CUB = yes
 	hidden_effect = {
-		if = { limit = { country_exists = CUB NOT = { tag = ROOT } } CUB = { country_event = { id = COLDWAR_SOV.125 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = CUB
+				SOV = {
+					COLDWAR_SOV_sov01_125_mandate = yes
+				}
+			}
+			CUB = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_125_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_125_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_125_pending
+					country_event = {
+						id = COLDWAR_SOV.125
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_syria_arms = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_syria_arms_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_127_SYR = yes
 	hidden_effect = {
-		if = { limit = { country_exists = SYR NOT = { tag = ROOT } } SYR = { country_event = { id = COLDWAR_SOV.127 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = SYR
+				SOV = {
+					COLDWAR_SOV_sov01_127_mandate = yes
+				}
+			}
+			SYR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_127_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_127_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_127_pending
+					country_event = {
+						id = COLDWAR_SOV.127
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_tartus_supply_point = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_tartus_supply_point_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_102_SYR = yes
 	hidden_effect = {
-		if = { limit = { country_exists = SYR NOT = { tag = ROOT } } SYR = { country_event = { id = COLDWAR_SOV.102 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = SYR
+				SOV = {
+					COLDWAR_SOV_sov01_102_mandate = yes
+				}
+			}
+			SYR = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_102_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_102_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_102_pending
+					country_event = {
+						id = COLDWAR_SOV.102
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_vietnam_treaty = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_vietnam_treaty_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_115_VIE = yes
 	hidden_effect = {
-		if = { limit = { country_exists = VIE NOT = { tag = ROOT } } VIE = { country_event = { id = COLDWAR_SOV.115 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = VIE
+				SOV = {
+					COLDWAR_SOV_sov01_115_mandate = yes
+				}
+			}
+			VIE = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_115_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_115_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_115_pending
+					country_event = {
+						id = COLDWAR_SOV.115
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 
 COLDWAR_SOV_offer_vladivostok = {
-	custom_effect_tooltip = COLDWAR_SOV_offer_vladivostok_tt
+	custom_effect_tooltip = COLDWAR_SOV_sov01_if_accept
+	COLDWAR_SOV_sov01_preview_109_USA = yes
 	hidden_effect = {
-		if = { limit = { country_exists = USA NOT = { tag = ROOT } } USA = { country_event = { id = COLDWAR_SOV.109 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = USA
+				SOV = {
+					COLDWAR_SOV_sov01_109_mandate = yes
+				}
+			}
+			USA = {
+				if = {
+					limit = {
+						NOT = {
+							tag = SOV
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_109_pending
+						}
+						NOT = {
+							has_country_flag = COLDWAR_SOV_sov01_109_signed
+						}
+					}
+					set_country_flag = COLDWAR_SOV_sov01_109_pending
+					country_event = {
+						id = COLDWAR_SOV.109
+						days = 1
+					}
+				}
+			}
+		}
 	}
 }
 

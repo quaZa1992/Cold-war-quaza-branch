@@ -1,5 +1,5 @@
-# IMPERIA COLD WAR — Brazil 1970 historical leader integration.
-# IMPERIA COLD WAR — Chile 1970 non-destructive leader dispatch integration.
+# IMPERIA COLD WAR — North Korea 1970 leader dispatch. Upstream leader providers retained.
+# IMPERIA COLD WAR — Afghan restored portrait routing and French 1970 integration; original providers retained.
 # IMPERIA COLD WAR — USA and Soviet political leadership integration.
 # IMPERIA COLD WAR — German leadership and Eastern portrait integration.
 # IMPERIA COLD WAR — USA and Soviet political leadership integration.
@@ -13,6 +13,30 @@
 
 #Main Function
 set_leader = {
+# IMPERIA COLD WAR — North Korea 1970 documented leader route.
+if = {
+	limit = { ICW_NKO_V3_politics_managed_party = yes }
+	ICW_NKO_V3_politics_leader_route = yes
+}
+# IMPERIA COLD WAR: French 1970 early leader route BEGIN
+else_if = {
+	limit = {
+		COLDWAR_FRA_1970_LEADERS_supported = yes
+	}
+	COLDWAR_FRA_1970_LEADERS_set_leader = yes
+}
+# IMPERIA COLD WAR — Afghan historical portraits before the generic dispatcher removes the incumbent.
+else_if = {
+	limit = { COLDWAR_AFG_1970_portrait_supported = yes }
+	COLDWAR_AFG_1970_set_portrait_leader = yes
+}
+# COLDWAR POL 1970 leader route BEGIN (Poland 1970 party leaders before the generic dispatcher)
+else_if = { # COLDWAR POL 1970
+	limit = { COLDWAR_POL_1970_leader_supported = yes } # COLDWAR POL 1970
+	COLDWAR_POL_1970_set_leader = yes # COLDWAR POL 1970
+} # COLDWAR POL 1970
+# COLDWAR POL 1970 leader route END
+else = {
 	# COLDWAR EU PROFILE CLEANUP
 	COLDWAR_EU_1970_DDR_cleanup = yes
 
@@ -29,11 +53,7 @@ set_leader = {
 	# COLDWAR | Protect the current 1970 president before the modern dispatcher kills him.
 	# IMPERIA COLD WAR — Lukashenko date gate and portrait integration.
 	# COLDWAR LUKASHENKO EARLY ROUTE
-# COLDWAR_CHL_EARLY_LEADER_BEGIN
-
-if = { limit = { COLDWAR_CHL_is_scenario = yes } COLDWAR_CHL_route_leader = yes }
-# COLDWAR_CHL_EARLY_LEADER_END
-	else_if = {
+	if = {
 		limit = {
 			COLDWAR_LUKASHENKO_BLR_supported = yes
 		}
@@ -150,9 +170,6 @@ if = { limit = { COLDWAR_CHL_is_scenario = yes } COLDWAR_CHL_route_leader = yes 
 		set_correct_ideology_trait = yes
 	}
 	# COLDWAR NKO CHOSEN SUCCESSOR ROUTE END
-	# IMPERIA COLD WAR — Brazil early leader route BEGIN
-else_if = { limit = { COLDWAR_BRA_1970_party_leader_route_supported = yes } COLDWAR_BRA_1970_install_party_leader = yes }
-# IMPERIA COLD WAR — Brazil early leader route END
 	else = {
 		#will set correct outlook to place the newly generated leader in
 		if = {
@@ -194,6 +211,9 @@ else_if = { limit = { COLDWAR_BRA_1970_party_leader_route_supported = yes } COLD
 	# COLDWAR KOR OFFICE GENERATION BEGIN
 	if = { limit = { tag = KOR IMP_is_1970_scenario = yes has_country_flag = COLDWAR_KOR_initialized } add_to_variable = { COLDWAR_KOR_office_epoch = 1 } COLDWAR_KOR_refresh_programmes = yes }
 	# COLDWAR KOR OFFICE GENERATION END
+
+}
+# IMPERIA COLD WAR: French 1970 early leader route END
 }
 
 update_set_politics = {

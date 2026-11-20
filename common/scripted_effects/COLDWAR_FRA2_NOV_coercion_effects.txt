@@ -1,0 +1,451 @@
+# IMPERIA COLD WAR — France November 2026 funded coercion.
+COLDWAR_FRA2_NOV_grant_target_wargoal = {
+	if = { limit = { tag = FRA country_exists = FROM FROM = { exists = yes NOT = { tag = FRA } NOT = { is_subject_of = FRA } } NOT = { has_wargoal_against = FROM } NOT = { has_war_with = FROM } } create_wargoal = { type = puppet_wargoal_focus target = FROM expire = 730 } }
+}
+
+COLDWAR_FRA2_NOV_prepare_network = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_network = yes }
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
+	}
+	FROM = { set_country_flag = { flag = COLDWAR_FRA2_NOV_network_cooldown days = 180 value = 1 } }
+	set_temp_variable = { percent_change = 10 }
+	set_temp_variable = { tag_index = FRA.id }
+	set_temp_variable = { influence_target = FROM.id }
+	change_influence_percentage = yes
+	}
+}
+
+COLDWAR_FRA2_NOV_start_coup = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_coup = yes }
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	set_variable = { COLDWAR_FRA2_NOV_operation_target = FROM.id }
+	set_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending
+	FROM = { set_country_flag = COLDWAR_FRA2_NOV_coup_pending set_country_flag = { flag = COLDWAR_FRA2_NOV_coup_cooldown days = 365 value = 1 } }
+	save_event_target_as = influence_sender
+	FROM = { country_event = { id = influence.44 } }
+	}
+}
+
+COLDWAR_FRA2_NOV_coup_dialogue_confirmed = {
+	if = { limit = { tag = FRA FROM = { has_country_flag = COLDWAR_FRA2_NOV_coup_pending } } set_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending }
+}
+
+COLDWAR_FRA2_NOV_coup_aborted = {
+	if = { limit = { tag = FRA FROM = { has_country_flag = COLDWAR_FRA2_NOV_coup_pending } } FROM = { clr_country_flag = COLDWAR_FRA2_NOV_coup_pending } clr_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending }
+}
+
+COLDWAR_FRA2_NOV_coup_success = {
+	if = { limit = { tag = FRA FROM = { has_country_flag = COLDWAR_FRA2_NOV_coup_pending } } FROM = { clr_country_flag = COLDWAR_FRA2_NOV_coup_pending set_country_flag = COLDWAR_FRA2_NOV_coup_partner } clr_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending }
+}
+
+COLDWAR_FRA2_NOV_coup_failed = {
+	if = { limit = { tag = FRA FROM = { has_country_flag = COLDWAR_FRA2_NOV_coup_pending } } FROM = { clr_country_flag = COLDWAR_FRA2_NOV_coup_pending } clr_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending COLDWAR_FRA2_NOV_grant_target_wargoal = yes }
+}
+
+COLDWAR_FRA2_NOV_record_civil_rebel = {
+	if = {
+	        limit = {
+	            country_exists = FRA
+	            ROOT = { tag = FRA }
+	            NOT = { tag = FRA }
+	            NOT = { tag = FROM }
+	            FRA = { has_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending has_variable = COLDWAR_FRA2_NOV_operation_target }
+	            FROM = { exists = yes has_country_flag = COLDWAR_FRA2_NOV_coup_pending }
+	            check_variable = { var = FRA.COLDWAR_FRA2_NOV_operation_target value = FROM.id compare = equals }
+	        }
+	        set_variable = { COLDWAR_FRA2_NOV_civil_original = FROM.id }
+	        set_variable = { COLDWAR_FRA2_NOV_civil_sponsor = FRA.id }
+	        set_country_flag = COLDWAR_FRA2_NOV_backed_rebel
+	        FROM = {
+	            clr_country_flag = COLDWAR_FRA2_NOV_coup_pending
+	            set_country_flag = COLDWAR_FRA2_NOV_civil_incumbent
+	            set_variable = { COLDWAR_FRA2_NOV_backed_rebel_id = PREV.id }
+	        }
+	        FRA = { clr_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending }
+	    }
+}
+
+COLDWAR_FRA2_NOV_civil_war_ended = {
+	if = { limit = { country_exists = FRA FROM = { has_country_flag = COLDWAR_FRA2_NOV_backed_rebel check_variable = { COLDWAR_FRA2_NOV_civil_sponsor = FRA.id } check_variable = { COLDWAR_FRA2_NOV_civil_original = ROOT.id } } has_country_flag = COLDWAR_FRA2_NOV_civil_incumbent } clr_country_flag = COLDWAR_FRA2_NOV_civil_incumbent FROM = { clr_country_flag = COLDWAR_FRA2_NOV_backed_rebel } save_event_target_as = COLDWAR_FRA2_NOV_civil_victor FRA = { event_target:COLDWAR_FRA2_NOV_civil_victor = { save_event_target_as = COLDWAR_FRA2_NOV_war_target } COLDWAR_FRA2_NOV_grant_recorded_wargoal = yes } }
+	if = { limit = { has_country_flag = COLDWAR_FRA2_NOV_backed_rebel check_variable = { COLDWAR_FRA2_NOV_civil_sponsor = FRA.id } FROM = { check_variable = { ROOT.COLDWAR_FRA2_NOV_civil_original = FROM.id } } } clr_country_flag = COLDWAR_FRA2_NOV_backed_rebel set_country_flag = COLDWAR_FRA2_NOV_coup_partner FROM = { clr_country_flag = COLDWAR_FRA2_NOV_civil_incumbent } }
+}
+
+COLDWAR_FRA2_NOV_grant_recorded_wargoal = {
+	if = { limit = { tag = FRA event_target:COLDWAR_FRA2_NOV_war_target = { exists = yes NOT = { tag = FRA } NOT = { is_subject_of = FRA } } NOT = { has_wargoal_against = event_target:COLDWAR_FRA2_NOV_war_target } NOT = { has_war_with = event_target:COLDWAR_FRA2_NOV_war_target } } create_wargoal = { type = puppet_wargoal_focus target = event_target:COLDWAR_FRA2_NOV_war_target expire = 730 } }
+}
+
+COLDWAR_FRA2_NOV_cleanup_civil_observer = {
+	if = { limit = { has_country_flag = COLDWAR_FRA2_NOV_civil_incumbent NOT = { has_civil_war = yes } } clr_country_flag = COLDWAR_FRA2_NOV_civil_incumbent }
+	if = { limit = { has_country_flag = COLDWAR_FRA2_NOV_backed_rebel NOT = { has_civil_war = yes } } clr_country_flag = COLDWAR_FRA2_NOV_backed_rebel }
+}
+
+COLDWAR_FRA2_NOV_register_offer = {
+	FROM = { set_country_flag = COLDWAR_FRA2_NOV_offer_pending set_country_flag = { flag = COLDWAR_FRA2_NOV_offer_cooldown days = 365 value = 1 } country_event = { id = COLDWAR_FRA2_NOV.1 days = 30 } }
+}
+
+COLDWAR_FRA2_NOV_start_offer = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_offer = yes }
+	if = { limit = { FROM = { OR = { tag = VIE tag = SVN } } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+	modify_treasury_effect = yes
+	FROM = { set_country_flag = COLDWAR_FRA2_NOV_offer_vietnam }
+	}
+	else = {
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.02 } }
+	modify_treasury_effect = yes
+	}
+	FROM = { set_country_flag = COLDWAR_FRA2_NOV_offer_africa }
+	}
+	COLDWAR_FRA2_NOV_register_offer = yes
+	}
+}
+
+COLDWAR_FRA2_NOV_clear_offer = {
+	clr_country_flag = COLDWAR_FRA2_NOV_offer_pending
+	clr_country_flag = COLDWAR_FRA2_NOV_offer_vietnam
+	clr_country_flag = COLDWAR_FRA2_NOV_offer_africa
+	clr_country_flag = COLDWAR_FRA2_NOV_offer_source_nov_libreville
+	clr_country_flag = COLDWAR_FRA2_NOV_offer_source_nov_chad_support
+	clr_country_flag = COLDWAR_FRA2_NOV_offer_source_nov_sahel_leverage
+}
+
+COLDWAR_FRA2_NOV_cleanup_pending_offer = {
+	if = { limit = { has_country_flag = COLDWAR_FRA2_NOV_offer_pending NOT = { COLDWAR_FRA2_NOV_offer_delivery_qualified = yes } } COLDWAR_FRA2_NOV_clear_offer = yes }
+}
+
+COLDWAR_FRA2_NOV_accept_offer = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_accept_offer = yes }
+	if = { limit = { has_country_flag = COLDWAR_FRA2_NOV_offer_vietnam }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	}
+	COLDWAR_FRA2_NOV_clear_offer = yes
+	FRA = { set_autonomy = { target = PREV autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	}
+}
+
+COLDWAR_FRA2_NOV_refuse_offer = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_resolve_offer = yes }
+	if = { limit = { COLDWAR_FRA2_NOV_valid_independent_target = yes } save_event_target_as = COLDWAR_FRA2_NOV_war_target FRA = { COLDWAR_FRA2_NOV_grant_recorded_wargoal = yes } }
+	COLDWAR_FRA2_NOV_clear_offer = yes
+	}
+}
+
+COLDWAR_FRA2_NOV_preview_network = {
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
+	}
+	set_temp_variable = { percent_change = 10 }
+	set_temp_variable = { tag_index = FRA.id }
+	set_temp_variable = { influence_target = FROM.id }
+	change_influence_percentage = yes
+}
+
+COLDWAR_FRA2_NOV_preview_coup = {
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	add_political_power = -200
+	add_threat = 2
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_coup_fails
+	create_wargoal = { type = puppet_wargoal_focus target = FROM expire = 730 }
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_backed_side_loses
+	create_wargoal = { type = puppet_wargoal_focus target = FROM expire = 730 }
+}
+
+COLDWAR_FRA2_NOV_preview_offer = {
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_to_deliver
+	FRA = { if = { limit = { FROM = { OR = { tag = VIE tag = SVN } } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+	modify_treasury_effect = yes
+	} else = {
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.02 } }
+	modify_treasury_effect = yes
+	}
+	} }
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_france_heading
+	FRA = { set_autonomy = { target = FROM autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	FROM = { custom_effect_tooltip = COLDWAR_FRA2_NOV_recipient_heading if = { limit = { OR = { tag = VIE tag = SVN } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+	modify_treasury_effect = yes
+	} else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	} custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms }
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_refused
+	create_wargoal = { type = puppet_wargoal_focus target = FROM expire = 730 }
+}
+
+COLDWAR_FRA2_NOV_preview_recipient_accept = {
+	if = { limit = { has_country_flag = COLDWAR_FRA2_NOV_offer_vietnam }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+	modify_treasury_effect = yes
+	} else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	}
+	FRA = { set_autonomy = { target = PREV autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms
+}
+
+COLDWAR_FRA2_NOV_preview_recipient_refuse = {
+	FRA = { create_wargoal = { type = puppet_wargoal_focus target = PREV expire = 730 } }
+}
+
+COLDWAR_FRA2_NOV_preview_african_offer_candidates = {
+	every_country = { limit = { COLDWAR_FRA2_NOV_valid_african_target = yes } custom_effect_tooltip = COLDWAR_FRA2_NOV_recipient_heading
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_to_deliver
+	FRA = { if = { limit = { PREV = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	} else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.02 } }
+	modify_treasury_effect = yes
+	} }
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	FRA = { set_autonomy = { target = PREV autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_refused
+	FRA = { create_wargoal = { type = puppet_wargoal_focus target = PREV expire = 730 } }
+	}
+}
+
+COLDWAR_FRA2_NOV_preview_african_coup_outcomes = {
+	every_country = { limit = { COLDWAR_FRA2_NOV_valid_african_target = yes } custom_effect_tooltip = COLDWAR_FRA2_NOV_recipient_heading
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_coup_fails
+	FRA = { create_wargoal = { type = puppet_wargoal_focus target = PREV expire = 730 } }
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_backed_side_loses
+	FRA = { create_wargoal = { type = puppet_wargoal_focus target = PREV expire = 730 } }
+	}
+}
+
+COLDWAR_FRA2_NOV_start_libreville_operation = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_libreville_operation = yes }
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	FROM = { set_country_flag = COLDWAR_FRA2_NOV_offer_source_nov_libreville }
+	COLDWAR_FRA2_NOV_register_offer = yes
+	}
+}
+
+COLDWAR_FRA2_NOV_preview_libreville_operation = {
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	FRA = { set_autonomy = { target = FROM autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	FROM = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_refused
+	create_wargoal = { type = puppet_wargoal_focus target = FROM expire = 730 }
+}
+
+COLDWAR_FRA2_NOV_start_chad_support_operation = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_chad_support_operation = yes }
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	FROM = { set_country_flag = COLDWAR_FRA2_NOV_offer_source_nov_chad_support }
+	COLDWAR_FRA2_NOV_register_offer = yes
+	}
+}
+
+COLDWAR_FRA2_NOV_preview_chad_support_operation = {
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	FRA = { set_autonomy = { target = FROM autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	FROM = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_refused
+	create_wargoal = { type = puppet_wargoal_focus target = FROM expire = 730 }
+}
+
+COLDWAR_FRA2_NOV_start_barracuda_operation = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_barracuda_operation = yes } COLDWAR_FRA2_NOV_start_coup = yes }
+}
+
+COLDWAR_FRA2_NOV_preview_barracuda_operation = {
+	COLDWAR_FRA2_NOV_preview_coup = yes
+}
+
+COLDWAR_FRA2_NOV_start_sahel_leverage_operation = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_sahel_leverage_operation = yes }
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	FROM = { set_country_flag = COLDWAR_FRA2_NOV_offer_source_nov_sahel_leverage }
+	COLDWAR_FRA2_NOV_register_offer = yes
+	}
+}
+
+COLDWAR_FRA2_NOV_preview_sahel_leverage_operation = {
+	if = { limit = { FROM = { COLDWAR_FRA2_NOV_target_old_sphere = yes } }
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
+	}
+	else = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.014 } }
+	modify_treasury_effect = yes
+	}
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	FRA = { set_autonomy = { target = FROM autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	FROM = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_refused
+	create_wargoal = { type = puppet_wargoal_focus target = FROM expire = 730 }
+}
+
+COLDWAR_FRA2_NOV_complete_nov_africa_policy = {
+	if = { limit = { COLDWAR_FRA2_NOV_can_complete_nov_africa_policy = yes } set_country_flag = COLDWAR_FRA2_NOV_enabled_nov_africa_policy }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COLDWAR_FRA2_NOV_preview_named_offer_SVN = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	FRA = { set_autonomy = { target = SVN autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	SVN = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_refused
+	create_wargoal = { type = puppet_wargoal_focus target = SVN expire = 730 }
+}
+
+COLDWAR_FRA2_NOV_preview_named_offer_VIE = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	FRA = { set_autonomy = { target = VIE autonomy_state = autonomy_satellite_state freedom_level = 0.5 end_wars = no end_civil_wars = no } }
+	VIE = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_satellite_terms
+	}
+	custom_effect_tooltip = COLDWAR_FRA2_NOV_if_refused
+	create_wargoal = { type = puppet_wargoal_focus target = VIE expire = 730 }
+}

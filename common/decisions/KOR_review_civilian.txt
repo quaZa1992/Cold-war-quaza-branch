@@ -1,0 +1,357 @@
+# IMPERIA COLD WAR — South Korean civilian programme administration.
+KOR_review_civilian_policies = {
+	KOR_review_civilian_adopt_saemaul_administration = {
+		icon = generic_political_discourse
+		cost = 0
+		days_remove = 28
+		days_re_enable = 28
+		visible = { hidden_trigger = { has_country_flag = KOR_review_enacted_rural_policy_review } }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = KOR_review_civilian_adopt_saemaul_administration_review_available_tt
+				not_tooltip = KOR_review_civilian_adopt_saemaul_administration_review_available_tt_NOT
+				has_country_flag = KOR_review_civilian_selected_local_cooperative_charters
+				NOT = { has_country_flag = KOR_review_civilian_rural_programme_review_pending }
+			}
+			hidden_trigger = { check_variable = { gdp_total > 0 } }
+		}
+		complete_effect = {
+			KOR_review_civilian_adopt_saemaul_administration_prospective = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_local_cooperative_charters
+						NOT = { has_country_flag = KOR_review_civilian_rural_programme_review_pending }
+						check_variable = { gdp_total > 0 }
+					}
+					set_country_flag = KOR_review_civilian_rural_programme_review_pending
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+					modify_treasury_effect = yes
+				}
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = { has_country_flag = KOR_review_civilian_rural_programme_review_pending }
+				clr_country_flag = KOR_review_civilian_rural_programme_review_pending
+				if = {
+					limit = { has_country_flag = KOR_review_civilian_selected_local_cooperative_charters }
+					clr_country_flag = KOR_review_civilian_selected_local_cooperative_charters
+					set_country_flag = KOR_review_civilian_selected_saemaul_administration
+					set_country_flag = KOR_review_enacted_saemaul_administration
+					if = {
+						limit = { NOT = { has_completed_focus = COLDWAR_KOR_saemaul_administration } }
+						complete_national_focus = COLDWAR_KOR_saemaul_administration
+					}
+					KOR_review_sync_programmes = yes
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+
+	KOR_review_civilian_adopt_local_cooperative_charters = {
+		icon = generic_political_discourse
+		cost = 0
+		days_remove = 28
+		days_re_enable = 28
+		visible = { hidden_trigger = { has_country_flag = KOR_review_enacted_rural_policy_review } }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = KOR_review_civilian_adopt_local_cooperative_charters_review_available_tt
+				not_tooltip = KOR_review_civilian_adopt_local_cooperative_charters_review_available_tt_NOT
+				has_country_flag = KOR_review_civilian_selected_saemaul_administration
+				NOT = { has_country_flag = KOR_review_civilian_rural_programme_review_pending }
+			}
+			hidden_trigger = { check_variable = { gdp_total > 0 } }
+			has_idea = farmers
+		}
+		complete_effect = {
+			KOR_review_civilian_adopt_local_cooperative_charters_prospective = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_saemaul_administration
+						NOT = { has_country_flag = KOR_review_civilian_rural_programme_review_pending }
+						check_variable = { gdp_total > 0 }
+						has_idea = farmers
+					}
+					set_country_flag = KOR_review_civilian_rural_programme_review_pending
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+					modify_treasury_effect = yes
+				}
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = { has_country_flag = KOR_review_civilian_rural_programme_review_pending }
+				clr_country_flag = KOR_review_civilian_rural_programme_review_pending
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_saemaul_administration
+						has_idea = farmers
+					}
+					clr_country_flag = KOR_review_civilian_selected_saemaul_administration
+					set_country_flag = KOR_review_civilian_selected_local_cooperative_charters
+					set_country_flag = KOR_review_enacted_local_cooperative_charters
+					if = {
+						limit = { NOT = { has_completed_focus = COLDWAR_KOR_local_cooperative_charters } }
+						complete_national_focus = COLDWAR_KOR_local_cooperative_charters
+					}
+					KOR_review_sync_programmes = yes
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+
+	KOR_review_civilian_adopt_managed_labour_councils = {
+		icon = generic_political_discourse
+		cost = 0
+		days_remove = 28
+		days_re_enable = 28
+		visible = { hidden_trigger = { has_country_flag = KOR_review_enacted_labour_reform_review } }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = KOR_review_civilian_adopt_managed_labour_councils_review_available_tt
+				not_tooltip = KOR_review_civilian_adopt_managed_labour_councils_review_available_tt_NOT
+				has_country_flag = KOR_review_civilian_selected_tripartite_labour_pact
+				NOT = { has_country_flag = KOR_review_civilian_labour_administration_review_pending }
+			}
+			hidden_trigger = { check_variable = { gdp_total > 0 } }
+			has_idea = chaebols
+		}
+		complete_effect = {
+			KOR_review_civilian_adopt_managed_labour_councils_prospective = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_tripartite_labour_pact
+						NOT = { has_country_flag = KOR_review_civilian_labour_administration_review_pending }
+						check_variable = { gdp_total > 0 }
+						has_idea = chaebols
+					}
+					set_country_flag = KOR_review_civilian_labour_administration_review_pending
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+					modify_treasury_effect = yes
+				}
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = { has_country_flag = KOR_review_civilian_labour_administration_review_pending }
+				clr_country_flag = KOR_review_civilian_labour_administration_review_pending
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_tripartite_labour_pact
+						has_idea = chaebols
+					}
+					clr_country_flag = KOR_review_civilian_selected_tripartite_labour_pact
+					set_country_flag = KOR_review_civilian_selected_managed_labour_councils
+					set_country_flag = KOR_review_enacted_managed_labour_councils
+					if = {
+						limit = { NOT = { has_completed_focus = COLDWAR_KOR_managed_labour_councils } }
+						complete_national_focus = COLDWAR_KOR_managed_labour_councils
+					}
+					KOR_review_sync_programmes = yes
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+
+	KOR_review_civilian_adopt_tripartite_labour_pact = {
+		icon = generic_political_discourse
+		cost = 0
+		days_remove = 28
+		days_re_enable = 28
+		visible = { hidden_trigger = { has_country_flag = KOR_review_enacted_labour_reform_review } }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = KOR_review_civilian_adopt_tripartite_labour_pact_review_available_tt
+				not_tooltip = KOR_review_civilian_adopt_tripartite_labour_pact_review_available_tt_NOT
+				has_country_flag = KOR_review_civilian_selected_managed_labour_councils
+				NOT = { has_country_flag = KOR_review_civilian_labour_administration_review_pending }
+			}
+			hidden_trigger = { check_variable = { gdp_total > 0 } }
+			has_idea = labour_unions
+			has_idea = chaebols
+		}
+		complete_effect = {
+			KOR_review_civilian_adopt_tripartite_labour_pact_prospective = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_managed_labour_councils
+						NOT = { has_country_flag = KOR_review_civilian_labour_administration_review_pending }
+						check_variable = { gdp_total > 0 }
+						has_idea = labour_unions
+						has_idea = chaebols
+					}
+					set_country_flag = KOR_review_civilian_labour_administration_review_pending
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+					modify_treasury_effect = yes
+				}
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = { has_country_flag = KOR_review_civilian_labour_administration_review_pending }
+				clr_country_flag = KOR_review_civilian_labour_administration_review_pending
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_managed_labour_councils
+						has_idea = labour_unions
+						has_idea = chaebols
+					}
+					clr_country_flag = KOR_review_civilian_selected_managed_labour_councils
+					set_country_flag = KOR_review_civilian_selected_tripartite_labour_pact
+					set_country_flag = KOR_review_enacted_tripartite_labour_pact
+					if = {
+						limit = { NOT = { has_completed_focus = COLDWAR_KOR_tripartite_labour_pact } }
+						complete_national_focus = COLDWAR_KOR_tripartite_labour_pact
+					}
+					KOR_review_sync_programmes = yes
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+
+	KOR_review_civilian_adopt_occupational_health_funds = {
+		icon = generic_political_discourse
+		cost = 0
+		days_remove = 35
+		days_re_enable = 35
+		visible = { hidden_trigger = { has_country_flag = KOR_review_enacted_insurer_reorganisation } }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = KOR_review_civilian_adopt_occupational_health_funds_review_available_tt
+				not_tooltip = KOR_review_civilian_adopt_occupational_health_funds_review_available_tt_NOT
+				has_country_flag = KOR_review_civilian_selected_national_health_insurer
+				NOT = { has_country_flag = KOR_review_civilian_insurer_structure_review_pending }
+			}
+			hidden_trigger = { check_variable = { gdp_total > 0 } }
+			has_idea = chaebols
+		}
+		complete_effect = {
+			KOR_review_civilian_adopt_occupational_health_funds_prospective = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_national_health_insurer
+						NOT = { has_country_flag = KOR_review_civilian_insurer_structure_review_pending }
+						check_variable = { gdp_total > 0 }
+						has_idea = chaebols
+					}
+					set_country_flag = KOR_review_civilian_insurer_structure_review_pending
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0042 } }
+					modify_treasury_effect = yes
+				}
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = { has_country_flag = KOR_review_civilian_insurer_structure_review_pending }
+				clr_country_flag = KOR_review_civilian_insurer_structure_review_pending
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_national_health_insurer
+						has_idea = chaebols
+					}
+					clr_country_flag = KOR_review_civilian_selected_national_health_insurer
+					set_country_flag = KOR_review_civilian_selected_occupational_health_funds
+					set_country_flag = KOR_review_enacted_occupational_health_funds
+					if = {
+						limit = { NOT = { has_completed_focus = COLDWAR_KOR_occupational_health_funds } }
+						complete_national_focus = COLDWAR_KOR_occupational_health_funds
+					}
+					KOR_review_sync_programmes = yes
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+
+	KOR_review_civilian_adopt_national_health_insurer = {
+		icon = generic_political_discourse
+		cost = 0
+		days_remove = 35
+		days_re_enable = 35
+		visible = { hidden_trigger = { has_country_flag = KOR_review_enacted_insurer_reorganisation } }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = KOR_review_civilian_adopt_national_health_insurer_review_available_tt
+				not_tooltip = KOR_review_civilian_adopt_national_health_insurer_review_available_tt_NOT
+				has_country_flag = KOR_review_civilian_selected_occupational_health_funds
+				NOT = { has_country_flag = KOR_review_civilian_insurer_structure_review_pending }
+			}
+			hidden_trigger = { check_variable = { gdp_total > 0 } }
+			OR = { has_idea = health_02 has_idea = health_03 has_idea = health_04 has_idea = health_05 has_idea = health_06 }
+		}
+		complete_effect = {
+			KOR_review_civilian_adopt_national_health_insurer_prospective = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_occupational_health_funds
+						NOT = { has_country_flag = KOR_review_civilian_insurer_structure_review_pending }
+						check_variable = { gdp_total > 0 }
+						OR = { has_idea = health_02 has_idea = health_03 has_idea = health_04 has_idea = health_05 has_idea = health_06 }
+					}
+					set_country_flag = KOR_review_civilian_insurer_structure_review_pending
+					set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0042 } }
+					modify_treasury_effect = yes
+				}
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = { has_country_flag = KOR_review_civilian_insurer_structure_review_pending }
+				clr_country_flag = KOR_review_civilian_insurer_structure_review_pending
+				if = {
+					limit = {
+						has_country_flag = KOR_review_civilian_selected_occupational_health_funds
+						OR = { has_idea = health_02 has_idea = health_03 has_idea = health_04 has_idea = health_05 has_idea = health_06 }
+					}
+					clr_country_flag = KOR_review_civilian_selected_occupational_health_funds
+					set_country_flag = KOR_review_civilian_selected_national_health_insurer
+					set_country_flag = KOR_review_enacted_national_health_insurer
+					if = {
+						limit = { NOT = { has_completed_focus = COLDWAR_KOR_national_health_insurer } }
+						complete_national_focus = COLDWAR_KOR_national_health_insurer
+					}
+					KOR_review_sync_programmes = yes
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+
+	KOR_review_civilian_imf_apply = {
+		icon = GFX_decision_bancru_imf_button
+		cost = 0
+		days_re_enable = 365
+		visible = {
+			hidden_trigger = { has_country_flag = KOR_review_enacted_crisis_imf_mission }
+		}
+		available = {
+			KOR_review_civilian_imf_available = yes
+			hidden_trigger = { check_variable = { gdp_total > 0 } }
+		}
+		complete_effect = {
+			effect_tooltip = { KOR_review_civilian_imf_prospective = yes }
+			hidden_effect = {
+				if = {
+					limit = {
+						KOR_review_civilian_imf_available = yes
+						check_variable = { gdp_total > 0 }
+					}
+					set_country_flag = KOR_review_civilian_imf_application_pending
+					country_event = { id = KOR_review_civilian.3 days = 7 }
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+}

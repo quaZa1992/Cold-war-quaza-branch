@@ -1,3 +1,7 @@
+# IMPERIA COLD WAR — Korean mirrored weekly invoices, original MD on_actions retained.
+# IMPERIA COLD WAR — Czechoslovakia 1970 integration; existing content and attribution retained.
+# IMPERIA COLD WAR — Yugoslav weekly treaty invoices; original MD on_actions retained.
+# IMPERIA COLD WAR — Soviet 1970 shared weekly fiscal integration; original MD on_actions retained.
 # IMPERIA COLD WAR — Israel V2 native budget and protected bilateral principal integration.
 # COLDWAR: synced with MD 2.0.3 hotfix (HOI4 1.19.4 UI controls, research-tab tooltips, native agency-upgrade queue)
 # Author(s): Angriest Bird
@@ -5,6 +9,34 @@
 on_actions = {
 	on_weekly = {
 		effect = {
+			# IMPERIA COLD WAR — COLDWAR_KOR_REVIEW_INVOICES
+			if = {
+				limit = { IMP_is_1970_scenario = yes NOT = { has_global_flag = on_weekly_global_done } }
+				KOR_review_prepare_week = yes
+			}
+			# IMPERIA COLD WAR — Czechoslovak paired weekly invoice before convergence.
+			if = {
+				limit = { IMP_is_1970_scenario = yes country_exists = CZE CZE = { has_country_flag = COLDWAR_CZE_1970_initialized } NOT = { has_global_flag = on_weekly_global_done } }
+				CZE = { COLDWAR_CZE_1970_bilateral_prepare_week = yes }
+			}
+
+# IMPERIA COLD WAR — Soviet 1970 fiscal [shared weekly invoice] BEGIN
+			# Read the native once-per-week flag before any country's convergence.
+			# The existing global block sets it later in this same ordered pass.
+			if = {
+				limit = { NOT = { has_global_flag = on_weekly_global_done } }
+				COLDWAR_SOV_fiscal_prepare_week = yes
+			}
+# IMPERIA COLD WAR — Soviet 1970 fiscal [shared weekly invoice] END
+			# IMPERIA COLD WAR — Yugoslav treaty [shared weekly invoice] BEGIN
+			if = {
+				limit = {
+					has_global_flag = COLDWAR_YUG_1970_treaty_weekly_enabled
+					NOT = { has_global_flag = on_weekly_global_done }
+				}
+				COLDWAR_YUG_1970_treaty_prepare_week = yes
+			}
+			# IMPERIA COLD WAR — Yugoslav treaty [shared weekly invoice] END
 			if = { limit = { NOT = { has_variable = last_quarter_gdp_total } }
 				ingame_startup_nations_effect = yes
 			}
@@ -12,6 +44,11 @@ on_actions = {
 
 			if = { limit = { NOT = { has_global_flag = on_weekly_global_done } }
 				set_global_flag = { flag = on_weekly_global_done value = 1 days = 7 }
+				# IMPERIA COLD WAR — Stop calibrating the site when its reactor has been removed.
+				if = {
+					limit = { has_global_flag = COLDWAR_YUG_1970_krsko_commissioned }
+					COLDWAR_YUG_1970_clear_removed_krsko = yes
+				}
 
 				update_canal_blockage_flags = yes
 
@@ -39,6 +76,13 @@ on_actions = {
 			mdcw_gw_weekly_update = yes
 			update_tension_premium = yes
 			ingame_update_setup = yes
+
+			# IMPERIA COLD WAR — Tick Korea's signed IMF programme after the actual weekly budget pass.
+			if = { limit = { COLDWAR_KOR_campaign = yes } KOR_review_civilian_imf_advance_week = yes }			# IMPERIA COLD WAR — Yugoslav funded construction follows the weekly budget.
+			if = {
+				limit = { COLDWAR_YUG_1970_active = yes }
+				COLDWAR_YUG_1970_advance_funded_construction = yes
+			}
 			# Delay until every country's weekly economic totals have refreshed.
 			if = {
 				limit = { is_faction_leader = yes }

@@ -1,0 +1,96 @@
+# IMPERIA COLD WAR — Greek 112-focus military actor bridge.
+COLDWAR_GRE_R3_MIL_refresh_prices = {
+	set_variable = { COLDWAR_CYP_R2_budget_cyp_025 = gdp_total }
+	multiply_variable = { COLDWAR_CYP_R2_budget_cyp_025 = 0.0075 }
+	set_variable = { COLDWAR_CYP_R2_budget_cyp_050 = gdp_total }
+	multiply_variable = { COLDWAR_CYP_R2_budget_cyp_050 = 0.015 }
+	set_variable = { COLDWAR_CYP_R2_budget_greek_050 = gdp_total }
+	multiply_variable = { COLDWAR_CYP_R2_budget_greek_050 = 0.015 }
+}
+COLDWAR_GRE_R3_MIL_gre_officers_apply = { COLDWAR_GRE_R3_MIL_refresh_prices = yes COLDWAR_CYP_R2_ACT_gre_officers_apply = yes }
+COLDWAR_GRE_R3_MIL_gre_treaty_apply = { COLDWAR_GRE_R3_MIL_refresh_prices = yes COLDWAR_CYP_R2_ACT_gre_treaty_apply = yes }
+COLDWAR_GRE_R3_MIL_gre_network_apply = { COLDWAR_GRE_R3_MIL_refresh_prices = yes COLDWAR_CYP_R2_ACT_gre_network_apply = yes }
+COLDWAR_GRE_R3_MIL_gre_consult_apply = { COLDWAR_GRE_R3_MIL_refresh_prices = yes COLDWAR_CYP_R2_ACT_gre_consult_apply = yes }
+COLDWAR_GRE_R3_MIL_gre_coup_apply = { COLDWAR_GRE_R3_MIL_refresh_prices = yes COLDWAR_CYP_R2_ACT_gre_coup_apply = yes }
+COLDWAR_GRE_R3_MIL_gre_response_apply = { COLDWAR_GRE_R3_MIL_refresh_prices = yes COLDWAR_CYP_R2_ACT_gre_response_apply = yes }
+COLDWAR_GRE_R3_MIL_gre_volunteers_apply = {
+	if = {
+		limit = { COLDWAR_GRE_R3_MIL_gre_volunteers_available = yes }
+		set_country_flag = COLDWAR_GRE_R3_MIL_volunteers_offered
+		set_country_flag = { flag = COLDWAR_GRE_R3_MIL_volunteers_pending value = 1 days = 90 }
+		CYP = {
+			country_event = { id = COLDWAR_GRE_R3MIL.1 hours = 1 }
+		}
+	}
+}
+COLDWAR_GRE_R3_MIL_gre_escalate_apply = { COLDWAR_GRE_R3_MIL_refresh_prices = yes COLDWAR_CYP_R2_ACT_gre_escalate_apply = yes }
+COLDWAR_GRE_R3_MIL_volunteers_preview = {
+	effect_tooltip = { custom_effect_tooltip = COLDWAR_GRE_R3_MIL_if_cyprus_accepts COLDWAR_CYP_R2_ACT_gre_volunteers_preview = yes }
+}
+COLDWAR_GRE_R3_MIL_accept_volunteers = {
+	if = {
+		limit = {
+			tag = CYP
+			is_subject = no
+			has_capitulated = no
+			GRE = { has_country_flag = COLDWAR_GRE_R3_MIL_volunteers_pending COLDWAR_CYP_R2_ACT_gre_volunteers_available = yes }
+			COLDWAR_CYP_R2_pair_clear_gre = yes
+		}
+		set_country_flag = COLDWAR_GRE_R3_MIL_volunteer_consent
+		GRE = {
+			COLDWAR_CYP_R2_ACT_gre_volunteers_apply = yes
+			if = {
+				limit = { has_country_flag = COLDWAR_CYP_R2_applied_gre_volunteers }
+				clr_country_flag = COLDWAR_GRE_R3_MIL_volunteers_pending
+			}
+		}
+	}
+}
+COLDWAR_GRE_R3_MIL_restore_nato_membership = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CYP_R2_nato_was_member
+			has_country_flag = COLDWAR_CYP_R2_nato_separated
+			COLDWAR_CYP_R2_nato_return_allowed = yes
+			COLDWAR_CYP_R2_nato_join_allowed = yes
+			NOT = { has_idea = NATO_member }
+		}
+		for_each_scope_loop = {
+			array = global.nato_members
+			add_opinion_modifier = { target = PREV modifier = NATO_member_modifier }
+			reverse_add_opinion_modifier = { target = PREV modifier = NATO_member_modifier }
+			if = {
+				limit = {
+					NOT = { has_military_access_to = PREV }
+				}
+				diplomatic_relation = { country = PREV relation = military_access active = yes }
+			}
+			PREV = {
+				if = {
+					limit = {
+						NOT = { has_military_access_to = PREV }
+					}
+					diplomatic_relation = { country = PREV relation = military_access active = yes }
+				}
+			}
+		}
+		add_ideas = NATO_member
+		add_to_tech_sharing_group = NATO_Tech_Share
+		random_scope_in_array = {
+			array = global.nato_members
+			limit = { is_faction_leader = yes }
+			add_to_faction = PREV
+		}
+		remove_ideas = Major_Non_NATO_Ally
+		hidden_effect = {
+			news_event = { id = NATO.8 hours = 6 }
+		}
+	}
+}
+COLDWAR_GRE_R3_MIL_sync = {
+	if = {
+		limit = { original_tag = GRE IMP_is_1970_scenario = yes exists = yes }
+		COLDWAR_GRE_R3_MIL_refresh_prices = yes
+		COLDWAR_CYP_R2_crisis_reconcile = yes
+	}
+}

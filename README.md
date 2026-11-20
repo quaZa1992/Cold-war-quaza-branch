@@ -11,7 +11,9 @@ The playable scenario starts in 1970 and uses English localisation. Starting for
 <!-- IMPERIA COLD WAR: Preserve attribution for the SSR agency creation restriction. -->
 The SSR intelligence-agency restriction adapts the two-layer button blocker and AI factory-budget technique from [Yard1's Intelligence Agency Blocker](https://github.com/Yard1/HoI4-Intelligence-Agency-Blocker). The SSR eligibility rule and MD reward safeguards are Imperia Cold War additions.
 
-Install the repository as `mod/mdcoldwar-main`. Copy the supplied `mdcoldwar.mod` into the parent `mod` directory, restart the launcher and enable `MD Cold War` in the selected playset. Keep `descriptor.mod` inside `mdcoldwar-main`; it contains the internal metadata and does not register the mod's location with the launcher. Large graphics and audio assets use Git LFS; clone with Git LFS installed and download the LFS content.
+Install the repository as `mod/mdcoldwar` and use the launcher descriptor in the parent `mod` directory. The redundant internal `mdcoldwar.mod` is retained in the external development archive. Large graphics and audio assets use Git LFS; clone with Git LFS installed and download the LFS content.
+
+Development sources were relocated on 31 October 2026 and are stored outside this repository. Workshop releases are prepared separately from the live repository and include game files, licences and bundled provenance notices.
 
 This remains a work in progress. A USA 1970 startup, seven days of play, saving and reloading were confirmed. A later first-month crash was recorded; two stale power-rank references were corrected, but the monthly crash still requires an in-game retest. Static file verification is not a runtime compatibility guarantee.
 

@@ -1223,6 +1223,12 @@ mdcw_cw_update_bloc_effects = {
 		add_to_variable = { mdcw_cw_b_trade = -0.15 }
 		add_to_variable = { mdcw_cw_b_research = -0.02 }
 		add_to_variable = { mdcw_cw_b_drift_emerging = 0.02 }
+		# COLDWAR CHI 1970 bloc tiers BEGIN
+		if = { limit = { check_variable = { global.COLDWAR_CHI_bloc_tier > 0 } } add_to_variable = { mdcw_cw_b_build = 0.03 } add_to_variable = { mdcw_cw_b_sanc_res = 0.05 } } # COLDWAR CHI 1970
+		if = { limit = { check_variable = { global.COLDWAR_CHI_bloc_tier > 1 } } add_to_variable = { mdcw_cw_b_research = 0.03 } add_to_variable = { mdcw_cw_b_trade = 0.05 } } # COLDWAR CHI 1970
+		if = { limit = { check_variable = { global.COLDWAR_CHI_bloc_tier > 2 } } add_to_variable = { mdcw_cw_b_pp_gain = 0.1 } add_to_variable = { mdcw_cw_b_stab = 0.03 } } # COLDWAR CHI 1970
+		if = { limit = { check_variable = { global.COLDWAR_CHI_bloc_tier > 3 } } add_to_variable = { mdcw_cw_b_build = 0.05 } add_to_variable = { mdcw_cw_b_research = 0.03 } add_to_variable = { mdcw_cw_b_fidef = 0.1 } } # COLDWAR CHI 1970
+		# COLDWAR CHI 1970 bloc tiers END
 		# network, scaled by the bloc's share of world power (half for estranged members)
 		set_temp_variable = { mdcw_cw_t_scale = global.mdcw_cw_scale_3 }
 		if = {
@@ -1251,6 +1257,11 @@ mdcw_cw_update_bloc_effects = {
 			multiply_temp_variable = { mdcw_cw_t_fx = global.mdcw_cw_scale_3 }
 			add_to_variable = { mdcw_cw_b_consumer = mdcw_cw_t_fx }
 			set_variable = { mdcw_cw_bloc_upkeep = global.mdcw_cw_upkeep_3 }
+			# COLDWAR CHI 1970: every Beijing bloc tier makes leadership 10% more expensive
+			set_temp_variable = { COLDWAR_CHI_t_upkeep = global.COLDWAR_CHI_bloc_tier } # COLDWAR CHI 1970
+			multiply_temp_variable = { COLDWAR_CHI_t_upkeep = 0.1 } # COLDWAR CHI 1970
+			add_to_temp_variable = { COLDWAR_CHI_t_upkeep = 1 } # COLDWAR CHI 1970
+			multiply_variable = { mdcw_cw_bloc_upkeep = COLDWAR_CHI_t_upkeep } # COLDWAR CHI 1970
 			if = {
 				limit = { has_global_flag = mdcw_cw_bp_3 }
 				add_to_variable = { mdcw_cw_b_consumer = 0.02 }
@@ -1634,6 +1645,8 @@ mdcw_cw_recalculate_oil_embargo_world = {
 }
 
 # Sender scope, PREV = chosen country.
+# COLDWAR: OPEC 1970 - the OPEC joint embargoes run exactly this action for every bound member; inside such a batch (global flag
+# COLDWAR_OPEC_batch) the recount and the news wait for the OPEC batch (one recount, one OPEC world news). Tension +1 stays per embargo.
 mdcw_cw_start_oil_embargo = {
 	if = { limit = { NOT = { check_variable = { global.mdcw_cw_oil_export_total > 0 } } } imp_calculate_oil_producers = yes }
 	mdcw_cw_update_opec_share = yes
@@ -1645,19 +1658,25 @@ mdcw_cw_start_oil_embargo = {
 	PREV = {
 		add_to_array = { array = mdcw_cw_oil_embargo_sources value = PREV }
 		set_country_flag = mdcw_cw_oil_embargo_happened
-		mdcw_cw_recalculate_oil_embargo_pressure = yes
+		if = { limit = { NOT = { has_global_flag = COLDWAR_OPEC_batch } } mdcw_cw_recalculate_oil_embargo_pressure = yes } # COLDWAR
 		add_opinion_modifier = { target = PREV modifier = mdcw_cw_oil_embargo }
 	}
+	if = { # COLDWAR
+	limit = { NOT = { has_global_flag = COLDWAR_OPEC_batch } } # COLDWAR
 	mdcw_cw_recalculate_oil_embargo_world = yes
 	mdcw_cw_update_world_situation = yes
+	} # COLDWAR
 	set_temp_variable = { mdcw_cw_tension_delta = 1 }
 	mdcw_cw_add_tension = yes
+	if = { # COLDWAR
+	limit = { NOT = { has_global_flag = COLDWAR_OPEC_batch } } # COLDWAR
 	every_country = {
 		limit = { is_ai = no }
 		set_variable = { mdcw_cw_ev13_partner = PREV.id }
 		set_variable = { mdcw_cw_ev13_target = mdcw_cw_t_oil_target }
 		news_event = { id = mdcw_cw.13 }
 	}
+	} # COLDWAR
 	mdcw_cw_touch_gui = yes
 }
 
@@ -1671,10 +1690,13 @@ mdcw_cw_end_oil_embargo = {
 	if = { limit = { check_variable = { mdcw_cw_oil_embargo_out < 1 } } set_variable = { mdcw_cw_oil_embargo_lost_sales = 0 } }
 	PREV = {
 		remove_from_array = { array = mdcw_cw_oil_embargo_sources value = PREV }
-		mdcw_cw_recalculate_oil_embargo_pressure = yes
+		if = { limit = { NOT = { has_global_flag = COLDWAR_OPEC_batch } } mdcw_cw_recalculate_oil_embargo_pressure = yes } # COLDWAR: OPEC batch recounts once
 	}
+	if = { # COLDWAR
+	limit = { NOT = { has_global_flag = COLDWAR_OPEC_batch } } # COLDWAR
 	mdcw_cw_recalculate_oil_embargo_world = yes
 	mdcw_cw_update_world_situation = yes
+	} # COLDWAR
 	mdcw_cw_touch_gui = yes
 }
 
@@ -1708,6 +1730,14 @@ mdcw_cw_oil_effective_price = {
 		add_to_temp_variable = { mdcw_cw_t_embargo_factor = 1 }
 		multiply_temp_variable = { imp_oil_factor_t = mdcw_cw_t_embargo_factor }
 	}
+	# IMPERIA COLD WAR — Oil at Friendship Prices BEGIN
+	if = {
+		limit = { check_variable = { COLDWAR_OF_discount > 0 } }
+		set_temp_variable = { cwof_t_f = 1 }
+		subtract_from_temp_variable = { cwof_t_f = COLDWAR_OF_discount }
+		multiply_temp_variable = { imp_oil_factor_t = cwof_t_f }
+	}
+	# IMPERIA COLD WAR — Oil at Friendship Prices END
 }
 
 # Country scope, called by Imperia's high-price formula. temp imp_oil_factor_t = (price - 75) / 125.
@@ -2111,6 +2141,11 @@ mdcw_cw_calculate_switch_costs = {
 	clamp_temp_variable = { var = mdcw_cw_t_disc min = 0 max = 0.5 }
 	set_temp_variable = { mdcw_cw_t_mult = 1 }
 	subtract_from_temp_variable = { mdcw_cw_t_mult = mdcw_cw_t_disc }
+	# COLDWAR CHI 1970: every Beijing bloc tier makes joining 10% cheaper
+	set_temp_variable = { COLDWAR_CHI_t_tier = global.COLDWAR_CHI_bloc_tier } # COLDWAR CHI 1970
+	multiply_temp_variable = { COLDWAR_CHI_t_tier = 0.1 } # COLDWAR CHI 1970
+	subtract_from_temp_variable = { mdcw_cw_t_mult = COLDWAR_CHI_t_tier } # COLDWAR CHI 1970
+	clamp_temp_variable = { var = mdcw_cw_t_mult min = 0.3 max = 1 } # COLDWAR CHI 1970
 	multiply_variable = { mdcw_cw_switch_cost_3 = mdcw_cw_t_mult }
 	round_variable = mdcw_cw_switch_cost_3
 }

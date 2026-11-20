@@ -1,0 +1,4973 @@
+# IMPERIA COLD WAR — Czechoslovakia 1970 bilateral agreements.
+
+COLDWAR_CZE_1970_preview_offer_sovereignty_protocol = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_sovereignty_protocol_ui_cze_setup_cost
+		remove_ideas = COLDWAR_CZE_1970_spirit_start_1
+		add_ideas = COLDWAR_CZE_1970_sovereignty_protocol_cze
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
+	SOV = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_sovereignty_protocol_ui_recipient_setup_cost
+		add_ideas = COLDWAR_CZE_1970_sovereignty_protocol_recipient
+	}
+}
+COLDWAR_CZE_1970_offer_sovereignty_protocol = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_sovereignty_protocol_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
+			}
+			SOV = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
+		set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_ever_offered
+		SOV = {
+			set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_sovereignty_protocol = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
+				COLDWAR_CZE_1970_sovereignty_protocol_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00200
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00080
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+		CZE = {
+			set_variable = {
+				COLDWAR_CZE_1970_slot_soviet_presence = 0
+			}
+			COLDWAR_CZE_1970_refresh_spirits = yes
+		}
+		clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_sovereignty_protocol = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_oil = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_cze_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_cze_weekly_transfer_cost
+		add_ideas = COLDWAR_CZE_1970_oil_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_oil_one_time_cze_research_cat_fuel_efficiency
+			category = CAT_fuel_efficiency
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
+	SOV = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_recipient_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_recipient_weekly_transfer_income
+		add_ideas = COLDWAR_CZE_1970_oil_recipient
+	}
+}
+COLDWAR_CZE_1970_offer_oil = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_oil_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_oil_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_oil_offer_open
+			}
+			SOV = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_oil_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_oil_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_oil_offer_open
+		set_country_flag = COLDWAR_CZE_1970_oil_ever_offered
+		SOV = {
+			set_country_flag = COLDWAR_CZE_1970_oil_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_oil_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_oil = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_oil_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_oil_offer_open
+				COLDWAR_CZE_1970_oil_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_oil_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_oil_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00350
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_oil_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00100
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_oil_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_oil_one_time_cze_research_cat_fuel_efficiency
+				category = CAT_fuel_efficiency
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			set_variable = {
+				COLDWAR_CZE_1970_oil_transfer = {
+					value = gdp_total
+					multiply = 0.00006
+				}
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_oil_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_oil_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_oil_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_oil = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_oil_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_oil_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_oil_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_oil_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_reactor = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_cze_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_cze_weekly_transfer_cost
+		add_ideas = COLDWAR_CZE_1970_reactor_generation_cze
+		add_ideas = COLDWAR_CZE_1970_reactor_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_reactor_one_time_cze_research_cat_nuclear_reactors
+			category = CAT_nuclear_reactors
+			bonus = 0.5
+			uses = 1
+		}
+		unlock_decision_tooltip = civil_nuclear_investment
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
+	SOV = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_recipient_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_recipient_weekly_transfer_income
+		add_ideas = COLDWAR_CZE_1970_reactor_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_reactor_one_time_recipient_research_cat_industry
+			category = CAT_industry
+			bonus = 0.25
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_reactor = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_reactor_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_offer_open
+			}
+			SOV = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_reactor_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_reactor_offer_open
+		set_country_flag = COLDWAR_CZE_1970_reactor_ever_offered
+		SOV = {
+			set_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_reactor_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_reactor = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_offer_open
+				COLDWAR_CZE_1970_reactor_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_reactor_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00400
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_reactor_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00120
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_reactor_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_reactor_one_time_cze_research_cat_nuclear_reactors
+				category = CAT_nuclear_reactors
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			unlock_decision_tooltip = civil_nuclear_investment
+			set_country_flag = COLDWAR_CZE_1970_civil_nuclear_investment_unlocked
+		}
+		SOV = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_reactor_one_time_recipient_research_cat_industry
+				category = CAT_industry
+				bonus = 0.25
+				uses = 1
+			}
+		}
+		CZE = {
+			set_variable = {
+				COLDWAR_CZE_1970_reactor_transfer = {
+					value = gdp_total
+					multiply = 0.00003
+				}
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_reactor_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_reactor_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_reactor = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_reactor_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_components = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_components_cze
+		117 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = no
+			}
+		}
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_components_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
+	SOV = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_components_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_components_one_time_recipient_research_cat_nuclear_reactors
+			category = CAT_nuclear_reactors
+			bonus = 0.25
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_components = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_components_pair_clear = yes
+			owns_state = 117
+			controls_state = 117
+			117 = {
+				industrial_complex < 50
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = no
+				}
+			}
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_components_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_components_offer_open
+			}
+			SOV = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_components_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_components_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_components_offer_open
+		set_country_flag = COLDWAR_CZE_1970_components_ever_offered
+		SOV = {
+			set_country_flag = COLDWAR_CZE_1970_components_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_components_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_components = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_components_offer_pending
+			CZE = {
+				owns_state = 117
+				controls_state = 117
+				117 = {
+					industrial_complex < 50
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = no
+					}
+				}
+				has_country_flag = COLDWAR_CZE_1970_components_offer_open
+				COLDWAR_CZE_1970_components_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_components_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_components_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00500
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_components_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00150
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_components_signed
+		CZE = {
+			117 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = no
+				}
+			}
+		}
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_components_one_time_cze_research_cat_industry
+				category = CAT_industry
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		SOV = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_components_one_time_recipient_research_cat_nuclear_reactors
+				category = CAT_nuclear_reactors
+				bonus = 0.25
+				uses = 1
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_components_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_components_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_components = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_components_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_components_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_components_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_components_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_power_pool = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_cze_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_cze_weekly_transfer_cost
+		add_ideas = COLDWAR_CZE_1970_power_pool_cze
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
+	SOV = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_recipient_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_recipient_weekly_transfer_income
+		add_ideas = COLDWAR_CZE_1970_power_pool_recipient
+	}
+}
+COLDWAR_CZE_1970_offer_power_pool = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_power_pool_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
+			}
+			SOV = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
+		set_country_flag = COLDWAR_CZE_1970_power_pool_ever_offered
+		SOV = {
+			set_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_power_pool_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_power_pool = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
+				COLDWAR_CZE_1970_power_pool_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00650
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_power_pool_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00200
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_power_pool_signed
+		CZE = {
+			set_variable = {
+				COLDWAR_CZE_1970_power_pool_transfer = {
+					value = gdp_total
+					multiply = 0.00004
+				}
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_power_pool_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_power_pool = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_gdr_auto = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_gdr_auto_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_gdr_auto_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_DDR
+	DDR = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_gdr_auto_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_gdr_auto_one_time_recipient_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_gdr_auto = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_gdr_auto_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
+			}
+			DDR = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
+		set_country_flag = COLDWAR_CZE_1970_gdr_auto_ever_offered
+		DDR = {
+			set_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_gdr_auto_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_gdr_auto = {
+	if = {
+		limit = {
+			tag = DDR
+			has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
+				COLDWAR_CZE_1970_gdr_auto_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00350
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00350
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_gdr_auto_one_time_cze_research_cat_industry
+				category = CAT_industry
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		DDR = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_gdr_auto_one_time_recipient_research_cat_industry
+				category = CAT_industry
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_gdr_auto = {
+	if = {
+		limit = {
+			tag = DDR
+			has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_gdr_rail = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_gdr_rail_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_gdr_rail_one_time_cze_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_DDR
+	DDR = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_gdr_rail_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_gdr_rail_one_time_recipient_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_gdr_rail = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_gdr_rail_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
+			}
+			DDR = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
+		set_country_flag = COLDWAR_CZE_1970_gdr_rail_ever_offered
+		DDR = {
+			set_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_gdr_rail_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_gdr_rail = {
+	if = {
+		limit = {
+			tag = DDR
+			has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
+				COLDWAR_CZE_1970_gdr_rail_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00350
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00300
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_gdr_rail_one_time_cze_research_cat_infrastructure
+				category = CAT_infrastructure
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		DDR = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_gdr_rail_one_time_recipient_research_cat_infrastructure
+				category = CAT_infrastructure
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_gdr_rail = {
+	if = {
+		limit = {
+			tag = DDR
+			has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_pol_rail = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_rail_cze
+		1018 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
+	POL = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_rail_recipient
+		custom_effect_tooltip = COLDWAR_CZE_1970_polish_site_choice_tt
+		112 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_alternative_site_tt
+		115 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_pol_rail = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_pol_rail_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
+			}
+			POL = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
+		set_country_flag = COLDWAR_CZE_1970_pol_rail_ever_offered
+		POL = {
+			set_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_pol_rail_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_pol_rail = {
+	if = {
+		limit = {
+			OR = {
+				check_variable = {
+					COLDWAR_CZE_1970_pol_rail_site = 112
+				}
+				check_variable = {
+					COLDWAR_CZE_1970_pol_rail_site = 115
+				}
+			}
+			CZE = {
+				owns_state = 1018
+				controls_state = 1018
+				1018 = {
+					infrastructure < 6
+					free_building_slots = {
+						building = infrastructure
+						size > 0
+						include_locked = no
+					}
+				}
+			}
+			POL = {
+				OR = {
+					AND = {
+						check_variable = {
+							COLDWAR_CZE_1970_pol_rail_site = 112
+						}
+						owns_state = 112
+						controls_state = 112
+						112 = {
+							infrastructure < 6
+							free_building_slots = {
+								building = infrastructure
+								size > 0
+								include_locked = no
+							}
+						}
+					}
+					AND = {
+						check_variable = {
+							COLDWAR_CZE_1970_pol_rail_site = 115
+						}
+						owns_state = 115
+						controls_state = 115
+						115 = {
+							infrastructure < 6
+							free_building_slots = {
+								building = infrastructure
+								size > 0
+								include_locked = no
+							}
+						}
+					}
+				}
+			}
+			tag = POL
+			has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
+			CZE = {
+				owns_state = 1018
+				controls_state = 1018
+				1018 = {
+					infrastructure < 6
+					free_building_slots = {
+						building = infrastructure
+						size > 0
+						include_locked = no
+					}
+				}
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
+				COLDWAR_CZE_1970_pol_rail_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00300
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00300
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+		CZE = {
+			1018 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = no
+				}
+			}
+		}
+		if = {
+			limit = {
+				check_variable = {
+					COLDWAR_CZE_1970_pol_rail_site = 112
+				}
+			}
+			POL = {
+				112 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = no
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				check_variable = {
+					COLDWAR_CZE_1970_pol_rail_site = 115
+				}
+			}
+			POL = {
+				115 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = no
+					}
+				}
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_pol_rail = {
+	if = {
+		limit = {
+			tag = POL
+			has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_pol_environment = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_environment_cze
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
+	POL = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_environment_recipient
+	}
+}
+COLDWAR_CZE_1970_offer_pol_environment = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_pol_environment_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
+			}
+			POL = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
+		set_country_flag = COLDWAR_CZE_1970_pol_environment_ever_offered
+		POL = {
+			set_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_pol_environment_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_pol_environment = {
+	if = {
+		limit = {
+			tag = POL
+			has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
+				COLDWAR_CZE_1970_pol_environment_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00180
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00180
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_pol_environment = {
+	if = {
+		limit = {
+			tag = POL
+			has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_hun_dam = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_construction_cost
+		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_cze
+		119 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = energy_infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_operation_cost
+		swap_ideas = {
+			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
+			add_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
+	HUN = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_construction_cost
+		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_recipient
+		custom_effect_tooltip = COLDWAR_CZE_1970_hungarian_site_choice_tt
+		121 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = energy_infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_alternative_site_tt
+		123 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = energy_infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_operation_cost
+		swap_ideas = {
+			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
+			add_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_hun_dam = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
+			}
+			HUN = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
+		set_country_flag = COLDWAR_CZE_1970_hun_dam_ever_offered
+		HUN = {
+			set_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_hun_dam_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_hun_dam = {
+	if = {
+		limit = {
+			OR = {
+				check_variable = {
+					COLDWAR_CZE_1970_hun_dam_site = 121
+				}
+				check_variable = {
+					COLDWAR_CZE_1970_hun_dam_site = 123
+				}
+			}
+			CZE = {
+				owns_state = 119
+				controls_state = 119
+				119 = {
+					energy_infrastructure < 1
+					free_building_slots = {
+						building = energy_infrastructure
+						size > 0
+						include_locked = no
+					}
+				}
+			}
+			HUN = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
+				OR = {
+					AND = {
+						check_variable = {
+							COLDWAR_CZE_1970_hun_dam_site = 121
+						}
+						owns_state = 121
+						controls_state = 121
+						121 = {
+							energy_infrastructure < 1
+							free_building_slots = {
+								building = energy_infrastructure
+								size > 0
+								include_locked = no
+							}
+						}
+					}
+					AND = {
+						check_variable = {
+							COLDWAR_CZE_1970_hun_dam_site = 123
+						}
+						owns_state = 123
+						controls_state = 123
+						123 = {
+							energy_infrastructure < 1
+							free_building_slots = {
+								building = energy_infrastructure
+								size > 0
+								include_locked = no
+							}
+						}
+					}
+				}
+			}
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00800
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00800
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+		CZE = {
+			set_variable = {
+				COLDWAR_CZE_1970_hun_dam_active_days = 0
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_hun_dam = {
+	if = {
+		limit = {
+			tag = HUN
+			has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_hun_river = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_hun_river_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_hun_river_one_time_cze_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
+	HUN = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_hun_river_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_hun_river_one_time_recipient_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_hun_river = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_hun_river_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
+			}
+			HUN = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_river_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
+		set_country_flag = COLDWAR_CZE_1970_hun_river_ever_offered
+		HUN = {
+			set_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_hun_river_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_hun_river = {
+	if = {
+		limit = {
+			tag = HUN
+			has_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
+				COLDWAR_CZE_1970_hun_river_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_river_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00250
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_hun_river_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00250
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_hun_river_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_hun_river_one_time_cze_research_cat_infrastructure
+				category = CAT_infrastructure
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		HUN = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_hun_river_one_time_recipient_research_cat_infrastructure
+				category = CAT_infrastructure
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_hun_river_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_hun_river = {
+	if = {
+		limit = {
+			tag = HUN
+			has_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_frg_treaty = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_frg_treaty_cze
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_GER
+	GER = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_frg_treaty_recipient
+	}
+}
+COLDWAR_CZE_1970_offer_frg_treaty = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_frg_treaty_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
+			}
+			GER = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
+		set_country_flag = COLDWAR_CZE_1970_frg_treaty_ever_offered
+		GER = {
+			set_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_frg_treaty_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_frg_treaty = {
+	if = {
+		limit = {
+			tag = GER
+			has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
+				COLDWAR_CZE_1970_frg_treaty_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00100
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00100
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_frg_treaty = {
+	if = {
+		limit = {
+			tag = GER
+			has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_frg_technology = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_cze_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_cze_weekly_transfer_cost
+		add_ideas = COLDWAR_CZE_1970_frg_technology_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_electronics
+			category = CAT_electronics
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_GER
+	GER = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_recipient_weekly_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_recipient_weekly_transfer_income
+		add_ideas = COLDWAR_CZE_1970_frg_technology_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_frg_technology_one_time_recipient_research_cat_industry
+			category = CAT_industry
+			bonus = 0.25
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_frg_technology = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_frg_technology_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
+			}
+			GER = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
+		set_country_flag = COLDWAR_CZE_1970_frg_technology_ever_offered
+		GER = {
+			set_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_frg_technology_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_frg_technology = {
+	if = {
+		limit = {
+			tag = GER
+			has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
+				COLDWAR_CZE_1970_frg_technology_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00550
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00200
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_industry
+				category = CAT_industry
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_electronics
+				category = CAT_electronics
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		GER = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_frg_technology_one_time_recipient_research_cat_industry
+				category = CAT_industry
+				bonus = 0.25
+				uses = 1
+			}
+		}
+		CZE = {
+			set_variable = {
+				COLDWAR_CZE_1970_frg_technology_transfer = {
+					value = gdp_total
+					multiply = 0.00003
+				}
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_frg_technology = {
+	if = {
+		limit = {
+			tag = GER
+			has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_aus_claims = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_aus_claims_cze
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_AUS
+	AUS = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_recipient_setup_income
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_aus_claims_recipient
+	}
+}
+COLDWAR_CZE_1970_offer_aus_claims = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_aus_claims_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
+			}
+			AUS = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
+		set_country_flag = COLDWAR_CZE_1970_aus_claims_ever_offered
+		AUS = {
+			set_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_aus_claims_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_aus_claims = {
+	if = {
+		limit = {
+			tag = AUS
+			has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
+				COLDWAR_CZE_1970_aus_claims_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00250
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+		}
+		AUS = {
+			set_temp_variable = {
+				treasury_change = {
+					value = var:CZE.gdp_total
+					multiply = 0.00250
+				}
+			}
+			modify_treasury_effect = yes
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00050
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_aus_claims = {
+	if = {
+		limit = {
+			tag = AUS
+			has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_aus_trade = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_aus_trade_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_aus_trade_one_time_cze_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_AUS
+	AUS = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_aus_trade_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_aus_trade_one_time_recipient_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_aus_trade = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_aus_trade_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
+			}
+			AUS = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
+		set_country_flag = COLDWAR_CZE_1970_aus_trade_ever_offered
+		AUS = {
+			set_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_aus_trade_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_aus_trade = {
+	if = {
+		limit = {
+			tag = AUS
+			has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
+				COLDWAR_CZE_1970_aus_trade_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00300
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00250
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_aus_trade_one_time_cze_research_cat_infrastructure
+				category = CAT_infrastructure
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		AUS = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_aus_trade_one_time_recipient_research_cat_infrastructure
+				category = CAT_infrastructure
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_aus_trade = {
+	if = {
+		limit = {
+			tag = AUS
+			has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_yug_engineering = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_yug_engineering_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_yug_engineering_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SER
+	SER = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_yug_engineering_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_yug_engineering_one_time_recipient_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_yug_engineering = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_yug_engineering_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
+			}
+			SER = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
+		set_country_flag = COLDWAR_CZE_1970_yug_engineering_ever_offered
+		SER = {
+			set_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_yug_engineering_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_yug_engineering = {
+	if = {
+		limit = {
+			tag = SER
+			has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
+				COLDWAR_CZE_1970_yug_engineering_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00350
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00350
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_yug_engineering_one_time_cze_research_cat_industry
+				category = CAT_industry
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		SER = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_yug_engineering_one_time_recipient_research_cat_industry
+				category = CAT_industry
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_yug_engineering = {
+	if = {
+		limit = {
+			tag = SER
+			has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_interkosmos = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_interkosmos_cze
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_interkosmos_one_time_cze_research_cat_electronics
+			category = CAT_electronics
+			bonus = 0.5
+			uses = 1
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
+	SOV = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_interkosmos_recipient
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_interkosmos_one_time_recipient_research_cat_electronics
+			category = CAT_electronics
+			bonus = 0.25
+			uses = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_offer_interkosmos = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_interkosmos_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
+			}
+			SOV = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
+		set_country_flag = COLDWAR_CZE_1970_interkosmos_ever_offered
+		SOV = {
+			set_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_interkosmos_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_interkosmos = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
+				COLDWAR_CZE_1970_interkosmos_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00250
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00120
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+		CZE = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_interkosmos_one_time_cze_research_cat_electronics
+				category = CAT_electronics
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		SOV = {
+			add_tech_bonus = {
+				name = COLDWAR_CZE_1970_interkosmos_one_time_recipient_research_cat_electronics
+				category = CAT_electronics
+				bonus = 0.25
+				uses = 1
+			}
+		}
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+			set_country_flag = cw_sr_cap_interkosmos_cooperation
+		}
+		clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_interkosmos = {
+	if = {
+		limit = {
+			tag = SOV
+			has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_successor_treaty = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_successor_treaty_cze
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SLO
+	SLO = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_successor_treaty_recipient
+	}
+}
+COLDWAR_CZE_1970_offer_successor_treaty = {
+	if = {
+		limit = {
+			tag = CZE
+			COLDWAR_CZE_1970_successor_treaty_pair_clear = yes
+			is_ai = no
+			check_variable = {
+				gdp_total > 0
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
+			}
+			SLO = {
+				is_ai = no
+				check_variable = {
+					gdp_total > 0
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
+		set_country_flag = COLDWAR_CZE_1970_successor_treaty_ever_offered
+		SLO = {
+			set_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
+			set_country_flag = COLDWAR_CZE_1970_successor_treaty_ever_offered
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_successor_treaty = {
+	if = {
+		limit = {
+			tag = SLO
+			has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
+				COLDWAR_CZE_1970_successor_treaty_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+				}
+			}
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+			}
+			check_variable = {
+				gdp_total > 0
+			}
+			CZE = {
+				check_variable = {
+					gdp_total > 0
+				}
+			}
+		}
+		CZE = {
+			set_temp_variable = {
+				treasury_change = {
+					value = gdp_total
+					multiply = -0.00150
+				}
+			}
+			modify_treasury_effect = yes
+			set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+		}
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00150
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+		CZE = {
+			set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+		}
+		clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
+		}
+		CZE = {
+			COLDWAR_CZE_1970_bilateral_refresh = yes
+		}
+	}
+}
+COLDWAR_CZE_1970_refuse_successor_treaty = {
+	if = {
+		limit = {
+			tag = SLO
+			has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
+			}
+		}
+		clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
+		CZE = {
+			clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_pol_rail_at_112 = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_rail_cze
+		1018 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
+	POL = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_rail_recipient
+		112 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_pol_rail_at_115 = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_rail_cze
+		1018 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
+	POL = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_weekly_cost
+		add_ideas = COLDWAR_CZE_1970_pol_rail_recipient
+		115 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_hun_dam_at_121 = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_construction_cost
+		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_cze
+		119 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = energy_infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_operation_cost
+		swap_ideas = {
+			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
+			add_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
+	HUN = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_construction_cost
+		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_recipient
+		121 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = energy_infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_operation_cost
+		swap_ideas = {
+			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
+			add_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient
+		}
+	}
+}
+COLDWAR_CZE_1970_preview_offer_hun_dam_at_123 = {
+	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
+	CZE = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_construction_cost
+		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_cze
+		119 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = energy_infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_operation_cost
+		swap_ideas = {
+			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
+			add_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
+		}
+	}
+	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
+	HUN = {
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_setup_cost
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_construction_cost
+		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_recipient
+		123 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = energy_infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
+		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_operation_cost
+		swap_ideas = {
+			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
+			add_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient
+		}
+	}
+}
+COLDWAR_CZE_1970_bilateral_init = {
+	CZE = {
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+COLDWAR_CZE_1970_bilateral_weekly = {
+	CZE = {
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				COLDWAR_CZE_1970_hun_dam_construction_sites_valid = yes
+				check_variable = {
+					COLDWAR_CZE_1970_hun_dam_active_days < 1825
+				}
+			}
+			add_to_variable = {
+				COLDWAR_CZE_1970_hun_dam_active_days = 7
+			}
+			clamp_variable = {
+				var = COLDWAR_CZE_1970_hun_dam_active_days
+				min = 0
+				max = 1825
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				check_variable = {
+					var = COLDWAR_CZE_1970_hun_dam_active_days
+					value = 1825
+					compare = greater_than_or_equals
+				}
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_dam_grid_ordered
+				}
+				owns_state = 119
+				controls_state = 119
+				119 = {
+					energy_infrastructure < 1
+					free_building_slots = {
+						building = energy_infrastructure
+						size > 0
+						include_locked = no
+					}
+				}
+				HUN = {
+					OR = {
+						AND = {
+							check_variable = {
+								COLDWAR_CZE_1970_hun_dam_site = 121
+							}
+							owns_state = 121
+							controls_state = 121
+							121 = {
+								energy_infrastructure < 1
+								free_building_slots = {
+									building = energy_infrastructure
+									size > 0
+									include_locked = no
+								}
+							}
+						}
+						AND = {
+							check_variable = {
+								COLDWAR_CZE_1970_hun_dam_site = 123
+							}
+							owns_state = 123
+							controls_state = 123
+							123 = {
+								energy_infrastructure < 1
+								free_building_slots = {
+									building = energy_infrastructure
+									size > 0
+									include_locked = no
+								}
+							}
+						}
+					}
+				}
+			}
+			119 = {
+				set_variable = {
+					COLDWAR_CZE_1970_hun_dam_grid_baseline = building_level@energy_infrastructure
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = energy_infrastructure
+					level = 1
+					instant_build = no
+				}
+			}
+			HUN = {
+				if = {
+					limit = {
+						check_variable = {
+							COLDWAR_CZE_1970_hun_dam_site = 121
+						}
+					}
+					121 = {
+						set_variable = {
+							COLDWAR_CZE_1970_hun_dam_grid_baseline = building_level@energy_infrastructure
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = energy_infrastructure
+							level = 1
+							instant_build = no
+						}
+					}
+				}
+				if = {
+					limit = {
+						check_variable = {
+							COLDWAR_CZE_1970_hun_dam_site = 123
+						}
+					}
+					123 = {
+						set_variable = {
+							COLDWAR_CZE_1970_hun_dam_grid_baseline = building_level@energy_infrastructure
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = energy_infrastructure
+							level = 1
+							instant_build = no
+						}
+					}
+				}
+				set_country_flag = COLDWAR_CZE_1970_hun_dam_grid_ordered
+			}
+			set_country_flag = COLDWAR_CZE_1970_hun_dam_grid_ordered
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_grid_ordered
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+				}
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				119 = {
+					is_owned_by = CZE
+					is_controlled_by = CZE
+					has_variable = COLDWAR_CZE_1970_hun_dam_grid_baseline
+					check_variable = {
+						var = building_level@energy_infrastructure
+						value = COLDWAR_CZE_1970_hun_dam_grid_baseline
+						compare = greater_than
+					}
+					OWNER = {
+						has_country_flag = COLDWAR_CZE_1970_hun_dam_grid_ordered
+					}
+				}
+				HUN = {
+					OR = {
+						AND = {
+							check_variable = {
+								COLDWAR_CZE_1970_hun_dam_site = 121
+							}
+							121 = {
+								is_owned_by = HUN
+								is_controlled_by = HUN
+								has_variable = COLDWAR_CZE_1970_hun_dam_grid_baseline
+								check_variable = {
+									var = building_level@energy_infrastructure
+									value = COLDWAR_CZE_1970_hun_dam_grid_baseline
+									compare = greater_than
+								}
+								OWNER = {
+									has_country_flag = COLDWAR_CZE_1970_hun_dam_grid_ordered
+								}
+							}
+						}
+						AND = {
+							check_variable = {
+								COLDWAR_CZE_1970_hun_dam_site = 123
+							}
+							123 = {
+								is_owned_by = HUN
+								is_controlled_by = HUN
+								has_variable = COLDWAR_CZE_1970_hun_dam_grid_baseline
+								check_variable = {
+									var = building_level@energy_infrastructure
+									value = COLDWAR_CZE_1970_hun_dam_grid_baseline
+									compare = greater_than
+								}
+								OWNER = {
+									has_country_flag = COLDWAR_CZE_1970_hun_dam_grid_ordered
+								}
+							}
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+			HUN = {
+				set_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+			}
+		}
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+COLDWAR_CZE_1970_bilateral_refresh = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CZE_1970_reactor_signed
+			COLDWAR_CZE_1970_reactor_pair_clear = yes
+			has_country_flag = COLDWAR_CZE_1970_civil_reactor_commissioned
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_reactor_generation_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_reactor_generation_cze
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_reactor_generation_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_reactor_generation_cze
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+			}
+			COLDWAR_CZE_1970_sovereignty_protocol_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_sovereignty_protocol_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_sovereignty_protocol_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_sovereignty_protocol_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_sovereignty_protocol_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_sovereignty_protocol_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_sovereignty_protocol_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_sovereignty_protocol_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_sovereignty_protocol_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_oil_signed
+			}
+			COLDWAR_CZE_1970_oil_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_oil_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_oil_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_oil_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_oil_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_oil_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_oil_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_oil_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_oil_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_signed
+			}
+			COLDWAR_CZE_1970_reactor_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_reactor_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_reactor_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_reactor_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_reactor_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_reactor_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_reactor_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_reactor_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_reactor_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_signed
+			}
+			COLDWAR_CZE_1970_reactor_pair_clear = yes
+		}
+		set_country_flag = COLDWAR_CZE_1970_nuclear_design_active
+		SOV = {
+			set_country_flag = COLDWAR_CZE_1970_nuclear_design_active
+		}
+	}
+	else = {
+		clr_country_flag = COLDWAR_CZE_1970_nuclear_design_active
+		SOV = {
+			clr_country_flag = COLDWAR_CZE_1970_nuclear_design_active
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_components_signed
+			}
+			COLDWAR_CZE_1970_components_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_components_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_components_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_components_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_components_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_components_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_components_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_components_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_components_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+			}
+			COLDWAR_CZE_1970_power_pool_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_power_pool_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_power_pool_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_power_pool_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_power_pool_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_power_pool_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_power_pool_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_power_pool_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_power_pool_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+			}
+			COLDWAR_CZE_1970_gdr_auto_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_gdr_auto_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_gdr_auto_cze
+		}
+		DDR = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_gdr_auto_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_gdr_auto_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_gdr_auto_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_gdr_auto_cze
+		}
+		DDR = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_gdr_auto_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_gdr_auto_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+			}
+			COLDWAR_CZE_1970_gdr_rail_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_gdr_rail_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_gdr_rail_cze
+		}
+		DDR = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_gdr_rail_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_gdr_rail_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_gdr_rail_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_gdr_rail_cze
+		}
+		DDR = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_gdr_rail_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_gdr_rail_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+			}
+			COLDWAR_CZE_1970_pol_rail_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_pol_rail_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_pol_rail_cze
+		}
+		POL = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_pol_rail_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_pol_rail_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_pol_rail_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_pol_rail_cze
+		}
+		POL = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_pol_rail_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_pol_rail_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+			}
+			COLDWAR_CZE_1970_pol_environment_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_pol_environment_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_pol_environment_cze
+		}
+		POL = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_pol_environment_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_pol_environment_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_pol_environment_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_pol_environment_cze
+		}
+		POL = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_pol_environment_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_pol_environment_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+			}
+			COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+			NOT = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
+		}
+		HUN = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+			}
+			COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_hun_dam_operating_cze
+		}
+		HUN = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_hun_dam_operating_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
+		}
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_hun_dam_operating_cze
+		}
+		HUN = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
+			}
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_hun_dam_operating_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_signed
+			}
+			COLDWAR_CZE_1970_hun_river_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_hun_river_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_hun_river_cze
+		}
+		HUN = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_hun_river_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_hun_river_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_hun_river_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_hun_river_cze
+		}
+		HUN = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_hun_river_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_hun_river_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+			}
+			COLDWAR_CZE_1970_frg_treaty_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_frg_treaty_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_frg_treaty_cze
+		}
+		GER = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_frg_treaty_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_frg_treaty_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_frg_treaty_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_frg_treaty_cze
+		}
+		GER = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_frg_treaty_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_frg_treaty_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+			}
+			COLDWAR_CZE_1970_frg_technology_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_frg_technology_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_frg_technology_cze
+		}
+		GER = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_frg_technology_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_frg_technology_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_frg_technology_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_frg_technology_cze
+		}
+		GER = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_frg_technology_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_frg_technology_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+			}
+			COLDWAR_CZE_1970_aus_claims_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_aus_claims_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_aus_claims_cze
+		}
+		AUS = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_aus_claims_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_aus_claims_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_aus_claims_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_aus_claims_cze
+		}
+		AUS = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_aus_claims_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_aus_claims_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+			}
+			COLDWAR_CZE_1970_aus_trade_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_aus_trade_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_aus_trade_cze
+		}
+		AUS = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_aus_trade_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_aus_trade_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_aus_trade_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_aus_trade_cze
+		}
+		AUS = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_aus_trade_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_aus_trade_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+			}
+			COLDWAR_CZE_1970_yug_engineering_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_yug_engineering_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_yug_engineering_cze
+		}
+		SER = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_yug_engineering_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_yug_engineering_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_yug_engineering_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_yug_engineering_cze
+		}
+		SER = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_yug_engineering_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_yug_engineering_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+			}
+			COLDWAR_CZE_1970_interkosmos_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_interkosmos_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_interkosmos_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_interkosmos_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_interkosmos_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_interkosmos_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_interkosmos_cze
+		}
+		SOV = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_interkosmos_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_interkosmos_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+			}
+			COLDWAR_CZE_1970_successor_treaty_pair_clear = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_idea = COLDWAR_CZE_1970_successor_treaty_cze
+				}
+			}
+			add_ideas = COLDWAR_CZE_1970_successor_treaty_cze
+		}
+		SLO = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_CZE_1970_successor_treaty_recipient
+					}
+				}
+				add_ideas = COLDWAR_CZE_1970_successor_treaty_recipient
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_idea = COLDWAR_CZE_1970_successor_treaty_cze
+			}
+			remove_ideas = COLDWAR_CZE_1970_successor_treaty_cze
+		}
+		SLO = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_CZE_1970_successor_treaty_recipient
+				}
+				remove_ideas = COLDWAR_CZE_1970_successor_treaty_recipient
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CZE_1970_reactor_signed
+			COLDWAR_CZE_1970_reactor_pair_clear = yes
+			has_variable = COLDWAR_fuel_supplier
+			var:COLDWAR_fuel_supplier = {
+				exists = yes
+				NOT = {
+					has_war_with = CZE
+				}
+				check_variable = {
+					var_reactor_material_stockpile > 0
+				}
+				is_in_array = {
+					array = COLDWAR_fuel_customers
+					value = CZE
+				}
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_nuclear_fuel_active
+	}
+	else = {
+		clr_country_flag = COLDWAR_CZE_1970_nuclear_fuel_active
+	}
+	set_variable = {
+		COLDWAR_CZE_1970_active_agreements = 0
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_sovereignty_protocol_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_oil_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_reactor_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_components_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_power_pool_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_gdr_auto_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_gdr_rail_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_pol_rail_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_pol_environment_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_hun_dam_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_hun_river_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_frg_treaty_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_frg_technology_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_aus_claims_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_aus_trade_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_yug_engineering_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_interkosmos_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+	if = {
+		limit = {
+			COLDWAR_CZE_1970_successor_treaty_active = yes
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_active_agreements = 1
+		}
+	}
+}
+COLDWAR_CZE_1970_bilateral_prepare_week = {
+	if = {
+		limit = {
+			tag = CZE
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_sovereignty_protocol_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_oil_transfer = 0
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_CZE_1970_oil_signed
+				COLDWAR_CZE_1970_oil_pair_clear = yes
+			}
+			set_variable = {
+				COLDWAR_CZE_1970_oil_transfer = {
+					value = gdp_total
+					multiply = 0.00006
+				}
+			}
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_reactor_transfer = 0
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_signed
+				COLDWAR_CZE_1970_reactor_pair_clear = yes
+			}
+			set_variable = {
+				COLDWAR_CZE_1970_reactor_transfer = {
+					value = gdp_total
+					multiply = 0.00003
+				}
+			}
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_components_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_power_pool_transfer = 0
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+				COLDWAR_CZE_1970_power_pool_pair_clear = yes
+			}
+			set_variable = {
+				COLDWAR_CZE_1970_power_pool_transfer = {
+					value = gdp_total
+					multiply = 0.00004
+				}
+			}
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_gdr_auto_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_gdr_rail_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_pol_rail_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_pol_environment_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_hun_dam_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_hun_river_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_frg_treaty_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_frg_technology_transfer = 0
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+				COLDWAR_CZE_1970_frg_technology_pair_clear = yes
+			}
+			set_variable = {
+				COLDWAR_CZE_1970_frg_technology_transfer = {
+					value = gdp_total
+					multiply = 0.00003
+				}
+			}
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_aus_claims_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_aus_trade_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_yug_engineering_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_interkosmos_transfer = 0
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_successor_treaty_transfer = 0
+		}
+	}
+}
+COLDWAR_CZE_1970_bilateral_calculate_streams = {
+	set_variable = {
+		COLDWAR_CZE_1970_bilateral_weekly_income = 0
+	}
+	set_variable = {
+		COLDWAR_CZE_1970_bilateral_weekly_expense = 0
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_oil_signed
+				COLDWAR_CZE_1970_oil_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_oil_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = SOV
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_oil_signed
+				COLDWAR_CZE_1970_oil_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_income = var:CZE.COLDWAR_CZE_1970_oil_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_signed
+				COLDWAR_CZE_1970_reactor_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00004
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_reactor_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = SOV
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_reactor_signed
+				COLDWAR_CZE_1970_reactor_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_income = var:CZE.COLDWAR_CZE_1970_reactor_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_components_signed
+				COLDWAR_CZE_1970_components_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = SOV
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_components_signed
+				COLDWAR_CZE_1970_components_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+				COLDWAR_CZE_1970_power_pool_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00004
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_power_pool_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = SOV
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
+				COLDWAR_CZE_1970_power_pool_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_income = var:CZE.COLDWAR_CZE_1970_power_pool_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+				COLDWAR_CZE_1970_gdr_auto_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = DDR
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+				COLDWAR_CZE_1970_gdr_auto_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+				COLDWAR_CZE_1970_gdr_rail_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = DDR
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+				COLDWAR_CZE_1970_gdr_rail_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+				COLDWAR_CZE_1970_pol_rail_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = POL
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+				COLDWAR_CZE_1970_pol_rail_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+				COLDWAR_CZE_1970_pol_environment_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = POL
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+				COLDWAR_CZE_1970_pol_environment_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+				}
+				COLDWAR_CZE_1970_hun_dam_construction_sites_valid = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00012
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00006
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = HUN
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				NOT = {
+					has_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+				}
+				COLDWAR_CZE_1970_hun_dam_construction_sites_valid = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00012
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = HUN
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+				COLDWAR_CZE_1970_hun_dam_pair_clear = yes
+				has_country_flag = COLDWAR_CZE_1970_hun_dam_commissioned
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00006
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_signed
+				COLDWAR_CZE_1970_hun_river_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = HUN
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_hun_river_signed
+				COLDWAR_CZE_1970_hun_river_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+				COLDWAR_CZE_1970_frg_treaty_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00001
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = GER
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+				COLDWAR_CZE_1970_frg_treaty_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00001
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+				COLDWAR_CZE_1970_frg_technology_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_frg_technology_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = GER
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+				COLDWAR_CZE_1970_frg_technology_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_income = var:CZE.COLDWAR_CZE_1970_frg_technology_transfer
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+				COLDWAR_CZE_1970_aus_claims_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00001
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = AUS
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+				COLDWAR_CZE_1970_aus_claims_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00001
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+				COLDWAR_CZE_1970_aus_trade_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = AUS
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+				COLDWAR_CZE_1970_aus_trade_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+				COLDWAR_CZE_1970_yug_engineering_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = SER
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+				COLDWAR_CZE_1970_yug_engineering_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+				COLDWAR_CZE_1970_interkosmos_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = SOV
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+				COLDWAR_CZE_1970_interkosmos_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = CZE
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+				COLDWAR_CZE_1970_successor_treaty_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+	if = {
+		limit = {
+			tag = SLO
+			CZE = {
+				has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+				COLDWAR_CZE_1970_successor_treaty_pair_clear = yes
+			}
+		}
+		set_temp_variable = {
+			COLDWAR_CZE_1970_bilateral_charge = {
+				value = gdp_total
+				multiply = 0.00002
+			}
+		}
+		add_to_variable = {
+			COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_bilateral_charge
+		}
+	}
+}
+COLDWAR_CZE_1970_accept_hun_dam_at_121 = {
+	set_variable = {
+		COLDWAR_CZE_1970_hun_dam_site = 121
+	}
+	COLDWAR_CZE_1970_accept_hun_dam = yes
+}
+COLDWAR_CZE_1970_accept_hun_dam_at_123 = {
+	set_variable = {
+		COLDWAR_CZE_1970_hun_dam_site = 123
+	}
+	COLDWAR_CZE_1970_accept_hun_dam = yes
+}
+COLDWAR_CZE_1970_accept_pol_rail_at_112 = {
+	set_variable = {
+		COLDWAR_CZE_1970_pol_rail_site = 112
+	}
+	COLDWAR_CZE_1970_accept_pol_rail = yes
+	clear_variable = COLDWAR_CZE_1970_pol_rail_site
+}
+COLDWAR_CZE_1970_accept_pol_rail_at_115 = {
+	set_variable = {
+		COLDWAR_CZE_1970_pol_rail_site = 115
+	}
+	COLDWAR_CZE_1970_accept_pol_rail = yes
+	clear_variable = COLDWAR_CZE_1970_pol_rail_site
+}

@@ -1,0 +1,123 @@
+# IMPERIA COLD WAR — NKO V3 native economic special cases.
+# Root owns all setup and weekly fees. These helpers never charge money.
+ICW_NKO3_economy_refresh_native_order = {
+ if = { limit = { check_variable = { icw_econ_position > icw_econ_market_high_water } }
+  set_variable = { icw_econ_market_high_water = icw_econ_position }
+ }
+ icw_econ_refresh_tier = yes
+ set_variable = { globalism_value_eq = modifier@globalism_equilibrium }
+ clamp_variable = { var = globalism_value_eq min = 0 max = 100 }
+ if = { limit = { has_dynamic_modifier = { modifier = imp_globalism_modifier } } imp_eco_globalism_modifier = yes }
+ if = { limit = { IMP_is_1970_scenario = yes } mdcw_cw_update_world_market = yes }
+ ingame_update_setup = yes
+}
+
+ICW_NKO3_economy_apply_strict = {
+ if = { limit = { ICW_NKO3_economy_can_strict = yes NOT = { has_country_flag = icw_nko3_econ_strict_applied } }
+  set_country_flag = icw_nko3_econ_strict_applied
+  icw_econ_sale_initialize = yes
+  add_to_variable = { icw_econ_position = -10 }
+  clamp_variable = { var = icw_econ_position min = -100 max = 100 }
+  set_variable = { icw_econ_cooldown_days = 180 }
+  ICW_NKO3_economy_refresh_native_order = yes
+ }
+}
+
+ICW_NKO3_economy_apply_reformed = {
+ if = { limit = { ICW_NKO3_economy_can_reformed = yes NOT = { has_country_flag = icw_nko3_econ_reformed_applied } }
+  set_country_flag = icw_nko3_econ_reformed_applied
+  icw_econ_sale_initialize = yes
+  add_to_variable = { icw_econ_position = 15 }
+  clamp_variable = { var = icw_econ_position min = -100 max = -16 }
+  set_variable = { icw_econ_cooldown_days = 180 }
+  ICW_NKO3_economy_refresh_native_order = yes
+ }
+}
+
+ICW_NKO3_economy_apply_mixed = {
+ if = { limit = { ICW_NKO3_economy_can_mixed = yes NOT = { has_country_flag = icw_nko3_econ_mixed_applied } }
+  set_country_flag = icw_nko3_econ_mixed_applied
+  icw_econ_sale_initialize = yes
+  add_to_variable = { icw_econ_position = 15 }
+  clamp_variable = { var = icw_econ_position min = -100 max = 14 }
+  set_variable = { icw_econ_cooldown_days = 180 }
+  ICW_NKO3_economy_refresh_native_order = yes
+ }
+}
+
+ICW_NKO3_economy_establish_zone = {
+ if = { limit = { ICW_NKO3_economy_can_zone = yes }
+  set_country_flag = icwp_export_zone
+  if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+ }
+}
+ICW_NKO3_economy_train_cadres = {
+ if = { limit = { ICW_NKO3_economy_plan_is_open = yes }
+  set_country_flag = icw_nko3_plan_cadres_trained
+  if = { limit = { has_dynamic_modifier = { modifier = COLDWAR_NKO_plan_overstretch } } remove_dynamic_modifier = { modifier = COLDWAR_NKO_plan_overstretch } }
+  if = { limit = { NOT = { has_dynamic_modifier = { modifier = ICW_NKO3_plan_cadres_residual } } }
+   add_dynamic_modifier = { modifier = ICW_NKO3_plan_cadres_residual }
+  }
+ }
+}
+ICW_NKO3_economy_resolve_plan = {
+ if = { limit = { ICW_NKO3_economy_active = yes }
+  if = { limit = { NOT = { has_country_flag = icw_nko3_plan_resolved } } set_country_flag = icw_nko3_plan_resolved }
+  if = { limit = { has_dynamic_modifier = { modifier = COLDWAR_NKO_plan_overstretch } } remove_dynamic_modifier = { modifier = COLDWAR_NKO_plan_overstretch } }
+  if = { limit = { has_dynamic_modifier = { modifier = ICW_NKO3_plan_cadres_residual } } remove_dynamic_modifier = { modifier = ICW_NKO3_plan_cadres_residual } }
+ }
+}
+ICW_NKO3_economy_resolve_power = {
+ if = { limit = { ICW_NKO3_economy_active = yes }
+  if = { limit = { NOT = { has_country_flag = icw_nko3_power_resolved } } set_country_flag = icw_nko3_power_resolved }
+  if = { limit = { has_dynamic_modifier = { modifier = COLDWAR_NKO_power_bottleneck } } remove_dynamic_modifier = { modifier = COLDWAR_NKO_power_bottleneck } }
+ }
+}
+ICW_NKO3_economy_resolve_food = {
+ if = { limit = { ICW_NKO3_economy_active = yes }
+  if = { limit = { NOT = { has_country_flag = icw_nko3_food_resolved } } set_country_flag = icw_nko3_food_resolved }
+  if = { limit = { has_dynamic_modifier = { modifier = COLDWAR_NKO_ration_strain } } remove_dynamic_modifier = { modifier = COLDWAR_NKO_ration_strain } }
+ }
+}
+ICW_NKO3_economy_award_zone_utilities = {
+ if = { limit = { ICW_NKO3_economy_active = yes }
+  if = { limit = { NOT = { has_country_flag = icw_nko3_zone_utilities_earned } } set_country_flag = icw_nko3_zone_utilities_earned }
+  if = { limit = { NOT = { has_dynamic_modifier = { modifier = ICW_NKO3_zone_utilities } } }
+   add_dynamic_modifier = { modifier = ICW_NKO3_zone_utilities }
+  }
+ }
+}
+ICW_NKO3_economy_award_zone_certification = {
+ if = { limit = { ICW_NKO3_economy_active = yes }
+  if = { limit = { NOT = { has_country_flag = icw_nko3_zone_certification_earned } } set_country_flag = icw_nko3_zone_certification_earned }
+  if = { limit = { NOT = { has_dynamic_modifier = { modifier = ICW_NKO3_zone_certification } } }
+   add_dynamic_modifier = { modifier = ICW_NKO3_zone_certification }
+  }
+ }
+}
+# Idempotent receipt reconciliation; no baseline burden is created here.
+ICW_NKO3_economy_reconcile = {
+ if = { limit = { ICW_NKO3_economy_active = yes }
+  if = { limit = { OR = {
+   has_country_flag = icw_nko3_plan_resolved
+   has_country_flag = icw_nko3_done_econ_machine_tools
+   has_country_flag = icw_nko3_done_cabinet_settlement
+  } } ICW_NKO3_economy_resolve_plan = yes }
+  else_if = { limit = {
+   has_country_flag = icw_nko3_done_technical_cadres
+   NOT = { has_country_flag = icw_nko3_plan_cadres_trained }
+  } ICW_NKO3_economy_train_cadres = yes }
+  if = { limit = { OR = { has_country_flag = icw_nko3_power_resolved has_country_flag = icw_nko3_done_econ_fuel_standards } }
+   ICW_NKO3_economy_resolve_power = yes
+  }
+  if = { limit = { OR = { has_country_flag = icw_nko3_food_resolved has_country_flag = icw_nko3_done_econ_food_storage } }
+   ICW_NKO3_economy_resolve_food = yes
+  }
+  if = { limit = { OR = { has_country_flag = icw_nko3_zone_utilities_earned has_country_flag = icw_nko3_done_econ_zone_utilities_service } }
+   ICW_NKO3_economy_award_zone_utilities = yes
+  }
+  if = { limit = { OR = { has_country_flag = icw_nko3_zone_certification_earned has_country_flag = icw_nko3_done_econ_zone_cargo_verification } }
+   ICW_NKO3_economy_award_zone_certification = yes
+  }
+ }
+}

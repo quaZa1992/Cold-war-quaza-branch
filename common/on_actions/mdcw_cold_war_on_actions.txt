@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Recurring action performance integration.
 # IMPERIA CW — Cold War: on actions — event hooks.
 ###############################################################
 # MD Cold War - Cold War Equilibrium
@@ -33,8 +34,11 @@ on_actions = {
 				limit = { has_global_flag = mdcw_cw_initialized }
 				# on_monthly pulses per country; the global tick runs once.
 				if = {
-					limit = { NOT = { has_global_flag = mdcw_cw_monthly_done } }
+					# COLDWAR | hand patch 08.11.2026 (performance): day stamp gate instead of the timed global flag; the flag is still set for other readers.
+					limit = { NOT = { check_variable = { global.mdcw_cw_monthly_done_next_day > global.num_days } } }
 					set_global_flag = { flag = mdcw_cw_monthly_done days = 27 value = 1 }
+					set_variable = { global.mdcw_cw_monthly_done_next_day = global.num_days }
+					add_to_variable = { global.mdcw_cw_monthly_done_next_day = 27 }
 					mdcw_cw_global_monthly = yes
 				}
 				mdcw_cw_country_monthly = yes

@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Turkey 1970 military-standing integration; upstream effects retained.
 TUR_update_military_standing = {
 	set_variable = { TUR_military_standing_value = 0 }
 
@@ -136,7 +137,22 @@ TUR_update_military_standing = {
 		}
 		set_variable = { TUR_military_standing_party = 200 }
 	}
+	# IMPERIA COLD WAR — T11 replaces only the 1970 party term, retaining every native component.
+	if = {
+		limit = { original_tag = TUR IMP_is_1970_scenario = yes NOT = { has_completed_focus = TUR_beacon_of_islam } }
+		if = { limit = { OR = { check_variable = { ruling_party = 1 } check_variable = { ruling_party = 3 } check_variable = { ruling_party = 16 } } } set_variable = { TUR_military_standing_party = 25 } }
+		else_if = { limit = { OR = { check_variable = { ruling_party = 6 } check_variable = { ruling_party = 12 } } } set_variable = { TUR_military_standing_party = -25 } }
+		else_if = { limit = { check_variable = { ruling_party = 20 } } set_variable = { TUR_military_standing_party = 0 } }
+	}
 	add_to_variable = { TUR_military_standing_value = TUR_military_standing_party }
+	# IMPERIA COLD WAR — A fresh crossing starts a new crisis; no date or protest counter is added.
+	if = {
+		limit = { original_tag = TUR IMP_is_1970_scenario = yes has_idea = the_military NOT = { has_country_flag = TUR_military_peacefully_removed } NOT = { has_country_flag = COLDWAR_TUR_1970_coup_episode } check_variable = { TUR_military_standing_value < -199 } }
+		set_country_flag = COLDWAR_TUR_1970_coup_episode
+		if = { limit = { has_idea = TUR_guards_of_kemalism } remove_ideas = TUR_guards_of_kemalism }
+		else = { country_event = Turkey.11 }
+	}
+	else_if = { limit = { original_tag = TUR IMP_is_1970_scenario = yes NOT = { check_variable = { TUR_military_standing_value < -199 } } } clr_country_flag = COLDWAR_TUR_1970_coup_episode }
 }
 TUR_update_mafia_dirty_variable = {
 	if = {

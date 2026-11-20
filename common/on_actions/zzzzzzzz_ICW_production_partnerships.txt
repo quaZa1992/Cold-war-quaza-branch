@@ -1,0 +1,41 @@
+# IMPERIA COLD WAR — International Production scheduling
+# Update 08.11.2026: v2 rebuild. No world loops: one monthly pass over participants, guarded by a day stamp.
+on_actions = {
+	on_startup = {
+		effect = {
+			# Startup has no country scope; register human players from one valid country.
+			random_country = {
+				limit = { IMP_is_1970_scenario = yes }
+				icwp_init_globals = yes
+				icwp_migrate_v1 = yes
+				every_country = {
+					limit = { is_ai = no IMP_is_1970_scenario = yes NOT = { has_country_flag = hide_money } }
+					icwp_register = yes
+				}
+			}
+		}
+	}
+	on_monthly = {
+		effect = {
+			if = {
+				limit = { is_ai = no NOT = { has_country_flag = icwp_participant } IMP_is_1970_scenario = yes NOT = { has_country_flag = hide_money } }
+				icwp_register = yes
+			}
+			if = {
+				limit = {
+					has_global_flag = icwp_v2_globals
+					check_variable = { global.icwp_participants^num > 1 }
+					NOT = { check_variable = { global.icwp_next_month > global.num_days } }
+				}
+				set_variable = { global.icwp_next_month = global.num_days }
+				add_to_variable = { global.icwp_next_month = 27 }
+				icwp_monthly_world = yes
+			}
+		}
+	}
+	on_war_relation_added = {
+		effect = {
+			if = { limit = { has_country_flag = icwp_participant } icwp_war_break = yes }
+		}
+	}
+}

@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — Korean electricity contracts, original MD energy effects retained.
+# IMPERIA COLD WAR — Krško fuel calibration in the native MD energy system.
 # Author(s): Simone, AngriestBird
 # -------------
 # Energy system scripted effects.
@@ -462,6 +464,11 @@ energy_calc_generation = {
 		}
 
 		# Net nuclear fuel = weekly production - weekly consumption
+		# IMPERIA COLD WAR — Only the commissioned Krško unit has the reduced fuel specification.
+		if = {
+			limit = { has_global_flag = COLDWAR_YUG_1970_krsko_commissioned }
+			COLDWAR_YUG_1970_adjust_krsko_fuel = yes
+		}
 		set_variable = {
 			net_nuclear_fuel_display = {
 				value = total_nuclear_reactor_fuel_production
@@ -531,6 +538,8 @@ energy_calc_generation = {
 # Requires (temp): temp_total_energy_use (from energy_calc_consumption)
 energy_calc_balance = {
 	set_variable = { energy_consumption = temp_total_energy_use }
+	# IMPERIA COLD WAR — Settle agreed Korean electricity capacities in the native grid balance.
+	if = { limit = { IMP_is_1970_scenario = yes } KOR_review_apply_grid = yes }
 	set_variable = { energy_balance = { value = energy_sum subtract = energy_consumption } }
 
 	set_temp_variable = { energy_fulfillment = energy_sum }

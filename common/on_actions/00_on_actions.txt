@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Distributed nuclear maintenance and change-driven oil modifiers.
 # Primary On actions File
 # For a relatively up-to-date available set of information regarding available on_actions please go to the following link:
 # https://hoi4.paradoxwikis.com/On_actions
@@ -1349,10 +1350,26 @@ on_actions = {
 						drop_cosmetic_tag = yes
 						clear_variable = dynamic_flag_variant
 						set_cosmetic_tag = NEW_SUDAN
-						set_politics = {
-							ruling_party = ROOT
-							election_frequency = 60
-							elections_allowed = yes
+						# IMPERIA COLD WAR — Resolve the outlook before native politics formatting.
+						if = {
+							limit = { ROOT = { has_government = democratic } }
+							set_politics = { ruling_party = democratic election_frequency = 60 elections_allowed = yes }
+						}
+						else_if = {
+							limit = { ROOT = { has_government = communism } }
+							set_politics = { ruling_party = communism election_frequency = 60 elections_allowed = yes }
+						}
+						else_if = {
+							limit = { ROOT = { has_government = fascism } }
+							set_politics = { ruling_party = fascism election_frequency = 60 elections_allowed = yes }
+						}
+						else_if = {
+							limit = { ROOT = { has_government = neutrality } }
+							set_politics = { ruling_party = neutrality election_frequency = 60 elections_allowed = yes }
+						}
+						else_if = {
+							limit = { ROOT = { has_government = nationalist } }
+							set_politics = { ruling_party = nationalist election_frequency = 60 elections_allowed = yes }
 						}
 					}
 					every_state = {
@@ -1816,6 +1833,8 @@ on_actions = {
 			# Intelligence advisors are selected via faction intelligence tab popup - do not pre-activate
 
 			every_country = {
+                # IMPERIA COLD WAR — Starting organisation modifiers precede native employment and income.
+                icw_econ_initialize = yes
 				setup_employment_variables = yes
 				setup_starting_world_productivity = yes
 				# Bootstrap gdpc_converging_var before any GDP run.

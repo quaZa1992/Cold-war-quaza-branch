@@ -1,0 +1,1294 @@
+# IMPERIA COLD WAR — International Production (player-only outsourcing network)
+# Update 08.11.2026: v2 rebuild. Player-only contracts between players, open end, location profile
+# (wages, unemployment, capacity, labour and environmental law, stability, clients), bound consumer
+# goods factories, lock-in through integration, Factory of the World. Loops only over participants.
+# Pair helpers run in client scope with the host in PREV.
+
+######################################################################
+# Constants and registration
+######################################################################
+
+icwp_init_globals = {
+	if = {
+		limit = { NOT = { has_global_flag = icwp_v2_globals } }
+		set_global_flag = icwp_v2_globals
+		# Share of GDP per factory and week that sets the domestic cost of one unit (calibration value).
+		set_variable = { global.icwp_k_value = 0.0067 }
+		set_variable = { global.icwp_world_u = 0 }
+		set_variable = { global.icwp_holder = 0 }
+		set_variable = { global.icwp_cand = 0 }
+		set_variable = { global.icwp_cand_m = 0 }
+		set_variable = { global.icwp_next_month = 0 }
+		set_variable = { global.icwp_rev = 0 }
+	}
+}
+
+# Country scope. Idempotent. Called when a human player opens the window, and monthly for human players.
+icwp_register = {
+	icwp_init_globals = yes
+	if = {
+		limit = { NOT = { has_country_flag = icwp_participant } }
+		set_country_flag = icwp_participant
+		add_to_array = { array = global.icwp_participants value = THIS }
+		set_variable = { icwp_xp = 0 }
+		set_variable = { icwp_tier = 0 }
+		set_variable = { icwp_offer_u = 2 }
+		set_variable = { icwp_tab = 1 }
+		set_variable = { icwp_sel = 0 }
+		set_variable = { icwp_cg_applied = 0 }
+		set_variable = { icwp_af_u = 0 }
+		set_variable = { icwp_af_s = 0 }
+		set_variable = { icwp_af_p12 = 0 }
+		set_variable = { icwp_af_p24 = 0 }
+		icwp_tab_frames = yes
+		icwp_refresh = yes
+		icwp_host_tier = yes
+		icwp_refresh = yes
+	}
+}
+
+icwp_tab_frames = {
+	set_variable = { icwp_tab1f = 1 }
+	set_variable = { icwp_tab2f = 1 }
+	set_variable = { icwp_tab3f = 1 }
+	if = { limit = { check_variable = { icwp_tab = 1 } } set_variable = { icwp_tab1f = 2 } }
+	else_if = { limit = { check_variable = { icwp_tab = 2 } } set_variable = { icwp_tab2f = 2 } }
+	else_if = { limit = { check_variable = { icwp_tab = 3 } } set_variable = { icwp_tab3f = 2 } }
+}
+
+icwp_touch = {
+	add_to_variable = { icwp_gui_rev = 1 }
+}
+
+######################################################################
+# Consumer goods: bound and released factories as whole factories
+######################################################################
+
+# Constant time. Called from MD's weekly update_state_variables and after every refresh.
+icwp_update_cg = {
+	set_variable = { icwp_base = industrial_complex_total }
+	add_to_variable = { icwp_base = military_factory_total }
+	clamp_variable = { var = icwp_base min = 1 }
+	set_variable = { icwp_civs = industrial_complex_total }
+	clamp_variable = { var = icwp_civs min = 1 }
+	set_variable = { icwp_exp_cg = modifier@consumer_goods_expected_value }
+	clamp_variable = { var = icwp_exp_cg min = 0.01 }
+	# Own consumer goods factories without this system.
+	set_temp_variable = { icwp_t_f = modifier@consumer_goods_factor }
+	subtract_from_temp_variable = { icwp_t_f = icwp_cg_applied }
+	add_to_temp_variable = { icwp_t_f = 1 }
+	clamp_temp_variable = { var = icwp_t_f min = 0 }
+	set_variable = { icwp_own_cg_f = icwp_t_f }
+	multiply_variable = { icwp_own_cg_f = icwp_exp_cg }
+	multiply_variable = { icwp_own_cg_f = icwp_base }
+	# Factories per 1.0 of consumer_goods_factor.
+	set_temp_variable = { icwp_t_k = icwp_exp_cg }
+	multiply_temp_variable = { icwp_t_k = icwp_base }
+	clamp_temp_variable = { var = icwp_t_k min = 0.01 }
+	# Client: deliveries replace at most 40 % of the own consumer goods factories.
+	set_variable = { icwp_relief_f = icwp_out_d }
+	set_temp_variable = { icwp_t_cap = icwp_own_cg_f }
+	multiply_temp_variable = { icwp_t_cap = 0.4 }
+	clamp_variable = { var = icwp_relief_f min = 0 max = icwp_t_cap }
+	set_temp_variable = { icwp_t_old = icwp_cg_applied }
+	set_variable = { icwp_c_cg = icwp_relief_f }
+	divide_variable = { icwp_c_cg = icwp_t_k }
+	multiply_variable = { icwp_c_cg = -1 }
+	# Host: factories bound for foreign clients (only while the tier modifier is active).
+	set_variable = { icwp_h_cg = 0 }
+	if = {
+		limit = { check_variable = { icwp_in_u > 0 } check_variable = { icwp_tier > 0 } }
+		set_variable = { icwp_h_cg = icwp_in_d }
+		divide_variable = { icwp_h_cg = icwp_t_k }
+	}
+	# Aftermath: supply shortage after a lost contract.
+	set_variable = { icwp_a_cg = icwp_af_u }
+	divide_variable = { icwp_a_cg = icwp_t_k }
+	set_variable = { icwp_cg_applied = icwp_c_cg }
+	add_to_variable = { icwp_cg_applied = icwp_h_cg }
+	add_to_variable = { icwp_cg_applied = icwp_a_cg }
+	# Dependence of the client on foreign supply.
+	set_variable = { icwp_dep = icwp_relief_f }
+	set_temp_variable = { icwp_t_own = icwp_own_cg_f }
+	clamp_temp_variable = { var = icwp_t_own min = 1 }
+	divide_variable = { icwp_dep = icwp_t_own }
+	clamp_variable = { var = icwp_dep min = 0 max = 1 }
+	if = {
+		limit = { NOT = { check_variable = { icwp_cg_applied = icwp_t_old } } }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+######################################################################
+# Location profile (host scope)
+######################################################################
+
+icwp_host_profile = {
+	set_variable = { icwp_access = globalism_value }
+	divide_variable = { icwp_access = 100 }
+	clamp_variable = { var = icwp_access min = 0 max = 1 }
+	if = { limit = { has_country_flag = icwp_export_zone } clamp_variable = { var = icwp_access min = 0.65 max = 1 } }
+	# Labour protection (MD law employment_pressure).
+	set_variable = { icwp_lawm = 1 }
+	if = { limit = { has_idea = minimal_regulations } set_variable = { icwp_lawm = 0.90 } }
+	else_if = { limit = { has_idea = light_regulations } set_variable = { icwp_lawm = 0.95 } }
+	else_if = { limit = { has_idea = strong_regulations } set_variable = { icwp_lawm = 1.08 } }
+	else_if = { limit = { has_idea = comprehensive_regulations } set_variable = { icwp_lawm = 1.15 } }
+	# Environmental protection (MD law mining_policies).
+	set_variable = { icwp_envm = 1 }
+	if = { limit = { has_idea = strip_mining } set_variable = { icwp_envm = 0.92 } }
+	else_if = { limit = { has_idea = economic_motivated_mining } set_variable = { icwp_envm = 0.96 } }
+	else_if = { limit = { has_idea = partial_environmental_protections } set_variable = { icwp_envm = 1.04 } }
+	else_if = { limit = { has_idea = full_environmental_protections } set_variable = { icwp_envm = 1.08 } }
+	# Risk premium below 50 % stability, up to +15 %.
+	set_variable = { icwp_riskm = 0.5 }
+	subtract_from_variable = { icwp_riskm = stability }
+	clamp_variable = { var = icwp_riskm min = 0 max = 0.5 }
+	multiply_variable = { icwp_riskm = 0.3 }
+	add_to_variable = { icwp_riskm = 1 }
+	# Clusters: every client makes the location cheaper, up to -12 %.
+	set_variable = { icwp_nclients = icwp_clients^num }
+	set_variable = { icwp_clusm = icwp_nclients }
+	multiply_variable = { icwp_clusm = -0.02 }
+	add_to_variable = { icwp_clusm = 1 }
+	clamp_variable = { var = icwp_clusm min = 0.88 max = 1 }
+	# Tier price.
+	set_variable = { icwp_tierm = 1 }
+	if = { limit = { check_variable = { icwp_tier = 2 } } set_variable = { icwp_tierm = 1.15 } }
+	else_if = { limit = { check_variable = { icwp_tier = 3 } } set_variable = { icwp_tierm = 1.30 } }
+	else_if = { limit = { check_variable = { icwp_tier = 4 } } set_variable = { icwp_tierm = 1.50 } }
+	set_variable = { icwp_hmult = icwp_lawm }
+	multiply_variable = { icwp_hmult = icwp_envm }
+	multiply_variable = { icwp_hmult = icwp_riskm }
+	multiply_variable = { icwp_hmult = icwp_clusm }
+	multiply_variable = { icwp_hmult = icwp_tierm }
+	# Capacity: factories x 0.4 x operation x labour pool x openness.
+	set_variable = { icwp_unemp = total_unemployed_percentage_display }
+	clamp_variable = { var = icwp_unemp min = 0 max = 1 }
+	set_temp_variable = { icwp_t_pool = icwp_unemp }
+	multiply_temp_variable = { icwp_t_pool = 3 }
+	clamp_temp_variable = { var = icwp_t_pool min = 0 max = 0.5 }
+	add_to_temp_variable = { icwp_t_pool = 1 }
+	set_temp_variable = { icwp_t_power = 1 }
+	if = {
+		limit = { check_variable = { energy_consumption > 0.01 } }
+		set_temp_variable = { icwp_t_power = energy_consumption }
+		add_to_temp_variable = { icwp_t_power = energy_balance }
+		divide_temp_variable = { icwp_t_power = energy_consumption }
+		clamp_temp_variable = { var = icwp_t_power min = 0 max = 1 }
+	}
+	set_temp_variable = { icwp_t_work = civilian_factories_manpower_fulfillment }
+	clamp_temp_variable = { var = icwp_t_work min = 0 max = 1 }
+	set_temp_variable = { icwp_t_open = icwp_access }
+	multiply_temp_variable = { icwp_t_open = 0.5 }
+	add_to_temp_variable = { icwp_t_open = 0.5 }
+	set_variable = { icwp_cap = industrial_complex_total }
+	multiply_variable = { icwp_cap = 0.4 }
+	multiply_variable = { icwp_cap = icwp_t_work }
+	multiply_variable = { icwp_cap = icwp_t_power }
+	multiply_variable = { icwp_cap = icwp_t_pool }
+	multiply_variable = { icwp_cap = icwp_t_open }
+	set_variable = { icwp_free_cap = icwp_cap }
+	subtract_from_variable = { icwp_free_cap = icwp_in_u }
+	clamp_variable = { var = icwp_free_cap min = 0 }
+	# Client side: at most 40 % of the own consumer goods factories can be placed abroad.
+	set_variable = { icwp_free_dem = icwp_own_cg_f }
+	multiply_variable = { icwp_free_dem = 0.4 }
+	subtract_from_variable = { icwp_free_dem = icwp_out_u }
+	clamp_variable = { var = icwp_free_dem min = 0 }
+}
+
+######################################################################
+# Price (client scope, host in PREV). Temporary results only.
+######################################################################
+
+icwp_quote = {
+	# Domestic cost of one unit per week: GDP per factory x calibration value.
+	set_temp_variable = { icwp_t_dom = gdp_total }
+	set_temp_variable = { icwp_t_b = icwp_base }
+	clamp_temp_variable = { var = icwp_t_b min = 1 }
+	divide_temp_variable = { icwp_t_dom = icwp_t_b }
+	multiply_temp_variable = { icwp_t_dom = global.icwp_k_value }
+	# Wage index: host GDP per capita / client GDP per capita.
+	set_temp_variable = { icwp_t_g = gdp_per_capita }
+	clamp_temp_variable = { var = icwp_t_g min = 0.001 }
+	set_temp_variable = { icwp_t_wage = PREV.gdp_per_capita }
+	divide_temp_variable = { icwp_t_wage = icwp_t_g }
+	clamp_temp_variable = { var = icwp_t_wage min = 0.02 max = 3 }
+	set_temp_variable = { icwp_t_mult = icwp_t_wage }
+	multiply_temp_variable = { icwp_t_mult = PREV.icwp_hmult }
+	if = { limit = { is_neighbor_of = PREV } multiply_temp_variable = { icwp_t_mult = 0.95 } }
+	set_temp_variable = { icwp_t_price = icwp_t_dom }
+	multiply_temp_variable = { icwp_t_price = icwp_t_mult }
+	set_temp_variable = { icwp_t_save = 1 }
+	subtract_from_temp_variable = { icwp_t_save = icwp_t_mult }
+	clamp_temp_variable = { var = icwp_t_save min = -1 max = 1 }
+}
+
+######################################################################
+# Refresh one participant: aggregates, display rows, modifiers. Bounded by own contracts.
+######################################################################
+
+icwp_refresh = {
+	# Pair values for our own contracts as client.
+	set_variable = { icwp_out_u = 0 }
+	set_variable = { icwp_out_d = 0 }
+	set_variable = { icwp_pay_wk = 0 }
+	clear_array = icwp_dh_u
+	clear_array = icwp_dh_d
+	clear_array = icwp_dh_pay
+	clear_array = icwp_dh_s
+	clear_array = icwp_dh_m
+	clear_array = icwp_dh_ig
+	clear_array = icwp_dh_settle
+	for_each_scope_loop = {
+		array = icwp_hosts
+		PREV = { icwp_pair_values = yes }
+	}
+	# Our role as host: sums over the clients' pair values.
+	set_variable = { icwp_in_u = 0 }
+	set_variable = { icwp_in_d = 0 }
+	set_variable = { icwp_inc_wk = 0 }
+	clear_array = icwp_dc_u
+	clear_array = icwp_dc_d
+	clear_array = icwp_dc_pay
+	clear_array = icwp_dc_s
+	clear_array = icwp_dc_m
+	clear_array = icwp_dc_ig
+	clear_array = icwp_dc_settle
+	for_each_scope_loop = {
+		array = icwp_clients
+		add_to_variable = { PREV.icwp_in_u = icwp_u@PREV }
+		add_to_variable = { PREV.icwp_in_d = icwp_d@PREV }
+		add_to_variable = { PREV.icwp_inc_wk = icwp_pay@PREV }
+		set_temp_variable = { icwp_t_v = icwp_u@PREV }
+		add_to_array = { array = PREV.icwp_dc_u value = icwp_t_v }
+		set_temp_variable = { icwp_t_v = icwp_d@PREV }
+		add_to_array = { array = PREV.icwp_dc_d value = icwp_t_v }
+		set_temp_variable = { icwp_t_v = icwp_pay@PREV }
+		add_to_array = { array = PREV.icwp_dc_pay value = icwp_t_v }
+		set_temp_variable = { icwp_t_v = icwp_code@PREV }
+		add_to_array = { array = PREV.icwp_dc_s value = icwp_t_v }
+		set_temp_variable = { icwp_t_v = icwp_mleft@PREV }
+		add_to_array = { array = PREV.icwp_dc_m value = icwp_t_v }
+		set_temp_variable = { icwp_t_v = icwp_ig@PREV }
+		multiply_temp_variable = { icwp_t_v = 100 }
+		add_to_array = { array = PREV.icwp_dc_ig value = icwp_t_v }
+		set_temp_variable = { icwp_t_v = icwp_settle@PREV }
+		add_to_array = { array = PREV.icwp_dc_settle value = icwp_t_v }
+	}
+	icwp_update_cg = yes
+	icwp_host_profile = yes
+	icwp_apply_modifiers = yes
+	set_variable = { icwp_tierf = icwp_tier }
+	add_to_variable = { icwp_tierf = 1 }
+	set_variable = { icwp_balance = icwp_inc_wk }
+	subtract_from_variable = { icwp_balance = icwp_pay_wk }
+	set_variable = { icwp_dep_pct = icwp_dep }
+	multiply_variable = { icwp_dep_pct = 100 }
+	set_variable = { icwp_wshare_pct = icwp_wshare }
+	multiply_variable = { icwp_wshare_pct = 100 }
+	set_variable = { icwp_relief_r = icwp_relief_f }
+	round_variable = icwp_relief_r
+	set_variable = { icwp_in_r = icwp_in_d }
+	round_variable = icwp_in_r
+	icwp_touch = yes
+}
+
+# Client scope, host in PREV: delivered units, weekly payment, settlement, display row.
+icwp_pair_values = {
+	set_temp_variable = { icwp_t_full = icwp_u@PREV }
+	multiply_temp_variable = { icwp_t_full = icwp_r@PREV }
+	if = {
+		limit = { check_variable = { icwp_s@PREV = 1 } }
+		set_variable = { icwp_d@PREV = icwp_t_full }
+		set_variable = { icwp_pay@PREV = icwp_t_full }
+		set_variable = { icwp_mleft@PREV = icwp_p@PREV }
+	}
+	else_if = {
+		# Notice period: deliveries run down over 12 months, payments continue in full.
+		limit = { check_variable = { icwp_s@PREV = 2 } }
+		set_variable = { icwp_d@PREV = icwp_t_full }
+		multiply_variable = { icwp_d@PREV = icwp_n@PREV }
+		divide_variable = { icwp_d@PREV = 12 }
+		set_variable = { icwp_pay@PREV = icwp_t_full }
+		set_variable = { icwp_mleft@PREV = icwp_n@PREV }
+	}
+	else = {
+		# Suspended by the host: no deliveries, no payments.
+		set_variable = { icwp_d@PREV = 0 }
+		set_variable = { icwp_pay@PREV = 0 }
+		set_variable = { icwp_mleft@PREV = icwp_sp@PREV }
+	}
+	multiply_variable = { icwp_pay@PREV = icwp_pr@PREV }
+	# Display code: 1 preparing, 2 ramping up, 3 running, 4 notice given, 5 suspended.
+	set_variable = { icwp_code@PREV = 3 }
+	if = { limit = { check_variable = { icwp_s@PREV = 2 } } set_variable = { icwp_code@PREV = 4 } }
+	else_if = { limit = { check_variable = { icwp_s@PREV = 3 } } set_variable = { icwp_code@PREV = 5 } }
+	else_if = { limit = { check_variable = { icwp_p@PREV > 0 } } set_variable = { icwp_code@PREV = 1 } }
+	else_if = { limit = { check_variable = { icwp_r@PREV < 0.999 } } set_variable = { icwp_code@PREV = 2 } set_variable = { icwp_mleft@PREV = 1 } subtract_from_variable = { icwp_mleft@PREV = icwp_r@PREV } multiply_variable = { icwp_mleft@PREV = 6 } }
+	# Settlement for leaving without notice: 26 weeks of the full payment x integration.
+	set_variable = { icwp_settle@PREV = icwp_u@PREV }
+	multiply_variable = { icwp_settle@PREV = icwp_r@PREV }
+	multiply_variable = { icwp_settle@PREV = icwp_pr@PREV }
+	multiply_variable = { icwp_settle@PREV = 26 }
+	multiply_variable = { icwp_settle@PREV = icwp_ig@PREV }
+	add_to_variable = { icwp_out_u = icwp_u@PREV }
+	add_to_variable = { icwp_out_d = icwp_d@PREV }
+	add_to_variable = { icwp_pay_wk = icwp_pay@PREV }
+	set_temp_variable = { icwp_t_v = icwp_u@PREV }
+	add_to_array = { array = icwp_dh_u value = icwp_t_v }
+	set_temp_variable = { icwp_t_v = icwp_d@PREV }
+	add_to_array = { array = icwp_dh_d value = icwp_t_v }
+	set_temp_variable = { icwp_t_v = icwp_pay@PREV }
+	add_to_array = { array = icwp_dh_pay value = icwp_t_v }
+	set_temp_variable = { icwp_t_v = icwp_code@PREV }
+	add_to_array = { array = icwp_dh_s value = icwp_t_v }
+	set_temp_variable = { icwp_t_v = icwp_mleft@PREV }
+	add_to_array = { array = icwp_dh_m value = icwp_t_v }
+	set_temp_variable = { icwp_t_v = icwp_ig@PREV }
+	multiply_temp_variable = { icwp_t_v = 100 }
+	add_to_array = { array = icwp_dh_ig value = icwp_t_v }
+	set_temp_variable = { icwp_t_v = icwp_settle@PREV }
+	add_to_array = { array = icwp_dh_settle value = icwp_t_v }
+}
+
+######################################################################
+# Modifiers
+######################################################################
+
+icwp_apply_modifiers = {
+	# Client: Rust Belt and dependence.
+	set_variable = { icwp_c_pg = icwp_dep }
+	multiply_variable = { icwp_c_pg = -0.30 }
+	clamp_variable = { var = icwp_c_pg min = -0.15 max = 0 }
+	set_variable = { icwp_c_stab = icwp_dep }
+	multiply_variable = { icwp_c_stab = -0.10 }
+	clamp_variable = { var = icwp_c_stab min = -0.03 max = 0 }
+	set_variable = { icwp_c_exp = icwp_dep }
+	multiply_variable = { icwp_c_exp = 0.20 }
+	clamp_variable = { var = icwp_c_exp min = 0 max = 0.15 }
+	# Host: orders and tier.
+	set_variable = { icwp_share = icwp_in_d }
+	divide_variable = { icwp_share = icwp_civs }
+	clamp_variable = { var = icwp_share min = 0 max = 1 }
+	set_variable = { icwp_h_pg = icwp_share }
+	multiply_variable = { icwp_h_pg = 0.40 }
+	clamp_variable = { var = icwp_h_pg min = 0 max = 0.15 }
+	set_variable = { icwp_h_build = 0 }
+	set_variable = { icwp_h_res = 0 }
+	set_variable = { icwp_h_glob = 0 }
+	if = {
+		limit = { check_variable = { icwp_tier = 1 } }
+		add_to_variable = { icwp_h_pg = 0.05 }
+		set_variable = { icwp_h_build = 0.03 }
+	}
+	else_if = {
+		limit = { check_variable = { icwp_tier = 2 } }
+		add_to_variable = { icwp_h_pg = 0.10 }
+		set_variable = { icwp_h_build = 0.06 }
+		set_variable = { icwp_h_res = 0.01 }
+	}
+	else_if = {
+		limit = { check_variable = { icwp_tier = 3 } }
+		add_to_variable = { icwp_h_pg = 0.15 }
+		set_variable = { icwp_h_build = 0.08 }
+		set_variable = { icwp_h_res = 0.02 }
+	}
+	else_if = {
+		limit = { check_variable = { icwp_tier = 4 } }
+		add_to_variable = { icwp_h_pg = 0.20 }
+		set_variable = { icwp_h_build = 0.10 }
+		set_variable = { icwp_h_res = 0.03 }
+		set_variable = { icwp_h_glob = 5 }
+	}
+	# Jobs: stability from unemployment absorbed by foreign orders.
+	set_variable = { icwp_h_stab = icwp_unemp }
+	multiply_variable = { icwp_h_stab = icwp_share }
+	multiply_variable = { icwp_h_stab = 2 }
+	clamp_variable = { var = icwp_h_stab min = 0 max = 0.03 }
+	set_variable = { icwp_h_exp = icwp_share }
+	multiply_variable = { icwp_h_exp = 0.5 }
+	clamp_variable = { var = icwp_h_exp min = 0 max = 0.15 }
+	# Aftermath pools.
+	set_variable = { icwp_a_stab = icwp_af_s }
+	set_variable = { icwp_a_pg = icwp_af_p12 }
+	add_to_variable = { icwp_a_pg = icwp_af_p24 }
+
+	# Client modifier.
+	if = {
+		limit = { check_variable = { icwp_out_u > 0 } }
+		if = { limit = { NOT = { has_dynamic_modifier = { modifier = icwp_overseas_supply } } } add_dynamic_modifier = { modifier = icwp_overseas_supply } }
+	}
+	else_if = {
+		limit = { has_dynamic_modifier = { modifier = icwp_overseas_supply } }
+		remove_dynamic_modifier = { modifier = icwp_overseas_supply }
+	}
+	# Host modifier: one per tier, only while foreign orders are contracted.
+	set_temp_variable = { icwp_t_tier = 0 }
+	if = { limit = { check_variable = { icwp_in_u > 0 } } set_temp_variable = { icwp_t_tier = icwp_tier } }
+	if = { limit = { NOT = { check_variable = { icwp_t_tier = 1 } } has_dynamic_modifier = { modifier = icwp_tier_assembly } } remove_dynamic_modifier = { modifier = icwp_tier_assembly } }
+	if = { limit = { NOT = { check_variable = { icwp_t_tier = 2 } } has_dynamic_modifier = { modifier = icwp_tier_platform } } remove_dynamic_modifier = { modifier = icwp_tier_platform } }
+	if = { limit = { NOT = { check_variable = { icwp_t_tier = 3 } } has_dynamic_modifier = { modifier = icwp_tier_hub } } remove_dynamic_modifier = { modifier = icwp_tier_hub } }
+	if = { limit = { NOT = { check_variable = { icwp_t_tier = 4 } } has_dynamic_modifier = { modifier = icwp_tier_factory_world } } remove_dynamic_modifier = { modifier = icwp_tier_factory_world } }
+	if = { limit = { check_variable = { icwp_t_tier = 1 } NOT = { has_dynamic_modifier = { modifier = icwp_tier_assembly } } } add_dynamic_modifier = { modifier = icwp_tier_assembly } }
+	if = { limit = { check_variable = { icwp_t_tier = 2 } NOT = { has_dynamic_modifier = { modifier = icwp_tier_platform } } } add_dynamic_modifier = { modifier = icwp_tier_platform } }
+	if = { limit = { check_variable = { icwp_t_tier = 3 } NOT = { has_dynamic_modifier = { modifier = icwp_tier_hub } } } add_dynamic_modifier = { modifier = icwp_tier_hub } }
+	if = { limit = { check_variable = { icwp_t_tier = 4 } NOT = { has_dynamic_modifier = { modifier = icwp_tier_factory_world } } } add_dynamic_modifier = { modifier = icwp_tier_factory_world } }
+	# Aftermath modifier.
+	if = {
+		limit = { OR = { check_variable = { icwp_af_u > 0 } check_variable = { icwp_af_s < 0 } check_variable = { icwp_af_p12 < 0 } check_variable = { icwp_af_p24 < 0 } } }
+		if = { limit = { NOT = { has_dynamic_modifier = { modifier = icwp_supply_disruption } } } add_dynamic_modifier = { modifier = icwp_supply_disruption } }
+	}
+	else_if = {
+		limit = { has_dynamic_modifier = { modifier = icwp_supply_disruption } }
+		remove_dynamic_modifier = { modifier = icwp_supply_disruption }
+	}
+	force_update_dynamic_modifier = yes
+}
+
+######################################################################
+# Contracts
+######################################################################
+
+# Client scope, host in PREV. Temp icwp_t_units = new units.
+icwp_sign = {
+	if = {
+		limit = { NOT = { is_in_array = { array = icwp_hosts value = PREV } } }
+		add_to_array = { array = icwp_hosts value = PREV }
+		PREV = { add_to_array = { array = icwp_clients value = PREV } }
+		set_variable = { icwp_u@PREV = 0 }
+		set_variable = { icwp_r@PREV = 0 }
+		set_variable = { icwp_p@PREV = 3 }
+		set_variable = { icwp_s@PREV = 1 }
+		set_variable = { icwp_n@PREV = 0 }
+		set_variable = { icwp_sp@PREV = 0 }
+		set_variable = { icwp_cd@PREV = 0 }
+		set_variable = { icwp_ig@PREV = 0 }
+	}
+	# New units start at zero ramp; existing ramp is spread over the larger volume.
+	set_temp_variable = { icwp_t_old = icwp_u@PREV }
+	multiply_temp_variable = { icwp_t_old = icwp_r@PREV }
+	add_to_variable = { icwp_u@PREV = icwp_t_units }
+	clamp_variable = { var = icwp_u@PREV min = 0 max = 10 }
+	set_variable = { icwp_r@PREV = icwp_t_old }
+	divide_variable = { icwp_r@PREV = icwp_u@PREV }
+	icwp_quote = yes
+	set_variable = { icwp_pr@PREV = icwp_t_price }
+	# Setup: 13 weeks of the new units' payment, paid by the client.
+	set_temp_variable = { treasury_change = icwp_t_price }
+	multiply_temp_variable = { treasury_change = icwp_t_units }
+	multiply_temp_variable = { treasury_change = -13 }
+	modify_treasury_effect = yes
+	icwp_refresh = yes
+	PREV = { icwp_host_tier = yes icwp_refresh = yes }
+	icwp_cw_refresh = yes
+	PREV = { icwp_cw_refresh = yes }
+}
+
+icwp_cw_refresh = {
+	if = {
+		limit = { has_country_flag = mdcw_cw_initialized }
+		mdcw_cw_recalculate_country = yes
+	}
+}
+
+# Client scope, host in PREV. Temps: icwp_t_mode (1 full, 0.5 notice expired, 0 none),
+# icwp_t_payer (0 none, 1 client pays the host, 2 host pays the client).
+icwp_close_pair = {
+	set_temp_variable = { icwp_t_lost = icwp_u@PREV }
+	multiply_temp_variable = { icwp_t_lost = icwp_r@PREV }
+	set_temp_variable = { icwp_t_ig = icwp_ig@PREV }
+	# Settlement.
+	set_temp_variable = { icwp_t_settle = icwp_t_lost }
+	multiply_temp_variable = { icwp_t_settle = icwp_pr@PREV }
+	multiply_temp_variable = { icwp_t_settle = 26 }
+	multiply_temp_variable = { icwp_t_settle = icwp_t_ig }
+	if = {
+		limit = { check_variable = { icwp_t_payer = 1 } exists = yes PREV = { exists = yes } }
+		set_temp_variable = { treasury_change = icwp_t_settle }
+		multiply_temp_variable = { treasury_change = -1 }
+		modify_treasury_effect = yes
+		PREV = { set_temp_variable = { treasury_change = icwp_t_settle } modify_treasury_effect = yes }
+	}
+	else_if = {
+		limit = { check_variable = { icwp_t_payer = 2 } exists = yes PREV = { exists = yes } }
+		set_temp_variable = { treasury_change = icwp_t_settle }
+		modify_treasury_effect = yes
+		PREV = { set_temp_variable = { treasury_change = icwp_t_settle } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
+	}
+	# Client aftermath: shortage, stability, Rust Belt carries on for 24 months.
+	if = {
+		limit = { exists = yes check_variable = { icwp_t_mode > 0 } }
+		set_temp_variable = { icwp_t_own = icwp_own_cg_f }
+		clamp_temp_variable = { var = icwp_t_own min = 1 }
+		set_temp_variable = { icwp_t_sh = icwp_t_lost }
+		divide_temp_variable = { icwp_t_sh = icwp_t_own }
+		clamp_temp_variable = { var = icwp_t_sh min = 0 max = 0.4 }
+		set_temp_variable = { icwp_t_x = icwp_t_lost }
+		multiply_temp_variable = { icwp_t_x = 0.5 }
+		multiply_temp_variable = { icwp_t_x = icwp_t_ig }
+		multiply_temp_variable = { icwp_t_x = icwp_t_mode }
+		add_to_variable = { icwp_af_u = icwp_t_x }
+		set_variable = { icwp_af_u_rate = icwp_af_u }
+		divide_variable = { icwp_af_u_rate = 12 }
+		set_temp_variable = { icwp_t_x = icwp_t_sh }
+		multiply_temp_variable = { icwp_t_x = -0.10 }
+		multiply_temp_variable = { icwp_t_x = icwp_t_ig }
+		multiply_temp_variable = { icwp_t_x = icwp_t_mode }
+		add_to_variable = { icwp_af_s = icwp_t_x }
+		clamp_variable = { var = icwp_af_s min = -0.05 max = 0 }
+		set_variable = { icwp_af_s_rate = icwp_af_s }
+		divide_variable = { icwp_af_s_rate = 12 }
+		set_temp_variable = { icwp_t_x = icwp_t_sh }
+		multiply_temp_variable = { icwp_t_x = -0.30 }
+		multiply_temp_variable = { icwp_t_x = icwp_t_mode }
+		add_to_variable = { icwp_af_p24 = icwp_t_x }
+		clamp_variable = { var = icwp_af_p24 min = -0.15 max = 0 }
+		set_variable = { icwp_af_p24_rate = icwp_af_p24 }
+		divide_variable = { icwp_af_p24_rate = 24 }
+	}
+	# Host aftermath: order slump in productivity growth and stability, mirrors the bonus.
+	if = {
+		limit = { PREV = { exists = yes } check_variable = { icwp_t_mode > 0 } }
+		PREV = {
+			set_temp_variable = { icwp_t_x = icwp_t_lost }
+			set_temp_variable = { icwp_t_c = icwp_civs }
+			clamp_temp_variable = { var = icwp_t_c min = 1 }
+			divide_temp_variable = { icwp_t_x = icwp_t_c }
+			multiply_temp_variable = { icwp_t_x = -0.40 }
+			multiply_temp_variable = { icwp_t_x = icwp_t_ig }
+			multiply_temp_variable = { icwp_t_x = icwp_t_mode }
+			add_to_variable = { icwp_af_p12 = icwp_t_x }
+			clamp_variable = { var = icwp_af_p12 min = -0.15 max = 0 }
+			set_variable = { icwp_af_p12_rate = icwp_af_p12 }
+			divide_variable = { icwp_af_p12_rate = 12 }
+			set_temp_variable = { icwp_t_x = icwp_t_lost }
+			set_temp_variable = { icwp_t_c = icwp_in_u }
+			clamp_temp_variable = { var = icwp_t_c min = 1 }
+			divide_temp_variable = { icwp_t_x = icwp_t_c }
+			clamp_temp_variable = { var = icwp_t_x min = 0 max = 1 }
+			multiply_temp_variable = { icwp_t_x = -0.06 }
+			multiply_temp_variable = { icwp_t_x = icwp_t_ig }
+			multiply_temp_variable = { icwp_t_x = icwp_t_mode }
+			add_to_variable = { icwp_af_s = icwp_t_x }
+			clamp_variable = { var = icwp_af_s min = -0.05 max = 0 }
+			set_variable = { icwp_af_s_rate = icwp_af_s }
+			divide_variable = { icwp_af_s_rate = 12 }
+		}
+	}
+	# Remove the link.
+	remove_from_array = { array = icwp_hosts value = PREV }
+	PREV = { remove_from_array = { array = icwp_clients value = PREV } }
+	clear_variable = icwp_u@PREV
+	clear_variable = icwp_r@PREV
+	clear_variable = icwp_p@PREV
+	clear_variable = icwp_s@PREV
+	clear_variable = icwp_n@PREV
+	clear_variable = icwp_sp@PREV
+	clear_variable = icwp_cd@PREV
+	clear_variable = icwp_ig@PREV
+	clear_variable = icwp_pr@PREV
+	clear_variable = icwp_d@PREV
+	clear_variable = icwp_pay@PREV
+	clear_variable = icwp_mleft@PREV
+	clear_variable = icwp_settle@PREV
+	clear_variable = icwp_code@PREV
+	if = { limit = { exists = yes } icwp_refresh = yes icwp_cw_refresh = yes }
+	PREV = { if = { limit = { exists = yes } icwp_host_tier = yes icwp_refresh = yes icwp_cw_refresh = yes } }
+}
+
+# Notice by either side: client scope, host in PREV.
+icwp_give_notice = {
+	if = {
+		limit = { check_variable = { icwp_s@PREV = 1 } }
+		set_variable = { icwp_s@PREV = 2 }
+		set_variable = { icwp_n@PREV = 12 }
+		set_variable = { icwp_p@PREV = 0 }
+		icwp_refresh = yes
+		PREV = { icwp_refresh = yes }
+	}
+}
+
+# Host suspends deliveries for 3 months, once per 24 months: client scope, host in PREV.
+icwp_suspend = {
+	if = {
+		limit = { check_variable = { icwp_s@PREV = 1 } NOT = { check_variable = { icwp_cd@PREV > 0 } } }
+		set_variable = { icwp_s@PREV = 3 }
+		set_variable = { icwp_sp@PREV = 3 }
+		set_variable = { icwp_cd@PREV = 24 }
+		icwp_refresh = yes
+		PREV = { icwp_refresh = yes }
+	}
+}
+
+######################################################################
+# Monthly world pass: once per month, only over participants
+######################################################################
+
+icwp_monthly_world = {
+	# Pairs, seen from their clients.
+	for_each_scope_loop = {
+		array = global.icwp_participants
+		if = {
+			limit = { check_variable = { icwp_hosts^num > 0 } }
+			clear_array = icwp_kill
+			for_each_scope_loop = {
+				array = icwp_hosts
+				PREV = { icwp_pair_month = yes }
+			}
+			for_each_scope_loop = {
+				array = icwp_kill
+				PREV = {
+					set_temp_variable = { icwp_t_mode = icwp_km@PREV }
+					set_temp_variable = { icwp_t_payer = icwp_kp@PREV }
+					clear_variable = icwp_km@PREV
+					clear_variable = icwp_kp@PREV
+					icwp_close_pair = yes
+				}
+			}
+			clear_array = icwp_kill
+		}
+	}
+	# Clients first, so every host reads this month's pair values.
+	for_each_scope_loop = {
+		array = global.icwp_participants
+		if = { limit = { exists = yes } icwp_refresh = yes }
+	}
+	# Hosts: experience, aftermath decay, refresh.
+	set_variable = { global.icwp_world_u = 0 }
+	for_each_scope_loop = {
+		array = global.icwp_participants
+		if = {
+			limit = { exists = yes }
+			icwp_decay = yes
+			icwp_refresh = yes
+			if = {
+				limit = { check_variable = { icwp_in_d > 0 } }
+				set_temp_variable = { icwp_t_x = icwp_share }
+				multiply_temp_variable = { icwp_t_x = 25 }
+				clamp_temp_variable = { var = icwp_t_x min = 0.5 }
+				add_to_variable = { icwp_xp = icwp_t_x }
+				clamp_variable = { var = icwp_xp min = 0 max = 100 }
+			}
+			add_to_variable = { global.icwp_world_u = icwp_in_d }
+		}
+	}
+	icwp_league = yes
+	for_each_scope_loop = {
+		array = global.icwp_participants
+		if = {
+			limit = { exists = yes }
+			icwp_host_tier = yes
+			icwp_refresh = yes
+		}
+	}
+	add_to_variable = { global.icwp_rev = 1 }
+}
+
+# Client scope, host in PREV.
+icwp_pair_month = {
+	if = {
+		limit = { OR = { NOT = { exists = yes } NOT = { PREV = { exists = yes } } } }
+		set_variable = { icwp_km@PREV = 0 }
+		set_variable = { icwp_kp@PREV = 0 }
+		add_to_array = { array = icwp_kill value = PREV }
+	}
+	else_if = {
+		limit = { NOT = { AND = { icwp_trade_clear = yes icwp_finance_clear = yes } } }
+		# War, embargo or sanction: full aftermath. The side that sanctions pays the settlement.
+		set_variable = { icwp_km@PREV = 1 }
+		set_variable = { icwp_kp@PREV = 0 }
+		if = {
+			limit = { OR = { is_in_array = { array = imp_eco_sanc_by_us value = PREV } is_in_array = { array = imp_fin_sanc_by_us value = PREV } is_embargoing = PREV } }
+			set_variable = { icwp_kp@PREV = 1 }
+		}
+		else_if = {
+			limit = { PREV = { OR = { is_in_array = { array = imp_eco_sanc_by_us value = PREV } is_in_array = { array = imp_fin_sanc_by_us value = PREV } is_embargoing = PREV } } }
+			set_variable = { icwp_kp@PREV = 2 }
+		}
+		add_to_array = { array = icwp_kill value = PREV }
+	}
+	else = {
+		if = { limit = { check_variable = { icwp_cd@PREV > 0 } } subtract_from_variable = { icwp_cd@PREV = 1 } }
+		if = {
+			limit = { check_variable = { icwp_s@PREV = 1 } }
+			if = {
+				limit = { check_variable = { icwp_p@PREV > 0 } }
+				subtract_from_variable = { icwp_p@PREV = 1 }
+			}
+			else_if = {
+				limit = { check_variable = { icwp_r@PREV < 1 } }
+				add_to_variable = { icwp_r@PREV = 0.1667 }
+				clamp_variable = { var = icwp_r@PREV min = 0 max = 1 }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { icwp_s@PREV = 2 } }
+			subtract_from_variable = { icwp_n@PREV = 1 }
+			if = {
+				limit = { NOT = { check_variable = { icwp_n@PREV > 0 } } }
+				set_variable = { icwp_km@PREV = 0.5 }
+				set_variable = { icwp_kp@PREV = 0 }
+				add_to_array = { array = icwp_kill value = PREV }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { icwp_s@PREV = 3 } }
+			subtract_from_variable = { icwp_sp@PREV = 1 }
+			if = {
+				limit = { NOT = { check_variable = { icwp_sp@PREV > 0 } } }
+				set_variable = { icwp_s@PREV = 1 }
+			}
+		}
+		# Integration grows over 36 months of deliveries.
+		if = {
+			limit = { check_variable = { icwp_d@PREV > 0 } }
+			add_to_variable = { icwp_ig@PREV = 0.0278 }
+			clamp_variable = { var = icwp_ig@PREV min = 0 max = 1 }
+		}
+		# Price floats with wages, laws, stability, clients and tier.
+		icwp_quote = yes
+		set_variable = { icwp_pr@PREV = icwp_t_price }
+	}
+}
+
+icwp_decay = {
+	if = {
+		limit = { check_variable = { icwp_af_u > 0 } }
+		subtract_from_variable = { icwp_af_u = icwp_af_u_rate }
+		if = { limit = { check_variable = { icwp_af_u < 0.05 } } set_variable = { icwp_af_u = 0 } }
+	}
+	if = {
+		limit = { check_variable = { icwp_af_s < 0 } }
+		subtract_from_variable = { icwp_af_s = icwp_af_s_rate }
+		if = { limit = { check_variable = { icwp_af_s > -0.0005 } } set_variable = { icwp_af_s = 0 } }
+	}
+	if = {
+		limit = { check_variable = { icwp_af_p12 < 0 } }
+		subtract_from_variable = { icwp_af_p12 = icwp_af_p12_rate }
+		if = { limit = { check_variable = { icwp_af_p12 > -0.0005 } } set_variable = { icwp_af_p12 = 0 } }
+	}
+	if = {
+		limit = { check_variable = { icwp_af_p24 < 0 } }
+		subtract_from_variable = { icwp_af_p24 = icwp_af_p24_rate }
+		if = { limit = { check_variable = { icwp_af_p24 > -0.0005 } } set_variable = { icwp_af_p24 = 0 } }
+	}
+}
+
+# Host scope. Tier from experience, clients, volume and the world title.
+icwp_host_tier = {
+	set_temp_variable = { icwp_t_old = icwp_tier }
+	set_variable = { icwp_tier = 0 }
+	set_variable = { icwp_nclients = icwp_clients^num }
+	if = {
+		limit = { OR = { check_variable = { icwp_access > 0.3499 } check_variable = { icwp_nclients > 0 } } }
+		set_variable = { icwp_tier = 1 }
+		if = {
+			limit = { check_variable = { icwp_xp > 24.99 } check_variable = { icwp_nclients > 1 } }
+			set_variable = { icwp_tier = 2 }
+			if = {
+				limit = { check_variable = { icwp_xp > 59.99 } check_variable = { icwp_nclients > 2 } check_variable = { icwp_in_u > 9.99 } }
+				set_variable = { icwp_tier = 3 }
+			}
+		}
+		if = { limit = { check_variable = { global.icwp_holder > 0 } var:global.icwp_holder = { tag = PREV } } set_variable = { icwp_tier = 4 } }
+	}
+}
+
+# League table and the Factory of the World. Insertion into a five-place table.
+icwp_league = {
+	clear_array = global.icwp_lg
+	clear_array = global.icwp_lg_s
+	for_each_scope_loop = {
+		array = global.icwp_participants
+		set_variable = { icwp_wshare = 0 }
+		if = {
+			limit = { exists = yes check_variable = { global.icwp_world_u > 0 } }
+			set_variable = { icwp_wshare = icwp_in_d }
+			divide_variable = { icwp_wshare = global.icwp_world_u }
+		}
+		if = {
+			limit = { exists = yes check_variable = { icwp_in_d > 0 } }
+			set_temp_variable = { icwp_t_pos = 0 }
+			for_each_loop = {
+				array = global.icwp_lg_s
+				value = icwp_t_sv
+				index = icwp_t_li
+				if = { limit = { NOT = { check_variable = { icwp_t_sv < icwp_wshare } } } add_to_temp_variable = { icwp_t_pos = 1 } }
+			}
+			if = {
+				limit = { check_variable = { icwp_t_pos < 5 } }
+				add_to_array = { array = global.icwp_lg value = THIS index = icwp_t_pos }
+				set_temp_variable = { icwp_t_sv = icwp_wshare }
+				add_to_array = { array = global.icwp_lg_s value = icwp_t_sv index = icwp_t_pos }
+				if = {
+					limit = { check_variable = { global.icwp_lg^num > 5 } }
+					remove_from_array = { array = global.icwp_lg index = 5 }
+					remove_from_array = { array = global.icwp_lg_s index = 5 }
+				}
+			}
+		}
+	}
+	clear_array = global.icwp_lg_rk
+	for_each_loop = {
+		array = global.icwp_lg
+		value = icwp_t_lv
+		index = icwp_t_li
+		set_temp_variable = { icwp_t_r = icwp_t_li }
+		add_to_temp_variable = { icwp_t_r = 1 }
+		add_to_array = { array = global.icwp_lg_rk value = icwp_t_r }
+	}
+	# The holder keeps the title while it qualifies.
+	if = {
+		limit = { check_variable = { global.icwp_holder > 0 } }
+		if = {
+			limit = { NOT = { var:global.icwp_holder = { exists = yes check_variable = { icwp_wshare > 0.1999 } check_variable = { icwp_clients^num > 2 } } } }
+			set_variable = { global.icwp_holder = 0 }
+		}
+	}
+	# A challenger needs 12 months at the top.
+	set_temp_variable = { icwp_t_top = 0 }
+	if = {
+		limit = { check_variable = { global.icwp_lg^num > 0 } }
+		set_temp_variable = { icwp_t_top = global.icwp_lg^0 }
+	}
+	if = {
+		limit = {
+			check_variable = { icwp_t_top > 0 }
+			NOT = { check_variable = { icwp_t_top = global.icwp_holder } }
+			var:icwp_t_top = { check_variable = { icwp_wshare > 0.1999 } check_variable = { icwp_clients^num > 2 } check_variable = { icwp_in_d > 9.99 } }
+		}
+		if = {
+			limit = { check_variable = { global.icwp_cand = icwp_t_top } }
+			add_to_variable = { global.icwp_cand_m = 1 }
+		}
+		else = {
+			set_variable = { global.icwp_cand = icwp_t_top }
+			set_variable = { global.icwp_cand_m = 1 }
+		}
+		if = {
+			limit = { check_variable = { global.icwp_cand_m > 11 } }
+			set_variable = { global.icwp_holder = global.icwp_cand }
+			set_variable = { global.icwp_cand = 0 }
+			set_variable = { global.icwp_cand_m = 0 }
+			for_each_scope_loop = {
+				array = global.icwp_participants
+				if = { limit = { exists = yes is_ai = no } country_event = { id = icwp.10 } }
+			}
+		}
+	}
+	else = {
+		set_variable = { global.icwp_cand = 0 }
+		set_variable = { global.icwp_cand_m = 0 }
+	}
+}
+
+######################################################################
+# Partner market (client scope). Bounded by the participant list.
+######################################################################
+
+icwp_scan_market = {
+	icwp_refresh = yes
+	clear_array = icwp_mk
+	clear_array = icwp_mk_ok
+	clear_array = icwp_mk_pr
+	clear_array = icwp_mk_sv
+	clear_array = icwp_mk_wage
+	clear_array = icwp_mk_unemp
+	clear_array = icwp_mk_free
+	clear_array = icwp_mk_laws
+	clear_array = icwp_mk_stab
+	clear_array = icwp_mk_tier
+	clear_array = icwp_mk_cl
+	clear_array = icwp_mk_tierf
+	clear_array = icwp_mk_rowf
+	for_each_scope_loop = {
+		array = global.icwp_participants
+		if = {
+			limit = { exists = yes NOT = { tag = PREV } }
+			icwp_host_profile = yes
+			PREV = {
+				icwp_quote = yes
+				# Reason codes: 1 ok, 2 offer pending, 3 not a player now, 4 war or sanctions,
+				# 5 closed (access), 6 no cost advantage, 7 no free capacity, 8 no free slot, 9 contract full or ending.
+				set_temp_variable = { icwp_t_ok = 1 }
+				if = { limit = { has_country_flag = icwp_offer_out@PREV } set_temp_variable = { icwp_t_ok = 2 } }
+				else_if = { limit = { PREV = { has_country_flag = icwp_offer_open } } set_temp_variable = { icwp_t_ok = 2 } }
+				else_if = { limit = { PREV = { NOT = { icwp_player_ready = yes } } } set_temp_variable = { icwp_t_ok = 3 } }
+				else_if = { limit = { NOT = { AND = { icwp_trade_clear = yes icwp_finance_clear = yes } } } set_temp_variable = { icwp_t_ok = 4 } }
+				else_if = { limit = { NOT = { is_in_array = { array = icwp_hosts value = PREV } } PREV = { NOT = { icwp_host_open = yes } } } set_temp_variable = { icwp_t_ok = 5 } }
+				else_if = { limit = { check_variable = { icwp_t_save < 0.15 } } set_temp_variable = { icwp_t_ok = 6 } }
+				else_if = { limit = { PREV = { check_variable = { icwp_free_cap < 1 } } } set_temp_variable = { icwp_t_ok = 7 } }
+				else_if = { limit = { NOT = { is_in_array = { array = icwp_hosts value = PREV } } OR = { check_variable = { icwp_hosts^num > 5 } PREV = { check_variable = { icwp_clients^num > 7 } } } } set_temp_variable = { icwp_t_ok = 8 } }
+				else_if = { limit = { is_in_array = { array = icwp_hosts value = PREV } OR = { NOT = { check_variable = { icwp_s@PREV = 1 } } check_variable = { icwp_u@PREV > 9.99 } } } set_temp_variable = { icwp_t_ok = 9 } }
+				add_to_array = { array = icwp_mk value = PREV }
+				add_to_array = { array = icwp_mk_ok value = icwp_t_ok }
+				add_to_array = { array = icwp_mk_pr value = icwp_t_price }
+				set_temp_variable = { icwp_t_v = icwp_t_save }
+				multiply_temp_variable = { icwp_t_v = 100 }
+				add_to_array = { array = icwp_mk_sv value = icwp_t_v }
+				add_to_array = { array = icwp_mk_wage value = icwp_t_wage }
+				set_temp_variable = { icwp_t_v = PREV.icwp_unemp }
+				multiply_temp_variable = { icwp_t_v = 100 }
+				add_to_array = { array = icwp_mk_unemp value = icwp_t_v }
+				set_temp_variable = { icwp_t_v = PREV.icwp_free_cap }
+				add_to_array = { array = icwp_mk_free value = icwp_t_v }
+				set_temp_variable = { icwp_t_v = PREV.icwp_lawm }
+				multiply_temp_variable = { icwp_t_v = PREV.icwp_envm }
+				add_to_array = { array = icwp_mk_laws value = icwp_t_v }
+				set_temp_variable = { icwp_t_v = PREV.stability }
+				multiply_temp_variable = { icwp_t_v = 100 }
+				add_to_array = { array = icwp_mk_stab value = icwp_t_v }
+				set_temp_variable = { icwp_t_v = PREV.icwp_tier }
+				add_to_array = { array = icwp_mk_tier value = icwp_t_v }
+				add_to_temp_variable = { icwp_t_v = 1 }
+				add_to_array = { array = icwp_mk_tierf value = icwp_t_v }
+				set_temp_variable = { icwp_t_v = PREV.icwp_clients^num }
+				add_to_array = { array = icwp_mk_cl value = icwp_t_v }
+			}
+		}
+	}
+	# Keep the selection on the same country if it is still listed.
+	set_variable = { icwp_sel = 0 }
+	if = {
+		limit = { check_variable = { icwp_sel_c > 0 } }
+		for_each_loop = {
+			array = icwp_mk
+			value = icwp_t_c
+			index = icwp_t_i
+			if = {
+				limit = { check_variable = { icwp_t_c = icwp_sel_c } }
+				set_variable = { icwp_sel = icwp_t_i }
+				add_to_variable = { icwp_sel = 1 }
+			}
+		}
+	}
+	if = { limit = { check_variable = { icwp_sel = 0 } } set_variable = { icwp_sel_c = 0 } }
+	icwp_row_frames = yes
+	icwp_offer_preview = yes
+	icwp_touch = yes
+}
+
+# Preview numbers for the selected partner (client scope).
+icwp_offer_preview = {
+	set_variable = { icwp_pv_ok = 0 }
+	set_variable = { icwp_pv_u = icwp_offer_u }
+	set_variable = { icwp_pv_pay = 0 }
+	set_variable = { icwp_pv_setup = 0 }
+	set_variable = { icwp_pv_dep = 0 }
+	set_variable = { icwp_pv_pg = 0 }
+	set_variable = { icwp_pv_f = 12 }
+	if = {
+		limit = { check_variable = { icwp_sel > 0 } }
+		set_temp_variable = { icwp_t_i = icwp_sel }
+		subtract_from_temp_variable = { icwp_t_i = 1 }
+		set_variable = { icwp_pv_ok = icwp_mk_ok^icwp_t_i }
+		set_temp_variable = { icwp_t_p = icwp_mk_pr^icwp_t_i }
+		set_variable = { icwp_pv_pay = icwp_t_p }
+		multiply_variable = { icwp_pv_pay = icwp_offer_u }
+		set_variable = { icwp_pv_setup = icwp_pv_pay }
+		multiply_variable = { icwp_pv_setup = 13 }
+		set_variable = { icwp_pv_dep = icwp_offer_u }
+		set_temp_variable = { icwp_t_own = icwp_own_cg_f }
+		clamp_temp_variable = { var = icwp_t_own min = 1 }
+		divide_variable = { icwp_pv_dep = icwp_t_own }
+		var:icwp_sel_c = {
+			set_temp_variable = { icwp_t_c = icwp_civs }
+			clamp_temp_variable = { var = icwp_t_c min = 1 }
+			set_variable = { PREV.icwp_pv_pg = PREV.icwp_offer_u }
+			divide_variable = { PREV.icwp_pv_pg = icwp_t_c }
+			multiply_variable = { PREV.icwp_pv_pg = 0.40 }
+		}
+		# Existing contract with this producer: at most 10 units in total.
+		set_temp_variable = { icwp_t_ex = 0 }
+		var:icwp_sel_c = { PREV = { if = { limit = { is_in_array = { array = icwp_hosts value = PREV } } set_temp_variable = { icwp_t_ex = icwp_u@PREV } } } }
+		add_to_temp_variable = { icwp_t_ex = icwp_offer_u }
+		# Not enough room on either side for the chosen volume.
+		if = {
+			limit = { check_variable = { icwp_pv_ok = 1 } }
+			set_temp_variable = { icwp_t_fc = icwp_mk_free^icwp_t_i }
+			if = { limit = { check_variable = { icwp_t_ex > 10 } } set_variable = { icwp_pv_ok = 9 } }
+			else_if = { limit = { check_variable = { icwp_offer_u > icwp_t_fc } } set_variable = { icwp_pv_ok = 7 } }
+			else_if = { limit = { check_variable = { icwp_offer_u > icwp_free_dem } } set_variable = { icwp_pv_ok = 10 } }
+			else_if = { limit = { check_variable = { icwp_pv_setup > treasury } } set_variable = { icwp_pv_ok = 11 } }
+		}
+		set_variable = { icwp_pv_f = icwp_pv_ok }
+	}
+	set_variable = { icwp_pv_dep_pct = icwp_pv_dep }
+	multiply_variable = { icwp_pv_dep_pct = 100 }
+	set_variable = { icwp_pv_pg_pct = icwp_pv_pg }
+	multiply_variable = { icwp_pv_pg_pct = 100 }
+}
+
+# Send the offer (client scope).
+icwp_send_offer = {
+	if = {
+		limit = { check_variable = { icwp_sel_c > 0 } check_variable = { icwp_pv_ok = 1 } }
+		var:icwp_sel_c = {
+			if = {
+				limit = { PREV = { icwp_can_offer_to = yes } }
+				PREV = {
+					set_country_flag = { flag = icwp_offer_out@PREV days = 30 value = 1 }
+					set_variable = { icwp_ou@PREV = icwp_offer_u }
+				}
+				set_country_flag = { flag = icwp_offer_open days = 30 value = 1 }
+				country_event = { id = icwp.1 }
+			}
+		}
+		icwp_scan_market = yes
+	}
+}
+
+######################################################################
+# Player actions and war
+######################################################################
+
+# ROOT is the attacker, FROM the defender (on_war_relation_added). The attacker pays the settlement.
+icwp_war_break = {
+	if = {
+		limit = { has_country_flag = icwp_participant FROM = { has_country_flag = icwp_participant } }
+		if = {
+			limit = { is_in_array = { array = icwp_hosts value = FROM } }
+			FROM = {
+				ROOT = {
+					set_temp_variable = { icwp_t_mode = 1 }
+					set_temp_variable = { icwp_t_payer = 1 }
+					icwp_close_pair = yes
+				}
+			}
+		}
+		if = {
+			limit = { FROM = { is_in_array = { array = icwp_hosts value = ROOT } } }
+			FROM = {
+				set_temp_variable = { icwp_t_mode = 1 }
+				set_temp_variable = { icwp_t_payer = 2 }
+				icwp_close_pair = yes
+			}
+		}
+	}
+}
+
+# Actor scope. icwp_ev_p = partner, icwp_ev_role = 1 (we are the client) or 2 (we are the host).
+icwp_prepare_exit = {
+	set_variable = { icwp_ev_settle = 0 }
+	set_variable = { icwp_ev_lost = 0 }
+	set_variable = { icwp_ev_ig = 0 }
+	if = {
+		limit = { check_variable = { icwp_ev_role = 1 } }
+		var:icwp_ev_p = {
+			ROOT = {
+				if = {
+					limit = { is_in_array = { array = icwp_hosts value = PREV } }
+					set_variable = { icwp_ev_settle = icwp_settle@PREV }
+					set_variable = { icwp_ev_lost = icwp_u@PREV }
+					multiply_variable = { icwp_ev_lost = icwp_r@PREV }
+					set_variable = { icwp_ev_ig = icwp_ig@PREV }
+				}
+			}
+		}
+	}
+	else = {
+		var:icwp_ev_p = {
+			if = {
+				limit = { is_in_array = { array = icwp_hosts value = ROOT } }
+				set_variable = { ROOT.icwp_ev_settle = icwp_settle@ROOT }
+				set_variable = { ROOT.icwp_ev_lost = icwp_u@ROOT }
+				multiply_variable = { ROOT.icwp_ev_lost = icwp_r@ROOT }
+				set_variable = { ROOT.icwp_ev_ig = icwp_ig@ROOT }
+			}
+		}
+	}
+	multiply_variable = { icwp_ev_ig = 100 }
+}
+
+icwp_execute_exit = {
+	if = {
+		limit = { check_variable = { icwp_ev_role = 1 } }
+		var:icwp_ev_p = {
+			if = {
+				limit = { ROOT = { is_in_array = { array = icwp_hosts value = PREV } } }
+				country_event = { id = icwp.4 }
+				ROOT = {
+					set_temp_variable = { icwp_t_mode = 1 }
+					set_temp_variable = { icwp_t_payer = 1 }
+					icwp_close_pair = yes
+				}
+			}
+		}
+	}
+	else = {
+		var:icwp_ev_p = {
+			if = {
+				limit = { is_in_array = { array = icwp_hosts value = ROOT } }
+				country_event = { id = icwp.4 }
+				set_temp_variable = { icwp_t_mode = 1 }
+				set_temp_variable = { icwp_t_payer = 2 }
+				icwp_close_pair = yes
+			}
+		}
+	}
+}
+
+# Accept an offer: ROOT is the host, FROM the client.
+icwp_accept_offer = {
+	FROM = {
+		set_temp_variable = { icwp_t_units = icwp_ou@PREV }
+		if = {
+			limit = { is_in_array = { array = icwp_hosts value = PREV } }
+			set_temp_variable = { icwp_t_max = 10 }
+			subtract_from_temp_variable = { icwp_t_max = icwp_u@PREV }
+			clamp_temp_variable = { var = icwp_t_units min = 0 max = icwp_t_max }
+		}
+		clr_country_flag = icwp_offer_out@PREV
+		PREV = { clr_country_flag = icwp_offer_open }
+		icwp_refresh = yes
+		PREV = { icwp_refresh = yes }
+		icwp_quote = yes
+		set_temp_variable = { icwp_t_setup = icwp_t_price }
+		multiply_temp_variable = { icwp_t_setup = icwp_t_units }
+		multiply_temp_variable = { icwp_t_setup = 13 }
+		set_temp_variable = { icwp_t_room = icwp_free_dem }
+		if = {
+			limit = {
+				icwp_trade_clear = yes
+				icwp_finance_clear = yes
+				check_variable = { icwp_t_save > 0.1499 }
+				check_variable = { icwp_t_units > 0 }
+				NOT = { check_variable = { icwp_t_units > icwp_t_room } }
+				PREV = { NOT = { check_variable = { icwp_free_cap < icwp_t_units } } }
+				NOT = { check_variable = { icwp_t_setup > treasury } }
+				OR = {
+					is_in_array = { array = icwp_hosts value = PREV }
+					AND = {
+						check_variable = { icwp_hosts^num < 6 }
+						PREV = { check_variable = { icwp_clients^num < 8 } icwp_host_open = yes }
+					}
+				}
+				OR = {
+					NOT = { is_in_array = { array = icwp_hosts value = PREV } }
+					check_variable = { icwp_s@PREV = 1 }
+				}
+			}
+			icwp_sign = yes
+			country_event = { id = icwp.2 }
+		}
+		else = {
+			country_event = { id = icwp.3 }
+		}
+		clear_variable = icwp_ou@PREV
+	}
+}
+
+icwp_decline_offer = {
+	FROM = {
+		clr_country_flag = icwp_offer_out@PREV
+		PREV = { clr_country_flag = icwp_offer_open }
+		clear_variable = icwp_ou@PREV
+		country_event = { id = icwp.3 }
+	}
+}
+
+# Event numbers for an offer: ROOT host, FROM client. Stored on the host for the event text.
+icwp_offer_numbers = {
+	FROM = {
+		icwp_quote = yes
+		set_variable = { PREV.icwp_ev_u = icwp_ou@PREV }
+		set_variable = { PREV.icwp_ev_pr = icwp_t_price }
+		set_variable = { PREV.icwp_ev_wk = icwp_t_price }
+		multiply_variable = { PREV.icwp_ev_wk = icwp_ou@PREV }
+		set_variable = { PREV.icwp_ev_setup = PREV.icwp_ev_wk }
+		multiply_variable = { PREV.icwp_ev_setup = 13 }
+		set_variable = { PREV.icwp_ev_dep = icwp_ou@PREV }
+		set_temp_variable = { icwp_t_own = icwp_own_cg_f }
+		clamp_temp_variable = { var = icwp_t_own min = 1 }
+		divide_variable = { PREV.icwp_ev_dep = icwp_t_own }
+	}
+	set_variable = { icwp_ev_pg = icwp_ev_u }
+	set_temp_variable = { icwp_t_c = icwp_civs }
+	clamp_temp_variable = { var = icwp_t_c min = 1 }
+	divide_variable = { icwp_ev_pg = icwp_t_c }
+	multiply_variable = { icwp_ev_pg = 0.40 }
+}
+
+# Row highlight frames for the market list (client scope).
+icwp_row_frames = {
+	clear_array = icwp_mk_rowf
+	for_each_loop = {
+		array = icwp_mk
+		value = icwp_t_rv
+		index = icwp_t_i
+		set_temp_variable = { icwp_t_f = 1 }
+		set_temp_variable = { icwp_t_j = icwp_t_i }
+		add_to_temp_variable = { icwp_t_j = 1 }
+		if = { limit = { check_variable = { icwp_t_j = icwp_sel } } set_temp_variable = { icwp_t_f = 2 } }
+		add_to_array = { array = icwp_mk_rowf value = icwp_t_f }
+	}
+}
+
+######################################################################
+# Savegame migration from v1 (once, on startup)
+######################################################################
+
+# Old contracts become running v2 contracts with the same volume (at most 10 units) and 50 % integration.
+icwp_migrate_v1 = {
+	if = {
+		limit = { has_global_flag = icwp_initialized NOT = { has_global_flag = icwp_v2_migrated } }
+		set_global_flag = icwp_v2_migrated
+		every_country = {
+			limit = { has_country_flag = icwp_initialized }
+			clear_array = icwp_buyers
+			clear_array = icwp_v1_hosts
+			for_each_loop = {
+				array = icwp_hosts
+				value = icwp_t_h
+				add_to_array = { array = icwp_v1_hosts value = icwp_t_h }
+			}
+			clear_array = icwp_hosts
+			for_each_scope_loop = {
+				array = icwp_v1_hosts
+				if = {
+					limit = { exists = yes PREV = { exists = yes } }
+					PREV = {
+						icwp_register = yes
+						PREV = { icwp_register = yes clear_array = icwp_buyers }
+						set_temp_variable = { icwp_t_units = icwp_units@PREV }
+						clamp_temp_variable = { var = icwp_t_units min = 0 max = 10 }
+						if = {
+							limit = { check_variable = { icwp_t_units > 0.5 } NOT = { is_in_array = { array = icwp_hosts value = PREV } } }
+							add_to_array = { array = icwp_hosts value = PREV }
+							PREV = { add_to_array = { array = icwp_clients value = PREV } }
+							set_variable = { icwp_u@PREV = icwp_t_units }
+							set_variable = { icwp_r@PREV = 1 }
+							set_variable = { icwp_p@PREV = 0 }
+							set_variable = { icwp_s@PREV = 1 }
+							set_variable = { icwp_n@PREV = 0 }
+							set_variable = { icwp_sp@PREV = 0 }
+							set_variable = { icwp_cd@PREV = 0 }
+							set_variable = { icwp_ig@PREV = 0.5 }
+							PREV = { icwp_host_profile = yes }
+							icwp_quote = yes
+							set_variable = { icwp_pr@PREV = icwp_t_price }
+						}
+						clear_variable = icwp_units@PREV
+						clear_variable = icwp_unmatured@PREV
+						clear_variable = icwp_delivered@PREV
+						clear_variable = icwp_state@PREV
+					}
+				}
+			}
+			clear_array = icwp_v1_hosts
+			clr_country_flag = icwp_initialized
+		}
+		clr_global_flag = icwp_initialized
+		for_each_scope_loop = {
+			array = global.icwp_participants
+			icwp_refresh = yes
+		}
+		for_each_scope_loop = {
+			array = global.icwp_participants
+			icwp_host_tier = yes
+			icwp_refresh = yes
+		}
+	}
+}

@@ -1,0 +1,476 @@
+# IMPERIA COLD WAR — Turkey PKK organisation native core.
+# Country scope TUR. Reconciliation never applies monthly growth.
+COLDWAR_TUR_1970_PKK_initialize = { COLDWAR_TUR_1970_PKK_reconcile = yes }
+COLDWAR_TUR_1970_PKK_reconcile = {
+ if = { limit = { tag = TUR exists = yes IMP_is_1970_scenario = yes }
+  # Migrate old permanent military closure and base receipts once. Never reopen a territorial settlement.
+  if = { limit = { NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_persistent_migrated } }
+   if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_case_closed has_country_flag = TUR_PKK_gone NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_independence_resolved } OR = { 162 = { is_owned_by = TUR } 935 = { is_owned_by = TUR } 1205 = { is_owned_by = TUR } } } clr_country_flag = COLDWAR_TUR_1970_PKK_case_closed clr_country_flag = TUR_PKK_gone }
+   if = { limit = { NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_independence_resolved } }
+    if = { limit = { has_country_flag = TUR_van_done } clr_country_flag = TUR_van_done set_country_flag = { flag = TUR_van_done days = 180 value = 1 } set_variable = { var_pkk_van = 0 } }
+    if = { limit = { has_country_flag = TUR_diyarbakir_done } clr_country_flag = TUR_diyarbakir_done set_country_flag = { flag = TUR_diyarbakir_done days = 180 value = 1 } set_variable = { var_pkk_diyarbakir = 0 } }
+    if = { limit = { has_country_flag = TUR_euphrates_done } clr_country_flag = TUR_euphrates_done set_country_flag = { flag = TUR_euphrates_done days = 180 value = 1 } set_variable = { var_pkk_euphrates = 0 } }
+   }
+   162 = { if = { limit = { is_owned_and_controlled_by = TUR has_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } set_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } }
+   935 = { if = { limit = { is_owned_and_controlled_by = TUR has_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } set_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } }
+   1205 = { if = { limit = { is_owned_and_controlled_by = TUR has_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } set_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } }
+   clr_country_flag = COLDWAR_TUR_1970_PKK_victory_pending
+   set_country_flag = COLDWAR_TUR_1970_PKK_persistent_migrated
+  }
+  if = { limit = { NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_policy_migrated } }
+   clr_country_flag = TUR_auto_attacks_van clr_country_flag = TUR_auto_attacks_diyarbakir clr_country_flag = TUR_auto_attacks_euphrates
+   162 = { set_variable = { COLDWAR_COL_case_policy = 0 } set_variable = { COLDWAR_COL_case_lock = 0 } clr_state_flag = COLDWAR_TUR_1970_PKK_mandate }
+   935 = { set_variable = { COLDWAR_COL_case_policy = 0 } set_variable = { COLDWAR_COL_case_lock = 0 } clr_state_flag = COLDWAR_TUR_1970_PKK_mandate }
+   1205 = { set_variable = { COLDWAR_COL_case_policy = 0 } set_variable = { COLDWAR_COL_case_lock = 0 } clr_state_flag = COLDWAR_TUR_1970_PKK_mandate }
+   set_country_flag = COLDWAR_TUR_1970_PKK_policy_migrated update_money_dirty_variable = yes
+  }
+  if = { limit = { has_country_flag = TUR_targeting_van 935 = { is_owned_and_controlled_by = TUR } NOT = { has_country_flag = TUR_van_done } } set_variable = { COLDWAR_COL_case_target = 935 } }
+  else_if = { limit = { has_country_flag = TUR_targeting_diyarbakir 162 = { is_owned_and_controlled_by = TUR } NOT = { has_country_flag = TUR_diyarbakir_done } } set_variable = { COLDWAR_COL_case_target = 162 } }
+  else_if = { limit = { has_country_flag = TUR_targeting_euphrates 1205 = { is_owned_and_controlled_by = TUR } NOT = { has_country_flag = TUR_euphrates_done } } set_variable = { COLDWAR_COL_case_target = 1205 } }
+  if = { limit = { date > 1978.11.26 NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_formed } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_case_closed } } set_country_flag = COLDWAR_TUR_1970_PKK_formed 162 = { if = { limit = { NOT = { has_variable = COLDWAR_COL_cells } } set_variable = { COLDWAR_COL_cells = 35 } } } update_money_dirty_variable = yes }
+  if = { limit = { COLDWAR_TUR_1970_PKK_active = yes NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_native_migrated } }
+   if = { limit = { 162 = { has_variable = COLDWAR_COL_cells } } set_variable = { TUR_PKK_strength = 162.COLDWAR_COL_cells } }
+   else = { set_variable = { TUR_PKK_strength = 35 } }
+   clamp_variable = { var = TUR_PKK_strength min = 0 max = 100 }
+   set_variable = { TUR_PKK_min_strength = 30 }
+   set_country_flag = COLDWAR_TUR_1970_PKK_native_migrated
+  }
+  if = { limit = { COLDWAR_TUR_1970_PKK_active = yes date > 1984.8.14 NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_armed } } set_country_flag = COLDWAR_TUR_1970_PKK_armed }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_bases_initialized } }
+   if = { limit = { NOT = { has_variable = var_pkk_van } NOT = { has_country_flag = TUR_van_done } } set_variable = { var_pkk_van = 3950 } }
+   if = { limit = { NOT = { has_variable = var_pkk_diyarbakir } NOT = { has_country_flag = TUR_diyarbakir_done } } set_variable = { var_pkk_diyarbakir = 4800 } }
+   if = { limit = { NOT = { has_variable = var_pkk_euphrates } NOT = { has_country_flag = TUR_euphrates_done } } set_variable = { var_pkk_euphrates = 3200 } }
+   set_country_flag = COLDWAR_TUR_1970_PKK_bases_initialized
+  }
+  if = { limit = { COLDWAR_TUR_1970_PKK_active = yes }
+   clamp_variable = { var = TUR_PKK_strength min = 0 max = 100 }
+   162 = { set_variable = { COLDWAR_COL_cells = TUR.TUR_PKK_strength } } 935 = { set_variable = { COLDWAR_COL_cells = TUR.TUR_PKK_strength } } 1205 = { set_variable = { COLDWAR_COL_cells = TUR.TUR_PKK_strength } }
+   set_variable = { kurdish_resistance_cap = TUR_PKK_strength } multiply_variable = { kurdish_resistance_cap = 0.005 }
+   set_variable = { kurdish_resistance_garrison_requirement = TUR_PKK_strength } multiply_variable = { kurdish_resistance_garrison_requirement = 0.03 }
+   set_variable = { kurdish_resistance_garrison_damage = TUR_PKK_strength } multiply_variable = { kurdish_resistance_garrison_damage = 0.019 } subtract_from_variable = { kurdish_resistance_garrison_damage = 0.999 }
+  }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes OR = { 162 = { is_owned_and_controlled_by = TUR } 935 = { is_owned_and_controlled_by = TUR } 1205 = { is_owned_and_controlled_by = TUR } } }
+   if = { limit = { NOT = { has_idea = TUR_kurdish_trouble } } add_ideas = TUR_kurdish_trouble set_country_flag = COLDWAR_TUR_1970_PKK_trouble_owned }
+  }
+  else = { if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_trouble_owned has_idea = TUR_kurdish_trouble } remove_ideas = TUR_kurdish_trouble } clr_country_flag = COLDWAR_TUR_1970_PKK_trouble_owned }
+  # Keep the underlying owned-core resistance active during local suppression.
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes 935 = { is_owned_and_controlled_by = TUR has_resistance = no } } 935 = { force_enable_resistance = TUR start_resistance = yes set_resistance = 10 set_compliance = 80 set_garrison_strength = 1.0 set_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes 162 = { is_owned_and_controlled_by = TUR has_resistance = no } } 162 = { force_enable_resistance = TUR start_resistance = yes set_resistance = 10 set_compliance = 80 set_garrison_strength = 1.0 set_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes 1205 = { is_owned_and_controlled_by = TUR has_resistance = no } } 1205 = { force_enable_resistance = TUR start_resistance = yes set_resistance = 10 set_compliance = 80 set_garrison_strength = 1.0 set_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes NOT = { has_country_flag = TUR_van_done } 935 = { is_owned_and_controlled_by = TUR } }
+   935 = { if = { limit = { NOT = { has_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } } if = { limit = { has_resistance = no } force_enable_resistance = TUR start_resistance = yes set_resistance = 10 set_compliance = 80 set_garrison_strength = 1.0 set_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } if = { limit = { NOT = { has_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } } add_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } set_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } } }
+  }
+  else = { 935 = { if = { limit = { has_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } remove_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } clr_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } if = { limit = { has_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance is_owned_and_controlled_by = TUR NOT = { TUR = { COLDWAR_TUR_1970_PKK_armed_active = yes } } } force_disable_resistance = { clear = yes occupier = TUR } clr_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } } }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes NOT = { has_country_flag = TUR_diyarbakir_done } 162 = { is_owned_and_controlled_by = TUR } }
+   162 = { if = { limit = { NOT = { has_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } } if = { limit = { has_resistance = no } force_enable_resistance = TUR start_resistance = yes set_resistance = 10 set_compliance = 80 set_garrison_strength = 1.0 set_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } if = { limit = { NOT = { has_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } } add_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } set_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } } }
+  }
+  else = { 162 = { if = { limit = { has_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } remove_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } clr_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } if = { limit = { has_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance is_owned_and_controlled_by = TUR NOT = { TUR = { COLDWAR_TUR_1970_PKK_armed_active = yes } } } force_disable_resistance = { clear = yes occupier = TUR } clr_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } } }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes NOT = { has_country_flag = TUR_euphrates_done } 1205 = { is_owned_and_controlled_by = TUR } }
+   1205 = { if = { limit = { NOT = { has_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } } if = { limit = { has_resistance = no } force_enable_resistance = TUR start_resistance = yes set_resistance = 10 set_compliance = 80 set_garrison_strength = 1.0 set_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } if = { limit = { NOT = { has_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } } add_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } set_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } } }
+  }
+  else = { 1205 = { if = { limit = { has_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } remove_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } clr_state_flag = COLDWAR_TUR_1970_PKK_resistance_owned } if = { limit = { has_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance is_owned_and_controlled_by = TUR NOT = { TUR = { COLDWAR_TUR_1970_PKK_armed_active = yes } } } force_disable_resistance = { clear = yes occupier = TUR } clr_state_flag = COLDWAR_TUR_1970_PKK_forced_resistance } } }
+ }
+
+if = { limit = { tag = TUR IMP_is_1970_scenario = yes has_country_flag = TUR_targeting_van NOT = { 935 = { is_owned_and_controlled_by = TUR } } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_operation_pending } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_clear_pending } } clr_country_flag = TUR_targeting_van }
+
+if = { limit = { tag = TUR IMP_is_1970_scenario = yes has_country_flag = TUR_targeting_diyarbakir NOT = { 162 = { is_owned_and_controlled_by = TUR } } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_operation_pending } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_clear_pending } } clr_country_flag = TUR_targeting_diyarbakir }
+
+if = { limit = { tag = TUR IMP_is_1970_scenario = yes has_country_flag = TUR_targeting_euphrates NOT = { 1205 = { is_owned_and_controlled_by = TUR } } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_operation_pending } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_clear_pending } } clr_country_flag = TUR_targeting_euphrates }
+}
+# `_monthly` belongs only on the monthly hook, never startup. Timed guard prevents duplicate adjacent calls.
+COLDWAR_TUR_1970_PKK_monthly = {
+ COLDWAR_TUR_1970_PKK_reconcile = yes
+ if = { limit = { COLDWAR_TUR_1970_PKK_active = yes NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_month_guard } }
+  set_country_flag = { flag = COLDWAR_TUR_1970_PKK_month_guard days = 27  value = 1 }
+  COLDWAR_TUR_1970_PKK_refresh_aid = yes
+  set_temp_variable = { COLDWAR_TUR_1970_PKK_aid = COLDWAR_TUR_1970_PKK_aid_cap }
+  multiply_temp_variable = { COLDWAR_TUR_1970_PKK_aid = 0.1 } add_to_variable = { TUR_PKK_strength = COLDWAR_TUR_1970_PKK_aid }
+  if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes }
+  if = { limit = { check_variable = { TUR_PKK_yearly_strength < 12 } } add_to_variable = { TUR_PKK_yearly_strength = 1 } }
+  else = { random_list = { 50 = { add_to_variable = { TUR_PKK_strength = 5 } } 50 = { add_to_variable = { TUR_PKK_strength = 10 } } } add_to_variable = { TUR_PKK_yearly_strength = -12 } }
+  clamp_variable = { var = TUR_PKK_yearly_strength min = 0 max = 12 }
+  }
+  COLDWAR_TUR_1970_PKK_reconcile = yes
+  COLDWAR_TUR_1970_PKK_rebuild_bases = yes
+  if = { limit = { is_ai = yes COLDWAR_TUR_1970_PKK_can_change_policy = yes } set_country_flag = COLDWAR_TUR_1970_PKK_policy_pending COLDWAR_TUR_1970_PKK_policy_conventional = yes }
+  if = { limit = { is_ai = yes has_country_flag = TUR_PKK_conventional NOT = { COLDWAR_TUR_1970_PKK_selected_valid = yes } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_auto_enabled } }
+   if = { limit = { COLDWAR_TUR_1970_PKK_can_select_diyarbakir = yes } COLDWAR_TUR_1970_PKK_select_diyarbakir = yes }
+   else_if = { limit = { COLDWAR_TUR_1970_PKK_can_select_van = yes } COLDWAR_TUR_1970_PKK_select_van = yes }
+   else_if = { limit = { COLDWAR_TUR_1970_PKK_can_select_euphrates = yes } COLDWAR_TUR_1970_PKK_select_euphrates = yes }
+  }
+  if = { limit = { is_ai = yes COLDWAR_TUR_1970_PKK_can_start_auto = yes } COLDWAR_TUR_1970_PKK_start_auto = yes }
+  if = { limit = { is_ai = yes has_country_flag = COLDWAR_TUR_1970_PKK_auto_enabled COLDWAR_TUR_1970_PKK_can_stop_auto = yes OR = { NOT = { COLDWAR_TUR_1970_PKK_selected_valid = yes } AND = { has_country_flag = TUR_targeting_van check_variable = { var_pkk_van < 100 } 935 = { resistance < 10 compliance > 89 } } AND = { has_country_flag = TUR_targeting_diyarbakir check_variable = { var_pkk_diyarbakir < 100 } 162 = { resistance < 10 compliance > 89 } } AND = { has_country_flag = TUR_targeting_euphrates check_variable = { var_pkk_euphrates < 100 } 1205 = { resistance < 10 compliance > 89 } } } } COLDWAR_TUR_1970_PKK_stop_auto = yes }
+  if = { limit = { is_ai = yes COLDWAR_TUR_1970_PKK_can_clear = yes } COLDWAR_TUR_1970_PKK_clear = yes }
+  COLDWAR_TUR_1970_PKK_commit_auto = yes
+ }
+}
+COLDWAR_TUR_1970_PKK_select_van = { if = { limit = { COLDWAR_TUR_1970_PKK_can_select_van = yes }
+ clr_country_flag = TUR_targeting_van
+ clr_country_flag = TUR_targeting_diyarbakir
+ clr_country_flag = TUR_targeting_euphrates
+ set_country_flag = TUR_targeting_van
+ set_variable = { COLDWAR_COL_case_target = 935 }
+ if = { limit = { NOT = { has_country_flag = TUR_selected_van_already } } set_country_flag = TUR_selected_van_already set_country_flag = COLDWAR_TUR_1970_PKK_preop_pending country_event = COLDWAR_TUR_PKK.5 } } }
+COLDWAR_TUR_1970_PKK_select_diyarbakir = { if = { limit = { COLDWAR_TUR_1970_PKK_can_select_diyarbakir = yes }
+ clr_country_flag = TUR_targeting_van
+ clr_country_flag = TUR_targeting_diyarbakir
+ clr_country_flag = TUR_targeting_euphrates
+ set_country_flag = TUR_targeting_diyarbakir
+ set_variable = { COLDWAR_COL_case_target = 162 }
+ if = { limit = { NOT = { has_country_flag = TUR_selected_diyarbakir_already } } set_country_flag = TUR_selected_diyarbakir_already set_country_flag = COLDWAR_TUR_1970_PKK_preop_pending country_event = COLDWAR_TUR_PKK.5 } } }
+COLDWAR_TUR_1970_PKK_select_euphrates = { if = { limit = { COLDWAR_TUR_1970_PKK_can_select_euphrates = yes }
+ clr_country_flag = TUR_targeting_van
+ clr_country_flag = TUR_targeting_diyarbakir
+ clr_country_flag = TUR_targeting_euphrates
+ set_country_flag = TUR_targeting_euphrates
+ set_variable = { COLDWAR_COL_case_target = 1205 }
+ if = { limit = { NOT = { has_country_flag = TUR_selected_euphrates_already } } set_country_flag = TUR_selected_euphrates_already set_country_flag = COLDWAR_TUR_1970_PKK_preop_pending country_event = COLDWAR_TUR_PKK.5 } } }
+COLDWAR_TUR_1970_PKK_assault = { if = { limit = { COLDWAR_TUR_1970_PKK_can_assault = yes } add_command_power = -35 set_country_flag = COLDWAR_TUR_1970_PKK_operation_pending
+ if = { limit = { has_country_flag = TUR_targeting_van } set_country_flag = COLDWAR_TUR_1970_PKK_pending_van }
+ if = { limit = { has_country_flag = TUR_targeting_diyarbakir } set_country_flag = COLDWAR_TUR_1970_PKK_pending_diyarbakir }
+ if = { limit = { has_country_flag = TUR_targeting_euphrates } set_country_flag = COLDWAR_TUR_1970_PKK_pending_euphrates }
+ country_event = { id = COLDWAR_TUR_PKK.1 days = 14 } } }
+# Adapted from MD common/scripted_effects/99_TUR_scripted_effects.txt TUR_PKK_attack.
+COLDWAR_TUR_1970_PKK_operation_draw = {
+ random_list = {
+ 25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -150 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -25 } }
+ 25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -200 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -90 } }
+ 25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -380 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -135 } }
+ 25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -460 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -190 } }
+ }
+ if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_pending_van } random_list = {
+ 10 = { add_to_variable = { var_pkk_van = -150 } }
+ 10 = { add_to_variable = { var_pkk_van = -120 } }
+ 10 = { add_to_variable = { var_pkk_van = -110 } }
+ 10 = { add_to_variable = { var_pkk_van = -100 } }
+ 10 = { add_to_variable = { var_pkk_van = -90 } }
+ 10 = { add_to_variable = { var_pkk_van = -80 } }
+ 10 = { add_to_variable = { var_pkk_van = -70 } }
+ 10 = { add_to_variable = { var_pkk_van = -60 } }
+ 10 = { add_to_variable = { var_pkk_van = -50 } }
+ 10 = { add_to_variable = { var_pkk_van = -40 } }
+ } clamp_variable = { var = var_pkk_van min = 0 max = 5000 } }
+ if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_pending_diyarbakir } random_list = {
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -150 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -120 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -110 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -100 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -90 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -80 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -70 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -60 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -50 } }
+ 10 = { add_to_variable = { var_pkk_diyarbakir = -40 } }
+ } clamp_variable = { var = var_pkk_diyarbakir min = 0 max = 5000 } }
+ if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_pending_euphrates } random_list = {
+ 10 = { add_to_variable = { var_pkk_euphrates = -150 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -120 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -110 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -100 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -90 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -80 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -70 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -60 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -50 } }
+ 10 = { add_to_variable = { var_pkk_euphrates = -40 } }
+ } clamp_variable = { var = var_pkk_euphrates min = 0 max = 5000 } }
+}
+COLDWAR_TUR_1970_PKK_resolve_assault = {
+ if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes has_country_flag = COLDWAR_TUR_1970_PKK_operation_pending OR = {
+  AND = { has_country_flag = COLDWAR_TUR_1970_PKK_pending_van has_country_flag = TUR_targeting_van 935 = { is_owned_and_controlled_by = TUR } NOT = { has_country_flag = TUR_van_done } }
+  AND = { has_country_flag = COLDWAR_TUR_1970_PKK_pending_diyarbakir has_country_flag = TUR_targeting_diyarbakir 162 = { is_owned_and_controlled_by = TUR } NOT = { has_country_flag = TUR_diyarbakir_done } }
+  AND = { has_country_flag = COLDWAR_TUR_1970_PKK_pending_euphrates has_country_flag = TUR_targeting_euphrates 1205 = { is_owned_and_controlled_by = TUR } NOT = { has_country_flag = TUR_euphrates_done } }
+ } OR = {
+  AND = { NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_auto_committed } has_equipment = { infantry_weapons_type > 459 } has_equipment = { util_vehicle_type > 189 } }
+  AND = { has_country_flag = COLDWAR_TUR_1970_PKK_auto_committed COLDWAR_TUR_1970_PKK_auto_conditions = yes has_equipment = { infantry_weapons_type > 1839 } has_equipment = { util_vehicle_type > 759 } }
+ } }
+  COLDWAR_TUR_1970_PKK_operation_draw = yes
+  if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_auto_committed } COLDWAR_TUR_1970_PKK_operation_draw = yes COLDWAR_TUR_1970_PKK_operation_draw = yes COLDWAR_TUR_1970_PKK_operation_draw = yes }
+ }
+ else_if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_operation_pending } add_command_power = 35 }
+ if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_operation_pending } set_country_flag = { flag = COLDWAR_TUR_1970_PKK_operation_cooldown days = 7  value = 1 } }
+ clr_country_flag = COLDWAR_TUR_1970_PKK_operation_pending clr_country_flag = COLDWAR_TUR_1970_PKK_auto_committed
+ clr_country_flag = COLDWAR_TUR_1970_PKK_pending_van
+ clr_country_flag = COLDWAR_TUR_1970_PKK_pending_diyarbakir
+ clr_country_flag = COLDWAR_TUR_1970_PKK_pending_euphrates
+}
+COLDWAR_TUR_1970_PKK_start_auto = { if = { limit = { COLDWAR_TUR_1970_PKK_can_start_auto = yes } set_country_flag = COLDWAR_TUR_1970_PKK_auto_enabled } }
+COLDWAR_TUR_1970_PKK_stop_auto = { if = { limit = { COLDWAR_TUR_1970_PKK_can_stop_auto = yes } clr_country_flag = COLDWAR_TUR_1970_PKK_auto_enabled } }
+COLDWAR_TUR_1970_PKK_commit_auto = { if = { limit = { COLDWAR_TUR_1970_PKK_can_commit_auto = yes } add_command_power = -35 set_country_flag = COLDWAR_TUR_1970_PKK_operation_pending set_country_flag = COLDWAR_TUR_1970_PKK_auto_committed
+ if = { limit = { has_country_flag = TUR_targeting_van } set_country_flag = COLDWAR_TUR_1970_PKK_pending_van }
+ if = { limit = { has_country_flag = TUR_targeting_diyarbakir } set_country_flag = COLDWAR_TUR_1970_PKK_pending_diyarbakir }
+ if = { limit = { has_country_flag = TUR_targeting_euphrates } set_country_flag = COLDWAR_TUR_1970_PKK_pending_euphrates }
+ country_event = { id = COLDWAR_TUR_PKK.1 days = 14 } } }
+COLDWAR_TUR_1970_PKK_clear = { if = { limit = { COLDWAR_TUR_1970_PKK_can_clear = yes } set_country_flag = COLDWAR_TUR_1970_PKK_clear_pending
+ if = { limit = { has_country_flag = TUR_targeting_van } set_country_flag = COLDWAR_TUR_1970_PKK_clear_van }
+ if = { limit = { has_country_flag = TUR_targeting_diyarbakir } set_country_flag = COLDWAR_TUR_1970_PKK_clear_diyarbakir }
+ if = { limit = { has_country_flag = TUR_targeting_euphrates } set_country_flag = COLDWAR_TUR_1970_PKK_clear_euphrates }
+ country_event = { id = COLDWAR_TUR_PKK.6 days = 30 } } }
+COLDWAR_TUR_1970_PKK_resolve_clear = {
+ if = { limit = { COLDWAR_TUR_1970_PKK_can_resolve_clear = yes }
+  if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_clear_van } set_country_flag = { flag = TUR_van_done days = 180 value = 1 } clr_country_flag = TUR_targeting_van set_variable = { var_pkk_van = 0 } }
+  if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_clear_diyarbakir } set_country_flag = { flag = TUR_diyarbakir_done days = 180 value = 1 } clr_country_flag = TUR_targeting_diyarbakir set_variable = { var_pkk_diyarbakir = 0 } }
+  if = { limit = { has_country_flag = COLDWAR_TUR_1970_PKK_clear_euphrates } set_country_flag = { flag = TUR_euphrates_done days = 180 value = 1 } clr_country_flag = TUR_targeting_euphrates set_variable = { var_pkk_euphrates = 0 } }
+  if = { limit = { check_variable = { TUR_PKK_strength > 32.999 } } add_to_variable = { TUR_PKK_strength = -3 } }
+  else_if = { limit = { check_variable = { TUR_PKK_strength > 30 } } set_variable = { TUR_PKK_strength = 30 } }
+  COLDWAR_TUR_1970_PKK_reconcile = yes
+ }
+ clr_country_flag = COLDWAR_TUR_1970_PKK_clear_pending
+ clr_country_flag = COLDWAR_TUR_1970_PKK_clear_van
+ clr_country_flag = COLDWAR_TUR_1970_PKK_clear_diyarbakir
+ clr_country_flag = COLDWAR_TUR_1970_PKK_clear_euphrates
+}
+COLDWAR_TUR_1970_PKK_victory = { clr_country_flag = COLDWAR_TUR_1970_PKK_victory_pending }
+COLDWAR_TUR_1970_PKK_resolve_victory = { clr_country_flag = COLDWAR_TUR_1970_PKK_victory_pending }
+COLDWAR_TUR_1970_PKK_offer_independence = { if = { limit = { COLDWAR_TUR_1970_PKK_can_offer_independence = yes } set_country_flag = COLDWAR_TUR_1970_PKK_independence_pending country_event = COLDWAR_TUR_PKK.2 } }
+
+# Adapted from MD events/Turkey.txt TUR_pkk.1-4; explicit recipient acceptance.
+COLDWAR_TUR_1970_PKK_open_policy = { if = { limit = { COLDWAR_TUR_1970_PKK_can_change_policy = yes } set_country_flag = COLDWAR_TUR_1970_PKK_policy_pending country_event = COLDWAR_TUR_PKK.3 } }
+COLDWAR_TUR_1970_PKK_policy_conventional = { if = { limit = { COLDWAR_TUR_1970_PKK_can_choose_policy = yes } set_country_flag = TUR_PKK_conventional clr_country_flag = COLDWAR_TUR_1970_PKK_policy_pending
+ PER = { if = { limit = { exists = yes NOT = { has_war_with = TUR } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_pending } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_answered } } set_country_flag = COLDWAR_TUR_1970_PKK_request_pending country_event = { id = COLDWAR_TUR_PKK.4 days = 3 } } }
+ SYR = { if = { limit = { exists = yes NOT = { has_war_with = TUR } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_pending } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_answered } } set_country_flag = COLDWAR_TUR_1970_PKK_request_pending country_event = { id = COLDWAR_TUR_PKK.4 days = 3 } } }
+ IRQ = { if = { limit = { exists = yes NOT = { has_war_with = TUR } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_pending } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_answered } } set_country_flag = COLDWAR_TUR_1970_PKK_request_pending country_event = { id = COLDWAR_TUR_PKK.4 days = 3 } } }
+ KUR = { if = { limit = { exists = yes NOT = { has_war_with = TUR } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_pending } NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_request_answered } } set_country_flag = COLDWAR_TUR_1970_PKK_request_pending country_event = { id = COLDWAR_TUR_PKK.4 days = 3 } } }
+} }
+COLDWAR_TUR_1970_PKK_policy_unconventional = { if = { limit = { COLDWAR_TUR_1970_PKK_can_choose_policy = yes } set_country_flag = TUR_PKK_unconventional set_country_flag = TUR_PKK_conventional clr_country_flag = COLDWAR_TUR_1970_PKK_policy_pending } }
+COLDWAR_TUR_1970_PKK_policy_reconciliation = { if = { limit = { COLDWAR_TUR_1970_PKK_can_choose_policy = yes } set_country_flag = TUR_PKK_reconciliation clr_country_flag = COLDWAR_TUR_1970_PKK_policy_pending } }
+
+# GUI preview effects: these only emit localised numeric outcomes.
+
+COLDWAR_TUR_1970_PKK_preview_assault = {
+add_command_power = -35
+custom_effect_tooltip = COLDWAR_TUR_1970_PKK_after_14
+random_list = {
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -150 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -25 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -200 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -90 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -380 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -135 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -460 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -190 } }
+}
+random_list = {
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_40 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_50 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_60 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_70 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_80 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_90 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_100 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_110 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_120 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_150 }
+}
+}
+
+COLDWAR_TUR_1970_PKK_preview_auto = {
+custom_effect_tooltip = COLDWAR_TUR_1970_PKK_monthly_operations
+add_command_power = -35
+custom_effect_tooltip = COLDWAR_TUR_1970_PKK_after_14
+random_list = {
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -150 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -25 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -200 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -90 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -380 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -135 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -460 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -190 } }
+}
+random_list = {
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_40 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_50 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_60 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_70 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_80 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_90 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_100 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_110 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_120 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_150 }
+}
+random_list = {
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -150 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -25 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -200 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -90 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -380 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -135 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -460 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -190 } }
+}
+random_list = {
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_40 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_50 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_60 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_70 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_80 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_90 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_100 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_110 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_120 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_150 }
+}
+random_list = {
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -150 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -25 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -200 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -90 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -380 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -135 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -460 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -190 } }
+}
+random_list = {
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_40 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_50 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_60 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_70 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_80 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_90 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_100 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_110 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_120 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_150 }
+}
+random_list = {
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -150 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -25 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -200 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -90 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -380 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -135 } }
+25 = { add_equipment_to_stockpile = { type = infantry_weapons_type amount = -460 } add_equipment_to_stockpile = { type = util_vehicle_type amount = -190 } }
+}
+random_list = {
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_40 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_50 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_60 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_70 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_80 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_90 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_100 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_110 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_120 }
+10 = { custom_effect_tooltip = COLDWAR_TUR_1970_PKK_base_damage_150 }
+}
+}
+
+COLDWAR_TUR_1970_PKK_preview_clear = {
+ custom_effect_tooltip = COLDWAR_TUR_1970_PKK_after_30
+ if = { limit = { check_variable = { TUR_PKK_strength > 30 } } custom_effect_tooltip = COLDWAR_TUR_1970_PKK_clear_strength }
+ if = { limit = { has_country_flag = TUR_targeting_van } 935 = { remove_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } }
+ if = { limit = { has_country_flag = TUR_targeting_diyarbakir } 162 = { remove_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } }
+ if = { limit = { has_country_flag = TUR_targeting_euphrates } 1205 = { remove_dynamic_modifier = { modifier = kurdish_resistance_dynamic_modifier } } }
+ custom_effect_tooltip = COLDWAR_TUR_1970_PKK_clear_relief
+}
+
+COLDWAR_TUR_1970_PKK_preview_victory = { }
+COLDWAR_TUR_1970_PKK_preview_independence = {
+random_list = { 80 = { add_ideas = the_military
+add_ideas = TUR_guards_of_kemalism
+set_temp_variable = { rul_party_temp = 22 }
+set_temp_variable = { disable_elections = 1 }
+change_ruling_party_effect = yes
+ } 20 = { 162 = { transfer_state_to = PKK }
+935 = { transfer_state_to = PKK }
+1205 = { transfer_state_to = PKK }
+if = { limit = { PKK = { exists = yes is_subject_of = TUR } } end_puppet = PKK }
+ } }
+}
+COLDWAR_TUR_1970_PKK_refresh_aid = {
+set_variable = { COLDWAR_TUR_1970_PKK_aid_cap = 0 }
+162 = { set_variable = { COLDWAR_COL_local_aid = 0 } }
+935 = { set_variable = { COLDWAR_COL_local_aid = 0 } }
+1205 = { set_variable = { COLDWAR_COL_local_aid = 0 } }
+every_country = {
+ limit = { OR = { has_country_flag = COLDWAR_COL_local_funding_live has_country_flag = COLDWAR_COL_local_arms_live } }
+ if = { limit = { has_country_flag = COLDWAR_COL_local_funding_live has_variable = COLDWAR_COL_local_funding_power check_variable = { COLDWAR_COL_local_funding_state = 162 } }
+  if = { limit = { 162 = { COLDWAR_TUR_1970_PKK_group = yes is_controlled_by = var:PREV.COLDWAR_COL_local_funding_power } }
+   TUR = { add_to_variable = { COLDWAR_TUR_1970_PKK_aid_cap = 5 } }
+   162 = { add_to_variable = { COLDWAR_COL_local_aid = 5 } }
+  }
+  else = { clr_country_flag = COLDWAR_COL_local_funding_live }
+ }
+ if = { limit = { has_country_flag = COLDWAR_COL_local_funding_live has_variable = COLDWAR_COL_local_funding_power check_variable = { COLDWAR_COL_local_funding_state = 935 } }
+  if = { limit = { 935 = { COLDWAR_TUR_1970_PKK_group = yes is_controlled_by = var:PREV.COLDWAR_COL_local_funding_power } }
+   TUR = { add_to_variable = { COLDWAR_TUR_1970_PKK_aid_cap = 5 } }
+   935 = { add_to_variable = { COLDWAR_COL_local_aid = 5 } }
+  }
+  else = { clr_country_flag = COLDWAR_COL_local_funding_live }
+ }
+ if = { limit = { has_country_flag = COLDWAR_COL_local_funding_live has_variable = COLDWAR_COL_local_funding_power check_variable = { COLDWAR_COL_local_funding_state = 1205 } }
+  if = { limit = { 1205 = { COLDWAR_TUR_1970_PKK_group = yes is_controlled_by = var:PREV.COLDWAR_COL_local_funding_power } }
+   TUR = { add_to_variable = { COLDWAR_TUR_1970_PKK_aid_cap = 5 } }
+   1205 = { add_to_variable = { COLDWAR_COL_local_aid = 5 } }
+  }
+  else = { clr_country_flag = COLDWAR_COL_local_funding_live }
+ }
+ if = { limit = { has_country_flag = COLDWAR_COL_local_arms_live has_variable = COLDWAR_COL_local_arms_power check_variable = { COLDWAR_COL_local_arms_state = 162 } }
+  if = { limit = { 162 = { COLDWAR_TUR_1970_PKK_group = yes is_controlled_by = var:PREV.COLDWAR_COL_local_arms_power } }
+   TUR = { add_to_variable = { COLDWAR_TUR_1970_PKK_aid_cap = 5 } }
+   162 = { add_to_variable = { COLDWAR_COL_local_aid = 5 } }
+  }
+  else = { clr_country_flag = COLDWAR_COL_local_arms_live }
+ }
+ if = { limit = { has_country_flag = COLDWAR_COL_local_arms_live has_variable = COLDWAR_COL_local_arms_power check_variable = { COLDWAR_COL_local_arms_state = 935 } }
+  if = { limit = { 935 = { COLDWAR_TUR_1970_PKK_group = yes is_controlled_by = var:PREV.COLDWAR_COL_local_arms_power } }
+   TUR = { add_to_variable = { COLDWAR_TUR_1970_PKK_aid_cap = 5 } }
+   935 = { add_to_variable = { COLDWAR_COL_local_aid = 5 } }
+  }
+  else = { clr_country_flag = COLDWAR_COL_local_arms_live }
+ }
+ if = { limit = { has_country_flag = COLDWAR_COL_local_arms_live has_variable = COLDWAR_COL_local_arms_power check_variable = { COLDWAR_COL_local_arms_state = 1205 } }
+  if = { limit = { 1205 = { COLDWAR_TUR_1970_PKK_group = yes is_controlled_by = var:PREV.COLDWAR_COL_local_arms_power } }
+   TUR = { add_to_variable = { COLDWAR_TUR_1970_PKK_aid_cap = 5 } }
+   1205 = { add_to_variable = { COLDWAR_COL_local_aid = 5 } }
+  }
+  else = { clr_country_flag = COLDWAR_COL_local_arms_live }
+ }
+}
+clamp_variable = { var = COLDWAR_TUR_1970_PKK_aid_cap min = 0 max = 15 }
+162 = { clamp_variable = { var = COLDWAR_COL_local_aid min = 0 max = 15 } }
+935 = { clamp_variable = { var = COLDWAR_COL_local_aid min = 0 max = 15 } }
+1205 = { clamp_variable = { var = COLDWAR_COL_local_aid min = 0 max = 15 } }
+}
+
+
+COLDWAR_TUR_1970_PKK_preview_policy = { }
+
+# User-approved 80/20 independence gamble. No military-standing reroll is involved.
+COLDWAR_TUR_1970_PKK_confirm_independence = {
+ if = { limit = { COLDWAR_TUR_1970_PKK_can_confirm_independence = yes NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_independence_resolved } }
+  clr_country_flag = COLDWAR_TUR_1970_PKK_independence_pending
+  set_country_flag = COLDWAR_TUR_1970_PKK_independence_committed
+  random_list = {
+   80 = { set_country_flag = COLDWAR_TUR_1970_PKK_independence_outcome_coup COLDWAR_TUR_1970_PKK_independence_coup = yes }
+   20 = { set_country_flag = COLDWAR_TUR_1970_PKK_independence_outcome_transfer COLDWAR_TUR_1970_PKK_independence_transfer = yes }
+  }
+ }
+}
+COLDWAR_TUR_1970_PKK_independence_coup = {
+ if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes has_country_flag = COLDWAR_TUR_1970_PKK_independence_committed NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_independence_resolved } has_country_flag = COLDWAR_TUR_1970_PKK_independence_outcome_coup }
+  set_country_flag = COLDWAR_TUR_1970_PKK_independence_resolved clr_country_flag = COLDWAR_TUR_1970_PKK_independence_committed clr_country_flag = COLDWAR_TUR_1970_PKK_independence_pending
+
+  clr_country_flag = COLDWAR_TUR_1970_PKK_independence_outcome_coup
+  set_country_flag = COLDWAR_TUR_1970_PKK_independence_blocked
+  clr_country_flag = TUR_PKK_reconciliation
+  set_country_flag = TUR_PKK_conventional
+  clr_country_flag = TUR_military_peacefully_removed
+  if = { limit = { NOT = { has_idea = the_military } } add_ideas = the_military }
+if = { limit = { NOT = { has_idea = TUR_guards_of_kemalism } } add_ideas = TUR_guards_of_kemalism }
+set_temp_variable = { rul_party_temp = 22 }
+set_temp_variable = { disable_elections = 1 }
+change_ruling_party_effect = yes
+set_leader_TUR = yes
+COLDWAR_TUR_1970_refresh_programmes = yes
+
+  country_event = COLDWAR_TUR_PKK.8
+ }
+}
+COLDWAR_TUR_1970_PKK_independence_transfer = {
+ if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes has_country_flag = COLDWAR_TUR_1970_PKK_independence_committed NOT = { has_country_flag = COLDWAR_TUR_1970_PKK_independence_resolved } has_country_flag = COLDWAR_TUR_1970_PKK_independence_outcome_transfer has_country_flag = TUR_PKK_reconciliation 162 = { is_owned_and_controlled_by = TUR } 935 = { is_owned_and_controlled_by = TUR } 1205 = { is_owned_and_controlled_by = TUR } }
+  set_country_flag = COLDWAR_TUR_1970_PKK_independence_resolved clr_country_flag = COLDWAR_TUR_1970_PKK_independence_committed clr_country_flag = COLDWAR_TUR_1970_PKK_independence_pending
+
+  clr_country_flag = COLDWAR_TUR_1970_PKK_independence_outcome_transfer
+  set_country_flag = COLDWAR_TUR_1970_PKK_case_closed
+  set_country_flag = TUR_PKK_gone
+  COLDWAR_TUR_1970_PKK_reconcile = yes
+  if = { limit = { PKK = { exists = yes is_subject_of = TUR } } end_puppet = PKK }
+  162 = { transfer_state_to = PKK }
+  935 = { transfer_state_to = PKK }
+  1205 = { transfer_state_to = PKK }
+ }
+}
+
+COLDWAR_TUR_1970_PKK_rebuild_bases = {
+ if = { limit = { COLDWAR_TUR_1970_PKK_armed_active = yes }
+  set_temp_variable = { COLDWAR_TUR_1970_PKK_rebuild = TUR_PKK_strength }
+  multiply_temp_variable = { COLDWAR_TUR_1970_PKK_rebuild = 5 }
+  if = { limit = { NOT = { has_country_flag = TUR_van_done } 935 = { is_owned_and_controlled_by = TUR } } add_to_variable = { var_pkk_van = COLDWAR_TUR_1970_PKK_rebuild } clamp_variable = { var = var_pkk_van min = 0 max = 3950 } }
+  if = { limit = { NOT = { has_country_flag = TUR_diyarbakir_done } 162 = { is_owned_and_controlled_by = TUR } } add_to_variable = { var_pkk_diyarbakir = COLDWAR_TUR_1970_PKK_rebuild } clamp_variable = { var = var_pkk_diyarbakir min = 0 max = 4800 } }
+  if = { limit = { NOT = { has_country_flag = TUR_euphrates_done } 1205 = { is_owned_and_controlled_by = TUR } } add_to_variable = { var_pkk_euphrates = COLDWAR_TUR_1970_PKK_rebuild } clamp_variable = { var = var_pkk_euphrates min = 0 max = 3200 } }
+ }
+}

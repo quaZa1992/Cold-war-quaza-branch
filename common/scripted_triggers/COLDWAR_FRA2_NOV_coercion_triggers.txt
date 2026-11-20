@@ -1,0 +1,177 @@
+# IMPERIA COLD WAR — France November 2026 funded coercion.
+COLDWAR_FRA2_NOV_is_france = {
+	hidden_trigger = { tag = FRA IMP_is_1970_scenario = yes }
+	check_variable = { gdp_total > 0 }
+}
+
+COLDWAR_FRA2_NOV_target_old_sphere = {
+	OR = { original_tag = ALG original_tag = MOR original_tag = TUN original_tag = MAU original_tag = SEN original_tag = GUI original_tag = MAL original_tag = BFA original_tag = BEN original_tag = TOG original_tag = CDI original_tag = NGR original_tag = CHA original_tag = CAM original_tag = CAR original_tag = CNG original_tag = GAB original_tag = DJI original_tag = MAD original_tag = COM original_tag = MTE original_tag = ANJ original_tag = MRT original_tag = SEY }
+}
+
+COLDWAR_FRA2_NOV_valid_independent_target = {
+	exists = yes
+	NOT = { tag = FRA }
+	is_subject = no
+	any_owned_state = { always = yes }
+	check_variable = { gdp_total > 0 }
+	NOT = { has_war_with = FRA }
+}
+
+COLDWAR_FRA2_NOV_valid_african_target = {
+	COLDWAR_FRA2_NOV_valid_independent_target = yes
+	capital_scope = { is_on_continent = africa }
+}
+
+COLDWAR_FRA2_NOV_african_access = {
+	COLDWAR_FRA2_NOV_valid_african_target = yes
+	OR = { COLDWAR_FRA2_NOV_target_old_sphere = yes FRA = { has_completed_focus = COLDWAR_FRA2_nov_wider_africa } }
+}
+
+COLDWAR_FRA2_NOV_has_african_satellite = {
+	any_country = { is_subject_of = FRA has_autonomy_state = autonomy_satellite_state any_owned_state = { always = yes } capital_scope = { is_on_continent = africa } }
+}
+
+COLDWAR_FRA2_NOV_has_indochinese_client = {
+	OR = { any_country = { OR = { tag = VIE tag = SVN tag = LAO tag = CBD } is_subject_of = FRA } any_controlled_state = { OR = { is_core_of = VIE is_core_of = SVN is_core_of = LAO is_core_of = CBD } } AND = { country_exists = VIE has_military_access_to = VIE } AND = { country_exists = SVN has_military_access_to = SVN } AND = { country_exists = LAO has_military_access_to = LAO } AND = { country_exists = CBD has_military_access_to = CBD } }
+}
+
+COLDWAR_FRA2_NOV_target_no_pending = {
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_offer_pending }
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_coup_pending }
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_offer_cooldown }
+}
+
+COLDWAR_FRA2_NOV_network_eligible = {
+	COLDWAR_FRA2_NOV_african_access = yes
+	COLDWAR_FRA2_influence_5 = yes
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_network_cooldown }
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_offer_pending }
+	FRA = { has_completed_focus = COLDWAR_FRA2_nov_officer_contacts }
+}
+
+COLDWAR_FRA2_NOV_coup_target_eligible = {
+	COLDWAR_FRA2_NOV_african_access = yes
+	NOT = { has_government = FRA }
+	NOT = { has_civil_war = yes }
+	has_war = no
+	check_variable = { influence_array^0 = FRA.id }
+	check_variable = { influence_array_val^0 > 49.999 }
+	ERI_is_not_transitional_government = yes
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_coup_pending }
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_coup_cooldown }
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_civil_incumbent }
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_offer_pending }
+	if = { limit = { has_game_rule = { rule = rule_disable_western_outlook_features option = yes } } FRA = { NOT = { has_government = democratic } } }
+}
+
+COLDWAR_FRA2_NOV_can_network = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	has_completed_focus = COLDWAR_FRA2_nov_officer_contacts
+	FROM = { COLDWAR_FRA2_NOV_network_eligible = yes }
+}
+
+COLDWAR_FRA2_NOV_can_coup = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	OR = { has_completed_focus = COLDWAR_FRA2_nov_fund_coup AND = { has_completed_focus = COLDWAR_FRA2_nov_barracuda FROM = { tag = CAR } } }
+	has_political_power > 200
+	NOT = { has_country_flag = COLDWAR_FRA2_NOV_native_dialogue_pending }
+	FROM = { COLDWAR_FRA2_NOV_coup_target_eligible = yes }
+}
+
+COLDWAR_FRA2_NOV_paid_coup_still_valid = {
+	COLDWAR_FRA2_NOV_valid_african_target = yes
+	NOT = { has_government = FRA }
+	has_war = no
+	NOT = { has_civil_war = yes }
+	check_variable = { influence_array^0 = FRA.id }
+	check_variable = { influence_array_val^0 > 49.999 }
+	ERI_is_not_transitional_government = yes
+}
+
+COLDWAR_FRA2_NOV_can_offer = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	FROM = { COLDWAR_FRA2_NOV_valid_independent_target = yes COLDWAR_FRA2_NOV_target_no_pending = yes COLDWAR_FRA2_influence_leading_50 = yes }
+	OR = { AND = { has_completed_focus = COLDWAR_FRA2_nov_satellite_offer FROM = { COLDWAR_FRA2_NOV_african_access = yes } } AND = { has_completed_focus = COLDWAR_FRA2_nov_saigon_subject FROM = { tag = SVN } } AND = { has_completed_focus = COLDWAR_FRA2_nov_hanoi_subject FROM = { tag = VIE } } AND = { FROM = { has_country_flag = COLDWAR_FRA2_NOV_coup_partner COLDWAR_FRA2_NOV_african_access = yes } } }
+}
+
+COLDWAR_FRA2_NOV_can_resolve_offer = {
+	has_country_flag = COLDWAR_FRA2_NOV_offer_pending
+	COLDWAR_FRA2_NOV_offer_delivery_qualified = yes
+}
+
+COLDWAR_FRA2_NOV_can_accept_offer = {
+	COLDWAR_FRA2_NOV_can_resolve_offer = yes
+	COLDWAR_FRA2_NOV_valid_independent_target = yes
+}
+
+COLDWAR_FRA2_NOV_can_libreville_operation = {
+	COLDWAR_FRA2_NOV_can_offer = yes
+	has_completed_focus = COLDWAR_FRA2_nov_libreville
+	FROM = { tag = GAB OR = { has_opinion = { target = FRA value > 0 } FRA = { has_military_access_to = GAB } FRA = { COLDWAR_FRA2_offer_active_fp_libreville_station = yes } FRA = { COLDWAR_FRA2_offer_active_fp_gabon_elf = yes } FRA = { COLDWAR_FRA2_offer_active_fp_gabon_officers = yes } } OR = { has_war = yes has_civil_war = yes } }
+}
+
+COLDWAR_FRA2_NOV_can_chad_support_operation = {
+	COLDWAR_FRA2_NOV_can_offer = yes
+	has_completed_focus = COLDWAR_FRA2_nov_chad_support
+	FROM = { tag = CHA OR = { has_opinion = { target = FRA value > 0 } FRA = { has_military_access_to = CHA } FRA = { COLDWAR_FRA2_offer_active_fp_chad_airlift = yes } FRA = { COLDWAR_FRA2_offer_active_fp_chad_cadres = yes } } }
+}
+
+COLDWAR_FRA2_NOV_can_barracuda_operation = {
+	COLDWAR_FRA2_NOV_can_coup = yes
+	has_completed_focus = COLDWAR_FRA2_nov_barracuda
+	FROM = { tag = CAR has_opinion = { target = FRA value < 0 } }
+}
+
+COLDWAR_FRA2_NOV_can_sahel_leverage_operation = {
+	COLDWAR_FRA2_NOV_can_offer = yes
+	has_completed_focus = COLDWAR_FRA2_nov_sahel_leverage
+	FROM = { tag = NGR FRA = { COLDWAR_FRA2_offer_active_fp_niger_rights = yes } }
+}
+
+
+
+COLDWAR_FRA2_NOV_can_complete_nov_africa_policy = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	has_completed_focus = COLDWAR_FRA2_fp_foreign_service
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_officer_contacts = {
+	COLDWAR_FRA2_NOV_is_france = yes
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_fund_coup = {
+	COLDWAR_FRA2_NOV_is_france = yes
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_security_treaties = {
+	COLDWAR_FRA2_NOV_is_france = yes
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_satellite_offer = {
+	COLDWAR_FRA2_NOV_is_france = yes
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_libreville = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	custom_trigger_tooltip = { tooltip = COLDWAR_FRA2_NOV_requirement_nov_libreville country_exists = GAB GAB = { COLDWAR_FRA2_NOV_valid_african_target = yes OR = { has_opinion = { target = FRA value > 0 } FRA = { has_military_access_to = GAB } FRA = { COLDWAR_FRA2_offer_active_fp_libreville_station = yes } FRA = { COLDWAR_FRA2_offer_active_fp_gabon_elf = yes } FRA = { COLDWAR_FRA2_offer_active_fp_gabon_officers = yes } } OR = { has_war = yes has_civil_war = yes } } }
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_chad_support = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	custom_trigger_tooltip = { tooltip = COLDWAR_FRA2_NOV_requirement_nov_chad_support country_exists = CHA CHA = { COLDWAR_FRA2_NOV_valid_african_target = yes OR = { has_opinion = { target = FRA value > 0 } FRA = { has_military_access_to = CHA } FRA = { COLDWAR_FRA2_offer_active_fp_chad_airlift = yes } FRA = { COLDWAR_FRA2_offer_active_fp_chad_cadres = yes } } } }
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_barracuda = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	custom_trigger_tooltip = { tooltip = COLDWAR_FRA2_NOV_requirement_nov_barracuda country_exists = CAR CAR = { COLDWAR_FRA2_NOV_valid_african_target = yes has_opinion = { target = FRA value < 0 } } }
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_sahel_leverage = {
+	COLDWAR_FRA2_NOV_is_france = yes
+	custom_trigger_tooltip = { tooltip = COLDWAR_FRA2_NOV_requirement_nov_sahel_leverage country_exists = NGR NGR = { COLDWAR_FRA2_NOV_valid_african_target = yes FRA = { COLDWAR_FRA2_offer_active_fp_niger_rights = yes } } }
+	COLDWAR_FRA2_offer_active_fp_niger_rights = yes
+}
+
+COLDWAR_FRA2_NOV_can_complete_nov_wider_africa = {
+	COLDWAR_FRA2_NOV_is_france = yes
+}

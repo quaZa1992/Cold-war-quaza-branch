@@ -1,0 +1,189 @@
+# IMPERIA COLD WAR — Korean civilian programme expense projection and weekly settlement.
+# IMPERIA COLD WAR — South Korean civilian programme administration.
+KOR_review_civilian_sync_kist = {
+	if = {
+		limit = {
+			has_country_flag = KOR_review_enacted_kist_research_mandate
+			KOR_review_civilian_kist_site = yes
+		}
+		if = {
+			limit = { NOT = { has_idea = KOR_review_civilian_kist_applied_research } }
+			add_ideas = KOR_review_civilian_kist_applied_research
+		}
+	}
+	else_if = {
+		limit = { has_idea = KOR_review_civilian_kist_applied_research }
+		remove_ideas = KOR_review_civilian_kist_applied_research
+	}
+}
+KOR_review_civilian_imf_prospective = {
+	custom_effect_tooltip = KOR_review_civilian_imf_prospective_heading
+	add_ideas = KOR_review_civilian_imf_recovery
+	set_temp_variable = { KOR_review_preview_amount = gdp_total }
+	multiply_temp_variable = { KOR_review_preview_amount = 0.015 }
+	custom_effect_tooltip = KOR_review_civilian_imf_treasury_amount_tt
+	set_temp_variable = { KOR_review_preview_amount = gdp_total }
+	multiply_temp_variable = { KOR_review_preview_amount = 0.015 }
+	custom_effect_tooltip = KOR_review_civilian_imf_debt_amount_tt
+	set_temp_variable = { KOR_review_preview_amount = gdp_total }
+	multiply_temp_variable = { KOR_review_preview_amount = 0.00003 }
+	multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+	custom_effect_tooltip = KOR_review_civilian_imf_weekly_amount_tt
+	custom_effect_tooltip = KOR_review_civilian_imf_refusal_tt
+	custom_effect_tooltip = KOR_review_civilian_imf_rejected_tt
+}
+KOR_review_civilian_imf_daily_notified = {
+	if = {
+		limit = { has_country_flag = KOR_review_civilian_imf_application_pending }
+		clr_country_flag = KOR_review_civilian_imf_application_pending
+		if = {
+			limit = {
+				KOR_review_civilian_imf_institution_approves = yes
+				NOT = { has_country_flag = KOR_review_civilian_imf_open }
+			}
+			set_country_flag = KOR_review_civilian_imf_open
+			set_variable = { KOR_review_civilian_imf_weeks_remaining = 104 }
+			set_temp_variable = { KOR_review_civilian_advance = { value = gdp_total multiply = 0.015 } }
+			set_temp_variable = { debt_change = KOR_review_civilian_advance }
+			modify_debt_effect = yes
+			set_temp_variable = { treasury_change = KOR_review_civilian_advance }
+			modify_treasury_effect = yes
+			add_ideas = KOR_review_civilian_imf_recovery
+			country_event = { id = KOR_review_civilian.1 }
+		}
+		else = { country_event = { id = KOR_review_civilian.2 } }
+	}
+}
+KOR_review_civilian_imf_weekly = {
+	if = {
+		limit = {
+			has_country_flag = KOR_review_civilian_imf_open
+			check_variable = { KOR_review_civilian_imf_weeks_remaining > 0 }
+		}
+		add_to_variable = {
+			var = additional_expenses_rate
+			value = { value = gdp_total multiply = 0.00003 }
+		}
+	}
+}
+KOR_review_civilian_imf_advance_week = {
+	if = {
+		limit = { has_country_flag = KOR_review_civilian_imf_open check_variable = { KOR_review_civilian_imf_weeks_remaining > 0 } }
+		subtract_from_variable = { KOR_review_civilian_imf_weeks_remaining = 1 }
+		if = {
+			limit = { check_variable = { var = KOR_review_civilian_imf_weeks_remaining value = 0 compare = less_than_or_equals } }
+			clr_country_flag = KOR_review_civilian_imf_open
+			clear_variable = KOR_review_civilian_imf_weeks_remaining
+			remove_ideas = KOR_review_civilian_imf_recovery
+		}
+	}
+}
+
+KOR_review_civilian_adopt_saemaul_administration_prospective = {
+	effect_tooltip = {
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.003 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_saemaul_administration_setup_amount_tt
+		remove_dynamic_modifier = { modifier = KOR_review_programme_local_cooperative_charters }
+		add_ideas = KOR_review_programme_saemaul_administration_preview
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+		divide_temp_variable = { KOR_review_preview_amount = 10 }
+		multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_saemaul_administration_weekly_amount_tt
+	}
+}
+
+KOR_review_civilian_adopt_local_cooperative_charters_prospective = {
+	effect_tooltip = {
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.003 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_local_cooperative_charters_setup_amount_tt
+		remove_dynamic_modifier = { modifier = KOR_review_programme_saemaul_administration }
+		add_ideas = KOR_review_programme_local_cooperative_charters_preview
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+		multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_local_cooperative_charters_weekly_amount_tt
+	}
+}
+
+KOR_review_civilian_rural_policy_review_preview = {
+	unlock_decision_tooltip = KOR_review_civilian_adopt_saemaul_administration
+	KOR_review_civilian_adopt_saemaul_administration_prospective = yes
+	unlock_decision_tooltip = KOR_review_civilian_adopt_local_cooperative_charters
+	KOR_review_civilian_adopt_local_cooperative_charters_prospective = yes
+}
+
+KOR_review_civilian_adopt_managed_labour_councils_prospective = {
+	effect_tooltip = {
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.003 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_managed_labour_councils_setup_amount_tt
+		remove_dynamic_modifier = { modifier = KOR_review_programme_tripartite_labour_pact }
+		add_ideas = KOR_review_programme_managed_labour_councils_preview
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.00005 }
+		divide_temp_variable = { KOR_review_preview_amount = 10 }
+		multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_managed_labour_councils_weekly_amount_tt
+	}
+}
+
+KOR_review_civilian_adopt_tripartite_labour_pact_prospective = {
+	effect_tooltip = {
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.003 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_tripartite_labour_pact_setup_amount_tt
+		remove_dynamic_modifier = { modifier = KOR_review_programme_managed_labour_councils }
+		add_ideas = KOR_review_programme_tripartite_labour_pact_preview
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+		divide_temp_variable = { KOR_review_preview_amount = 10 }
+		multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_tripartite_labour_pact_weekly_amount_tt
+	}
+}
+
+KOR_review_civilian_labour_reform_review_preview = {
+	unlock_decision_tooltip = KOR_review_civilian_adopt_managed_labour_councils
+	KOR_review_civilian_adopt_managed_labour_councils_prospective = yes
+	unlock_decision_tooltip = KOR_review_civilian_adopt_tripartite_labour_pact
+	KOR_review_civilian_adopt_tripartite_labour_pact_prospective = yes
+}
+
+KOR_review_civilian_adopt_occupational_health_funds_prospective = {
+	effect_tooltip = {
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.0042 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_occupational_health_funds_setup_amount_tt
+		remove_dynamic_modifier = { modifier = KOR_review_programme_national_health_insurer }
+		add_ideas = KOR_review_programme_occupational_health_funds_preview
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+		multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_occupational_health_funds_weekly_amount_tt
+	}
+}
+
+KOR_review_civilian_adopt_national_health_insurer_prospective = {
+	effect_tooltip = {
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.0042 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_national_health_insurer_setup_amount_tt
+		remove_dynamic_modifier = { modifier = KOR_review_programme_occupational_health_funds }
+		add_ideas = KOR_review_programme_national_health_insurer_preview
+		set_temp_variable = { KOR_review_preview_amount = gdp_total }
+		multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+		divide_temp_variable = { KOR_review_preview_amount = 10 }
+		multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+		custom_effect_tooltip = KOR_review_civilian_adopt_national_health_insurer_weekly_amount_tt
+	}
+}
+
+KOR_review_civilian_insurer_reorganisation_preview = {
+	unlock_decision_tooltip = KOR_review_civilian_adopt_occupational_health_funds
+	KOR_review_civilian_adopt_occupational_health_funds_prospective = yes
+	unlock_decision_tooltip = KOR_review_civilian_adopt_national_health_insurer
+	KOR_review_civilian_adopt_national_health_insurer_prospective = yes
+}

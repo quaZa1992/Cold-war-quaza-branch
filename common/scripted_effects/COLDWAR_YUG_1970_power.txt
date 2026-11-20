@@ -1,0 +1,44 @@
+# IMPERIA COLD WAR — Commission the calibrated Krško commercial reactor.
+COLDWAR_YUG_1970_register_krsko_reactor = {
+	if = {
+		limit = {
+			COLDWAR_YUG_1970_active = yes
+			owns_state = 125
+			controls_state = 125
+			125 = { check_variable = { building_level@nuclear_reactor > 0 } }
+		}
+		125 = { set_state_flag = COLDWAR_YUG_1970_krsko_commissioned }
+		set_global_flag = COLDWAR_YUG_1970_krsko_commissioned
+	}
+}
+
+COLDWAR_YUG_1970_adjust_krsko_generation = {
+	if = {
+		limit = { COLDWAR_YUG_1970_operates_krsko = yes }
+		125 = {
+			set_temp_variable = { COLDWAR_YUG_1970_krsko_generation_correction = { value = 1 add = modifier@state_nuclear_energy_generation_modifier } }
+		}
+		multiply_temp_variable = { COLDWAR_YUG_1970_krsko_generation_correction = 3.368 }
+		subtract_from_variable = { state_nuclear_energy_var = COLDWAR_YUG_1970_krsko_generation_correction }
+	}
+}
+
+COLDWAR_YUG_1970_adjust_krsko_fuel = {
+	if = {
+		limit = { COLDWAR_YUG_1970_operates_krsko = yes }
+		set_temp_variable = { COLDWAR_YUG_1970_krsko_fuel_correction = { value = 1 add = modifier@nuclear_fuel_consumption_modifier } }
+		multiply_temp_variable = { COLDWAR_YUG_1970_krsko_fuel_correction = 33.68 }
+		subtract_from_variable = { nuclear_fuel_consumption = COLDWAR_YUG_1970_krsko_fuel_correction }
+		clamp_variable = { var = nuclear_fuel_consumption min = 0.001 max = 999999999 }
+	}
+}
+
+COLDWAR_YUG_1970_clear_removed_krsko = {
+	125 = {
+		if = {
+			limit = { check_variable = { building_level@nuclear_reactor = 0 } }
+			clr_state_flag = COLDWAR_YUG_1970_krsko_commissioned
+			clr_global_flag = COLDWAR_YUG_1970_krsko_commissioned
+		}
+	}
+}

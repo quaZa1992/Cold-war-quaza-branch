@@ -10,12 +10,52 @@ COLDWAR_CHL_apply_government_change = { set_country_flag = no_leader_change chan
 COLDWAR_CHL_sync_native_outlook = { set_country_flag = no_leader_change update_set_politics = yes clr_country_flag = no_leader_change }
 COLDWAR_CHL_record_1970_presidential_term = {
 	set_country_flag = no_leader_change
-	set_politics = { ruling_party = ROOT elections_allowed = yes last_election = "1970.9.4" election_frequency = 72 }
+	# IMPERIA COLD WAR — Resolve the outlook before native politics formatting.
+	if = {
+		limit = { ROOT = { has_government = democratic } }
+		set_politics = { ruling_party = democratic elections_allowed = yes last_election = "1970.9.4" election_frequency = 72 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = communism } }
+		set_politics = { ruling_party = communism elections_allowed = yes last_election = "1970.9.4" election_frequency = 72 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = fascism } }
+		set_politics = { ruling_party = fascism elections_allowed = yes last_election = "1970.9.4" election_frequency = 72 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = neutrality } }
+		set_politics = { ruling_party = neutrality elections_allowed = yes last_election = "1970.9.4" election_frequency = 72 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = nationalist } }
+		set_politics = { ruling_party = nationalist elections_allowed = yes last_election = "1970.9.4" election_frequency = 72 }
+	}
 	clr_country_flag = no_leader_change
 }
 COLDWAR_CHL_record_1990_presidential_term = {
 	set_country_flag = no_leader_change
-	set_politics = { ruling_party = ROOT elections_allowed = yes last_election = "1989.12.14" election_frequency = 48 }
+	# IMPERIA COLD WAR — Resolve the outlook before native politics formatting.
+	if = {
+		limit = { ROOT = { has_government = democratic } }
+		set_politics = { ruling_party = democratic elections_allowed = yes last_election = "1989.12.14" election_frequency = 48 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = communism } }
+		set_politics = { ruling_party = communism elections_allowed = yes last_election = "1989.12.14" election_frequency = 48 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = fascism } }
+		set_politics = { ruling_party = fascism elections_allowed = yes last_election = "1989.12.14" election_frequency = 48 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = neutrality } }
+		set_politics = { ruling_party = neutrality elections_allowed = yes last_election = "1989.12.14" election_frequency = 48 }
+	}
+	else_if = {
+		limit = { ROOT = { has_government = nationalist } }
+		set_politics = { ruling_party = nationalist elections_allowed = yes last_election = "1989.12.14" election_frequency = 48 }
+	}
 	clr_country_flag = no_leader_change
 }
 COLDWAR_CHL_election_count = {
@@ -690,227 +730,235 @@ COLDWAR_CHL_politics_initialize = {
 	}
 }
 COLDWAR_CHL_politics_daily = {
-	set_variable = { COLDWAR_CHL_politics_weekly = 0 }
+if = {
+	limit = { COLDWAR_CHL_is_scenario = yes }
+	COLDWAR_CHL_politics_initialize = yes
 	if = {
-		limit = { COLDWAR_CHL_is_scenario = yes }
-		COLDWAR_CHL_politics_initialize = yes
-		if = {
-			limit = {
-				check_variable = { ruling_party = 22 }
-			}
-			set_country_flag = COLDWAR_CHL_1970_calendar_superseded
-			if = {
-				limit = {
-					NOT = { has_country_flag = COLDWAR_CHL_military_government }
-				}
-				set_country_flag = COLDWAR_CHL_military_government
-				COLDWAR_CHL_route_leader = yes
-				COLDWAR_CHL_refresh_programmes = yes
-			}
+		limit = {
+			check_variable = { ruling_party = 22 }
 		}
+		set_country_flag = COLDWAR_CHL_1970_calendar_superseded
 		if = {
 			limit = {
-				NOT = {
-					check_variable = { ruling_party = 22 }
-				}
-				has_country_flag = COLDWAR_CHL_military_government
+				NOT = { has_country_flag = COLDWAR_CHL_military_government }
 			}
-			clr_country_flag = COLDWAR_CHL_military_government
-			clr_country_flag = COLDWAR_CHL_pinochet_presidency
+			set_country_flag = COLDWAR_CHL_military_government
 			COLDWAR_CHL_route_leader = yes
 			COLDWAR_CHL_refresh_programmes = yes
 		}
+	}
+	if = {
+		limit = {
+			NOT = {
+				check_variable = { ruling_party = 22 }
+			}
+			has_country_flag = COLDWAR_CHL_military_government
+		}
+		clr_country_flag = COLDWAR_CHL_military_government
+		clr_country_flag = COLDWAR_CHL_pinochet_presidency
+		COLDWAR_CHL_route_leader = yes
+		COLDWAR_CHL_refresh_programmes = yes
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CHL_early_exit_election
+			NOT = {
+				check_variable = { ruling_party = 22 }
+			}
+			NOT = { has_country_flag = COLDWAR_CHL_early_exit_term_recorded }
+		}
+		set_country_flag = COLDWAR_CHL_early_exit_term_recorded
+		set_country_flag = no_leader_change
 		if = {
 			limit = {
-				has_country_flag = COLDWAR_CHL_early_exit_election
-				NOT = {
-					check_variable = { ruling_party = 22 }
-				}
-				NOT = { has_country_flag = COLDWAR_CHL_early_exit_term_recorded }
+				ROOT = { has_government = democratic }
 			}
-			set_country_flag = COLDWAR_CHL_early_exit_term_recorded
-			set_country_flag = no_leader_change
-			set_politics = { ruling_party = ROOT election_frequency = 72 elections_allowed = yes }
-			clr_country_flag = no_leader_change
+			set_politics = { ruling_party = democratic election_frequency = 72 elections_allowed = yes }
 		}
+		else_if = {
+			limit = {
+				ROOT = { has_government = communism }
+			}
+			set_politics = { ruling_party = communism election_frequency = 72 elections_allowed = yes }
+		}
+		else_if = {
+			limit = {
+				ROOT = { has_government = fascism }
+			}
+			set_politics = { ruling_party = fascism election_frequency = 72 elections_allowed = yes }
+		}
+		else_if = {
+			limit = {
+				ROOT = { has_government = neutrality }
+			}
+			set_politics = { ruling_party = neutrality election_frequency = 72 elections_allowed = yes }
+		}
+		else_if = {
+			limit = {
+				ROOT = { has_government = nationalist }
+			}
+			set_politics = { ruling_party = nationalist election_frequency = 72 elections_allowed = yes }
+		}
+		clr_country_flag = no_leader_change
+	}
+	if = {
+		limit = { date > 1970.11.2 has_stability < 0.4 }
+		set_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^18 }
+		add_to_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^4 }
+		add_to_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^3 }
+		add_to_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^19 }
+		set_temp_variable = { COLDWAR_CHL_right_bloc = party_pop_array^2 }
+		add_to_temp_variable = { COLDWAR_CHL_right_bloc = party_pop_array^14 }
 		if = {
-			limit = { date > 1970.11.2 has_stability < 0.4 }
-			set_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^18 }
-			add_to_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^4 }
-			add_to_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^3 }
-			add_to_temp_variable = { COLDWAR_CHL_left_bloc = party_pop_array^19 }
-			set_temp_variable = { COLDWAR_CHL_right_bloc = party_pop_array^2 }
-			add_to_temp_variable = { COLDWAR_CHL_right_bloc = party_pop_array^14 }
-			if = {
-				limit = {
-					check_variable = { COLDWAR_CHL_left_bloc > 0.25 }
-					check_variable = { COLDWAR_CHL_right_bloc > 0.25 }
-				}
-				add_to_variable = { COLDWAR_CHL_confrontation_days = 1 }
+			limit = {
+				check_variable = { COLDWAR_CHL_left_bloc > 0.25 }
+				check_variable = { COLDWAR_CHL_right_bloc > 0.25 }
 			}
-			else = {
-				set_variable = { COLDWAR_CHL_confrontation_days = 0 }
-				clr_country_flag = COLDWAR_CHL_high_confrontation
-			}
+			add_to_variable = { COLDWAR_CHL_confrontation_days = 1 }
 		}
 		else = {
 			set_variable = { COLDWAR_CHL_confrontation_days = 0 }
 			clr_country_flag = COLDWAR_CHL_high_confrontation
 		}
+	}
+	else = {
+		set_variable = { COLDWAR_CHL_confrontation_days = 0 }
+		clr_country_flag = COLDWAR_CHL_high_confrontation
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_CHL_confrontation_days > 30 }
+		}
+		set_country_flag = COLDWAR_CHL_high_confrontation
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CHL_stress_test_active
+			NOT = { has_idea = COLDWAR_CHL_banking_stress_test }
+		}
+		clr_country_flag = COLDWAR_CHL_stress_test_active
+	}
+	if = {
+		limit = { has_country_flag = COLDWAR_CHL_pinochet_chicago_applied date > 1981.12.31 }
+		set_country_flag = COLDWAR_CHL_fragile_banks
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_CHL_pinochet_handover
+			has_country_flag = COLDWAR_CHL_plebiscite_no_won
+			date > 1989.12.13
+			NOT = { has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed }
+		}
+		COLDWAR_CHL_count_1990_election = yes
+	}
+	if = {
+		limit = { COLDWAR_CHL_can_event_election = yes }
+		COLDWAR_CHL_trigger_event_election = yes
+	}
+	if = {
+		limit = { COLDWAR_CHL_civilian_calendar_active = yes }
 		if = {
 			limit = {
-				check_variable = { COLDWAR_CHL_confrontation_days > 30 }
+				has_country_flag = COLDWAR_CHL_campaign_opened
+				date > 1970.9.3
+				NOT = { has_country_flag = COLDWAR_CHL_election_ballot_counted }
 			}
-			set_country_flag = COLDWAR_CHL_high_confrontation
-		}
-		if = {
-			limit = {
-				has_country_flag = COLDWAR_CHL_stress_test_active
-				NOT = { has_idea = COLDWAR_CHL_banking_stress_test }
-			}
-			clr_country_flag = COLDWAR_CHL_stress_test_active
-		}
-		if = {
-			limit = { has_country_flag = COLDWAR_CHL_pinochet_chicago_applied date > 1981.12.31 }
-			set_country_flag = COLDWAR_CHL_fragile_banks
-		}
-		if = {
-			limit = {
-				has_completed_focus = COLDWAR_CHL_pinochet_handover
-				has_country_flag = COLDWAR_CHL_plebiscite_no_won
-				date > 1989.12.13
-				NOT = { has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed }
-			}
-			COLDWAR_CHL_count_1990_election = yes
-		}
-		if = {
-			limit = { COLDWAR_CHL_can_event_election = yes }
-			COLDWAR_CHL_trigger_event_election = yes
-		}
-		if = {
-			limit = { COLDWAR_CHL_civilian_calendar_active = yes }
-			if = {
-				limit = {
-					has_country_flag = COLDWAR_CHL_campaign_opened
-					date > 1970.9.3
-					NOT = { has_country_flag = COLDWAR_CHL_election_ballot_counted }
-				}
-				COLDWAR_CHL_election_count = yes
-			}
-			if = {
-				limit = {
-					has_country_flag = COLDWAR_CHL_election_ballot_counted
-					NOT = { has_country_flag = COLDWAR_CHL_election_ratified }
-				}
-				COLDWAR_CHL_update_congress_support = yes
-			}
-			if = {
-				limit = {
-					COLDWAR_CHL_can_event_congress = yes
-					NOT = { has_country_flag = COLDWAR_CHL_congress_event_seen }
-				}
-				COLDWAR_CHL_trigger_event_congress = yes
-			}
-			if = {
-				limit = {
-					has_country_flag = COLDWAR_CHL_election_ratified
-					date > 1970.11.2
-					NOT = { has_country_flag = COLDWAR_CHL_election_installed }
-				}
-				COLDWAR_CHL_install_confirmed_candidate = yes
-			}
-		}
-		if = {
-			limit = { COLDWAR_CHL_can_event_transport = yes }
-			COLDWAR_CHL_trigger_event_transport = yes
-		}
-		if = {
-			limit = { COLDWAR_CHL_can_event_rupture = yes }
-			COLDWAR_CHL_trigger_event_rupture = yes
-		}
-		if = {
-			limit = { COLDWAR_CHL_can_event_junta = yes }
-			COLDWAR_CHL_trigger_event_junta = yes
-		}
-		if = {
-			limit = { COLDWAR_CHL_can_event_banking = yes }
-			COLDWAR_CHL_trigger_event_banking = yes
-		}
-		if = {
-			limit = { COLDWAR_CHL_can_event_andean = yes }
-			COLDWAR_CHL_trigger_event_andean = yes
+			COLDWAR_CHL_election_count = yes
 		}
 		if = {
 			limit = {
-				has_country_flag = COLDWAR_CHL_military_government
-				NOT = { has_country_flag = COLDWAR_CHL_repression_event_seen }
+				has_country_flag = COLDWAR_CHL_election_ballot_counted
+				NOT = { has_country_flag = COLDWAR_CHL_election_ratified }
 			}
-			COLDWAR_CHL_trigger_event_repression = yes
+			COLDWAR_CHL_update_congress_support = yes
 		}
 		if = {
 			limit = {
-				has_completed_focus = COLDWAR_CHL_national_copper
-				NOT = { has_country_flag = COLDWAR_CHL_copper_event_seen }
+				COLDWAR_CHL_can_event_congress = yes
+				NOT = { has_country_flag = COLDWAR_CHL_congress_event_seen }
 			}
-			COLDWAR_CHL_trigger_event_copper = yes
+			COLDWAR_CHL_trigger_event_congress = yes
 		}
 		if = {
 			limit = {
-				has_completed_focus = COLDWAR_CHL_pinochet_chicago
-				NOT = { has_country_flag = COLDWAR_CHL_adjustment_event_seen }
+				has_country_flag = COLDWAR_CHL_election_ratified
+				date > 1970.11.2
+				NOT = { has_country_flag = COLDWAR_CHL_election_installed }
 			}
-			COLDWAR_CHL_trigger_event_adjustment = yes
-		}
-		if = {
-			limit = {
-				has_completed_focus = COLDWAR_CHL_commission_truth
-				NOT = { has_country_flag = COLDWAR_CHL_truth_event_seen }
-			}
-			COLDWAR_CHL_trigger_event_truth = yes
-		}
-		if = {
-			limit = {
-				has_completed_focus = COLDWAR_CHL_military_ballot
-				NOT = { has_country_flag = COLDWAR_CHL_early_exit_event_seen }
-				NOT = { has_country_flag = COLDWAR_CHL_early_exit_cooldown }
-			}
-			COLDWAR_CHL_trigger_event_early_exit = yes
-		}
-		if = {
-			limit = {
-				has_completed_focus = COLDWAR_CHL_pinochet_plebiscite
-				NOT = { has_country_flag = COLDWAR_CHL_plebiscite_event_seen }
-			}
-			COLDWAR_CHL_trigger_event_plebiscite = yes
-		}
-		if = {
-			limit = {
-				has_completed_focus = COLDWAR_CHL_pinochet_handover
-				NOT = { has_country_flag = COLDWAR_CHL_handover_event_seen }
-			}
-			COLDWAR_CHL_trigger_event_handover = yes
-		}
-		if = {
-			limit = { has_country_flag = COLDWAR_CHL_truth_full }
-			add_to_variable = { COLDWAR_CHL_politics_weekly = 0.00005 }
-		}
-		if = {
-			limit = { has_country_flag = COLDWAR_CHL_truth_limited }
-			add_to_variable = { COLDWAR_CHL_politics_weekly = 0.00005 }
-		}
-		if = {
-			limit = { has_country_flag = COLDWAR_CHL_financial_resolution_funded has_idea = COLDWAR_CHL_restructuring }
-			add_to_variable = { COLDWAR_CHL_politics_weekly = 0.00015 }
-		}
-		if = {
-			limit = { has_idea = COLDWAR_CHL_choice_transport_2 }
-			add_to_variable = { COLDWAR_CHL_politics_weekly = 0.00005 }
-		}
-		if = {
-			limit = { has_idea = COLDWAR_CHL_choice_adjustment_2 }
-			add_to_variable = { COLDWAR_CHL_politics_weekly = 0.0001 }
+			COLDWAR_CHL_install_confirmed_candidate = yes
 		}
 	}
+	if = {
+		limit = { COLDWAR_CHL_can_event_transport = yes }
+		COLDWAR_CHL_trigger_event_transport = yes
+	}
+	if = {
+		limit = { COLDWAR_CHL_can_event_rupture = yes }
+		COLDWAR_CHL_trigger_event_rupture = yes
+	}
+	if = {
+		limit = { COLDWAR_CHL_can_event_junta = yes }
+		COLDWAR_CHL_trigger_event_junta = yes
+	}
+	if = {
+		limit = { COLDWAR_CHL_can_event_banking = yes }
+		COLDWAR_CHL_trigger_event_banking = yes
+	}
+	if = {
+		limit = { COLDWAR_CHL_can_event_andean = yes }
+		COLDWAR_CHL_trigger_event_andean = yes
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CHL_military_government
+			NOT = { has_country_flag = COLDWAR_CHL_repression_event_seen }
+		}
+		COLDWAR_CHL_trigger_event_repression = yes
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_CHL_national_copper
+			NOT = { has_country_flag = COLDWAR_CHL_copper_event_seen }
+		}
+		COLDWAR_CHL_trigger_event_copper = yes
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_CHL_pinochet_chicago
+			NOT = { has_country_flag = COLDWAR_CHL_adjustment_event_seen }
+		}
+		COLDWAR_CHL_trigger_event_adjustment = yes
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_CHL_commission_truth
+			NOT = { has_country_flag = COLDWAR_CHL_truth_event_seen }
+		}
+		COLDWAR_CHL_trigger_event_truth = yes
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_CHL_military_ballot
+			NOT = { has_country_flag = COLDWAR_CHL_early_exit_event_seen }
+			NOT = { has_country_flag = COLDWAR_CHL_early_exit_cooldown }
+		}
+		COLDWAR_CHL_trigger_event_early_exit = yes
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_CHL_pinochet_plebiscite
+			NOT = { has_country_flag = COLDWAR_CHL_plebiscite_event_seen }
+		}
+		COLDWAR_CHL_trigger_event_plebiscite = yes
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_CHL_pinochet_handover
+			NOT = { has_country_flag = COLDWAR_CHL_handover_event_seen }
+		}
+		COLDWAR_CHL_trigger_event_handover = yes
+	}
+}
 }
 COLDWAR_CHL_count_plebiscite_vote = {
 	if = {

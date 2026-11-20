@@ -1,7 +1,14 @@
-# IMPERIA COLD WAR — Brazil 1970 weekly finance integration.
-# IMPERIA COLD WAR — Chile 1970 weekly programme expense integration.
-# IMPERIA COLD WAR — Argentina 1970 custom integration.
-# IMPERIA COLD WAR — Chile 1970 weekly programme expense integration.
+# IMPERIA COLD WAR — North Korea 1970 focus revision
+# IMPERIA COLD WAR — South Korea approved fiscal programmes, original MD effects retained.
+# IMPERIA COLD WAR — South Korea 1970 industrial programme expenses in the existing MD budget.
+# IMPERIA COLD WAR — Czechoslovakia 1970 integration; existing content and attribution retained.
+# IMPERIA COLD WAR — South American weekly fiscal integration; existing MD economy retained.
+# IMPERIA COLD WAR — Yugoslav federal and bilateral budget integration; original MD economy retained.
+# IMPERIA COLD WAR — Soviet 1970 weekly fiscal readers; original MD economy retained.
+# IMPERIA COLD WAR — Turkey 1970 integration; original content retained.
+# IMPERIA COLD WAR — France 1970 national programme integration.
+# IMPERIA COLD WAR — Compact Greek programme integration.
+# IMPERIA COLD WAR — France 1970 national programme integration.
 # IMPERIA COLD WAR — France 1970 national programme integration.
 # IMPERIA COLD WAR — Israel V2 native budget and protected bilateral principal integration.
 # IMPERIA COLD WAR — France 1970 national programme integration.
@@ -12,6 +19,7 @@
 # IMPERIA COLD WAR — COMECON weekly national programme expenses integration.
 # IMPERIA COLD WAR — USA 1970 national programmes and negotiated partnerships.
 # IMPERIA COLD WAR — Suez navigation income and fiscal cache integration.
+# IMPERIA COLD WAR — Industrial production partnership weekly expense integration.
 # Author(s): Angriest Bird, Hiddengearz, Killerrabbit
 
 # GDP Calculation
@@ -826,6 +834,23 @@ calculate_tax_gain = {
 # Purpose: Aggregates special income sources (seigniorage, ideas, canal revenue, foreign aid)
 calculate_additional_income_rate = {
 	set_variable = { additional_income_rate = 0 }
+	# IMPERIA COLD WAR — Czechoslovak current-GDP weekly programme streams.
+	# COLDWAR CZE WEEKLY INCOME BEGIN
+	COLDWAR_CZE_1970_calculate_budget_streams = yes
+	add_to_variable = { additional_income_rate = COLDWAR_CZE_1970_bilateral_weekly_income }
+	# COLDWAR CZE WEEKLY INCOME END
+	# IMPERIA COLD WAR — South American weekly fiscal readers BEGIN
+	COLDWAR_ARG_add_weekly_income = yes
+	set_variable = { COLDWAR_BRA_cooperation_weekly_income = 0 }
+	if = { limit = { country_exists = BRA IMP_is_1970_scenario = yes } COLDWAR_BRA_add_weekly_income = yes }
+	# IMPERIA COLD WAR — South American weekly fiscal readers END
+
+	# IMPERIA COLD WAR — Yugoslav treaty income BEGIN
+	if = { limit = { has_country_flag = COLDWAR_YUG_1970_treaty_budget_participant } COLDWAR_YUG_1970_treaty_budget_income = yes }
+	# IMPERIA COLD WAR — Yugoslav treaty income END
+# IMPERIA COLD WAR — Soviet 1970 fiscal [income reader] BEGIN
+	COLDWAR_SOV_fiscal_add_income = yes
+# IMPERIA COLD WAR — Soviet 1970 fiscal [income reader] END
 # IMPERIA COLD WAR — Kissinger weekly income BEGIN
 COLDWAR_USA_KS_calculate_streams = yes
 add_to_variable = { additional_income_rate = COLDWAR_USA_KS_weekly_income }
@@ -837,12 +862,21 @@ add_to_variable = { additional_income_rate = icwt_weekly_income }
 	add_to_variable = { additional_income_rate = cwec_wk_recv } # COLDWAR
 	# COLDWAR: COMECON - weekly receipts of the clearing and IIB credits (COLDWAR_CMEA_1970_settlement.txt)
 	add_to_variable = { additional_income_rate = cwcm_wk_recv } # COLDWAR
+	# IMPERIA COLD WAR — International Production: weekly income from foreign clients (COLDWAR icwp v2, 08.11.2026)
+	if = { limit = { has_country_flag = icwp_participant } add_to_variable = { additional_income_rate = icwp_inc_wk } } # COLDWAR
 # IMPERIA COLD WAR — USA signed weekly income BEGIN
 COLDWAR_USA_agreements_calculate_weekly_streams = yes
 	add_to_variable = { additional_income_rate = COLDWAR_USA_agreements_weekly_income }
 	COLDWAR_USA_early_calculate_weekly_streams = yes
 	add_to_variable = { additional_income_rate = COLDWAR_USA_early_weekly_income }
 # IMPERIA COLD WAR — USA signed weekly income END
+# COLDWAR AFG 1970 - weekly income BEGIN
+if = { limit = { original_tag = AFG } COLDWAR_AFG_calculate_weekly_income = yes } # COLDWAR AFG 1970
+# COLDWAR AFG 1970 - weekly income END
+# COLDWAR POL 1970 - weekly income BEGIN
+if = { limit = { original_tag = POL } COLDWAR_POL_calculate_weekly_income = yes } # COLDWAR POL 1970
+if = { limit = { NOT = { original_tag = POL } OR = { has_country_flag = COLDWAR_POL_offer_partner COLDWAR_POL_is_repay_partner = yes } } COLDWAR_POL_calculate_partner_weekly_income = yes } # COLDWAR POL 1970
+# COLDWAR POL 1970 - weekly income END
 	# IMPERIA CW — Cold War: Guest-worker remittances enter native weekly income.
 	mdcw_gw_add_remittance_income = yes
 	# Own Libyan portfolio income; producer resets and computes its variables.
@@ -2544,6 +2578,8 @@ COLDWAR_USA_agreements_calculate_weekly_streams = yes
 # IMPERIA COLD WAR — Cold War: South Korea1970 national programme.
 # COLDWAR KOR WEEKLY INCOME BEGIN
 	COLDWAR_KOR_contract_income = yes
+	# IMPERIA COLD WAR — COLDWAR_KOR_REVIEW_INCOME
+	add_to_variable = { additional_income_rate = KOR_review_weekly_receivable }
 # COLDWAR KOR WEEKLY INCOME END
 
 
@@ -2554,6 +2590,9 @@ COLDWAR_USA_agreements_calculate_weekly_streams = yes
 COLDWAR_CYP_R2_calculate_weekly_streams = yes
 add_to_variable = { additional_income_rate = COLDWAR_CYP_R2_weekly_income }
 # IMPERIA COLD WAR — Cyprus weekly income END
+# IMPERIA COLD WAR — Compact Greece weekly income BEGIN
+COLDWAR_GRE_R3AG_calculate_income = yes
+# IMPERIA COLD WAR — Compact Greece weekly income END
 # IMPERIA COLD WAR — Israel V2 money [income streams] BEGIN
 if = { limit = { ISR2_is_scenario = yes } ISR2_refresh = yes }
 set_variable = { ISR2_money_weekly_income = 0 }
@@ -2563,18 +2602,8 @@ if = { limit = { ISR2_is_scenario = yes has_variable = ISR2_territories_weekly_i
 if = { limit = { IMP_is_1970_scenario = yes has_variable = ISR2_bilateral_weekly_income OR = { ISR2_is_scenario = yes tag = ETH tag = UGA tag = KEN tag = USA tag = ROM tag = EGY tag = PER tag = PAL tag = SOV tag = JOR tag = DRC tag = TUR tag = GER } } add_to_variable = { ISR2_money_weekly_income = ISR2_bilateral_weekly_income } }
 add_to_variable = { additional_income_rate = ISR2_money_weekly_income }
 # IMPERIA COLD WAR — Israel V2 money [income streams] END
-	# IMPERIA COLD WAR — France matched weekly income BEGIN
-	# The native aggregator runs in each payer or recipient country scope.
-	COLDWAR_FRA2_add_weekly_income = yes
-	# IMPERIA COLD WAR — France matched weekly income END
-
-# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_INCOME_RATE BEGIN
-COLDWAR_ARG_add_weekly_income = yes
-# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_INCOME_RATE END
-
-	# IMPERIA COLD WAR — Brazil weekly programme stream BEGIN
-	COLDWAR_BRA_add_weekly_income = yes
-	# IMPERIA COLD WAR — Brazil weekly programme stream END
+	# IMPERIA COLD WAR — North Korea 1970 partner settlement receipts.
+	icw_nko3_add_weekly_income = yes
 }
 
 # Effect: update_tension_premium
@@ -3751,12 +3780,21 @@ update_infra_rate = {
 # Purpose: Aggregates special expenses (propaganda campaigns, diplomatic actions, special projects)
 calculate_additional_expense_rate = {
 	set_variable = { additional_expenses_rate = 0 }
-# COLDWAR_CHL_WEEKLY_EXPENSES_BEGIN
-if = { limit = { has_variable = COLDWAR_CHL_domestic_weekly } add_to_variable = { additional_expenses_rate = COLDWAR_CHL_domestic_weekly } }
-if = { limit = { has_variable = COLDWAR_CHL_politics_weekly } add_to_variable = { additional_expenses_rate = COLDWAR_CHL_politics_weekly } }
-if = { limit = { has_variable = COLDWAR_CHL_diplomacy_weekly } add_to_variable = { additional_expenses_rate = COLDWAR_CHL_diplomacy_weekly } }
-# COLDWAR_CHL_WEEKLY_EXPENSES_END
+	# IMPERIA COLD WAR — South American weekly fiscal readers BEGIN
+	COLDWAR_ARG_add_weekly_expenses = yes
+	set_variable = { COLDWAR_BRA_cooperation_weekly_expense = 0 }
+	if = { limit = { country_exists = BRA IMP_is_1970_scenario = yes } COLDWAR_BRA_add_weekly_expenses = yes }
+	# COLDWAR_CHL_WEEKLY_EXPENSES_BEGIN
+	COLDWAR_CHL_add_weekly_expenses = yes
+	# COLDWAR_CHL_WEEKLY_EXPENSES_END
+	# IMPERIA COLD WAR — South American weekly fiscal readers END
 
+	# IMPERIA COLD WAR — Yugoslav domestic and treaty expenses BEGIN
+	if = { limit = { COLDWAR_YUG_1970_active = yes } COLDWAR_YUG_1970_domestic_budget_expense = yes }
+	if = { limit = { has_country_flag = COLDWAR_YUG_1970_treaty_budget_participant } COLDWAR_YUG_1970_treaty_budget_expense = yes }
+	# IMPERIA COLD WAR — Yugoslav domestic and treaty expenses END
+	# IMPERIA COLD WAR — International Production: weekly payments to producers (COLDWAR icwp v2, 08.11.2026)
+	if = { limit = { has_country_flag = icwp_participant } add_to_variable = { additional_expenses_rate = icwp_pay_wk } } # COLDWAR
 	# COLDWAR: COMECON - weekly payments of the clearing, programmes and IIB credits (COLDWAR_CMEA_1970_settlement.txt)
 	add_to_variable = { additional_expenses_rate = cwcm_wk_pay } # COLDWAR
 	# COLDWAR: European Communities - weekly payments to the Community budget (COLDWAR_EC_1970_budget.txt)
@@ -3769,7 +3807,10 @@ if = { limit = { has_variable = COLDWAR_CHL_diplomacy_weekly } add_to_variable =
 	# COLDWAR COLONIAL EXPENSE BEGIN
 	if = {
 		limit = { IMP_is_1970_scenario = yes }
+		# COLDWAR | hand patch 07.11.2026 (performance): the weekly money pass runs this for every country; the world reconcile inside runs once per day.
+		set_temp_variable = { COLDWAR_COL_daily_pass = 1 }
 		COLDWAR_COL_recalculate_budget = yes
+		set_temp_variable = { COLDWAR_COL_daily_pass = 0 }
 		add_to_variable = { additional_expenses_rate = COLDWAR_COL_total_weekly_cost }
 	}
 	if = {
@@ -4593,6 +4634,10 @@ if = { limit = { has_variable = COLDWAR_CHL_diplomacy_weekly } add_to_variable =
 	#Compensate for inflation on the final value
 	set_temp_variable = { additional_expenses_inflation = { value = 1 add = modifier@inflation_cost_multiplier_modifier } }
 	multiply_variable = { additional_expenses_rate = additional_expenses_inflation }
+# IMPERIA COLD WAR — Soviet 1970 fiscal [expense reader] BEGIN
+	# Current-GDP invoices already include current prices; do not inflate twice.
+	COLDWAR_SOV_fiscal_add_expense = yes
+# IMPERIA COLD WAR — Soviet 1970 fiscal [expense reader] END
 
 	# Event Horizon
 	if = {
@@ -4638,14 +4683,17 @@ if = { limit = { has_variable = COLDWAR_CHL_diplomacy_weekly } add_to_variable =
 	}
 	# IMPERIA COLD WAR — Cold War: North Korea 1970 national programme.
 	COLDWAR_NKO_foreign_add_weekly_expenses = yes
+	# IMPERIA COLD WAR — North Korea 1970 current-GDP weekly expense readers.
+	icw_nko3_add_weekly_expenses = yes
+	ICW_NKO3_government_add_expenses = yes
 	# IMPERIA CW — Cold War: Guest-worker integration programme expenses.
 	add_to_variable = { additional_expenses_rate = gw_project_weekly }
 	# IMPERIA CW — Cold War: Settlement grants are an actual weekly expense.
 	add_to_variable = { additional_expenses_rate = gw_dp_retention_weekly }
 # IMPERIA COLD WAR — USA signed weekly expenses BEGIN
-COLDWAR_USA_agreements_calculate_weekly_streams = yes
+# COLDWAR | hand patch 07.11.2026 (performance): COLDWAR_USA_agreements_calculate_weekly_streams already ran in calculate_additional_income_rate of the same ingame_update_setup pass (income runs first); the weekly variables are reused.
 	add_to_variable = { additional_expenses_rate = COLDWAR_USA_agreements_weekly_expense }
-	COLDWAR_USA_early_calculate_weekly_streams = yes
+	# COLDWAR | hand patch 07.11.2026 (performance): COLDWAR_USA_early_calculate_weekly_streams already ran in calculate_additional_income_rate of the same ingame_update_setup pass (income runs first); the weekly variables are reused.
 	add_to_variable = { additional_expenses_rate = COLDWAR_USA_early_weekly_expense }
 	COLDWAR_USA_dom_add_expense_rate = yes
 # IMPERIA COLD WAR — USA signed weekly expenses END
@@ -4654,6 +4702,10 @@ COLDWAR_USA_agreements_calculate_weekly_streams = yes
 # COLDWAR KOR WEEKLY EXPENSES BEGIN
 	COLDWAR_KOR_add_weekly_programme_cost = yes
 	COLDWAR_KOR_contract_expenses = yes
+	# IMPERIA COLD WAR — South Korea 1970 post-inflation GDP programme expense.
+	COLDWAR_KOR_industry_add_weekly_expenses = yes
+	# IMPERIA COLD WAR — COLDWAR_KOR_REVIEW_EXPENSE
+	KOR_review_expenses = yes
 # COLDWAR KOR WEEKLY EXPENSES END
 
 
@@ -4661,13 +4713,28 @@ COLDWAR_USA_agreements_calculate_weekly_streams = yes
 
 
 # IMPERIA COLD WAR — Cyprus weekly expenses BEGIN
-COLDWAR_CYP_R2_calculate_weekly_streams = yes
+# COLDWAR | hand patch 07.11.2026 (performance): COLDWAR_CYP_R2_calculate_weekly_streams already ran in calculate_additional_income_rate of the same ingame_update_setup pass (income runs first); the weekly variables are reused.
 add_to_variable = { additional_expenses_rate = COLDWAR_CYP_R2_weekly_expenses }
 # IMPERIA COLD WAR — Cyprus weekly expenses END
-	# IMPERIA COLD WAR — France GDP programme expenses BEGIN
-	# The native aggregator runs in each payer country, including every RP recipient.
-	COLDWAR_FRA2_add_weekly_expenses = yes
-	# IMPERIA COLD WAR — France GDP programme expenses END
+# IMPERIA COLD WAR — Compact Greece weekly expenses BEGIN
+COLDWAR_GRE_R3_calculate_expense = yes
+COLDWAR_GRE_R3AG_calculate_expense = yes
+# IMPERIA COLD WAR — Compact Greece weekly expenses END
+# IMPERIA COLD WAR — Turkey weekly programme expense BEGIN
+COLDWAR_TUR_1970_calculate_weekly_expense = yes
+# IMPERIA COLD WAR — Turkey weekly programme expense END
+# COLDWAR SVN 1970 - weekly programme expense BEGIN
+if = { limit = { original_tag = SVN } COLDWAR_SVN_calculate_weekly_expense = yes } # COLDWAR SVN 1970
+if = { limit = { has_country_flag = COLDWAR_SVN_offer_partner } COLDWAR_SVN_calculate_partner_weekly_expense = yes } # COLDWAR SVN 1970
+# COLDWAR SVN 1970 - weekly programme expense END
+# COLDWAR AFG 1970 - weekly expense BEGIN
+if = { limit = { original_tag = AFG } COLDWAR_AFG_calculate_weekly_expense = yes } # COLDWAR AFG 1970
+if = { limit = { OR = { has_country_flag = COLDWAR_AFG_offer_partner has_country_flag = COLDWAR_AFG_supporter } } COLDWAR_AFG_calculate_partner_weekly_expense = yes } # COLDWAR AFG 1970
+# COLDWAR AFG 1970 - weekly expense END
+# COLDWAR POL 1970 - weekly expense BEGIN
+if = { limit = { original_tag = POL } COLDWAR_POL_calculate_weekly_expense = yes } # COLDWAR POL 1970
+if = { limit = { NOT = { original_tag = POL } OR = { has_country_flag = COLDWAR_POL_offer_partner has_country_flag = COLDWAR_POL_decision_payer COLDWAR_POL_is_repay_partner = yes } } COLDWAR_POL_calculate_partner_weekly_expense = yes } # COLDWAR POL 1970
+# COLDWAR POL 1970 - weekly expense END
 # IMPERIA COLD WAR — Israel V2 money [expense streams] BEGIN
 if = { limit = { ISR2_is_scenario = yes } ISR2_refresh = yes }
 set_variable = { ISR2_money_weekly_expense = 0 }
@@ -4678,20 +4745,19 @@ if = { limit = { IMP_is_1970_scenario = yes has_variable = ISR2_bilateral_weekly
 add_to_variable = { additional_expenses_rate = ISR2_money_weekly_expense }
 # IMPERIA COLD WAR — Israel V2 money [expense streams] END
 # IMPERIA COLD WAR — Kissinger weekly expense BEGIN
-COLDWAR_USA_KS_calculate_streams = yes
+# COLDWAR | hand patch 07.11.2026 (performance): COLDWAR_USA_KS_calculate_streams already ran in calculate_additional_income_rate of the same ingame_update_setup pass (income runs first); the weekly variables are reused.
 add_to_variable = { additional_expenses_rate = COLDWAR_USA_KS_weekly_expense }
 # IMPERIA COLD WAR — Signed superpower programmes in weekly MD units
-icwt_programme_fiscal = yes
+# COLDWAR | hand patch 07.11.2026 (performance): icwt_programme_fiscal already ran in calculate_additional_income_rate of the same ingame_update_setup pass (income runs first); the weekly variables are reused.
 add_to_variable = { additional_expenses_rate = icwt_weekly_expense }
 # IMPERIA COLD WAR — Kissinger weekly expense END
 
-# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_EXPENSE_RATE BEGIN
-COLDWAR_ARG_add_weekly_expenses = yes
-# IMPERIA COLD WAR — ARG CALCULATE_ADDITIONAL_EXPENSE_RATE END
-
-	# IMPERIA COLD WAR — Brazil weekly programme stream BEGIN
-	COLDWAR_BRA_add_weekly_expenses = yes
-	# IMPERIA COLD WAR — Brazil weekly programme stream END
+	# IMPERIA COLD WAR — Czechoslovak weekly costs, after native inflation.
+	# COLDWAR CZE WEEKLY EXPENSE BEGIN
+	add_to_variable = { additional_expenses_rate = COLDWAR_CZE_1970_programmes_weekly_expense }
+	add_to_variable = { additional_expenses_rate = COLDWAR_CZE_1970_projects_weekly_expense }
+	add_to_variable = { additional_expenses_rate = COLDWAR_CZE_1970_bilateral_weekly_expense }
+	# COLDWAR CZE WEEKLY EXPENSE END
 }
 
 # Effect: calculate_int_investments_rate
@@ -4892,6 +4958,8 @@ update_economic_cycle_cost = {
 # Effect: update_state_variables
 # Purpose: Calculates national aggregate variables (consumer goods, military buildings, population state)
 update_state_variables = {
+	# IMPERIA COLD WAR — International Production: bound and released consumer goods factories (COLDWAR icwp v2, 08.11.2026)
+	if = { limit = { has_country_flag = icwp_participant } icwp_update_cg = yes } # COLDWAR
 	# Calculate Consumer Goods Factor
 	set_variable = {
 		actual_consumer_goods_percent_display = {
@@ -5303,6 +5371,11 @@ update_state_variables = {
 					}
 				}
 			}
+		}
+		# IMPERIA COLD WAR — Count the contracted Krško unit at its actual nameplate rating.
+		if = {
+			limit = { has_global_flag = COLDWAR_YUG_1970_krsko_commissioned }
+			COLDWAR_YUG_1970_adjust_krsko_generation = yes
 		}
 
 		productivity_growth_controlled_display_effect = yes

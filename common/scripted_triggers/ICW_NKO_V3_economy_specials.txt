@@ -1,0 +1,66 @@
+# IMPERIA COLD WAR — NKO V3 native economic special cases.
+
+ICW_NKO3_economy_active = {
+ hidden_trigger = { original_tag = NKO IMP_is_1970_scenario = yes has_country_flag = icw_nko3_ready }
+}
+ICW_NKO3_economy_reform_ready = {
+ ICW_NKO3_economy_active = yes
+ hidden_trigger = { has_country_flag = icw_econ_initialized }
+ is_subject = no
+ custom_trigger_tooltip = {
+  tooltip = ICW_NKO3_econ_reform_ready_tt
+  NOT = { has_country_flag = icw_econ_reform_active }
+  NOT = { has_country_flag = icw_econ_approval_pending }
+  check_variable = { icw_econ_cooldown_days < 1 }
+ }
+}
+ICW_NKO3_economy_can_strict = {
+ ICW_NKO3_economy_reform_ready = yes
+ custom_trigger_tooltip = { tooltip = ICW_NKO3_econ_strict_range_tt
+  check_variable = { icw_econ_position > -100 }
+  NOT = { check_variable = { icw_econ_position > -61 } }
+ }
+}
+ICW_NKO3_economy_can_reformed = {
+ ICW_NKO3_economy_reform_ready = yes
+ custom_trigger_tooltip = { tooltip = ICW_NKO3_econ_reformed_range_tt
+  NOT = { check_variable = { icw_econ_position < -55 } }
+  check_variable = { icw_econ_position < -16 }
+ }
+}
+ICW_NKO3_economy_can_mixed = {
+ ICW_NKO3_economy_reform_ready = yes
+ custom_trigger_tooltip = { tooltip = ICW_NKO3_econ_mixed_range_tt
+  NOT = { check_variable = { icw_econ_position < -29 } }
+  check_variable = { icw_econ_position < 14 }
+ }
+}
+ICW_NKO3_economy_zone_exists = {
+ custom_trigger_tooltip = { tooltip = ICW_NKO3_econ_zone_present_tt has_country_flag = icwp_export_zone }
+}
+ICW_NKO3_economy_can_zone = {
+ ICW_NKO3_economy_active = yes
+ custom_trigger_tooltip = { tooltip = ICW_NKO3_econ_factory_tt check_variable = { industrial_complex_total > 0 } }
+ custom_trigger_tooltip = { tooltip = ICW_NKO3_econ_zone_absent_tt NOT = { has_country_flag = icwp_export_zone } }
+}
+ICW_NKO3_economy_live_deliveries = {
+ ICW_NKO3_economy_active = yes
+ custom_trigger_tooltip = { tooltip = ICW_NKO3_econ_deliveries_tt
+  has_country_flag = icwp_export_zone
+  has_country_flag = icwp_participant
+  check_variable = { icwp_in_d > 0 }
+ }
+}
+ICW_NKO3_economy_plan_is_open = {
+ ICW_NKO3_economy_active = yes
+ NOT = { has_country_flag = icw_nko3_plan_resolved }
+ has_dynamic_modifier = { modifier = COLDWAR_NKO_plan_overstretch }
+}
+
+# IMPERIA COLD WAR — Actual economic-order and operational programme predicates.
+ICW_NKO3_economy_is_command = { ICW_NKO3_economy_active = yes has_country_flag = icw_econ_initialized check_variable = { icw_econ_position < -70 } }
+ICW_NKO3_economy_is_state_led = { ICW_NKO3_economy_active = yes has_country_flag = icw_econ_initialized NOT = { check_variable = { icw_econ_position < -40 } } check_variable = { icw_econ_position < -15 } }
+ICW_NKO3_economy_is_mixed = { ICW_NKO3_economy_active = yes has_country_flag = icw_econ_initialized NOT = { check_variable = { icw_econ_position < -15 } } check_variable = { icw_econ_position < 15 } }
+ICW_NKO3_economy_fossil_operating = { ICW_NKO3_economy_active = yes check_variable = { number_of_fossil_pps > 0 } check_variable = { fuel_k > 0 } NOT = { has_country_flag = disable_fossil_fuel_power_plant_flag } }
+ICW_NKO3_economy_hydro_exists = { ICW_NKO3_economy_active = yes check_variable = { hydroelectric_energy_generation_base > 0 } }
+ICW_NKO3_economy_balance_nonnegative = { ICW_NKO3_economy_active = yes NOT = { check_variable = { energy_balance < 0 } } }

@@ -1,0 +1,27 @@
+# IMPERIA COLD WAR — International Production decisions
+# Update 08.11.2026: v2 rebuild. Export processing zones raise investment access for foreign orders to 65 %.
+icwp_category = {
+	icwp_export_processing_zone = {
+		icon = GFX_decision_attract_foreign_investor
+		visible = { NOT = { has_country_flag = icwp_export_zone } }
+		available = {
+			icwp_player_ready = yes
+			custom_trigger_tooltip = { tooltip = icwp_req_zone_funds check_variable = { var = treasury value = 3 compare = greater_than_or_equals } }
+			custom_trigger_tooltip = { tooltip = icwp_req_core_industry check_variable = { industrial_complex_total > 0 } }
+		}
+		cost = 0
+		days_remove = 180
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision icwp_export_processing_zone"
+			set_temp_variable = { treasury_change = -3 }
+			modify_treasury_effect = yes
+			custom_effect_tooltip = icwp_zone_effect_tt
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision icwp_export_processing_zone finished"
+			set_country_flag = icwp_export_zone
+			if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+		}
+		ai_will_do = { base = 0 }
+	}
+}

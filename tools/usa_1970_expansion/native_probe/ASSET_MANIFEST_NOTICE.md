@@ -1,3 +1,0 @@
-IMPERIA COLD WAR: Compressed native-test asset manifest.
-
-asset_manifest.json.gz is a lossless gzip copy of the generated asset manifest for 79,898 local source assets. Uncompressed SHA256: 3090f0c52caf993fc106d4e1fb4f25b2ca8de602896d73e71e9d6e6164bcff92. It retains hashes and paths, not the textures or sounds. Existing HOI4, Millennium Dawn and project assets retain their original authors and rights. Individual authors and separate redistribution permissions are unknown where not established by existing notices. Compression changes no uncompressed data; no asset ownership is claimed. The temporary 7.48 GB provider is pruned separately.

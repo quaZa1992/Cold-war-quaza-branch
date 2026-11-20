@@ -1,0 +1,69 @@
+# IMPERIA COLD WAR — International Production (player-only outsourcing network)
+# Update 08.11.2026: v2 rebuild. Player-only contracts, open end, country location profile, no world loops.
+
+# Country takes part in the network. Set once a human player opened or used it; never cleared,
+# so contracts keep running if a player crashes and the country is AI for a while.
+icwp_is_participant = {
+	has_country_flag = icwp_participant
+}
+
+# Can use the window and send or answer offers right now.
+icwp_player_ready = {
+	is_ai = no
+	IMP_is_1970_scenario = yes
+	NOT = { has_country_flag = hide_money }
+}
+
+# Pair guards run in client scope with the host in PREV.
+icwp_trade_clear = {
+	exists = yes
+	PREV = { exists = yes }
+	NOT = { has_war_with = PREV }
+	NOT = { is_embargoing = PREV }
+	PREV = { NOT = { is_embargoing = PREV } }
+	NOT = { is_in_array = { array = imp_eco_sanc_on_us value = PREV } }
+	NOT = { is_in_array = { array = imp_eco_sanc_by_us value = PREV } }
+	PREV = {
+		NOT = { is_in_array = { array = imp_eco_sanc_on_us value = PREV } }
+		NOT = { is_in_array = { array = imp_eco_sanc_by_us value = PREV } }
+	}
+}
+
+icwp_finance_clear = {
+	NOT = { is_in_array = { array = imp_fin_sanc_on_us value = PREV } }
+	NOT = { is_in_array = { array = imp_fin_sanc_by_us value = PREV } }
+	PREV = {
+		NOT = { is_in_array = { array = imp_fin_sanc_on_us value = PREV } }
+		NOT = { is_in_array = { array = imp_fin_sanc_by_us value = PREV } }
+	}
+}
+
+# Host is open enough for foreign orders (35 % investment access, or an export processing zone).
+icwp_host_open = {
+	NOT = { check_variable = { icwp_access < 0.35 } }
+}
+
+# Offer check: client scope, host in PREV. Same rules as the market scan and the acceptance.
+icwp_can_offer_to = {
+	icwp_player_ready = yes
+	PREV = { icwp_player_ready = yes }
+	NOT = { tag = PREV }
+	icwp_trade_clear = yes
+	icwp_finance_clear = yes
+	NOT = { has_country_flag = icwp_offer_out@PREV }
+	PREV = { NOT = { has_country_flag = icwp_offer_open } }
+	OR = {
+		is_in_array = { array = icwp_hosts value = PREV }
+		AND = {
+			check_variable = { icwp_hosts^num < 6 }
+			PREV = { check_variable = { icwp_clients^num < 8 } icwp_host_open = yes }
+		}
+	}
+	OR = {
+		NOT = { is_in_array = { array = icwp_hosts value = PREV } }
+		AND = {
+			check_variable = { icwp_s@PREV = 1 }
+			check_variable = { icwp_u@PREV < 10 }
+		}
+	}
+}

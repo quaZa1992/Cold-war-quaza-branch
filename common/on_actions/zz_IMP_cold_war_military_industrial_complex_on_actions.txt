@@ -36,13 +36,16 @@ clr_global_flag = ICW_startup_dispatch_military_industrial
 				# on_monthly pulses in country scope; this guard makes the global count run once.
 				if = {
 					limit = {
-						NOT = { has_global_flag = IMP_military_industrial_complex_monthly_recalculated }
+						# COLDWAR | hand patch 08.11.2026 (performance): day stamp gate instead of the timed global flag; the flag is still set for other readers.
+						NOT = { check_variable = { global.IMP_military_industrial_complex_monthly_recalculated_next_day > global.num_days } }
 					}
 					set_global_flag = {
 						flag = IMP_military_industrial_complex_monthly_recalculated
 						days = 27
 						value = 1
 					}
+					set_variable = { global.IMP_military_industrial_complex_monthly_recalculated_next_day = global.num_days }
+					add_to_variable = { global.IMP_military_industrial_complex_monthly_recalculated_next_day = 27 }
 					IMP_cold_war_recalculate_military_industrial_complex = yes
 				}
 

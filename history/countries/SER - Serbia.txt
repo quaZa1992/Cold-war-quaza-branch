@@ -1,9 +1,12 @@
+# IMPERIA COLD WAR — Restore dated successor officer recruitment.
+# IMPERIA COLD WAR — Yugoslav federal focus tree and succession integration.
 # IMPERIA COLD WAR — January 1970 researched national technology baseline.
 capital = 131
 
 # IMPERIA CW — Cold War: 1970 scenario country history.
 # Authored Cold War 1970 snapshot; native later history retained.
 1970.1.1 = {
+	if = { limit = { IMP_is_1970_scenario = yes NOT = { has_idea = wto_member } } add_ideas = wto_member } # COLDWAR 1970 GATT contracting party
 	# IMPERIA COLD WAR — January 1970 researched national technology baseline. BEGIN
 	if = {
 		limit = { IMP_is_1970_scenario = yes }
@@ -810,8 +813,9 @@ capital = 131
 	set_variable = { ruling_party = 4 }
 	create_country_leader = {
 		name = "Josip Broz Tito"
-		picture = "gfx/Leaders/SER/SER_Coldwar_Josip_Broz_Tito.dds"
-		expire = "1980.5.4"
+		picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_josip_broz_tito.dds"
+		# IMPERIA COLD WAR — Leave the 4 May transition to the Yugoslav succession effect.
+		expire = "1980.5.6"
 		ideology = communist_state
 	}
 	# COLDWAR HISTORICAL1970 NATIVE IDENTITY END
@@ -819,7 +823,13 @@ capital = 131
 	if = {
 		limit = { date < 1985.1.1 }
 		mdcw_apply_1970_infantry_research = yes
-		load_focus_tree = mdcw_1970_generic_focus
+		# IMPERIA COLD WAR — Use the federal tree for the January 1970 campaign.
+		if = {
+			limit = { IMP_is_1970_scenario = yes }
+			load_focus_tree = COLDWAR_YUG_1970_focus
+			COLDWAR_YUG_1970_init = yes
+		}
+		else = { load_focus_tree = mdcw_1970_generic_focus }
 		set_variable = { gdp_per_capita = 1.008 }
 		set_variable = { overall_productivity = 351.048 }
 		if = {

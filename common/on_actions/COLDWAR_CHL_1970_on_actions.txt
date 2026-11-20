@@ -8,18 +8,23 @@ on_actions = {
 			}
 		}
 	}
-	on_daily = {
+	# COLDWAR | hand patch 07.11.2026 (performance): runs only for the tag it is meant for (on_daily_TAG instead of a tag check in every country).
+	on_daily_CHL = {
 		effect = {
 			if = {
 				limit = { COLDWAR_CHL_is_scenario = yes }
 				COLDWAR_CHL_daily = yes
 			}
+		}
+	}
+	on_daily = {
+		effect = {
 			if = {
 				limit = {
 					IMP_is_1970_scenario = yes
-					NOT = { has_global_flag = COLDWAR_CHL_world_diplomacy_checked }
+					NOT = { check_variable = { global.COLDWAR_CHL_world_diplomacy_day = global.num_days } } # COLDWAR | hand patch 07.11.2026 (performance): a day stamp instead of a 1-day flag, the flag did not stop the other ~200 countries (benchmark)
 				}
-				set_global_flag = { flag = COLDWAR_CHL_world_diplomacy_checked days = 1 }
+				set_variable = { global.COLDWAR_CHL_world_diplomacy_day = global.num_days }
 				COLDWAR_CHL_diplomacy_world_daily = yes
 			}
 		}

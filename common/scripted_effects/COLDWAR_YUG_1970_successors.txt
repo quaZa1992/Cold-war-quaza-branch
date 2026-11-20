@@ -1,0 +1,523 @@
+# IMPERIA COLD WAR — Yugoslav successor governments and territorial defence.
+COLDWAR_YUG_1970_successor_initialize = {
+	if = {
+		limit = { IMP_is_1970_scenario = yes has_global_flag = COLDWAR_YUG_1970_system_started_global exists = yes }
+		if = { limit = { tag = SLV } COLDWAR_YUG_1970_successor_SLV = yes }
+		else_if = { limit = { tag = CRO } COLDWAR_YUG_1970_successor_CRO = yes }
+		else_if = { limit = { tag = BOS } COLDWAR_YUG_1970_successor_BOS = yes }
+		else_if = { limit = { tag = FYR } COLDWAR_YUG_1970_successor_FYR = yes }
+		else_if = { limit = { tag = MNT } COLDWAR_YUG_1970_successor_MNT = yes }
+		else_if = { limit = { tag = KOS } COLDWAR_YUG_1970_successor_KOS = yes }
+		else_if = { limit = { tag = VOJ } COLDWAR_YUG_1970_successor_VOJ = yes }
+		else_if = { limit = { tag = RSK } COLDWAR_YUG_1970_successor_RSK = yes }
+		else_if = { limit = { tag = HZG } COLDWAR_YUG_1970_successor_HZG = yes }
+	}
+}
+
+# Historical references: https://www.slovenija2001.gov.si/10years/path/war/
+COLDWAR_YUG_1970_successor_SLV = {
+	if = {
+		limit = {
+			tag = SLV
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 124 controls_state = 124 has_full_control_of_state = 124 }
+				AND = { owns_state = 125 controls_state = 125 has_full_control_of_state = 125 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 124 controls_state = 124 has_full_control_of_state = 124 } set_capital = { state = 124 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 125 controls_state = 125 has_full_control_of_state = 125 } set_capital = { state = 125 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1990.4.22 } date < 2002.12.23 }
+			set_politics = { ruling_party = neutrality elections_allowed = yes }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Milan Kučan" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Milan Kučan" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_milan_kucan.dds" ideology = neutral_Social }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = neutrality elections_allowed = no }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Slovenian Republican Presidency" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Slovenian Republican Presidency" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_ljubljana_assembly.dds" ideology = neutral_Social }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		if = { limit = { NOT = { date < 1991.6.25 } date < 1993.1.1 } recruit_character = COLDWAR_YUG_1970_officer_janez_slapar }
+		else = { recruit_character = COLDWAR_YUG_1970_officer_ljubljana_assembly }
+		division_template = {
+			name = "Slovenian Territorial Defence Brigade"
+			regiments = {
+				L_Inf_Bat = { x = 0 y = 0 }
+				L_Inf_Bat = { x = 0 y = 1 }
+				L_Inf_Bat = { x = 0 y = 2 }
+				L_Inf_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 124 controls_state = 124 has_full_control_of_state = 124 }
+			124 = { create_unit = { division = "name = \"1st Ljubljana Territorial Defence Brigade\" division_template = \"Slovenian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = SLV prioritize_location = 9627 } create_unit = { division = "name = \"2nd Ljubljana Territorial Defence Brigade\" division_template = \"Slovenian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = SLV prioritize_location = 9627 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"1st Ljubljana Territorial Defence Brigade\" division_template = \"Slovenian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = SLV } create_unit = { division = "name = \"2nd Ljubljana Territorial Defence Brigade\" division_template = \"Slovenian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = SLV } } }
+		if = { limit = { owns_state = 125 controls_state = 125 has_full_control_of_state = 125 }
+			125 = { create_unit = { division = "name = \"Maribor Territorial Defence Brigade\" division_template = \"Slovenian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = SLV prioritize_location = 9596 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Maribor Territorial Defence Brigade\" division_template = \"Slovenian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = SLV } } }
+	}
+}
+
+# Historical references: https://www.predsjednik.hr/en/bivsi-predsjednici/franjo-tudman/ | https://mvep.gov.hr/in-memoriam-anton-tus-retired-staff-general-the-first-chief-of-the-general-staff-of-the-croatian-army-and-the-first-head-of-the-mission-of-the-republic-of-croatia-to-nato/259767
+COLDWAR_YUG_1970_successor_CRO = {
+	if = {
+		limit = {
+			tag = CRO
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 126 controls_state = 126 has_full_control_of_state = 126 }
+				AND = { owns_state = 127 controls_state = 127 has_full_control_of_state = 127 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 126 controls_state = 126 has_full_control_of_state = 126 } set_capital = { state = 126 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 127 controls_state = 127 has_full_control_of_state = 127 } set_capital = { state = 127 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1990.5.30 } date < 1999.12.11 }
+			set_politics = { ruling_party = democratic elections_allowed = yes }
+			set_variable = { ruling_party = 1 }
+			if = { limit = { NOT = { has_country_leader = { name = "Franjo Tuđman" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Franjo Tuđman" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_franjo_tudman.dds" ideology = conservatism }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = neutrality elections_allowed = no }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Croatian Republican Presidency" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Croatian Republican Presidency" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_zagreb_assembly.dds" ideology = neutral_Social }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		if = { limit = { NOT = { date < 1991.9.21 } date < 1992.11.23 } recruit_character = COLDWAR_YUG_1970_officer_anton_tus }
+		else = { recruit_character = COLDWAR_YUG_1970_officer_zagreb_assembly }
+		division_template = {
+			name = "Croatian National Guard Brigade"
+			regiments = {
+				L_Inf_Bat = { x = 0 y = 0 }
+				L_Inf_Bat = { x = 0 y = 1 }
+				L_Inf_Bat = { x = 0 y = 2 }
+				L_Inf_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 126 controls_state = 126 has_full_control_of_state = 126 }
+			126 = { create_unit = { division = "name = \"1st Zagreb National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO prioritize_location = 11581 } create_unit = { division = "name = \"2nd Zagreb National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO prioritize_location = 11581 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"1st Zagreb National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO } create_unit = { division = "name = \"2nd Zagreb National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO } } }
+		if = { limit = { owns_state = 126 controls_state = 126 has_full_control_of_state = 126 }
+			126 = { create_unit = { division = "name = \"Slavonia National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO prioritize_location = 9595 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Slavonia National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO } } }
+		if = { limit = { owns_state = 127 controls_state = 127 has_full_control_of_state = 127 }
+			127 = { create_unit = { division = "name = \"Dalmatian National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO prioritize_location = 3924 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Dalmatian National Guard Brigade\" division_template = \"Croatian National Guard Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = CRO } } }
+	}
+}
+
+# Historical references: https://www.icty.org/en/press/judgement-case-prosecutor-v-sefer-halilovic
+COLDWAR_YUG_1970_successor_BOS = {
+	if = {
+		limit = {
+			tag = BOS
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 128 controls_state = 128 has_full_control_of_state = 128 }
+				AND = { owns_state = 1051 controls_state = 1051 has_full_control_of_state = 1051 }
+				AND = { owns_state = 1052 controls_state = 1052 has_full_control_of_state = 1052 }
+				AND = { owns_state = 129 controls_state = 129 has_full_control_of_state = 129 }
+				AND = { owns_state = 1053 controls_state = 1053 has_full_control_of_state = 1053 }
+				AND = { owns_state = 1054 controls_state = 1054 has_full_control_of_state = 1054 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 128 controls_state = 128 has_full_control_of_state = 128 } set_capital = { state = 128 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 1051 controls_state = 1051 has_full_control_of_state = 1051 } set_capital = { state = 1051 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 1052 controls_state = 1052 has_full_control_of_state = 1052 } set_capital = { state = 1052 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 129 controls_state = 129 has_full_control_of_state = 129 } set_capital = { state = 129 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 1053 controls_state = 1053 has_full_control_of_state = 1053 } set_capital = { state = 1053 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 1054 controls_state = 1054 has_full_control_of_state = 1054 } set_capital = { state = 1054 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1990.12.20 } date < 1996.10.6 }
+			set_politics = { ruling_party = neutrality elections_allowed = yes }
+			set_variable = { ruling_party = 14 }
+			if = { limit = { NOT = { has_country_leader = { name = "Alija Izetbegović" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Alija Izetbegović" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_alija_izetbegovic.dds" ideology = Neutral_conservatism }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = neutrality elections_allowed = no }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Bosnian Republican Presidency" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Bosnian Republican Presidency" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_sarajevo_presidency.dds" ideology = neutral_Social }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		if = { limit = { NOT = { date < 1992.5.25 } date < 1993.6.9 } recruit_character = COLDWAR_YUG_1970_officer_sefer_halilovic }
+		else = { recruit_character = COLDWAR_YUG_1970_officer_sarajevo_presidency }
+		division_template = {
+			name = "Bosnian Territorial Defence Brigade"
+			regiments = {
+				L_Inf_Bat = { x = 0 y = 0 }
+				L_Inf_Bat = { x = 0 y = 1 }
+				L_Inf_Bat = { x = 0 y = 2 }
+				L_Inf_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 128 controls_state = 128 has_full_control_of_state = 128 }
+			128 = { create_unit = { division = "name = \"1st Sarajevo Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS prioritize_location = 11899 } create_unit = { division = "name = \"2nd Sarajevo Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS prioritize_location = 11899 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"1st Sarajevo Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS } create_unit = { division = "name = \"2nd Sarajevo Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS } } }
+		if = { limit = { owns_state = 1051 controls_state = 1051 has_full_control_of_state = 1051 }
+			1051 = { create_unit = { division = "name = \"Una-Sana Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS prioritize_location = 6614 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Una-Sana Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS } } }
+		if = { limit = { owns_state = 1052 controls_state = 1052 has_full_control_of_state = 1052 }
+			1052 = { create_unit = { division = "name = \"Neretva Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS prioritize_location = 9894 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Neretva Territorial Defence Brigade\" division_template = \"Bosnian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = BOS } } }
+	}
+}
+
+# Historical references: https://arm.mil.mk/history/?lang=en | https://peacemaker.un.org/sites/default/files/document/files/2024/05/arrangements20for20a20general20settlement.pdf
+COLDWAR_YUG_1970_successor_FYR = {
+	if = {
+		limit = {
+			tag = FYR
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 136 controls_state = 136 has_full_control_of_state = 136 }
+				AND = { owns_state = 135 controls_state = 135 has_full_control_of_state = 135 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 136 controls_state = 136 has_full_control_of_state = 136 } set_capital = { state = 136 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 135 controls_state = 135 has_full_control_of_state = 135 } set_capital = { state = 135 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1991.1.27 } date < 1999.11.20 }
+			set_politics = { ruling_party = neutrality elections_allowed = yes }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Kiro Gligorov" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Kiro Gligorov" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_kiro_gligorov.dds" ideology = neutral_Social }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = neutrality elections_allowed = no }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Macedonian Republican Presidency" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Macedonian Republican Presidency" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_skopje_assembly.dds" ideology = neutral_Social }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		if = { limit = { NOT = { date < 1992.3.16 } date < 1993.3.4 } recruit_character = COLDWAR_YUG_1970_officer_mitre_arsovski }
+		else = { recruit_character = COLDWAR_YUG_1970_officer_skopje_assembly }
+		division_template = {
+			name = "Macedonian Territorial Defence Brigade"
+			regiments = {
+				L_Inf_Bat = { x = 0 y = 0 }
+				L_Inf_Bat = { x = 0 y = 1 }
+				L_Inf_Bat = { x = 0 y = 2 }
+				L_Inf_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 136 controls_state = 136 has_full_control_of_state = 136 }
+			136 = { create_unit = { division = "name = \"Skopje Territorial Defence Brigade\" division_template = \"Macedonian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = FYR prioritize_location = 11857 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Skopje Territorial Defence Brigade\" division_template = \"Macedonian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = FYR } } }
+		if = { limit = { owns_state = 135 controls_state = 135 has_full_control_of_state = 135 }
+			135 = { create_unit = { division = "name = \"Western Macedonian Territorial Defence Brigade\" division_template = \"Macedonian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = FYR prioritize_location = 3882 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Western Macedonian Territorial Defence Brigade\" division_template = \"Macedonian Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = FYR } } }
+	}
+}
+
+# Historical references: https://peacemaker.un.org/sites/default/files/document/files/2024/05/arrangements20for20a20general20settlement.pdf
+COLDWAR_YUG_1970_successor_MNT = {
+	if = {
+		limit = {
+			tag = MNT
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 134 controls_state = 134 has_full_control_of_state = 134 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 134 controls_state = 134 has_full_control_of_state = 134 } set_capital = { state = 134 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1991.10.15 } date < 1998.1.16 }
+			set_politics = { ruling_party = neutrality elections_allowed = yes }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Momir Bulatović" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Momir Bulatović" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_momir_bulatovic.dds" ideology = neutral_Social }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = neutrality elections_allowed = no }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Montenegrin Republican Presidency" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Montenegrin Republican Presidency" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_podgorica_assembly.dds" ideology = neutral_Social }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		recruit_character = COLDWAR_YUG_1970_officer_podgorica_assembly
+		division_template = {
+			name = "Montenegrin Territorial Defence Brigade"
+			regiments = {
+				L_Inf_Bat = { x = 0 y = 0 }
+				L_Inf_Bat = { x = 0 y = 1 }
+				L_Inf_Bat = { x = 0 y = 2 }
+				L_Inf_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 134 controls_state = 134 has_full_control_of_state = 134 }
+			134 = { create_unit = { division = "name = \"Titograd Territorial Defence Brigade\" division_template = \"Montenegrin Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = MNT prioritize_location = 9809 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Titograd Territorial Defence Brigade\" division_template = \"Montenegrin Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = MNT } } }
+		if = { limit = { owns_state = 134 controls_state = 134 has_full_control_of_state = 134 }
+			134 = { create_unit = { division = "name = \"Northern Montenegro Territorial Defence Brigade\" division_template = \"Montenegrin Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = MNT prioritize_location = 9821 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Northern Montenegro Territorial Defence Brigade\" division_template = \"Montenegrin Territorial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = MNT } } }
+	}
+}
+
+# Historical references: https://president-ksgov.net/en/former-presidents-of-kosovo/dr-ibrahim-rugova/ | https://www.icty.org/x/cases/limaj/tjug/en/lim-tj051130-e.pdf
+COLDWAR_YUG_1970_successor_KOS = {
+	if = {
+		limit = {
+			tag = KOS
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 133 controls_state = 133 has_full_control_of_state = 133 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 133 controls_state = 133 has_full_control_of_state = 133 } set_capital = { state = 133 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1992.5.24 } date < 2006.1.21 }
+			set_politics = { ruling_party = democratic elections_allowed = yes }
+			set_variable = { ruling_party = 1 }
+			if = { limit = { NOT = { has_country_leader = { name = "Ibrahim Rugova" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Ibrahim Rugova" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_ibrahim_rugova.dds" ideology = conservatism }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = neutrality elections_allowed = no }
+			set_variable = { ruling_party = 18 }
+			if = { limit = { NOT = { has_country_leader = { name = "Kosovo Provincial Council" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Kosovo Provincial Council" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_pristina_assembly.dds" ideology = neutral_Social }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		if = { limit = { NOT = { date < 1997.11.1 } date < 1998.3.6 } recruit_character = COLDWAR_YUG_1970_officer_adem_jashari }
+		else = { recruit_character = COLDWAR_YUG_1970_officer_pristina_assembly }
+		division_template = {
+			name = "Kosovo Local Defence Brigade"
+			regiments = {
+				Militia_Bat = { x = 0 y = 0 }
+				Militia_Bat = { x = 0 y = 1 }
+				Militia_Bat = { x = 0 y = 2 }
+				Militia_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 133 controls_state = 133 has_full_control_of_state = 133 }
+			133 = { create_unit = { division = "name = \"Pristina Local Defence Brigade\" division_template = \"Kosovo Local Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = KOS prioritize_location = 9890 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Pristina Local Defence Brigade\" division_template = \"Kosovo Local Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = KOS } } }
+		if = { limit = { owns_state = 133 controls_state = 133 has_full_control_of_state = 133 }
+			133 = { create_unit = { division = "name = \"Western Kosovo Local Defence Brigade\" division_template = \"Kosovo Local Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = KOS prioritize_location = 9849 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Western Kosovo Local Defence Brigade\" division_template = \"Kosovo Local Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = KOS } } }
+	}
+}
+
+# Historical references: https://www.arhivyu.rs/en/leksikon-jugoslavije/konstitutivni_akti_jugoslavije
+COLDWAR_YUG_1970_successor_VOJ = {
+	if = {
+		limit = {
+			tag = VOJ
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 130 controls_state = 130 has_full_control_of_state = 130 }
+				AND = { owns_state = 998 controls_state = 998 has_full_control_of_state = 998 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 130 controls_state = 130 has_full_control_of_state = 130 } set_capital = { state = 130 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 998 controls_state = 998 has_full_control_of_state = 998 } set_capital = { state = 998 remember_old_capital = no } }
+		set_politics = { ruling_party = neutrality elections_allowed = no }
+		set_variable = { ruling_party = 18 }
+		if = { limit = { NOT = { has_country_leader = { name = "Vojvodina Provincial Assembly" ruling_only = yes } } }
+			retire_country_leader = yes
+			create_country_leader = { name = "Vojvodina Provincial Assembly" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_novi_sad_assembly.dds" ideology = neutral_Social }
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		recruit_character = COLDWAR_YUG_1970_officer_novi_sad_assembly
+		division_template = {
+			name = "Vojvodina Provincial Defence Brigade"
+			regiments = {
+				Militia_Bat = { x = 0 y = 0 }
+				Militia_Bat = { x = 0 y = 1 }
+				Militia_Bat = { x = 0 y = 2 }
+				Militia_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 130 controls_state = 130 has_full_control_of_state = 130 }
+			130 = { create_unit = { division = "name = \"Novi Sad Provincial Defence Brigade\" division_template = \"Vojvodina Provincial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = VOJ prioritize_location = 3617 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Novi Sad Provincial Defence Brigade\" division_template = \"Vojvodina Provincial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = VOJ } } }
+		if = { limit = { owns_state = 998 controls_state = 998 has_full_control_of_state = 998 }
+			998 = { create_unit = { division = "name = \"Banat Provincial Defence Brigade\" division_template = \"Vojvodina Provincial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = VOJ prioritize_location = 11787 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Banat Provincial Defence Brigade\" division_template = \"Vojvodina Provincial Defence Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = VOJ } } }
+	}
+}
+
+# Historical references: https://www.icty.org/x/cases/karadzic-mladic/ind/en/kar-ii951116e.htm | https://www.icty.org/x/cases/stanisic_simatovic/tjug/en/130530_judgement_p1.pdf
+COLDWAR_YUG_1970_successor_RSK = {
+	if = {
+		limit = {
+			tag = RSK
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 1054 controls_state = 1054 has_full_control_of_state = 1054 }
+				AND = { owns_state = 129 controls_state = 129 has_full_control_of_state = 129 }
+				AND = { owns_state = 1053 controls_state = 1053 has_full_control_of_state = 1053 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 1054 controls_state = 1054 has_full_control_of_state = 1054 } set_capital = { state = 1054 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 129 controls_state = 129 has_full_control_of_state = 129 } set_capital = { state = 129 remember_old_capital = no } }
+		else_if = { limit = { owns_state = 1053 controls_state = 1053 has_full_control_of_state = 1053 } set_capital = { state = 1053 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1992.5.13 } date < 1996.7.20 }
+			set_politics = { ruling_party = nationalist elections_allowed = no }
+			set_variable = { ruling_party = 20 }
+			if = { limit = { NOT = { has_country_leader = { name = "Radovan Karadžić" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Radovan Karadžić" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_radovan_karadzic.dds" ideology = Nat_Populism }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = nationalist elections_allowed = no }
+			set_variable = { ruling_party = 20 }
+			if = { limit = { NOT = { has_country_leader = { name = "Bosnian Serb Assembly" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Bosnian Serb Assembly" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_banja_luka_council.dds" ideology = Nat_Populism }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		if = { limit = { NOT = { date < 1992.5.19 } date < 1996.1.1 } recruit_character = COLDWAR_YUG_1970_officer_momir_talic }
+		else = { recruit_character = COLDWAR_YUG_1970_officer_banja_luka_council }
+		division_template = {
+			name = "Bosnian Serb Territorial Brigade"
+			regiments = {
+				L_Inf_Bat = { x = 0 y = 0 }
+				L_Inf_Bat = { x = 0 y = 1 }
+				L_Inf_Bat = { x = 0 y = 2 }
+				L_Inf_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 1054 controls_state = 1054 has_full_control_of_state = 1054 }
+			1054 = { create_unit = { division = "name = \"1st Banja Luka Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK prioritize_location = 9588 } create_unit = { division = "name = \"2nd Banja Luka Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK prioritize_location = 9588 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"1st Banja Luka Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK } create_unit = { division = "name = \"2nd Banja Luka Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK } } }
+		if = { limit = { owns_state = 129 controls_state = 129 has_full_control_of_state = 129 }
+			129 = { create_unit = { division = "name = \"Eastern Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK prioritize_location = 11741 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Eastern Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK } } }
+		if = { limit = { owns_state = 1053 controls_state = 1053 has_full_control_of_state = 1053 }
+			1053 = { create_unit = { division = "name = \"Posavina Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK prioritize_location = 13934 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Posavina Territorial Brigade\" division_template = \"Bosnian Serb Territorial Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = RSK } } }
+	}
+}
+
+# Historical references: https://www.icty.org/x/cases/prlic/acjug/en/171129-judgement-vol-1-part-2.pdf | https://www.icty.org/x/cases/naletilic_martinovic/tjug/en/nal-tj030331-e.PDF
+COLDWAR_YUG_1970_successor_HZG = {
+	if = {
+		limit = {
+			tag = HZG
+			NOT = { has_country_flag = COLDWAR_YUG_1970_successor_initialized }
+			OR = {
+				AND = { owns_state = 1052 controls_state = 1052 has_full_control_of_state = 1052 }
+			}
+		}
+		set_country_flag = COLDWAR_YUG_1970_successor_initialized
+		if = { limit = { owns_state = 1052 controls_state = 1052 has_full_control_of_state = 1052 } set_capital = { state = 1052 remember_old_capital = no } }
+		if = { limit = { NOT = { date < 1992.4.8 } date < 1994.2.1 }
+			set_politics = { ruling_party = nationalist elections_allowed = no }
+			set_variable = { ruling_party = 20 }
+			if = { limit = { NOT = { has_country_leader = { name = "Mate Boban" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Mate Boban" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_mate_boban.dds" ideology = Nat_Populism }
+			}
+		}
+		else = {
+			set_politics = { ruling_party = nationalist elections_allowed = no }
+			set_variable = { ruling_party = 20 }
+			if = { limit = { NOT = { has_country_leader = { name = "Bosnian Croat Council" ruling_only = yes } } }
+				retire_country_leader = yes
+				create_country_leader = { name = "Bosnian Croat Council" picture = "gfx/leaders/COLDWAR_YUG/COLDWAR_YUG_mostar_council.dds" ideology = Nat_Populism }
+			}
+		}
+		clear_array = gov_coalition_array
+		update_government_coalition_strength = yes
+		set_correct_ideology_trait = yes
+		IP_idea_configuration = yes
+		if = { limit = { NOT = { date < 1992.4.14 } date < 1993.7.25 } recruit_character = COLDWAR_YUG_1970_officer_milivoj_petkovic }
+		else = { recruit_character = COLDWAR_YUG_1970_officer_mostar_council }
+		division_template = {
+			name = "Croatian Defence Council Brigade"
+			regiments = {
+				L_Inf_Bat = { x = 0 y = 0 }
+				L_Inf_Bat = { x = 0 y = 1 }
+				L_Inf_Bat = { x = 0 y = 2 }
+				L_Inf_Bat = { x = 0 y = 3 }
+			}
+		}
+		if = { limit = { owns_state = 1052 controls_state = 1052 has_full_control_of_state = 1052 }
+			1052 = { create_unit = { division = "name = \"Mostar Defence Brigade\" division_template = \"Croatian Defence Council Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = HZG prioritize_location = 9894 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Mostar Defence Brigade\" division_template = \"Croatian Defence Council Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = HZG } } }
+		if = { limit = { owns_state = 1052 controls_state = 1052 has_full_control_of_state = 1052 }
+			1052 = { create_unit = { division = "name = \"Southwestern Herzegovina Defence Brigade\" division_template = \"Croatian Defence Council Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = HZG prioritize_location = 3985 } }
+		}
+		else = { capital_scope = { create_unit = { division = "name = \"Southwestern Herzegovina Defence Brigade\" division_template = \"Croatian Defence Council Brigade\" start_experience_factor = 0.15 start_equipment_factor = 1.0 start_manpower_factor = 1.0" owner = HZG } } }
+	}
+}

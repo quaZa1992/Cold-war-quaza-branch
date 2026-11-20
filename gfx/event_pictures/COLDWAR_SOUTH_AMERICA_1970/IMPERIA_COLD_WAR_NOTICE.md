@@ -20,7 +20,7 @@ Licence/permission: Public domain
 
 Source date: 1982-10-05
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_accountability.dds`.
 
@@ -34,7 +34,7 @@ Licence/permission: Public domain
 
 Source date: late 1978
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_beagle.dds`.
 
@@ -48,7 +48,7 @@ Licence/permission: Public domain
 
 Source date: 1971
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_commanders.dds`.
 
@@ -62,7 +62,7 @@ Licence/permission: Public domain
 
 Source date: 1982-09
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_economy.dds`.
 
@@ -76,7 +76,7 @@ Licence/permission: Public domain
 
 Source date: 01/12/1979
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_grain.dds`.
 
@@ -90,7 +90,7 @@ Licence/permission: Public domain
 
 Source date: 1960
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_industry.dds`.
 
@@ -104,7 +104,7 @@ Licence/permission: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0
 
 Source date: 1982-06-18 12:42:27
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_islands.dds`.
 
@@ -118,7 +118,7 @@ Licence/permission: Public domain
 
 Source date: 1972-11-17
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_labor.dds`.
 
@@ -132,7 +132,7 @@ Licence/permission: Public domain
 
 Source date: 1979-06-01
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_navy.dds`.
 
@@ -146,7 +146,7 @@ Licence/permission: Public domain
 
 Source date: 1972
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/arg_opening.dds`.
 
@@ -160,7 +160,7 @@ Licence/permission: CC BY 3.0 br (https://creativecommons.org/licenses/by/3.0/br
 
 Source date: 1988
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/bra_constitution.dds`.
 
@@ -174,7 +174,7 @@ Licence/permission: Public domain
 
 Source date: 2015-04-15
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/bra_debt.dds`.
 
@@ -188,7 +188,7 @@ Licence/permission: CC BY 3.0 br (https://creativecommons.org/licenses/by/3.0/br
 
 Source date: cerca de 1985
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/bra_inflation.dds`.
 
@@ -202,7 +202,7 @@ Licence/permission: Public domain
 
 Source date: 30 October 1969
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/bra_officers.dds`.
 
@@ -216,7 +216,7 @@ Licence/permission: Public domain
 
 Source date: 1979
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/bra_party.dds`.
 
@@ -230,7 +230,7 @@ Licence/permission: Public domain
 
 Source date: Taken on 29 March 1978
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/bra_rights.dds`.
 
@@ -258,7 +258,7 @@ Licence/permission: CC BY 3.0 cl (https://creativecommons.org/licenses/by/3.0/cl
 
 Source date: Unknown date (between 1970 and 1971)
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_congress.dds`.
 
@@ -272,7 +272,7 @@ Licence/permission: CC BY-SA 3.0 cl (https://creativecommons.org/licenses/by-sa/
 
 Source date: 1971-09-28
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_copper.dds`.
 
@@ -286,7 +286,7 @@ Licence/permission: CC BY 3.0 cl (https://creativecommons.org/licenses/by/3.0/cl
 
 Source date: 1971
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_economy.dds`.
 
@@ -314,7 +314,7 @@ Licence/permission: CC BY-SA 3.0 cl (https://creativecommons.org/licenses/by-sa/
 
 Source date: 1990
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_handover.dds`.
 
@@ -328,7 +328,7 @@ Licence/permission: CC BY 3.0 cl (https://creativecommons.org/licenses/by/3.0/cl
 
 Source date: 1973
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_junta.dds`.
 
@@ -342,7 +342,7 @@ Licence/permission: Attribution
 
 Source date: 1988-10-06
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_plebiscite.dds`.
 
@@ -357,7 +357,7 @@ Licence/permission: Public domain
 
 Source date: Original:  1973;  This version:  1974
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_repression.dds`.
 
@@ -371,7 +371,7 @@ Licence/permission: CC BY 3.0 cl (https://creativecommons.org/licenses/by/3.0/cl
 
 Source date: 1973-09-11
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_rupture.dds`.
 
@@ -385,7 +385,7 @@ Licence/permission: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0
 
 Source date: 2008-01-01
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/chl_truth.dds`.
 
@@ -413,7 +413,7 @@ Licence/permission: Separate redistribution permission unknown. Existing MD/game
 
 Source date: Unknown date.
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/shared_contract.dds`.
 
@@ -427,7 +427,7 @@ Licence/permission: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0
 
 Source date: 1973
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/shared_medical.dds`.
 
@@ -441,7 +441,7 @@ Licence/permission: CC BY 2.0 (https://creativecommons.org/licenses/by/2.0)
 
 Source date: 2008-11-21 17:12
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/shared_nuclear.dds`.
 
@@ -455,7 +455,7 @@ Licence/permission: Public domain
 
 Source date: February 1974
 
-Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset. 
+Changes: AI colorization or color restoration, scan cleanup and inferred detail; selected photo crop and downsampling to the native 180 x 150 inset.
 
 Output: `gfx/event_pictures/COLDWAR_SOUTH_AMERICA_1970/shared_oil.dds`.
 

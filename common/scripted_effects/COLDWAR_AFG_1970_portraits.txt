@@ -1,0 +1,143 @@
+# IMPERIA COLD WAR — Afghan source-restored portraits and historical leader bindings.
+# Photographic credits, source dates, licences and restoration prompts:
+# gfx/leaders/AFG/COLDWAR_1970/PROVENANCE_NOTICES.txt and asset_bindings.json.
+# Incumbent ordinals survive party changes. Only native retirement advances them.
+COLDWAR_AFG_1970_set_portrait_leader = {
+	if = {
+		limit = { COLDWAR_AFG_1970_portrait_supported = yes }
+		if = {
+			limit = { check_variable = { ruling_party = 5 } }
+			if = {
+				limit = { has_country_leader = { name = "Nur Muhammad Taraki" ruling_only = yes } }
+				set_variable = { COLDWAR_AFG_1970_khalq_incumbent = 0 }
+			}
+			else_if = {
+				limit = { has_country_leader = { name = "Hafizullah Amin" ruling_only = yes } }
+				set_variable = { COLDWAR_AFG_1970_khalq_incumbent = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { MDCW_HP_native_retirement = 1 }
+					NOT = { has_country_flag = do_not_retire }
+				}
+				add_to_variable = { COLDWAR_AFG_1970_khalq_incumbent = 1 }
+				if = {
+					limit = { check_variable = { COLDWAR_AFG_1970_khalq_incumbent > 1 } }
+					set_variable = { COLDWAR_AFG_1970_khalq_incumbent = 0 }
+				}
+			}
+		}
+		if = {
+			limit = { check_variable = { ruling_party = 4 } }
+			if = {
+				limit = { has_country_leader = { name = "Babrak Karmal" ruling_only = yes } }
+				set_variable = { COLDWAR_AFG_1970_parcham_incumbent = 0 }
+			}
+			else_if = {
+				limit = { has_country_leader = { name = "Mohammad Najibullah" ruling_only = yes } }
+				set_variable = { COLDWAR_AFG_1970_parcham_incumbent = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { MDCW_HP_native_retirement = 1 }
+					NOT = { has_country_flag = do_not_retire }
+				}
+				add_to_variable = { COLDWAR_AFG_1970_parcham_incumbent = 1 }
+				if = {
+					limit = { check_variable = { COLDWAR_AFG_1970_parcham_incumbent > 1 } }
+					set_variable = { COLDWAR_AFG_1970_parcham_incumbent = 0 }
+				}
+			}
+			if = {
+				limit = { has_completed_focus = COLDWAR_AFG_parcham_x1 }
+				set_variable = { COLDWAR_AFG_1970_parcham_incumbent = 1 }
+			}
+		}
+		kill_country_leader = yes
+		update_set_politics = yes
+		if = {
+			limit = { check_variable = { ruling_party = 5 } }
+			if = {
+				limit = { check_variable = { COLDWAR_AFG_1970_khalq_incumbent = 1 } }
+				create_country_leader = {
+					name = "Hafizullah Amin"
+					picture = "gfx/leaders/AFG/COLDWAR_1970/hafizullah_amin.dds"
+					ideology = anarchist_communism
+					traits = { }
+				}
+			}
+			else = {
+				create_country_leader = {
+					name = "Nur Muhammad Taraki"
+					picture = "gfx/leaders/AFG/COLDWAR_1970/nur_muhammad_taraki.dds"
+					ideology = anarchist_communism
+					traits = { }
+				}
+			}
+			set_variable = { anarchist_communism_leader = COLDWAR_AFG_1970_khalq_incumbent }
+		}
+		else_if = {
+			limit = { check_variable = { ruling_party = 4 } }
+			if = {
+				limit = { check_variable = { COLDWAR_AFG_1970_parcham_incumbent = 1 } }
+				create_country_leader = {
+					name = "Mohammad Najibullah"
+					picture = "gfx/leaders/AFG/COLDWAR_1970/mohammad_najibullah.dds"
+					ideology = communist_state
+					traits = { }
+				}
+			}
+			else = {
+				create_country_leader = {
+					name = "Babrak Karmal"
+					picture = "gfx/leaders/AFG/AFG_Babrak_Karmal.dds"
+					ideology = communist_state
+					traits = { }
+				}
+			}
+			set_variable = { communist_state_leader = COLDWAR_AFG_1970_parcham_incumbent }
+		}
+		else_if = {
+			limit = { check_variable = { ruling_party = 2 } }
+			create_country_leader = {
+				name = "Mohammad Hashim Maiwandwal"
+				picture = "gfx/leaders/AFG/COLDWAR_1970/mohammad_hashim_maiwandwal.dds"
+				ideology = liberalism
+				traits = { }
+			}
+			set_variable = { liberalism_leader = 0 }
+		}
+		else_if = {
+			limit = { check_variable = { ruling_party = 3 } }
+			create_country_leader = {
+				name = "Mohammad Hashim Maiwandwal"
+				picture = "gfx/leaders/AFG/COLDWAR_1970/mohammad_hashim_maiwandwal.dds"
+				ideology = socialism
+				traits = { }
+			}
+			set_variable = { socialism_leader = 0 }
+		}
+		else_if = {
+			limit = { check_variable = { ruling_party = 10 } }
+			create_country_leader = {
+				name = "Sibghatullah Mojaddedi"
+				picture = "gfx/leaders/AFG/COLDWAR_1970/sibghatullah_mojaddedi.dds"
+				ideology = Kingdom
+				traits = { }
+			}
+			set_variable = { Kingdom_leader = 0 }
+		}
+		set_correct_ideology_trait = yes
+		if = {
+			limit = { check_variable = { term_limit > 0 } }
+			set_variable = { current_term = 1 }
+		}
+	}
+}
+
+COLDWAR_AFG_1970_refresh_portrait_leader = {
+	if = {
+		limit = { COLDWAR_AFG_1970_portrait_needs_refresh = yes }
+		COLDWAR_AFG_1970_set_portrait_leader = yes
+	}
+}

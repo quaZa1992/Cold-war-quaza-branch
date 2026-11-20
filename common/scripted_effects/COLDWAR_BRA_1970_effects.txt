@@ -226,7 +226,7 @@ COLDWAR_BRA_event_apply_debt_crisis_option_0 = {
 		remove_ideas = COLDWAR_BRA_policy_event_debt_crisis_option_0
 		remove_ideas = COLDWAR_BRA_policy_event_debt_crisis_option_1
 		add_timed_idea = { idea = COLDWAR_BRA_policy_event_debt_crisis_option_0 days = 365 }
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -355,7 +355,7 @@ COLDWAR_BRA_event_apply_inflation_settlement_option_0 = {
 		remove_ideas = COLDWAR_BRA_policy_event_inflation_settlement_option_0
 		remove_ideas = COLDWAR_BRA_policy_event_inflation_settlement_option_1
 		add_timed_idea = { idea = COLDWAR_BRA_policy_event_inflation_settlement_option_0 days = 365 }
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -461,7 +461,7 @@ COLDWAR_BRA_complete_military_2 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_military_2
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_ai5
 		if = {
@@ -508,7 +508,7 @@ COLDWAR_BRA_complete_military_4 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_military_4
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_military_4_research_1
@@ -558,7 +558,7 @@ COLDWAR_BRA_complete_military_5 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_military_5
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0065 }
 			modify_treasury_effect = yes
 			884 = {
 				add_building_construction = {
@@ -680,6 +680,13 @@ COLDWAR_BRA_complete_arena_1 = {
 				has_country_flag = COLDWAR_BRA_earned_arena_1
 			}
 			COLDWAR_BRA_arena_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 887
+			controls_state = 887
+			has_full_control_of_state = 887
+			887 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_arena_0
 			}
@@ -687,8 +694,42 @@ COLDWAR_BRA_complete_arena_1 = {
 				has_completed_focus = COLDWAR_BRA_arena_2
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_arena_1
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			887 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					887 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_arena_1
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
+			modify_treasury_effect = yes
+			887 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				887 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -700,6 +741,13 @@ COLDWAR_BRA_complete_arena_2 = {
 				has_country_flag = COLDWAR_BRA_earned_arena_2
 			}
 			COLDWAR_BRA_arena_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 885
+			controls_state = 885
+			has_full_control_of_state = 885
+			885 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_arena_0
 			}
@@ -707,8 +755,42 @@ COLDWAR_BRA_complete_arena_2 = {
 				has_completed_focus = COLDWAR_BRA_arena_1
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_arena_2
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			885 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					885 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_arena_2
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
+			modify_treasury_effect = yes
+			885 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				885 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -727,7 +809,7 @@ COLDWAR_BRA_complete_arena_3 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_arena_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_arena_3_research_1
@@ -779,7 +861,7 @@ COLDWAR_BRA_complete_arena_4 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_arena_4
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0065 }
 			modify_treasury_effect = yes
 			884 = {
 				add_building_construction = {
@@ -817,7 +899,7 @@ COLDWAR_BRA_complete_arena_5 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_arena_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 		modify_treasury_effect = yes
 		if = {
 			limit = {
@@ -929,7 +1011,7 @@ COLDWAR_BRA_complete_mdb_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_mdb_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -952,7 +1034,7 @@ COLDWAR_BRA_complete_mdb_1 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_mdb_1
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		if = {
 			limit = {
@@ -994,7 +1076,7 @@ COLDWAR_BRA_complete_mdb_2 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_mdb_2
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		if = {
 			limit = {
@@ -1022,7 +1104,7 @@ COLDWAR_BRA_complete_mdb_3 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_mdb_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_ai5
 		COLDWAR_BRA_fire_constitution = yes
@@ -1067,7 +1149,7 @@ COLDWAR_BRA_complete_mdb_4 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_mdb_4
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
 			modify_treasury_effect = yes
 			888 = {
 				add_building_construction = {
@@ -1096,15 +1178,55 @@ COLDWAR_BRA_complete_mdb_5 = {
 				has_country_flag = COLDWAR_BRA_earned_mdb_5
 			}
 			COLDWAR_BRA_mdb_in_power = yes
+			has_political_power > 34
 			check_variable = { gdp_total > 0 }
+			owns_state = 885
+			controls_state = 885
+			has_full_control_of_state = 885
+			885 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_mdb_3
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_mdb_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
-		modify_treasury_effect = yes
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			885 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					885 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_mdb_5
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
+			modify_treasury_effect = yes
+			add_political_power = -35
+			885 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				885 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -1226,7 +1348,7 @@ COLDWAR_BRA_complete_ptb_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_ptb_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -1319,15 +1441,53 @@ COLDWAR_BRA_complete_ptb_3 = {
 			}
 			COLDWAR_BRA_ptb_in_power = yes
 			check_variable = { gdp_total > 0 }
+			owns_state = 882
+			controls_state = 882
+			has_full_control_of_state = 882
+			882 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_ptb_1
 				has_completed_focus = COLDWAR_BRA_ptb_2
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_ptb_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
-		modify_treasury_effect = yes
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			882 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					882 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_ptb_3
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
+			modify_treasury_effect = yes
+			882 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				882 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -1345,7 +1505,7 @@ COLDWAR_BRA_complete_ptb_4 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_ptb_4
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_ptb_4_research_1
@@ -1365,15 +1525,57 @@ COLDWAR_BRA_complete_ptb_5 = {
 				has_country_flag = COLDWAR_BRA_earned_ptb_5
 			}
 			COLDWAR_BRA_ptb_in_power = yes
+			has_political_power > 24
 			check_variable = { gdp_total > 0 }
+			owns_state = 883
+			controls_state = 883
+			has_full_control_of_state = 883
+			883 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_ptb_0
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_ptb_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
-		modify_treasury_effect = yes
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			883 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					883 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_ptb_5
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
+			modify_treasury_effect = yes
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
+			modify_treasury_effect = yes
+			883 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_political_power = -25
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				883 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -1467,7 +1669,7 @@ COLDWAR_BRA_complete_pdt_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_pdt_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -1490,7 +1692,7 @@ COLDWAR_BRA_complete_pdt_1 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pdt_1
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -1513,7 +1715,7 @@ COLDWAR_BRA_complete_pdt_2 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pdt_2
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0045 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -1527,13 +1729,54 @@ COLDWAR_BRA_complete_pdt_3 = {
 				has_country_flag = COLDWAR_BRA_earned_pdt_3
 			}
 			COLDWAR_BRA_pdt_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 883
+			controls_state = 883
+			has_full_control_of_state = 883
+			883 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pdt_1
 				has_completed_focus = COLDWAR_BRA_pdt_2
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pdt_3
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			883 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					883 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pdt_3
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
+			modify_treasury_effect = yes
+			883 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				883 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -1574,7 +1817,7 @@ COLDWAR_BRA_complete_pdt_4 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pdt_4
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
 			modify_treasury_effect = yes
 			883 = {
 				add_building_construction = {
@@ -1620,7 +1863,7 @@ COLDWAR_BRA_complete_pdt_5 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pdt_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0045 }
 		modify_treasury_effect = yes
 		879 = {
 			add_building_construction = {
@@ -1726,7 +1969,7 @@ COLDWAR_BRA_complete_pt_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_pt_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		if = {
 			limit = {
@@ -1806,7 +2049,7 @@ COLDWAR_BRA_complete_pt_3 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pt_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_wage_squeeze
 		COLDWAR_BRA_sync_programmes = yes
@@ -1850,7 +2093,7 @@ COLDWAR_BRA_complete_pt_4 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pt_4
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.005 }
 			modify_treasury_effect = yes
 			882 = {
 				add_building_construction = {
@@ -1879,15 +2122,55 @@ COLDWAR_BRA_complete_pt_5 = {
 				has_country_flag = COLDWAR_BRA_earned_pt_5
 			}
 			COLDWAR_BRA_pt_in_power = yes
+			has_political_power > 34
 			check_variable = { gdp_total > 0 }
+			owns_state = 879
+			controls_state = 879
+			has_full_control_of_state = 879
+			879 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pt_0
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pt_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
-		modify_treasury_effect = yes
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			879 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					879 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pt_5
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
+			modify_treasury_effect = yes
+			879 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_political_power = -35
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				879 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -1928,7 +2211,7 @@ COLDWAR_BRA_complete_pt_7 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pt_7
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0045 }
 		modify_treasury_effect = yes
 		if = {
 			limit = {
@@ -1958,7 +2241,7 @@ COLDWAR_BRA_complete_pt_8 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pt_8
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
 		modify_treasury_effect = yes
 		if = {
 			limit = {
@@ -2055,7 +2338,7 @@ COLDWAR_BRA_complete_pfl_1 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pfl_1
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.007 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.007 }
 			modify_treasury_effect = yes
 			887 = {
 				add_building_construction = {
@@ -2111,7 +2394,7 @@ COLDWAR_BRA_complete_pfl_3 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pfl_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -2154,7 +2437,7 @@ COLDWAR_BRA_complete_pfl_4 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pfl_4
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 			modify_treasury_effect = yes
 			888 = {
 				add_building_construction = {
@@ -2183,12 +2466,53 @@ COLDWAR_BRA_complete_pfl_5 = {
 				has_country_flag = COLDWAR_BRA_earned_pfl_5
 			}
 			COLDWAR_BRA_pfl_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 887
+			controls_state = 887
+			has_full_control_of_state = 887
+			887 = {
+				check_variable = { var = building_level@industrial_complex value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pfl_3
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pfl_5
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			887 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					887 = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pfl_5
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.007 }
+			modify_treasury_effect = yes
+			887 = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				887 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -2257,6 +2581,14 @@ COLDWAR_BRA_complete_pfl_9 = {
 				has_country_flag = COLDWAR_BRA_earned_pfl_9
 			}
 			COLDWAR_BRA_pfl_in_power = yes
+			has_political_power > 29
+			check_variable = { gdp_total > 0 }
+			owns_state = 888
+			controls_state = 888
+			has_full_control_of_state = 888
+			888 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pfl_6
 			}
@@ -2265,8 +2597,43 @@ COLDWAR_BRA_complete_pfl_9 = {
 				has_completed_focus = COLDWAR_BRA_pfl_8
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pfl_9
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			888 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					888 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pfl_9
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
+			modify_treasury_effect = yes
+			888 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_political_power = -30
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				888 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -2281,7 +2648,7 @@ COLDWAR_BRA_complete_psdb_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_psdb_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -2342,7 +2709,7 @@ COLDWAR_BRA_complete_psdb_3 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_psdb_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -2362,7 +2729,7 @@ COLDWAR_BRA_complete_psdb_4 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_psdb_4
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0045 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_psdb_4_research_1
@@ -2388,7 +2755,7 @@ COLDWAR_BRA_complete_psdb_5 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_psdb_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -2459,6 +2826,13 @@ COLDWAR_BRA_complete_psdb_9 = {
 				has_country_flag = COLDWAR_BRA_earned_psdb_9
 			}
 			COLDWAR_BRA_psdb_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 882
+			controls_state = 882
+			has_full_control_of_state = 882
+			882 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_psdb_6
 			}
@@ -2467,8 +2841,42 @@ COLDWAR_BRA_complete_psdb_9 = {
 				has_completed_focus = COLDWAR_BRA_psdb_8
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_psdb_9
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			882 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					882 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_psdb_9
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0045 }
+			modify_treasury_effect = yes
+			882 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				882 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -2480,11 +2888,13 @@ COLDWAR_BRA_complete_pcb_0 = {
 				has_country_flag = COLDWAR_BRA_earned_pcb_0
 			}
 			COLDWAR_BRA_pcb_in_power = yes
+			has_political_power > 39
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_pcb_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
+		add_political_power = -40
 		COLDWAR_BRA_sync_programmes = yes
 	}
 }
@@ -2567,7 +2977,7 @@ COLDWAR_BRA_complete_pcb_3 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pcb_3
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 			modify_treasury_effect = yes
 			883 = {
 				add_building_construction = {
@@ -2628,7 +3038,7 @@ COLDWAR_BRA_complete_pcb_4 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pcb_4
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
 			modify_treasury_effect = yes
 			884 = {
 				add_building_construction = {
@@ -2666,7 +3076,7 @@ COLDWAR_BRA_complete_pcb_5 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pcb_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_pcb_5_research_1
@@ -2704,6 +3114,13 @@ COLDWAR_BRA_complete_pcb_7 = {
 				has_country_flag = COLDWAR_BRA_earned_pcb_7
 			}
 			COLDWAR_BRA_pcb_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 884
+			controls_state = 884
+			has_full_control_of_state = 884
+			884 = {
+				check_variable = { var = building_level@industrial_complex value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pcb_6
 			}
@@ -2711,8 +3128,48 @@ COLDWAR_BRA_complete_pcb_7 = {
 				has_completed_focus = COLDWAR_BRA_pcb_8
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pcb_7
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			884 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					884 = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pcb_7
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.008 }
+			modify_treasury_effect = yes
+			884 = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				name = COLDWAR_BRA_pcb_7_research_2
+				bonus = 0.25
+				uses = 1
+				category = CAT_industry
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				884 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -2724,6 +3181,13 @@ COLDWAR_BRA_complete_pcb_8 = {
 				has_country_flag = COLDWAR_BRA_earned_pcb_8
 			}
 			COLDWAR_BRA_pcb_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 883
+			controls_state = 883
+			has_full_control_of_state = 883
+			883 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pcb_6
 			}
@@ -2731,8 +3195,48 @@ COLDWAR_BRA_complete_pcb_8 = {
 				has_completed_focus = COLDWAR_BRA_pcb_7
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pcb_8
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			883 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					883 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pcb_8
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
+			modify_treasury_effect = yes
+			883 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				name = COLDWAR_BRA_pcb_8_research_2
+				bonus = 0.25
+				uses = 1
+				category = CAT_electronics
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				883 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -2744,13 +3248,54 @@ COLDWAR_BRA_complete_pcb_9 = {
 				has_country_flag = COLDWAR_BRA_earned_pcb_9
 			}
 			COLDWAR_BRA_pcb_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 885
+			controls_state = 885
+			has_full_control_of_state = 885
+			885 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pcb_7
 				has_completed_focus = COLDWAR_BRA_pcb_8
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pcb_9
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			885 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					885 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pcb_9
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
+			modify_treasury_effect = yes
+			885 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				885 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -2765,7 +3310,7 @@ COLDWAR_BRA_complete_pcdob_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_pcdob_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -2856,7 +3401,7 @@ COLDWAR_BRA_complete_pcdob_3 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pcdob_3
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 			modify_treasury_effect = yes
 			891 = {
 				add_building_construction = {
@@ -2891,7 +3436,7 @@ COLDWAR_BRA_complete_pcdob_4 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pcdob_4
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -2934,7 +3479,7 @@ COLDWAR_BRA_complete_pcdob_5 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_pcdob_5
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0055 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0055 }
 			modify_treasury_effect = yes
 			888 = {
 				add_building_construction = {
@@ -3021,6 +3566,19 @@ COLDWAR_BRA_complete_pcdob_9 = {
 				has_country_flag = COLDWAR_BRA_earned_pcdob_9
 			}
 			COLDWAR_BRA_pcdob_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 891
+			controls_state = 891
+			has_full_control_of_state = 891
+			891 = {
+				check_variable = { var = building_level@agriculture_district value = 9 compare = less_than_or_equals }
+			}
+			owns_state = 888
+			controls_state = 888
+			has_full_control_of_state = 888
+			888 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_pcdob_6
 			}
@@ -3029,8 +3587,68 @@ COLDWAR_BRA_complete_pcdob_9 = {
 				has_completed_focus = COLDWAR_BRA_pcdob_8
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_pcdob_9
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			891 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		BRA = {
+			888 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					891 = {
+						free_building_slots = {
+							building = agriculture_district
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+				BRA = {
+					888 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pcdob_9
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0075 }
+			modify_treasury_effect = yes
+			891 = {
+				add_building_construction = {
+					type = agriculture_district
+					level = 1
+					instant_build = yes
+				}
+			}
+			888 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				891 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+			BRA = {
+				888 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -3045,7 +3663,7 @@ COLDWAR_BRA_complete_populist_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_populist_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3099,16 +3717,56 @@ COLDWAR_BRA_complete_populist_3 = {
 				has_country_flag = COLDWAR_BRA_earned_populist_3
 			}
 			COLDWAR_BRA_populist_in_power = yes
+			has_political_power > 29
 			check_variable = { gdp_total > 0 }
+			owns_state = 883
+			controls_state = 883
+			has_full_control_of_state = 883
+			883 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_populist_1
 				has_completed_focus = COLDWAR_BRA_populist_2
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_populist_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
-		modify_treasury_effect = yes
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			883 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					883 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_populist_3
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
+			modify_treasury_effect = yes
+			883 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_political_power = -30
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				883 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -3154,7 +3812,7 @@ COLDWAR_BRA_complete_populist_5 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_populist_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 		modify_treasury_effect = yes
 		883 = {
 			add_building_construction = {
@@ -3253,7 +3911,7 @@ COLDWAR_BRA_complete_prn_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_prn_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3314,7 +3972,7 @@ COLDWAR_BRA_complete_prn_3 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_prn_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3334,7 +3992,7 @@ COLDWAR_BRA_complete_prn_4 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_prn_4
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_prn_4_research_1
@@ -3360,7 +4018,7 @@ COLDWAR_BRA_complete_prn_5 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_prn_5
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3457,7 +4115,7 @@ COLDWAR_BRA_complete_constitutional = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_constitutional
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_ai5
 		COLDWAR_BRA_sync_programmes = yes
@@ -3474,7 +4132,7 @@ COLDWAR_BRA_complete_church_dialogue = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_church_dialogue
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3490,7 +4148,7 @@ COLDWAR_BRA_complete_secular_services = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_secular_services
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3509,7 +4167,7 @@ COLDWAR_BRA_complete_legal_parties = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_legal_parties
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_fire_party_reform = yes
 		COLDWAR_BRA_sync_programmes = yes
@@ -3530,7 +4188,7 @@ COLDWAR_BRA_complete_schools = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_schools
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.005 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_skills
 		add_tech_bonus = {
@@ -3575,7 +4233,7 @@ COLDWAR_BRA_complete_municipal = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_municipal
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
 		modify_treasury_effect = yes
 		882 = {
 			add_building_construction = {
@@ -3611,7 +4269,7 @@ COLDWAR_BRA_complete_universities = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_universities
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_universities_research_1
@@ -3639,7 +4297,7 @@ COLDWAR_BRA_complete_adult_literacy = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_adult_literacy
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3681,7 +4339,7 @@ COLDWAR_BRA_complete_urban_services = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_urban_services
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 			modify_treasury_effect = yes
 			883 = {
 				add_building_construction = {
@@ -3736,7 +4394,7 @@ COLDWAR_BRA_complete_land_titles = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_land_titles
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_land_inequality
 		if = {
@@ -3767,7 +4425,7 @@ COLDWAR_BRA_complete_extension = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_extension
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_land_inequality
 		COLDWAR_BRA_sync_programmes = yes
@@ -3787,7 +4445,7 @@ COLDWAR_BRA_complete_wage_bargain = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_wage_bargain
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_wage_squeeze
 		if = {
@@ -3850,7 +4508,7 @@ COLDWAR_BRA_complete_territory = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_territory
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0045 }
 			modify_treasury_effect = yes
 			891 = {
 				add_building_construction = {
@@ -3887,7 +4545,7 @@ COLDWAR_BRA_complete_frontier_safeguards = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_frontier_safeguards
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_amazon_pressure
 		COLDWAR_BRA_sync_programmes = yes
@@ -3910,7 +4568,7 @@ COLDWAR_BRA_complete_frontier_admin = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_frontier_admin
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_amazon_pressure
 		COLDWAR_BRA_sync_programmes = yes
@@ -3930,7 +4588,7 @@ COLDWAR_BRA_complete_service_audit = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_service_audit
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -3966,7 +4624,7 @@ COLDWAR_BRA_complete_development_bank = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_development_bank
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_development_bank_research_1
@@ -3994,7 +4652,7 @@ COLDWAR_BRA_complete_refinance = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_refinance
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0065 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_miracle
 		COLDWAR_BRA_sync_programmes = yes
@@ -4077,7 +4735,7 @@ COLDWAR_BRA_complete_industrial_triangle = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_industrial_triangle
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.009 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.009 }
 			modify_treasury_effect = yes
 			882 = {
 				add_building_construction = {
@@ -4124,7 +4782,7 @@ COLDWAR_BRA_complete_embrapa = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_embrapa
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_embrapa_research_1
@@ -4172,7 +4830,7 @@ COLDWAR_BRA_complete_capital_goods = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_capital_goods
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0065 }
 			modify_treasury_effect = yes
 			882 = {
 				add_building_construction = {
@@ -4232,7 +4890,7 @@ COLDWAR_BRA_complete_cerrado = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_cerrado
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
 			modify_treasury_effect = yes
 			885 = {
 				add_building_construction = {
@@ -4292,7 +4950,7 @@ COLDWAR_BRA_complete_smallholder = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_smallholder
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 			modify_treasury_effect = yes
 			888 = {
 				add_building_construction = {
@@ -4354,7 +5012,7 @@ COLDWAR_BRA_complete_national_tools = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_national_tools
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0045 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -4385,7 +5043,7 @@ COLDWAR_BRA_complete_storage = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_storage
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 		modify_treasury_effect = yes
 		886 = {
 			add_building_construction = {
@@ -4412,7 +5070,7 @@ COLDWAR_BRA_complete_industrial_standards = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_industrial_standards
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -4457,7 +5115,7 @@ COLDWAR_BRA_complete_manaus = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_manaus
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.007 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.007 }
 			modify_treasury_effect = yes
 			892 = {
 				add_building_construction = {
@@ -4517,7 +5175,7 @@ COLDWAR_BRA_complete_regional_industry = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_regional_industry
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.007 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.007 }
 			modify_treasury_effect = yes
 			887 = {
 				add_building_construction = {
@@ -4574,7 +5232,7 @@ COLDWAR_BRA_complete_embraer = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_embraer
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0075 }
 			modify_treasury_effect = yes
 			882 = {
 				add_building_construction = {
@@ -4638,7 +5296,7 @@ COLDWAR_BRA_complete_telebras = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_telebras
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0055 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0055 }
 			modify_treasury_effect = yes
 			883 = {
 				add_building_construction = {
@@ -4673,14 +5331,52 @@ COLDWAR_BRA_complete_trade_fairs = {
 				has_country_flag = COLDWAR_BRA_earned_trade_fairs
 			}
 			check_variable = { gdp_total > 0 }
+			owns_state = 883
+			controls_state = 883
+			has_full_control_of_state = 883
+			883 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_embraer
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_trade_fairs
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
-		modify_treasury_effect = yes
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			883 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					883 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_trade_fairs
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
+			modify_treasury_effect = yes
+			883 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				883 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -4713,7 +5409,7 @@ COLDWAR_BRA_complete_energy_balance = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_energy_balance
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_energy_balance_research_1
@@ -4741,7 +5437,7 @@ COLDWAR_BRA_complete_offshore = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_offshore
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.008 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_offshore_research_1
@@ -4769,7 +5465,7 @@ COLDWAR_BRA_complete_conservation = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_conservation
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_conservation_research_1
@@ -4805,7 +5501,7 @@ COLDWAR_BRA_complete_grid = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_grid
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.007 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.007 }
 		modify_treasury_effect = yes
 		884 = {
 			add_building_construction = {
@@ -4843,7 +5539,7 @@ COLDWAR_BRA_complete_fuel_security = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_fuel_security
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_BRA_oil_exposure
 		882 = {
@@ -4881,7 +5577,7 @@ COLDWAR_BRA_complete_hydro = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_hydro
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.01 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.01 }
 		modify_treasury_effect = yes
 		880 = {
 			add_building_construction = {
@@ -4910,7 +5606,7 @@ COLDWAR_BRA_complete_proalcool = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_proalcool
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -4955,7 +5651,7 @@ COLDWAR_BRA_complete_refining = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_refining
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.007 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.007 }
 			modify_treasury_effect = yes
 			883 = {
 				add_building_construction = {
@@ -4989,7 +5685,7 @@ COLDWAR_BRA_complete_nuclear_science = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_nuclear_science
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_nuclear_science_research_1
@@ -5015,7 +5711,7 @@ COLDWAR_BRA_complete_mineral_survey = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_mineral_survey
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_mineral_survey_research_1
@@ -5056,7 +5752,7 @@ COLDWAR_BRA_complete_reactor = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_reactor
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.015 }
 		modify_treasury_effect = yes
 		883 = {
 			add_building_construction = {
@@ -5096,7 +5792,7 @@ COLDWAR_BRA_complete_grid_diversity = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_grid_diversity
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.009 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.009 }
 		modify_treasury_effect = yes
 		887 = {
 			add_building_construction = {
@@ -5139,7 +5835,7 @@ COLDWAR_BRA_complete_carajas = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_carajas
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.008 }
 		modify_treasury_effect = yes
 		891 = {
 			add_building_construction = {
@@ -5166,7 +5862,7 @@ COLDWAR_BRA_complete_resource_standards = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_resource_standards
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -5227,7 +5923,7 @@ COLDWAR_BRA_complete_energy_dispatch = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_energy_dispatch
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 			modify_treasury_effect = yes
 			885 = {
 				add_building_construction = {
@@ -5258,7 +5954,7 @@ COLDWAR_BRA_complete_joint_staff = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_joint_staff
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		army_experience = 25
 		navy_experience = 25
@@ -5318,7 +6014,7 @@ COLDWAR_BRA_complete_air_training = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_air_training
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_air_training_research_1
@@ -5368,7 +6064,7 @@ COLDWAR_BRA_complete_imbel = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_imbel
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0065 }
 			modify_treasury_effect = yes
 			884 = {
 				add_building_construction = {
@@ -5421,7 +6117,7 @@ COLDWAR_BRA_complete_jungle = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_jungle
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		army_experience = 40
 		add_tech_bonus = {
@@ -5473,7 +6169,7 @@ COLDWAR_BRA_complete_mechanised = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_mechanised
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.006 }
 			modify_treasury_effect = yes
 			882 = {
 				add_building_construction = {
@@ -5540,7 +6236,7 @@ COLDWAR_BRA_complete_air_defence = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_air_defence
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 		modify_treasury_effect = yes
 		885 = {
 			add_building_construction = {
@@ -5591,7 +6287,7 @@ COLDWAR_BRA_complete_naval_yards = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_naval_yards
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.008 }
 			modify_treasury_effect = yes
 			883 = {
 				add_building_construction = {
@@ -5626,7 +6322,7 @@ COLDWAR_BRA_complete_joint_exercises = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_joint_exercises
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		army_experience = 25
 		air_experience = 25
@@ -5685,7 +6381,7 @@ COLDWAR_BRA_complete_procurement = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_procurement
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -5705,7 +6401,7 @@ COLDWAR_BRA_complete_avibras = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_avibras
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.005 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_avibras_research_1
@@ -5731,7 +6427,7 @@ COLDWAR_BRA_complete_exports_arms = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_exports_arms
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -5766,7 +6462,7 @@ COLDWAR_BRA_complete_itamaraty = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_itamaraty
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -5823,7 +6519,7 @@ COLDWAR_BRA_complete_regional = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_regional
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -6036,7 +6732,7 @@ COLDWAR_BRA_complete_nuclear_dialogue = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_nuclear_dialogue
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_nuclear_dialogue_research_1
@@ -6156,7 +6852,7 @@ COLDWAR_BRA_complete_regional_secretariat = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_regional_secretariat
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
 			modify_treasury_effect = yes
 			885 = {
 				add_building_construction = {
@@ -6191,7 +6887,7 @@ COLDWAR_BRA_complete_technical_desk = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_technical_desk
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0012 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_technical_desk_research_1
@@ -6217,7 +6913,7 @@ COLDWAR_BRA_complete_pacific_desk = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_pacific_desk
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0012 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_pacific_desk_research_1
@@ -6242,7 +6938,7 @@ COLDWAR_BRA_complete_commercial_desk = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_commercial_desk
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0012 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_commercial_desk_research_1
@@ -6267,7 +6963,7 @@ COLDWAR_BRA_complete_industrial_talks = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_industrial_talks
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0012 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_industrial_talks_research_1
@@ -6290,7 +6986,7 @@ COLDWAR_BRA_complete_ptb_late_0 = {
 			check_variable = { gdp_total > 0 }
 		}
 		set_country_flag = COLDWAR_BRA_earned_ptb_late_0
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0018 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0018 }
 		modify_treasury_effect = yes
 		COLDWAR_BRA_sync_programmes = yes
 	}
@@ -6359,15 +7055,53 @@ COLDWAR_BRA_complete_ptb_late_3 = {
 			}
 			COLDWAR_BRA_ptb_late_in_power = yes
 			check_variable = { gdp_total > 0 }
+			owns_state = 887
+			controls_state = 887
+			has_full_control_of_state = 887
+			887 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_ptb_late_1
 				has_completed_focus = COLDWAR_BRA_ptb_late_2
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_ptb_late_3
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
-		modify_treasury_effect = yes
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			887 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					887 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_ptb_late_3
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 }
+			modify_treasury_effect = yes
+			887 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				887 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -6385,7 +7119,7 @@ COLDWAR_BRA_complete_ptb_late_4 = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_earned_ptb_late_4
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.003 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_ptb_late_4_research_1
@@ -6434,7 +7168,7 @@ COLDWAR_BRA_complete_ptb_late_5 = {
 				}
 			}
 			set_country_flag = COLDWAR_BRA_earned_ptb_late_5
-			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
 			modify_treasury_effect = yes
 			887 = {
 				add_building_construction = {
@@ -6524,13 +7258,504 @@ COLDWAR_BRA_complete_ptb_late_9 = {
 				has_country_flag = COLDWAR_BRA_earned_ptb_late_9
 			}
 			COLDWAR_BRA_ptb_late_in_power = yes
+			has_political_power > 24
+			check_variable = { gdp_total > 0 }
+			owns_state = 879
+			controls_state = 879
+			has_full_control_of_state = 879
+			879 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
 			OR = {
 				has_completed_focus = COLDWAR_BRA_ptb_late_7
 				has_completed_focus = COLDWAR_BRA_ptb_late_8
 			}
 		}
-		set_country_flag = COLDWAR_BRA_earned_ptb_late_9
-		COLDWAR_BRA_sync_programmes = yes
+		BRA = {
+			879 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					879 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_ptb_late_9
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.004 }
+			modify_treasury_effect = yes
+			879 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_political_power = -25
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				879 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_complete_pds_enterprise_accounts = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_earned_pds_enterprise_accounts
+			}
+			COLDWAR_BRA_pds_in_power = yes
+			has_political_power > 39
+			check_variable = { gdp_total > 0 }
+			owns_state = 885
+			controls_state = 885
+			has_full_control_of_state = 885
+			885 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
+			OR = {
+				has_completed_focus = COLDWAR_BRA_arena_9
+			}
+		}
+		BRA = {
+			885 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					885 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pds_enterprise_accounts
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
+			modify_treasury_effect = yes
+			885 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_political_power = -40
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				885 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_complete_pds_strategic_holdings = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_earned_pds_strategic_holdings
+			}
+			COLDWAR_BRA_pds_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 884
+			controls_state = 884
+			has_full_control_of_state = 884
+			884 = {
+				check_variable = { var = building_level@industrial_complex value = 49 compare = less_than_or_equals }
+			}
+			OR = {
+				has_completed_focus = COLDWAR_BRA_pds_enterprise_accounts
+			}
+			NOT = {
+				has_completed_focus = COLDWAR_BRA_pds_private_suppliers
+			}
+		}
+		BRA = {
+			884 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					884 = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pds_strategic_holdings
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0085 }
+			modify_treasury_effect = yes
+			884 = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				884 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_complete_pds_private_suppliers = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_earned_pds_private_suppliers
+			}
+			COLDWAR_BRA_pds_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 882
+			controls_state = 882
+			has_full_control_of_state = 882
+			882 = {
+				check_variable = { var = building_level@industrial_complex value = 49 compare = less_than_or_equals }
+			}
+			OR = {
+				has_completed_focus = COLDWAR_BRA_pds_enterprise_accounts
+			}
+			NOT = {
+				has_completed_focus = COLDWAR_BRA_pds_strategic_holdings
+			}
+		}
+		BRA = {
+			882 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					882 = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pds_private_suppliers
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0075 }
+			modify_treasury_effect = yes
+			882 = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				name = COLDWAR_BRA_pds_private_suppliers_research_2
+				bonus = 0.25
+				uses = 1
+				category = CAT_industry
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				882 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_complete_pmdb_social_charter = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_earned_pmdb_social_charter
+			}
+			COLDWAR_BRA_pmdb_in_power = yes
+			has_political_power > 39
+			check_variable = { gdp_total > 0 }
+			owns_state = 885
+			controls_state = 885
+			has_full_control_of_state = 885
+			885 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
+			OR = {
+				has_completed_focus = COLDWAR_BRA_mdb_9
+			}
+		}
+		BRA = {
+			885 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					885 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pmdb_social_charter
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0035 }
+			modify_treasury_effect = yes
+			885 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_political_power = -40
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				885 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_complete_pmdb_health_regions = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_earned_pmdb_health_regions
+			}
+			COLDWAR_BRA_pmdb_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 888
+			controls_state = 888
+			has_full_control_of_state = 888
+			888 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
+			owns_state = 883
+			controls_state = 883
+			has_full_control_of_state = 883
+			883 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
+			OR = {
+				has_completed_focus = COLDWAR_BRA_pmdb_social_charter
+			}
+			NOT = {
+				has_completed_focus = COLDWAR_BRA_pmdb_municipal_services
+			}
+		}
+		BRA = {
+			888 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		BRA = {
+			883 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					888 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+				BRA = {
+					883 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pmdb_health_regions
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.008 }
+			modify_treasury_effect = yes
+			888 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			883 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				888 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+			BRA = {
+				883 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
+	}
+}
+
+COLDWAR_BRA_complete_pmdb_municipal_services = {
+	if = {
+		limit = {
+			COLDWAR_BRA_campaign = yes
+			NOT = {
+				has_country_flag = COLDWAR_BRA_earned_pmdb_municipal_services
+			}
+			COLDWAR_BRA_pmdb_in_power = yes
+			check_variable = { gdp_total > 0 }
+			owns_state = 887
+			controls_state = 887
+			has_full_control_of_state = 887
+			887 = {
+				check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+			}
+			owns_state = 888
+			controls_state = 888
+			has_full_control_of_state = 888
+			888 = {
+				check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals }
+			}
+			owns_state = 885
+			controls_state = 885
+			has_full_control_of_state = 885
+			885 = {
+				check_variable = { var = building_level@offices value = 49 compare = less_than_or_equals }
+			}
+			OR = {
+				has_completed_focus = COLDWAR_BRA_pmdb_social_charter
+			}
+			NOT = {
+				has_completed_focus = COLDWAR_BRA_pmdb_health_regions
+			}
+		}
+		BRA = {
+			887 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		BRA = {
+			888 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		BRA = {
+			885 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		if = {
+			limit = {
+				BRA = {
+					885 = {
+						free_building_slots = {
+							building = offices
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+			}
+			set_country_flag = COLDWAR_BRA_earned_pmdb_municipal_services
+			set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.009 }
+			modify_treasury_effect = yes
+			887 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			888 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			885 = {
+				add_building_construction = {
+					type = offices
+					level = 1
+					instant_build = yes
+				}
+			}
+			COLDWAR_BRA_sync_programmes = yes
+		}
+		else = {
+			BRA = {
+				887 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+			BRA = {
+				888 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+			BRA = {
+				885 = {
+					add_extra_state_shared_building_slots = -1
+				}
+			}
+		}
 	}
 }
 
@@ -6546,7 +7771,7 @@ COLDWAR_BRA_decision_apply_service_mission = {
 			COLDWAR_BRA_military_in_power = yes
 		}
 		set_country_flag = COLDWAR_BRA_decision_service_mission
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.002 }
 		modify_treasury_effect = yes
 		army_experience = 30
 	}
@@ -6569,7 +7794,7 @@ COLDWAR_BRA_decision_apply_uranium_study = {
 			}
 		}
 		set_country_flag = COLDWAR_BRA_decision_uranium_study
-		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0015 }
 		modify_treasury_effect = yes
 		add_tech_bonus = {
 			name = COLDWAR_BRA_decision_uranium_study_research_1
@@ -9230,27 +10455,6 @@ COLDWAR_BRA_sync_programmes = {
 		}
 		if = {
 			limit = {
-				has_country_flag = COLDWAR_BRA_earned_trade_fairs
-			}
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_BRA_policy_trade_fairs
-					}
-				}
-				add_ideas = COLDWAR_BRA_policy_trade_fairs
-			}
-		}
-		else = {
-			if = {
-				limit = {
-					has_idea = COLDWAR_BRA_policy_trade_fairs
-				}
-				remove_ideas = COLDWAR_BRA_policy_trade_fairs
-			}
-		}
-		if = {
-			limit = {
 				has_country_flag = COLDWAR_BRA_earned_productive_nation
 			}
 			if = {
@@ -9889,6 +11093,94 @@ COLDWAR_BRA_sync_programmes = {
 		}
 		if = {
 			limit = {
+				has_country_flag = COLDWAR_BRA_earned_pds_strategic_holdings
+				COLDWAR_BRA_pds_in_power = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_policy_pds_strategic_holdings
+					}
+				}
+				add_ideas = COLDWAR_BRA_policy_pds_strategic_holdings
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_policy_pds_strategic_holdings
+				}
+				remove_ideas = COLDWAR_BRA_policy_pds_strategic_holdings
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_BRA_earned_pds_private_suppliers
+				COLDWAR_BRA_pds_in_power = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_policy_pds_private_suppliers
+					}
+				}
+				add_ideas = COLDWAR_BRA_policy_pds_private_suppliers
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_policy_pds_private_suppliers
+				}
+				remove_ideas = COLDWAR_BRA_policy_pds_private_suppliers
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_BRA_earned_pmdb_health_regions
+				COLDWAR_BRA_pmdb_in_power = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_policy_pmdb_health_regions
+					}
+				}
+				add_ideas = COLDWAR_BRA_policy_pmdb_health_regions
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_policy_pmdb_health_regions
+				}
+				remove_ideas = COLDWAR_BRA_policy_pmdb_health_regions
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = COLDWAR_BRA_earned_pmdb_municipal_services
+				COLDWAR_BRA_pmdb_in_power = yes
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_idea = COLDWAR_BRA_policy_pmdb_municipal_services
+					}
+				}
+				add_ideas = COLDWAR_BRA_policy_pmdb_municipal_services
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_idea = COLDWAR_BRA_policy_pmdb_municipal_services
+				}
+				remove_ideas = COLDWAR_BRA_policy_pmdb_municipal_services
+			}
+		}
+		if = {
+			limit = {
 				has_country_flag = COLDWAR_BRA_event_officer_council_option_0
 				COLDWAR_BRA_military_in_power = yes
 			}
@@ -9936,15 +11228,11 @@ COLDWAR_BRA_sync_programmes = {
 
 COLDWAR_BRA_initialize = {
 	if = {
-		limit = {
-			COLDWAR_BRA_campaign = yes
-		}
+		limit = { COLDWAR_BRA_campaign = yes }
 		COLDWAR_BRA_init_politics = yes
 		if = {
 			limit = {
-				NOT = {
-					has_country_flag = COLDWAR_BRA_initialized
-				}
+				NOT = { has_country_flag = COLDWAR_BRA_initialized }
 			}
 			add_ideas = COLDWAR_BRA_ai5
 			add_ideas = COLDWAR_BRA_miracle
@@ -9955,10 +11243,10 @@ COLDWAR_BRA_initialize = {
 			add_ideas = COLDWAR_BRA_oil_exposure
 			add_ideas = COLDWAR_BRA_amazon_pressure
 			set_country_flag = COLDWAR_BRA_initialized
+			COLDWAR_BRA_reconcile_politics = yes
+			COLDWAR_BRA_sync_programmes = yes
+			COLDWAR_BRA_sync_agreements = yes
 		}
-		COLDWAR_BRA_reconcile_politics = yes
-		COLDWAR_BRA_sync_programmes = yes
-		COLDWAR_BRA_sync_agreements = yes
 	}
 }
 
@@ -9973,7 +11261,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_military_7
 				COLDWAR_BRA_military_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -9981,7 +11269,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_ptb_7
 				COLDWAR_BRA_ptb_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -9989,7 +11277,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_pdt_3
 				COLDWAR_BRA_pdt_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.001 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -9997,7 +11285,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_pdt_8
 				COLDWAR_BRA_pdt_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.001 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10005,7 +11293,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_pt_4
 				COLDWAR_BRA_pt_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10013,7 +11301,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_pt_7
 				COLDWAR_BRA_pt_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10021,7 +11309,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_psdb_6
 				COLDWAR_BRA_psdb_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10029,7 +11317,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_psdb_8
 				COLDWAR_BRA_psdb_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10037,7 +11325,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_pcb_6
 				COLDWAR_BRA_pcb_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.001 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10045,7 +11333,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_pcdob_1
 				COLDWAR_BRA_pcdob_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10053,7 +11341,7 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_populist_8
 				COLDWAR_BRA_populist_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.001 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
@@ -10061,147 +11349,147 @@ COLDWAR_BRA_add_domestic_weekly_expenses = {
 				has_country_flag = COLDWAR_BRA_earned_prn_2
 				COLDWAR_BRA_prn_in_power = yes
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_universities
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_urban_services
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0006 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_extension
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.001 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_frontier_admin
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_social_settlement
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_smallholder
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_licensed_tools
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.001 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_regional_industry
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0006 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_trade_fairs
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0004 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0004 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_productive_nation
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_offshore
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_hydro
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_proalcool
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0012 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0012 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_reactor
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.002 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.002 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_carajas
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0006 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_energy_resilience
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0006 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0006 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_ocean_fleet
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.001 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.001 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_regional_force
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0008 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0008 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_country_flag = COLDWAR_BRA_earned_regional_secretariat
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0005 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0005 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		if = {
 			limit = {
 				has_idea = COLDWAR_BRA_policy_event_oil_shock_option_0
 			}
-			set_temp_variable = { COLDWAR_BRA_stream = { value = gdp_total multiply = 0.0015 divide = 52 } }
+			set_temp_variable = { COLDWAR_BRA_stream = gdp_total } multiply_temp_variable = { COLDWAR_BRA_stream = 0.0015 } divide_temp_variable = { COLDWAR_BRA_stream = 52 }
 			add_to_variable = { COLDWAR_BRA_domestic_weekly = COLDWAR_BRA_stream }
 		}
 		add_to_variable = { additional_expenses_rate = COLDWAR_BRA_domestic_weekly }
@@ -12228,6 +13516,60 @@ COLDWAR_BRA_reconcile_focus_receipts = {
 				}
 			}
 			COLDWAR_BRA_complete_ptb_late_9 = yes
+		}
+		if = {
+			limit = {
+				has_completed_focus = COLDWAR_BRA_pds_enterprise_accounts
+				NOT = {
+					has_country_flag = COLDWAR_BRA_earned_pds_enterprise_accounts
+				}
+			}
+			COLDWAR_BRA_complete_pds_enterprise_accounts = yes
+		}
+		if = {
+			limit = {
+				has_completed_focus = COLDWAR_BRA_pds_strategic_holdings
+				NOT = {
+					has_country_flag = COLDWAR_BRA_earned_pds_strategic_holdings
+				}
+			}
+			COLDWAR_BRA_complete_pds_strategic_holdings = yes
+		}
+		if = {
+			limit = {
+				has_completed_focus = COLDWAR_BRA_pds_private_suppliers
+				NOT = {
+					has_country_flag = COLDWAR_BRA_earned_pds_private_suppliers
+				}
+			}
+			COLDWAR_BRA_complete_pds_private_suppliers = yes
+		}
+		if = {
+			limit = {
+				has_completed_focus = COLDWAR_BRA_pmdb_social_charter
+				NOT = {
+					has_country_flag = COLDWAR_BRA_earned_pmdb_social_charter
+				}
+			}
+			COLDWAR_BRA_complete_pmdb_social_charter = yes
+		}
+		if = {
+			limit = {
+				has_completed_focus = COLDWAR_BRA_pmdb_health_regions
+				NOT = {
+					has_country_flag = COLDWAR_BRA_earned_pmdb_health_regions
+				}
+			}
+			COLDWAR_BRA_complete_pmdb_health_regions = yes
+		}
+		if = {
+			limit = {
+				has_completed_focus = COLDWAR_BRA_pmdb_municipal_services
+				NOT = {
+					has_country_flag = COLDWAR_BRA_earned_pmdb_municipal_services
+				}
+			}
+			COLDWAR_BRA_complete_pmdb_municipal_services = yes
 		}
 	}
 }

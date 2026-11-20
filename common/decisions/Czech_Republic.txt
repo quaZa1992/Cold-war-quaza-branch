@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Czechoslovakia 1970 integration; existing content and attribution retained.
 CZE_vop_cz_category = {
 	CZE_quick_modernization = {
 		custom_cost_trigger = { check_variable = { treasury > 30 } }
@@ -2933,13 +2934,18 @@ CZE_temelin_reactor_construction_category = {
 		icon = GFX_decision_reactor_dec
 		fire_only_once = yes
 		is_good = yes
-		activation = { always = yes }
+		# IMPERIA COLD WAR — Modern Temelin mission is excluded from the 1970 scenario.
+		activation = { NOT = { IMP_is_1970_scenario = yes } }
+		cancel_trigger = { IMP_is_1970_scenario = yes }
 		available = { NOT = { 117 = { is_fully_controlled_by = CZE } } }
 
 		timeout_effect = {
 			log = "[GetDateText]: [Root.GetName]: Decision CZE_temelin_reactor_opening"
-			117 = { one_state_nuclear_reactor = yes }
-			set_country_flag = CZE_temelin_reactor_completed
+			if = {
+				limit = { NOT = { IMP_is_1970_scenario = yes } }
+				117 = { one_state_nuclear_reactor = yes }
+				set_country_flag = CZE_temelin_reactor_completed
+			}
 		}
 	}
 }

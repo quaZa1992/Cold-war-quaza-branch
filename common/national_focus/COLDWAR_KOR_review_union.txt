@@ -1,0 +1,1050 @@
+# IMPERIA COLD WAR — South and North Korea shared post-union focus programmes
+shared_focus = {
+	id = COLDWAR_KOR_union_ratification
+	icon = focus_generic_conference
+	x = 26
+	y = 39
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 23 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 10
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_legal_preparation
+	}
+	prerequisite = {
+		focus = COLDWAR_KOR_new_common_constitution
+		focus = COLDWAR_KOR_accession_to_south
+		focus = COLDWAR_KOR_accession_to_north
+	}
+	allow_branch = { OR = { original_tag = KOR has_country_flag = KOR_review_union_in_effect } }
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = KOR_review_condition_union_ratification
+			not_tooltip = KOR_review_condition_union_ratification_NOT
+			country_exists = NKO
+			NOT = { has_war_with = NKO }
+			has_country_flag = KOR_review_union_treaty_set
+			has_country_flag = KOR_review_final_union_consent
+			NKO = {
+				has_country_flag = KOR_review_final_union_consent
+			}
+		}
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_ratification }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0055 }
+			custom_effect_tooltip = COLDWAR_KOR_union_ratification_setup_cost
+			add_ideas = KOR_review_union_integration_preview
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_ratification }
+					custom_trigger_tooltip = {
+						tooltip = KOR_review_condition_union_ratification
+						not_tooltip = KOR_review_condition_union_ratification_NOT
+						country_exists = NKO
+						NOT = { has_war_with = NKO }
+						has_country_flag = KOR_review_union_treaty_set
+						has_country_flag = KOR_review_final_union_consent
+						NKO = {
+							has_country_flag = KOR_review_final_union_consent
+						}
+					}
+				}
+				set_country_flag = KOR_review_enacted_union_ratification
+				clr_country_flag = KOR_review_suppressed_union_ratification
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0055 }
+				modify_treasury_effect = yes
+				KOR_review_ratify_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_administration
+	icon = GFX_COLDWAR_IRQ_foreign_treaty_register
+	x = 27
+	y = 40
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 22 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_ratification
+		focus = COLDWAR_KOR_postwar_peninsula_settlement
+	}
+	allow_branch = { OR = { original_tag = KOR has_country_flag = KOR_review_union_in_effect } }
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = KOR_review_condition_union_administration
+			not_tooltip = KOR_review_condition_union_administration_NOT
+			has_country_flag = KOR_review_union_in_effect
+			controls_province = 7221
+			controls_province = 4052
+		}
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_administration }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0036 }
+			custom_effect_tooltip = COLDWAR_KOR_union_administration_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_administration_weekly_cost
+			add_ideas = KOR_review_programme_union_administration_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_administration_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_administration }
+					custom_trigger_tooltip = {
+						tooltip = KOR_review_condition_union_administration
+						not_tooltip = KOR_review_condition_union_administration_NOT
+						has_country_flag = KOR_review_union_in_effect
+						controls_province = 7221
+						controls_province = 4052
+					}
+				}
+				set_country_flag = KOR_review_enacted_union_administration
+				clr_country_flag = KOR_review_suppressed_union_administration
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0036 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_administration = -0.14 }
+				clamp_variable = { var = KOR_review_union_administration min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_local_jurisdiction
+	icon = GFX_COLDWAR_goal_planning_bonus
+	x = 26
+	y = 41
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 16 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_administration
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_local_jurisdiction }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0028 }
+			custom_effect_tooltip = COLDWAR_KOR_union_local_jurisdiction_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_local_jurisdiction_weekly_cost
+			add_ideas = KOR_review_programme_union_local_jurisdiction_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_local_jurisdiction_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_local_jurisdiction }
+				}
+				set_country_flag = KOR_review_enacted_union_local_jurisdiction
+				clr_country_flag = KOR_review_suppressed_union_local_jurisdiction
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0028 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_administration = -0.12 }
+				clamp_variable = { var = KOR_review_union_administration min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_public_accounts
+	icon = focus_generic_financial_agreement
+	x = 26
+	y = 42
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 16 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_local_jurisdiction
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_public_accounts }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0031 }
+			custom_effect_tooltip = COLDWAR_KOR_union_public_accounts_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_public_accounts_weekly_cost
+			add_ideas = KOR_review_programme_union_public_accounts_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_public_accounts_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_public_accounts }
+				}
+				set_country_flag = KOR_review_enacted_union_public_accounts
+				clr_country_flag = KOR_review_suppressed_union_public_accounts
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0031 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_administration = -0.14 }
+				clamp_variable = { var = KOR_review_union_administration min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_development_audit
+	icon = focus_generic_industry_investment
+	x = 22
+	y = 41
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 24 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_administration
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_development_audit }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0026 }
+			custom_effect_tooltip = COLDWAR_KOR_union_development_audit_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00005 }
+			divide_temp_variable = { KOR_review_preview_amount = 10 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_development_audit_weekly_cost
+			custom_effect_tooltip = COLDWAR_KOR_union_development_audit_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_development_audit }
+				}
+				set_country_flag = KOR_review_enacted_union_development_audit
+				clr_country_flag = KOR_review_suppressed_union_development_audit
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0026 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_economy = -0.08 }
+				clamp_variable = { var = KOR_review_union_economy min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_rail_rehabilitation
+	icon = focus_generic_railroad
+	x = 21
+	y = 42
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 23 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 7
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_development_audit
+	}
+	available = {
+		603 = {
+			is_owned_by = ROOT
+			is_controlled_by = ROOT
+			COLDWAR_KOR_industry_shared_headroom_1 = yes
+			check_variable = { building_level@infrastructure < 6 }
+			free_building_slots = { building = infrastructure size > 0 }
+		}
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_rail_rehabilitation }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0082 }
+			custom_effect_tooltip = COLDWAR_KOR_union_rail_rehabilitation_setup_cost
+			603 = {
+				add_extra_state_shared_building_slots = 1
+			}
+			603 = {
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+			custom_effect_tooltip = COLDWAR_KOR_union_rail_rehabilitation_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_rail_rehabilitation }
+					603 = {
+						is_owned_by = ROOT
+						is_controlled_by = ROOT
+						COLDWAR_KOR_industry_shared_headroom_1 = yes
+						check_variable = { building_level@infrastructure < 6 }
+						free_building_slots = { building = infrastructure size > 0 }
+					}
+				}
+				set_country_flag = KOR_review_enacted_union_rail_rehabilitation
+				clr_country_flag = KOR_review_suppressed_union_rail_rehabilitation
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0082 }
+				modify_treasury_effect = yes
+				603 = {
+					add_extra_state_shared_building_slots = 1
+				}
+				603 = {
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				}
+				add_to_variable = { KOR_review_union_economy = -0.14 }
+				clamp_variable = { var = KOR_review_union_economy min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_grid_repair
+	icon = focus_ARG_develop_the_electricity_sector
+	x = 23
+	y = 42
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 23 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 7
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_development_audit
+	}
+	available = {
+		602 = {
+			is_owned_by = ROOT
+			is_controlled_by = ROOT
+			COLDWAR_KOR_industry_shared_headroom_1 = yes
+			check_variable = { building_level@fossil_powerplant < 20 }
+			free_building_slots = { building = fossil_powerplant size > 0 }
+		}
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_grid_repair }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0084 }
+			custom_effect_tooltip = COLDWAR_KOR_union_grid_repair_setup_cost
+			602 = {
+				add_extra_state_shared_building_slots = 1
+			}
+			602 = {
+				add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
+			}
+			custom_effect_tooltip = COLDWAR_KOR_union_grid_repair_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_grid_repair }
+					602 = {
+						is_owned_by = ROOT
+						is_controlled_by = ROOT
+						COLDWAR_KOR_industry_shared_headroom_1 = yes
+						check_variable = { building_level@fossil_powerplant < 20 }
+						free_building_slots = { building = fossil_powerplant size > 0 }
+					}
+				}
+				set_country_flag = KOR_review_enacted_union_grid_repair
+				clr_country_flag = KOR_review_suppressed_union_grid_repair
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0084 }
+				modify_treasury_effect = yes
+				602 = {
+					add_extra_state_shared_building_slots = 1
+				}
+				602 = {
+					add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
+				}
+				add_to_variable = { KOR_review_union_economy = -0.13 }
+				clamp_variable = { var = KOR_review_union_economy min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_supplier_transition
+	icon = GFX_goal_COLDWAR_EASTASIA_machine_tools
+	x = 22
+	y = 43
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 23 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_rail_rehabilitation
+	}
+	prerequisite = {
+		focus = COLDWAR_KOR_union_grid_repair
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_supplier_transition }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0038 }
+			custom_effect_tooltip = COLDWAR_KOR_union_supplier_transition_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_supplier_transition_weekly_cost
+			add_ideas = KOR_review_programme_union_supplier_transition_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_supplier_transition_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_supplier_transition }
+				}
+				set_country_flag = KOR_review_enacted_union_supplier_transition
+				clr_country_flag = KOR_review_suppressed_union_supplier_transition
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0038 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_economy = -0.13 }
+				clamp_variable = { var = KOR_review_union_economy min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_regional_finance
+	icon = focus_generic_financial_agreement
+	x = 22
+	y = 44
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 23 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 7
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_supplier_transition
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_regional_finance }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0052 }
+			custom_effect_tooltip = COLDWAR_KOR_union_regional_finance_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+			divide_temp_variable = { KOR_review_preview_amount = 10 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_regional_finance_weekly_cost
+			add_ideas = KOR_review_programme_union_regional_finance_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_regional_finance_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_regional_finance }
+				}
+				set_country_flag = KOR_review_enacted_union_regional_finance
+				clr_country_flag = KOR_review_suppressed_union_regional_finance
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0052 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_economy = -0.17 }
+				clamp_variable = { var = KOR_review_union_economy min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_social_registry
+	icon = GFX_COLDWAR_SSR_goal_administration
+	x = 29
+	y = 41
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 21 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_administration
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_social_registry }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0025 }
+			custom_effect_tooltip = COLDWAR_KOR_union_social_registry_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_social_registry_weekly_cost
+			add_ideas = KOR_review_programme_union_social_registry_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_social_registry_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_social_registry }
+				}
+				set_country_flag = KOR_review_enacted_union_social_registry
+				clr_country_flag = KOR_review_suppressed_union_social_registry
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0025 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_social = -0.12 }
+				clamp_variable = { var = KOR_review_union_social min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_health_access
+	icon = GFX_COLDWAR_goal_Emergency_aid_to_the_rural_peasantry
+	x = 28
+	y = 42
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 21 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 7
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_social_registry
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_health_access }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0042 }
+			custom_effect_tooltip = COLDWAR_KOR_union_health_access_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+			divide_temp_variable = { KOR_review_preview_amount = 10 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_health_access_weekly_cost
+			add_ideas = KOR_review_programme_union_health_access_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_health_access_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_health_access }
+				}
+				set_country_flag = KOR_review_enacted_union_health_access
+				clr_country_flag = KOR_review_suppressed_union_health_access
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0042 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_social = -0.17 }
+				clamp_variable = { var = KOR_review_union_social min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_pension_credits
+	icon = focus_generic_financial_agreement
+	x = 30
+	y = 42
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 21 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 7
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_social_registry
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_pension_credits }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0044 }
+			custom_effect_tooltip = COLDWAR_KOR_union_pension_credits_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+			divide_temp_variable = { KOR_review_preview_amount = 10 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_pension_credits_weekly_cost
+			add_ideas = KOR_review_programme_union_pension_credits_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_pension_credits_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_pension_credits }
+				}
+				set_country_flag = KOR_review_enacted_union_pension_credits
+				clr_country_flag = KOR_review_suppressed_union_pension_credits
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0044 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_social = -0.16 }
+				clamp_variable = { var = KOR_review_union_social min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_employment_services
+	icon = focus_generic_worker_expansion
+	x = 29
+	y = 43
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 21 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_health_access
+	}
+	prerequisite = {
+		focus = COLDWAR_KOR_union_pension_credits
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_employment_services }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0039 }
+			custom_effect_tooltip = COLDWAR_KOR_union_employment_services_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_employment_services_weekly_cost
+			add_ideas = KOR_review_programme_union_employment_services_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_employment_services_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_employment_services }
+				}
+				set_country_flag = KOR_review_enacted_union_employment_services
+				clr_country_flag = KOR_review_suppressed_union_employment_services
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0039 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_social = -0.16 }
+				clamp_variable = { var = KOR_review_union_social min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_armed_forces_register
+	icon = GFX_goal_COLDWAR_KOR_army
+	x = 34
+	y = 41
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 20 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 5
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_administration
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_armed_forces_register }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0029 }
+			custom_effect_tooltip = COLDWAR_KOR_union_armed_forces_register_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00001 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_armed_forces_register_weekly_cost
+			add_ideas = KOR_review_programme_union_armed_forces_register_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_armed_forces_register_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_armed_forces_register }
+				}
+				set_country_flag = KOR_review_enacted_union_armed_forces_register
+				clr_country_flag = KOR_review_suppressed_union_armed_forces_register
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0029 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_defence = -0.12 }
+				clamp_variable = { var = KOR_review_union_defence min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_joint_command_reform
+	icon = focus_generic_conference
+	x = 34
+	y = 42
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 20 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 7
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_armed_forces_register
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_joint_command_reform }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0045 }
+			custom_effect_tooltip = COLDWAR_KOR_union_joint_command_reform_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+			divide_temp_variable = { KOR_review_preview_amount = 10 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_joint_command_reform_weekly_cost
+			add_ideas = KOR_review_programme_union_joint_command_reform_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_joint_command_reform_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_joint_command_reform }
+				}
+				set_country_flag = KOR_review_enacted_union_joint_command_reform
+				clr_country_flag = KOR_review_suppressed_union_joint_command_reform
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0045 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_defence = -0.17 }
+				clamp_variable = { var = KOR_review_union_defence min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_KOR_union_service_transition
+	icon = GFX_COLDWAR_IRQ_officer_reintegration
+	x = 34
+	y = 43
+	# IMPERIA COLD WAR — North Korea host focus position
+	offset = { x = 20 y = 5 trigger = { has_focus_tree = COLDWAR_NKO_1970_focus } }
+	cost = 7
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_DIPLOMACY }
+	prerequisite = {
+		focus = COLDWAR_KOR_union_joint_command_reform
+	}
+	available = {
+		hidden_trigger = {
+			OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+			check_variable = { gdp_total > 0 }
+			NOT = { has_country_flag = MD_skip_treasury_cost }
+			NOT = { has_country_flag = KOR_review_enacted_union_service_transition }
+		}
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.0045 }
+			custom_effect_tooltip = COLDWAR_KOR_union_service_transition_setup_cost
+			set_temp_variable = { KOR_review_preview_amount = gdp_total }
+			multiply_temp_variable = { KOR_review_preview_amount = 0.00015 }
+			divide_temp_variable = { KOR_review_preview_amount = 10 }
+			multiply_temp_variable = { KOR_review_preview_amount = 1000 }
+			custom_effect_tooltip = COLDWAR_KOR_union_service_transition_weekly_cost
+			add_ideas = KOR_review_programme_union_service_transition_preview
+			custom_effect_tooltip = COLDWAR_KOR_union_service_transition_burden
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = { COLDWAR_KOR_campaign = yes has_country_flag = KOR_review_union_in_effect }
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = MD_skip_treasury_cost }
+					NOT = { has_country_flag = KOR_review_enacted_union_service_transition }
+				}
+				set_country_flag = KOR_review_enacted_union_service_transition
+				clr_country_flag = KOR_review_suppressed_union_service_transition
+				set_temp_variable = { treasury_change = gdp_total }
+				multiply_temp_variable = { treasury_change = -0.0045 }
+				modify_treasury_effect = yes
+				add_to_variable = { KOR_review_union_defence = -0.17 }
+				clamp_variable = { var = KOR_review_union_defence min = 0 max = 1 }
+				KOR_review_sync_union = yes
+				KOR_review_sync_programmes = yes
+			}
+		}
+	}
+}

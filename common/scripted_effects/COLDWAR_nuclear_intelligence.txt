@@ -4,12 +4,16 @@
 
 COLDWAR_NI_refresh_observer_cache = {
 	if = {
-		limit = { NOT = { has_global_flag = COLDWAR_NI_observer_cache_current } }
-		set_global_flag = { flag = COLDWAR_NI_observer_cache_current days = 1 value = 1 }
+		# COLDWAR | hand patch 08.11.2026 (performance): day stamp gate instead of the timed global flag; the flag is still set for other readers.
+		limit = { NOT = { check_variable = { global.COLDWAR_NI_observer_cache_current_next_day > global.num_days } } }
+		set_global_flag = { flag = COLDWAR_NI_observer_cache_current days = 27 value = 1 }
+		set_variable = { global.COLDWAR_NI_observer_cache_current_next_day = global.num_days }
+		add_to_variable = { global.COLDWAR_NI_observer_cache_current_next_day = 27 }
 		clear_array = global.COLDWAR_NI_observers
 		every_country = {
 			limit = {
 				exists = yes
+				is_ai = no
 				NOT = { has_idea = non_state_actor }
 				OR = { COLDWAR_NI_great_power = yes has_intelligence_agency = yes }
 			}
@@ -149,11 +153,11 @@ COLDWAR_NI_monthly_country = {
 			}
 		}
 		COLDWAR_NI_calculate_defense = yes
-		# Cache holds all great powers and agency countries; only high networks qualify below.
+		# Cache holds human great powers and agency countries; only high networks qualify below.
 		for_each_scope_loop = {
 			array = global.COLDWAR_NI_observers
 			if = {
-				limit = { exists = yes NOT = { tag = ROOT } }
+				limit = { exists = yes is_ai = no NOT = { tag = ROOT } }
 				COLDWAR_NI_observe_programme = yes
 			}
 		}
@@ -161,6 +165,7 @@ COLDWAR_NI_monthly_country = {
 		every_neighbor_country = {
 			limit = {
 				exists = yes
+				is_ai = no
 				NOT = { has_idea = non_state_actor }
 				NOT = { is_in_array = { array = global.COLDWAR_NI_observers value = THIS.id } }
 			}
@@ -207,7 +212,12 @@ COLDWAR_NI_observer_rates = {
 
 COLDWAR_NI_observe_programme = {
 	if = {
-		limit = { NOT = { has_country_flag = COLDWAR_NI_checked@ROOT } }
+		limit = {
+            is_ai = no
+            ROOT = { exists = yes is_ai = no }
+            NOT = { has_country_flag = COLDWAR_NI_checked@ROOT }
+            NOT = { has_country_flag = COLDWAR_NI_report_cooldown }
+        }
 		COLDWAR_NI_observer_rates = yes
 		if = {
 			limit = { check_variable = { COLDWAR_NI_enrichment_chance > 0 } }
@@ -242,7 +252,11 @@ COLDWAR_NI_observe_programme = {
 				if = {
 					limit = { NOT = { check_variable = { COLDWAR_NI_enrichment_revision@ROOT = ROOT.COLDWAR_NI_enrichment_revision } } }
 					set_variable = { COLDWAR_NI_enrichment_revision@ROOT = ROOT.COLDWAR_NI_enrichment_revision }
-					set_variable = { COLDWAR_NI_enrichment_knowledge@ROOT = 0 }
+                    if = {
+                        limit = { has_country_flag = COLDWAR_NI_enrichment_known@ROOT }
+                        set_variable = { COLDWAR_NI_enrichment_knowledge@ROOT = 1 }
+                    }
+                    else = { set_variable = { COLDWAR_NI_enrichment_knowledge@ROOT = 0 } }
 				}
 				if = {
 					limit = { ROOT = { NOT = { has_country_flag = COLDWAR_NI_expansion_trace } } }
@@ -266,6 +280,7 @@ COLDWAR_NI_roll = {
 }
 
 COLDWAR_NI_enrichment_success = {
+	set_country_flag = { flag = COLDWAR_NI_report_cooldown days = 90 value = 1 }
 	if = {
 		limit = { check_variable = { COLDWAR_NI_enrichment_knowledge@ROOT < 1 } }
 		set_variable = { COLDWAR_NI_enrichment_knowledge@ROOT = 1 }
@@ -279,6 +294,7 @@ COLDWAR_NI_enrichment_success = {
 }
 
 COLDWAR_NI_weapons_success = {
+	set_country_flag = { flag = COLDWAR_NI_report_cooldown days = 90 value = 1 }
 	if = {
 		limit = { check_variable = { COLDWAR_NI_weapons_knowledge@ROOT < 1 } }
 		set_variable = { COLDWAR_NI_weapons_knowledge@ROOT = 1 }

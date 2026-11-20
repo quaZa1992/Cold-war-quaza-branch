@@ -1,11 +1,15 @@
 # IMPERIA CW — Cold War: 1970 air research on actions — event hooks.
-# COLDWAR jetgen | Applies the 1970 air research snapshot and the jet generation prerequisite inheritance once at game start.
+# COLDWAR jetgen | The 1970 research comes from the history files (set_technology in 1970.1.1, like MD).
+# This hook only fills the jet generation prerequisites for later starts; it does not run in the 1970 scenario.
 on_actions = {
 	on_startup = {
 		effect = {
-			every_country = {
-				mdcw_apply_1970_air_research = yes
-				mdcw_inherit_jet_generation_research = yes
+			if = {
+				limit = { NOT = { any_country = { IMP_is_1970_scenario = yes } } } # COLDWAR | hand patch 07.11.2026: on_startup has no scope, the check needs a country
+				every_country = {
+					mdcw_apply_1970_air_research = yes
+					mdcw_inherit_jet_generation_research = yes
+				}
 			}
 		}
 	}

@@ -1,0 +1,37 @@
+# IMPERIA COLD WAR — Native South Korean civilian programme requirements.
+# IMPERIA COLD WAR — South Korean civilian programme administration.
+KOR_review_civilian_kist_site = {
+	604 = { is_owned_by = KOR is_controlled_by = KOR nuclear_facility > 0 }
+}
+KOR_review_civilian_imf_available = {
+	is_full_state = yes
+	custom_trigger_tooltip = { tooltip = KOR_review_civilian_credit_distress_tt not_tooltip = KOR_review_civilian_credit_distress_tt_NOT OR = { check_variable = { var = debt_ratio value = 0.60 compare = greater_than_or_equals } has_active_mission = debt_default_main_mission } }
+	custom_trigger_tooltip = { tooltip = KOR_review_civilian_single_imf_tt not_tooltip = KOR_review_civilian_single_imf_tt_NOT NOT = { OR = { has_active_mission = cheap_loan_from_the_imf_mission has_country_flag = paused_debt_repayment has_country_flag = KOR_review_civilian_imf_open has_country_flag = KOR_review_civilian_imf_application_pending } } }
+}
+KOR_review_civilian_imf_institution_approves = {
+	is_full_state = yes
+	check_variable = { gdp_total > 0 }
+	OR = { check_variable = { var = debt_ratio value = 0.60 compare = greater_than_or_equals } has_active_mission = debt_default_main_mission }
+	NOT = { has_active_mission = cheap_loan_from_the_imf_mission }
+	NOT = { has_country_flag = paused_debt_repayment }
+	OR = {
+		AND = { gdp_per_capita_greater_than_5 = yes interest_rate_lower_than_15 = yes }
+		AND = {
+			has_active_mission = debt_default_main_mission
+			OR = { has_idea = bureau_02 has_idea = bureau_03 has_idea = bureau_04 has_idea = bureau_05 }
+		}
+	}
+	NOT = { OR = { has_idea = corruption_level_08 has_idea = corruption_level_09 has_idea = corruption_level_10 } }
+}
+KOR_review_civilian_reactor_fuel_available = {
+	custom_trigger_tooltip = { tooltip = KOR_review_civilian_reactor_fuel_tt not_tooltip = KOR_review_civilian_reactor_fuel_tt_NOT set_temp_variable = {
+		var = KOR_review_civilian_fuel_due
+		value = {
+			value = modifier@nuclear_fuel_consumption
+			add = 40
+			multiply = { value = 1 add = modifier@nuclear_fuel_consumption_modifier }
+			clamp = { min = 0.0001 max = 999999999 }
+		}
+	}
+	check_variable = { var = var_reactor_material_stockpile value = KOR_review_civilian_fuel_due compare = greater_than_or_equals } }
+}
