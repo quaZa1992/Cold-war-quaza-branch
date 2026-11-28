@@ -1,0 +1,946 @@
+# IMPERIA COLD WAR — Syrian treaty offers, ratification and reciprocal effects.
+
+COLDWAR_SYR_RP_offer_EGY = {
+	hidden_effect = {
+		if = {
+			limit = { COLDWAR_SYR_RP_can_offer_EGY = yes }
+			set_country_flag = COLDWAR_SYR_RP_pending_EGY
+		}
+	}
+}
+
+# The joint Egyptian-Syrian command informs the staff protocol. The reciprocal medical exchange is an RP alternative. https://history.state.gov/historicaldocuments/frus1969-76v26/d246
+COLDWAR_SYR_RP_once_EGY_main_SYR = {
+	add_doctrine_cost_reduction = { name = COLDWAR_SYR_RP_cairo_staff_courses category = land_doctrine cost_reduction = 0.35 uses = 1 }
+	add_opinion_modifier = { target = EGY modifier = supports_us_2 }
+}
+
+COLDWAR_SYR_RP_once_EGY_main_EGY = {
+	add_doctrine_cost_reduction = { name = COLDWAR_SYR_RP_cairo_staff_courses category = land_doctrine cost_reduction = 0.25 uses = 1 }
+	add_opinion_modifier = { target = SYR modifier = supports_us_2 }
+}
+
+COLDWAR_SYR_RP_terms_EGY_main = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_main_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_EGY_main_SYR_spirit
+			COLDWAR_SYR_RP_once_EGY_main_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 6 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+		EGY = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_EGY_main_EGY_spirit
+			COLDWAR_SYR_RP_once_EGY_main_EGY = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 6 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_EGY_main = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_pending_EGY
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_EGY_main has_country_flag = COLDWAR_SYR_RP_signed_EGY_counter } }
+			COLDWAR_SYR_RP_may_sign_EGY = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_EGY
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_EGY
+		set_country_flag = COLDWAR_SYR_RP_signed_EGY_main
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 6 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_EGY_main_SYR = yes
+		EGY = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 6 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_EGY_main_EGY = yes
+		}
+		COLDWAR_SYR_RP_sync_EGY = yes
+	}
+}
+
+COLDWAR_SYR_RP_once_EGY_counter_SYR = {
+	add_opinion_modifier = { target = EGY modifier = political_outreach }
+}
+
+COLDWAR_SYR_RP_once_EGY_counter_EGY = {
+	add_opinion_modifier = { target = SYR modifier = political_outreach }
+}
+
+COLDWAR_SYR_RP_terms_EGY_counter = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_counter_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_EGY_counter_SYR_spirit
+			COLDWAR_SYR_RP_once_EGY_counter_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+		EGY = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_EGY_counter_EGY_spirit
+			COLDWAR_SYR_RP_once_EGY_counter_EGY = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_EGY_counter = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_counter_pending_EGY
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_EGY_main has_country_flag = COLDWAR_SYR_RP_signed_EGY_counter } }
+			COLDWAR_SYR_RP_may_sign_EGY = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_EGY
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_EGY
+		set_country_flag = COLDWAR_SYR_RP_signed_EGY_counter
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_EGY_counter_SYR = yes
+		EGY = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_EGY_counter_EGY = yes
+		}
+		COLDWAR_SYR_RP_sync_EGY = yes
+	}
+}
+
+COLDWAR_SYR_RP_preview_EGY = {
+	COLDWAR_SYR_RP_terms_EGY_main = yes
+	COLDWAR_SYR_RP_terms_EGY_counter = yes
+	effect_tooltip = {
+		EGY = {
+			unlock_decision_tooltip = COLDWAR_SYR_RP_accept_EGY
+			unlock_decision_tooltip = COLDWAR_SYR_RP_amend_EGY
+			unlock_decision_tooltip = COLDWAR_SYR_RP_refuse_EGY
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sync_EGY = {
+	# A dissolved negotiating government cannot return its draft.
+	if = {
+		limit = {
+			NOT = { country_exists = EGY }
+			OR = { has_country_flag = COLDWAR_SYR_RP_pending_EGY has_country_flag = COLDWAR_SYR_RP_counter_pending_EGY }
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_EGY
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_EGY
+		set_country_flag = COLDWAR_SYR_RP_declined_EGY
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_EGY_main
+			COLDWAR_SYR_RP_pair_clear_EGY = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_EGY_main_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_EGY_main_SYR_spirit }
+		EGY = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_EGY_main_EGY_spirit } } add_ideas = COLDWAR_SYR_RP_EGY_main_EGY_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_EGY_main_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_EGY_main_SYR_spirit }
+		if = {
+			limit = { country_exists = EGY }
+			EGY = { if = { limit = { has_idea = COLDWAR_SYR_RP_EGY_main_EGY_spirit } remove_ideas = COLDWAR_SYR_RP_EGY_main_EGY_spirit } }
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_EGY_counter
+			COLDWAR_SYR_RP_pair_clear_EGY = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_EGY_counter_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_EGY_counter_SYR_spirit }
+		EGY = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_EGY_counter_EGY_spirit } } add_ideas = COLDWAR_SYR_RP_EGY_counter_EGY_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_EGY_counter_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_EGY_counter_SYR_spirit }
+		if = {
+			limit = { country_exists = EGY }
+			EGY = { if = { limit = { has_idea = COLDWAR_SYR_RP_EGY_counter_EGY_spirit } remove_ideas = COLDWAR_SYR_RP_EGY_counter_EGY_spirit } }
+		}
+	}
+}
+
+COLDWAR_SYR_RP_offer_ISR = {
+	hidden_effect = {
+		if = {
+			limit = { COLDWAR_SYR_RP_can_offer_ISR = yes }
+			set_country_flag = COLDWAR_SYR_RP_pending_ISR
+		}
+	}
+}
+
+# The later 1974 disengagement and the ICRC crossings inform the observer and family agreements. https://peacekeeping.un.org/en/node/104035 https://avarchives.icrc.org/Picture/115569
+COLDWAR_SYR_RP_once_ISR_main_SYR = {
+	add_opinion_modifier = { target = ISR modifier = supports_us_2 }
+}
+
+COLDWAR_SYR_RP_once_ISR_main_ISR = {
+	add_opinion_modifier = { target = SYR modifier = supports_us_2 }
+}
+
+COLDWAR_SYR_RP_terms_ISR_main = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_main_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_ISR_main_SYR_spirit
+			COLDWAR_SYR_RP_once_ISR_main_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+		ISR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_ISR_main_ISR_spirit
+			COLDWAR_SYR_RP_once_ISR_main_ISR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_ISR_main = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_pending_ISR
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_ISR_main has_country_flag = COLDWAR_SYR_RP_signed_ISR_counter } }
+			COLDWAR_SYR_RP_may_sign_ISR = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_ISR
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_ISR
+		set_country_flag = COLDWAR_SYR_RP_signed_ISR_main
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_ISR_main_SYR = yes
+		ISR = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_ISR_main_ISR = yes
+		}
+		COLDWAR_SYR_RP_sync_ISR = yes
+	}
+}
+
+COLDWAR_SYR_RP_once_ISR_counter_SYR = {
+	add_opinion_modifier = { target = ISR modifier = political_outreach }
+}
+
+COLDWAR_SYR_RP_once_ISR_counter_ISR = {
+	add_opinion_modifier = { target = SYR modifier = political_outreach }
+}
+
+COLDWAR_SYR_RP_terms_ISR_counter = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_counter_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_ISR_counter_SYR_spirit
+			COLDWAR_SYR_RP_once_ISR_counter_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+		ISR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_ISR_counter_ISR_spirit
+			COLDWAR_SYR_RP_once_ISR_counter_ISR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_ISR_counter = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_counter_pending_ISR
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_ISR_main has_country_flag = COLDWAR_SYR_RP_signed_ISR_counter } }
+			COLDWAR_SYR_RP_may_sign_ISR = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_ISR
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_ISR
+		set_country_flag = COLDWAR_SYR_RP_signed_ISR_counter
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_ISR_counter_SYR = yes
+		ISR = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_ISR_counter_ISR = yes
+		}
+		COLDWAR_SYR_RP_sync_ISR = yes
+	}
+}
+
+COLDWAR_SYR_RP_preview_ISR = {
+	COLDWAR_SYR_RP_terms_ISR_main = yes
+	COLDWAR_SYR_RP_terms_ISR_counter = yes
+	effect_tooltip = {
+		ISR = {
+			unlock_decision_tooltip = COLDWAR_SYR_RP_accept_ISR
+			unlock_decision_tooltip = COLDWAR_SYR_RP_amend_ISR
+			unlock_decision_tooltip = COLDWAR_SYR_RP_refuse_ISR
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sync_ISR = {
+	# A dissolved negotiating government cannot return its draft.
+	if = {
+		limit = {
+			NOT = { country_exists = ISR }
+			OR = { has_country_flag = COLDWAR_SYR_RP_pending_ISR has_country_flag = COLDWAR_SYR_RP_counter_pending_ISR }
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_ISR
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_ISR
+		set_country_flag = COLDWAR_SYR_RP_declined_ISR
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_ISR_main
+			COLDWAR_SYR_RP_pair_clear_ISR = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_ISR_main_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_ISR_main_SYR_spirit }
+		ISR = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_ISR_main_ISR_spirit } } add_ideas = COLDWAR_SYR_RP_ISR_main_ISR_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_ISR_main_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_ISR_main_SYR_spirit }
+		if = {
+			limit = { country_exists = ISR }
+			ISR = { if = { limit = { has_idea = COLDWAR_SYR_RP_ISR_main_ISR_spirit } remove_ideas = COLDWAR_SYR_RP_ISR_main_ISR_spirit } }
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_ISR_counter
+			COLDWAR_SYR_RP_pair_clear_ISR = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_ISR_counter_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_ISR_counter_SYR_spirit }
+		ISR = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_ISR_counter_ISR_spirit } } add_ideas = COLDWAR_SYR_RP_ISR_counter_ISR_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_ISR_counter_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_ISR_counter_SYR_spirit }
+		if = {
+			limit = { country_exists = ISR }
+			ISR = { if = { limit = { has_idea = COLDWAR_SYR_RP_ISR_counter_ISR_spirit } remove_ideas = COLDWAR_SYR_RP_ISR_counter_ISR_spirit } }
+		}
+	}
+}
+
+COLDWAR_SYR_RP_offer_SOV = {
+	hidden_effect = {
+		if = {
+			limit = { COLDWAR_SYR_RP_can_offer_SOV = yes }
+			set_country_flag = COLDWAR_SYR_RP_pending_SOV
+		}
+	}
+}
+
+# The 1966 Tabqa pact paired power and civil works with Soviet technical assistance. https://treaties.un.org/Pages/showDetails.aspx?objid=0800000280127814
+COLDWAR_SYR_RP_once_SOV_main_SYR = {
+	add_equipment_to_stockpile = { type = infantry_weapons_1 amount = 600 producer = SOV }
+	add_tech_bonus = { name = COLDWAR_SYR_RP_soviet_technical_placements category = CAT_industry bonus = 0.40 uses = 1 }
+}
+
+COLDWAR_SYR_RP_once_SOV_main_SOV = {
+	add_tech_bonus = { name = COLDWAR_SYR_RP_euphrates_turbine_studies category = CAT_electrification bonus = 0.30 uses = 1 }
+	add_opinion_modifier = { target = SYR modifier = political_outreach }
+}
+
+COLDWAR_SYR_RP_terms_SOV_main = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_main_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_SOV_main_SYR_spirit
+			COLDWAR_SYR_RP_once_SOV_main_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 14 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = -2 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+		SOV = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_SOV_main_SOV_spirit
+			COLDWAR_SYR_RP_once_SOV_main_SOV = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = 2 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_SOV_main = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_pending_SOV
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_SOV_main has_country_flag = COLDWAR_SYR_RP_signed_SOV_counter } }
+			COLDWAR_SYR_RP_may_sign_SOV = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_SOV
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_SOV
+		set_country_flag = COLDWAR_SYR_RP_signed_SOV_main
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 14 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_SOV_main_SYR = yes
+		SOV = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_SOV_main_SOV = yes
+		}
+		COLDWAR_SYR_RP_sync_SOV = yes
+	}
+}
+
+COLDWAR_SYR_RP_once_SOV_counter_SYR = {
+	add_equipment_to_stockpile = { type = util_vehicle_1 amount = 120 producer = SOV }
+	add_tech_bonus = { name = COLDWAR_SYR_RP_soviet_works_depots category = CAT_construction bonus = 0.45 uses = 1 }
+}
+
+COLDWAR_SYR_RP_once_SOV_counter_SOV = {
+	add_tech_bonus = { name = COLDWAR_SYR_RP_euphrates_works_surveys category = CAT_infrastructure bonus = 0.35 uses = 1 }
+}
+
+COLDWAR_SYR_RP_terms_SOV_counter = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_counter_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_SOV_counter_SYR_spirit
+			COLDWAR_SYR_RP_once_SOV_counter_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 10 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = -1 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+		SOV = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_SOV_counter_SOV_spirit
+			COLDWAR_SYR_RP_once_SOV_counter_SOV = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 2 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = 1 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_SOV_counter = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_counter_pending_SOV
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_SOV_main has_country_flag = COLDWAR_SYR_RP_signed_SOV_counter } }
+			COLDWAR_SYR_RP_may_sign_SOV = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_SOV
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_SOV
+		set_country_flag = COLDWAR_SYR_RP_signed_SOV_counter
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 10 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_SOV_counter_SYR = yes
+		SOV = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 2 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_SOV_counter_SOV = yes
+		}
+		COLDWAR_SYR_RP_sync_SOV = yes
+	}
+}
+
+COLDWAR_SYR_RP_preview_SOV = {
+	COLDWAR_SYR_RP_terms_SOV_main = yes
+	COLDWAR_SYR_RP_terms_SOV_counter = yes
+	effect_tooltip = {
+		SOV = {
+			unlock_decision_tooltip = COLDWAR_SYR_RP_accept_SOV
+			unlock_decision_tooltip = COLDWAR_SYR_RP_amend_SOV
+			unlock_decision_tooltip = COLDWAR_SYR_RP_refuse_SOV
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sync_SOV = {
+	# A dissolved negotiating government cannot return its draft.
+	if = {
+		limit = {
+			NOT = { country_exists = SOV }
+			OR = { has_country_flag = COLDWAR_SYR_RP_pending_SOV has_country_flag = COLDWAR_SYR_RP_counter_pending_SOV }
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_SOV
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_SOV
+		set_country_flag = COLDWAR_SYR_RP_declined_SOV
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_SOV_main
+			COLDWAR_SYR_RP_pair_clear_SOV = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_SOV_main_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_SOV_main_SYR_spirit }
+		SOV = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_SOV_main_SOV_spirit } } add_ideas = COLDWAR_SYR_RP_SOV_main_SOV_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_SOV_main_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_SOV_main_SYR_spirit }
+		if = {
+			limit = { country_exists = SOV }
+			SOV = { if = { limit = { has_idea = COLDWAR_SYR_RP_SOV_main_SOV_spirit } remove_ideas = COLDWAR_SYR_RP_SOV_main_SOV_spirit } }
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_SOV_counter
+			COLDWAR_SYR_RP_pair_clear_SOV = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_SOV_counter_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_SOV_counter_SYR_spirit }
+		SOV = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_SOV_counter_SOV_spirit } } add_ideas = COLDWAR_SYR_RP_SOV_counter_SOV_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_SOV_counter_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_SOV_counter_SYR_spirit }
+		if = {
+			limit = { country_exists = SOV }
+			SOV = { if = { limit = { has_idea = COLDWAR_SYR_RP_SOV_counter_SOV_spirit } remove_ideas = COLDWAR_SYR_RP_SOV_counter_SOV_spirit } }
+		}
+	}
+}
+
+COLDWAR_SYR_RP_offer_PER = {
+	hidden_effect = {
+		if = {
+			limit = { COLDWAR_SYR_RP_can_offer_PER = yes }
+			set_country_flag = COLDWAR_SYR_RP_pending_PER
+		}
+	}
+}
+
+# The later 1982 and 1983 supply contracts inform the first delivery and the alternate agricultural clearing account. https://www.cia.gov/readingroom/docs/CIA-RDP86T01017R000302840001-3.pdf
+COLDWAR_SYR_RP_once_PER_main_SYR = {
+	add_fuel = 60000
+	add_tech_bonus = { name = COLDWAR_SYR_RP_iranian_refinery_standards category = CAT_fuel_refining bonus = 0.30 uses = 1 }
+}
+
+COLDWAR_SYR_RP_once_PER_main_PER = {
+	add_opinion_modifier = { target = SYR modifier = improve_trade }
+}
+
+COLDWAR_SYR_RP_terms_PER_main = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_main_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_PER_main_SYR_spirit
+			COLDWAR_SYR_RP_once_PER_main_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 10 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = -2 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+		PER = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_PER_main_PER_spirit
+			COLDWAR_SYR_RP_once_PER_main_PER = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = 2 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_PER_main = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_pending_PER
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_PER_main has_country_flag = COLDWAR_SYR_RP_signed_PER_counter } }
+			COLDWAR_SYR_RP_may_sign_PER = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_PER
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_PER
+		set_country_flag = COLDWAR_SYR_RP_signed_PER_main
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 10 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_PER_main_SYR = yes
+		PER = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_PER_main_PER = yes
+		}
+		COLDWAR_SYR_RP_sync_PER = yes
+	}
+}
+
+COLDWAR_SYR_RP_once_PER_counter_SYR = {
+	add_fuel = 25000
+	add_opinion_modifier = { target = PER modifier = minor_improve_trade }
+}
+
+COLDWAR_SYR_RP_once_PER_counter_PER = {
+	add_tech_bonus = { name = COLDWAR_SYR_RP_levantine_crops category = CAT_agriculture bonus = 0.35 uses = 1 }
+	add_opinion_modifier = { target = SYR modifier = minor_improve_trade }
+}
+
+COLDWAR_SYR_RP_terms_PER_counter = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_counter_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_PER_counter_SYR_spirit
+			COLDWAR_SYR_RP_once_PER_counter_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 6 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = -1 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+		PER = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_PER_counter_PER_spirit
+			COLDWAR_SYR_RP_once_PER_counter_PER = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+			COLDWAR_SYR_RP_show_fee = yes
+			set_temp_variable = { COLDWAR_SYR_RP_signed_units = 1 }
+			COLDWAR_SYR_RP_show_weekly_transfer = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_PER_counter = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_counter_pending_PER
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_PER_main has_country_flag = COLDWAR_SYR_RP_signed_PER_counter } }
+			COLDWAR_SYR_RP_may_sign_PER = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_PER
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_PER
+		set_country_flag = COLDWAR_SYR_RP_signed_PER_counter
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 6 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_PER_counter_SYR = yes
+		PER = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 3 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_PER_counter_PER = yes
+		}
+		COLDWAR_SYR_RP_sync_PER = yes
+	}
+}
+
+COLDWAR_SYR_RP_preview_PER = {
+	COLDWAR_SYR_RP_terms_PER_main = yes
+	COLDWAR_SYR_RP_terms_PER_counter = yes
+	effect_tooltip = {
+		PER = {
+			unlock_decision_tooltip = COLDWAR_SYR_RP_accept_PER
+			unlock_decision_tooltip = COLDWAR_SYR_RP_amend_PER
+			unlock_decision_tooltip = COLDWAR_SYR_RP_refuse_PER
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sync_PER = {
+	# A dissolved negotiating government cannot return its draft.
+	if = {
+		limit = {
+			NOT = { country_exists = PER }
+			OR = { has_country_flag = COLDWAR_SYR_RP_pending_PER has_country_flag = COLDWAR_SYR_RP_counter_pending_PER }
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_PER
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_PER
+		set_country_flag = COLDWAR_SYR_RP_declined_PER
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_PER_main
+			COLDWAR_SYR_RP_pair_clear_PER = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_PER_main_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_PER_main_SYR_spirit }
+		PER = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_PER_main_PER_spirit } } add_ideas = COLDWAR_SYR_RP_PER_main_PER_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_PER_main_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_PER_main_SYR_spirit }
+		if = {
+			limit = { country_exists = PER }
+			PER = { if = { limit = { has_idea = COLDWAR_SYR_RP_PER_main_PER_spirit } remove_ideas = COLDWAR_SYR_RP_PER_main_PER_spirit } }
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_PER_counter
+			COLDWAR_SYR_RP_pair_clear_PER = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_PER_counter_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_PER_counter_SYR_spirit }
+		PER = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_PER_counter_PER_spirit } } add_ideas = COLDWAR_SYR_RP_PER_counter_PER_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_PER_counter_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_PER_counter_SYR_spirit }
+		if = {
+			limit = { country_exists = PER }
+			PER = { if = { limit = { has_idea = COLDWAR_SYR_RP_PER_counter_PER_spirit } remove_ideas = COLDWAR_SYR_RP_PER_counter_PER_spirit } }
+		}
+	}
+}
+
+COLDWAR_SYR_RP_offer_TUR = {
+	hidden_effect = {
+		if = {
+			limit = { COLDWAR_SYR_RP_can_offer_TUR = yes }
+			set_country_flag = COLDWAR_SYR_RP_pending_TUR
+		}
+	}
+}
+
+# The 1987 economic protocol linked regulated flows to broader cooperation. Article 6 informs the allocation and data-sharing alternatives. https://gis.nacse.org/tfdd/tfdddocs/1086ENG.pdf
+COLDWAR_SYR_RP_once_TUR_main_SYR = {
+	add_tech_bonus = { name = COLDWAR_SYR_RP_euphrates_allocation_study category = CAT_agriculture bonus = 0.30 uses = 1 }
+}
+
+COLDWAR_SYR_RP_once_TUR_main_TUR = {
+	add_tech_bonus = { name = COLDWAR_SYR_RP_euphrates_joint_survey category = CAT_infrastructure bonus = 0.40 uses = 1 }
+	add_opinion_modifier = { target = SYR modifier = improve_trade }
+}
+
+COLDWAR_SYR_RP_terms_TUR_main = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_main_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_TUR_main_SYR_spirit
+			COLDWAR_SYR_RP_once_TUR_main_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+		TUR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_TUR_main_TUR_spirit
+			COLDWAR_SYR_RP_once_TUR_main_TUR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_TUR_main = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_pending_TUR
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_TUR_main has_country_flag = COLDWAR_SYR_RP_signed_TUR_counter } }
+			COLDWAR_SYR_RP_may_sign_TUR = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_TUR
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_TUR
+		set_country_flag = COLDWAR_SYR_RP_signed_TUR_main
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_TUR_main_SYR = yes
+		TUR = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_TUR_main_TUR = yes
+		}
+		COLDWAR_SYR_RP_sync_TUR = yes
+	}
+}
+
+COLDWAR_SYR_RP_once_TUR_counter_SYR = {
+	add_tech_bonus = { name = COLDWAR_SYR_RP_euphrates_drought_bulletin category = CAT_agriculture bonus = 0.40 uses = 1 }
+}
+
+COLDWAR_SYR_RP_once_TUR_counter_TUR = {
+	add_tech_bonus = { name = COLDWAR_SYR_RP_euphrates_drought_bulletin category = CAT_agriculture bonus = 0.40 uses = 1 }
+}
+
+COLDWAR_SYR_RP_terms_TUR_counter = {
+	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_SYR_RP_foreign_counter_tt
+		SYR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_TUR_counter_SYR_spirit
+			COLDWAR_SYR_RP_once_TUR_counter_SYR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+		TUR = {
+			show_ideas_tooltip = COLDWAR_SYR_RP_TUR_counter_TUR_spirit
+			COLDWAR_SYR_RP_once_TUR_counter_TUR = yes
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+			COLDWAR_SYR_RP_show_fee = yes
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sign_TUR_counter = {
+	if = {
+		limit = {
+			tag = SYR
+			has_country_flag = COLDWAR_SYR_RP_counter_pending_TUR
+			NOT = { OR = { has_country_flag = COLDWAR_SYR_RP_signed_TUR_main has_country_flag = COLDWAR_SYR_RP_signed_TUR_counter } }
+			COLDWAR_SYR_RP_may_sign_TUR = yes
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_TUR
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_TUR
+		set_country_flag = COLDWAR_SYR_RP_signed_TUR_counter
+		set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+		COLDWAR_SYR_RP_pay_fee = yes
+		COLDWAR_SYR_RP_once_TUR_counter_SYR = yes
+		TUR = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 4 }
+			COLDWAR_SYR_RP_pay_fee = yes
+			COLDWAR_SYR_RP_once_TUR_counter_TUR = yes
+		}
+		COLDWAR_SYR_RP_sync_TUR = yes
+	}
+}
+
+COLDWAR_SYR_RP_preview_TUR = {
+	COLDWAR_SYR_RP_terms_TUR_main = yes
+	COLDWAR_SYR_RP_terms_TUR_counter = yes
+	effect_tooltip = {
+		TUR = {
+			unlock_decision_tooltip = COLDWAR_SYR_RP_accept_TUR
+			unlock_decision_tooltip = COLDWAR_SYR_RP_amend_TUR
+			unlock_decision_tooltip = COLDWAR_SYR_RP_refuse_TUR
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sync_TUR = {
+	# A dissolved negotiating government cannot return its draft.
+	if = {
+		limit = {
+			NOT = { country_exists = TUR }
+			OR = { has_country_flag = COLDWAR_SYR_RP_pending_TUR has_country_flag = COLDWAR_SYR_RP_counter_pending_TUR }
+		}
+		clr_country_flag = COLDWAR_SYR_RP_pending_TUR
+		clr_country_flag = COLDWAR_SYR_RP_counter_pending_TUR
+		set_country_flag = COLDWAR_SYR_RP_declined_TUR
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_TUR_main
+			COLDWAR_SYR_RP_pair_clear_TUR = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_TUR_main_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_TUR_main_SYR_spirit }
+		TUR = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_TUR_main_TUR_spirit } } add_ideas = COLDWAR_SYR_RP_TUR_main_TUR_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_TUR_main_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_TUR_main_SYR_spirit }
+		if = {
+			limit = { country_exists = TUR }
+			TUR = { if = { limit = { has_idea = COLDWAR_SYR_RP_TUR_main_TUR_spirit } remove_ideas = COLDWAR_SYR_RP_TUR_main_TUR_spirit } }
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_SYR_RP_signed_TUR_counter
+			COLDWAR_SYR_RP_pair_clear_TUR = yes
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_TUR_counter_SYR_spirit } } add_ideas = COLDWAR_SYR_RP_TUR_counter_SYR_spirit }
+		TUR = { if = { limit = { NOT = { has_idea = COLDWAR_SYR_RP_TUR_counter_TUR_spirit } } add_ideas = COLDWAR_SYR_RP_TUR_counter_TUR_spirit } }
+	}
+	else = {
+		if = { limit = { has_idea = COLDWAR_SYR_RP_TUR_counter_SYR_spirit } remove_ideas = COLDWAR_SYR_RP_TUR_counter_SYR_spirit }
+		if = {
+			limit = { country_exists = TUR }
+			TUR = { if = { limit = { has_idea = COLDWAR_SYR_RP_TUR_counter_TUR_spirit } remove_ideas = COLDWAR_SYR_RP_TUR_counter_TUR_spirit } }
+		}
+	}
+}
+
+COLDWAR_SYR_RP_sync_deals = {
+	COLDWAR_SYR_RP_sync_EGY = yes
+	COLDWAR_SYR_RP_sync_ISR = yes
+	COLDWAR_SYR_RP_sync_SOV = yes
+	COLDWAR_SYR_RP_sync_PER = yes
+	COLDWAR_SYR_RP_sync_TUR = yes
+}
+
+# Native GDP and the treasury use billions. Accumulate small claims in
+# hundred-thousandths of a billion and settle whole 0.001-billion units.
+# Full terms fund 0.104% of annual GDP / 52; counterterms fund 0.052% / 52.
+COLDWAR_SYR_RP_quote_week_SOV = {
+	set_variable = { COLDWAR_SYR_RP_invoice_SOV = 0 }
+	if = {
+		limit = {
+			OR = { has_country_flag = COLDWAR_SYR_RP_signed_SOV_main has_country_flag = COLDWAR_SYR_RP_signed_SOV_counter }
+			COLDWAR_SYR_RP_pair_clear_SOV = yes
+		}
+		add_to_variable = { COLDWAR_SYR_RP_accrued_SOV = gdp_total }
+		if = {
+			limit = { has_country_flag = COLDWAR_SYR_RP_signed_SOV_main }
+			add_to_variable = { COLDWAR_SYR_RP_accrued_SOV = gdp_total }
+		}
+		set_temp_variable = { COLDWAR_SYR_RP_whole = COLDWAR_SYR_RP_accrued_SOV }
+		divide_temp_variable = { COLDWAR_SYR_RP_whole = 100 }
+		round_temp_variable = COLDWAR_SYR_RP_whole
+		multiply_temp_variable = { COLDWAR_SYR_RP_whole = 100 }
+		if = {
+			limit = { check_variable = { COLDWAR_SYR_RP_whole > COLDWAR_SYR_RP_accrued_SOV } }
+			subtract_from_temp_variable = { COLDWAR_SYR_RP_whole = 100 }
+		}
+		subtract_from_variable = { COLDWAR_SYR_RP_accrued_SOV = COLDWAR_SYR_RP_whole }
+		set_variable = { COLDWAR_SYR_RP_invoice_SOV = COLDWAR_SYR_RP_whole }
+		divide_variable = { COLDWAR_SYR_RP_invoice_SOV = 100 }
+		divide_variable = { COLDWAR_SYR_RP_invoice_SOV = 1000 }
+	}
+}
+
+COLDWAR_SYR_RP_quote_week_PER = {
+	set_variable = { COLDWAR_SYR_RP_invoice_PER = 0 }
+	if = {
+		limit = {
+			OR = { has_country_flag = COLDWAR_SYR_RP_signed_PER_main has_country_flag = COLDWAR_SYR_RP_signed_PER_counter }
+			COLDWAR_SYR_RP_pair_clear_PER = yes
+		}
+		add_to_variable = { COLDWAR_SYR_RP_accrued_PER = gdp_total }
+		if = {
+			limit = { has_country_flag = COLDWAR_SYR_RP_signed_PER_main }
+			add_to_variable = { COLDWAR_SYR_RP_accrued_PER = gdp_total }
+		}
+		set_temp_variable = { COLDWAR_SYR_RP_whole = COLDWAR_SYR_RP_accrued_PER }
+		divide_temp_variable = { COLDWAR_SYR_RP_whole = 100 }
+		round_temp_variable = COLDWAR_SYR_RP_whole
+		multiply_temp_variable = { COLDWAR_SYR_RP_whole = 100 }
+		if = {
+			limit = { check_variable = { COLDWAR_SYR_RP_whole > COLDWAR_SYR_RP_accrued_PER } }
+			subtract_from_temp_variable = { COLDWAR_SYR_RP_whole = 100 }
+		}
+		subtract_from_variable = { COLDWAR_SYR_RP_accrued_PER = COLDWAR_SYR_RP_whole }
+		set_variable = { COLDWAR_SYR_RP_invoice_PER = COLDWAR_SYR_RP_whole }
+		divide_variable = { COLDWAR_SYR_RP_invoice_PER = 100 }
+		divide_variable = { COLDWAR_SYR_RP_invoice_PER = 1000 }
+	}
+}
+
+COLDWAR_SYR_RP_prepare_week = {
+	# This runs once globally, before the first national budget of the week.
+	# Manual budget refreshes only read the amounts. Both ledgers use the same claim.
+	if = {
+		limit = {
+			OR = {
+				has_country_flag = COLDWAR_SYR_RP_signed_SOV_main
+				has_country_flag = COLDWAR_SYR_RP_signed_SOV_counter
+				has_country_flag = COLDWAR_SYR_RP_signed_PER_main
+				has_country_flag = COLDWAR_SYR_RP_signed_PER_counter
+			}
+		}
+		update_state_variables = yes
+		COLDWAR_SYR_RP_quote_week_SOV = yes
+		COLDWAR_SYR_RP_quote_week_PER = yes
+	}
+}
+
+COLDWAR_SYR_RP_read_income = {
+	if = {
+		limit = { tag = SOV country_exists = SYR check_variable = { SYR.COLDWAR_SYR_RP_invoice_SOV > 0 } COLDWAR_SYR_RP_pair_clear_SOV = yes }
+		add_to_variable = { additional_income_rate = SYR.COLDWAR_SYR_RP_invoice_SOV }
+	}
+	if = {
+		limit = { tag = PER country_exists = SYR check_variable = { SYR.COLDWAR_SYR_RP_invoice_PER > 0 } COLDWAR_SYR_RP_pair_clear_PER = yes }
+		add_to_variable = { additional_income_rate = SYR.COLDWAR_SYR_RP_invoice_PER }
+	}
+}
+
+COLDWAR_SYR_RP_read_expenses = {
+	if = {
+		limit = { check_variable = { COLDWAR_SYR_RP_invoice_SOV > 0 } COLDWAR_SYR_RP_pair_clear_SOV = yes }
+		add_to_variable = { additional_expenses_rate = COLDWAR_SYR_RP_invoice_SOV }
+	}
+	if = {
+		limit = { check_variable = { COLDWAR_SYR_RP_invoice_PER > 0 } COLDWAR_SYR_RP_pair_clear_PER = yes }
+		add_to_variable = { additional_expenses_rate = COLDWAR_SYR_RP_invoice_PER }
+	}
+}

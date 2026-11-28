@@ -1,4 +1,7 @@
+# IMPERIA COLD WAR — 24.11.2026: deal foci send an offer event (COLDWAR_DEAL); reward only if the partner signs.
+# IMPERIA COLD WAR — MD standard (B7): gdp_total > 0 gates removed (always true in MD)
 # IMPERIA COLD WAR — German leadership and Eastern portrait integration.
+# Update 22.11.2026: "power to party" focuses removed (rule: parties come to power by game means; playtest 1).
 # IMPERIA COLD WAR — Native ideological defence integration.
 # IMPERIA CW — Cold War: DDR 1970 focus — national focus tree.
 ## COLDWAR | Cold War mod (MD Imperia) - German Democratic Republic 1970
@@ -274,150 +277,8 @@ focus_tree = {
 		}
 	}
 
-	focus = {
-		id = COLDWAR_DDR_power_ldk
-		icon = COLDWAR_DDR_goal_Communist_Liberalization
 
-		x = -23
-		y = 3
-		relative_position_id = COLDWAR_DDR_em_the_leading_role
 
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_em_the_workers_and_farmers_state }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^5 > 0.199 }
-			NOT = { emerging_anarchist_communism_are_in_power = yes }
-			has_civil_war = no
-			OR = { check_variable = { COLDWAR_DDR_course > 0.199 } has_stability < 0.35 }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_ldk"
-			set_temp_variable = { rul_party_temp = 5 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_robert_havemann_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/robert_havemann.dds" name = "COLDWAR_DDR_leader_robert_havemann" ideology = anarchist_communism traits = { emerging_anarchist_communism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_robert_havemann_5 = yes }
-			}
-			set_temp_variable = { party_index = 5 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_labour_unions_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_tg
-		icon = COLDWAR_DDR_goal_CommunistLoyalty
-
-		x = -10
-		y = 3
-		relative_position_id = COLDWAR_DDR_em_the_leading_role
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_em_the_workers_and_farmers_state }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^6 > 0.199 }
-			NOT = { emerging_reactionaries_are_in_power = yes }
-			has_civil_war = no
-			check_variable = { COLDWAR_DDR_course < -0.399 }
-			has_idea = communist_cadres check_variable = { communist_cadres_opinion > 59 }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_tg"
-			set_temp_variable = { rul_party_temp = 6 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_alfred_neumann_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/alfred_neumann.dds" name = "COLDWAR_DDR_leader_alfred_neumann" ideology = Conservative traits = { emerging_Conservative } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_alfred_neumann_6 = yes }
-			}
-			set_temp_variable = { party_index = 6 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			set_temp_variable = { temp_opinion = 5 }
-			change_communist_cadres_opinion = yes
-			add_timed_idea = { idea = COLDWAR_DDR_transition_of_power days = 180 }
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_ssp
-		icon = COLDWAR_DDR_goal_DDR_Coldwar_Stasi_Surveillance_Focus
-
-		x = 9
-		y = 3
-		relative_position_id = COLDWAR_DDR_em_the_leading_role
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_em_the_workers_and_farmers_state }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^7 > 0.199 }
-			NOT = { emerging_autocracy_are_in_power = yes }
-			has_civil_war = no
-			has_idea = intelligence_community check_variable = { intelligence_community_opinion > 74 }
-			OR = { has_stability < 0.4 has_war = yes has_country_flag = COLDWAR_DDR_ambassador_called }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_ssp"
-			set_temp_variable = { rul_party_temp = 7 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_erich_mielke_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { name = "COLDWAR_DDR_leader_erich_mielke" picture = "gfx/leaders/COLDWAR_europe_1970/erich_mielke.dds" ideology = Autocracy traits = { emerging_Autocracy } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_erich_mielke_7 = yes }
-			}
-			set_temp_variable = { party_index = 7 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			set_temp_variable = { temp_opinion = 10 }
-			change_intelligence_community_opinion = yes
-			add_timed_idea = { idea = COLDWAR_DDR_transition_of_power days = 180 }
-			set_temp_variable = { temp_opinion = -15 }
-			change_communist_cadres_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
 
 	focus = {
 		id = COLDWAR_DDR_em_a_socialist_state_of_the_german_nation
@@ -705,191 +566,9 @@ hidden_effect = { COLDWAR_EU_1970_note_DDR_erich_mielke_7 = yes }
 		}
 	}
 
-	focus = {
-		id = COLDWAR_DDR_power_koko
-		icon = COLDWAR_DDR_goal_goal_endless_money
 
-		x = -24
-		y = 3
-		relative_position_id = COLDWAR_DDR_we_change_through_rapprochement
 
-		cost = 3
 
-		prerequisite = { focus = COLDWAR_DDR_we_the_round_tables }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^0 > 0.199 }
-			NOT = { western_autocrats_are_in_power = yes }
-			has_civil_war = no
-			OR = { has_completed_focus = COLDWAR_DDR_plan_commercial_coordination check_variable = { COLDWAR_DDR_hard_currency_deals > 2 } }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_koko"
-			set_temp_variable = { rul_party_temp = 0 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_alexander_schalck_golodkowski_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/alexander_schalck_golodkowski.dds" name = "COLDWAR_DDR_leader_alexander_schalck_golodkowski" ideology = Western_Autocracy traits = { western_Western_Autocracy } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_alexander_schalck_golodkowski_0 = yes }
-			}
-			set_temp_variable = { party_index = 0 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_intelligence_community_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_cdu
-		icon = logo_CDU
-
-		x = -11
-		y = 3
-		relative_position_id = COLDWAR_DDR_we_change_through_rapprochement
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_we_the_round_tables }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^1 > 0.199 }
-			NOT = { western_conservatism_are_in_power = yes }
-			has_civil_war = no
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_cdu"
-			set_temp_variable = { rul_party_temp = 1 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_gerald_g_tting_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/gerald_gotting.dds" name = "COLDWAR_DDR_leader_gerald_goetting" ideology = conservatism traits = { western_conservatism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_gerald_gotting_1 = yes }
-			}
-			set_temp_variable = { party_index = 1 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_the_clergy_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_ldpd
-		icon = COLDWAR_DDR_goal_liberal_party
-
-		x = 10
-		y = 3
-		relative_position_id = COLDWAR_DDR_we_change_through_rapprochement
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_we_the_round_tables }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^2 > 0.199 }
-			NOT = { western_liberals_are_in_power = yes }
-			has_civil_war = no
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_ldpd"
-			set_temp_variable = { rul_party_temp = 2 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_manfred_gerlach_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { name = "COLDWAR_DDR_leader_manfred_gerlach" picture = "gfx/leaders/COLDWAR_europe_1970/manfred_gerlach.dds" ideology = liberalism traits = { western_liberalism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_manfred_gerlach_2 = yes }
-			}
-			set_temp_variable = { party_index = 2 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_small_medium_business_owners_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_spd
-		icon = social_democracy
-
-		x = 23
-		y = 3
-		relative_position_id = COLDWAR_DDR_we_change_through_rapprochement
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_we_the_round_tables }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^3 > 0.199 }
-			NOT = { western_social_democrats_are_in_power = yes }
-			has_civil_war = no
-			OR = { check_variable = { COLDWAR_DDR_course > 0.599 } has_stability < 0.3 }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_spd"
-			set_temp_variable = { rul_party_temp = 3 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_friedrich_ebert_jr_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/friedrich_ebert_jr.dds" name = "COLDWAR_DDR_leader_friedrich_ebert_jr" ideology = socialism traits = { western_socialism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_friedrich_ebert_jr_3 = yes }
-			}
-			set_temp_variable = { party_index = 3 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_labour_unions_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
 
 	focus = {
 		id = COLDWAR_DDR_we_a_democratic_republic
@@ -1359,340 +1038,12 @@ hidden_effect = { COLDWAR_EU_1970_note_DDR_friedrich_ebert_jr_3 = yes }
 		}
 	}
 
-	focus = {
-		id = COLDWAR_DDR_power_spk
-		icon = COLDWAR_DDR_goal_Bureaucratic_Five_Year_Plan
 
-		x = -42
-		y = 3
-		relative_position_id = COLDWAR_DDR_na_a_third_way_for_germany
 
-		cost = 3
 
-		prerequisite = { focus = COLDWAR_DDR_na_the_third_force }
 
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
 
-		available = {
-			check_variable = { party_pop_array^13 > 0.199 }
-			NOT = { neutrality_neutral_autocracy_are_in_power = yes }
-			has_civil_war = no
-			has_completed_focus = COLDWAR_DDR_na_the_honest_balance_sheet
-		}
 
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_spk"
-			set_temp_variable = { rul_party_temp = 13 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_gerhard_sch_rer_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/gerhard_schurer.dds" name = "COLDWAR_DDR_leader_gerhard_schuerer" ideology = Neutral_Autocracy traits = { neutrality_Neutral_Autocracy } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_gerhard_schurer_13 = yes }
-			}
-			set_temp_variable = { party_index = 13 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_industrial_conglomerates_opinion = yes
-			decrease_corruption = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_kis
-		icon = COLDWAR_DDR_goal_GDR_Tolerate_Organized_Religion
-
-		x = -28
-		y = 3
-		relative_position_id = COLDWAR_DDR_na_a_third_way_for_germany
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_na_the_third_force }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^14 > 0.199 }
-			NOT = { neutrality_neutral_conservatism_are_in_power = yes }
-			has_civil_war = no
-			has_stability < 0.4
-			has_idea = the_clergy check_variable = { the_clergy_opinion > 59 }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_kis"
-			set_temp_variable = { rul_party_temp = 14 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_albrecht_sch_nherr_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/albrecht_schonherr.dds" name = "COLDWAR_DDR_leader_albrecht_schoenherr" ideology = Neutral_conservatism traits = { neutrality_Neutral_conservatism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_albrecht_schonherr_14 = yes }
-			}
-			set_temp_variable = { party_index = 14 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 10 }
-			change_the_clergy_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_kd
-		icon = COLDWAR_DDR_goal_Soviet_Conglomorates
-
-		x = -15
-		y = 3
-		relative_position_id = COLDWAR_DDR_na_a_third_way_for_germany
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_na_the_third_force }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^15 > 0.199 }
-			NOT = { neutrality_neutral_oligarch_are_in_power = yes }
-			has_civil_war = no
-			OR = { OR = { has_idea = corruption_level_05 has_idea = corruption_level_06 has_idea = corruption_level_07 has_idea = corruption_level_08 has_idea = corruption_level_09 has_idea = corruption_level_10 } AND = { has_idea = industrial_conglomerates check_variable = { industrial_conglomerates_opinion > 79 } } }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_kd"
-			set_temp_variable = { rul_party_temp = 15 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_wolfgang_biermann_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/wolfgang_biermann.dds" name = "COLDWAR_DDR_leader_wolfgang_biermann" ideology = oligarchism traits = { neutrality_oligarchism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_wolfgang_biermann_15 = yes }
-			}
-			set_temp_variable = { party_index = 15 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 10 }
-			change_industrial_conglomerates_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_uct
-		icon = business_man
-
-		x = -3
-		y = 3
-		relative_position_id = COLDWAR_DDR_na_a_third_way_for_germany
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_na_the_third_force }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^16 > 0.199 }
-			NOT = { neutrality_neutral_libertarians_are_in_power = yes }
-			has_civil_war = no
-			has_idea = small_medium_business_owners check_variable = { small_medium_business_owners_opinion > 59 }
-			NOT = { has_idea = md_closed_economy }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_uct"
-			set_temp_variable = { rul_party_temp = 16 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_council_of_master_craftsmen_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { name = "COLDWAR_DDR_leader_council_of_master_craftsmen" ideology = Neutral_Libertarian traits = { neutrality_Neutral_Libertarian } }
-			}
-			set_temp_variable = { party_index = 16 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 10 }
-			change_small_medium_business_owners_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_gl
-		icon = COLDWAR_DDR_goal_Green_Movement
-
-		x = 16
-		y = 3
-		relative_position_id = COLDWAR_DDR_na_a_third_way_for_germany
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_na_the_third_force }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^17 > 0.199 }
-			NOT = { neutrality_neutral_green_are_in_power = yes }
-			has_civil_war = no
-			OR = { has_idea = COLDWAR_DDR_energy_coal_instead_of_oil has_idea = COLDWAR_DDR_king_lignite has_idea = COLDWAR_DDR_king_lignite_2 has_idea = COLDWAR_DDR_king_lignite_3 }
-			has_stability < 0.45
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_gl"
-			set_temp_variable = { rul_party_temp = 17 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_reimar_gilsenbach_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/reimar_gilsenbach.dds" name = "COLDWAR_DDR_leader_reimar_gilsenbach" ideology = Neutral_green traits = { neutrality_Neutral_green } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_reimar_gilsenbach_17 = yes }
-			}
-			set_temp_variable = { party_index = 17 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_the_clergy_opinion = yes
-			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
-			add_to_variable = { COLDWAR_DDR_planned_economy_health_cost_multiplier_modifier = -0.05 tooltip = health_cost_multiplier_modifier_tt }
-			newline = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_dbd
-		icon = COLDWAR_DDR_goal_Support_Farmers
-
-		x = 29
-		y = 3
-		relative_position_id = COLDWAR_DDR_na_a_third_way_for_germany
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_na_the_third_force }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^18 > 0.199 }
-			NOT = { neutrality_neutral_social_are_in_power = yes }
-			has_civil_war = no
-			has_idea = farmers check_variable = { farmers_opinion > 64 }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_dbd"
-			set_temp_variable = { rul_party_temp = 18 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_ernst_goldenbaum_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/ernst_goldenbaum.dds" name = "COLDWAR_DDR_leader_ernst_goldenbaum" ideology = neutral_Social traits = { neutrality_neutral_Social } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_ernst_goldenbaum_18 = yes }
-			}
-			set_temp_variable = { party_index = 18 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 10 }
-			change_farmers_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_tws
-		icon = liberalized_socialism
-
-		x = 39
-		y = 3
-		relative_position_id = COLDWAR_DDR_na_a_third_way_for_germany
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_na_the_third_force }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^19 > 0.199 }
-			NOT = { neutrality_neutral_communism_are_in_power = yes }
-			has_civil_war = no
-			check_variable = { COLDWAR_DDR_course > -0.201 } check_variable = { COLDWAR_DDR_course < 0.601 }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_tws"
-			set_temp_variable = { rul_party_temp = 19 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_wolfgang_harich_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/wolfgang_harich.dds" name = "COLDWAR_DDR_leader_wolfgang_harich" ideology = Neutral_Communism traits = { neutrality_Neutral_Communism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_wolfgang_harich_19 = yes }
-			}
-			set_temp_variable = { party_index = 19 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_labour_unions_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
 
 	focus = {
 		id = COLDWAR_DDR_na_neither_moscow_nor_bonn
@@ -2007,193 +1358,9 @@ hidden_effect = { COLDWAR_EU_1970_note_DDR_wolfgang_harich_19 = yes }
 		}
 	}
 
-	focus = {
-		id = COLDWAR_DDR_power_ndpd
-		icon = german_nationalism2
 
-		x = -22
-		y = 3
-		relative_position_id = COLDWAR_DDR_nt_the_nation_above_the_class
 
-		cost = 3
 
-		prerequisite = { focus = COLDWAR_DDR_nt_one_people }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^20 > 0.199 }
-			NOT = { nationalist_right_wing_populists_are_in_power = yes }
-			has_civil_war = no
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_ndpd"
-			set_temp_variable = { rul_party_temp = 20 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_lothar_bolz_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/lothar_bolz.dds" name = "COLDWAR_DDR_leader_lothar_bolz" ideology = Nat_Populism traits = { nationalist_Nat_Populism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_lothar_bolz_20 = yes }
-			}
-			set_temp_variable = { party_index = 20 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_political_power = 100
-			set_temp_variable = { temp_opinion = 5 }
-			change_small_medium_business_owners_opinion = yes
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_nrf
-		icon = Ultranationalism
-
-		x = -11
-		y = 3
-		relative_position_id = COLDWAR_DDR_nt_the_nation_above_the_class
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_nt_one_people }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS }
-
-		available = {
-			check_variable = { party_pop_array^21 > 0.199 }
-			NOT = { nationalist_fascist_are_in_power = yes }
-			has_civil_war = no
-			has_stability < 0.25
-			is_ai = no
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_nrf"
-			set_temp_variable = { rul_party_temp = 21 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_national_revolutionary_council_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { name = "COLDWAR_DDR_leader_national_revolutionary_council" ideology = Nat_Fascism traits = { nationalist_Nat_Fascism } }
-			}
-			set_temp_variable = { party_index = 21 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			add_war_support = 0.05
-			add_timed_idea = { idea = COLDWAR_DDR_transition_of_power days = 180 }
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_mcn
-		icon = COLDWAR_DDR_goal_Junta_Focus
-
-		x = 8
-		y = 3
-		relative_position_id = COLDWAR_DDR_nt_the_nation_above_the_class
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_nt_one_people }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^22 > 0.199 }
-			NOT = { nationalist_military_junta_are_in_power = yes }
-			has_civil_war = no
-			OR = { AND = { has_idea = the_military check_variable = { the_military_opinion > 74 } } has_stability < 0.25 AND = { has_country_flag = COLDWAR_DDR_hof_kessler_junta_option has_country_flag = COLDWAR_DDR_kessler_refused } }
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_mcn"
-			set_temp_variable = { rul_party_temp = 22 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_heinz_ke_ler_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { name = "COLDWAR_DDR_leader_heinz_kessler" picture = "gfx/leaders/COLDWAR_europe_1970/heinz_kessler.dds" ideology = Nat_Autocracy traits = { nationalist_Nat_Autocracy } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_heinz_kessler_22 = yes }
-			}
-			set_temp_variable = { party_index = 22 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			set_temp_variable = { temp_opinion = 10 }
-			change_the_military_opinion = yes
-			add_timed_idea = { idea = COLDWAR_DDR_transition_of_power days = 180 }
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
-
-	focus = {
-		id = COLDWAR_DDR_power_pcc
-		icon = house_of_hohenzollern
-
-		x = 21
-		y = 3
-		relative_position_id = COLDWAR_DDR_nt_the_nation_above_the_class
-
-		cost = 3
-
-		prerequisite = { focus = COLDWAR_DDR_nt_one_people }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
-
-		available = {
-			check_variable = { party_pop_array^23 > 0.199 }
-			NOT = { nationalist_monarchists_are_in_power = yes }
-			has_civil_war = no
-			has_stability < 0.3
-			has_completed_focus = COLDWAR_DDR_nt_the_heritage_of_prussia
-			is_ai = no
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_power_pcc"
-			set_temp_variable = { rul_party_temp = 23 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_louis_ferdinand_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/louis_ferdinand.dds" name = "COLDWAR_DDR_leader_louis_ferdinand" ideology = Monarchist traits = { nationalist_Monarchist } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_louis_ferdinand_23 = yes }
-			}
-			set_temp_variable = { party_index = 23 }
-			set_temp_variable = { party_popularity_increase = 0.1 }
-			set_temp_variable = { temp_outlook_increase = 0.1 }
-			change_relative_party_popularity = yes
-			set_temp_variable = { temp_opinion = 10 }
-			change_the_clergy_opinion = yes
-			add_timed_idea = { idea = COLDWAR_DDR_transition_of_power days = 180 }
-			hidden_effect = { set_country_flag = COLDWAR_DDR_power_transferred }
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0 COLDWAR_DDR_ai_no_power_transfer = yes }
-		}
-	}
 
 	focus = {
 		id = COLDWAR_DDR_nt_a_german_republic
@@ -3315,11 +2482,9 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			western_conservatism_are_in_power = yes
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 49 } }
-45 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 49 } }
 		}
 
 		completion_reward = {
@@ -3333,8 +2498,10 @@ check_variable = { gdp_total > 0 }
 						change_small_medium_business_owners_opinion = yes
 						set_temp_variable = { temp_opinion = -5 }
 						change_industrial_conglomerates_opinion = yes
-			44 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-			45 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 45 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_civilian_factories_productivity = 0.04 tooltip = civilian_factories_productivity_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_monthly_population = 0.02 tooltip = COLDWAR_monthly_population_tt }
@@ -4520,15 +3687,12 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			western_social_democrats_are_in_power = yes
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_spd_growth_before_distribution
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_spd_growth_before_distribution_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_spd_growth_before_distribution = yes
 			}
 		}
 		completion_reward = {
@@ -7144,11 +6308,9 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			neutrality_neutral_autocracy_are_in_power = yes
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@offices < 50 } }
-45 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@offices < 50 } }
 		}
 
 		completion_reward = {
@@ -7161,8 +6323,10 @@ check_variable = { gdp_total > 0 }
 						change_relative_party_popularity = yes
 						set_temp_variable = { temp_opinion = 5 }
 						change_industrial_conglomerates_opinion = yes
-			44 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = offices level = 1 instant_build = yes } }
-			45 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = offices level = 1 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 1 add_building_construction = { type = offices level = 1 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 45 }  add_extra_state_shared_building_slots = 1 add_building_construction = { type = offices level = 1 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_research_speed_factor = 0.03 tooltip = COLDWAR_research_speed_factor_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_productivity_growth_modifier = 0.03 tooltip = productivity_growth_modifier_tt }
@@ -7668,15 +6832,12 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			neutrality_neutral_conservatism_are_in_power = yes
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kis_justice_peace_and_creation
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kis_justice_peace_and_creation_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kis_justice_peace_and_creation = yes
 			}
 		}
 		completion_reward = {
@@ -8930,11 +8091,9 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INDUSTRY }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			neutrality_neutral_libertarians_are_in_power = yes
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 49 } }
-545 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 49 } }
 		}
 
 		completion_reward = {
@@ -8946,8 +8105,10 @@ check_variable = { gdp_total > 0 }
 
 						custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_uct_programme }
 						add_to_variable = { COLDWAR_DDR_uct_programme_industrial_capacity_factory = 0.02 tooltip = industrial_capacity_factory_tt }
-			44 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-			545 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 545 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_civilian_factories_productivity = 0.04 tooltip = civilian_factories_productivity_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_consumer_goods_factor = -0.04 tooltip = COLDWAR_consumer_goods_factor_tt }
@@ -9332,38 +8493,15 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_STABILITY
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			original_tag = DDR
 			tag = DDR
 			IMP_is_1970_scenario = yes
 			neutrality_neutral_green_are_in_power = yes
-			check_variable = {
-				gdp_total > 0
-			}
-			545 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@renewable_energy_infra < 19
-				}
-				OR = {
-					AND = {
-						ROOT = {
-							has_tech = fuel_silos
-						}
-						check_variable = {
-							building_level@renewable_energy_infra < 19
-						}
-					}
-				}
-			}
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_gl_neither_coal_nor_atom
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_gl_neither_coal_nor_atom_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_gl_neither_coal_nor_atom = yes
 			}
 		}
 		completion_reward = {
@@ -9394,7 +8532,8 @@ check_variable = { gdp_total > 0 }
 					}
 					newline = yes
 					add_stability = 0.01
-					545 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 545 } 
 						add_extra_state_shared_building_slots = 2
 						add_building_construction = {
 							type = renewable_energy_infra
@@ -9447,15 +8586,12 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			neutrality_neutral_green_are_in_power = yes
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_gl_greifswald_and_stendal
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_gl_greifswald_and_stendal_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_gl_greifswald_and_stendal = yes
 			}
 		}
 		completion_reward = {
@@ -9902,10 +9038,9 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			neutrality_neutral_social_are_in_power = yes
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-1079 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@agriculture_district < 7 } }
 		}
 
 		completion_reward = {
@@ -9921,7 +9056,8 @@ check_variable = { gdp_total > 0 }
 						change_relative_party_popularity = yes
 						set_temp_variable = { temp_opinion = 5 }
 						change_farmers_opinion = yes
-			1079 = { add_extra_state_shared_building_slots = 4 add_building_construction = { type = agriculture_district level = 4 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 1079 }  add_extra_state_shared_building_slots = 4 add_building_construction = { type = agriculture_district level = 4 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_agricolture_productivity_modifier = 0.08 tooltip = agricolture_productivity_modifier_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_agriculture_district_income_tax_modifier = 0.03 tooltip = agriculture_district_income_tax_modifier_tt }
@@ -10105,28 +9241,15 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_STABILITY
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			original_tag = DDR
 			tag = DDR
 			IMP_is_1970_scenario = yes
 			neutrality_neutral_social_are_in_power = yes
-			check_variable = {
-				gdp_total > 0
-			}
-			539 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 5
-				}
-			}
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_dbd_the_village_programme
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_dbd_the_village_programme_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_dbd_the_village_programme = yes
 			}
 		}
 		completion_reward = {
@@ -10159,7 +9282,8 @@ check_variable = { gdp_total > 0 }
 						temp_outlook_increase = 0.02
 					}
 					change_relative_party_popularity = yes
-					539 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 539 } 
 						add_extra_state_shared_building_slots = 2
 						add_building_construction = {
 							type = infrastructure
@@ -11948,8 +11072,16 @@ check_variable = { gdp_total > 0 }
 
 		available = { nationalist_military_junta_are_in_power = yes }
 
+		bypass = { NOT = { country_exists = IRQ } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_mcn_arms_for_export"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_mcn_arms_for_export"
+		if = {
+			limit = { country_exists = IRQ NOT = { has_war_with = IRQ } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_DDR_mcn_arms_for_export_IRQ_offered }
+			IRQ = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.35 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			set_temp_variable = { treasury_change = { value = gdp_total multiply = 0.01 } }
 			modify_treasury_effect = yes
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
@@ -11960,7 +11092,23 @@ check_variable = { gdp_total > 0 }
 			mdcw_cw_add_tension = yes
 			set_temp_variable = { temp_opinion = -5 }
 			change_the_military_opinion = yes
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_mcn_arms_for_export"
+#|			set_temp_variable = { treasury_change = { value = gdp_total multiply = 0.01 } }
+#|			modify_treasury_effect = yes
+#|			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
+#|			add_to_variable = { COLDWAR_DDR_planned_economy_international_market_income_modifier = 0.05 tooltip = international_market_income_modifier_tt }
+#|			add_to_variable = { COLDWAR_DDR_planned_economy_military_industry_tax_modifier = 0.03 tooltip = military_industry_tax_modifier_tt }
+#|			newline = yes
+#|			set_temp_variable = { mdcw_cw_tension_delta = 1 }
+#|			mdcw_cw_add_tension = yes
+#|			set_temp_variable = { temp_opinion = -5 }
+#|			change_the_military_opinion = yes
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 1
@@ -12240,8 +11388,7 @@ check_variable = { gdp_total > 0 }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_mcn_the_barracks_return"
 			COLDWAR_DDR_allow_elections = yes
-			set_country_flag = COLDWAR_DDR_mcn_return_to_civilian_rule_unlocked
-			custom_effect_tooltip = COLDWAR_DDR_mcn_return_to_civilian_rule_unlock_tt
+			# IMPERIA COLD WAR — power paths (P3): who governs after the generals is now the focus fork below (was decision COLDWAR_DDR_return_to_civilian_rule)
 			add_stability = 0.03
 			set_temp_variable = { COLDWAR_DDR_outlook_id = 0 }
 			set_temp_variable = { COLDWAR_DDR_outlook_amount = 0.04 }
@@ -12253,6 +11400,90 @@ check_variable = { gdp_total > 0 }
 		ai_will_do = {
 			base = 1
 			modifier = { factor = 0.2 COLDWAR_DDR_ai_historical_path = yes }
+		}
+	}
+
+	# IMPERIA COLD WAR — power paths (P3): path fork: the SED takes power back from the generals
+	focus = {
+		id = COLDWAR_DDR_mcn_the_party_returns
+		icon = COLDWAR_DDR_goal_socialist_constitution
+
+		x = -1
+		y = 1
+		relative_position_id = COLDWAR_DDR_mcn_the_barracks_return
+
+		cost = 5
+
+		prerequisite = { focus = COLDWAR_DDR_mcn_the_barracks_return }
+		mutually_exclusive = { focus = COLDWAR_DDR_mcn_free_elections_decide }
+
+		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
+
+		available = { nationalist_military_junta_are_in_power = yes custom_trigger_tooltip = { tooltip = COLDWAR_DDR_mcn_tt_av_sed_support check_variable = { party_pop_array^4 > 0.19 } } has_political_power > 49 }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_mcn_the_party_returns"
+			add_political_power = -50
+			add_stability = -0.02
+			set_temp_variable = { temp_opinion = -10 }
+			change_the_military_opinion = yes
+			COLDWAR_DDR_restore_party_rule = yes
+		}
+
+		ai_will_do = {
+			base = 10
+		}
+	}
+
+	# IMPERIA COLD WAR — power paths (P3): path fork: free elections decide, the strongest civilian party governs (was decision COLDWAR_DDR_return_to_civilian_rule)
+	focus = {
+		id = COLDWAR_DDR_mcn_free_elections_decide
+		icon = Focus_Parliament_Constitution
+
+		x = 1
+		y = 1
+		relative_position_id = COLDWAR_DDR_mcn_the_barracks_return
+
+		cost = 5
+
+		prerequisite = { focus = COLDWAR_DDR_mcn_the_barracks_return }
+		mutually_exclusive = { focus = COLDWAR_DDR_mcn_the_party_returns }
+
+		search_filters = { FOCUS_FILTER_COLDWAR_DDR_POLITICS FOCUS_FILTER_INTERNAL_FACTION }
+
+		available = { nationalist_military_junta_are_in_power = yes has_stability > 0.34 has_political_power > 49 }
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_mcn_free_elections_decide"
+			add_political_power = -50
+			add_stability = -0.03
+			set_temp_variable = { temp_opinion = -10 }
+			change_the_military_opinion = yes
+			custom_effect_tooltip = COLDWAR_DDR_civilian_rule_tt
+			hidden_effect = {
+				set_temp_variable = { COLDWAR_DDR_best = 4 }
+				set_temp_variable = { COLDWAR_DDR_best_pop = 0 }
+				for_loop_effect = {
+					start = 0
+					end = 24
+					value = i
+					if = {
+						limit = { NOT = { check_variable = { i = 4 } } NOT = { check_variable = { i = 22 } } NOT = { check_variable = { i = 8 } } NOT = { check_variable = { i = 9 } } NOT = { check_variable = { i = 10 } } NOT = { check_variable = { i = 11 } } NOT = { check_variable = { i = 12 } } check_variable = { party_pop_array^i > COLDWAR_DDR_best_pop } }
+						set_temp_variable = { COLDWAR_DDR_best = i }
+						set_temp_variable = { COLDWAR_DDR_best_pop = party_pop_array^i }
+					}
+				}
+			}
+			if = { limit = { check_variable = { COLDWAR_DDR_best = 4 } } COLDWAR_DDR_restore_party_rule = yes }
+			else = {
+				set_temp_variable = { rul_party_temp = COLDWAR_DDR_best }
+				change_ruling_party_effect = yes
+			}
+			COLDWAR_DDR_allow_elections = yes
+		}
+
+		ai_will_do = {
+			base = 3
 		}
 	}
 
@@ -13872,14 +13103,10 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_SED FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_ulb
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 50 } }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@synthetic_refinery < 2 } OR = { AND = { ROOT = { has_tech = fuel_silos } check_variable = { building_level@synthetic_refinery < 1 } } AND = { ROOT = { has_tech = fuel_efficiency2 } check_variable = { building_level@synthetic_refinery < 2 } } } }
-972 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 50 } }
-972 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@synthetic_refinery < 2 } OR = { AND = { ROOT = { has_tech = fuel_silos } check_variable = { building_level@synthetic_refinery < 1 } } AND = { ROOT = { has_tech = fuel_efficiency2 } check_variable = { building_level@synthetic_refinery < 2 } } } }
 		}
 
 		completion_reward = {
@@ -13894,10 +13121,14 @@ check_variable = { gdp_total > 0 }
 						change_communist_cadres_opinion = yes
 						set_temp_variable = { temp_opinion = -5 }
 						change_labour_unions_opinion = yes
-			44 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-			44 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = synthetic_refinery level = 1 instant_build = yes } }
-			972 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-			972 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = synthetic_refinery level = 1 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 1 add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 1 add_building_construction = { type = synthetic_refinery level = 1 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 972 }  add_extra_state_shared_building_slots = 1 add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 972 }  add_extra_state_shared_building_slots = 1 add_building_construction = { type = synthetic_refinery level = 1 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_synthetic_refinery_productivity_modifier = 0.08 tooltip = COLDWAR_synthetic_refinery_productivity_modifier_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_production_speed_industrial_complex_factor = 0.03 tooltip = production_speed_industrial_complex_factor_tt }
@@ -13928,11 +13159,10 @@ check_variable = { gdp_total > 0 }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_SED FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_ulb
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@offices < 49 } }
 		}
 
 		completion_reward = {
@@ -13948,7 +13178,8 @@ check_variable = { gdp_total > 0 }
 						custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 						add_to_variable = { COLDWAR_DDR_planned_economy_line_change_production_efficiency_factor = 0.05 tooltip = line_change_production_efficiency_factor_tt }
 						newline = yes
-			44 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = offices level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = offices level = 2 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_research_speed_factor = 0.03 tooltip = COLDWAR_research_speed_factor_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_productivity_growth_modifier = 0.03 tooltip = productivity_growth_modifier_tt }
@@ -14062,11 +13293,10 @@ check_variable = { gdp_total > 0 }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_SED FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_ulb
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 47 } }
 		}
 
 		completion_reward = {
@@ -14082,7 +13312,8 @@ check_variable = { gdp_total > 0 }
 						change_industrial_conglomerates_opinion = yes
 						set_country_flag = COLDWAR_DDR_ulb_kombinat_contracts_unlocked
 						custom_effect_tooltip = COLDWAR_DDR_ulb_kombinat_contracts_unlock_tt
-			44 = { add_extra_state_shared_building_slots = 4 add_building_construction = { type = industrial_complex level = 4 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 4 add_building_construction = { type = industrial_complex level = 4 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_civilian_factories_productivity = 0.05 tooltip = civilian_factories_productivity_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_production_factory_max_efficiency_factor = 0.03 tooltip = COLDWAR_production_factory_max_efficiency_factor_tt }
@@ -14900,8 +14131,16 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			has_country_flag = COLDWAR_DDR_first_sec_hon
 		}
 
+		bypass = { NOT = { country_exists = GER } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_hon_western_credit_lines"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_hon_western_credit_lines"
+		if = {
+			limit = { country_exists = GER NOT = { has_war_with = GER } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_DDR_hon_western_credit_lines_GER_offered }
+			GER = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.29 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			COLDWAR_DDR_ladder_overtaking_clear = yes
 			add_ideas = COLDWAR_DDR_hon_doc_credit
 			set_temp_variable = { treasury_change = { value = gdp_total multiply = 0.015 } }
@@ -14916,13 +14155,39 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			set_temp_variable = { temp_opinion = 5 }
 			change_labour_unions_opinion = yes
 			add_power_balance_value = {
-				id = COLDWAR_DDR_german_course_bop
-				value = 0.05
-				tooltip_side = COLDWAR_DDR_german_course_bop_right_side
+			id = COLDWAR_DDR_german_course_bop
+			value = 0.05
+			tooltip_side = COLDWAR_DDR_german_course_bop_right_side
 			}
 			hidden_effect = { add_to_variable = { COLDWAR_DDR_course = 0.05 } clamp_variable = { var = COLDWAR_DDR_course min = -1 max = 1 } }
 			hidden_effect = { if = { limit = { has_country_flag = mdcw_cw_initialized } mdcw_cw_recalculate_country = yes mdcw_cw_update_world_market = yes } }
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_hon_western_credit_lines"
+#|			COLDWAR_DDR_ladder_overtaking_clear = yes
+#|			add_ideas = COLDWAR_DDR_hon_doc_credit
+#|			set_temp_variable = { treasury_change = { value = gdp_total multiply = 0.015 } }
+#|			modify_treasury_effect = yes
+#|			set_temp_variable = { debt_change = { value = gdp_total multiply = 0.015 } }
+#|			modify_debt_effect = yes
+#|			set_temp_variable = { skip_payment = 1 }
+#|			one_random_industrial_complex = yes
+#|			set_temp_variable = { skip_payment = 0 }
+#|			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+#|			modify_treasury_effect = yes
+#|			set_temp_variable = { temp_opinion = 5 }
+#|			change_labour_unions_opinion = yes
+#|			add_power_balance_value = {
+#|				id = COLDWAR_DDR_german_course_bop
+#|				value = 0.05
+#|				tooltip_side = COLDWAR_DDR_german_course_bop_right_side
+#|			}
+#|			hidden_effect = { add_to_variable = { COLDWAR_DDR_course = 0.05 } clamp_variable = { var = COLDWAR_DDR_course min = -1 max = 1 } }
+#|			hidden_effect = { if = { limit = { has_country_flag = mdcw_cw_initialized } mdcw_cw_recalculate_country = yes mdcw_cw_update_world_market = yes } }
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 1
@@ -14949,50 +14214,16 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			original_tag = DDR
 			tag = DDR
 			IMP_is_1970_scenario = yes
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_hon
-			check_variable = {
-				gdp_total > 0
-			}
-			45 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			539 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			972 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			1079 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_hon_pay_from_the_plan
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_hon_pay_from_the_plan_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_hon_pay_from_the_plan = yes
 			}
 		}
 		completion_reward = {
@@ -15018,7 +14249,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 						temp_opinion = -5
 					}
 					change_industrial_conglomerates_opinion = yes
-					45 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 45 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15026,7 +14258,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					539 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 539 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15034,7 +14267,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					972 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 972 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15042,7 +14276,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					1079 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 1079 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15104,64 +14339,16 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			FOCUS_FILTER_STABILITY
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			original_tag = DDR
 			tag = DDR
 			IMP_is_1970_scenario = yes
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_hon
-			check_variable = {
-				gdp_total > 0
-			}
-			44 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@industrial_complex < 50
-				}
-			}
-			44 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			45 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@industrial_complex < 50
-				}
-			}
-			539 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			545 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			1079 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_hon_solve_the_housing_question
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_hon_solve_the_housing_question_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_hon_solve_the_housing_question = yes
 			}
 		}
 		completion_reward = {
@@ -15184,7 +14371,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 					}
 					newline = yes
 					add_stability = 0.02
-					44 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 44 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = industrial_complex
@@ -15192,7 +14380,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					44 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 44 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15200,7 +14389,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					45 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 45 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = industrial_complex
@@ -15208,7 +14398,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					539 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 539 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15216,7 +14407,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					545 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 545 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15224,7 +14416,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					1079 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 1079 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15362,64 +14555,16 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			original_tag = DDR
 			tag = DDR
 			IMP_is_1970_scenario = yes
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_hon
-			check_variable = {
-				gdp_total > 0
-			}
-			44 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@industrial_complex < 49
-				}
-			}
-			44 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			45 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@industrial_complex < 49
-				}
-			}
-			45 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			545 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
-			972 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@infrastructure < 6
-				}
-			}
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_hon_the_main_task_fulfilled
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_hon_the_main_task_fulfilled_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_hon_the_main_task_fulfilled = yes
 			}
 		}
 		completion_reward = {
@@ -15449,7 +14594,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 						temp_opinion = 10
 					}
 					change_labour_unions_opinion = yes
-					44 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 44 } 
 						add_extra_state_shared_building_slots = 2
 						add_building_construction = {
 							type = industrial_complex
@@ -15457,7 +14603,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					44 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 44 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15465,7 +14612,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					45 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 45 } 
 						add_extra_state_shared_building_slots = 2
 						add_building_construction = {
 							type = industrial_complex
@@ -15473,7 +14621,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					45 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 45 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15481,7 +14630,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					545 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 545 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -15489,7 +14639,8 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 							instant_build = yes
 						}
 					}
-					972 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 972 } 
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = {
 							type = infrastructure
@@ -17561,11 +16712,10 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_SED FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_mit
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@microchip_plant < 4 } OR = { AND = { ROOT = { has_tech = microchip_production_2 } check_variable = { building_level@microchip_plant < 1 } } AND = { ROOT = { has_tech = microchip_production_3 } check_variable = { building_level@microchip_plant < 2 } } } }
 		}
 
 		bypass = { has_completed_focus = COLDWAR_DDR_micro_the_microelectronics_decision }
@@ -17583,7 +16733,8 @@ check_variable = { gdp_total > 0 }
 						custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 						add_to_variable = { COLDWAR_DDR_planned_economy_microchip_plant_productivity_modifier = 0.05 tooltip = microchip_plant_productivity_modifier_tt }
 						add_to_variable = { COLDWAR_DDR_planned_economy_consumer_goods_factor = 0.02 tooltip = COLDWAR_consumer_goods_factor_tt }
-			44 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = microchip_plant level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = microchip_plant level = 2 instant_build = yes } }
 			add_tech_bonus = { name = COLDWAR_DDR_mit_the_microelectronics_resolution_reward_tech_1 bonus = 0.5 uses = 2 category = CAT_microchips category = CAT_electronics }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_research_speed_factor = 0.03 tooltip = COLDWAR_research_speed_factor_tt }
@@ -18364,16 +17515,13 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_hag
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_hag_beautify_our_towns
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_hag_beautify_our_towns_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_hag_beautify_our_towns = yes
 			}
 		}
 		completion_reward = {
@@ -19421,8 +18569,16 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			has_country_flag = COLDWAR_DDR_first_sec_hof
 		}
 
+		bypass = { NOT = { country_exists = SOV } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_hof_arms_for_the_nva"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_hof_arms_for_the_nva"
+		if = {
+			limit = { country_exists = SOV NOT = { has_war_with = SOV } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_DDR_hof_arms_for_the_nva_SOV_offered }
+			SOV = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.33 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			COLDWAR_DDR_ladder_overtaking_clear = yes
 			add_ideas = COLDWAR_DDR_hof_doc_arsenal
 			set_temp_variable = { skip_payment = 1 }
@@ -19431,13 +18587,33 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
 			modify_treasury_effect = yes
 			add_tech_bonus = {
-				name = COLDWAR_DDR_hof_arms_for_the_nva
-				bonus = 0.5
-				uses = 1
-				category = CAT_utility_vehicles
+			name = COLDWAR_DDR_hof_arms_for_the_nva
+			bonus = 0.5
+			uses = 1
+			category = CAT_utility_vehicles
 			}
 			hidden_effect = { if = { limit = { has_country_flag = mdcw_cw_initialized } mdcw_cw_recalculate_country = yes mdcw_cw_update_world_market = yes } }
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_hof_arms_for_the_nva"
+#|			COLDWAR_DDR_ladder_overtaking_clear = yes
+#|			add_ideas = COLDWAR_DDR_hof_doc_arsenal
+#|			set_temp_variable = { skip_payment = 1 }
+#|			one_random_arms_factory = yes
+#|			set_temp_variable = { skip_payment = 0 }
+#|			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+#|			modify_treasury_effect = yes
+#|			add_tech_bonus = {
+#|				name = COLDWAR_DDR_hof_arms_for_the_nva
+#|				bonus = 0.5
+#|				uses = 1
+#|				category = CAT_utility_vehicles
+#|			}
+#|			hidden_effect = { if = { limit = { has_country_flag = mdcw_cw_initialized } mdcw_cw_recalculate_country = yes mdcw_cw_update_world_market = yes } }
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 1
@@ -19460,11 +18636,10 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_SED FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_hof
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-545 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@arms_factory < 32 } }
 		}
 
 		completion_reward = {
@@ -19479,7 +18654,8 @@ check_variable = { gdp_total > 0 }
 						}
 						set_temp_variable = { temp_opinion = 5 }
 						change_industrial_conglomerates_opinion = yes
-			545 = { add_extra_state_shared_building_slots = 4 add_building_construction = { type = arms_factory level = 4 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 545 }  add_extra_state_shared_building_slots = 4 add_building_construction = { type = arms_factory level = 4 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_military_factories_productivity = 0.05 tooltip = military_factories_productivity_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_military_industry_tax_modifier = 0.03 tooltip = military_industry_tax_modifier_tt }
@@ -19514,16 +18690,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_hof
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_hof_soldiers_in_the_economy
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_hof_soldiers_in_the_economy_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_hof_soldiers_in_the_economy = yes
 			}
 		}
 		completion_reward = {
@@ -21058,21 +20231,47 @@ check_variable = { gdp_total > 0 }
 			has_country_flag = COLDWAR_DDR_first_sec_kro
 		}
 
+		bypass = { NOT = { country_exists = SOV } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_kro_soviet_advisers_in_every_ministry"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_kro_soviet_advisers_in_every_ministry"
+		if = {
+			limit = { country_exists = SOV NOT = { has_war_with = SOV } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_DDR_kro_soviet_advisers_in_every_ministry_SOV_offered }
+			SOV = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.31 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			add_timed_idea = { idea = mdcw_cw_soviet_advisers days = 365 }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_production_factory_max_efficiency_factor = 0.03 tooltip = COLDWAR_production_factory_max_efficiency_factor_tt }
 			newline = yes
 			add_tech_bonus = {
-				name = COLDWAR_DDR_kro_soviet_advisers_in_every_ministry
-				bonus = 0.5
-				uses = 1
-				category = CAT_production_lines
+			name = COLDWAR_DDR_kro_soviet_advisers_in_every_ministry
+			bonus = 0.5
+			uses = 1
+			category = CAT_production_lines
 			}
 			set_temp_variable = { temp_opinion = -5 }
 			change_industrial_conglomerates_opinion = yes
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_kro_soviet_advisers_in_every_ministry"
+#|			add_timed_idea = { idea = mdcw_cw_soviet_advisers days = 365 }
+#|			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
+#|			add_to_variable = { COLDWAR_DDR_planned_economy_production_factory_max_efficiency_factor = 0.03 tooltip = COLDWAR_production_factory_max_efficiency_factor_tt }
+#|			newline = yes
+#|			add_tech_bonus = {
+#|				name = COLDWAR_DDR_kro_soviet_advisers_in_every_ministry
+#|				bonus = 0.5
+#|				uses = 1
+#|				category = CAT_production_lines
+#|			}
+#|			set_temp_variable = { temp_opinion = -5 }
+#|			change_industrial_conglomerates_opinion = yes
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 1
@@ -21385,16 +20584,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_kro
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kro_the_ferry_to_klaipeda
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kro_the_ferry_to_klaipeda_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kro_the_ferry_to_klaipeda = yes
 			}
 		}
 		completion_reward = {
@@ -21983,16 +21179,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_kre
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kre_young_families_first
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kre_young_families_first_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kre_young_families_first = yes
 			}
 		}
 		completion_reward = {
@@ -22086,16 +21279,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_kre
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kre_youth_objects
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kre_youth_objects_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kre_youth_objects = yes
 			}
 		}
 		completion_reward = {
@@ -22177,16 +21367,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_STABILITY
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_kre
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kre_the_fdj_initiative_berlin
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kre_the_fdj_initiative_berlin_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kre_the_fdj_initiative_berlin = yes
 			}
 		}
 		completion_reward = {
@@ -22340,16 +21527,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_kre
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kre_the_republic_of_the_young
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kre_the_republic_of_the_young_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kre_the_republic_of_the_young = yes
 			}
 		}
 		completion_reward = {
@@ -22924,16 +22108,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_mod
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_mod_berghofers_city_hall
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_mod_berghofers_city_hall_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_mod_berghofers_city_hall = yes
 			}
 		}
 		completion_reward = {
@@ -23127,16 +22308,13 @@ check_variable = { gdp_total > 0 }
 			FOCUS_FILTER_INTERNAL_FACTION
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			emerging_communist_state_are_in_power = yes
 			has_country_flag = COLDWAR_DDR_first_sec_mod
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_mod_power_to_the_districts
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_mod_power_to_the_districts_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_mod_power_to_the_districts = yes
 			}
 		}
 		completion_reward = {
@@ -23582,50 +22760,6 @@ check_variable = { gdp_total > 0 }
 		}
 	}
 
-	focus = {
-		id = COLDWAR_DDR_mod_hand_over_to_the_democratic_communists
-		icon = COLDWAR_DDR_goal_socialist_constitution
-
-		x = 1
-		y = 4
-		relative_position_id = COLDWAR_DDR_mod_the_man_from_dresden
-
-		cost = 5
-
-		prerequisite = { focus = COLDWAR_DDR_mod_the_central_round_table }
-
-		search_filters = { FOCUS_FILTER_COLDWAR_DDR_SED FOCUS_FILTER_STABILITY }
-
-		available = {
-			emerging_communist_state_are_in_power = yes
-			has_country_flag = COLDWAR_DDR_first_sec_mod
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_mod_hand_over_to_the_democratic_communists"
-			set_temp_variable = { rul_party_temp = 5 }
-			change_ruling_party_effect = yes
-			custom_effect_tooltip = COLDWAR_DDR_new_leader_robert_havemann_tt
-			hidden_effect = {
-				retire_country_leader = yes
-				create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/robert_havemann.dds" name = "COLDWAR_DDR_leader_robert_havemann" ideology = anarchist_communism traits = { emerging_anarchist_communism } }
-hidden_effect = { COLDWAR_EU_1970_note_DDR_robert_havemann_5 = yes }
-			}
-			set_temp_variable = { party_index = 5 }
-			set_temp_variable = { party_popularity_increase = 0.05 }
-			set_temp_variable = { temp_outlook_increase = 0.05 }
-			change_relative_party_popularity = yes
-			add_timed_idea = { idea = COLDWAR_DDR_transition_of_power days = 180 }
-			set_country_flag = COLDWAR_DDR_mod_hand_over
-			custom_effect_tooltip = COLDWAR_DDR_flag_mod_hand_over_tt
-			add_stability = 0.02
-		}
-
-		ai_will_do = {
-			base = 1
-			modifier = { factor = 0.2 COLDWAR_DDR_ai_historical_path = yes }
-		}
-	}
 
 	focus = {
 		id = COLDWAR_DDR_mod_candles_at_the_frauenkirche
@@ -24173,6 +23307,7 @@ hidden_effect = { COLDWAR_EU_1970_note_DDR_robert_havemann_5 = yes }
 			FOCUS_FILTER_INDUSTRY
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			NOT = {
 				has_idea = mixed_economy
 				has_idea = semi_consumption_economy
@@ -24183,10 +23318,6 @@ hidden_effect = { COLDWAR_EU_1970_note_DDR_robert_havemann_5 = yes }
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_plan_fyp_1976
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_plan_fyp_1976_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_plan_fyp_1976 = yes
 			}
 		}
 		completion_reward = {
@@ -24774,9 +23905,8 @@ hidden_effect = { COLDWAR_EU_1970_note_DDR_robert_havemann_5 = yes }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_ECONOMY FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-972 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@synthetic_refinery < 2 } OR = { AND = { ROOT = { has_tech = fuel_silos } check_variable = { building_level@synthetic_refinery < 1 } } AND = { ROOT = { has_tech = fuel_efficiency2 } check_variable = { building_level@synthetic_refinery < 2 } } } }
 		}
 		completion_reward = {
 			effect_tooltip = {
@@ -24790,7 +23920,8 @@ check_variable = { gdp_total > 0 }
 						}
 						set_temp_variable = { temp_opinion = 5 }
 						change_industrial_conglomerates_opinion = yes
-			972 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = synthetic_refinery level = 1 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 972 }  add_extra_state_shared_building_slots = 1 add_building_construction = { type = synthetic_refinery level = 1 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_synthetic_refinery_productivity_modifier = 0.08 tooltip = COLDWAR_synthetic_refinery_productivity_modifier_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_civilian_factories_productivity = 0.03 tooltip = civilian_factories_productivity_tt }
@@ -25840,9 +24971,8 @@ check_variable = { gdp_total > 0 }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_ECONOMY FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-1079 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@fossil_powerplant < 19 } }
 		}
 		completion_reward = {
 			effect_tooltip = {
@@ -25859,7 +24989,8 @@ check_variable = { gdp_total > 0 }
 						}
 						set_temp_variable = { temp_opinion = 5 }
 						change_labour_unions_opinion = yes
-			1079 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = fossil_powerplant level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 1079 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = fossil_powerplant level = 2 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_energy_gain_multiplier = 0.08 tooltip = energy_gain_multiplier_tt }
 			add_to_variable = { COLDWAR_DDR_planned_economy_health_cost_multiplier_modifier = 0.05 tooltip = health_cost_multiplier_modifier_tt }
@@ -26058,14 +25189,11 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_energy_oil_on_the_world_market
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_energy_oil_on_the_world_market_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_energy_oil_on_the_world_market = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -26274,7 +25402,8 @@ check_variable = { gdp_total > 0 }
 						COLDWAR_DDR_planned_economy_production_speed_nuclear_reactor_factor = 0.05
 						tooltip = production_speed_nuclear_reactor_factor_tt
 					}
-					539 = {
+					# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+					random_owned_controlled_state = { prioritize = { 539 } 
 						add_extra_state_shared_building_slots = 2
 						add_building_construction = {
 							type = nuclear_reactor
@@ -26314,37 +25443,14 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			original_tag = DDR
 			tag = DDR
 			IMP_is_1970_scenario = yes
-			check_variable = {
-				gdp_total > 0
-			}
-			539 = {
-				is_owned_by = ROOT
-				is_controlled_by = ROOT
-				check_variable = {
-					building_level@nuclear_reactor < 19
-				}
-				OR = {
-					AND = {
-						ROOT = {
-							has_tech = reactor1
-						}
-						check_variable = {
-							building_level@nuclear_reactor < 19
-						}
-					}
-				}
-			}
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_energy_greifswald_nuclear_power_station
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_energy_greifswald_nuclear_power_station_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_energy_greifswald_nuclear_power_station = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -26407,14 +25513,11 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_energy_build_stendal
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_energy_build_stendal_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_energy_build_stendal = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -27043,14 +26146,11 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_cons_the_housing_construction_kombinate
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_cons_the_housing_construction_kombinate_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_cons_the_housing_construction_kombinate = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -27114,14 +26214,11 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_cons_the_wbs_70_series
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_cons_the_wbs_70_series_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_cons_the_wbs_70_series = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -27186,14 +26283,11 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_cons_halle_neustadt
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_cons_halle_neustadt_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_cons_halle_neustadt = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -27290,14 +26384,11 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_cons_berlin_marzahn
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_cons_berlin_marzahn_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_cons_berlin_marzahn = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -27372,14 +26463,11 @@ check_variable = { gdp_total > 0 }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_cons_the_three_millionth_flat
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_cons_the_three_millionth_flat_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_cons_the_three_millionth_flat = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -27528,11 +26616,9 @@ check_variable = { gdp_total > 0 }
 		search_filters = { FOCUS_FILTER_COLDWAR_DDR_ECONOMY FOCUS_FILTER_INDUSTRY }
 
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			NOT = { has_idea = mixed_economy has_idea = semi_consumption_economy has_idea = consumption_economy has_idea = globalized_trade_economy }
 hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
-check_variable = { gdp_total > 0 }
-44 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 49 } }
-45 = { is_owned_by = ROOT is_controlled_by = ROOT check_variable = { building_level@industrial_complex < 49 } }
 		}
 
 		completion_reward = {
@@ -27542,8 +26628,10 @@ check_variable = { gdp_total > 0 }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 						add_to_variable = { COLDWAR_DDR_planned_economy_consumer_goods_factor = -0.03 tooltip = COLDWAR_consumer_goods_factor_tt }
 						add_to_variable = { COLDWAR_DDR_planned_economy_production_speed_industrial_complex_factor = 0.03 tooltip = production_speed_industrial_complex_factor_tt }
-			44 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-			45 = { add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 44 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			# IMPERIA COLD WAR — MD fallback build target (preferred state first)
+			random_owned_controlled_state = { prioritize = { 45 }  add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_planned_economy_modifier }
 			add_to_variable = { COLDWAR_DDR_planned_economy_production_factory_efficiency_gain_factor = 0.03 tooltip = COLDWAR_production_factory_efficiency_gain_factor_tt }
 			newline = yes
@@ -28683,14 +27771,11 @@ newline = yes
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_border_the_modern_border
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_border_the_modern_border_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_border_the_modern_border = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -29283,14 +28368,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_navy_air_the_coastal_missile_regiment
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_navy_air_the_coastal_missile_regiment_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_navy_air_the_coastal_missile_regiment = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -29420,14 +28502,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_navy_air_air_forces_and_air_defence
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_navy_air_air_forces_and_air_defence_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_navy_air_air_forces_and_air_defence = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -29747,14 +28826,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_navy_air_the_missile_belts
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_navy_air_the_missile_belts_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_navy_air_the_missile_belts = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -30183,14 +29259,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kg_the_social_peace_service
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kg_the_social_peace_service_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kg_the_social_peace_service = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -30282,14 +29355,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_kg_the_state_reserve
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_kg_the_state_reserve_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_kg_the_state_reserve = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -31196,14 +30266,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_soc_sport_for_everyone
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_soc_sport_for_everyone_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_soc_sport_for_everyone = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -31308,14 +30375,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_soc_a_creche_for_every_child
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_soc_a_creche_for_every_child_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_soc_a_creche_for_every_child = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -31490,14 +30554,11 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 			}
 		}
 		available = {
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				NOT = {
 					has_country_flag = COLDWAR_GRANT_done_COLDWAR_DDR_soc_the_agreement_of_6_march_1978
 				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_GRANT_focus_capacity_COLDWAR_DDR_soc_the_agreement_of_6_march_1978_tt
-				COLDWAR_GRANT_capacity_COLDWAR_DDR_soc_the_agreement_of_6_march_1978 = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -31992,14 +31053,33 @@ hidden_trigger = { original_tag = DDR tag = DDR IMP_is_1970_scenario = yes }
 
 		available = { has_country_flag = COLDWAR_DDR_transit_agreement_accepted }
 
+		bypass = { NOT = { country_exists = GER } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_ger_the_transit_lump_sum"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_ger_the_transit_lump_sum"
+		if = {
+			limit = { country_exists = GER NOT = { has_war_with = GER } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_DDR_ger_the_transit_lump_sum_GER_offered }
+			GER = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.27 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			set_temp_variable = { treasury_change = { value = gdp_total multiply = 0.015 } }
 			modify_treasury_effect = yes
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_mfs_modifier }
 			add_to_variable = { COLDWAR_DDR_mfs_civilian_intel_factor = 0.05 tooltip = civilian_intel_factor_tt }
 			add_to_variable = { COLDWAR_DDR_mfs_police_cost_multiplier_modifier = 0.03 tooltip = police_cost_multiplier_modifier_tt }
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_DDR_ger_the_transit_lump_sum"
+#|			set_temp_variable = { treasury_change = { value = gdp_total multiply = 0.015 } }
+#|			modify_treasury_effect = yes
+#|			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_DDR_mfs_modifier }
+#|			add_to_variable = { COLDWAR_DDR_mfs_civilian_intel_factor = 0.05 tooltip = civilian_intel_factor_tt }
+#|			add_to_variable = { COLDWAR_DDR_mfs_police_cost_multiplier_modifier = 0.03 tooltip = police_cost_multiplier_modifier_tt }
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 1
@@ -34611,6 +33691,7 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 		prerequisite = { focus = COLDWAR_NAVY_DDR_surface_ships }
 		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION FOCUS_FILTER_NAVY }
 		available = {
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: naval focus without building-room gate
 			hidden_trigger = {
 				tag = DDR
 				IMP_is_1970_scenario = yes
@@ -34621,20 +33702,6 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 				tag = DDR
 				controls_a_coastal_state = yes
 				NOT = { has_country_flag = MD_skip_treasury_cost }
-				OR = {
-					AND = {
-						owns_state = 539
-						controls_state = 539
-						539 = {
-							is_owned_and_controlled_by = DDR
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
-						}
-					}
-				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_NAVY_DDR_capacity_combined_military_defense_industries_tt
-				COLDWAR_NAVY_DDR_capacity_combined_military_defense_industries = yes
 			}
 		}
 		cancel_if_invalid = yes
@@ -34656,6 +33723,7 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 		prerequisite = { focus = COLDWAR_NAVY_DDR_naval_reform }
 		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION FOCUS_FILTER_NAVY }
 		available = {
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: naval focus without building-room gate
 			hidden_trigger = {
 				tag = DDR
 				IMP_is_1970_scenario = yes
@@ -34667,32 +33735,7 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 				controls_a_coastal_state = yes
 				NOT = { has_country_flag = MD_skip_treasury_cost }
 				check_variable = { COLDWAR_NAVY_DDR_port_quote > 0 }
-				check_variable = { gdp_total > 0 }
 				check_variable = { var = treasury value = COLDWAR_NAVY_DDR_port_quote compare = greater_than_or_equals }
-				OR = {
-					AND = {
-						owns_state = 539
-						controls_state = 539
-						controls_province = 321
-						ROOT = { controls_province = 321 }
-						539 = {
-							is_owned_and_controlled_by = DDR
-							is_coastal = yes
-							free_building_slots = { building = naval_base size > 0 province = 321 }
-						}
-					}
-					AND = {
-						owns_state = 539
-						controls_state = 539
-						controls_province = 9388
-						ROOT = { controls_province = 9388 }
-						539 = {
-							is_owned_and_controlled_by = DDR
-							is_coastal = yes
-							free_building_slots = { building = naval_base size > 0 province = 9388 }
-						}
-					}
-				}
 			}
 			custom_trigger_tooltip = { tooltip = COLDWAR_NAVY_DDR_capacity_naval_bases_tt COLDWAR_NAVY_DDR_capacity_naval_bases = yes }
 			custom_trigger_tooltip = {
@@ -34749,6 +33792,7 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 		prerequisite = { focus = COLDWAR_NAVY_DDR_naval_bases }
 		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INTERNAL_FACTION FOCUS_FILTER_NAVY }
 		available = {
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: naval focus without building-room gate
 			hidden_trigger = {
 				tag = DDR
 				IMP_is_1970_scenario = yes
@@ -34761,19 +33805,7 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 				controls_a_coastal_state = yes
 				NOT = { has_country_flag = MD_skip_treasury_cost }
 				check_variable = { COLDWAR_NAVY_DDR_yard_quote > 0 }
-				check_variable = { gdp_total > 0 }
 				check_variable = { var = treasury value = COLDWAR_NAVY_DDR_yard_quote compare = greater_than_or_equals }
-				OR = {
-					AND = {
-						owns_state = 539
-						controls_state = 539
-						539 = {
-							is_owned_and_controlled_by = DDR
-							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
-						}
-					}
-				}
 			}
 			custom_trigger_tooltip = { tooltip = COLDWAR_NAVY_DDR_capacity_dockyards_tt COLDWAR_NAVY_DDR_capacity_dockyards = yes }
 			custom_trigger_tooltip = {
@@ -34830,6 +33862,7 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 		prerequisite = { focus = COLDWAR_NAVY_DDR_surface_ships }
 		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_NAVY }
 		available = {
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: naval focus without building-room gate
 			hidden_trigger = {
 				tag = DDR
 				IMP_is_1970_scenario = yes
@@ -34842,23 +33875,7 @@ available = { has_dynamic_modifier = { modifier = united_nations_member } }
 				controls_a_coastal_state = yes
 				NOT = { has_country_flag = MD_skip_treasury_cost }
 				check_variable = { COLDWAR_NAVY_DDR_yard_quote > 0 }
-				check_variable = { gdp_total > 0 }
 				check_variable = { var = treasury value = COLDWAR_NAVY_DDR_yard_quote compare = greater_than_or_equals }
-				OR = {
-					AND = {
-						owns_state = 539
-						controls_state = 539
-						539 = {
-							is_owned_and_controlled_by = DDR
-							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
-						}
-					}
-				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = COLDWAR_NAVY_DDR_capacity_large_ship_drydocks_tt
-				COLDWAR_NAVY_DDR_capacity_large_ship_drydocks = yes
 			}
 			custom_trigger_tooltip = {
 				tooltip = COLDWAR_NAVY_DDR_funded_large_ship_drydocks_tt

@@ -1,5 +1,7 @@
-# IMPERIA COLD WAR — Korean mirrored weekly invoices, original MD on_actions retained.
-# IMPERIA COLD WAR — Czechoslovakia 1970 integration; existing content and attribution retained.
+# IMPERIA COLD WAR — Syrian treaty invoices before the weekly MD budget.
+# IMPERIA COLD WAR update 20.11.2026: quaZa branch import (Korean weekly invoices and IMF tick, Czechoslovak paired invoices); local content retained.
+# IMPERIA COLD WAR update 22.11.2026: War on Terror global tick off in the 1970 scenario (playtest 1).
+# IMPERIA COLD WAR update 20.11.2026: performance pass after the quaZa import: no daily ticks; weekly TAG pass, government changes, wars, peace conferences and sanctions instead.
 # IMPERIA COLD WAR — Yugoslav weekly treaty invoices; original MD on_actions retained.
 # IMPERIA COLD WAR — Soviet 1970 shared weekly fiscal integration; original MD on_actions retained.
 # IMPERIA COLD WAR — Israel V2 native budget and protected bilateral principal integration.
@@ -9,6 +11,8 @@
 on_actions = {
 	on_weekly = {
 		effect = {
+			# IMPERIA COLD WAR — Kim Il-sung death date and the world news, once a week instead of daily in every country.
+			if = { limit = { NOT = { has_global_flag = on_weekly_global_done } } COLDWAR_NKO_world_succession_daily = yes }
 			# IMPERIA COLD WAR — COLDWAR_KOR_REVIEW_INVOICES
 			if = {
 				limit = { IMP_is_1970_scenario = yes NOT = { has_global_flag = on_weekly_global_done } }
@@ -19,7 +23,6 @@ on_actions = {
 				limit = { IMP_is_1970_scenario = yes country_exists = CZE CZE = { has_country_flag = COLDWAR_CZE_1970_initialized } NOT = { has_global_flag = on_weekly_global_done } }
 				CZE = { COLDWAR_CZE_1970_bilateral_prepare_week = yes }
 			}
-
 # IMPERIA COLD WAR — Soviet 1970 fiscal [shared weekly invoice] BEGIN
 			# Read the native once-per-week flag before any country's convergence.
 			# The existing global block sets it later in this same ordered pass.
@@ -28,15 +31,6 @@ on_actions = {
 				COLDWAR_SOV_fiscal_prepare_week = yes
 			}
 # IMPERIA COLD WAR — Soviet 1970 fiscal [shared weekly invoice] END
-			# IMPERIA COLD WAR — Yugoslav treaty [shared weekly invoice] BEGIN
-			if = {
-				limit = {
-					has_global_flag = COLDWAR_YUG_1970_treaty_weekly_enabled
-					NOT = { has_global_flag = on_weekly_global_done }
-				}
-				COLDWAR_YUG_1970_treaty_prepare_week = yes
-			}
-			# IMPERIA COLD WAR — Yugoslav treaty [shared weekly invoice] END
 			if = { limit = { NOT = { has_variable = last_quarter_gdp_total } }
 				ingame_startup_nations_effect = yes
 			}
@@ -44,6 +38,11 @@ on_actions = {
 
 			if = { limit = { NOT = { has_global_flag = on_weekly_global_done } }
 				set_global_flag = { flag = on_weekly_global_done value = 1 days = 7 }
+				# IMPERIA COLD WAR — The Iranian and Soviet ledgers use the same Syrian GDP snapshot.
+				if = {
+					limit = { country_exists = SYR IMP_is_1970_scenario = yes }
+					SYR = { COLDWAR_SYR_RP_prepare_week = yes }
+				}
 				# IMPERIA COLD WAR — Stop calibrating the site when its reactor has been removed.
 				if = {
 					limit = { has_global_flag = COLDWAR_YUG_1970_krsko_commissioned }
@@ -78,11 +77,7 @@ on_actions = {
 			ingame_update_setup = yes
 
 			# IMPERIA COLD WAR — Tick Korea's signed IMF programme after the actual weekly budget pass.
-			if = { limit = { COLDWAR_KOR_campaign = yes } KOR_review_civilian_imf_advance_week = yes }			# IMPERIA COLD WAR — Yugoslav funded construction follows the weekly budget.
-			if = {
-				limit = { COLDWAR_YUG_1970_active = yes }
-				COLDWAR_YUG_1970_advance_funded_construction = yes
-			}
+			if = { limit = { COLDWAR_KOR_campaign = yes } KOR_review_civilian_imf_advance_week = yes }
 			# Delay until every country's weekly economic totals have refreshed.
 			if = {
 				limit = { is_faction_leader = yes }
@@ -1403,7 +1398,8 @@ limit = { check_variable = { debt < 0.001 } NOT = { ISR2_money_has_protected_loa
 					recog_ai_monthly = yes
 				}
 
-				counter_terror_global = yes
+				# COLDWAR 22.11.2026: the 2000s War on Terror organisations do not run in the 1970 scenario (playtest 1)
+				if = { limit = { NOT = { IMP_is_1970_scenario = yes } } counter_terror_global = yes }
 
 				recount_global_reserve_currency = yes
 

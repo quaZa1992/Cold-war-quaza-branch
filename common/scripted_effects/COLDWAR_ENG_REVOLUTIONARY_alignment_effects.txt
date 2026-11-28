@@ -1,0 +1,55 @@
+# IMPERIA COLD WAR — United Kingdom 1970 REVOLUTIONARY alignment effects.
+# COLDWAR | Native realignment; no global bloc rules changed.
+COLDWAR_ENG_REVOLUTIONARY_align_soviet = {
+ if = {
+  limit = { has_global_flag = mdcw_cw_initialized mdcw_cw_can_join_soviet = yes NOT = { check_variable = { mdcw_cw_alignment = 2 } } }
+  set_temp_variable = { mdcw_cw_t_free = 0 }
+  set_temp_variable = { mdcw_cw_new_alignment = 2 }
+  mdcw_cw_change_alignment = yes
+ }
+ if = {
+  limit = { has_global_flag = mdcw_cw_initialized check_variable = { mdcw_cw_alignment = 2 } }
+  set_country_flag = COLDWAR_ENG_REVOLUTIONARY_alignment_ratified
+ }
+}
+COLDWAR_ENG_REVOLUTIONARY_align_maoist = {
+ if = {
+  limit = { has_global_flag = mdcw_cw_initialized mdcw_cw_can_join_beijing = yes NOT = { check_variable = { mdcw_cw_alignment = 3 } } }
+  set_temp_variable = { mdcw_cw_t_free = 0 }
+  set_temp_variable = { mdcw_cw_new_alignment = 3 }
+  mdcw_cw_change_alignment = yes
+ }
+ if = {
+  limit = { has_global_flag = mdcw_cw_initialized check_variable = { mdcw_cw_alignment = 3 } }
+  set_country_flag = COLDWAR_ENG_REVOLUTIONARY_alignment_ratified
+ }
+}
+COLDWAR_ENG_REVOLUTIONARY_align_british = {
+ if = {
+  limit = { has_global_flag = mdcw_cw_initialized mdcw_cw_can_join_na = yes NOT = { check_variable = { mdcw_cw_alignment = 0 } } }
+  set_temp_variable = { mdcw_cw_t_free = 0 }
+  set_temp_variable = { mdcw_cw_new_alignment = 0 }
+  mdcw_cw_change_alignment = yes
+ }
+ if = {
+  limit = { has_global_flag = mdcw_cw_initialized check_variable = { mdcw_cw_alignment = 0 } }
+  set_country_flag = COLDWAR_ENG_REVOLUTIONARY_alignment_ratified
+ }
+}
+COLDWAR_ENG_REVOLUTIONARY_lift_eastern_military_sanctions = {
+ every_country = {
+  limit = { exists = yes check_variable = { mdcw_cw_alignment = 2 } is_in_array = { array = ENG.imp_mil_sanc_by_us value = THIS } }
+  remove_from_array = { array = imp_mil_sanc_on_us value = ENG }
+  remove_opinion_modifier = { target = ENG modifier = opinion_mil_sanctioned_us }
+  ENG = { remove_from_array = { array = imp_mil_sanc_by_us value = PREV } }
+ }
+ IMP_sanctions_refresh_world = yes
+ every_country = {
+  limit = { exists = yes NOT = { tag = ENG } check_variable = { mdcw_cw_alignment = 2 } NOT = { has_war_with = ENG } }
+  add_opinion_modifier = { target = ENG modifier = COLDWAR_ENG_REVOLUTIONARY_eastern_opening }
+  ENG = { add_opinion_modifier = { target = PREV modifier = COLDWAR_ENG_REVOLUTIONARY_eastern_opening } }
+ }
+ if = { limit = { USA = { exists = yes check_variable = { mdcw_cw_alignment = 1 } } }
+  USA = { add_opinion_modifier = { target = ENG modifier = COLDWAR_ENG_REVOLUTIONARY_arms_control_disagreement } }
+ }
+}

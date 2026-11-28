@@ -10,15 +10,14 @@ COLDWAR_CYP_R2_offer_greek_training_preview = {
 	army_experience = 20
 	add_to_variable = { COLDWAR_CYP_R2_officer_penetration = 15 tooltip = COLDWAR_CYP_R2_deal_officer_penetration_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	GRE = {
 	add_ideas = COLDWAR_CYP_R2_greek_training_gre
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_army_org_factor = 0.01 tooltip = COLDWAR_CYP_R2_deal_mod_army_org_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_bureaucracy_cost_multiplier_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	GRE = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_gre_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_gre_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.005 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_greek_training_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_greek_training_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -47,15 +46,14 @@ COLDWAR_CYP_R2_event_preview_greek_training = {
 	army_experience = 20
 	add_to_variable = { COLDWAR_CYP_R2_officer_penetration = 15 tooltip = COLDWAR_CYP_R2_deal_officer_penetration_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	GRE = {
 	add_ideas = COLDWAR_CYP_R2_greek_training_gre
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_army_org_factor = 0.01 tooltip = COLDWAR_CYP_R2_deal_mod_army_org_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_bureaucracy_cost_multiplier_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	GRE = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_gre_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_gre_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = COLDWAR_CYP_R2_quote_greek_training_setup } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_greek_training_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_greek_training_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_greek_training_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -82,15 +80,19 @@ COLDWAR_CYP_R2_apply_once_greek_training = {
 
 COLDWAR_CYP_R2_decline_greek_training = {
 	if = { limit = { tag = GRE has_country_flag = COLDWAR_CYP_R2_greek_training_offer_pending CYP = { has_country_flag = COLDWAR_CYP_R2_greek_training_offer_open } }
-	clr_country_flag = COLDWAR_CYP_R2_greek_training_offer_pending set_country_flag = COLDWAR_CYP_R2_greek_training_declined
-	CYP = { clr_country_flag = COLDWAR_CYP_R2_greek_training_offer_open set_country_flag = COLDWAR_CYP_R2_greek_training_declined country_event = { id = COLDWAR_CYP_R2_deal.600 } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_greek_training_offer_pending set_country_flag = { flag = COLDWAR_CYP_R2_greek_training_declined value = 1 days = 365 }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	CYP = { clr_country_flag = COLDWAR_CYP_R2_greek_training_offer_open set_country_flag = { flag = COLDWAR_CYP_R2_greek_training_declined value = 1 days = 365 } country_event = { id = COLDWAR_CYP_R2_deal.600 } }
 	}
 }
 
 COLDWAR_CYP_R2_terminate_greek_training = {
 	if = { limit = { tag = CYP has_country_flag = COLDWAR_CYP_R2_greek_training_signed }
-	clr_country_flag = COLDWAR_CYP_R2_greek_training_signed clr_country_flag = COLDWAR_CYP_R2_greek_training_active set_country_flag = COLDWAR_CYP_R2_greek_training_terminated remove_ideas = COLDWAR_CYP_R2_greek_training_cyp
-	GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_training_signed clr_country_flag = COLDWAR_CYP_R2_greek_training_active set_country_flag = COLDWAR_CYP_R2_greek_training_terminated remove_ideas = COLDWAR_CYP_R2_greek_training_gre }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_greek_training_signed clr_country_flag = COLDWAR_CYP_R2_greek_training_active set_country_flag = { flag = COLDWAR_CYP_R2_greek_training_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_greek_training_cyp
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_training_signed clr_country_flag = COLDWAR_CYP_R2_greek_training_active set_country_flag = { flag = COLDWAR_CYP_R2_greek_training_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_greek_training_gre }
 	COLDWAR_CYP_R2_agreements_reconcile = yes
 	}
 }
@@ -104,18 +106,18 @@ COLDWAR_CYP_R2_offer_yugoslavia_preview = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_education_cost_multiplier_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_education_cost_multiplier_modifier_tt }
 	add_tech_bonus = { name = COLDWAR_CYP_R2_yugoslavia_cyp_research_1 bonus = 0.5 uses = 1 category = CAT_industry }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	SER = {
 	add_ideas = COLDWAR_CYP_R2_yugoslavia_ser
 	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
-	set_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = CYP.gdp_total }
-	multiply_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = 0.00002 }
-	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt }
+	set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = CYP.gdp_total }
+	multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 }
+	# IMPERIA COLD WAR — MD weekly expense line
+	custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt
 	}
-	SER = { add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_ser_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_ser_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.005 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -142,18 +144,18 @@ COLDWAR_CYP_R2_event_preview_yugoslavia = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_education_cost_multiplier_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_education_cost_multiplier_modifier_tt }
 	add_tech_bonus = { name = COLDWAR_CYP_R2_yugoslavia_cyp_research_1 bonus = 0.5 uses = 1 category = CAT_industry }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	SER = {
 	add_ideas = COLDWAR_CYP_R2_yugoslavia_ser
 	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
-	set_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = CYP.gdp_total }
-	multiply_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = 0.00002 }
-	add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt }
+	set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = CYP.gdp_total }
+	multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 }
+	# IMPERIA COLD WAR — MD weekly expense line
+	custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt
 	}
-	SER = { add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_ser_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_ser_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = COLDWAR_CYP_R2_quote_yugoslavia_setup } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_yugoslavia_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_yugoslavia_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -179,15 +181,19 @@ COLDWAR_CYP_R2_apply_once_yugoslavia = {
 
 COLDWAR_CYP_R2_decline_yugoslavia = {
 	if = { limit = { tag = SER has_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_pending CYP = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_open } }
-	clr_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_pending set_country_flag = COLDWAR_CYP_R2_yugoslavia_declined
-	CYP = { clr_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_open set_country_flag = COLDWAR_CYP_R2_yugoslavia_declined country_event = { id = COLDWAR_CYP_R2_deal.600 } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_pending set_country_flag = { flag = COLDWAR_CYP_R2_yugoslavia_declined value = 1 days = 365 }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	CYP = { clr_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_open set_country_flag = { flag = COLDWAR_CYP_R2_yugoslavia_declined value = 1 days = 365 } country_event = { id = COLDWAR_CYP_R2_deal.600 } }
 	}
 }
 
 COLDWAR_CYP_R2_terminate_yugoslavia = {
 	if = { limit = { tag = CYP has_country_flag = COLDWAR_CYP_R2_yugoslavia_signed }
-	clr_country_flag = COLDWAR_CYP_R2_yugoslavia_signed clr_country_flag = COLDWAR_CYP_R2_yugoslavia_active set_country_flag = COLDWAR_CYP_R2_yugoslavia_terminated remove_ideas = COLDWAR_CYP_R2_yugoslavia_cyp
-	SER = { clr_country_flag = COLDWAR_CYP_R2_yugoslavia_signed clr_country_flag = COLDWAR_CYP_R2_yugoslavia_active set_country_flag = COLDWAR_CYP_R2_yugoslavia_terminated remove_ideas = COLDWAR_CYP_R2_yugoslavia_ser }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_yugoslavia_signed clr_country_flag = COLDWAR_CYP_R2_yugoslavia_active set_country_flag = { flag = COLDWAR_CYP_R2_yugoslavia_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_yugoslavia_cyp
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	SER = { clr_country_flag = COLDWAR_CYP_R2_yugoslavia_signed clr_country_flag = COLDWAR_CYP_R2_yugoslavia_active set_country_flag = { flag = COLDWAR_CYP_R2_yugoslavia_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_yugoslavia_ser }
 	COLDWAR_CYP_R2_agreements_reconcile = yes
 	}
 }
@@ -200,15 +206,12 @@ COLDWAR_CYP_R2_offer_britain_preview = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_office_park_income_tax_modifier = 0.08 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_foreign_influence_defense_modifier = -0.05 tooltip = COLDWAR_CYP_R2_deal_mod_foreign_influence_defense_modifier_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_britain_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	ENG = {
 	add_ideas = COLDWAR_CYP_R2_britain_eng
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_army_org_factor = 0.005 tooltip = COLDWAR_CYP_R2_deal_mod_army_org_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_bureaucracy_cost_multiplier_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	ENG = { add_to_variable = { COLDWAR_CYP_R2_preview_britain_eng_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_britain_eng_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_britain_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	}
 }
 
@@ -234,15 +237,12 @@ COLDWAR_CYP_R2_event_preview_britain = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_office_park_income_tax_modifier = 0.08 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_foreign_influence_defense_modifier = -0.05 tooltip = COLDWAR_CYP_R2_deal_mod_foreign_influence_defense_modifier_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_britain_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	ENG = {
 	add_ideas = COLDWAR_CYP_R2_britain_eng
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_army_org_factor = 0.005 tooltip = COLDWAR_CYP_R2_deal_mod_army_org_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_britain_bureaucracy_cost_multiplier_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	ENG = { add_to_variable = { COLDWAR_CYP_R2_preview_britain_eng_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_britain_eng_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = COLDWAR_CYP_R2_quote_britain_setup } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_britain_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	}
 }
 
@@ -267,15 +267,19 @@ COLDWAR_CYP_R2_apply_once_britain = {
 
 COLDWAR_CYP_R2_decline_britain = {
 	if = { limit = { tag = ENG has_country_flag = COLDWAR_CYP_R2_britain_offer_pending CYP = { has_country_flag = COLDWAR_CYP_R2_britain_offer_open } }
-	clr_country_flag = COLDWAR_CYP_R2_britain_offer_pending set_country_flag = COLDWAR_CYP_R2_britain_declined
-	CYP = { clr_country_flag = COLDWAR_CYP_R2_britain_offer_open set_country_flag = COLDWAR_CYP_R2_britain_declined country_event = { id = COLDWAR_CYP_R2_deal.600 } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_britain_offer_pending set_country_flag = { flag = COLDWAR_CYP_R2_britain_declined value = 1 days = 365 }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	CYP = { clr_country_flag = COLDWAR_CYP_R2_britain_offer_open set_country_flag = { flag = COLDWAR_CYP_R2_britain_declined value = 1 days = 365 } country_event = { id = COLDWAR_CYP_R2_deal.600 } }
 	}
 }
 
 COLDWAR_CYP_R2_terminate_britain = {
 	if = { limit = { tag = CYP has_country_flag = COLDWAR_CYP_R2_britain_signed }
-	clr_country_flag = COLDWAR_CYP_R2_britain_signed clr_country_flag = COLDWAR_CYP_R2_britain_active set_country_flag = COLDWAR_CYP_R2_britain_terminated remove_ideas = COLDWAR_CYP_R2_britain_cyp
-	ENG = { clr_country_flag = COLDWAR_CYP_R2_britain_signed clr_country_flag = COLDWAR_CYP_R2_britain_active set_country_flag = COLDWAR_CYP_R2_britain_terminated remove_ideas = COLDWAR_CYP_R2_britain_eng }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_britain_signed clr_country_flag = COLDWAR_CYP_R2_britain_active set_country_flag = { flag = COLDWAR_CYP_R2_britain_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_britain_cyp
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	ENG = { clr_country_flag = COLDWAR_CYP_R2_britain_signed clr_country_flag = COLDWAR_CYP_R2_britain_active set_country_flag = { flag = COLDWAR_CYP_R2_britain_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_britain_eng }
 	COLDWAR_CYP_R2_agreements_reconcile = yes
 	}
 }
@@ -290,18 +294,18 @@ COLDWAR_CYP_R2_offer_czechoslovakia_preview = {
 	add_tech_bonus = { name = COLDWAR_CYP_R2_czechoslovakia_cyp_research_1 bonus = 0.5 uses = 1 category = CAT_infantry }
 	army_experience = 25
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	CZE = {
 	add_ideas = COLDWAR_CYP_R2_czechoslovakia_cze
 	add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
-	set_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = CYP.gdp_total }
-	multiply_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = 0.00002 }
-	add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt }
+	set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = CYP.gdp_total }
+	multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 }
+	# IMPERIA COLD WAR — MD weekly expense line
+	custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt
 	}
-	CZE = { add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_cze_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_cze_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.005 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -329,18 +333,18 @@ COLDWAR_CYP_R2_event_preview_czechoslovakia = {
 	add_tech_bonus = { name = COLDWAR_CYP_R2_czechoslovakia_cyp_research_1 bonus = 0.5 uses = 1 category = CAT_infantry }
 	army_experience = 25
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	CZE = {
 	add_ideas = COLDWAR_CYP_R2_czechoslovakia_cze
 	add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
-	set_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = CYP.gdp_total }
-	multiply_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = 0.00002 }
-	add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt }
+	set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = CYP.gdp_total }
+	multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 }
+	# IMPERIA COLD WAR — MD weekly expense line
+	custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt
 	}
-	CZE = { add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_cze_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_cze_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = COLDWAR_CYP_R2_quote_czechoslovakia_setup } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_czechoslovakia_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -367,15 +371,19 @@ COLDWAR_CYP_R2_apply_once_czechoslovakia = {
 
 COLDWAR_CYP_R2_decline_czechoslovakia = {
 	if = { limit = { tag = CZE has_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_pending CYP = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_open } }
-	clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_pending set_country_flag = COLDWAR_CYP_R2_czechoslovakia_declined
-	CYP = { clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_open set_country_flag = COLDWAR_CYP_R2_czechoslovakia_declined country_event = { id = COLDWAR_CYP_R2_deal.600 } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_pending set_country_flag = { flag = COLDWAR_CYP_R2_czechoslovakia_declined value = 1 days = 365 }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	CYP = { clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_open set_country_flag = { flag = COLDWAR_CYP_R2_czechoslovakia_declined value = 1 days = 365 } country_event = { id = COLDWAR_CYP_R2_deal.600 } }
 	}
 }
 
 COLDWAR_CYP_R2_terminate_czechoslovakia = {
 	if = { limit = { tag = CYP has_country_flag = COLDWAR_CYP_R2_czechoslovakia_signed }
-	clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_signed clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_active set_country_flag = COLDWAR_CYP_R2_czechoslovakia_terminated remove_ideas = COLDWAR_CYP_R2_czechoslovakia_cyp
-	CZE = { clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_signed clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_active set_country_flag = COLDWAR_CYP_R2_czechoslovakia_terminated remove_ideas = COLDWAR_CYP_R2_czechoslovakia_cze }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_signed clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_active set_country_flag = { flag = COLDWAR_CYP_R2_czechoslovakia_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_czechoslovakia_cyp
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	CZE = { clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_signed clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_active set_country_flag = { flag = COLDWAR_CYP_R2_czechoslovakia_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_czechoslovakia_cze }
 	COLDWAR_CYP_R2_agreements_reconcile = yes
 	}
 }
@@ -389,46 +397,37 @@ COLDWAR_CYP_R2_offer_eec_preview = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_production_speed_industrial_complex_factor = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_production_speed_industrial_complex_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	GER = {
 	add_ideas = COLDWAR_CYP_R2_eec_ger
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	GER = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_ger_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ger_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ger_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	FRA = {
 	add_ideas = COLDWAR_CYP_R2_eec_fra
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	FRA = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_fra_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_fra_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_fra_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	ITA = {
 	add_ideas = COLDWAR_CYP_R2_eec_ita
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	ITA = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_ita_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ita_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ita_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	BEL = {
 	add_ideas = COLDWAR_CYP_R2_eec_bel
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	BEL = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_bel_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_bel_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_bel_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	HOL = {
 	add_ideas = COLDWAR_CYP_R2_eec_hol
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	HOL = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_hol_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_hol_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_hol_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	LUX = {
 	add_ideas = COLDWAR_CYP_R2_eec_lux
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	LUX = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_lux_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_lux_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_lux_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	CYP = { set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.01 } modify_treasury_effect = yes }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	}
 }
 
@@ -464,46 +463,37 @@ COLDWAR_CYP_R2_event_preview_eec = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_production_speed_industrial_complex_factor = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_production_speed_industrial_complex_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	GER = {
 	add_ideas = COLDWAR_CYP_R2_eec_ger
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	GER = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_ger_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ger_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ger_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	FRA = {
 	add_ideas = COLDWAR_CYP_R2_eec_fra
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	FRA = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_fra_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_fra_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_fra_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	ITA = {
 	add_ideas = COLDWAR_CYP_R2_eec_ita
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	ITA = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_ita_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ita_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_ita_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	BEL = {
 	add_ideas = COLDWAR_CYP_R2_eec_bel
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	BEL = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_bel_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_bel_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_bel_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	HOL = {
 	add_ideas = COLDWAR_CYP_R2_eec_hol
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	HOL = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_hol_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_hol_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_hol_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	LUX = {
 	add_ideas = COLDWAR_CYP_R2_eec_lux
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_office_park_income_tax_modifier = 0.001 tooltip = COLDWAR_CYP_R2_deal_mod_office_park_income_tax_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_eec_bureaucracy_cost_multiplier_modifier = 0.0005 tooltip = COLDWAR_CYP_R2_deal_mod_bureaucracy_cost_multiplier_modifier_tt }
 	}
-	LUX = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_lux_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_lux_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } add_to_variable = { COLDWAR_CYP_R2_preview_eec_lux_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	CYP = { set_temp_variable = { treasury_change = COLDWAR_CYP_R2_quote_eec_setup } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_eec_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	}
 }
 
@@ -655,19 +645,27 @@ COLDWAR_CYP_R2_decline_eec = {
 	ITA = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent }
 	BEL = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent }
 	HOL = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent }
-	LUX = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent }CYP = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_open set_country_flag = COLDWAR_CYP_R2_eec_declined clr_country_flag = COLDWAR_CYP_R2_eec_consent_ger clr_country_flag = COLDWAR_CYP_R2_eec_consent_fra clr_country_flag = COLDWAR_CYP_R2_eec_consent_ita clr_country_flag = COLDWAR_CYP_R2_eec_consent_bel clr_country_flag = COLDWAR_CYP_R2_eec_consent_hol clr_country_flag = COLDWAR_CYP_R2_eec_consent_lux country_event = { id = COLDWAR_CYP_R2_deal.600 } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	LUX = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent }CYP = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_open set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_eec_consent_ger clr_country_flag = COLDWAR_CYP_R2_eec_consent_fra clr_country_flag = COLDWAR_CYP_R2_eec_consent_ita clr_country_flag = COLDWAR_CYP_R2_eec_consent_bel clr_country_flag = COLDWAR_CYP_R2_eec_consent_hol clr_country_flag = COLDWAR_CYP_R2_eec_consent_lux country_event = { id = COLDWAR_CYP_R2_deal.600 } }
 	}
 }
 
 COLDWAR_CYP_R2_terminate_eec = {
 	if = { limit = { tag = CYP has_country_flag = COLDWAR_CYP_R2_eec_signed }
-	clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = COLDWAR_CYP_R2_eec_terminated remove_ideas = COLDWAR_CYP_R2_eec_cyp
-	GER = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = COLDWAR_CYP_R2_eec_terminated remove_ideas = COLDWAR_CYP_R2_eec_ger }
-	FRA = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = COLDWAR_CYP_R2_eec_terminated remove_ideas = COLDWAR_CYP_R2_eec_fra }
-	ITA = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = COLDWAR_CYP_R2_eec_terminated remove_ideas = COLDWAR_CYP_R2_eec_ita }
-	BEL = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = COLDWAR_CYP_R2_eec_terminated remove_ideas = COLDWAR_CYP_R2_eec_bel }
-	HOL = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = COLDWAR_CYP_R2_eec_terminated remove_ideas = COLDWAR_CYP_R2_eec_hol }
-	LUX = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = COLDWAR_CYP_R2_eec_terminated remove_ideas = COLDWAR_CYP_R2_eec_lux }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = { flag = COLDWAR_CYP_R2_eec_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_eec_cyp
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	GER = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = { flag = COLDWAR_CYP_R2_eec_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_eec_ger }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	FRA = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = { flag = COLDWAR_CYP_R2_eec_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_eec_fra }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	ITA = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = { flag = COLDWAR_CYP_R2_eec_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_eec_ita }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	BEL = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = { flag = COLDWAR_CYP_R2_eec_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_eec_bel }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	HOL = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = { flag = COLDWAR_CYP_R2_eec_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_eec_hol }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	LUX = { clr_country_flag = COLDWAR_CYP_R2_eec_signed clr_country_flag = COLDWAR_CYP_R2_eec_active set_country_flag = { flag = COLDWAR_CYP_R2_eec_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_eec_lux }
 	}
 }
 
@@ -680,18 +678,18 @@ COLDWAR_CYP_R2_offer_greek_civil_preview = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_education_cost_multiplier_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_education_cost_multiplier_modifier_tt }
 	add_tech_bonus = { name = COLDWAR_CYP_R2_greek_civil_cyp_research_1 bonus = 0.35 uses = 1 category = CAT_industry }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	GRE = {
 	add_ideas = COLDWAR_CYP_R2_greek_civil_gre
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_research_speed_factor = 0.01 tooltip = COLDWAR_CYP_R2_deal_mod_research_speed_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_education_cost_multiplier_modifier = 0.01 tooltip = COLDWAR_CYP_R2_deal_mod_education_cost_multiplier_modifier_tt }
-	set_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = CYP.gdp_total }
-	multiply_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = 0.00002 }
-	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt }
+	set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = CYP.gdp_total }
+	multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 }
+	# IMPERIA COLD WAR — MD weekly expense line
+	custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt
 	}
-	GRE = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_gre_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_gre_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.005 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -718,18 +716,18 @@ COLDWAR_CYP_R2_event_preview_greek_civil = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_education_cost_multiplier_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_education_cost_multiplier_modifier_tt }
 	add_tech_bonus = { name = COLDWAR_CYP_R2_greek_civil_cyp_research_1 bonus = 0.35 uses = 1 category = CAT_industry }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	GRE = {
 	add_ideas = COLDWAR_CYP_R2_greek_civil_gre
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_research_speed_factor = 0.01 tooltip = COLDWAR_CYP_R2_deal_mod_research_speed_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_education_cost_multiplier_modifier = 0.01 tooltip = COLDWAR_CYP_R2_deal_mod_education_cost_multiplier_modifier_tt }
-	set_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = CYP.gdp_total }
-	multiply_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = 0.00002 }
-	add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt }
+	set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = CYP.gdp_total }
+	multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 }
+	# IMPERIA COLD WAR — MD weekly expense line
+	custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt
 	}
-	GRE = { add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_gre_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_gre_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = COLDWAR_CYP_R2_quote_greek_civil_setup } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
-	CYP = { set_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_expense = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_preview_greek_civil_expense = 0.00002 } add_to_variable = { COLDWAR_CYP_R2_preview_greek_civil_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
+	# IMPERIA COLD WAR — MD weekly expense line
+	CYP = { set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total } multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.00002 } custom_effect_tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt }
 	}
 }
 
@@ -755,15 +753,19 @@ COLDWAR_CYP_R2_apply_once_greek_civil = {
 
 COLDWAR_CYP_R2_decline_greek_civil = {
 	if = { limit = { tag = GRE has_country_flag = COLDWAR_CYP_R2_greek_civil_offer_pending CYP = { has_country_flag = COLDWAR_CYP_R2_greek_civil_offer_open } }
-	clr_country_flag = COLDWAR_CYP_R2_greek_civil_offer_pending set_country_flag = COLDWAR_CYP_R2_greek_civil_declined
-	CYP = { clr_country_flag = COLDWAR_CYP_R2_greek_civil_offer_open set_country_flag = COLDWAR_CYP_R2_greek_civil_declined country_event = { id = COLDWAR_CYP_R2_deal.600 } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_greek_civil_offer_pending set_country_flag = { flag = COLDWAR_CYP_R2_greek_civil_declined value = 1 days = 365 }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	CYP = { clr_country_flag = COLDWAR_CYP_R2_greek_civil_offer_open set_country_flag = { flag = COLDWAR_CYP_R2_greek_civil_declined value = 1 days = 365 } country_event = { id = COLDWAR_CYP_R2_deal.600 } }
 	}
 }
 
 COLDWAR_CYP_R2_terminate_greek_civil = {
 	if = { limit = { tag = CYP has_country_flag = COLDWAR_CYP_R2_greek_civil_signed }
-	clr_country_flag = COLDWAR_CYP_R2_greek_civil_signed clr_country_flag = COLDWAR_CYP_R2_greek_civil_active set_country_flag = COLDWAR_CYP_R2_greek_civil_terminated remove_ideas = COLDWAR_CYP_R2_greek_civil_cyp
-	GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_civil_signed clr_country_flag = COLDWAR_CYP_R2_greek_civil_active set_country_flag = COLDWAR_CYP_R2_greek_civil_terminated remove_ideas = COLDWAR_CYP_R2_greek_civil_gre }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_greek_civil_signed clr_country_flag = COLDWAR_CYP_R2_greek_civil_active set_country_flag = { flag = COLDWAR_CYP_R2_greek_civil_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_greek_civil_cyp
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_civil_signed clr_country_flag = COLDWAR_CYP_R2_greek_civil_active set_country_flag = { flag = COLDWAR_CYP_R2_greek_civil_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_greek_civil_gre }
 	COLDWAR_CYP_R2_agreements_reconcile = yes
 	}
 }
@@ -777,16 +779,13 @@ COLDWAR_CYP_R2_offer_turkey_preview = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_foreign_influence_defense_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_foreign_influence_defense_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_army_attack_factor = -0.03 tooltip = COLDWAR_CYP_R2_deal_mod_army_attack_factor_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_turkey_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	TUR = {
 	add_ideas = COLDWAR_CYP_R2_turkey_tur
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_stability_factor = 0.02 tooltip = COLDWAR_CYP_R2_deal_mod_stability_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_foreign_influence_defense_modifier = 0.03 tooltip = COLDWAR_CYP_R2_deal_mod_foreign_influence_defense_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_army_attack_factor = -0.01 tooltip = COLDWAR_CYP_R2_deal_mod_army_attack_factor_tt }
 	}
-	TUR = { add_to_variable = { COLDWAR_CYP_R2_preview_turkey_tur_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_turkey_tur_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = gdp_total } multiply_temp_variable = { treasury_change = -0.0025 } modify_treasury_effect = yes }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_turkey_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	}
 }
 
@@ -813,16 +812,13 @@ COLDWAR_CYP_R2_event_preview_turkey = {
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_foreign_influence_defense_modifier = 0.05 tooltip = COLDWAR_CYP_R2_deal_mod_foreign_influence_defense_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_army_attack_factor = -0.03 tooltip = COLDWAR_CYP_R2_deal_mod_army_attack_factor_tt }
 	}
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_turkey_income = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_income_tt } }
 	TUR = {
 	add_ideas = COLDWAR_CYP_R2_turkey_tur
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_stability_factor = 0.02 tooltip = COLDWAR_CYP_R2_deal_mod_stability_factor_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_foreign_influence_defense_modifier = 0.03 tooltip = COLDWAR_CYP_R2_deal_mod_foreign_influence_defense_modifier_tt }
 	add_to_variable = { COLDWAR_CYP_R2_preview_turkey_army_attack_factor = -0.01 tooltip = COLDWAR_CYP_R2_deal_mod_army_attack_factor_tt }
 	}
-	TUR = { add_to_variable = { COLDWAR_CYP_R2_preview_turkey_tur_treasury = 0 tooltip = COLDWAR_CYP_R2_deal_treasury_tt } add_to_variable = { COLDWAR_CYP_R2_preview_turkey_tur_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	CYP = { set_temp_variable = { treasury_change = COLDWAR_CYP_R2_quote_turkey_setup } multiply_temp_variable = { treasury_change = -1 } modify_treasury_effect = yes }
-	CYP = { add_to_variable = { COLDWAR_CYP_R2_preview_turkey_expense = 0 tooltip = COLDWAR_CYP_R2_deal_weekly_expense_tt } }
 	}
 }
 
@@ -847,15 +843,19 @@ COLDWAR_CYP_R2_apply_once_turkey = {
 
 COLDWAR_CYP_R2_decline_turkey = {
 	if = { limit = { tag = TUR has_country_flag = COLDWAR_CYP_R2_turkey_offer_pending CYP = { has_country_flag = COLDWAR_CYP_R2_turkey_offer_open } }
-	clr_country_flag = COLDWAR_CYP_R2_turkey_offer_pending set_country_flag = COLDWAR_CYP_R2_turkey_declined
-	CYP = { clr_country_flag = COLDWAR_CYP_R2_turkey_offer_open set_country_flag = COLDWAR_CYP_R2_turkey_declined country_event = { id = COLDWAR_CYP_R2_deal.600 } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_turkey_offer_pending set_country_flag = { flag = COLDWAR_CYP_R2_turkey_declined value = 1 days = 365 }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	CYP = { clr_country_flag = COLDWAR_CYP_R2_turkey_offer_open set_country_flag = { flag = COLDWAR_CYP_R2_turkey_declined value = 1 days = 365 } country_event = { id = COLDWAR_CYP_R2_deal.600 } }
 	}
 }
 
 COLDWAR_CYP_R2_terminate_turkey = {
 	if = { limit = { tag = CYP has_country_flag = COLDWAR_CYP_R2_turkey_signed }
-	clr_country_flag = COLDWAR_CYP_R2_turkey_signed clr_country_flag = COLDWAR_CYP_R2_turkey_active set_country_flag = COLDWAR_CYP_R2_turkey_terminated remove_ideas = COLDWAR_CYP_R2_turkey_cyp
-	TUR = { clr_country_flag = COLDWAR_CYP_R2_turkey_signed clr_country_flag = COLDWAR_CYP_R2_turkey_active set_country_flag = COLDWAR_CYP_R2_turkey_terminated remove_ideas = COLDWAR_CYP_R2_turkey_tur }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	clr_country_flag = COLDWAR_CYP_R2_turkey_signed clr_country_flag = COLDWAR_CYP_R2_turkey_active set_country_flag = { flag = COLDWAR_CYP_R2_turkey_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_turkey_cyp
+	# IMPERIA COLD WAR — B8 24.11.2026: timed price instead of a permanent lock (MP rule A)
+	TUR = { clr_country_flag = COLDWAR_CYP_R2_turkey_signed clr_country_flag = COLDWAR_CYP_R2_turkey_active set_country_flag = { flag = COLDWAR_CYP_R2_turkey_terminated value = 1 days = 365 } remove_ideas = COLDWAR_CYP_R2_turkey_tur }
 	COLDWAR_CYP_R2_agreements_reconcile = yes
 	}
 }
@@ -919,12 +919,19 @@ COLDWAR_CYP_R2_agreements_weekly_streams = {
 
 COLDWAR_CYP_R2_agreements_clear_expired_offers = {
 	if = { limit = { tag = CYP }
-	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_greek_training_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_greek_training_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_greek_training_signed } } set_country_flag = COLDWAR_CYP_R2_greek_training_declined } GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_training_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_greek_training_declined } } set_country_flag = COLDWAR_CYP_R2_greek_training_declined } } }
-	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_signed } } set_country_flag = COLDWAR_CYP_R2_yugoslavia_declined } SER = { clr_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_declined } } set_country_flag = COLDWAR_CYP_R2_yugoslavia_declined } } }
-	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_britain_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_britain_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_britain_signed } } set_country_flag = COLDWAR_CYP_R2_britain_declined } ENG = { clr_country_flag = COLDWAR_CYP_R2_britain_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_britain_declined } } set_country_flag = COLDWAR_CYP_R2_britain_declined } } }
-	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_signed } } set_country_flag = COLDWAR_CYP_R2_czechoslovakia_declined } CZE = { clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_declined } } set_country_flag = COLDWAR_CYP_R2_czechoslovakia_declined } } }
-	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_eec_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_eec_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_eec_signed } } set_country_flag = COLDWAR_CYP_R2_eec_declined } GER = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = COLDWAR_CYP_R2_eec_declined } } FRA = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = COLDWAR_CYP_R2_eec_declined } } ITA = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = COLDWAR_CYP_R2_eec_declined } } BEL = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = COLDWAR_CYP_R2_eec_declined } } HOL = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = COLDWAR_CYP_R2_eec_declined } } LUX = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = COLDWAR_CYP_R2_eec_declined } } }
-	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_greek_civil_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_greek_civil_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_greek_civil_signed } } set_country_flag = COLDWAR_CYP_R2_greek_civil_declined } GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_civil_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_greek_civil_declined } } set_country_flag = COLDWAR_CYP_R2_greek_civil_declined } } }
-	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_turkey_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_turkey_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_turkey_signed } } set_country_flag = COLDWAR_CYP_R2_turkey_declined } TUR = { clr_country_flag = COLDWAR_CYP_R2_turkey_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_turkey_declined } } set_country_flag = COLDWAR_CYP_R2_turkey_declined } } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed decline; ever_offered cleared so the sweep does not renew it; timed decline, mirrored only while missing
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_greek_training_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_greek_training_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_greek_training_signed } } set_country_flag = { flag = COLDWAR_CYP_R2_greek_training_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_greek_training_ever_offered } GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_training_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_greek_training_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_greek_training_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_greek_training_declined value = 1 days = 365 } } } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed decline; ever_offered cleared so the sweep does not renew it; timed decline, mirrored only while missing
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_signed } } set_country_flag = { flag = COLDWAR_CYP_R2_yugoslavia_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_yugoslavia_ever_offered } SER = { clr_country_flag = COLDWAR_CYP_R2_yugoslavia_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_yugoslavia_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_yugoslavia_declined value = 1 days = 365 } } } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed decline; ever_offered cleared so the sweep does not renew it; timed decline, mirrored only while missing
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_britain_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_britain_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_britain_signed } } set_country_flag = { flag = COLDWAR_CYP_R2_britain_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_britain_ever_offered } ENG = { clr_country_flag = COLDWAR_CYP_R2_britain_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_britain_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_britain_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_britain_declined value = 1 days = 365 } } } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed decline; ever_offered cleared so the sweep does not renew it; timed decline, mirrored only while missing
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_signed } } set_country_flag = { flag = COLDWAR_CYP_R2_czechoslovakia_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_ever_offered } CZE = { clr_country_flag = COLDWAR_CYP_R2_czechoslovakia_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_czechoslovakia_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_czechoslovakia_declined value = 1 days = 365 } } } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed decline; ever_offered cleared so the sweep does not renew it; timed decline, mirrored only while missing
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_eec_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_eec_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_eec_signed } } set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_eec_ever_offered } GER = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } } } FRA = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } } } ITA = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } } } BEL = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } } } HOL = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } } } LUX = { clr_country_flag = COLDWAR_CYP_R2_eec_offer_pending clr_country_flag = COLDWAR_CYP_R2_eec_consent if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_eec_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_eec_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_eec_declined value = 1 days = 365 } } } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed decline; ever_offered cleared so the sweep does not renew it; timed decline, mirrored only while missing
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_greek_civil_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_greek_civil_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_greek_civil_signed } } set_country_flag = { flag = COLDWAR_CYP_R2_greek_civil_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_greek_civil_ever_offered } GRE = { clr_country_flag = COLDWAR_CYP_R2_greek_civil_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_greek_civil_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_greek_civil_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_greek_civil_declined value = 1 days = 365 } } } }
+	# IMPERIA COLD WAR — B8 24.11.2026: timed decline; ever_offered cleared so the sweep does not renew it; timed decline, mirrored only while missing
+	if = { limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_turkey_offer_open } } if = { limit = { has_country_flag = COLDWAR_CYP_R2_turkey_ever_offered NOT = { has_country_flag = COLDWAR_CYP_R2_turkey_signed } } set_country_flag = { flag = COLDWAR_CYP_R2_turkey_declined value = 1 days = 365 } clr_country_flag = COLDWAR_CYP_R2_turkey_ever_offered } TUR = { clr_country_flag = COLDWAR_CYP_R2_turkey_offer_pending if = { limit = { CYP = { has_country_flag = COLDWAR_CYP_R2_turkey_declined } NOT = { has_country_flag = COLDWAR_CYP_R2_turkey_declined } } set_country_flag = { flag = COLDWAR_CYP_R2_turkey_declined value = 1 days = 365 } } } }
 	}
 }

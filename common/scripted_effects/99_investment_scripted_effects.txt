@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Sami: Sweden 1970 and Nordic cooperation.
 # IMPERIA COLD WAR — Bilateral treaty investment adjustments in native project formulas
 # International Investments System
 # Player (GUI) and AI (investments_event.500) both call start_project_two.
@@ -241,8 +242,6 @@ project_monetary_cost_calculation = {
 				}
 				add_to_temp_variable = { investments_cost_modifier = -0.05 }
 			}
-			# IMPERIA COLD WAR — Maximum applicable bilateral treaty discount
-			icwt_investment_cost_extra = yes
 			# IMPERIA COLD WAR — Social Contract: investment across the blocs costs more when tension is high
 			COLDWAR_EB_investment_cost_extra = yes
 		}
@@ -480,8 +479,6 @@ precompute_state_construction_data = {
 			}
 			add_to_temp_variable = { receiving_investment_duration_temp = -0.05 }
 		}
-		# IMPERIA COLD WAR — Maximum applicable bilateral treaty duration adjustment
-		icwt_investment_duration_extra = yes
 		add_to_temp_variable = { receiving_investment_duration_temp = THIS.modifier@receiving_investment_duration_modifier }
 	}
 }
@@ -563,6 +560,11 @@ start_project_two = {
 		# Initializes the Project
 		set_variable = { project = new_project }
 		set_variable = { project_type = project_building_type^-1 }
+		# IMPERIA COLD WAR — reset the Nordic registration when a slot is reused.
+		if = {
+			limit = { COLDWAR_NORDIC_campaign = yes }
+			set_variable = { COLDWAR_NORDIC_investment_kind^project = 0 }
+		}
 
 		# Active Project Variables (must precede calculate_project_duration so it can read build_amount^project)
 		set_variable = { project_build_amount^project = project_build_amount^-1 }
@@ -580,6 +582,11 @@ start_project_two = {
 			set_variable = { PREV.project_array^PREV.project = THIS.id }
 			CONTROLLER = {
 				set_variable = { PREV.PREV.project_target_country^PREV.PREV.project = THIS.id }
+				# IMPERIA COLD WAR — classify a qualifying signed Nordic project.
+				if = {
+					limit = { PREV.PREV = { COLDWAR_NORDIC_campaign = yes } }
+					COLDWAR_NORDIC_mark_investment_effect = yes
+				}
 			}
 			precompute_state_construction_data = yes
 		}
@@ -624,7 +631,22 @@ complete_project = {
 		random_state = {
 			limit = { state = PREV.project_array^PREV.project }
 			if = { limit = { investment_building_slot_available = yes }
+				# IMPERIA COLD WAR — slot for each delivered Nordic Council segment.
+				if = {
+					limit = { PREV = { COLDWAR_NORDIC_campaign = yes check_variable = { COLDWAR_NORDIC_investment_kind^project > 0 } } }
+					add_extra_state_shared_building_slots = 1
+				}
 				add_finished_buildings = yes
+				# IMPERIA COLD WAR — a Council receipt follows a real delivery.
+				if = {
+					limit = {
+						PREV = {
+							COLDWAR_NORDIC_campaign = yes
+							check_variable = { COLDWAR_NORDIC_investment_kind^project > 0 }
+						}
+					}
+					CONTROLLER = { COLDWAR_NORDIC_register_investment_effect = yes }
+				}
 				CONTROLLER = { add_opinion_modifier = { target = ROOT modifier = investments_construction_opinion } }
 
 				ROOT = {
@@ -697,6 +719,7 @@ end_project = {
 			clear_variable = project_construction_duration^project
 			clear_variable = project_total_construction_duration_display^project
 			clear_variable = project_target_country^project
+			if = { limit = { COLDWAR_NORDIC_country = yes } clear_variable = COLDWAR_NORDIC_investment_kind^project }
 			clear_variable = project_monetary_cost^project
 		}
 

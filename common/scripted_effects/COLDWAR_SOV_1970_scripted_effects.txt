@@ -13,16 +13,16 @@ COLDWAR_SOV_initialize_1970 = {
 		set_country_flag = COLDWAR_SOV_gensec_bre
 		# laws, internal factions and the seven starting spirits
 		add_ideas = {
-			bureau_04
+			bureau_01
 			defence_07
-			police_04
-			edu_04
-			health_03
-			social_04
+			police_01
+			edu_01
+			health_01
+			social_01
 			draft_army
 			intervention_global_interventionism
 			officer_military_academy
-			md_closed_economy
+			consumption_economy
 			comprehensive_regulations
 			fully_nationalized_healthcare
 			economic_motivated_mining
@@ -1130,16 +1130,15 @@ COLDWAR_SOV_start_vote = {
 		if = { limit = { is_ai = yes } COLDWAR_SOV_ai_ballot = yes }
 		else = { country_event = { id = COLDWAR_SOV.11 } }
 	}
+	COLDWAR_PB_build_board = yes # COLDWAR SOV v4: the Moscow members cast their votes
 	country_event = { id = COLDWAR_SOV.12 days = 10 }
 }
 
 # an AI seat holder votes at once: always in favour of a change of leadership (Enes, 18.10.2026); against the replacement of its own
 # First Secretary; otherwise mostly in favour
 COLDWAR_SOV_ai_ballot = {
-	if = { limit = { check_variable = { global.COLDWAR_SOV_vote_type = 3 } } set_temp_variable = { COLDWAR_SOV_ballot = 1 } }
-	else_if = { limit = { has_country_flag = COLDWAR_UNI_cadre_target } set_temp_variable = { COLDWAR_SOV_ballot = 2 } }
-	else_if = { limit = { check_variable = { global.COLDWAR_SOV_vote_type = 5 } } random_list = { 67 = { set_temp_variable = { COLDWAR_SOV_ballot = 1 } } 33 = { set_temp_variable = { COLDWAR_SOV_ballot = 2 } } } }
-	else = { random_list = { 91 = { set_temp_variable = { COLDWAR_SOV_ballot = 1 } } 9 = { set_temp_variable = { COLDWAR_SOV_ballot = 2 } } } }
+	# COLDWAR SOV v4: a seat without a player always votes with Moscow, for the General Secretary's motion (Enes, 13.11.2026)
+	set_temp_variable = { COLDWAR_SOV_ballot = 1 }
 	COLDWAR_SOV_cast_vote = yes
 }
 
@@ -1183,12 +1182,11 @@ COLDWAR_SOV_tally_vote = {
 		set_temp_variable = { COLDWAR_SOV_t0 = 3 }
 	}
 	else = {
-		set_temp_variable = { COLDWAR_SOV_m = COLDWAR_SOV_bop }
-		multiply_temp_variable = { COLDWAR_SOV_m = global.COLDWAR_SOV_vote_lean }
-		multiply_temp_variable = { COLDWAR_SOV_m = 3.5 }
-		add_to_temp_variable = { COLDWAR_SOV_m = 3.5 }
-		round_temp_variable = COLDWAR_SOV_m
-		clamp_temp_variable = { var = COLDWAR_SOV_m min = 0 max = 7 }
+		# COLDWAR SOV v4: the named Moscow members vote by their line and network (COLDWAR_PB_build_board)
+		COLDWAR_PB_build_board = yes
+		set_temp_variable = { COLDWAR_SOV_m = global.COLDWAR_PB_moscow_yes }
+		set_temp_variable = { COLDWAR_SOV_t0 = global.COLDWAR_PB_moscow_total }
+		add_to_temp_variable = { COLDWAR_SOV_t0 = 1 }
 		set_temp_variable = { COLDWAR_SOV_g = 1 }
 	}
 	hidden_effect = { set_variable = { global.COLDWAR_SOV_vote_moscow = COLDWAR_SOV_m } }
@@ -1469,6 +1467,7 @@ COLDWAR_SOV_tally_vote = {
 			var:COLDWAR_UNI_ct = { if = { limit = { COLDWAR_UNI_is_republic = yes } COLDWAR_UNI_replace_first_secretary = yes } }
 		}
 	}
+	if = { limit = { check_variable = { global.COLDWAR_SOV_vote_type > 5 } } COLDWAR_PB_motion_result = yes } # COLDWAR SOV v4: motions and Free Resolutions
 	clr_global_flag = COLDWAR_SOV_vote_running
 	# the next resolution in the queue waits three days, so everyone can read the result
 	country_event = { id = COLDWAR_SOV.55 days = 3 }
@@ -1561,8 +1560,15 @@ else_if = {
             limit = { check_variable = { COLDWAR_SOV_prop_building = 5 } }
             set_temp_variable = { COLDWAR_SOV_gdp_share = 0.03 }
         }
+    # IMPERIA COLD WAR — B9: every open Union project raises the price (+50% each; petitions: half price and +25% each)
     set_temp_variable = { COLDWAR_SOV_burden_mult = SOV.COLDWAR_SOV_republic_burden }
-    multiply_temp_variable = { COLDWAR_SOV_burden_mult = 0.5 }
+    add_to_temp_variable = { COLDWAR_SOV_burden_mult = SOV.COLDWAR_SOV_petition_burden }
+    if = {
+        limit = { check_variable = { COLDWAR_SOV_petition_rate = 1 } }
+        multiply_temp_variable = { COLDWAR_SOV_burden_mult = 0.25 }
+        multiply_temp_variable = { COLDWAR_SOV_gdp_share = 0.5 }
+    }
+    else = { multiply_temp_variable = { COLDWAR_SOV_burden_mult = 0.5 } }
     add_to_temp_variable = { COLDWAR_SOV_burden_mult = 1 }
     multiply_temp_variable = { COLDWAR_SOV_gdp_share = COLDWAR_SOV_burden_mult }
     SOV = {
@@ -1704,24 +1710,43 @@ else_if = {
 # THIS = SOV: one more Union project weighs on the budget for 90 days (event COLDWAR_SOV.30 lifts it again)
 COLDWAR_SOV_add_republic_burden = {
     custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SOV_republic_investment_modifier }
-    add_to_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.02 tooltip = COLDWAR_SOV_mod_consumer_goods_factor_tt }
-    hidden_effect = {
-        add_to_variable = { COLDWAR_SOV_republic_burden = 1 }
-        COLDWAR_SOV_update_republic_burden = yes
-        country_event = { id = COLDWAR_SOV.30 days = 90 }
+    # IMPERIA COLD WAR — B9: a granted petition (temp COLDWAR_SOV_petition_rate) weighs +5% consumer goods for 60 days; Politburo projects keep +2% for 90 days
+    if = {
+        limit = { check_variable = { COLDWAR_SOV_petition_rate = 1 } }
+        add_to_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.05 tooltip = COLDWAR_SOV_mod_consumer_goods_factor_tt }
+        hidden_effect = {
+            add_to_variable = { COLDWAR_SOV_petition_burden = 1 }
+            COLDWAR_SOV_update_republic_burden = yes
+            country_event = { id = COLDWAR_SOV.190 days = 60 }
+        }
+    }
+    else = {
+        add_to_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.02 tooltip = COLDWAR_SOV_mod_consumer_goods_factor_tt }
+        hidden_effect = {
+            add_to_variable = { COLDWAR_SOV_republic_burden = 1 }
+            COLDWAR_SOV_update_republic_burden = yes
+            country_event = { id = COLDWAR_SOV.30 days = 90 }
+        }
     }
 }
 
-# THIS = SOV: Tax Cost Factor (Consumer Goods) +2% per active burden; the modifier goes away at zero
+# THIS = SOV: Tax Cost Factor (Consumer Goods) +2% per open Politburo project and +5% per open petition; the modifier goes away at zero
+# IMPERIA COLD WAR — B9: petitions are counted separately (COLDWAR_SOV_petition_burden)
 COLDWAR_SOV_update_republic_burden = {
 	hidden_effect = {
-		hidden_effect = { clamp_variable = { var = COLDWAR_SOV_republic_burden min = 0 } }
-		hidden_effect = { set_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = COLDWAR_SOV_republic_burden } }
-		hidden_effect = { multiply_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.02 } }
-		if = { limit = { check_variable = { COLDWAR_SOV_republic_burden > 0 } NOT = { has_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier } } }
+		clamp_variable = { var = COLDWAR_SOV_republic_burden min = 0 }
+		clamp_variable = { var = COLDWAR_SOV_petition_burden min = 0 }
+		set_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = COLDWAR_SOV_republic_burden }
+		multiply_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = 0.02 }
+		set_temp_variable = { COLDWAR_SOV_petition_part = COLDWAR_SOV_petition_burden }
+		multiply_temp_variable = { COLDWAR_SOV_petition_part = 0.05 }
+		add_to_variable = { COLDWAR_SOV_republic_investment_consumer_goods_factor = COLDWAR_SOV_petition_part }
+		set_temp_variable = { COLDWAR_SOV_open_projects = COLDWAR_SOV_republic_burden }
+		add_to_temp_variable = { COLDWAR_SOV_open_projects = COLDWAR_SOV_petition_burden }
+		if = { limit = { check_variable = { COLDWAR_SOV_open_projects > 0 } NOT = { has_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier } } }
 			add_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier }
 		}
-		if = { limit = { check_variable = { COLDWAR_SOV_republic_burden < 1 } has_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier } }
+		if = { limit = { check_variable = { COLDWAR_SOV_open_projects < 1 } has_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier } }
 			remove_dynamic_modifier = { modifier = COLDWAR_SOV_republic_investment_modifier }
 		}
 		force_update_dynamic_modifier = yes
@@ -4594,6 +4619,7 @@ COLDWAR_SOV_pb_update_board = {
 			hidden_effect = { set_variable = { COLDWAR_SOV_pb_v_output = gdp_per_capita } }
 			hidden_effect = { set_variable = { COLDWAR_SOV_pb_v_plan = 0 } }
 			if = { limit = { check_variable = { COLDWAR_UNI_fp_plan = COLDWAR_SOV_pb_judge_plan } } hidden_effect = { set_variable = { COLDWAR_SOV_pb_v_plan = COLDWAR_UNI_fulfilled_plan } } }
+			if = { limit = { has_global_flag = COLDWAR_GOS_enabled } hidden_effect = { set_variable = { COLDWAR_SOV_pb_v_plan = COLDWAR_GOS_plan_points } add_to_variable = { COLDWAR_SOV_pb_v_plan = COLDWAR_UNI_programmes_led } } } # COLDWAR SOV v4: Gosplan reports and Union programmes
 			# pripiski: the republic's statisticians polish the figures Moscow reads - only the republic itself knows
 			if = {
 				limit = { has_country_flag = COLDWAR_SOV_pb_inflated }

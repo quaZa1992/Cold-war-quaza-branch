@@ -55,35 +55,11 @@ COLDWAR_GRE_R3_MIL_restore_nato_membership = {
 			COLDWAR_CYP_R2_nato_join_allowed = yes
 			NOT = { has_idea = NATO_member }
 		}
-		for_each_scope_loop = {
-			array = global.nato_members
-			add_opinion_modifier = { target = PREV modifier = NATO_member_modifier }
-			reverse_add_opinion_modifier = { target = PREV modifier = NATO_member_modifier }
-			if = {
-				limit = {
-					NOT = { has_military_access_to = PREV }
-				}
-				diplomatic_relation = { country = PREV relation = military_access active = yes }
-			}
-			PREV = {
-				if = {
-					limit = {
-						NOT = { has_military_access_to = PREV }
-					}
-					diplomatic_relation = { country = PREV relation = military_access active = yes }
-				}
-			}
-		}
-		add_ideas = NATO_member
-		add_to_tech_sharing_group = NATO_Tech_Share
-		random_scope_in_array = {
-			array = global.nato_members
-			limit = { is_faction_leader = yes }
-			add_to_faction = PREV
-		}
-		remove_ideas = Major_Non_NATO_Ally
-		hidden_effect = {
-			news_event = { id = NATO.8 hours = 6 }
+		# IMPERIA COLD WAR — B8 24.11.2026: readmission is an offer to the NATO leader (MD NATO_join_via_event), not a forced faction join.
+		if = {
+			limit = { NOT = { has_country_flag = COLDWAR_CYP_R2_nato_readmission_requested } }
+			set_country_flag = { flag = COLDWAR_CYP_R2_nato_readmission_requested value = 1 days = 180 }
+			NATO_join_via_event = yes
 		}
 	}
 }

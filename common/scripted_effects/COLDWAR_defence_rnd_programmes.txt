@@ -1,0 +1,33 @@
+# IMPERIA COLD WAR — Equipment rework 23.11.2026: defence R&D programmes bind 3 civilian factories per running sight or computing project.
+# Called once a week from the native MD defence budget pass (00_money_system.txt). No daily checks.
+COLDWAR_update_defence_rnd_programmes = {
+	set_temp_variable = { COLDWAR_t_defence_rnd = 0 }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_tank_sights_1940s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_tank_sights_1950s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_tank_sights_1960s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_tank_sights_1970s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_tank_sights_1980s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_tank_sights_1990s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_computing_1970s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_computing_1980s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	if = { limit = { is_special_project_being_researched = sp:sp_COLDWAR_computing_1990s } add_to_temp_variable = { COLDWAR_t_defence_rnd = 3 } }
+	set_variable = { COLDWAR_defence_rnd_factories = COLDWAR_t_defence_rnd }
+	if = {
+		limit = {
+			check_variable = { COLDWAR_defence_rnd_factories > 0 }
+			NOT = { has_dynamic_modifier = { modifier = COLDWAR_defence_rnd_programmes } }
+		}
+		add_dynamic_modifier = { modifier = COLDWAR_defence_rnd_programmes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { COLDWAR_defence_rnd_factories < 1 }
+			has_dynamic_modifier = { modifier = COLDWAR_defence_rnd_programmes }
+		}
+		remove_dynamic_modifier = { modifier = COLDWAR_defence_rnd_programmes }
+	}
+	else_if = {
+		limit = { has_dynamic_modifier = { modifier = COLDWAR_defence_rnd_programmes } }
+		force_update_dynamic_modifier = yes
+	}
+}

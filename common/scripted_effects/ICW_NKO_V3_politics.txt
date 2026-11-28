@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — 24.11.2026 MD-style leaders (Enes): V3 leaders are characters (common/characters/COLDWAR_KOR_NKO_1970_leaders.txt) promoted with promote_character; Choe Hyon and O Jin U get a leader role on their officer characters; retire only for death or permanent exit.
+# IMPERIA COLD WAR update 24.11.2026: MD-standard requirements and costs (no DLC, GDP or trivial ownership gates; one treasury line; no weekly drain texts).
 # IMPERIA COLD WAR — North Korea 1970 government and succession.
 ICW_NKO_V3_politics_shift_sc = {
 	if = {
@@ -98,12 +100,7 @@ ICW_NKO_V3_politics_sync_personal_programme = {
 }
 
 ICW_NKO3_government_add_expenses = {
-	if = {
-		limit = { AND = { ICW_NKO_V3_politics_active = yes emerging_communist_state_are_in_power = yes OR = { AND = { check_variable = { icw_nko3_pol_wpk_leader = 1 } OR = { has_country_leader = { name = "Kim Jong Il" ruling_only = yes } has_country_leader = { name = "Kim Jong-il" ruling_only = yes } } ICW_NKO_V3_politics_present_kim_jong_il = yes } AND = { check_variable = { icw_nko3_pol_wpk_leader = 2 } has_country_leader = { name = "Kim Il" ruling_only = yes } ICW_NKO_V3_politics_present_kim_il = yes } AND = { check_variable = { icw_nko3_pol_wpk_leader = 3 } has_country_leader = { name = "Pak Song Chol" ruling_only = yes } ICW_NKO_V3_politics_present_pak_song_chol = yes } AND = { check_variable = { icw_nko3_pol_wpk_leader = 4 } has_country_leader = { name = "Kim Yong Ju" ruling_only = yes } ICW_NKO_V3_politics_present_kim_yong_ju = yes } } } }
-		set_temp_variable = { icw_nko3_government_weekly = gdp_total }
-		multiply_temp_variable = { icw_nko3_government_weekly = 0.00002 }
-		add_to_variable = { additional_expenses_rate = icw_nko3_government_weekly }
-	}
+	# IMPERIA COLD WAR — MD style (24.11.2026): no hidden weekly appropriation for the incumbent.
 }
 
 ICW_NKO_V3_politics_clear_nomination = {
@@ -132,7 +129,7 @@ ICW_NKO_V3_politics_open_wpk_vacancy = {
 	clr_country_flag = icw_nko3_pol_institutional_leadership
 	if = {
 		limit = { NOT = { has_country_leader = { name = "Interim WPK Cabinet" ruling_only = yes } } }
-		create_country_leader = { name = "Interim WPK Cabinet" picture = "gfx/Leaders/NKO/COLDWAR_NKO_Kim_Il_Sung_memorial.dds" ideology = communist_state }
+		promote_character = COLDWAR_NKO_1970_ldr_interim_wpk_cabinet
 	}
 	ICW_NKO_V3_politics_sync_personal_programme = yes
 }
@@ -158,7 +155,7 @@ ICW_NKO_V3_politics_retire_wpk_incumbent = {
 		limit = { has_country_leader = { name = "Kim Yong Ju" ruling_only = yes } }
 		set_country_flag = { flag = icw_nko3_pol_retired_kim_yong_ju days = 180 }
 	}
-	retire_country_leader = yes
+	if = { limit = { has_country_flag = icw_nko3_pol_kim_il_sung_permanent_exit } retire_country_leader = yes }
 }
 
 ICW_NKO_V3_politics_appoint_nominee = {
@@ -168,7 +165,7 @@ ICW_NKO_V3_politics_appoint_nominee = {
 		clr_country_flag = COLDWAR_NKO_succession_pending
 		clr_country_flag = icw_nko3_pol_wpk_vacancy
 		clr_country_flag = icw_nko3_pol_institutional_leadership
-		create_country_leader = { name = "Kim Jong Il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state }
+		promote_character = COLDWAR_NKO_1970_ldr_kim_jong_il
 		set_country_flag = COLDWAR_NKO_kim_jong_il_succeeded
 		if = {
 			limit = { AND = { has_country_flag = COLDWAR_NKO_kim_il_sung_death_recorded NOT = { has_global_flag = COLDWAR_NKO_1994_succession_announced } } }
@@ -182,7 +179,7 @@ ICW_NKO_V3_politics_appoint_nominee = {
 		clr_country_flag = COLDWAR_NKO_succession_pending
 		clr_country_flag = icw_nko3_pol_wpk_vacancy
 		set_country_flag = icw_nko3_pol_institutional_leadership
-		create_country_leader = { name = "Kim Il" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = communist_state }
+		promote_character = COLDWAR_NKO_1970_ldr_kim_il
 	}
 	else_if = {
 		limit = { check_variable = { icw_nko3_pol_nominee = 3 } }
@@ -190,7 +187,7 @@ ICW_NKO_V3_politics_appoint_nominee = {
 		clr_country_flag = COLDWAR_NKO_succession_pending
 		clr_country_flag = icw_nko3_pol_wpk_vacancy
 		set_country_flag = icw_nko3_pol_institutional_leadership
-		create_country_leader = { name = "Pak Song Chol" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = communist_state }
+		promote_character = COLDWAR_NKO_1970_ldr_pak_song_chol
 	}
 	else_if = {
 		limit = { check_variable = { icw_nko3_pol_nominee = 4 } }
@@ -198,7 +195,7 @@ ICW_NKO_V3_politics_appoint_nominee = {
 		clr_country_flag = COLDWAR_NKO_succession_pending
 		clr_country_flag = icw_nko3_pol_wpk_vacancy
 		set_country_flag = icw_nko3_pol_institutional_leadership
-		create_country_leader = { name = "Kim Yong Ju" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = communist_state }
+		promote_character = COLDWAR_NKO_1970_ldr_kim_yong_ju
 	}
 	ICW_NKO_V3_politics_clear_nomination = yes
 	ICW_NKO_V3_politics_clear_plenum = yes
@@ -223,7 +220,6 @@ ICW_NKO_V3_politics_record_excluded_kim_jong_il = {
 		set_country_flag = icw_nko3_pol_excluded_kim_jong_il
 		if = {
 			limit = { AND = { emerging_communist_state_are_in_power = yes OR = { has_country_leader = { name = "Kim Jong Il" ruling_only = yes } has_country_leader = { name = "Kim Jong-il" ruling_only = yes } } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_wpk_vacancy = yes
 		}
 	}
@@ -259,12 +255,10 @@ ICW_NKO_V3_politics_record_excluded_kim_il = {
 		set_country_flag = icw_nko3_pol_excluded_kim_il
 		if = {
 			limit = { AND = { emerging_communist_state_are_in_power = yes has_country_leader = { name = "Kim Il" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_wpk_vacancy = yes
 		}
 		else_if = {
 			limit = { AND = { check_variable = { ruling_party = 13 } has_country_leader = { name = "Kim Il" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_alternative_13 = yes
 		}
 	}
@@ -295,7 +289,6 @@ ICW_NKO_V3_politics_record_excluded_pak_song_chol = {
 		set_country_flag = icw_nko3_pol_excluded_pak_song_chol
 		if = {
 			limit = { AND = { emerging_communist_state_are_in_power = yes has_country_leader = { name = "Pak Song Chol" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_wpk_vacancy = yes
 		}
 	}
@@ -326,7 +319,6 @@ ICW_NKO_V3_politics_record_excluded_kim_yong_ju = {
 		set_country_flag = icw_nko3_pol_excluded_kim_yong_ju
 		if = {
 			limit = { AND = { emerging_communist_state_are_in_power = yes has_country_leader = { name = "Kim Yong Ju" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_wpk_vacancy = yes
 		}
 	}
@@ -345,14 +337,14 @@ ICW_NKO_V3_politics_install_alternative_5 = {
 		set_variable = { icw_nko3_pol_alt_leader_5 = 5 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Kang Ryang Uk" ruling_only = yes } } }
-			create_country_leader = { name = "Kang Ryang Uk" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = anarchist_communism }
+			promote_character = COLDWAR_NKO_1970_ldr_kang_ryang_uk
 		}
 	}
 	else = {
 		set_variable = { icw_nko3_pol_alt_leader_5 = 0 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Democratic Party Assembly Delegation" ruling_only = yes } } }
-			create_country_leader = { name = "Democratic Party Assembly Delegation" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = anarchist_communism }
+			promote_character = COLDWAR_NKO_1970_ldr_kdp_delegation
 		}
 	}
 }
@@ -361,7 +353,7 @@ ICW_NKO_V3_politics_open_alternative_5 = {
 	set_country_flag = icw_nko3_pol_alt_vacancy
 	if = {
 		limit = { NOT = { has_country_leader = { name = "Interim Assembly Delegation" ruling_only = yes } } }
-		create_country_leader = { name = "Interim Assembly Delegation" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = anarchist_communism }
+		promote_character = COLDWAR_NKO_1970_ldr_interim_delegation_5
 	}
 }
 
@@ -383,7 +375,6 @@ ICW_NKO_V3_politics_record_excluded_kang_ryang_uk = {
 		set_country_flag = icw_nko3_pol_excluded_kang_ryang_uk
 		if = {
 			limit = { AND = { check_variable = { ruling_party = 5 } has_country_leader = { name = "Kang Ryang Uk" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_alternative_5 = yes
 		}
 	}
@@ -402,14 +393,14 @@ ICW_NKO_V3_politics_install_alternative_7 = {
 		set_variable = { icw_nko3_pol_alt_leader_7 = 6 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Pak Sin Dok" ruling_only = yes } } }
-			create_country_leader = { name = "Pak Sin Dok" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = autocracy }
+			promote_character = COLDWAR_NKO_1970_ldr_pak_sin_dok
 		}
 	}
 	else = {
 		set_variable = { icw_nko3_pol_alt_leader_7 = 0 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Chongu Assembly Delegation" ruling_only = yes } } }
-			create_country_leader = { name = "Chongu Assembly Delegation" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = autocracy }
+			promote_character = COLDWAR_NKO_1970_ldr_chongu_delegation
 		}
 	}
 }
@@ -418,7 +409,7 @@ ICW_NKO_V3_politics_open_alternative_7 = {
 	set_country_flag = icw_nko3_pol_alt_vacancy
 	if = {
 		limit = { NOT = { has_country_leader = { name = "Interim Assembly Delegation" ruling_only = yes } } }
-		create_country_leader = { name = "Interim Assembly Delegation" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = autocracy }
+		promote_character = COLDWAR_NKO_1970_ldr_interim_delegation_7
 	}
 }
 
@@ -440,7 +431,6 @@ ICW_NKO_V3_politics_record_excluded_pak_sin_dok = {
 		set_country_flag = icw_nko3_pol_excluded_pak_sin_dok
 		if = {
 			limit = { AND = { check_variable = { ruling_party = 7 } has_country_leader = { name = "Pak Sin Dok" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_alternative_7 = yes
 		}
 	}
@@ -459,7 +449,7 @@ ICW_NKO_V3_politics_install_alternative_13 = {
 		set_variable = { icw_nko3_pol_alt_leader_13 = 2 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Kim Il" ruling_only = yes } } }
-			create_country_leader = { name = "Kim Il" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Neutral_Autocracy }
+			promote_character = COLDWAR_NKO_1970_ldr_kim_il_cabinet
 		}
 	}
 	else_if = {
@@ -467,14 +457,14 @@ ICW_NKO_V3_politics_install_alternative_13 = {
 		set_variable = { icw_nko3_pol_alt_leader_13 = 7 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Choe Yong Jin" ruling_only = yes } } }
-			create_country_leader = { name = "Choe Yong Jin" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Neutral_Autocracy }
+			promote_character = COLDWAR_NKO_1970_ldr_choe_yong_jin
 		}
 	}
 	else = {
 		set_variable = { icw_nko3_pol_alt_leader_13 = 0 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Cabinet Delegation" ruling_only = yes } } }
-			create_country_leader = { name = "Cabinet Delegation" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Neutral_Autocracy }
+			promote_character = COLDWAR_NKO_1970_ldr_cabinet_delegation
 		}
 	}
 }
@@ -483,7 +473,7 @@ ICW_NKO_V3_politics_open_alternative_13 = {
 	set_country_flag = icw_nko3_pol_alt_vacancy
 	if = {
 		limit = { NOT = { has_country_leader = { name = "Interim Assembly Delegation" ruling_only = yes } } }
-		create_country_leader = { name = "Interim Assembly Delegation" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Neutral_Autocracy }
+		promote_character = COLDWAR_NKO_1970_ldr_interim_delegation_13
 	}
 }
 
@@ -505,7 +495,6 @@ ICW_NKO_V3_politics_record_excluded_choe_yong_jin = {
 		set_country_flag = icw_nko3_pol_excluded_choe_yong_jin
 		if = {
 			limit = { AND = { check_variable = { ruling_party = 13 } has_country_leader = { name = "Choe Yong Jin" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_alternative_13 = yes
 		}
 	}
@@ -524,7 +513,7 @@ ICW_NKO_V3_politics_install_alternative_22 = {
 		set_variable = { icw_nko3_pol_alt_leader_22 = 8 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Choe Hyon" ruling_only = yes } } }
-			create_country_leader = { name = "Choe Hyon" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Nat_Autocracy }
+			if = { limit = { has_country_flag = icw_nko3_pol_leader_role_choe_hyon } promote_character = COLDWAR_1970_officer_nko_choe_hyon } else = { set_country_flag = icw_nko3_pol_leader_role_choe_hyon add_country_leader_role = { character = COLDWAR_1970_officer_nko_choe_hyon promote_leader = yes country_leader = { ideology = Nat_Autocracy traits = { } } } }
 		}
 	}
 	else_if = {
@@ -532,14 +521,14 @@ ICW_NKO_V3_politics_install_alternative_22 = {
 		set_variable = { icw_nko3_pol_alt_leader_22 = 9 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "O Jin U" ruling_only = yes } } }
-			create_country_leader = { name = "O Jin U" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Nat_Autocracy }
+			if = { limit = { has_country_flag = icw_nko3_pol_leader_role_o_jin_u } promote_character = COLDWAR_1970_officer_nko_o_jin_u } else = { set_country_flag = icw_nko3_pol_leader_role_o_jin_u add_country_leader_role = { character = COLDWAR_1970_officer_nko_o_jin_u promote_leader = yes country_leader = { ideology = Nat_Autocracy traits = { } } } }
 		}
 	}
 	else = {
 		set_variable = { icw_nko3_pol_alt_leader_22 = 0 }
 		if = {
 			limit = { NOT = { has_country_leader = { name = "Armed Forces Council" ruling_only = yes } } }
-			create_country_leader = { name = "Armed Forces Council" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Nat_Autocracy }
+			promote_character = COLDWAR_NKO_1970_ldr_armed_forces_council
 		}
 	}
 }
@@ -548,7 +537,7 @@ ICW_NKO_V3_politics_open_alternative_22 = {
 	set_country_flag = icw_nko3_pol_alt_vacancy
 	if = {
 		limit = { NOT = { has_country_leader = { name = "Interim Assembly Delegation" ruling_only = yes } } }
-		create_country_leader = { name = "Interim Assembly Delegation" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Nat_Autocracy }
+		promote_character = COLDWAR_NKO_1970_ldr_interim_delegation_22
 	}
 }
 
@@ -570,7 +559,6 @@ ICW_NKO_V3_politics_record_excluded_choe_hyon = {
 		set_country_flag = icw_nko3_pol_excluded_choe_hyon
 		if = {
 			limit = { AND = { check_variable = { ruling_party = 22 } has_country_leader = { name = "Choe Hyon" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_alternative_22 = yes
 		}
 	}
@@ -601,7 +589,6 @@ ICW_NKO_V3_politics_record_excluded_o_jin_u = {
 		set_country_flag = icw_nko3_pol_excluded_o_jin_u
 		if = {
 			limit = { AND = { check_variable = { ruling_party = 22 } has_country_leader = { name = "O Jin U" ruling_only = yes } } }
-			retire_country_leader = yes
 			ICW_NKO_V3_politics_open_alternative_22 = yes
 		}
 	}
@@ -653,7 +640,7 @@ ICW_NKO_V3_politics_leader_route = {
 				clr_country_flag = icw_nko3_pol_wpk_vacancy
 				if = {
 					limit = { NOT = { OR = { has_country_leader = { name = "Kim Il Sung" ruling_only = yes } has_country_leader = { name = "Kim Il-sung" ruling_only = yes } } } }
-					create_country_leader = { name = "Kim Il Sung" picture = "gfx/Leaders/NKO/NKO_Coldwar_Kim_Il_Sung.dds" ideology = communist_state }
+					promote_character = COLDWAR_NKO_1970_ldr_kim_il_sung
 				}
 			}
 			else_if = {
@@ -661,7 +648,7 @@ ICW_NKO_V3_politics_leader_route = {
 				clr_country_flag = icw_nko3_pol_wpk_vacancy
 				if = {
 					limit = { NOT = { has_country_leader = { name = "Kim Jong Il" ruling_only = yes } } }
-					create_country_leader = { name = "Kim Jong Il" picture = "gfx/Leaders/NKO/Kim_Jong_il.dds" ideology = communist_state }
+					promote_character = COLDWAR_NKO_1970_ldr_kim_jong_il
 				}
 			}
 			else_if = {
@@ -669,7 +656,7 @@ ICW_NKO_V3_politics_leader_route = {
 				clr_country_flag = icw_nko3_pol_wpk_vacancy
 				if = {
 					limit = { NOT = { has_country_leader = { name = "Kim Il" ruling_only = yes } } }
-					create_country_leader = { name = "Kim Il" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = communist_state }
+					promote_character = COLDWAR_NKO_1970_ldr_kim_il
 				}
 			}
 			else_if = {
@@ -677,7 +664,7 @@ ICW_NKO_V3_politics_leader_route = {
 				clr_country_flag = icw_nko3_pol_wpk_vacancy
 				if = {
 					limit = { NOT = { has_country_leader = { name = "Pak Song Chol" ruling_only = yes } } }
-					create_country_leader = { name = "Pak Song Chol" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = communist_state }
+					promote_character = COLDWAR_NKO_1970_ldr_pak_song_chol
 				}
 			}
 			else_if = {
@@ -685,7 +672,7 @@ ICW_NKO_V3_politics_leader_route = {
 				clr_country_flag = icw_nko3_pol_wpk_vacancy
 				if = {
 					limit = { NOT = { has_country_leader = { name = "Kim Yong Ju" ruling_only = yes } } }
-					create_country_leader = { name = "Kim Yong Ju" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = communist_state }
+					promote_character = COLDWAR_NKO_1970_ldr_kim_yong_ju
 				}
 			}
 			else = {
@@ -851,7 +838,6 @@ ICW_NKO_V3_politics_transfer_preview = {
 	if = { limit = { check_variable = { icw_nko3_pol_nominee = 2 } } add_dynamic_modifier = { modifier = ICW_NKO_V3_politics_personal_kim_il } }
 	if = { limit = { check_variable = { icw_nko3_pol_nominee = 3 } } add_dynamic_modifier = { modifier = ICW_NKO_V3_politics_personal_pak_song_chol } }
 	if = { limit = { check_variable = { icw_nko3_pol_nominee = 4 } } add_dynamic_modifier = { modifier = ICW_NKO_V3_politics_personal_kim_yong_ju } }
-	custom_effect_tooltip = ICW_NKO_V3_politics_continual_personal_budget
 }
 
 ICW_NKO_V3_politics_tick_plenum = {
@@ -866,32 +852,6 @@ ICW_NKO_V3_politics_tick_plenum = {
 			clr_country_flag = icw_nko3_pol_plenum_sitting
 			clear_variable = icw_nko3_pol_plenum_due
 			set_country_flag = icw_nko3_pol_plenum_ready
-		}
-	}
-}
-
-ICW_NKO_V3_politics_clear_proposal = {
-	clear_variable = icw_nko3_pol_cabinet_target
-	clear_variable = icw_nko3_pol_cabinet_due
-	clear_variable = icw_nko3_pol_cabinet_expires
-	clear_variable = icw_nko3_pol_cabinet_epoch
-	clr_country_flag = icw_nko3_pol_cabinet_ready
-}
-
-ICW_NKO_V3_politics_tick_proposal = {
-	if = {
-		limit = { NOT = { NOT = { has_variable = icw_nko3_pol_cabinet_target } } }
-		if = {
-			limit = { OR = { NOT = { check_variable = { icw_nko3_pol_cabinet_epoch = icw_nko3_pol_government_epoch } } NOT = { OR = { AND = { check_variable = { icw_nko3_pol_cabinet_target = 1 } ICW_NKO_V3_politics_front_cabinet_current = yes } AND = { check_variable = { icw_nko3_pol_cabinet_target = 2 } ICW_NKO_V3_politics_convene_county_delegates_current = yes } AND = { check_variable = { icw_nko3_pol_cabinet_target = 3 } ICW_NKO_V3_politics_draft_a_planning_mandate_current = yes } AND = { check_variable = { icw_nko3_pol_cabinet_target = 4 } ICW_NKO_V3_politics_petition_for_a_military_mandate_current = yes } AND = { check_variable = { icw_nko3_pol_cabinet_target = 5 } ICW_NKO_V3_politics_resume_democratic_cabinet_current = yes } AND = { check_variable = { icw_nko3_pol_cabinet_target = 6 } ICW_NKO_V3_politics_restore_civilian_government_current = yes } } } check_variable = { var = icw_nko3_pol_cabinet_expires value = global.num_days compare = less_than_or_equals } } }
-			if = { limit = { check_variable = { var = icw_nko3_pol_cabinet_expires value = global.num_days compare = less_than_or_equals } } if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.120 } } }
-			else = { if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.121 } } }
-			ICW_NKO_V3_politics_clear_proposal = yes
-		}
-		else_if = {
-			limit = { AND = { NOT = { has_country_flag = icw_nko3_pol_cabinet_ready } check_variable = { var = icw_nko3_pol_cabinet_due value = global.num_days compare = less_than_or_equals } } }
-			set_country_flag = icw_nko3_pol_cabinet_ready
-		
-			ICW_NKO_V3_politics_notify_ready_proposal = yes
 		}
 	}
 }
@@ -933,7 +893,7 @@ ICW_NKO_V3_politics_tick_alternative = {
 
 ICW_NKO_V3_politics_use_amnesty = {
 	if = {
-		limit = { AND = { ICW_NKO_V3_politics_active = yes emerging_communist_state_are_in_power = yes has_country_flag = icw_nko3_done_collective has_country_flag = icw_nko3_done_yanan_rehabilitation ICW_NKO_V3_politics_social_active = yes NOT = { has_country_flag = COLDWAR_EB_cd_amnesty } check_variable = { gdp_total > 0 } } }
+		limit = { AND = { ICW_NKO_V3_politics_active = yes emerging_communist_state_are_in_power = yes has_country_flag = icw_nko3_done_collective has_country_flag = icw_nko3_done_yanan_rehabilitation ICW_NKO_V3_politics_social_active = yes NOT = { has_country_flag = COLDWAR_EB_cd_amnesty } } }
 		COLDWAR_EB_update_costs = yes
 		if = {
 			limit = { check_variable = { treasury > COLDWAR_EB_cost_amnesty } }
@@ -944,7 +904,7 @@ ICW_NKO_V3_politics_use_amnesty = {
 
 ICW_NKO_V3_politics_use_replacement = {
 	if = {
-		limit = { AND = { ICW_NKO_V3_politics_wpk_incumbent = yes ICW_NKO_V3_politics_social_active = yes check_variable = { var = COLDWAR_EB_unrest value = 40 compare = greater_than_or_equals } NOT = { has_country_flag = COLDWAR_EB_cd_replace } check_variable = { gdp_total > 0 } } }
+		limit = { AND = { ICW_NKO_V3_politics_wpk_incumbent = yes ICW_NKO_V3_politics_social_active = yes check_variable = { var = COLDWAR_EB_unrest value = 40 compare = greater_than_or_equals } NOT = { has_country_flag = COLDWAR_EB_cd_replace } } }
 		COLDWAR_EB_update_costs = yes
 		if = {
 			limit = { check_variable = { treasury > COLDWAR_EB_cost_replace } }
@@ -1004,7 +964,6 @@ ICW_NKO_V3_politics_replacement_preview = {
 		if = { limit = { check_variable = { icw_nko3_pol_nominee = 2 } } add_dynamic_modifier = { modifier = ICW_NKO_V3_politics_personal_kim_il } }
 		if = { limit = { check_variable = { icw_nko3_pol_nominee = 3 } } add_dynamic_modifier = { modifier = ICW_NKO_V3_politics_personal_pak_song_chol } }
 		if = { limit = { check_variable = { icw_nko3_pol_nominee = 4 } } add_dynamic_modifier = { modifier = ICW_NKO_V3_politics_personal_kim_yong_ju } }
-		custom_effect_tooltip = ICW_NKO_V3_politics_continual_personal_budget
 	}
 	else = {
 		custom_effect_tooltip = ICW_NKO_V3_politics_crisis_no_prepared
@@ -1465,7 +1424,7 @@ ICW_NKO_V3_politics_daily = {
 			ICW_NKO_V3_politics_clear_plenum = yes
 		}
 		ICW_NKO_V3_politics_tick_plenum = yes
-		ICW_NKO_V3_politics_tick_proposal = yes
+		# IMPERIA COLD WAR — 24.11.2026 power paths (Enes): no cabinet proposal tick any more (cabinet forms are foci).
 		ICW_NKO_V3_politics_tick_alternative = yes
 		if = {
 			limit = { ICW_NKO_V3_politics_social_active = yes }
@@ -1474,11 +1433,3 @@ ICW_NKO_V3_politics_daily = {
 	}
 }
 
-ICW_NKO_V3_politics_notify_ready_proposal = {
-	if = { limit = { check_variable = { icw_nko3_pol_cabinet_target = 1 } } if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.102 } } }
-	if = { limit = { check_variable = { icw_nko3_pol_cabinet_target = 2 } } if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.105 } } }
-	if = { limit = { check_variable = { icw_nko3_pol_cabinet_target = 3 } } if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.108 } } }
-	if = { limit = { check_variable = { icw_nko3_pol_cabinet_target = 4 } } if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.111 } } }
-	if = { limit = { check_variable = { icw_nko3_pol_cabinet_target = 5 } } if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.114 } } }
-	if = { limit = { check_variable = { icw_nko3_pol_cabinet_target = 6 } } if = { limit = { is_ai = no } country_event = { id = ICW_NKO_1970_feedback.117 } } }
-}

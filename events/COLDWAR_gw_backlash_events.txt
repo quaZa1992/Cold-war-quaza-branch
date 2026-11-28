@@ -1,0 +1,59 @@
+# IMPERIA COLD WAR — Immigration Backlash: notice when it begins and when it fades (23.11.2026, playtest 1)
+add_namespace = COLDWAR_GWB
+
+# Fired 181 days after each new backlash; only the last one passes the trigger.
+country_event = {
+	id = COLDWAR_GWB.1
+	title = COLDWAR_GWB.1.t
+	desc = COLDWAR_GWB.1.d
+	picture = GFX_mdcw_guest_workers_arrival
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_idea = mdcw_gw_immigration_backlash }
+		NOT = { has_country_flag = COLDWAR_GWB_faded_recently }
+	}
+
+	option = {
+		name = COLDWAR_GWB.1.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_GWB.1 option a"
+		set_country_flag = { flag = COLDWAR_GWB_faded_recently days = 30 value = 1 }
+		clr_country_flag = COLDWAR_GWB_backlash_noticed
+		add_stability = 0.01
+		ai_chance = { base = 70 }
+	}
+	option = {
+		name = COLDWAR_GWB.1.b
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_GWB.1 option b"
+		set_country_flag = { flag = COLDWAR_GWB_faded_recently days = 30 value = 1 }
+		clr_country_flag = COLDWAR_GWB_backlash_noticed
+		add_political_power = 25
+		ai_chance = { base = 30 }
+	}
+}
+
+# Fired when a backlash begins; renewals during a running backlash stay silent (flag cleared by COLDWAR_GWB.1).
+country_event = {
+	id = COLDWAR_GWB.2
+	title = COLDWAR_GWB.2.t
+	desc = COLDWAR_GWB.2.d
+	picture = GFX_mdcw_guest_workers_arrival
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = mdcw_gw_immigration_backlash
+		NOT = { has_country_flag = COLDWAR_GWB_backlash_noticed }
+	}
+
+	immediate = {
+		hidden_effect = { set_country_flag = COLDWAR_GWB_backlash_noticed }
+	}
+
+	option = {
+		name = COLDWAR_GWB.2.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_GWB.2 option a"
+		ai_chance = { base = 1 }
+	}
+}

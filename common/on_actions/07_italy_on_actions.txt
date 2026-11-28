@@ -1,31 +1,35 @@
 on_actions = {
 	on_daily_ITA = {
 		effect = {
+			# COLDWAR ITA 1970: MD 2000 daily systems (technocrat clears the Western Autocracy slot, party propaganda, Reform Expectancy) stay in the MD start
 			if = {
-				limit = {
-					has_country_leader_with_trait = western_technocrat
-					check_variable = { party_pop_array^0 > 0 }
+				limit = { has_start_date > 1999.12.31 }
+				if = {
+					limit = {
+						has_country_leader_with_trait = western_technocrat
+						check_variable = { party_pop_array^0 > 0 }
+					}
+					set_variable = { party_pop_array^0 = 0 }
+					recalculate_party = yes
 				}
-				set_variable = { party_pop_array^0 = 0 }
-				recalculate_party = yes
-			}
-			if = { limit = { has_dynamic_modifier = { modifier = ITA_party_propaganda_modifier } }
-				set_variable = { party_propaganda_sub_var = {
-					value = fascism_propaganda_var
-					add = communism_propaganda_var
-					add = democratic_propaganda_var
-					add = neutrality_propaganda_var
-					add = nationalist_propaganda_var
-					multiply = 0.01
-				} }
+				if = { limit = { has_dynamic_modifier = { modifier = ITA_party_propaganda_modifier } }
+					set_variable = { party_propaganda_sub_var = {
+						value = fascism_propaganda_var
+						add = communism_propaganda_var
+						add = democratic_propaganda_var
+						add = neutrality_propaganda_var
+						add = nationalist_propaganda_var
+						multiply = 0.01
+					} }
 
-				if = { limit = { has_variable = ruling_party }
-					add_to_variable = { party_pop_array^ruling_party = party_propaganda_sub_var }
+					if = { limit = { has_variable = ruling_party }
+						add_to_variable = { party_pop_array^ruling_party = party_propaganda_sub_var }
+					}
 				}
-			}
-			if = { limit = { has_dynamic_modifier = { modifier = ITA_party_popularity_drift_modifier } }
-				reform_expectance_from_situation = yes
-				add_to_variable = { ruling_subparty_drift_store = drift_switch_var_base }
+				if = { limit = { has_dynamic_modifier = { modifier = ITA_party_popularity_drift_modifier } }
+					reform_expectance_from_situation = yes
+					add_to_variable = { ruling_subparty_drift_store = drift_switch_var_base }
+				}
 			}
 			if = { limit = { has_idea = ITA_mafia }
 				clamp_variable = { var = cosa_nostra_strength min = 0 max = 1 }
@@ -70,6 +74,53 @@ on_actions = {
 					add_to_variable = { party_pop_array^14 = lega_weekly_drift }
 				}
 				recalculate_party = yes
+				if = {
+					limit = {
+						OR = {
+							AND = {
+								has_completed_focus = ITA_dismantle_parliament
+								OR = {
+									has_completed_focus = ITA_repeal_former_government_measures_6
+									has_completed_focus = ITA_repeal_former_government_measures_7
+									has_completed_focus = ITA_repeal_former_government_measures_8
+									has_completed_focus = ITA_repeal_former_government_measures_9
+								}
+							}
+							NOT = {
+								has_completed_focus = ITA_dismantle_parliament
+							}
+						}
+					}
+					small_parties_leave_coalition = yes
+				}
+				if = {
+					limit = {
+						NOT = {
+							OR = {
+								has_completed_focus = ITA_dismantle_parliament
+								has_completed_focus = ITA_seize_power
+							}
+						}
+					}
+					ITA_calculate_civil_war_size = yes
+				}
+				weekly_stability_dynamic_modifier_update = yes
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = low_stability_protests_flag
+						}
+					}
+					low_stability_protests_effect = yes
+
+					else = {
+						lsp_popularity_effect = yes
+					}
+				}
+			}
+			# COLDWAR ITA 1970: MD mafia weekly block, also for the 1970 scenario
+			if = {
+				limit = { OR = { has_start_date > 1999.12.31 IMP_is_1970_scenario = yes } }
 				if = { #infiltrations_var increase state construction time
 					limit = { has_idea = ITA_mafia }
 					update_police_effectiveness = yes
@@ -156,49 +207,6 @@ on_actions = {
 							chance = 50
 							country_event = { id = italy_md.29 days = 3 random_days = 3 }
 						}
-					}
-				}
-				if = {
-					limit = {
-						OR = {
-							AND = {
-								has_completed_focus = ITA_dismantle_parliament
-								OR = {
-									has_completed_focus = ITA_repeal_former_government_measures_6
-									has_completed_focus = ITA_repeal_former_government_measures_7
-									has_completed_focus = ITA_repeal_former_government_measures_8
-									has_completed_focus = ITA_repeal_former_government_measures_9
-								}
-							}
-							NOT = {
-								has_completed_focus = ITA_dismantle_parliament
-							}
-						}
-					}
-					small_parties_leave_coalition = yes
-				}
-				if = {
-					limit = {
-						NOT = {
-							OR = {
-								has_completed_focus = ITA_dismantle_parliament
-								has_completed_focus = ITA_seize_power
-							}
-						}
-					}
-					ITA_calculate_civil_war_size = yes
-				}
-				weekly_stability_dynamic_modifier_update = yes
-				if = {
-					limit = {
-						NOT = {
-							has_country_flag = low_stability_protests_flag
-						}
-					}
-					low_stability_protests_effect = yes
-
-					else = {
-						lsp_popularity_effect = yes
 					}
 				}
 			}

@@ -1,0 +1,567 @@
+# IMPERIA COLD WAR — Soviet Union 1970 v4: decisions opened by focuses.
+COLDWAR_SOVR_active_measures_category = {
+	COLDWAR_SOVR_forgery = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 120
+		target_trigger = { FROM = { NOT = { tag = ROOT } has_government = democratic } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_active_measures }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_active_measures }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_forgery"
+			set_temp_variable = { tag_index = ROOT.id }
+			set_temp_variable = { influence_target = FROM.id }
+			set_temp_variable = { percent_change = 4 }
+			change_influence_percentage = yes
+			hidden_effect = { if = { limit = { has_variable = global.mdcw_cw_tension } set_temp_variable = { mdcw_cw_tension_delta = 1 } mdcw_cw_add_tension = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_SOVR_peace_campaign = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_active_measures }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_peace_campaign"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.002 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			add_timed_idea = { idea = COLDWAR_SOVR_peace_campaign days = 365 }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_afghan_aid_category = {
+	COLDWAR_SOVR_arms_kabul = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_afghan_aid }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_arms_kabul"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.003 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			if = { limit = { country_exists = AFG } AFG = { country_event = { id = COLDWAR_SOVR.20 days = 1 } } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_afghanistan_category = {
+	COLDWAR_SOVR_rotate_40th = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_afghanistan }
+		available = { has_country_flag = COLDWAR_SOVR_afghan_war }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_rotate_40th"
+			army_experience = 25
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = 3 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_SOVR_air_offensive = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 75
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_afghanistan }
+		available = { has_country_flag = COLDWAR_SOVR_afghan_war }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_air_offensive"
+			army_experience = 40
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = 5 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+			hidden_effect = { if = { limit = { has_variable = global.mdcw_cw_tension } set_temp_variable = { mdcw_cw_tension_delta = 1 } mdcw_cw_add_tension = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_allies_category = {
+	COLDWAR_SOVR_support_ally = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 180
+		target_trigger = { FROM = { OR = { has_government = communism is_in_faction_with = ROOT } NOT = { tag = ROOT } } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_allies }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_allies }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_support_ally"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.002 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			set_temp_variable = { tag_index = ROOT.id }
+			set_temp_variable = { influence_target = FROM.id }
+			set_temp_variable = { percent_change = 5 }
+			change_influence_percentage = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_amu_darya_border_category = {
+	COLDWAR_SOVR_fortify_border = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 730
+		visible = { has_country_flag = COLDWAR_SOVR_dec_amu_darya_border }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_fortify_border"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.003 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			add_timed_idea = { idea = COLDWAR_SOVR_amu_darya_line days = 730 }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_arms_deliveries_category = {
+	COLDWAR_SOVR_arms_credit = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 180
+		target_trigger = { FROM = { NOT = { tag = ROOT } NOT = { has_government = democratic } NOT = { is_in_faction_with = USA } } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_arms_deliveries }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_arms_deliveries }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_arms_credit"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.002 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			set_temp_variable = { tag_index = ROOT.id }
+			set_temp_variable = { influence_target = FROM.id }
+			set_temp_variable = { percent_change = 4 }
+			change_influence_percentage = yes
+			set_temp_variable = { temp_opinion = 5 }
+			change_defense_industry_opinion = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_baltic_dialogue_category = {
+	COLDWAR_SOVR_baltic_talks = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_baltic_dialogue }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_baltic_talks"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -6 } COLDWAR_SU_add_regions = yes COLDWAR_SU_after_change = yes } }
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = 4 } COLDWAR_SU_add_elite = yes COLDWAR_SU_after_change = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_china_war_plans_category = {
+	COLDWAR_SOVR_china_wargoal = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 100
+		fire_only_once = no
+		days_re_enable = 730
+		visible = { has_country_flag = COLDWAR_SOVR_dec_china_war_plans }
+		available = { country_exists = CHI NOT = { has_war_with = CHI } }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_china_wargoal"
+			create_wargoal = { type = topple_government target = CHI }
+			hidden_effect = { if = { limit = { has_variable = global.mdcw_cw_tension } set_temp_variable = { mdcw_cw_tension_delta = 5 } mdcw_cw_add_tension = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_comecon_iib_category = {
+	COLDWAR_SOVR_iib_credit = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_comecon_iib }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_iib_credit"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.002 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			add_timed_idea = { idea = COLDWAR_SOVR_iib_credits days = 365 }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_comecon_projects_category = {
+	COLDWAR_SOVR_soyuz_works = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_comecon_projects }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_soyuz_works"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.003 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			add_timed_idea = { idea = COLDWAR_SOVR_soyuz_works days = 365 }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_committee_tools_category = {
+	COLDWAR_SOVR_tanks_in_streets = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 75
+		fire_only_once = no
+		days_re_enable = 120
+		visible = { has_country_flag = COLDWAR_SOVR_dec_committee_tools }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_tanks_in_streets"
+			hidden_effect = { set_temp_variable = { COLDWAR_SU_t_d = -8 } COLDWAR_SU_add_pressure = yes }
+			add_stability = -0.02
+		}
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_SOVR_close_papers = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 120
+		visible = { has_country_flag = COLDWAR_SOVR_dec_committee_tools }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_close_papers"
+			hidden_effect = { set_temp_variable = { COLDWAR_SU_t_d = -5 } COLDWAR_SU_add_pressure = yes }
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = 3 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_emergency_category = {
+	COLDWAR_SOVR_curfew = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 120
+		visible = { has_country_flag = COLDWAR_SOVR_dec_emergency }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_curfew"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -5 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+			add_stability = -0.02
+		}
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_SOVR_strike_ban = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_emergency }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_strike_ban"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -4 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+			set_temp_variable = { temp_opinion = -10 }
+			change_labour_unions_opinion = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_emp_category = {
+	COLDWAR_SOVR_guarantee_brothers = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_emp }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_guarantee_brothers"
+			hidden_effect = { set_temp_variable = { COLDWAR_SU_t_d = -4 } COLDWAR_SU_add_pressure = yes }
+			hidden_effect = { if = { limit = { has_variable = global.mdcw_cw_tension } set_temp_variable = { mdcw_cw_tension_delta = 1 } mdcw_cw_add_tension = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOV_five_year_plan_category = {
+	COLDWAR_SOVR_storm_quarter = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_five_year_plan }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_storm_quarter"
+			add_timed_idea = { idea = COLDWAR_SOVR_storm_quarter days = 90 }
+		}
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_SOVR_gosplan_audit = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_five_year_plan }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_gosplan_audit"
+			set_temp_variable = { temp_opinion = -5 }
+			change_industrial_conglomerates_opinion = yes
+			add_timed_idea = { idea = COLDWAR_SOVR_gosplan_audit days = 365 }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_interkosmos_category = {
+	COLDWAR_SOVR_fly_cosmonaut = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 365
+		target_trigger = { FROM = { NOT = { tag = ROOT } OR = { has_government = communism is_in_faction_with = ROOT has_opinion = { target = ROOT value > 49 } } } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_interkosmos }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_interkosmos }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_fly_cosmonaut"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.002 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			set_temp_variable = { tag_index = ROOT.id }
+			set_temp_variable = { influence_target = FROM.id }
+			set_temp_variable = { percent_change = 6 }
+			change_influence_percentage = yes
+			FROM = { country_event = { id = COLDWAR_SOVR.21 days = 1 } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_karabakh_category = {
+	COLDWAR_SOVR_karabakh_troops = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_karabakh }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_karabakh_troops"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -4 } COLDWAR_SU_add_regions = yes COLDWAR_SU_after_change = yes } }
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = 2 } COLDWAR_SU_add_elite = yes COLDWAR_SU_after_change = yes } }
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.002 }
+			COLDWAR_SOV_pay_gdp_share = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_SOVR_karabakh_commission = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 75
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_karabakh }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_karabakh_commission"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -6 } COLDWAR_SU_add_regions = yes COLDWAR_SU_after_change = yes } }
+			set_temp_variable = { COLDWAR_SOV_cohesion_delta = -2 }
+			COLDWAR_SOV_change_union_cohesion = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_kgb_category = {
+	COLDWAR_SOVR_prophylaxis = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 120
+		visible = { has_country_flag = COLDWAR_SOVR_dec_kgb }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_prophylaxis"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -3 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+			set_temp_variable = { temp_opinion = 5 }
+			change_intelligence_community_opinion = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+	COLDWAR_SOVR_samizdat_raids = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_kgb }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_samizdat_raids"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -5 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+			add_stability = -0.01
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_liberation_fronts_category = {
+	COLDWAR_SOVR_arm_front = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 180
+		target_trigger = { FROM = { NOT = { tag = ROOT } has_civil_war = yes OR = { is_in_faction_with = USA has_opinion = { target = USA value > 49 } } } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_liberation_fronts }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_liberation_fronts }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_arm_front"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.003 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			set_temp_variable = { tag_index = ROOT.id }
+			set_temp_variable = { influence_target = FROM.id }
+			set_temp_variable = { percent_change = 5 }
+			change_influence_percentage = yes
+			hidden_effect = { if = { limit = { has_variable = global.mdcw_cw_tension } set_temp_variable = { mdcw_cw_tension_delta = 2 } mdcw_cw_add_tension = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_martial_law_category = {
+	COLDWAR_SOVR_martial_law_republic = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 100
+		fire_only_once = no
+		days_re_enable = 365
+		target_trigger = { FROM = { COLDWAR_SOV_is_union_republic = yes } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_martial_law }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_martial_law }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_martial_law_republic"
+			FROM = { country_event = { id = COLDWAR_SOVR.22 days = 1 } }
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = 3 } COLDWAR_SU_add_elite = yes COLDWAR_SU_after_change = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_martial_law_region_category = {
+	COLDWAR_SOVR_region_troops = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_martial_law_region }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_region_troops"
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -6 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+			add_stability = -0.03
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_outbid_beijing_category = {
+	COLDWAR_SOVR_outbid = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 180
+		target_trigger = { FROM = { NOT = { tag = ROOT } NOT = { tag = CHI } NOT = { has_government = democratic } } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_outbid_beijing }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_outbid_beijing }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_outbid"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.002 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			set_temp_variable = { tag_index = ROOT.id }
+			set_temp_variable = { influence_target = FROM.id }
+			set_temp_variable = { percent_change = 5 }
+			change_influence_percentage = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_republic_compacts_category = {
+	COLDWAR_SOVR_compact = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 365
+		target_trigger = { FROM = { COLDWAR_SOV_is_union_republic = yes } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_republic_compacts }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_republic_compacts }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_compact"
+			FROM = { country_event = { id = COLDWAR_SOVR.23 days = 1 } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_strike_committees_category = {
+	COLDWAR_SOVR_miners_deal = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 180
+		visible = { has_country_flag = COLDWAR_SOVR_dec_strike_committees }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_miners_deal"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.003 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = -6 } COLDWAR_SU_add_people = yes COLDWAR_SU_after_change = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_the_union_category = {
+	COLDWAR_SOVR_crisis_funds = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 365
+		visible = { has_country_flag = COLDWAR_SOVR_dec_the_union }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_crisis_funds"
+			set_temp_variable = { COLDWAR_SOV_gdp_share = 0.004 }
+			COLDWAR_SOV_pay_gdp_share = yes
+			set_temp_variable = { COLDWAR_SOV_cohesion_delta = 3 }
+			COLDWAR_SOV_change_union_cohesion = yes
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_union_category = {
+	COLDWAR_SOVR_treaty_offer = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 25
+		fire_only_once = no
+		days_re_enable = 365
+		target_trigger = { FROM = { COLDWAR_SOV_is_union_republic = yes } }
+		target_root_trigger = { has_country_flag = COLDWAR_SOVR_dec_union }
+		visible = { has_country_flag = COLDWAR_SOVR_dec_union }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_treaty_offer"
+			FROM = { country_event = { id = COLDWAR_SOVR.24 days = 1 } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}
+
+COLDWAR_SOVR_union_ministries_category = {
+	COLDWAR_SOVR_all_union_plants = {
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		days_re_enable = 730
+		visible = { has_country_flag = COLDWAR_SOVR_dec_union_ministries }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOVR_all_union_plants"
+			add_timed_idea = { idea = COLDWAR_SOVR_union_ministries days = 730 }
+			hidden_effect = { if = { limit = { has_country_flag = COLDWAR_SU_on } set_temp_variable = { COLDWAR_SU_t_d = 4 } COLDWAR_SU_add_regions = yes COLDWAR_SU_after_change = yes } }
+		}
+		ai_will_do = { base = 0 }
+	}
+}

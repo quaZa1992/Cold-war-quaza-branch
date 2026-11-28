@@ -1,0 +1,78 @@
+# IMPERIA COLD WAR — South African project payments
+# The same calculation runs in effect_tooltip and again on payment.
+COLDWAR_SAF_PROJECT_pay_rail = {
+ set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+ modify_treasury_effect = yes
+}
+
+COLDWAR_SAF_PROJECT_pay_factory = {
+ set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.01 } }
+ modify_treasury_effect = yes
+}
+
+COLDWAR_SAF_PROJECT_pay_fuel_silo = {
+ set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+ modify_treasury_effect = yes
+}
+
+COLDWAR_SAF_PROJECT_pay_housing_works = {
+ set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+ modify_treasury_effect = yes
+}
+
+COLDWAR_SAF_PROJECT_complete_fuel_silo = {
+ if = {
+  limit = { COLDWAR_SAF_PROJECT_can_build_fuel_silo = yes }
+  COLDWAR_SAF_PROJECT_pay_fuel_silo = yes
+  random_owned_controlled_state = {
+   limit = { COLDWAR_SAF_PROJECT_fuel_silo_site = yes }
+   add_extra_state_shared_building_slots = 1
+   add_building_construction = { type = fuel_silo level = 1 instant_build = yes }
+  }
+  set_country_flag = COLDWAR_SAF_ECONPLAN_silo_built
+ }
+}
+
+COLDWAR_SAF_PROJECT_pay_power_station = {
+ set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0075 } }
+ modify_treasury_effect = yes
+}
+
+COLDWAR_SAF_PROJECT_complete_reef_terminal = {
+ if = {
+  limit = { COLDWAR_SAF_PROJECT_can_build_reef_terminal = yes }
+  COLDWAR_SAF_PROJECT_pay_rail = yes
+  random_owned_controlled_state = {
+   limit = { COLDWAR_SAF_PROJECT_reef_terminal_site = yes }
+   add_extra_state_shared_building_slots = 1
+   add_building_construction = { type = rail_terminal level = 1 instant_build = yes }
+  }
+  set_country_flag = COLDWAR_SAF_ECONPLAN_reef_terminal_built
+ }
+}
+
+COLDWAR_SAF_PROJECT_complete_power_station = {
+ if = {
+  limit = { COLDWAR_SAF_PROJECT_can_build_power_station = yes }
+  COLDWAR_SAF_PROJECT_pay_power_station = yes
+  random_owned_controlled_state = {
+   limit = { COLDWAR_SAF_PROJECT_power_station_site = yes }
+   add_extra_state_shared_building_slots = 1
+   add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
+  }
+  set_country_flag = COLDWAR_SAF_ECONPLAN_power_station_built
+ }
+}
+
+COLDWAR_SAF_PROJECT_complete_industrial_development = {
+ if = {
+  limit = { COLDWAR_SAF_PROJECT_can_build_industrial_development = yes }
+  COLDWAR_SAF_PROJECT_pay_factory = yes
+  random_owned_controlled_state = {
+   limit = { COLDWAR_SAF_PROJECT_industrial_development_site = yes }
+   add_extra_state_shared_building_slots = 1
+   add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+  }
+  set_country_flag = COLDWAR_SAF_ECONPLAN_development_factory_built
+ }
+}

@@ -1,0 +1,104 @@
+# IMPERIA COLD WAR — United Kingdom 1970 REVOLUTIONARY council effects.
+# COLDWAR | Provisional council; pure provider tools/uk_revolution/council.py.
+COLDWAR_ENG_REVOLUTIONARY_abolish_royal_system = {
+ if = { limit = { original_tag = ENG has_country_flag = COLDWAR_ENG_CRISIS_revolutionary_won }
+  set_country_flag = COLDWAR_ENG_REVOLUTIONARY_royal_system_abolished
+  set_country_flag = ENG_monarchy_abolished
+  ENG_royal_family_cleanup = yes
+  remove_ideas = ENG_queen_elizabeth_2
+  remove_ideas = ENG_king_charles_3
+  remove_ideas = ENG_king_william_5
+  clear_variable = ENG_royal_family_army_xp_effect
+clear_variable = ENG_royal_family_command_power_effect
+clear_variable = ENG_royal_family_commonwealth_effect
+clear_variable = ENG_royal_family_commonwealth_reach
+clear_variable = ENG_royal_family_constitution_effect
+clear_variable = ENG_royal_family_consumer_goods_effect
+clear_variable = ENG_royal_family_education_cost_effect
+clear_variable = ENG_royal_family_globalism_effect
+clear_variable = ENG_royal_family_health_cost_effect
+clear_variable = ENG_royal_family_migration_effect
+clear_variable = ENG_royal_family_monthly_population_effect
+clear_variable = ENG_royal_family_navy_org_effect
+clear_variable = ENG_royal_family_press_effect
+clear_variable = ENG_royal_family_press_pressure
+clear_variable = ENG_royal_family_productivity_effect
+clear_variable = ENG_royal_family_public_appeal
+clear_variable = ENG_royal_family_public_effect
+clear_variable = ENG_royal_family_social_cost_effect
+clear_variable = ENG_royal_family_stability_effect
+clear_variable = ENG_royal_family_stability_score
+clear_variable = ENG_royal_family_war_support_effect
+ }
+}
+COLDWAR_ENG_REVOLUTIONARY_apply_council_identity = {
+ if = { limit = { original_tag = ENG has_country_flag = COLDWAR_ENG_CRISIS_revolutionary_won NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_council_identity_initialized } }
+  set_country_flag = COLDWAR_ENG_REVOLUTIONARY_council_identity_initialized
+  if = { limit = { NOT = { OR = { has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_CPC has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_USRB has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_HUN has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_COMMUNES has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_TRI has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_ENGLAND has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_SCOTLAND has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_WALES has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_IRELAND } } } set_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_COUNCIL }
+ }
+}
+# The provisional council inherits the old government's subjects and interest groups.
+COLDWAR_ENG_REVOLUTIONARY_reorganise_council = {
+ if = {
+  limit = { original_tag = ENG has_country_flag = COLDWAR_ENG_CRISIS_revolutionary_won check_variable = { ruling_party = 4 } }
+  if = {
+   limit = { NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_break_with_protectorates } }
+   set_country_flag = COLDWAR_ENG_REVOLUTIONARY_break_with_protectorates
+   every_country = {
+    limit = { is_subject_of = ENG NOT = { has_autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member } }
+    ENG = { set_autonomy = { target = PREV autonomy_state = autonomy_free end_wars = no end_civil_wars = no } }
+   }
+   COLDWAR_ENG_REVOLUTIONARY_close_overseas_accounts = yes
+  }
+  if = {
+   limit = { NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_cadres_installed } }
+   set_country_flag = COLDWAR_ENG_REVOLUTIONARY_cadres_installed
+   if = {
+    limit = { has_idea = fossil_fuel_industry }
+    swap_ideas = { remove_idea = fossil_fuel_industry add_idea = communist_cadres }
+    if_no_longer_has_faction_clear_previous = yes
+    setup_init_factions = yes
+   }
+   else_if = { limit = { NOT = { has_idea = communist_cadres } } add_ideas = communist_cadres setup_init_factions = yes }
+  }
+  if = {
+   limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_ENG_REVOLUTIONARY_public_support } } }
+   add_dynamic_modifier = { modifier = COLDWAR_ENG_REVOLUTIONARY_public_support }
+  }
+ }
+}
+
+COLDWAR_ENG_REVOLUTIONARY_establish_council = {
+ if = { limit = { original_tag = ENG has_country_flag = COLDWAR_ENG_CRISIS_revolutionary_won }
+  set_country_flag = COLDWAR_ENG_CRISIS_royal_executions
+  set_country_flag = ENG_elizabeth_dead_dead
+  set_country_flag = ENG_royal_elizabeth_dead
+  set_country_flag = ENG_royal_philip_dead
+  COLDWAR_ENG_REVOLUTIONARY_abolish_royal_system = yes
+  COLDWAR_ENG_REVOLUTIONARY_apply_council_identity = yes
+  COLDWAR_ENG_REVOLUTIONARY_install_provisional_council = yes
+  COLDWAR_ENG_REVOLUTIONARY_reorganise_council = yes
+  if = { limit = { NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_coup_news_announced } }
+   set_country_flag = COLDWAR_ENG_REVOLUTIONARY_coup_news_announced
+   news_event = { id = COLDWAR_ENG_REVOLUTIONARY_NEWS.1 hours = 6 }
+  }
+ }
+}
+COLDWAR_ENG_REVOLUTIONARY_recover_council = {
+ if = { limit = { original_tag = ENG has_country_flag = COLDWAR_ENG_CRISIS_revolutionary_won }
+  if = { limit = { NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_royal_system_abolished } } COLDWAR_ENG_REVOLUTIONARY_abolish_royal_system = yes }
+  COLDWAR_ENG_REVOLUTIONARY_apply_council_identity = yes
+  COLDWAR_ENG_REVOLUTIONARY_reorganise_council = yes
+  # Existing victories are historical state, not a new worldwide broadcast.
+  set_country_flag = COLDWAR_ENG_REVOLUTIONARY_coup_news_announced
+ }
+}
+COLDWAR_ENG_REVOLUTIONARY_maintain_congress_leadership = {
+ if = { limit = { original_tag = ENG has_country_flag = COLDWAR_ENG_CRISIS_revolutionary_won check_variable = { ruling_party = 4 } NOT = { has_country_flag = COLDWAR_ENG_CRISIS_caretaker } }
+  COLDWAR_ENG_REVOLUTIONARY_recover_existing_leadership = yes
+  if = { limit = { NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_leadership_chosen } }
+   COLDWAR_ENG_REVOLUTIONARY_install_provisional_council = yes
+   if = { limit = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_congress_finished } COLDWAR_ENG_REVOLUTIONARY_offer_congress_leadership = yes }
+  }
+ }
+}

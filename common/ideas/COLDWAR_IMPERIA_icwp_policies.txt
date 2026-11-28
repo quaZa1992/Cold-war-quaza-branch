@@ -1,0 +1,229 @@
+# IMPERIA COLD WAR — International Production policies in the Imperia selector (economy column).
+# Update 23.11.2026: two pairs for producers. Special Economic Zones or Open Door Manufacturing raise the client
+# limit and capacity; Pro-Business Climate or Investor-First Labour Regime make the location cheaper. Each policy is
+# tied to MD laws and falls away when they no longer fit. Read by icwp_host_profile. Player choice only, no AI.
+ideas = {
+	imp_national_ideas_2 = {
+		law = yes
+		use_list_view = yes
+
+		COLDWAR_ni_icwp_sez = {
+			cost = 150
+			removal_cost = 150
+			picture = COLDWAR_selector_icwp_sez
+			visible = { IMP_is_1970_scenario = yes }
+			available = {
+				NOT = { has_idea = COLDWAR_ni_icwp_open_door }
+				NOT = { has_idea = md_closed_economy }
+			}
+			# Falls away when the MD laws no longer fit (the tier is only needed to adopt it).
+			cancel = {
+				has_idea = md_closed_economy
+			}
+			allowed_to_remove = {
+				custom_trigger_tooltip = {
+					tooltip = flag_ni_tt
+					NOT = { has_country_flag = flag_ni_COLDWAR_ni_icwp_sez }
+				}
+			}
+			on_add = {
+				set_country_flag = { flag = flag_ni_COLDWAR_ni_icwp_sez days = 1440 value = 1 }
+				log = "[GetDateText]: [Root.GetName]: add national idea COLDWAR_ni_icwp_sez"
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			on_remove = {
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			modifier = {
+				# The International Production benefit, listed first; read by icwp_host_profile.
+				custom_modifier_tooltip = COLDWAR_ni_icwp_sez_mtt
+				political_power_factor = -0.05
+				mdcw_cw_market_exposure = 0.10
+			}
+			ai_will_do = {
+				factor = 0
+			}
+			cancel_if_invalid = no
+		}
+
+		COLDWAR_ni_icwp_open_door = {
+			cost = 150
+			removal_cost = 150
+			picture = COLDWAR_selector_icwp_open_door
+			visible = { IMP_is_1970_scenario = yes }
+			available = {
+				NOT = { has_idea = COLDWAR_ni_icwp_sez }
+				OR = {
+					has_idea = export_economy
+					has_idea = globalized_trade_economy
+				}
+				custom_trigger_tooltip = {
+					tooltip = COLDWAR_ni_icwp_open_door_tier_tt
+					check_variable = { icwp_tier > 1 }
+				}
+			}
+			# Falls away when the MD laws no longer fit (the tier is only needed to adopt it).
+			cancel = {
+				NOT = {
+					has_idea = export_economy
+					has_idea = globalized_trade_economy
+				}
+			}
+			allowed_to_remove = {
+				custom_trigger_tooltip = {
+					tooltip = flag_ni_tt
+					NOT = { has_country_flag = flag_ni_COLDWAR_ni_icwp_open_door }
+				}
+			}
+			on_add = {
+				set_country_flag = { flag = flag_ni_COLDWAR_ni_icwp_open_door days = 1440 value = 1 }
+				log = "[GetDateText]: [Root.GetName]: add national idea COLDWAR_ni_icwp_open_door"
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			on_remove = {
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			modifier = {
+				# The International Production benefit, listed first; read by icwp_host_profile.
+				custom_modifier_tooltip = COLDWAR_ni_icwp_open_door_mtt
+				mdcw_cw_market_exposure = 0.25
+				stability_factor = -0.03
+				globalism_equilibrium = 10
+			}
+			ai_will_do = {
+				factor = 0
+			}
+			cancel_if_invalid = no
+		}
+
+		COLDWAR_ni_icwp_pro_business = {
+			cost = 150
+			removal_cost = 150
+			picture = COLDWAR_selector_icwp_pro_business
+			visible = { IMP_is_1970_scenario = yes }
+			available = {
+				NOT = { has_idea = COLDWAR_ni_icwp_investor_labour }
+				NOT = { has_idea = comprehensive_regulations }
+			}
+			# Falls away when the MD laws no longer fit (the tier is only needed to adopt it).
+			cancel = {
+				has_idea = comprehensive_regulations
+			}
+			allowed_to_remove = {
+				custom_trigger_tooltip = {
+					tooltip = flag_ni_tt
+					NOT = { has_country_flag = flag_ni_COLDWAR_ni_icwp_pro_business }
+				}
+			}
+			on_add = {
+				set_country_flag = { flag = flag_ni_COLDWAR_ni_icwp_pro_business days = 1440 value = 1 }
+				log = "[GetDateText]: [Root.GetName]: add national idea COLDWAR_ni_icwp_pro_business"
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			on_remove = {
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			modifier = {
+				# The International Production benefit, listed first; read by icwp_host_profile.
+				custom_modifier_tooltip = COLDWAR_ni_icwp_pro_business_mtt
+				corporate_tax_income_multiplier_modifier = -0.05
+				stability_factor = -0.01
+			}
+			ai_will_do = {
+				factor = 0
+			}
+			cancel_if_invalid = no
+		}
+
+		COLDWAR_ni_icwp_investor_labour = {
+			cost = 150
+			removal_cost = 150
+			picture = COLDWAR_selector_icwp_investor_labour
+			visible = { IMP_is_1970_scenario = yes }
+			available = {
+				NOT = { has_idea = COLDWAR_ni_icwp_pro_business }
+				OR = {
+					has_idea = light_regulations
+					has_idea = minimal_regulations
+				}
+				NOT = { has_government = democratic }
+			}
+			# Falls away when the MD laws no longer fit (the tier is only needed to adopt it).
+			cancel = {
+				OR = {
+					NOT = {
+						has_idea = light_regulations
+						has_idea = minimal_regulations
+					}
+					has_government = democratic
+				}
+			}
+			allowed_to_remove = {
+				custom_trigger_tooltip = {
+					tooltip = flag_ni_tt
+					NOT = { has_country_flag = flag_ni_COLDWAR_ni_icwp_investor_labour }
+				}
+			}
+			on_add = {
+				set_country_flag = { flag = flag_ni_COLDWAR_ni_icwp_investor_labour days = 1440 value = 1 }
+				log = "[GetDateText]: [Root.GetName]: add national idea COLDWAR_ni_icwp_investor_labour"
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			on_remove = {
+				if = {
+					limit = { has_country_flag = mdcw_cw_initialized }
+					mdcw_cw_recalculate_country = yes
+					mdcw_cw_update_world_market = yes
+				}
+				if = { limit = { has_country_flag = icwp_participant } icwp_refresh = yes }
+			}
+			modifier = {
+				# The International Production benefit, listed first; read by icwp_host_profile.
+				custom_modifier_tooltip = COLDWAR_ni_icwp_investor_labour_mtt
+				stability_factor = -0.04
+				population_tax_income_multiplier_modifier = -0.05
+				political_power_factor = -0.05
+			}
+			ai_will_do = {
+				factor = 0
+			}
+			cancel_if_invalid = no
+		}
+
+	}
+}

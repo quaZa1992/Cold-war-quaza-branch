@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — 1970 focus and legacy mechanic corrections.
 # IMPERIA COLD WAR — Cuba 1970 recipient decisions and CUB contract desk.
 COLDWAR_CUB_diplomacy_responses = {
 
@@ -130,29 +131,23 @@ COLDWAR_CUB_diplomacy_responses = {
 	COLDWAR_CUB_accept_air = {
 		icon = generic_diplomacy
 		visible = { has_country_flag = COLDWAR_CUB_air_offer_pending }
-		available = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } CUB = { owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
-	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
-	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
-} } } }
+		# IMPERIA COLD WAR — B6 24.11.2026: radar site checked in the effect, not in available
+		available = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } }
 		cost = 0
 		days_remove = 90
 		complete_effect = {
 			if = {
-				limit = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } CUB = { owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
-	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
-	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
-} } } }
+				# IMPERIA COLD WAR — B6 24.11.2026: radar site checked in the effect, not in available
+				limit = { has_country_flag = COLDWAR_CUB_air_offer_pending CUB = { has_country_flag = COLDWAR_CUB_air_offer_open country_exists = CUB NOT = { has_war_with = ROOT } } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } }
 
 				set_temp_variable = { treasury_change = -0.15 }
 				modify_treasury_effect = yes
 				CUB = {
-					if = { limit = { owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
-	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
-	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
-} } } }
+					# IMPERIA COLD WAR — B6 24.11.2026: radar site checked in the effect, not in available
 					set_temp_variable = { treasury_change = -0.45 }
 					modify_treasury_effect = yes
-					854 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = radar_station level = 1 instant_build = yes } }
+					# IMPERIA COLD WAR — B6 24.11.2026: radar site checked in the effect, not in available
+					if = { limit = { 854 = { is_owned_and_controlled_by = CUB check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals } } } 854 = { add_extra_state_shared_building_slots = 1 add_building_construction = { type = radar_station level = 1 instant_build = yes } } }
 					add_tech_bonus = { name = COLDWAR_CUB_air_defence_radar_bonus bonus = 0.25 uses = 1 technology = radar }
 					set_country_flag = COLDWAR_CUB_air_defence_receipt
 				}
@@ -492,10 +487,8 @@ COLDWAR_CUB_diplomacy_responses = {
 
 # CUB's diplomacy desk: offers, targeted programmes, and explicit termination.
 COLDWAR_CUB_diplomacy = {
-COLDWAR_CUB_retry_air_defence = { icon = generic_diplomacy visible = { has_completed_focus = COLDWAR_CUB_air_defence } available = { country_exists = SOV NOT = { has_country_flag = COLDWAR_CUB_air_offer_open } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } NOT = { has_country_flag = COLDWAR_CUB_air_refused } owns_state = 854 controls_state = 854 854 = { custom_trigger_tooltip = {
-	tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt
-	check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals }
-} } NOT = { has_war_with = SOV } } cost = 0 days_re_enable = 1 complete_effect = { COLDWAR_CUB_offer_air_defence = yes } ai_will_do = { base = 1 } }
+# IMPERIA COLD WAR — B6 24.11.2026: radar site checked in the effect, not in available
+COLDWAR_CUB_retry_air_defence = { icon = generic_diplomacy visible = { has_completed_focus = COLDWAR_CUB_air_defence } available = { country_exists = SOV NOT = { has_country_flag = COLDWAR_CUB_air_offer_open } NOT = { has_country_flag = COLDWAR_CUB_air_defence_receipt } NOT = { has_country_flag = COLDWAR_CUB_air_refused } NOT = { has_war_with = SOV } } cost = 0 days_re_enable = 1 complete_effect = { COLDWAR_CUB_offer_air_defence = yes } ai_will_do = { base = 1 } }
 COLDWAR_CUB_end_overseas_mission_for_partner = {
 		icon = generic_diplomacy
 		visible = { has_country_flag = COLDWAR_CUB_overseas_mission_active }

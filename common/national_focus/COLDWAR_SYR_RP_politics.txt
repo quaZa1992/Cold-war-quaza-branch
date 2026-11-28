@@ -1,0 +1,2261 @@
+# IMPERIA COLD WAR — Syrian government programmes, constitutional choices and fiscal succession.
+
+# Historical reference: Thomas Collelo (ed.), Syria: A Country Study (1988),
+# pp. 199-206 on the Corrective Movement, the People's Council and the National
+# Progressive Front, and ch. 3 on economic planning and public enterprise.
+# https://www.loc.gov/item/87600488/
+# Cabinet oversight and alternative-party reforms are counterfactual programmes.
+# Administrative capacity, market access and patronage costs represent their trade-offs.
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_divided_command
+	icon = army_general_stuff1
+	x = 16
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 10
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ARMY_XP }
+	completion_reward = {
+		effect_tooltip = {
+			army_experience = 5
+			add_command_power = 10
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_divided_command }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_divided_command
+				army_experience = 5
+				add_command_power = 10
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_provincial_delegates
+	icon = Farm_national_movement
+	relative_position_id = COLDWAR_SYR_RP_divided_command
+	x = 0
+	y = 1
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_divided_command }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			if = {
+				limit = { OR = {
+					western_autocrats_are_in_power = yes
+					check_variable = { ruling_party = 7 }
+					check_variable = { ruling_party = 13 }
+					check_variable = { ruling_party = 21 }
+					check_variable = { ruling_party = 22 }
+					has_idea = syria_increased_agricultural_subsidies
+				} }
+				add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 16 tooltip = COLDWAR_SYR_RP_farmers_opinion_tt }
+			}
+			else = { add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 8 tooltip = COLDWAR_SYR_RP_farmers_opinion_tt } }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = -3 tooltip = COLDWAR_SYR_RP_the_military_opinion_tt }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_provincial_delegates }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_provincial_delegates
+				set_temp_variable = { temp_opinion = 8 }
+				change_farmers_opinion = yes
+				set_temp_variable = { temp_opinion = -3 }
+				change_the_military_opinion = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_keep_atassi
+	icon = democratic_stability
+	relative_position_id = COLDWAR_SYR_RP_provincial_delegates
+	x = -2
+	y = 1
+	cost = 20
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_provincial_delegates }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_corrective_movement focus = COLDWAR_SYR_RP_jadid_secretariat }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_pre_corrective_government = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_appoint_atassi_tt
+			add_ideas = COLDWAR_SYR_RP_spirit_keep_atassi
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+				COLDWAR_SYR_RP_pre_corrective_government = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_keep_atassi }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_keep_atassi
+				set_variable = { COLDWAR_SYR_baath_mandate = 0 }
+				COLDWAR_SYR_sync_baath_mandate = yes
+				set_country_flag = COLDWAR_SYR_RP_adopted_keep_atassi
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_corrective_movement
+	icon = army_reform
+	relative_position_id = COLDWAR_SYR_RP_provincial_delegates
+	x = 0
+	y = 1
+	cost = 20
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_provincial_delegates }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_keep_atassi focus = COLDWAR_SYR_RP_jadid_secretariat }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_pre_corrective_government = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			if = {
+				limit = { date < 1983.1.1 }
+				custom_effect_tooltip = COLDWAR_SYR_RP_appoint_khatib_tt
+			}
+			else = { custom_effect_tooltip = COLDWAR_SYR_RP_appoint_council_tt }
+			add_ideas = COLDWAR_SYR_RP_spirit_corrective_movement
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+				COLDWAR_SYR_RP_pre_corrective_government = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_corrective_movement }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_corrective_movement
+				set_country_flag = COLDWAR_SYR_corrective_transition
+				set_variable = { COLDWAR_SYR_baath_mandate = 0 }
+				COLDWAR_SYR_install_khatib = yes
+				set_country_flag = COLDWAR_SYR_RP_adopted_corrective_movement
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = { factor = 6 is_historical_focus_on = yes }
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_jadid_secretariat
+	icon = communism
+	relative_position_id = COLDWAR_SYR_RP_provincial_delegates
+	x = 2
+	y = 1
+	cost = 20
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_provincial_delegates }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_keep_atassi focus = COLDWAR_SYR_RP_corrective_movement }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_pre_corrective_government = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_appoint_jadid_tt
+			add_ideas = COLDWAR_SYR_RP_spirit_jadid_secretariat
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+				COLDWAR_SYR_RP_pre_corrective_government = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_jadid_secretariat }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_jadid_secretariat
+				set_variable = { COLDWAR_SYR_baath_mandate = 1 }
+				COLDWAR_SYR_sync_baath_mandate = yes
+				set_country_flag = COLDWAR_SYR_RP_adopted_jadid_secretariat
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_cabinet_responsibility
+	icon = civil_service
+	relative_position_id = COLDWAR_SYR_RP_keep_atassi
+	x = 0
+	y = 1
+	cost = 17
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_keep_atassi }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_atassi = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SYR_divided_command }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.07 tooltip = political_power_factor_tt }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.03 tooltip = army_org_factor_tt }
+			add_war_support = -0.02
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_atassi = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_cabinet_responsibility }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_cabinet_responsibility
+				set_country_flag = COLDWAR_SYR_RP_atassi_order
+				COLDWAR_SYR_RP_refresh_legacy = yes
+				add_war_support = -0.02
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_presidential_ballot
+	icon = Generic_Caesar
+	relative_position_id = COLDWAR_SYR_RP_corrective_movement
+	x = 0
+	y = 1
+	cost = 17
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_corrective_movement }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_corrective_ballot_ready = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_appoint_hafez_tt
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SYR_divided_command }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.08 tooltip = political_power_factor_tt }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.02 tooltip = army_org_factor_tt }
+			add_war_support = 0.04
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_corrective_ballot_ready = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_presidential_ballot }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_presidential_ballot
+				set_country_flag = COLDWAR_SYR_presidential_state_established
+				set_variable = { COLDWAR_SYR_baath_mandate = 0 }
+				set_variable = { COLDWAR_SYR_baath_head = 2 }
+				COLDWAR_SYR_1970_set_leader = yes
+				set_country_flag = COLDWAR_SYR_RP_assad_order
+				COLDWAR_SYR_RP_refresh_legacy = yes
+				add_war_support = 0.04
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = { factor = 6 is_historical_focus_on = yes }
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_party_statutes
+	icon = dominant_party
+	relative_position_id = COLDWAR_SYR_RP_jadid_secretariat
+	x = 0
+	y = 1
+	cost = 17
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_jadid_secretariat }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_jadid = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SYR_divided_command }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.06 tooltip = political_power_factor_tt }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.03 tooltip = army_org_factor_tt }
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			set_temp_variable = { temp_outlook_increase = 0 }
+			custom_effect_tooltip = TT_ADD_RELATIVE_PARTY_POPULARITY
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_jadid = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_party_statutes }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_party_statutes
+				set_country_flag = COLDWAR_SYR_RP_jadid_order
+				COLDWAR_SYR_RP_refresh_legacy = yes
+				set_temp_variable = { party_index = 7 }
+				set_temp_variable = { party_popularity_increase = 0.03 }
+				set_temp_variable = { temp_outlook_increase = 0 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_progressive_front
+	icon = communism
+	relative_position_id = COLDWAR_SYR_RP_cabinet_responsibility
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_cabinet_responsibility focus = COLDWAR_SYR_RP_presidential_ballot focus = COLDWAR_SYR_RP_party_statutes }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_national_pact }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		emerging_autocracy_are_in_power = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_front_tt
+			add_ideas = COLDWAR_SYR_RP_spirit_progressive_front
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					emerging_autocracy_are_in_power = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_progressive_front }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_progressive_front
+				COLDWAR_SYR_RP_admit_front_communists = yes
+				COLDWAR_SYR_RP_admit_front_nasserists = yes
+				update_dirty_politicsview_expanded = yes
+				set_country_flag = COLDWAR_SYR_RP_adopted_progressive_front
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = { factor = 6 is_historical_focus_on = yes }
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_national_pact
+	icon = Focus_Parliament_Constitution
+	relative_position_id = COLDWAR_SYR_RP_cabinet_responsibility
+	x = 3
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_cabinet_responsibility focus = COLDWAR_SYR_RP_presidential_ballot focus = COLDWAR_SYR_RP_party_statutes }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_progressive_front }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		emerging_autocracy_are_in_power = yes
+		has_stability > 0.4
+		NOT = { has_political_power < 75 }
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_political_power = -75
+			custom_effect_tooltip = COLDWAR_SYR_RP_pact_tt
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_national_pact days = 180 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					emerging_autocracy_are_in_power = yes
+					has_stability > 0.4
+					NOT = { has_political_power < 75 }
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_national_pact }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_national_pact
+				add_political_power = -75
+				COLDWAR_SYR_accept_national_pact = yes
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_national_pact days = 180 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_emergency_registers
+	icon = civil_service
+	relative_position_id = COLDWAR_SYR_RP_progressive_front
+	x = 1
+	y = 1
+	cost = 16
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_progressive_front focus = COLDWAR_SYR_RP_national_pact }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+			check_variable = { gdp_total > 0 }
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+			COLDWAR_SYR_RP_show_fee = yes
+			add_tech_bonus = { name = COLDWAR_SYR_RP_emergency_registers category = CAT_computing uses = 1 bonus = 0.20 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_emergency_registers }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_emergency_registers
+				set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+				COLDWAR_SYR_RP_pay_fee = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_emergency_registers category = CAT_computing uses = 1 bonus = 0.20 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_special_courts
+	icon = control_judiciary
+	relative_position_id = COLDWAR_SYR_RP_emergency_registers
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_emergency_registers }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_ordinary_appeals }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SYR_emergency_state }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.02 tooltip = research_speed_factor_tt }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.02 tooltip = political_power_factor_tt }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_special_courts }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_special_courts
+				set_country_flag = COLDWAR_SYR_RP_special_courts
+				COLDWAR_SYR_RP_refresh_legacy = yes
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = { factor = 6 is_historical_focus_on = yes }
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_ordinary_appeals
+	icon = focus_generic_court
+	relative_position_id = COLDWAR_SYR_RP_emergency_registers
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_emergency_registers }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_special_courts }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		NOT = { has_political_power < 30 }
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_political_power = -30
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SYR_emergency_state }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = -0.04 tooltip = stability_factor_tt }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.04 tooltip = research_speed_factor_tt }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.04 tooltip = political_power_factor_tt }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_political_power < 30 }
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_ordinary_appeals }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_ordinary_appeals
+				add_political_power = -30
+				set_country_flag = COLDWAR_SYR_RP_ordinary_appeals
+				COLDWAR_SYR_RP_refresh_legacy = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_constitutional_charter
+	icon = Focus_Parliament_Constitution
+	relative_position_id = COLDWAR_SYR_RP_special_courts
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_special_courts focus = COLDWAR_SYR_RP_ordinary_appeals }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_constitutional_charter days = 730 }
+			add_tech_bonus = { name = COLDWAR_SYR_RP_constitutional_charter category = CAT_computing uses = 1 bonus = 0.15 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_constitutional_charter }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_constitutional_charter
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_constitutional_charter days = 730 }
+				add_tech_bonus = { name = COLDWAR_SYR_RP_constitutional_charter category = CAT_computing uses = 1 bonus = 0.15 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_import_licences
+	icon = economic_banks
+	x = 64
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 16
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		effect_tooltip = {
+			add_tech_bonus = { name = COLDWAR_SYR_RP_import_licences category = CAT_industry uses = 1 bonus = 0.20 }
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_import_licences days = 365 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_import_licences }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_import_licences
+				add_tech_bonus = { name = COLDWAR_SYR_RP_import_licences category = CAT_industry uses = 1 bonus = 0.20 }
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_import_licences days = 365 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_municipal_relief
+	icon = bread_and_peace
+	relative_position_id = COLDWAR_SYR_RP_import_licences
+	x = 0
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_import_licences }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+			check_variable = { gdp_total > 0 }
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 16 }
+			COLDWAR_SYR_RP_show_fee = yes
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_municipal_relief days = 730 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_municipal_relief }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_municipal_relief
+				set_temp_variable = { COLDWAR_SYR_RP_basis_points = 16 }
+				COLDWAR_SYR_RP_pay_fee = yes
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_municipal_relief days = 730 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_city_syndicates
+	icon = business_man
+	relative_position_id = COLDWAR_SYR_RP_municipal_relief
+	x = 0
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_municipal_relief }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_city_syndicates days = 365 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_city_syndicates }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_city_syndicates
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_city_syndicates days = 365 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_syndicate_bargain
+	icon = concessions
+	relative_position_id = COLDWAR_SYR_RP_city_syndicates
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_city_syndicates }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_price_board }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_syndicate_bargain days = 730 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_syndicate_bargain }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_syndicate_bargain
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_syndicate_bargain days = 730 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_price_board
+	icon = central_planned_economy
+	relative_position_id = COLDWAR_SYR_RP_city_syndicates
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_city_syndicates }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_syndicate_bargain }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_price_board days = 730 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_price_board }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_price_board
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_price_board days = 730 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_hama_public_works
+	icon = construct_infrastructure
+	relative_position_id = COLDWAR_SYR_RP_syndicate_bargain
+	x = 1
+	y = 1
+	cost = 16
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_syndicate_bargain focus = COLDWAR_SYR_RP_price_board }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+			check_variable = { gdp_total > 0 }
+		}
+		COLDWAR_SYR_RP_hama_works_ready = yes
+	}
+	bypass = {
+		571 = {
+			is_owned_by = ROOT
+			is_fully_controlled_by = ROOT
+			check_variable = { building_level@infrastructure > 5 }
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 30 }
+			COLDWAR_SYR_RP_show_fee = yes
+			571 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					check_variable = { gdp_total > 0 }
+					COLDWAR_SYR_RP_hama_works_ready = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_hama_public_works }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_hama_public_works
+				set_temp_variable = { COLDWAR_SYR_RP_basis_points = 30 }
+				COLDWAR_SYR_RP_pay_fee = yes
+				571 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				}
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_presidential_review
+	icon = Generic_Secret_Meeting
+	relative_position_id = COLDWAR_SYR_RP_hama_public_works
+	x = 0
+	y = 1
+	cost = 20
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_hama_public_works }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = -5 tooltip = COLDWAR_SYR_RP_the_military_opinion_tt }
+			add_command_power = 12
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_presidential_review }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_presidential_review
+				set_temp_variable = { temp_opinion = -5 }
+				change_the_military_opinion = yes
+				add_command_power = 12
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_recall_hafez
+	icon = army_general_stuff2
+	relative_position_id = COLDWAR_SYR_RP_presidential_review
+	x = -3
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_presidential_review }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_civil_stewardship focus = COLDWAR_SYR_RP_rifaat_claim focus = COLDWAR_SYR_RP_cabinet_succession }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_succession_crisis = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_appoint_hafez_tt
+			add_ideas = COLDWAR_SYR_RP_spirit_recall_hafez
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_succession_crisis = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_recall_hafez }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_recall_hafez
+				clr_country_flag = COLDWAR_SYR_president_incapacitated
+				set_country_flag = COLDWAR_SYR_succession_crisis_resolved
+				set_variable = { COLDWAR_SYR_baath_mandate = 0 }
+				set_variable = { COLDWAR_SYR_baath_head = 2 }
+				COLDWAR_SYR_1970_set_leader = yes
+				set_country_flag = COLDWAR_SYR_RP_adopted_recall_hafez
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = { factor = 6 is_historical_focus_on = yes }
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_civil_stewardship
+	icon = Generic_Cincinnatus
+	relative_position_id = COLDWAR_SYR_RP_presidential_review
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_presidential_review }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_recall_hafez focus = COLDWAR_SYR_RP_rifaat_claim focus = COLDWAR_SYR_RP_cabinet_succession }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_succession_crisis = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_appoint_council_tt
+			add_ideas = COLDWAR_SYR_RP_spirit_civil_stewardship
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_succession_crisis = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_civil_stewardship }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_civil_stewardship
+				clr_country_flag = COLDWAR_SYR_president_incapacitated
+				set_country_flag = COLDWAR_SYR_succession_crisis_resolved
+				set_variable = { COLDWAR_SYR_baath_mandate = 0 }
+				set_variable = { COLDWAR_SYR_baath_head = 4 }
+				COLDWAR_SYR_1970_set_leader = yes
+				set_country_flag = COLDWAR_SYR_RP_adopted_civil_stewardship
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_rifaat_claim
+	icon = army_mobilisation
+	relative_position_id = COLDWAR_SYR_RP_presidential_review
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_presidential_review }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_recall_hafez focus = COLDWAR_SYR_RP_civil_stewardship focus = COLDWAR_SYR_RP_cabinet_succession }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_succession_crisis = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_appoint_rifaat_tt
+			add_ideas = COLDWAR_SYR_RP_spirit_rifaat_claim
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_succession_crisis = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_rifaat_claim }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_rifaat_claim
+				clr_country_flag = COLDWAR_SYR_president_incapacitated
+				set_country_flag = COLDWAR_SYR_succession_crisis_resolved
+				set_variable = { COLDWAR_SYR_baath_mandate = 0 }
+				set_variable = { COLDWAR_SYR_baath_head = 3 }
+				COLDWAR_SYR_1970_set_leader = yes
+				set_country_flag = COLDWAR_SYR_RP_adopted_rifaat_claim
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_cabinet_succession
+	icon = civil_service
+	relative_position_id = COLDWAR_SYR_RP_presidential_review
+	x = 3
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_presidential_review }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_recall_hafez focus = COLDWAR_SYR_RP_civil_stewardship focus = COLDWAR_SYR_RP_rifaat_claim }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_cabinet_succession_ready = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_cabinet_succession
+			add_command_power = 5
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_cabinet_succession_ready = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_cabinet_succession }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_cabinet_succession
+				clr_country_flag = COLDWAR_SYR_president_incapacitated
+				set_country_flag = COLDWAR_SYR_succession_crisis_resolved
+				add_ideas = COLDWAR_SYR_RP_spirit_cabinet_succession
+				add_command_power = 5
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_oil_receipts
+	icon = balance_buget
+	relative_position_id = COLDWAR_SYR_RP_recall_hafez
+	x = 3
+	y = 1
+	cost = 20
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_recall_hafez focus = COLDWAR_SYR_RP_civil_stewardship focus = COLDWAR_SYR_RP_rifaat_claim focus = COLDWAR_SYR_RP_cabinet_succession }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+			check_variable = { gdp_total > 0 }
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+			COLDWAR_SYR_RP_show_fee = yes
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_oil_receipts days = 730 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_oil_receipts }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_oil_receipts
+				set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+				COLDWAR_SYR_RP_pay_fee = yes
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_oil_receipts days = 730 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_bread_subsidies
+	icon = bread_and_peace
+	relative_position_id = COLDWAR_SYR_RP_oil_receipts
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_oil_receipts }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_open_imports }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_bread_subsidies days = 730 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_bread_subsidies }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_bread_subsidies
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_bread_subsidies days = 730 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_open_imports
+	icon = classic_liberal_economy
+	relative_position_id = COLDWAR_SYR_RP_oil_receipts
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_oil_receipts }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_bread_subsidies }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_open_imports days = 730 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_open_imports }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_open_imports
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_open_imports days = 730 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_five_year_estimates
+	icon = factory_planning
+	relative_position_id = COLDWAR_SYR_RP_bread_subsidies
+	x = 1
+	y = 1
+	cost = 20
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_bread_subsidies focus = COLDWAR_SYR_RP_open_imports }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+			check_variable = { gdp_total > 0 }
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 26 }
+			COLDWAR_SYR_RP_show_fee = yes
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SYR_uneven_services }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.03 tooltip = production_speed_buildings_factor_tt }
+			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_SYR_state_sector_strain }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 0.03 tooltip = agricolture_productivity_modifier_tt }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					check_variable = { gdp_total > 0 }
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_five_year_estimates }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_five_year_estimates
+				set_temp_variable = { COLDWAR_SYR_RP_basis_points = 26 }
+				COLDWAR_SYR_RP_pay_fee = yes
+				set_country_flag = COLDWAR_SYR_RP_budget_reform
+				COLDWAR_SYR_RP_refresh_legacy = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_civil_cabinet
+	icon = civil_service
+	x = 72
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_atassi = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_civil_cabinet days = 180 }
+			add_tech_bonus = { name = COLDWAR_SYR_RP_civil_cabinet category = CAT_infrastructure uses = 1 bonus = 0.20 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_atassi = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_civil_cabinet }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_civil_cabinet
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_civil_cabinet days = 180 }
+				add_tech_bonus = { name = COLDWAR_SYR_RP_civil_cabinet category = CAT_infrastructure uses = 1 bonus = 0.20 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_cabinet_auditors
+	icon = balance_buget
+	relative_position_id = COLDWAR_SYR_RP_civil_cabinet
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_civil_cabinet }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_provincial_councils }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_atassi = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_cabinet_auditors
+			if = {
+				limit = { NOT = { has_idea = corruption_level_01 } }
+				decrease_corruption = yes
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_atassi = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_cabinet_auditors }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_cabinet_auditors
+				set_country_flag = COLDWAR_SYR_RP_adopted_cabinet_auditors
+				COLDWAR_SYR_RP_sync_politics = yes
+				if = {
+					limit = { NOT = { has_idea = corruption_level_01 } }
+					decrease_corruption = yes
+				}
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_provincial_councils
+	icon = democracy
+	relative_position_id = COLDWAR_SYR_RP_civil_cabinet
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_civil_cabinet }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_cabinet_auditors }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_atassi = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_provincial_councils
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_atassi = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_provincial_councils }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_provincial_councils
+				set_country_flag = COLDWAR_SYR_RP_adopted_provincial_councils
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_party_delegates
+	icon = Farm_national_movement
+	x = 78
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_jadid = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			if = {
+				limit = { OR = {
+					western_autocrats_are_in_power = yes
+					check_variable = { ruling_party = 7 }
+					check_variable = { ruling_party = 13 }
+					check_variable = { ruling_party = 21 }
+					check_variable = { ruling_party = 22 }
+					has_idea = syria_increased_agricultural_subsidies
+				} }
+				add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 16 tooltip = COLDWAR_SYR_RP_farmers_opinion_tt }
+			}
+			else = { add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 8 tooltip = COLDWAR_SYR_RP_farmers_opinion_tt } }
+			add_to_variable = { COLDWAR_SYR_RP_tooltip_value = -3 tooltip = COLDWAR_SYR_RP_the_military_opinion_tt }
+			set_temp_variable = { party_index = 7 }
+			set_temp_variable = { party_popularity_increase = 0.02 }
+			set_temp_variable = { temp_outlook_increase = 0 }
+			custom_effect_tooltip = TT_ADD_RELATIVE_PARTY_POPULARITY
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_jadid = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_party_delegates }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_party_delegates
+				set_temp_variable = { temp_opinion = 8 }
+				change_farmers_opinion = yes
+				set_temp_variable = { temp_opinion = -3 }
+				change_the_military_opinion = yes
+				set_temp_variable = { party_index = 7 }
+				set_temp_variable = { party_popularity_increase = 0.02 }
+				set_temp_variable = { temp_outlook_increase = 0 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_producer_committees
+	icon = farming_sector
+	relative_position_id = COLDWAR_SYR_RP_party_delegates
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_party_delegates }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_state_holding_firms }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_jadid = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_producer_committees
+			add_tech_bonus = { name = COLDWAR_SYR_RP_producer_committees category = CAT_agriculture uses = 1 bonus = 0.20 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_jadid = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_producer_committees }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_producer_committees
+				set_country_flag = COLDWAR_SYR_RP_adopted_producer_committees
+				COLDWAR_SYR_RP_sync_politics = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_producer_committees category = CAT_agriculture uses = 1 bonus = 0.20 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_state_holding_firms
+	icon = factory_complex
+	relative_position_id = COLDWAR_SYR_RP_party_delegates
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_party_delegates }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_producer_committees }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_jadid = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_state_holding_firms
+			add_tech_bonus = { name = COLDWAR_SYR_RP_state_holding_firms category = CAT_industry uses = 1 bonus = 0.20 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_jadid = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_state_holding_firms }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_state_holding_firms
+				set_country_flag = COLDWAR_SYR_RP_adopted_state_holding_firms
+				COLDWAR_SYR_RP_sync_politics = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_state_holding_firms category = CAT_industry uses = 1 bonus = 0.20 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_presidential_office
+	icon = army_general_stuff3
+	x = 84
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_hafez = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ARMY_XP }
+	completion_reward = {
+		effect_tooltip = {
+			army_experience = 8
+			if = {
+				limit = { OR = {
+					western_autocrats_are_in_power = yes
+					check_variable = { ruling_party = 7 }
+					check_variable = { ruling_party = 13 }
+					check_variable = { ruling_party = 21 }
+					check_variable = { ruling_party = 22 }
+				} }
+				add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 6 tooltip = COLDWAR_SYR_RP_the_military_opinion_tt }
+			}
+			else = { add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 3 tooltip = COLDWAR_SYR_RP_the_military_opinion_tt } }
+			add_command_power = 10
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_hafez = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_presidential_office }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_presidential_office
+				army_experience = 8
+				set_temp_variable = { temp_opinion = 3 }
+				change_the_military_opinion = yes
+				add_command_power = 10
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_technical_cabinet
+	icon = industry
+	relative_position_id = COLDWAR_SYR_RP_presidential_office
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_presidential_office }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_appoint_loyalists }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_hafez = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_technical_cabinet
+			add_tech_bonus = { name = COLDWAR_SYR_RP_technical_cabinet category = CAT_industry uses = 1 bonus = 0.25 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_hafez = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_technical_cabinet }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_technical_cabinet
+				set_country_flag = COLDWAR_SYR_RP_adopted_technical_cabinet
+				COLDWAR_SYR_RP_sync_politics = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_technical_cabinet category = CAT_industry uses = 1 bonus = 0.25 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_appoint_loyalists
+	icon = army_recruting
+	relative_position_id = COLDWAR_SYR_RP_presidential_office
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_presidential_office }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_technical_cabinet }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_hafez = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			custom_effect_tooltip = COLDWAR_SYR_RP_rival_commands_tt
+			add_ideas = COLDWAR_SYR_RP_spirit_appoint_loyalists
+			if = {
+				limit = { NOT = { has_idea = corruption_level_10 } }
+				increase_corruption = yes
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_hafez = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_appoint_loyalists }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_appoint_loyalists
+				set_country_flag = COLDWAR_SYR_rival_guard_commands
+				set_country_flag = COLDWAR_SYR_RP_adopted_appoint_loyalists
+				COLDWAR_SYR_RP_sync_politics = yes
+				if = {
+					limit = { NOT = { has_idea = corruption_level_10 } }
+					increase_corruption = yes
+				}
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = { factor = 6 is_historical_focus_on = yes }
+	}
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_labour_congress
+	icon = communism
+	x = 90
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_communist = yes
+		NOT = { has_political_power < 15 }
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_political_power = -15
+			if = {
+				limit = { OR = {
+					western_autocrats_are_in_power = yes
+					check_variable = { ruling_party = 7 }
+					check_variable = { ruling_party = 13 }
+					check_variable = { ruling_party = 21 }
+					check_variable = { ruling_party = 22 }
+					has_idea = syria_increased_agricultural_subsidies
+				} }
+				add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 16 tooltip = COLDWAR_SYR_RP_farmers_opinion_tt }
+			}
+			else = { add_to_variable = { COLDWAR_SYR_RP_tooltip_value = 8 tooltip = COLDWAR_SYR_RP_farmers_opinion_tt } }
+			set_temp_variable = { party_index = 4 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			set_temp_variable = { temp_outlook_increase = 0 }
+			custom_effect_tooltip = TT_ADD_RELATIVE_PARTY_POPULARITY
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_communist = yes
+					NOT = { has_political_power < 15 }
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_labour_congress }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_labour_congress
+				add_political_power = -15
+				set_temp_variable = { temp_opinion = 8 }
+				change_farmers_opinion = yes
+				set_temp_variable = { party_index = 4 }
+				set_temp_variable = { party_popularity_increase = 0.03 }
+				set_temp_variable = { temp_outlook_increase = 0 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_plant_councils
+	icon = factory_facto
+	relative_position_id = COLDWAR_SYR_RP_labour_congress
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_labour_congress }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_wage_bargaining }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_communist = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_plant_councils
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_communist = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_plant_councils }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_plant_councils
+				set_country_flag = COLDWAR_SYR_RP_adopted_plant_councils
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_wage_bargaining
+	icon = consumer_goods
+	relative_position_id = COLDWAR_SYR_RP_labour_congress
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_labour_congress }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_plant_councils }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_communist = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_wage_bargaining
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_communist = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_wage_bargaining }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_wage_bargaining
+				set_country_flag = COLDWAR_SYR_RP_adopted_wage_bargaining
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_asu
+	icon = construction_engineering
+	x = 96
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+			check_variable = { gdp_total > 0 }
+		}
+		COLDWAR_SYR_RP_office_nasserist = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+			COLDWAR_SYR_RP_show_fee = yes
+			add_tech_bonus = { name = COLDWAR_SYR_RP_asu category = CAT_industry uses = 1 bonus = 0.20 }
+			set_temp_variable = { party_index = 13 }
+			set_temp_variable = { party_popularity_increase = 0.03 }
+			set_temp_variable = { temp_outlook_increase = 0 }
+			custom_effect_tooltip = TT_ADD_RELATIVE_PARTY_POPULARITY
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					check_variable = { gdp_total > 0 }
+					COLDWAR_SYR_RP_office_nasserist = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_asu }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_asu
+				set_temp_variable = { COLDWAR_SYR_RP_basis_points = 8 }
+				COLDWAR_SYR_RP_pay_fee = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_asu category = CAT_industry uses = 1 bonus = 0.20 }
+				set_temp_variable = { party_index = 13 }
+				set_temp_variable = { party_popularity_increase = 0.03 }
+				set_temp_variable = { temp_outlook_increase = 0 }
+				change_relative_party_popularity = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_public_engineers
+	icon = construction
+	relative_position_id = COLDWAR_SYR_RP_asu
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_asu }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_rural_cooperatives }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_nasserist = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_public_engineers
+			add_tech_bonus = { name = COLDWAR_SYR_RP_public_engineers category = CAT_infrastructure uses = 1 bonus = 0.25 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_nasserist = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_public_engineers }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_public_engineers
+				set_country_flag = COLDWAR_SYR_RP_adopted_public_engineers
+				COLDWAR_SYR_RP_sync_politics = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_public_engineers category = CAT_infrastructure uses = 1 bonus = 0.25 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_rural_cooperatives
+	icon = farming
+	relative_position_id = COLDWAR_SYR_RP_asu
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_asu }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_public_engineers }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_nasserist = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_rural_cooperatives
+			add_tech_bonus = { name = COLDWAR_SYR_RP_rural_cooperatives category = CAT_agriculture uses = 1 bonus = 0.20 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_nasserist = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_rural_cooperatives }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_rural_cooperatives
+				set_country_flag = COLDWAR_SYR_RP_adopted_rural_cooperatives
+				COLDWAR_SYR_RP_sync_politics = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_rural_cooperatives category = CAT_agriculture uses = 1 bonus = 0.20 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_budget_committee
+	icon = Focus_Parliament_Constitution
+	x = 102
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_parliament = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_budget_committee days = 180 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_parliament = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_budget_committee }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_budget_committee
+				add_timed_idea = { idea = COLDWAR_SYR_RP_spirit_budget_committee days = 180 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_audit_court
+	icon = focus_generic_court
+	relative_position_id = COLDWAR_SYR_RP_budget_committee
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_budget_committee }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_municipal_tax }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_parliament = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_audit_court
+			if = {
+				limit = { NOT = { has_idea = corruption_level_01 } }
+				decrease_corruption = yes
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_parliament = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_audit_court }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_audit_court
+				set_country_flag = COLDWAR_SYR_RP_adopted_audit_court
+				COLDWAR_SYR_RP_sync_politics = yes
+				if = {
+					limit = { NOT = { has_idea = corruption_level_01 } }
+					decrease_corruption = yes
+				}
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_municipal_tax
+	icon = coins
+	relative_position_id = COLDWAR_SYR_RP_budget_committee
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_budget_committee }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_audit_court }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_parliament = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_municipal_tax
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_parliament = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_municipal_tax }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_municipal_tax
+				set_country_flag = COLDWAR_SYR_RP_adopted_municipal_tax
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_civil_service
+	icon = civil_service
+	x = 108
+	y = 23
+	allow_branch = { tag = SYR IMP_is_1970_scenario = yes }
+	cost = 15
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+			check_variable = { gdp_total > 0 }
+		}
+		COLDWAR_SYR_RP_office_other = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		effect_tooltip = {
+			set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+			COLDWAR_SYR_RP_show_fee = yes
+			add_tech_bonus = { name = COLDWAR_SYR_RP_civil_service category = CAT_computing uses = 1 bonus = 0.20 }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					check_variable = { gdp_total > 0 }
+					COLDWAR_SYR_RP_office_other = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_civil_service }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_civil_service
+				set_temp_variable = { COLDWAR_SYR_RP_basis_points = 5 }
+				COLDWAR_SYR_RP_pay_fee = yes
+				add_tech_bonus = { name = COLDWAR_SYR_RP_civil_service category = CAT_computing uses = 1 bonus = 0.20 }
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_merit_appointments
+	icon = education_reform
+	relative_position_id = COLDWAR_SYR_RP_civil_service
+	x = -1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_civil_service }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_provincial_delegation }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_other = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_merit_appointments
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_other = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_merit_appointments }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_merit_appointments
+				set_country_flag = COLDWAR_SYR_RP_adopted_merit_appointments
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}
+
+shared_focus = {
+	id = COLDWAR_SYR_RP_provincial_delegation
+	icon = construction_development
+	relative_position_id = COLDWAR_SYR_RP_civil_service
+	x = 1
+	y = 1
+	cost = 18
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = no
+	prerequisite = { focus = COLDWAR_SYR_RP_civil_service }
+	mutually_exclusive = { focus = COLDWAR_SYR_RP_merit_appointments }
+	available = {
+		hidden_trigger = {
+			tag = SYR
+			IMP_is_1970_scenario = yes
+		}
+		COLDWAR_SYR_RP_office_other = yes
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		effect_tooltip = {
+			add_ideas = COLDWAR_SYR_RP_spirit_provincial_delegation
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SYR
+					IMP_is_1970_scenario = yes
+					COLDWAR_SYR_RP_office_other = yes
+					NOT = { has_country_flag = COLDWAR_SYR_RP_paid_provincial_delegation }
+				}
+				set_country_flag = COLDWAR_SYR_RP_paid_provincial_delegation
+				set_country_flag = COLDWAR_SYR_RP_adopted_provincial_delegation
+				COLDWAR_SYR_RP_sync_politics = yes
+			}
+		}
+	}
+	ai_will_do = { base = 1 }
+}

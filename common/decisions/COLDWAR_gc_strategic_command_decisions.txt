@@ -1,0 +1,110 @@
+# IMPERIA COLD WAR — Cold War: GC switch for Strategic Command (nuclear readiness, civil defence and crisis diplomacy).
+# IMPERIA COLD WAR update 20.11.2026: created; the GC can suspend and restore the whole system.
+# IMPERIA COLD WAR update 25.11.2026: targeted GC tools: early-warning false alarm and alarming intelligence report for a player government.
+imp_gc_tools_decisions = {
+	COLDWAR_gc_nr_disable = {
+		icon = GFX_decision_generic_nuclear
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			COLDWAR_nr_available = yes
+			NOT = { has_global_flag = COLDWAR_nr_disabled }
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation }
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_nr_disable_tt
+			hidden_effect = {
+				if = {
+					limit = { is_ai = no has_idea = imp_gc_nation }
+					COLDWAR_nr_gc_disable = yes
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_nr_enable = {
+		icon = GFX_decision_generic_nuclear
+		cost = 0
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			COLDWAR_nr_available = yes
+			has_global_flag = COLDWAR_nr_disabled
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation }
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_nr_enable_tt
+			hidden_effect = {
+				if = {
+					limit = { is_ai = no has_idea = imp_gc_nation }
+					COLDWAR_nr_gc_enable = yes
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_nr_false_alarm = {
+		icon = GFX_decision_generic_nuclear
+		cost = 0
+		target_trigger = {
+			FROM = {
+				exists = yes
+				is_ai = no
+				COLDWAR_nr_nuclear_power = yes
+			}
+		}
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			COLDWAR_nr_enabled = yes
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation }
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_nr_false_alarm_tt
+			hidden_effect = {
+				FROM = {
+					COLDWAR_nr_init = yes
+					COLDWAR_nr_trigger_false_alarm = yes
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	COLDWAR_gc_nr_alarming_report = {
+		icon = GFX_decision_generic_nuclear
+		cost = 0
+		target_trigger = {
+			FROM = {
+				exists = yes
+				is_ai = no
+			}
+		}
+		visible = {
+			is_ai = no
+			has_idea = imp_gc_nation
+			COLDWAR_nr_enabled = yes
+		}
+		available = {
+			hidden_trigger = { is_ai = no has_idea = imp_gc_nation }
+		}
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_gc_nr_alarming_report_tt
+			hidden_effect = {
+				FROM = {
+					COLDWAR_nr_init = yes
+					set_temp_variable = { COLDWAR_nr_paranoia_delta = 20 }
+					COLDWAR_nr_add_paranoia = yes
+					country_event = { id = cw_nuclear.36 }
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+}

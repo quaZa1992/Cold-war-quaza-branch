@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR: Update 24.11.2026: skip a duplicate world state pass at startup in 1970 (load time).
 # IMPERIA CW — Cold War: communist struggle startup effects — scripted effects.
 IMP_communist_struggle_update_internal_scores = {
 CHI = {
@@ -120,7 +121,12 @@ IMP_communist_struggle_startup_after_native_money = {
 		USA = { IMP_1970_seed_historical_sanctions_only = yes }
 		USA = { IMP_1970_restore_state_productivity_profile = yes }
 	}
-	every_country = { update_state_variables = yes }
+	# COLDWAR 24.11.2026: startup speed. In 1970 IMP_1970_apply_starting_gdp_profile runs update_state_variables
+	# for every country itself, so this world pass only runs outside the 1970 scenario.
+	if = {
+		limit = { USA = { NOT = { IMP_is_1970_scenario = yes } } }
+		every_country = { update_state_variables = yes }
+	}
 	if = {
 		limit = { USA = { IMP_is_1970_scenario = yes } }
 		every_country = { IMP_1970_apply_starting_gdp_profile = yes }

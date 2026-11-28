@@ -155,13 +155,112 @@ focus_tree = {
 		}
 		completion_reward = {
 			effect_tooltip = {
-				country_event = { id = COLDWAR_GRE_R3POL.1 }
+				# IMPERIA COLD WAR — P4 24.11.2026: the caretaker cabinet is chosen in the focus fork below
+				custom_effect_tooltip = COLDWAR_GRE_R3_POL_handover_fork_tt
 				add_timed_idea = { idea = COLDWAR_GRE_R3_temp_handover days = 180 }
 				add_ideas = COLDWAR_GRE_R3_preview_handover_2
 				remove_ideas = COLDWAR_GRE_R3_preview_start_emergency_rule
 			}
 			hidden_effect = {
 				COLDWAR_GRE_R3_apply_handover = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	# IMPERIA COLD WAR — P4 24.11.2026: path change via exclusive focus (was event COLDWAR_GRE_R3POL.1)
+	focus = {
+		id = COLDWAR_GRE_R2_caretaker_kanellopoulos
+		icon = GFX_COLDWAR_goal_Kitchen_Cabinet
+		x = 5
+		y = 2
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		prerequisite = {
+			focus = COLDWAR_GRE_R2_handover
+		}
+		mutually_exclusive = {
+			focus = COLDWAR_GRE_R2_caretaker_mavros
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		available = {
+			has_war = no
+			has_political_power > 74
+			has_stability > 0.29
+			hidden_trigger = {
+				original_tag = GRE
+				exists = yes
+				IMP_is_1970_scenario = yes
+				has_country_flag = COLDWAR_GRE_R3_POL_handover_pending
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_GRE_R2_caretaker_kanellopoulos"
+			add_political_power = -75
+			set_temp_variable = { temp_opinion = -5 }
+			change_the_military_opinion = yes
+			add_stability = 0.03
+			effect_tooltip = {
+				set_temp_variable = { rul_party_temp = 1 }
+				set_temp_variable = { disable_elections = 0 }
+				change_ruling_party_effect = yes
+			}
+			custom_effect_tooltip = COLDWAR_GRE_R3_POL_kanellopoulos_leader_tt
+			hidden_effect = {
+				COLDWAR_GRE_R3_POL_caretaker_kanellopoulos = yes
+			}
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+	# IMPERIA COLD WAR — P4 24.11.2026: path change via exclusive focus (was event COLDWAR_GRE_R3POL.1)
+	focus = {
+		id = COLDWAR_GRE_R2_caretaker_mavros
+		icon = GFX_COLDWAR_goal_Introduce_Limited_Democratic_Reforms
+		x = 7
+		y = 2
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		prerequisite = {
+			focus = COLDWAR_GRE_R2_handover
+		}
+		mutually_exclusive = {
+			focus = COLDWAR_GRE_R2_caretaker_kanellopoulos
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		available = {
+			has_war = no
+			has_political_power > 99
+			has_stability > 0.39
+			NOT = { hostile_the_military = yes }
+			hidden_trigger = {
+				original_tag = GRE
+				exists = yes
+				IMP_is_1970_scenario = yes
+				has_country_flag = COLDWAR_GRE_R3_POL_handover_pending
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_GRE_R2_caretaker_mavros"
+			add_political_power = -100
+			set_temp_variable = { temp_opinion = -15 }
+			change_the_military_opinion = yes
+			add_war_support = -0.05
+			add_stability = -0.03
+			effect_tooltip = {
+				set_temp_variable = { rul_party_temp = 2 }
+				set_temp_variable = { disable_elections = 0 }
+				change_ruling_party_effect = yes
+			}
+			custom_effect_tooltip = COLDWAR_GRE_R3_POL_mavros_leader_tt
+			hidden_effect = {
+				COLDWAR_GRE_R3_POL_caretaker_mavros = yes
 			}
 		}
 		ai_will_do = {
@@ -202,14 +301,17 @@ focus_tree = {
 		}
 	}
 	focus = {
+		# IMPERIA COLD WAR — P4 24.11.2026: moved one row down for the caretaker fork
 		id = COLDWAR_GRE_R2_amnesty
 		icon = GFX_COLDWAR_goal_generic_workers_rights
 		x = 6
-		y = 2
+		y = 3
 		cost = 10
 		search_filters = { FOCUS_FILTER_POLITICAL }
+		# IMPERIA COLD WAR — P4 24.11.2026: follows the chosen caretaker cabinet
 		prerequisite = {
-			focus = COLDWAR_GRE_R2_handover
+			focus = COLDWAR_GRE_R2_caretaker_kanellopoulos
+			focus = COLDWAR_GRE_R2_caretaker_mavros
 		}
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -236,10 +338,11 @@ focus_tree = {
 		}
 	}
 	focus = {
+		# IMPERIA COLD WAR — P4 24.11.2026: moved one row down for the caretaker fork
 		id = COLDWAR_GRE_R2_election
 		icon = GFX_COLDWAR_goal_new_democratic_elections
 		x = 6
-		y = 3
+		y = 4
 		cost = 10
 		search_filters = { FOCUS_FILTER_POLITICAL }
 		prerequisite = {
@@ -292,10 +395,11 @@ focus_tree = {
 		}
 	}
 	focus = {
+		# IMPERIA COLD WAR — P4 24.11.2026: moved one row down for the caretaker fork
 		id = COLDWAR_GRE_R2_republic
 		icon = GFX_COLDWAR_goal_generic_parliament
 		x = 4
-		y = 4
+		y = 5
 		cost = 10
 		search_filters = { FOCUS_FILTER_POLITICAL }
 		prerequisite = {
@@ -328,10 +432,11 @@ focus_tree = {
 		}
 	}
 	focus = {
+		# IMPERIA COLD WAR — P4 24.11.2026: moved one row down for the caretaker fork
 		id = COLDWAR_GRE_R2_constitutional_crown
 		icon = GFX_COLDWAR_goal_new_democratic_elections
 		x = 8
-		y = 4
+		y = 5
 		cost = 10
 		search_filters = { FOCUS_FILTER_POLITICAL }
 		prerequisite = {
@@ -460,7 +565,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			143 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = offices size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -473,7 +578,8 @@ focus_tree = {
 				multiply_temp_variable = { treasury_change = -0.1 }
 				modify_treasury_effect = yes
 				add_ideas = COLDWAR_GRE_R3_preview_visitor_credit_0
-				143 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 143 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = offices level = 1 instant_build = yes }
 				}
@@ -507,7 +613,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			140 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = industrial_complex size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -520,7 +626,8 @@ focus_tree = {
 				multiply_temp_variable = { treasury_change = -0.16 }
 				modify_treasury_effect = yes
 				add_ideas = COLDWAR_GRE_R3_preview_industrial_credit_0
-				140 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 140 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 				}
@@ -551,7 +658,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			143 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -563,7 +670,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.015 }
 				modify_treasury_effect = yes
-				143 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 143 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 				}
@@ -643,7 +751,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			139 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -655,7 +763,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.02 }
 				modify_treasury_effect = yes
-				139 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 139 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 				}
@@ -772,7 +881,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			141 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = dockyard size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -784,7 +893,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.045 }
 				modify_treasury_effect = yes
-				141 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 141 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = dockyard level = 1 instant_build = yes }
 				}
@@ -861,7 +971,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			142 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = industrial_complex size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -873,7 +983,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.03 }
 				modify_treasury_effect = yes
-				142 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 142 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 				}
@@ -1234,7 +1345,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			140 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = arms_factory size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -1246,7 +1357,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.03 }
 				modify_treasury_effect = yes
-				140 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 140 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 				}
@@ -1429,7 +1541,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			144 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_radar_station_1_tt check_variable = { var = building_level@radar_station value = 5 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -1441,7 +1553,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.015 }
 				modify_treasury_effect = yes
-				144 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 144 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = radar_station level = 1 instant_build = yes }
 				}
@@ -2060,7 +2173,7 @@ focus_tree = {
 		available = {
 			nationalist_military_junta_are_in_power = yes
 			has_country_leader = { name = "Georgios Papadopoulos" ruling_only = yes }
-			141 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = industrial_complex size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -2072,7 +2185,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.03 }
 				modify_treasury_effect = yes
-				141 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 141 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 				}
@@ -2460,7 +2574,7 @@ focus_tree = {
 		available_if_capitulated = no
 		available = {
 			western_conservatism_are_in_power = yes
-			140 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = industrial_complex size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -2472,7 +2586,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.03 }
 				modify_treasury_effect = yes
-				140 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 140 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 				}
@@ -2880,7 +2995,7 @@ focus_tree = {
 		available_if_capitulated = no
 		available = {
 			western_social_democrats_are_in_power = yes
-			141 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = industrial_complex size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -2892,7 +3007,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.2 }
 				modify_treasury_effect = yes
-				141 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 141 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 				}
@@ -2928,7 +3044,7 @@ focus_tree = {
 		available_if_capitulated = no
 		available = {
 			western_social_democrats_are_in_power = yes
-			140 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = offices size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -2940,7 +3056,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.16 }
 				modify_treasury_effect = yes
-				140 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 140 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = offices level = 1 instant_build = yes }
 				}
@@ -4181,7 +4298,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			142 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_fossil_powerplant_1_tt check_variable = { var = building_level@fossil_powerplant value = 19 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4193,7 +4310,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.1 }
 				modify_treasury_effect = yes
-				142 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 142 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
 				}
@@ -4228,8 +4346,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			140 = { is_owned_by = GRE is_controlled_by = GRE }
-			140 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4246,7 +4363,8 @@ focus_tree = {
 					set_temp_variable = { storage_addition = 0 }
 					add_hydroelectric_energy_production_effect = yes
 				}
-				140 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 140 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 				}
@@ -4322,8 +4440,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			140 = { is_owned_by = GRE is_controlled_by = GRE }
-			140 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4338,7 +4455,8 @@ focus_tree = {
 				140 = {
 					add_resource = { type = oil amount = 2 }
 				}
-				140 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 140 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 				}
@@ -4375,7 +4493,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			141 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = offices size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4387,7 +4505,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.06 }
 				modify_treasury_effect = yes
-				141 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 141 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = offices level = 1 instant_build = yes }
 				}
@@ -4427,7 +4546,7 @@ focus_tree = {
 		available = {
 			has_tech = internet_2
 			141 = { check_variable = { var = building_level@internet_station value = 1 compare = less_than_or_equals } }
-			141 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_internet_station_1_tt check_variable = { var = building_level@internet_station value = 10 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4439,7 +4558,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.08 }
 				modify_treasury_effect = yes
-				141 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 141 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = internet_station level = 1 instant_build = yes }
 				}
@@ -4575,7 +4695,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			141 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = arms_factory size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4587,7 +4707,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.12 }
 				modify_treasury_effect = yes
-				141 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 141 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 				}
@@ -4625,7 +4746,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			140 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_infrastructure_2_tt check_variable = { var = building_level@infrastructure value = 4 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4637,7 +4758,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.12 }
 				modify_treasury_effect = yes
-				140 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 140 }
 					add_extra_state_shared_building_slots = 2
 					add_building_construction = { type = infrastructure level = 2 instant_build = yes }
 				}
@@ -4669,7 +4791,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			141 = { is_owned_by = GRE is_controlled_by = GRE custom_trigger_tooltip = { tooltip = COLDWAR_GRANT_capacity_infrastructure_1_tt check_variable = { var = building_level@infrastructure value = 5 compare = less_than_or_equals } } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4681,7 +4803,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.1 }
 				modify_treasury_effect = yes
-				141 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 141 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
 				}
@@ -4715,7 +4838,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 		available = {
-			144 = { is_owned_by = GRE is_controlled_by = GRE free_building_slots = { building = offices size > 0 include_locked = yes } }
+			# IMPERIA COLD WAR — MD standard: no ownership/slot gate, MD handles the build target in the effect
 			hidden_trigger = {
 				original_tag = GRE
 				exists = yes
@@ -4727,7 +4850,8 @@ focus_tree = {
 				set_temp_variable = { treasury_change = gdp_total }
 				multiply_temp_variable = { treasury_change = -0.12 }
 				modify_treasury_effect = yes
-				144 = {
+				random_owned_controlled_state = { # IMPERIA COLD WAR — MD fallback build target
+					prioritize = { 144 }
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = offices level = 1 instant_build = yes }
 				}

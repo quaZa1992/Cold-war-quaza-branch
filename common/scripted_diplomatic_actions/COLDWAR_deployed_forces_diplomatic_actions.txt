@@ -1,0 +1,35 @@
+# IMPERIA COLD WAR — Cold War: war with deployed forces (24.11.2026).
+# Replaces the native war declaration when HOI4 blocks it because our divisions stand in the target's territory.
+# ROOT = the country that sends the action, THIS = the target.
+scripted_diplomatic_actions = {
+	COLDWAR_DEP_declare = {
+		allowed = { always = yes }
+		cost = 0
+		icon = 1
+		visible = {
+			NOT = { tag = ROOT }
+			NOT = { has_war_with = ROOT }
+			COLDWAR_DEP_root_deployed_in_this = yes
+		}
+		selectable = {
+			COLDWAR_DEP_can_declare = yes
+		}
+		requires_acceptance = no
+		complete_effect = {
+			custom_effect_tooltip = COLDWAR_DEP_declare_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						COLDWAR_DEP_can_declare = yes
+						COLDWAR_DEP_root_deployed_in_this = yes
+					}
+					log = "[GetDateText]: [Root.GetName]: declares war on [This.GetName] with forces deployed in their territory"
+					COLDWAR_DEP_declare_war = yes
+				}
+			}
+		}
+		accept_title = COLDWAR_DEP_declare_t
+		accept_description = COLDWAR_DEP_declare_d
+		ai_desire = { base = -1000 }
+	}
+}

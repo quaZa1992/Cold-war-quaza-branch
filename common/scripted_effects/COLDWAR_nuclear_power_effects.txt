@@ -37,6 +37,14 @@ COLDWAR_nuc_ensure_modifiers = {
 
 COLDWAR_nuc_monthly = {
 	COLDWAR_nuc_ensure_modifiers = yes
+	# COLDWAR 13.11.2026: the RBMK design flaw ends with Reactor Safety Upgrades
+	if = {
+		limit = {
+			has_idea = COLDWAR_graphite_channel_reactors
+			has_tech = mdcw_reactor_safety_upgrades_1980
+		}
+		remove_ideas = COLDWAR_graphite_channel_reactors
+	}
 	COLDWAR_cop_update = yes
 	if = {
         limit = {
@@ -257,6 +265,8 @@ COLDWAR_fuel_buyer_monthly = {
 		set_temp_variable = { COLDWAR_t_fuel_price = modifier@inflation_cost_multiplier_modifier }
 		add_to_temp_variable = { COLDWAR_t_fuel_price = 1 }
 		multiply_temp_variable = { COLDWAR_t_fuel_price = -0.02 }
+		# IMPERIA COLD WAR — Pakistan 1970: fuel under full safeguards costs 25% less.
+		if = { limit = { has_country_flag = COLDWAR_PAK_safeguards_fuel_discount } multiply_temp_variable = { COLDWAR_t_fuel_price = 0.75 } }
 		set_temp_variable = { treasury_change = nuclear_reactors }
 		multiply_temp_variable = { treasury_change = COLDWAR_t_fuel_price }
 		modify_treasury_effect = yes

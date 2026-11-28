@@ -1,0 +1,38 @@
+# IMPERIA COLD WAR - open hooks of the 21.11.2026 audit (tools/playtest1_postfix/open_hooks_1970.py, 23.11.2026).
+on_actions = {
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = { IMP_is_1970_scenario = yes original_tag = USA }
+				set_global_flag = COLDWAR_SOVR_usa_lost_war
+			}
+			if = {
+				limit = { IMP_is_1970_scenario = yes original_tag = SOV }
+				set_country_flag = COLDWAR_SOVR_lost_war
+			}
+		}
+	}
+	on_monthly_ISR = {
+		effect = {
+			if = {
+				limit = { IMP_is_1970_scenario = yes date > 1973.9.13 NOT = { has_country_flag = ISR70_likud_founded } NOT = { has_country_flag = COLDWAR_ISR_initialized } } # COLDWAR ISR 1970: Likud comes from the focus (no dated change)
+				set_country_flag = ISR70_likud_founded
+			}
+		}
+	}
+	on_monthly_SOV = {
+		effect = {
+			if = {
+				limit = {
+					IMP_is_1970_scenario = yes
+					any_country = { has_country_flag = COLDWAR_SU_funds_radio has_idea = mdcw_ni_broadcasting }
+				}
+				set_global_flag = COLDWAR_SU_radio_boost
+			}
+			else_if = {
+				limit = { has_global_flag = COLDWAR_SU_radio_boost }
+				clr_global_flag = COLDWAR_SU_radio_boost
+			}
+		}
+	}
+}

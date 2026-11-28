@@ -1,0 +1,163 @@
+# IMPERIA COLD WAR — 1971 settlements
+
+COLDWAR_RAJ_1970_pak_subject_of_raj = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_pak_subject_of_raj_tt
+		country_exists = PAK
+		PAK = { is_subject_of = RAJ }
+	}
+}
+
+COLDWAR_RAJ_1970_ban_subject_of_raj = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_ban_subject_eligible_tt
+	country_exists = BAN
+	BAN = { is_subject_of = RAJ }
+
+	}
+}
+
+COLDWAR_RAJ_1970_ban_independence_eligible = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_ban_independent_eligible_tt
+		COLDWAR_RAJ_1970_foreign_bangladesh_settlement_independent_valid = yes
+	}
+}
+
+COLDWAR_RAJ_1970_ban_indian_held_state = {
+	OR = { state = 490 state = 492 state = 493 state = 494 }
+	is_owned_by = RAJ
+	is_fully_controlled_by = RAJ
+}
+
+COLDWAR_RAJ_1970_ban_annex_eligible = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_ban_annex_eligible_tt
+		any_owned_state = { COLDWAR_RAJ_1970_ban_indian_held_state = yes }
+	}
+}
+
+COLDWAR_RAJ_1970_ban_radical_government = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_ban_radical_tt
+		OR = {
+			COLDWAR_RAJ_1970_shiv_sena_governing = yes
+			AND = {
+				COLDWAR_RAJ_1970_bjp_governing = yes
+				has_country_flag = COLDWAR_RAJ_1970_radical_hindutva
+			}
+		}
+	}
+}
+
+COLDWAR_RAJ_1970_ban_integration_ready = {
+	COLDWAR_RAJ_1970_ban_subject_of_raj = yes
+	hidden_trigger = { has_country_flag = COLDWAR_RAJ_1970_ban_integration_started }
+}
+
+COLDWAR_RAJ_1970_pak_war_verified_victory = { has_country_flag = COLDWAR_RAJ_1970_pak_war_victory_verified }
+COLDWAR_RAJ_1970_pak_war_verified_stalemate = { has_country_flag = COLDWAR_RAJ_1970_pak_war_stalemate_verified }
+COLDWAR_RAJ_1970_pak_war_verified_defeat = { has_country_flag = COLDWAR_RAJ_1970_pak_war_defeat_verified }
+COLDWAR_RAJ_1970_pak_war_active = {
+	has_war_with = PAK
+	hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_war_resolved } }
+}
+
+COLDWAR_RAJ_1970_pak_war_outcome_known = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_pak_war_outcome_known_tt
+		OR = {
+			COLDWAR_RAJ_1970_pak_war_verified_victory = yes
+			COLDWAR_RAJ_1970_pak_war_verified_stalemate = yes
+			COLDWAR_RAJ_1970_pak_war_verified_defeat = yes
+		}
+	}
+}
+
+# The India tree records the first native war with Pakistan in this scenario.
+
+COLDWAR_RAJ_1970_pak_campaign_open = {
+	NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_war_resolved }
+}
+
+COLDWAR_RAJ_1970_pak_can_record_war = {
+	original_tag = RAJ
+	IMP_is_1970_scenario = yes
+	has_war_with = PAK
+	NOT = {
+		OR = {
+			has_country_flag = COLDWAR_RAJ_1970_pak_war_instance_active
+			has_country_flag = COLDWAR_RAJ_1970_pak_war_resolved
+		}
+	}
+}
+
+COLDWAR_RAJ_1970_pak_war_total_settlement = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_pak_total_victory_tt
+		COLDWAR_RAJ_1970_pak_war_verified_victory = yes
+		NOT = { has_war_with = PAK }
+	}
+}
+
+COLDWAR_RAJ_1970_pak_war_limited_settlement = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_pak_partial_victory_tt
+		COLDWAR_RAJ_1970_pak_war_verified_stalemate = yes
+		NOT = { has_war_with = PAK }
+	}
+}
+
+COLDWAR_RAJ_1970_pak_war_lost_settlement = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_pak_defeat_tt
+		COLDWAR_RAJ_1970_pak_war_verified_defeat = yes
+		NOT = { has_war_with = PAK }
+	}
+}
+
+COLDWAR_RAJ_1970_pak_western_land_gained = {
+	any_owned_state = {
+		is_fully_controlled_by = RAJ
+		OR = {
+			has_state_flag = COLDWAR_RAJ_1970_pak_war_prewar_west
+			has_state_flag = COLDWAR_RAJ_1970_pak_war_west_granted
+			AND = {
+				# Old saves did not snapshot the starting frontier.
+				NOT = { RAJ = { has_country_flag = COLDWAR_RAJ_1970_pak_war_scoped } }
+				is_core_of = PAK
+				NOT = { OR = { is_core_of = RAJ is_core_of = BAN } }
+			}
+		}
+	}
+}
+
+COLDWAR_RAJ_1970_pak_annexed_west_settlement = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_pak_annexed_west_tt
+		COLDWAR_RAJ_1970_pak_western_land_gained = yes
+	}
+}
+
+COLDWAR_RAJ_1970_pak_western_border_intact = {
+	PAK = { exists = yes is_subject = no }
+	NOT = { COLDWAR_RAJ_1970_pak_western_land_gained = yes }
+	NOT = { any_state = { has_state_flag = COLDWAR_RAJ_1970_pak_war_prewar_west NOT = { is_owned_by = PAK } } }
+}
+
+COLDWAR_RAJ_1970_ban_independent_homeland = {
+	BAN = { exists = yes is_subject = no }
+	490 = { is_owned_by = BAN is_controlled_by = BAN }
+	492 = { is_owned_by = BAN is_controlled_by = BAN }
+	493 = { is_owned_by = BAN is_controlled_by = BAN }
+	494 = { is_owned_by = BAN is_controlled_by = BAN }
+}
+
+COLDWAR_RAJ_1970_pak_historical_east_eligible = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_RAJ_1970_pak_historical_east_tt
+		COLDWAR_RAJ_1970_pak_war_limited_settlement = yes
+		COLDWAR_RAJ_1970_pak_western_border_intact = yes
+		COLDWAR_RAJ_1970_ban_independent_homeland = yes
+	}
+}

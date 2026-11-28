@@ -1,0 +1,874 @@
+# IMPERIA COLD WAR — Cold War internal faction events (2026-11-13)
+# Licence: part of the Imperia Cold War mod, based on Millennium Dawn. Not for reuse outside the mod without permission of the Imperia team.
+# Update 2026-11-13: dedicated events for factions that had none of their own (landowners, the military, fossil fuel industry,
+#   international bankers, Wall Street, chaebols, donju, clergy, priesthood). Fired from the MD on_monthly random_events pool
+#   (common/on_actions/MD_event_on_actions.txt). Favour costs follow the Cold War pass: +5 = 75 PP or 0.3% GDP, +10 = 150 PP or 0.6% GDP.
+
+add_namespace = coldwar_ifac
+
+# IMPERIA COLD WAR — Landowners Resist Land Reform
+country_event = {
+	id = coldwar_ifac.1
+	title = coldwar_ifac.1.t
+	desc = coldwar_ifac.1.d
+	picture = GFX_internal_faction_political_conflict
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = landowners
+		NOT = { has_country_flag = COLDWAR_ifac_1_recent }
+		check_variable = { agriculture_district_total > 0 }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_1_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.1.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.1.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_landowners_opinion = yes
+		add_political_power = -150
+		if = {
+			limit = { has_idea = farmers }
+			set_temp_variable = { temp_opinion = -10 }
+			change_farmers_opinion = yes
+		}
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.1.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.1.o2 executed"
+		set_temp_variable = { temp_opinion = -15 }
+		change_landowners_opinion = yes
+		if = {
+			limit = { has_idea = farmers }
+			set_temp_variable = { temp_opinion = 5 }
+			change_farmers_opinion = yes
+		}
+		add_stability = -0.02
+		ai_chance = { base = 1 }
+	}
+	option = {
+		name = coldwar_ifac.1.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.1.o3 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_landowners_opinion = yes
+		if = {
+			limit = { has_idea = farmers }
+			set_temp_variable = { temp_opinion = 5 }
+			change_farmers_opinion = yes
+		}
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.009 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+}
+
+# IMPERIA COLD WAR — Estate Owners Demand Export Credits
+country_event = {
+	id = coldwar_ifac.2
+	title = coldwar_ifac.2.t
+	desc = coldwar_ifac.2.d
+	picture = GFX_internal_faction_money
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = landowners
+		NOT = { has_country_flag = COLDWAR_ifac_2_recent }
+		check_variable = { agriculture_district_total > 0 }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_2_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.2.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.2.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_landowners_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.2.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.2.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_landowners_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.2.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.2.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_landowners_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — The General Staff Demands New Equipment
+country_event = {
+	id = coldwar_ifac.3
+	title = coldwar_ifac.3.t
+	desc = coldwar_ifac.3.d
+	picture = GFX_weapons_arms1
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = the_military
+		NOT = { has_country_flag = COLDWAR_ifac_3_recent }
+		has_war = no
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_3_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.3.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.3.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_the_military_opinion = yes
+		if = {
+			limit = { has_idea = defense_industry }
+			set_temp_variable = { temp_opinion = 5 }
+			change_defense_industry_opinion = yes
+		}
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.3.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.3.o2 executed"
+		set_temp_variable = { temp_opinion = 3 }
+		change_the_military_opinion = yes
+		add_political_power = -50
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.3.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.3.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_the_military_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Officers Complain About Pay
+country_event = {
+	id = coldwar_ifac.4
+	title = coldwar_ifac.4.t
+	desc = coldwar_ifac.4.d
+	picture = GFX_politics_talks
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = the_military
+		NOT = { has_country_flag = COLDWAR_ifac_4_recent }
+		check_variable = { the_military_opinion < 60 }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_4_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.4.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.4.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_the_military_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.4.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.4.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_the_military_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.4.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.4.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_the_military_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Oil Companies Seek Exploration Licences
+country_event = {
+	id = coldwar_ifac.5
+	title = coldwar_ifac.5.t
+	desc = coldwar_ifac.5.d
+	picture = GFX_internal_faction_energy
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = fossil_fuel_industry
+		NOT = { has_country_flag = COLDWAR_ifac_5_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_5_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.5.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.5.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_fossil_fuel_industry_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.5.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.5.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_fossil_fuel_industry_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.5.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.5.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_fossil_fuel_industry_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Bankers Lobby Against Exchange Controls
+country_event = {
+	id = coldwar_ifac.6
+	title = coldwar_ifac.6.t
+	desc = coldwar_ifac.6.d
+	picture = GFX_stock_market
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = international_bankers
+		NOT = { has_country_flag = COLDWAR_ifac_6_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_6_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.6.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.6.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_international_bankers_opinion = yes
+		add_political_power = -150
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.6.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.6.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_international_bankers_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.6.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.6.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_international_bankers_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Wall Street Fears for the Dollar
+country_event = {
+	id = coldwar_ifac.7
+	title = coldwar_ifac.7.t
+	desc = coldwar_ifac.7.d
+	picture = GFX_stock_market
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = wall_street
+		NOT = { has_country_flag = COLDWAR_ifac_7_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_7_recent value = 1 days = 730 }
+	}
+
+	option = {
+		name = coldwar_ifac.7.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.7.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_wall_street_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.7.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.7.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_wall_street_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.7.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.7.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_wall_street_opinion = yes
+		add_political_power = 50
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Brokers Fight Over Fixed Commissions
+country_event = {
+	id = coldwar_ifac.8
+	title = coldwar_ifac.8.t
+	desc = coldwar_ifac.8.d
+	picture = GFX_internal_faction_business_purchase
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = wall_street
+		NOT = { has_country_flag = COLDWAR_ifac_8_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_8_recent value = 1 days = 730 }
+	}
+
+	option = {
+		name = coldwar_ifac.8.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.8.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_wall_street_opinion = yes
+		add_political_power = -150
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.8.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.8.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_wall_street_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.8.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.8.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_wall_street_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Chaebols Request Policy Loans
+country_event = {
+	id = coldwar_ifac.9
+	title = coldwar_ifac.9.t
+	desc = coldwar_ifac.9.d
+	picture = GFX_internal_faction_money
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = chaebols
+		NOT = { has_country_flag = COLDWAR_ifac_9_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_9_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.9.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.9.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_chaebols_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.9.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.9.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_chaebols_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.9.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.9.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_chaebols_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Chaebols Compete for Heavy Industry Licences
+country_event = {
+	id = coldwar_ifac.10
+	title = coldwar_ifac.10.t
+	desc = coldwar_ifac.10.d
+	picture = GFX_generic_factory
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = chaebols
+		NOT = { has_country_flag = COLDWAR_ifac_10_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_10_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.10.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.10.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_chaebols_opinion = yes
+		add_political_power = -150
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.10.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.10.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_chaebols_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.10.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.10.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_chaebols_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Traders Expand the Farmers' Markets
+country_event = {
+	id = coldwar_ifac.11
+	title = coldwar_ifac.11.t
+	desc = coldwar_ifac.11.d
+	picture = GFX_internal_faction_business_purchase
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = the_donju
+		NOT = { has_country_flag = COLDWAR_ifac_11_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_11_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.11.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.11.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_the_donju_opinion = yes
+		if = {
+			limit = { has_idea = communist_cadres }
+			set_temp_variable = { temp_opinion = -5 }
+			change_communist_cadres_opinion = yes
+		}
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.11.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.11.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_the_donju_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.11.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.11.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_the_donju_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Bishops Speak Out on Social Questions
+country_event = {
+	id = coldwar_ifac.12
+	title = coldwar_ifac.12.t
+	desc = coldwar_ifac.12.d
+	picture = GFX_internal_faction_religion
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = the_clergy
+		NOT = { has_country_flag = COLDWAR_ifac_12_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_12_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.12.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.12.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_the_clergy_opinion = yes
+		add_political_power = -150
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.12.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.12.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_the_clergy_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.12.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.12.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_the_clergy_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Church Schools Request State Funding
+country_event = {
+	id = coldwar_ifac.13
+	title = coldwar_ifac.13.t
+	desc = coldwar_ifac.13.d
+	picture = GFX_internal_faction_religion
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = the_clergy
+		NOT = { has_country_flag = COLDWAR_ifac_13_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_13_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.13.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.13.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_the_clergy_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.13.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.13.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_the_clergy_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.13.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.13.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_the_clergy_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Temple Authorities Request Restoration Funds
+country_event = {
+	id = coldwar_ifac.14
+	title = coldwar_ifac.14.t
+	desc = coldwar_ifac.14.d
+	picture = GFX_internal_faction_religion
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = the_priesthood
+		NOT = { has_country_flag = COLDWAR_ifac_14_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_14_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.14.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.14.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_the_priesthood_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.14.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.14.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_the_priesthood_opinion = yes
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				check_variable = { interest_rate > 9 }
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.14.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.14.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_the_priesthood_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}
+
+# IMPERIA COLD WAR — Priesthood Opposes the Family Planning Campaign
+country_event = {
+	id = coldwar_ifac.15
+	title = coldwar_ifac.15.t
+	desc = coldwar_ifac.15.d
+	picture = GFX_politics_protest
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_idea = the_priesthood
+		NOT = { has_country_flag = COLDWAR_ifac_15_recent }
+	}
+
+	immediate = {
+		set_country_flag = { flag = COLDWAR_ifac_15_recent value = 1 days = 365 }
+	}
+
+	option = {
+		name = coldwar_ifac.15.o1
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.15.o1 executed"
+		set_temp_variable = { temp_opinion = 10 }
+		change_the_priesthood_opinion = yes
+		add_political_power = -150
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.15.o2
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.15.o2 executed"
+		set_temp_variable = { temp_opinion = 5 }
+		change_the_priesthood_opinion = yes
+		add_political_power = -75
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_political_power < 200
+			}
+		}
+	}
+	option = {
+		name = coldwar_ifac.15.o3
+		log = "[GetDateText]: [This.GetName]: coldwar_ifac.15.o3 executed"
+		set_temp_variable = { temp_opinion = -10 }
+		change_the_priesthood_opinion = yes
+		ai_chance = { base = 1 }
+	}
+}

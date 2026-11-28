@@ -1,0 +1,112 @@
+# IMPERIA COLD WAR — South African project affordability
+# Project prices use the MD treasury's billions of dollars. HOI4 scripted
+# trigger and effect calls use concrete names for these rates.
+COLDWAR_SAF_PROJECT_can_fund_rail = {
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_PROJECT_can_fund_tt
+  check_variable = { gdp_total > 0 }
+  NOT = { has_country_flag = MD_skip_treasury_cost }
+  set_temp_variable = { COLDWAR_SAF_PROJECT_price = { value = gdp_total multiply = 0.005 } }
+  check_variable = { var = treasury value = COLDWAR_SAF_PROJECT_price compare = greater_than_or_equals }
+ }
+}
+
+COLDWAR_SAF_PROJECT_can_fund_factory = {
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_PROJECT_can_fund_tt
+  check_variable = { gdp_total > 0 }
+  NOT = { has_country_flag = MD_skip_treasury_cost }
+  set_temp_variable = { COLDWAR_SAF_PROJECT_price = { value = gdp_total multiply = 0.01 } }
+  check_variable = { var = treasury value = COLDWAR_SAF_PROJECT_price compare = greater_than_or_equals }
+ }
+}
+
+COLDWAR_SAF_PROJECT_can_fund_fuel_silo = {
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_PROJECT_can_fund_tt
+  check_variable = { gdp_total > 0 }
+  NOT = { has_country_flag = MD_skip_treasury_cost }
+  set_temp_variable = { COLDWAR_SAF_PROJECT_price = { value = gdp_total multiply = 0.0015 } }
+  check_variable = { var = treasury value = COLDWAR_SAF_PROJECT_price compare = greater_than_or_equals }
+ }
+}
+
+COLDWAR_SAF_PROJECT_can_fund_housing_works = {
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_PROJECT_can_fund_tt
+  check_variable = { gdp_total > 0 }
+  NOT = { has_country_flag = MD_skip_treasury_cost }
+  set_temp_variable = { COLDWAR_SAF_PROJECT_price = { value = gdp_total multiply = 0.001 } }
+  check_variable = { var = treasury value = COLDWAR_SAF_PROJECT_price compare = greater_than_or_equals }
+ }
+}
+
+COLDWAR_SAF_PROJECT_fuel_silo_site = {
+ is_fully_controlled_by = ROOT
+ is_core_of = ROOT
+ fuel_silo < 5
+}
+
+COLDWAR_SAF_PROJECT_can_build_fuel_silo = {
+ NOT = { has_country_flag = COLDWAR_SAF_ECONPLAN_silo_built }
+ COLDWAR_SAF_PROJECT_can_fund_fuel_silo = yes
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_REWARD_fuel_silo_site_tt
+  any_owned_state = { COLDWAR_SAF_PROJECT_fuel_silo_site = yes }
+ }
+}
+
+COLDWAR_SAF_PROJECT_can_fund_power_station = {
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_PROJECT_can_fund_tt
+  check_variable = { gdp_total > 0 }
+  NOT = { has_country_flag = MD_skip_treasury_cost }
+  set_temp_variable = { COLDWAR_SAF_PROJECT_price = { value = gdp_total multiply = 0.0075 } }
+  check_variable = { var = treasury value = COLDWAR_SAF_PROJECT_price compare = greater_than_or_equals }
+ }
+}
+
+COLDWAR_SAF_PROJECT_reef_terminal_site = {
+ is_fully_controlled_by = ROOT
+ is_core_of = ROOT
+ rail_terminal < 5
+}
+
+COLDWAR_SAF_PROJECT_power_station_site = {
+ is_fully_controlled_by = ROOT
+ is_core_of = ROOT
+ fossil_powerplant < 20
+}
+
+COLDWAR_SAF_PROJECT_industrial_development_site = {
+ is_fully_controlled_by = ROOT
+ is_core_of = ROOT
+ free_building_slots = { building = industrial_complex size > 0 include_locked = no }
+}
+
+COLDWAR_SAF_PROJECT_can_build_reef_terminal = {
+ hidden_trigger = { NOT = { has_country_flag = COLDWAR_SAF_ECONPLAN_reef_terminal_built } }
+ COLDWAR_SAF_PROJECT_can_fund_rail = yes
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_REWARD_reef_terminal_site_tt
+  any_owned_state = { COLDWAR_SAF_PROJECT_reef_terminal_site = yes }
+ }
+}
+
+COLDWAR_SAF_PROJECT_can_build_power_station = {
+ hidden_trigger = { NOT = { has_country_flag = COLDWAR_SAF_ECONPLAN_power_station_built } }
+ COLDWAR_SAF_PROJECT_can_fund_power_station = yes
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_REWARD_power_station_site_tt
+  any_owned_state = { COLDWAR_SAF_PROJECT_power_station_site = yes }
+ }
+}
+
+COLDWAR_SAF_PROJECT_can_build_industrial_development = {
+ hidden_trigger = { NOT = { has_country_flag = COLDWAR_SAF_ECONPLAN_development_factory_built } }
+ COLDWAR_SAF_PROJECT_can_fund_factory = yes
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_REWARD_industrial_development_site_tt
+  any_owned_state = { COLDWAR_SAF_PROJECT_industrial_development_site = yes }
+ }
+}

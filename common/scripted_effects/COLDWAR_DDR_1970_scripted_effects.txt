@@ -14,15 +14,15 @@ COLDWAR_DDR_initialize_1970 = {
 		set_country_flag = COLDWAR_DDR_first_sec_ulb
 		# laws, internal factions and the seven starting spirits
 		add_ideas = {
-			bureau_04
+			bureau_01
 			defence_05
-			police_05
-			edu_04
-			health_04
-			social_04
+			police_01
+			edu_02
+			health_02
+			social_02
 			draft_army
 			officer_military_academy
-			md_closed_economy
+			consumption_economy
 			comprehensive_regulations
 			fully_nationalized_healthcare
 			censored_nation_05
@@ -192,10 +192,12 @@ COLDWAR_DDR_bow_to_moscow = {
 COLDWAR_DDR_resist_fraternal_assistance = {
 	add_war_support = 0.10
 	custom_effect_tooltip = COLDWAR_DDR_resist_tt
+	# IMPERIA COLD WAR — MD standard (B7): Moscow answers in its own event (release or intervention), no forced war
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	effect_tooltip = { if = { limit = { is_subject_of = SOV } SOV = { end_puppet = ROOT } } }
 	hidden_effect = {
-		if = { limit = { is_subject_of = SOV } SOV = { end_puppet = PREV } }
 		COLDWAR_DDR_leave_warsaw_pact = yes
-		if = { limit = { country_exists = SOV NOT = { has_war_with = SOV } } SOV = { declare_war_on = { target = PREV type = topple_government } } }
+		if = { limit = { country_exists = SOV NOT = { has_war_with = SOV } } SOV = { country_event = { id = COLDWAR_B7.1 days = 1 } } }
 	}
 }
 
@@ -261,14 +263,17 @@ COLDWAR_DDR_begin_transition = {
 	}
 }
 
+# IMPERIA COLD WAR — MD standard (B7): Bonn signs the accession in its own event; nothing happens in Bonn's scope from here
 COLDWAR_DDR_complete_accession = {
-	clr_country_flag = COLDWAR_DDR_accession_pending
 	COLDWAR_DDR_leave_warsaw_pact = yes
-	if = {
-		limit = { has_country_flag = COLDWAR_DDR_social_charter }
-		GER = { add_timed_idea = { idea = COLDWAR_DDR_eastern_social_charter days = 1825 } }
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT
+	effect_tooltip = {
+		GER = {
+			if = { limit = { ROOT = { has_country_flag = COLDWAR_DDR_social_charter } } add_timed_idea = { idea = COLDWAR_DDR_eastern_social_charter days = 1825 } }
+			annex_country = { target = ROOT transfer_troops = yes }
+		}
 	}
-	GER = { annex_country = { target = PREV transfer_troops = yes } }
+	hidden_effect = { if = { limit = { country_exists = GER } GER = { country_event = { id = COLDWAR_B7.4 days = 1 } } } }
 }
 
 # ---- elections ----------------------------------------------------------------------------------
@@ -504,8 +509,8 @@ COLDWAR_DDR_install_first_sec_ulb = {
 		set_country_flag = COLDWAR_DDR_first_sec_ulb
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_walter_ulbricht" picture = "gfx/Leaders/DDR/DDR_Coldwar_WalterUlbricht.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_walter_ulbricht } promote_character = COLDWAR_DDR_1970_leader_walter_ulbricht }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_ulb_the_architect_of_the_republic } add_country_leader_trait = COLDWAR_DDR_ulb_founder_of_the_republic }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
 		}
@@ -531,8 +536,8 @@ COLDWAR_DDR_install_first_sec_hon = {
 		set_country_flag = COLDWAR_DDR_first_sec_hon
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_erich_honecker" picture = "gfx/leaders/COLDWAR_europe_1970/erich_honecker.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_erich_honecker } promote_character = COLDWAR_DDR_1970_leader_erich_honecker }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_erich_honecker_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hon_the_roofer_from_the_saar } add_country_leader_trait = COLDWAR_DDR_hon_man_of_the_apparatus }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -559,8 +564,8 @@ COLDWAR_DDR_install_first_sec_sto = {
 		set_country_flag = COLDWAR_DDR_first_sec_sto
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/willi_stoph.dds" name = "COLDWAR_DDR_leader_willi_stoph" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_willi_stoph } promote_character = COLDWAR_DDR_1970_leader_willi_stoph }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_willi_stoph_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_sto_the_man_from_erfurt } add_country_leader_trait = COLDWAR_DDR_sto_the_administrator }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -587,8 +592,8 @@ COLDWAR_DDR_install_first_sec_mit = {
 		set_country_flag = COLDWAR_DDR_first_sec_mit
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/gunter_mittag.dds" name = "COLDWAR_DDR_leader_guenter_mittag" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_guenter_mittag } promote_character = COLDWAR_DDR_1970_leader_guenter_mittag }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_gunter_mittag_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_mit_the_master_of_the_balance_sheet } add_country_leader_trait = COLDWAR_DDR_mit_economic_czar }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -615,8 +620,8 @@ COLDWAR_DDR_install_first_sec_hag = {
 		set_country_flag = COLDWAR_DDR_first_sec_hag
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/kurt_hager.dds" name = "COLDWAR_DDR_leader_kurt_hager" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_kurt_hager } promote_character = COLDWAR_DDR_1970_leader_kurt_hager }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_kurt_hager_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hag_the_chief_ideologist } add_country_leader_trait = COLDWAR_DDR_hag_keeper_of_the_doctrine }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -643,8 +648,8 @@ COLDWAR_DDR_install_first_sec_hof = {
 		set_country_flag = COLDWAR_DDR_first_sec_hof
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/heinz_hoffmann.dds" name = "COLDWAR_DDR_leader_heinz_hoffmann" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_1970_officer_ddr_heinz_hoffmann } promote_character = COLDWAR_1970_officer_ddr_heinz_hoffmann }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_heinz_hoffmann_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hof_comrade_army_general } add_country_leader_trait = COLDWAR_DDR_hof_army_general }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hof_marshal_of_the_gdr } add_country_leader_trait = COLDWAR_DDR_hof_marshal_of_the_gdr }
@@ -672,8 +677,8 @@ COLDWAR_DDR_install_first_sec_lam = {
 		set_country_flag = COLDWAR_DDR_first_sec_lam
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/werner_lamberz.dds" name = "COLDWAR_DDR_leader_werner_lamberz" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_werner_lamberz } promote_character = COLDWAR_DDR_1970_leader_werner_lamberz }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_werner_lamberz_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_lam_the_gdrs_kennedy } add_country_leader_trait = COLDWAR_DDR_lam_the_gdrs_kennedy }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -700,8 +705,8 @@ COLDWAR_DDR_install_first_sec_kro = {
 		set_country_flag = COLDWAR_DDR_first_sec_kro
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/werner_krolikowski.dds" name = "COLDWAR_DDR_leader_werner_krolikowski" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_werner_krolikowski } promote_character = COLDWAR_DDR_1970_leader_werner_krolikowski }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_werner_krolikowski_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_kro_loyalty_without_reservation } add_country_leader_trait = COLDWAR_DDR_kro_moscows_man }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -728,8 +733,8 @@ COLDWAR_DDR_install_first_sec_kre = {
 		set_country_flag = COLDWAR_DDR_first_sec_kre
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_egon_krenz" picture = "gfx/leaders/COLDWAR_europe_1970/egon_krenz.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_egon_krenz } promote_character = COLDWAR_DDR_1970_leader_egon_krenz }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_egon_krenz_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_kre_a_younger_face } add_country_leader_trait = COLDWAR_DDR_kre_the_fdj_generation }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -756,8 +761,8 @@ COLDWAR_DDR_install_first_sec_mod = {
 		set_country_flag = COLDWAR_DDR_first_sec_mod
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_hans_modrow" picture = "gfx/leaders/COLDWAR_europe_1970/hans_modrow.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_hans_modrow } promote_character = COLDWAR_DDR_1970_leader_hans_modrow }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_hans_modrow_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_mod_the_man_from_dresden } add_country_leader_trait = COLDWAR_DDR_mod_the_dresden_reformer }
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -781,8 +786,8 @@ COLDWAR_DDR_install_kessler = {
 		set_country_flag = COLDWAR_DDR_kessler_leads
 		if = {
 			limit = { emerging_communist_state_are_in_power = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_heinz_kessler" picture = "gfx/leaders/COLDWAR_europe_1970/heinz_kessler.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_1970_officer_ddr_heinz_kessler } promote_character = COLDWAR_1970_officer_ddr_heinz_kessler }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_heinz_kessler_4 = yes }
 			add_country_leader_trait = COLDWAR_DDR_hof_army_general
 			news_event = { id = COLDWAR_DDR.45 hours = 6 }
@@ -888,78 +893,78 @@ COLDWAR_DDR_restore_party_rule = {
 	hidden_effect = {
 		if = {
 			limit = { has_country_flag = COLDWAR_DDR_kessler_leads }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_heinz_kessler" picture = "gfx/leaders/COLDWAR_europe_1970/heinz_kessler.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_1970_officer_ddr_heinz_kessler } promote_character = COLDWAR_1970_officer_ddr_heinz_kessler }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_heinz_kessler_4 = yes }
 			add_country_leader_trait = COLDWAR_DDR_hof_army_general
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_ulb COLDWAR_DDR_alive_ulb = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_walter_ulbricht" picture = "gfx/Leaders/DDR/DDR_Coldwar_WalterUlbricht.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_walter_ulbricht } promote_character = COLDWAR_DDR_1970_leader_walter_ulbricht }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_ulb_the_architect_of_the_republic } add_country_leader_trait = COLDWAR_DDR_ulb_founder_of_the_republic }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_hon COLDWAR_DDR_alive_hon = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_erich_honecker" picture = "gfx/leaders/COLDWAR_europe_1970/erich_honecker.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_erich_honecker } promote_character = COLDWAR_DDR_1970_leader_erich_honecker }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_erich_honecker_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hon_the_roofer_from_the_saar } add_country_leader_trait = COLDWAR_DDR_hon_man_of_the_apparatus }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_sto COLDWAR_DDR_alive_sto = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/willi_stoph.dds" name = "COLDWAR_DDR_leader_willi_stoph" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_willi_stoph } promote_character = COLDWAR_DDR_1970_leader_willi_stoph }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_willi_stoph_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_sto_the_man_from_erfurt } add_country_leader_trait = COLDWAR_DDR_sto_the_administrator }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_mit COLDWAR_DDR_alive_mit = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/gunter_mittag.dds" name = "COLDWAR_DDR_leader_guenter_mittag" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_guenter_mittag } promote_character = COLDWAR_DDR_1970_leader_guenter_mittag }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_gunter_mittag_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_mit_the_master_of_the_balance_sheet } add_country_leader_trait = COLDWAR_DDR_mit_economic_czar }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_hag COLDWAR_DDR_alive_hag = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/kurt_hager.dds" name = "COLDWAR_DDR_leader_kurt_hager" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_kurt_hager } promote_character = COLDWAR_DDR_1970_leader_kurt_hager }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_kurt_hager_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hag_the_chief_ideologist } add_country_leader_trait = COLDWAR_DDR_hag_keeper_of_the_doctrine }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_hof COLDWAR_DDR_alive_hof = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/heinz_hoffmann.dds" name = "COLDWAR_DDR_leader_heinz_hoffmann" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_1970_officer_ddr_heinz_hoffmann } promote_character = COLDWAR_1970_officer_ddr_heinz_hoffmann }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_heinz_hoffmann_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hof_comrade_army_general } add_country_leader_trait = COLDWAR_DDR_hof_army_general }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_hof_marshal_of_the_gdr } add_country_leader_trait = COLDWAR_DDR_hof_marshal_of_the_gdr }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_lam COLDWAR_DDR_alive_lam = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/werner_lamberz.dds" name = "COLDWAR_DDR_leader_werner_lamberz" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_werner_lamberz } promote_character = COLDWAR_DDR_1970_leader_werner_lamberz }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_werner_lamberz_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_lam_the_gdrs_kennedy } add_country_leader_trait = COLDWAR_DDR_lam_the_gdrs_kennedy }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_kro COLDWAR_DDR_alive_kro = yes }
-			retire_country_leader = yes
-			create_country_leader = { picture = "gfx/leaders/COLDWAR_europe_1970/werner_krolikowski.dds" name = "COLDWAR_DDR_leader_werner_krolikowski" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_werner_krolikowski } promote_character = COLDWAR_DDR_1970_leader_werner_krolikowski }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_werner_krolikowski_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_kro_loyalty_without_reservation } add_country_leader_trait = COLDWAR_DDR_kro_moscows_man }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_kre COLDWAR_DDR_alive_kre = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_egon_krenz" picture = "gfx/leaders/COLDWAR_europe_1970/egon_krenz.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_egon_krenz } promote_character = COLDWAR_DDR_1970_leader_egon_krenz }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_egon_krenz_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_kre_a_younger_face } add_country_leader_trait = COLDWAR_DDR_kre_the_fdj_generation }
 		}
 		else_if = {
 			limit = { has_country_flag = COLDWAR_DDR_first_sec_mod COLDWAR_DDR_alive_mod = yes }
-			retire_country_leader = yes
-			create_country_leader = { name = "COLDWAR_DDR_leader_hans_modrow" picture = "gfx/leaders/COLDWAR_europe_1970/hans_modrow.dds" ideology = communist_state traits = { emerging_communist_state } }
+			# IMPERIA COLD WAR — MD characters (P3): promote the character from history (was a runtime-created leader)
+			if = { limit = { has_character = COLDWAR_DDR_1970_leader_hans_modrow } promote_character = COLDWAR_DDR_1970_leader_hans_modrow }
 hidden_effect = { COLDWAR_EU_1970_note_DDR_hans_modrow_4 = yes }
 			if = { limit = { has_completed_focus = COLDWAR_DDR_mod_the_man_from_dresden } add_country_leader_trait = COLDWAR_DDR_mod_the_dresden_reformer }
 		}

@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — NATO collective defence restrictions in native diplomacy.
 #	Triggers to control if diplomatic actions are enabled:
 #		Format:
 #
@@ -709,6 +710,15 @@ DIPLOMACY_SEND_VOLUNTEERS_ENABLE_TRIGGER = {
 	}
 }
 
+# IMPERIA COLD WAR — The 1970 NATO template and MD membership both use scripted collective defence.
+COLDWAR_1970_NATO_uses_article_five = {
+	IMP_is_1970_scenario = yes
+	OR = {
+		has_idea = NATO_member
+		has_faction_template = faction_template_1985_nato
+	}
+}
+
 DIPLOMACY_CALL_ALLY_ENABLE_TRIGGER = {
 	if = {
 		limit = {
@@ -716,8 +726,20 @@ DIPLOMACY_CALL_ALLY_ENABLE_TRIGGER = {
 		}
 		always = no
 	}
-	#NATO countries can only call allies in defensive wars
+	# IMPERIA COLD WAR — Article 5 runs on declaration, outside the general call action.
 	if = {
+		limit = {
+			OR = {
+				COLDWAR_1970_NATO_uses_article_five = yes
+				FROM = { COLDWAR_1970_NATO_uses_article_five = yes }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = COLDWAR_1970_NATO_article_five_diplomacy_tt
+			always = no
+		}
+	}
+	else_if = {
 		limit = {
 			has_idea = NATO_member
 		}
@@ -800,8 +822,20 @@ DIPLOMACY_JOIN_ALLY_ENABLE_TRIGGER = {
 		}
 		always = no
 	}
-	#NATO countries can only join allies in defensive wars
+	# IMPERIA COLD WAR — The voluntary join action also lacks a selected-war trigger scope.
 	if = {
+		limit = {
+			OR = {
+				COLDWAR_1970_NATO_uses_article_five = yes
+				FROM = { COLDWAR_1970_NATO_uses_article_five = yes }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = COLDWAR_1970_NATO_article_five_diplomacy_tt
+			always = no
+		}
+	}
+	else_if = {
 		limit = {
 			has_idea = NATO_member
 		}

@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — 1970 focus and legacy mechanic corrections.
 # IMPERIA COLD WAR — Brazil 1970 national programmes.
 on_actions = {
 	on_startup = {
@@ -17,8 +18,12 @@ on_actions = {
 				COLDWAR_BRA_initialize = yes
 				COLDWAR_BRA_open_organisation_stages = yes
 				COLDWAR_BRA_reconcile_politics = yes
-				COLDWAR_BRA_reconcile_focus_receipts = yes
-				COLDWAR_BRA_sync_programmes = yes
+				if = {
+					limit = { NOT = { has_country_flag = COLDWAR_BRA_receipts_migrated } }
+					COLDWAR_BRA_reconcile_focus_receipts = yes
+					COLDWAR_BRA_sync_programmes = yes
+					set_country_flag = COLDWAR_BRA_receipts_migrated
+				}
 				COLDWAR_BRA_sync_agreements = yes
 			}
 		}
@@ -32,12 +37,15 @@ on_actions = {
 			}
 		}
 	}
-	on_monthly = {
+	on_monthly_BRA = {
 		effect = {
 			if = {
 				limit = {
 					COLDWAR_BRA_campaign = yes
 				}
+				# Repair externally completed focuses and missed cabinet changes.
+				COLDWAR_BRA_reconcile_focus_receipts = yes
+				COLDWAR_BRA_sync_programmes = yes
 				COLDWAR_BRA_political_pressure_pulse = yes
 				COLDWAR_BRA_1970_monthly_politics_reconcile = yes
 				if = {

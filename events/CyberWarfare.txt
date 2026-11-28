@@ -94,6 +94,11 @@ country_event = {
 		else = {
 			add_timed_idea = { idea = cyber_economic_disruption_malus days = 120 }
 		}
+		# COLDWAR covert v2: forged money and speculation feed MD's inflation model, scaled by operation strength
+		custom_effect_tooltip = COLDWAR_ca_counterfeit_infl_tt
+		set_temp_variable = { COLDWAR_ca_infl = 0.06 }
+		multiply_temp_variable = { COLDWAR_ca_infl = COLDWAR_ca_strength }
+		add_to_variable = { print_money_inflation_pressure = COLDWAR_ca_infl }
 	}
 }
 
@@ -115,8 +120,11 @@ country_event = {
 		else = {
 			add_timed_idea = { idea = cyber_propaganda_ops_malus days = 120 }
 		}
+		set_party_index_to_ruling_party = yes # COLDWAR covert v2: MD left party_index unset here
 		set_temp_variable = { party_popularity_increase = -0.03 }
+		set_temp_variable = { temp_outlook_increase = -0.03 }
 		change_relative_party_popularity = yes
+		recalculate_party = yes
 	}
 }
 
@@ -234,8 +242,25 @@ country_event = {
 		else = {
 			add_timed_idea = { idea = cyber_election_interference_malus days = 180 }
 		}
+		# COLDWAR covert v2: the government loses, the party of the backer's own outlook gains (scaled by strength)
+		set_party_index_to_ruling_party = yes
 		set_temp_variable = { party_popularity_increase = -0.04 }
+		multiply_temp_variable = { party_popularity_increase = COLDWAR_ca_strength }
+		set_temp_variable = { temp_outlook_increase = party_popularity_increase }
+		set_temp_variable = { COLDWAR_ca_ruling = party_index }
 		change_relative_party_popularity = yes
+		if = {
+			limit = {
+				has_variable = COLDWAR_ca_backer_party
+				NOT = { check_variable = { COLDWAR_ca_backer_party = COLDWAR_ca_ruling } }
+			}
+			set_temp_variable = { party_index = COLDWAR_ca_backer_party }
+			set_temp_variable = { party_popularity_increase = 0.05 }
+			multiply_temp_variable = { party_popularity_increase = COLDWAR_ca_strength }
+			set_temp_variable = { temp_outlook_increase = party_popularity_increase }
+			change_relative_party_popularity = yes
+		}
+		recalculate_party = yes
 	}
 }
 
@@ -299,6 +324,11 @@ country_event = {
 		else = {
 			add_timed_idea = { idea = cyber_financial_system_attack_malus days = 150 }
 		}
+		# COLDWAR covert v2: forged money and speculation feed MD's inflation model, scaled by operation strength
+		custom_effect_tooltip = COLDWAR_ca_speculation_infl_tt
+		set_temp_variable = { COLDWAR_ca_infl = 0.10 }
+		multiply_temp_variable = { COLDWAR_ca_infl = COLDWAR_ca_strength }
+		add_to_variable = { print_money_inflation_pressure = COLDWAR_ca_infl }
 	}
 }
 
@@ -428,5 +458,80 @@ country_event = {
 	immediate = {
 		calculate_cyber_capability = yes
 		international_systems_update = yes
+	}
+}
+
+# COLDWAR covert v2: new operations
+# Scandal
+country_event = {
+	id = MD_cyber.119
+	title = MD_cyber.119.t
+	desc = MD_cyber.119.d
+	picture = GFX_cyber_attack
+	is_triggered_only = yes
+
+	option = {
+		name = MD_cyber.119.a
+		log = "[GetDateText]: [This.GetName]: MD_cyber.119.a"
+		if = {
+			limit = { has_idea = cyber_scandal_malus }
+			modify_timed_idea = { idea = cyber_scandal_malus days = 90 }
+		}
+		else = {
+			add_timed_idea = { idea = cyber_scandal_malus days = 120 }
+		}
+		# COLDWAR covert v2: the ruling party is disgraced; free presses spread it twice as far
+		set_party_index_to_ruling_party = yes
+		set_temp_variable = { party_popularity_increase = -0.06 }
+		multiply_temp_variable = { party_popularity_increase = COLDWAR_ca_strength }
+		if = {
+			limit = { has_elections = no }
+			multiply_temp_variable = { party_popularity_increase = 0.5 }
+		}
+		set_temp_variable = { temp_outlook_increase = party_popularity_increase }
+		change_relative_party_popularity = yes
+		recalculate_party = yes
+	}
+}
+
+# Brain Drain
+country_event = {
+	id = MD_cyber.120
+	title = MD_cyber.120.t
+	desc = MD_cyber.120.d
+	picture = GFX_cyber_attack
+	is_triggered_only = yes
+
+	option = {
+		name = MD_cyber.120.a
+		log = "[GetDateText]: [This.GetName]: MD_cyber.120.a"
+		if = {
+			limit = { has_idea = cyber_brain_drain_malus }
+			modify_timed_idea = { idea = cyber_brain_drain_malus days = 180 }
+		}
+		else = {
+			add_timed_idea = { idea = cyber_brain_drain_malus days = 365 }
+		}
+		if = { # COLDWAR covert v2: a strong operation empties whole institutes
+			limit = { check_variable = { COLDWAR_ca_strength > 1.1 } }
+			add_timed_idea = { idea = cyber_brain_drain_severe days = 180 }
+		}
+	}
+}
+
+# COLDWAR covert v2 coup: plotting officers
+country_event = {
+	id = MD_cyber.121
+	title = MD_cyber.121.t
+	desc = MD_cyber.121.d
+	picture = GFX_cyber_attack
+	is_triggered_only = yes
+
+	option = {
+		name = MD_cyber.121.a
+		log = "[GetDateText]: [This.GetName]: MD_cyber.121.a"
+		set_temp_variable = { COLDWAR_coup_delta = 25 }
+		multiply_temp_variable = { COLDWAR_coup_delta = COLDWAR_ca_strength }
+		COLDWAR_coup_change_plot = yes
 	}
 }

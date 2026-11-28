@@ -1,0 +1,98 @@
+# IMPERIA COLD WAR — MD standard (B7): offers by event. The receiving country decides in its own option.
+add_namespace = COLDWAR_B7
+
+# The GDR resists fraternal assistance: Moscow decides (FROM = DDR).
+country_event = {
+	id = COLDWAR_B7.1
+	title = COLDWAR_B7.1.t
+	desc = COLDWAR_B7.1.d
+	picture = GFX_Good_bye_lenin
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName]: event COLDWAR_B7.1" }
+	option = {
+		name = COLDWAR_B7.1.a
+		ai_chance = { base = 30 }
+		if = { limit = { FROM = { is_subject_of = ROOT } } end_puppet = FROM }
+		FROM = { country_event = { id = COLDWAR_B7.2 days = 1 } }
+	}
+	option = {
+		name = COLDWAR_B7.1.b
+		ai_chance = { base = 70 }
+		if = { limit = { NOT = { has_war_with = FROM } } declare_war_on = { target = FROM type = topple_government } }
+		FROM = { country_event = { id = COLDWAR_B7.3 days = 1 } }
+	}
+}
+
+country_event = {
+	id = COLDWAR_B7.2
+	title = COLDWAR_B7.2.t
+	desc = COLDWAR_B7.2.d
+	picture = GFX_Good_bye_lenin
+	is_triggered_only = yes
+	option = { name = COLDWAR_B7.2.a add_stability = 0.03 }
+}
+
+country_event = {
+	id = COLDWAR_B7.3
+	title = COLDWAR_B7.3.t
+	desc = COLDWAR_B7.3.d
+	picture = GFX_Good_bye_lenin
+	is_triggered_only = yes
+	option = { name = COLDWAR_B7.3.a add_war_support = 0.05 }
+}
+
+# The GDR asks Bonn to complete the accession (FROM = DDR).
+country_event = {
+	id = COLDWAR_B7.4
+	title = COLDWAR_B7.4.t
+	desc = COLDWAR_B7.4.d
+	picture = GFX_Good_bye_lenin
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName]: event COLDWAR_B7.4" }
+	option = {
+		name = COLDWAR_B7.4.a
+		trigger = { FROM = { exists = yes } NOT = { has_war_with = FROM } }
+		ai_chance = { base = 100 }
+		if = { limit = { FROM = { has_country_flag = COLDWAR_DDR_social_charter } } add_timed_idea = { idea = COLDWAR_DDR_eastern_social_charter days = 1825 } }
+		annex_country = { target = FROM transfer_troops = yes }
+	}
+	option = {
+		name = COLDWAR_B7.4.b
+		ai_chance = { base = 0 }
+		FROM = { country_event = { id = COLDWAR_B7.5 days = 1 } }
+	}
+}
+
+country_event = {
+	id = COLDWAR_B7.5
+	title = COLDWAR_B7.5.t
+	desc = COLDWAR_B7.5.d
+	picture = GFX_Good_bye_lenin
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_B7.5.a
+		clr_country_flag = COLDWAR_DDR_accession_pending
+		add_stability = -0.05
+	}
+}
+
+# Unified Germany asks to join the Soviet-led alliance (FROM = GER).
+country_event = {
+	id = COLDWAR_B7.6
+	title = COLDWAR_B7.6.t
+	desc = COLDWAR_B7.6.d
+	picture = GFX_Good_bye_lenin
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName]: event COLDWAR_B7.6" }
+	option = {
+		name = COLDWAR_B7.6.a
+		trigger = { is_faction_leader = yes FROM = { exists = yes is_in_faction = no } }
+		ai_chance = { base = 90 }
+		add_to_faction = FROM
+	}
+	option = {
+		name = COLDWAR_B7.6.b
+		ai_chance = { base = 10 }
+		add_opinion_modifier = { target = FROM modifier = medium_decrease }
+	}
+}

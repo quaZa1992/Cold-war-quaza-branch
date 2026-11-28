@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — update 24.11.2026: MD money lines (treasury_change from gdp_total) instead of invented expenditure texts; no GDP>0 gates.
 # IMPERIA COLD WAR — Czechoslovakia 1970 national programmes.
 
 COLDWAR_CZE_1970_refresh_spirits = {
@@ -3320,7 +3321,8 @@ COLDWAR_CZE_1970_preview_programme_husak = {
 	if = { limit = { check_variable = { COLDWAR_CZE_1970_slot_ksc_prices_programme_1 = 1 } } add_ideas = COLDWAR_CZE_1970_spirit_husak_prices }
 	if = {
 		limit = { check_variable = { COLDWAR_CZE_1970_slot_ksc_prices_programme_1 = 1 } }
-		custom_effect_tooltip = COLDWAR_CZE_1970_weekly_programme_husak_ksc_prices_programme_1_tt
+		set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.0001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 	}
 	if = { limit = { check_variable = { COLDWAR_CZE_1970_slot_ksc_prices_programme_1 = 2 } } add_ideas = COLDWAR_CZE_1970_spirit_husak_invest }
 	if = { limit = { check_variable = { COLDWAR_CZE_1970_slot_ksc_current_programme_1 = 2 } } add_ideas = COLDWAR_CZE_1970_spirit_husak_settlement }
@@ -3750,6 +3752,7 @@ COLDWAR_CZE_1970_reward_state_monitor = {
 }
 
 COLDWAR_CZE_1970_preview_state_bargain_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_sovereignty_protocol = yes
 }
 
@@ -3790,7 +3793,8 @@ COLDWAR_CZE_1970_reward_state_treaty_order = {
 }
 
 COLDWAR_CZE_1970_preview_state_human_rights_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_state_human_rights_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_state_monitor }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_state_monitor add_idea = COLDWAR_CZE_1970_spirit_state_human_rights }
@@ -3803,7 +3807,6 @@ COLDWAR_CZE_1970_reward_state_human_rights = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_state_human_rights }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_state_monitor }
 		}
@@ -4063,7 +4066,8 @@ COLDWAR_CZE_1970_reward_ksc_dubcek = {
 }
 
 COLDWAR_CZE_1970_preview_husak_housing_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_husak_housing_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -4079,7 +4083,6 @@ COLDWAR_CZE_1970_reward_husak_housing = {
 			COLDWAR_CZE_1970_party_KSC = yes
 			check_variable = { COLDWAR_CZE_1970_programme = 1 }
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_husak_housing }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ksc_husak }
 		}
@@ -4121,7 +4124,8 @@ COLDWAR_CZE_1970_preview_husak_prices_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_husak_invest add_idea = COLDWAR_CZE_1970_spirit_husak_prices }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_husak_prices }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_husak_prices_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.0001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_husak_prices = {
@@ -4167,7 +4171,8 @@ COLDWAR_CZE_1970_reward_husak_invest = {
 }
 
 COLDWAR_CZE_1970_preview_husak_factories_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_husak_factories_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_husak_factories bonus = 0.5 uses = 1 category = CAT_industry }
 	118 = {
 		add_extra_state_shared_building_slots = 1
@@ -4183,7 +4188,6 @@ COLDWAR_CZE_1970_reward_husak_factories = {
 			COLDWAR_CZE_1970_party_KSC = yes
 			check_variable = { COLDWAR_CZE_1970_programme = 1 }
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_husak_factories }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_husak_prices has_completed_focus = COLDWAR_CZE_1970_husak_invest }
 		}
@@ -4340,7 +4344,8 @@ COLDWAR_CZE_1970_reward_bilak_nomenklatura = {
 }
 
 COLDWAR_CZE_1970_preview_bilak_arms_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_bilak_arms_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+	modify_treasury_effect = yes
 	1018 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = arms_factory level = 1 instant_build = yes }
@@ -4356,7 +4361,6 @@ COLDWAR_CZE_1970_reward_bilak_arms = {
 			COLDWAR_CZE_1970_party_KSC = yes
 			check_variable = { COLDWAR_CZE_1970_programme = 2 }
 			1018 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE arms_factory < 35 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_bilak_arms }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_bilak_surveillance has_completed_focus = COLDWAR_CZE_1970_bilak_nomenklatura }
 		}
@@ -4513,7 +4517,8 @@ COLDWAR_CZE_1970_reward_strougal_audit = {
 }
 
 COLDWAR_CZE_1970_preview_strougal_electronics_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_strougal_electronics_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_strougal_electronics bonus = 0.5 uses = 2 category = CAT_electronics }
 	118 = {
 		add_extra_state_shared_building_slots = 1
@@ -4529,7 +4534,6 @@ COLDWAR_CZE_1970_reward_strougal_electronics = {
 			COLDWAR_CZE_1970_party_KSC = yes
 			check_variable = { COLDWAR_CZE_1970_programme = 3 }
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_strougal_electronics }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_strougal_surplus has_completed_focus = COLDWAR_CZE_1970_strougal_audit }
 		}
@@ -4819,7 +4823,8 @@ COLDWAR_CZE_1970_reward_css_enterprises = {
 }
 
 COLDWAR_CZE_1970_preview_css_libraries_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_css_libraries_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_css_libraries bonus = 0.5 uses = 1 category = CAT_electronics }
 	add_political_power = 50
 }
@@ -4830,7 +4835,6 @@ COLDWAR_CZE_1970_reward_css_libraries = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSS = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_css_libraries }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_css_councils }
 		}
@@ -4844,7 +4848,8 @@ COLDWAR_CZE_1970_reward_css_libraries = {
 }
 
 COLDWAR_CZE_1970_preview_css_workshops_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_css_workshops_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0055 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -4858,7 +4863,6 @@ COLDWAR_CZE_1970_reward_css_workshops = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSS = yes
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_css_workshops }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_css_enterprises }
 		}
@@ -4893,7 +4897,8 @@ COLDWAR_CZE_1970_reward_css_civic_budget = {
 }
 
 COLDWAR_CZE_1970_preview_css_cooperatives_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_css_cooperatives_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_css_public_services }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_css_public_services add_idea = COLDWAR_CZE_1970_spirit_css_cooperatives }
@@ -4907,7 +4912,6 @@ COLDWAR_CZE_1970_reward_css_cooperatives = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSS = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_css_cooperatives }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_css_civic_budget }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_css_public_services }
@@ -4921,13 +4925,15 @@ COLDWAR_CZE_1970_reward_css_cooperatives = {
 }
 
 COLDWAR_CZE_1970_preview_css_public_services_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_css_public_services_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_css_cooperatives }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_css_cooperatives add_idea = COLDWAR_CZE_1970_spirit_css_public_services }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_css_public_services }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_css_public_services_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 	119 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -4941,7 +4947,6 @@ COLDWAR_CZE_1970_reward_css_public_services = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSS = yes
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_css_public_services }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_css_civic_budget }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_css_cooperatives }
@@ -4982,7 +4987,8 @@ COLDWAR_CZE_1970_preview_csl_parishes_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_csl_public_welfare add_idea = COLDWAR_CZE_1970_spirit_csl_parishes }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_csl_parishes }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_csl_parishes_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_csl_parishes = {
@@ -5002,13 +5008,15 @@ COLDWAR_CZE_1970_reward_csl_parishes = {
 }
 
 COLDWAR_CZE_1970_preview_csl_public_welfare_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_csl_public_welfare_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_csl_parishes }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_csl_parishes add_idea = COLDWAR_CZE_1970_spirit_csl_public_welfare }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_csl_public_welfare }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_csl_public_welfare_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -5022,7 +5030,6 @@ COLDWAR_CZE_1970_reward_csl_public_welfare = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSL = yes
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_csl_public_welfare }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_csl_social }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_csl_parishes }
@@ -5040,7 +5047,8 @@ COLDWAR_CZE_1970_reward_csl_public_welfare = {
 }
 
 COLDWAR_CZE_1970_preview_csl_rural_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_csl_rural_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	1017 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -5055,7 +5063,6 @@ COLDWAR_CZE_1970_reward_csl_rural = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSL = yes
 			1017 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_csl_rural }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_csl_parishes }
 		}
@@ -5093,7 +5100,8 @@ COLDWAR_CZE_1970_reward_csl_workers = {
 }
 
 COLDWAR_CZE_1970_preview_csl_schools_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_csl_schools_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_csl_schools
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_csl_schools bonus = 0.25 uses = 1 category = CAT_electronics }
 }
@@ -5104,7 +5112,6 @@ COLDWAR_CZE_1970_reward_csl_schools = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSL = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_csl_schools }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_csl_rural has_completed_focus = COLDWAR_CZE_1970_csl_workers }
 		}
@@ -5227,7 +5234,10 @@ COLDWAR_CZE_1970_reward_ds_mandate = {
 }
 
 COLDWAR_CZE_1970_preview_ds_restoration_focus = {
-	unlock_decision_tooltip = COLDWAR_CZE_1970_ratify_ds_restoration
+	# IMPERIA COLD WAR — P7 power paths 24.11.2026: the restoration is completed by the focus (no ratify decision)
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0003 } }
+	modify_treasury_effect = yes
+	custom_effect_tooltip = COLDWAR_CZE_1970_ds_restored_tt
 	add_political_power = 75
 }
 
@@ -5243,7 +5253,11 @@ COLDWAR_CZE_1970_reward_ds_restoration = {
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ds_mandate }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_ds_republic }
 		}
-		COLDWAR_CZE_1970_unlock_ds_restoration = yes
+		# IMPERIA COLD WAR — P7 power paths 24.11.2026: party congress held in the focus (was decision COLDWAR_CZE_1970_ratify_ds_restoration)
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0003 } }
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_DS_restored
+		COLDWAR_CZE_1970_set_party_identity_DS = yes
 		add_political_power = 75
 		set_country_flag = COLDWAR_CZE_1970_earned_ds_restoration
 		COLDWAR_CZE_1970_refresh_spirits = yes
@@ -5273,7 +5287,8 @@ COLDWAR_CZE_1970_reward_ds_republic = {
 }
 
 COLDWAR_CZE_1970_preview_ds_business_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ds_business_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+	modify_treasury_effect = yes
 	119 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -5290,7 +5305,6 @@ COLDWAR_CZE_1970_reward_ds_business = {
 			COLDWAR_CZE_1970_party_SSO_DS = yes
 			COLDWAR_CZE_1970_common_state = yes
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ds_business }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ds_restoration }
 		}
@@ -5308,7 +5322,8 @@ COLDWAR_CZE_1970_reward_ds_business = {
 }
 
 COLDWAR_CZE_1970_preview_ds_farmers_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ds_farmers_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
@@ -5323,7 +5338,6 @@ COLDWAR_CZE_1970_reward_ds_farmers = {
 			COLDWAR_CZE_1970_party_SSO_DS = yes
 			COLDWAR_CZE_1970_common_state = yes
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE agriculture_district < 10 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ds_farmers }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ds_republic }
 		}
@@ -5339,7 +5353,8 @@ COLDWAR_CZE_1970_reward_ds_farmers = {
 }
 
 COLDWAR_CZE_1970_preview_ds_regional_budget_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ds_regional_budget_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_ds_regional_budget
 	120 = {
 		add_extra_state_shared_building_slots = 1
@@ -5355,7 +5370,6 @@ COLDWAR_CZE_1970_reward_ds_regional_budget = {
 			COLDWAR_CZE_1970_party_SSO_DS = yes
 			COLDWAR_CZE_1970_common_state = yes
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ds_regional_budget }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ds_business has_completed_focus = COLDWAR_CZE_1970_ds_farmers }
 		}
@@ -5402,7 +5416,8 @@ COLDWAR_CZE_1970_preview_ds_civic_guarantee_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_ds_competition add_idea = COLDWAR_CZE_1970_spirit_ds_civic_guarantee }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_ds_civic_guarantee }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_ds_civic_guarantee_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.0001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_ds_civic_guarantee = {
@@ -5492,7 +5507,8 @@ COLDWAR_CZE_1970_reward_sloboda_municipal = {
 }
 
 COLDWAR_CZE_1970_preview_sloboda_countryside_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_sloboda_countryside_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_sloboda_countryside bonus = 0.5 uses = 1 category = CAT_infrastructure }
 	120 = {
 		add_extra_state_shared_building_slots = 1
@@ -5508,7 +5524,6 @@ COLDWAR_CZE_1970_reward_sloboda_countryside = {
 			COLDWAR_CZE_1970_party_SLOBODA = yes
 			COLDWAR_CZE_1970_common_state = yes
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_sloboda_countryside }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_sloboda_church }
 		}
@@ -5525,7 +5540,8 @@ COLDWAR_CZE_1970_reward_sloboda_countryside = {
 }
 
 COLDWAR_CZE_1970_preview_sloboda_crafts_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_sloboda_crafts_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
 	119 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -5540,7 +5556,6 @@ COLDWAR_CZE_1970_reward_sloboda_crafts = {
 			COLDWAR_CZE_1970_party_SLOBODA = yes
 			COLDWAR_CZE_1970_common_state = yes
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_sloboda_crafts }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_sloboda_municipal }
 		}
@@ -5606,7 +5621,8 @@ COLDWAR_CZE_1970_preview_sloboda_solidarity_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_sloboda_fiscal add_idea = COLDWAR_CZE_1970_spirit_sloboda_solidarity }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_sloboda_solidarity }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_sloboda_solidarity_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.0001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_sloboda_solidarity = {
@@ -5693,7 +5709,8 @@ COLDWAR_CZE_1970_reward_cssd_enterprise = {
 }
 
 COLDWAR_CZE_1970_preview_cssd_housing_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_cssd_housing_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -5708,7 +5725,6 @@ COLDWAR_CZE_1970_reward_cssd_housing = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSSD = yes
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_cssd_housing }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_cssd_bargaining }
 		}
@@ -5725,7 +5741,8 @@ COLDWAR_CZE_1970_reward_cssd_housing = {
 }
 
 COLDWAR_CZE_1970_preview_cssd_retraining_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_cssd_retraining_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_cssd_retraining bonus = 0.5 uses = 2 category = CAT_industry }
 	add_ideas = COLDWAR_CZE_1970_spirit_cssd_retraining
 }
@@ -5736,7 +5753,6 @@ COLDWAR_CZE_1970_reward_cssd_retraining = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_CSSD = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_cssd_retraining }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_cssd_enterprise }
 		}
@@ -5751,7 +5767,8 @@ COLDWAR_CZE_1970_reward_cssd_retraining = {
 
 COLDWAR_CZE_1970_preview_cssd_insurance_focus = {
 	add_ideas = COLDWAR_CZE_1970_spirit_cssd_insurance
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_cssd_insurance_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_cssd_insurance = {
@@ -5775,7 +5792,8 @@ COLDWAR_CZE_1970_preview_cssd_universal_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_cssd_targeted add_idea = COLDWAR_CZE_1970_spirit_cssd_universal }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_cssd_universal }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_cssd_universal_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00015 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_cssd_universal = {
@@ -5925,7 +5943,8 @@ COLDWAR_CZE_1970_reward_of_local = {
 }
 
 COLDWAR_CZE_1970_preview_of_universities_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_of_universities_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_of_universities bonus = 0.5 uses = 2 category = CAT_electronics }
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_start_7 }
@@ -5945,7 +5964,6 @@ COLDWAR_CZE_1970_reward_of_universities = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_OF = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_of_universities }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_of_courts }
 		}
@@ -5998,7 +6016,8 @@ COLDWAR_CZE_1970_reward_of_transparency = {
 }
 
 COLDWAR_CZE_1970_preview_of_rapid_market_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_of_rapid_market_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_of_gradual_market }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_of_gradual_market add_idea = COLDWAR_CZE_1970_spirit_of_rapid_market }
@@ -6013,7 +6032,6 @@ COLDWAR_CZE_1970_reward_of_rapid_market = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_OF = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_of_rapid_market }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_of_transparency }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_of_gradual_market }
@@ -6028,7 +6046,8 @@ COLDWAR_CZE_1970_reward_of_rapid_market = {
 }
 
 COLDWAR_CZE_1970_preview_of_gradual_market_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_of_gradual_market_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_of_rapid_market }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_of_rapid_market add_idea = COLDWAR_CZE_1970_spirit_of_gradual_market }
@@ -6042,7 +6061,6 @@ COLDWAR_CZE_1970_reward_of_gradual_market = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_OF = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_of_gradual_market }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_of_transparency }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_of_rapid_market }
@@ -6056,7 +6074,8 @@ COLDWAR_CZE_1970_reward_of_gradual_market = {
 }
 
 COLDWAR_CZE_1970_preview_of_exchange_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_of_exchange_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_of_exchange bonus = 0.5 uses = 1 category = CAT_industry }
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_of_exchange_1 bonus = 0.5 uses = 1 category = CAT_electronics }
 }
@@ -6067,7 +6086,6 @@ COLDWAR_CZE_1970_reward_of_exchange = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_OF = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_of_exchange }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_of_rapid_market has_completed_focus = COLDWAR_CZE_1970_of_gradual_market }
 		}
@@ -6171,7 +6189,8 @@ COLDWAR_CZE_1970_reward_vpn_republic = {
 }
 
 COLDWAR_CZE_1970_preview_vpn_civic_schools_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_vpn_civic_schools_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_vpn_civic_schools bonus = 0.5 uses = 1 category = CAT_electronics }
 	add_ideas = COLDWAR_CZE_1970_spirit_vpn_civic_schools
 }
@@ -6183,7 +6202,6 @@ COLDWAR_CZE_1970_reward_vpn_civic_schools = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_VPN = yes
 			COLDWAR_CZE_1970_common_state = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_vpn_civic_schools }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_vpn_federal }
 		}
@@ -6197,7 +6215,8 @@ COLDWAR_CZE_1970_reward_vpn_civic_schools = {
 }
 
 COLDWAR_CZE_1970_preview_vpn_east_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_vpn_east_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -6212,7 +6231,6 @@ COLDWAR_CZE_1970_reward_vpn_east = {
 			COLDWAR_CZE_1970_party_VPN = yes
 			COLDWAR_CZE_1970_common_state = yes
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_vpn_east }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_vpn_republic }
 		}
@@ -6278,7 +6296,8 @@ COLDWAR_CZE_1970_preview_vpn_solidarity_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_vpn_local_market add_idea = COLDWAR_CZE_1970_spirit_vpn_solidarity }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_vpn_solidarity }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_vpn_solidarity_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_vpn_solidarity = {
@@ -6299,7 +6318,8 @@ COLDWAR_CZE_1970_reward_vpn_solidarity = {
 }
 
 COLDWAR_CZE_1970_preview_vpn_cultural_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_vpn_cultural_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_vpn_cultural
 }
 
@@ -6310,7 +6330,6 @@ COLDWAR_CZE_1970_reward_vpn_cultural = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_VPN = yes
 			COLDWAR_CZE_1970_common_state = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_vpn_cultural }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_vpn_local_market has_completed_focus = COLDWAR_CZE_1970_vpn_solidarity }
 		}
@@ -6414,7 +6433,8 @@ COLDWAR_CZE_1970_reward_kdh_social = {
 }
 
 COLDWAR_CZE_1970_preview_kdh_towns_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_kdh_towns_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	119 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -6430,7 +6450,6 @@ COLDWAR_CZE_1970_reward_kdh_towns = {
 			COLDWAR_CZE_1970_party_KDH = yes
 			COLDWAR_CZE_1970_common_state = yes
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_kdh_towns }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_kdh_schools }
 		}
@@ -6521,7 +6540,8 @@ COLDWAR_CZE_1970_preview_kdh_families_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_kdh_market add_idea = COLDWAR_CZE_1970_spirit_kdh_families }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_kdh_families }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_kdh_families_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_kdh_families = {
@@ -6611,7 +6631,8 @@ COLDWAR_CZE_1970_reward_sns_industry = {
 }
 
 COLDWAR_CZE_1970_preview_sns_regions_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_sns_regions_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -6626,7 +6647,6 @@ COLDWAR_CZE_1970_reward_sns_regions = {
 			COLDWAR_CZE_1970_party_SNS = yes
 			COLDWAR_CZE_1970_common_state = yes
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_sns_regions }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_sns_cultural }
 		}
@@ -6642,7 +6662,8 @@ COLDWAR_CZE_1970_reward_sns_regions = {
 }
 
 COLDWAR_CZE_1970_preview_sns_works_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_sns_works_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -6657,7 +6678,6 @@ COLDWAR_CZE_1970_reward_sns_works = {
 			COLDWAR_CZE_1970_party_SNS = yes
 			COLDWAR_CZE_1970_common_state = yes
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_sns_works }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_sns_industry }
 		}
@@ -6811,7 +6831,8 @@ COLDWAR_CZE_1970_reward_green_demand = {
 }
 
 COLDWAR_CZE_1970_preview_green_monitoring_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_green_monitoring_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0027 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_green_monitoring bonus = 0.5 uses = 1 category = CAT_electronics }
 	add_ideas = COLDWAR_CZE_1970_spirit_green_monitoring
 	1018 = {
@@ -6827,7 +6848,6 @@ COLDWAR_CZE_1970_reward_green_monitoring = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_GREEN = yes
 			1018 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_green_monitoring }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_green_nuclear }
 		}
@@ -6845,7 +6865,8 @@ COLDWAR_CZE_1970_reward_green_monitoring = {
 }
 
 COLDWAR_CZE_1970_preview_green_transport_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_green_transport_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -6860,7 +6881,6 @@ COLDWAR_CZE_1970_reward_green_transport = {
 			tag = CZE
 			COLDWAR_CZE_1970_party_GREEN = yes
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_green_transport }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_green_demand }
 		}
@@ -6877,7 +6897,8 @@ COLDWAR_CZE_1970_reward_green_transport = {
 }
 
 COLDWAR_CZE_1970_preview_green_river_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_green_river_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_green_river
 }
 
@@ -6887,7 +6908,6 @@ COLDWAR_CZE_1970_reward_green_river = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_GREEN = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_green_river }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_green_monitoring has_completed_focus = COLDWAR_CZE_1970_green_transport }
 		}
@@ -6900,7 +6920,8 @@ COLDWAR_CZE_1970_reward_green_river = {
 }
 
 COLDWAR_CZE_1970_preview_green_conversion_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_green_conversion_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_green_limits }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_green_limits add_idea = COLDWAR_CZE_1970_spirit_green_conversion }
@@ -6915,7 +6936,6 @@ COLDWAR_CZE_1970_reward_green_conversion = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_party_GREEN = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_green_conversion }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_green_river }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_green_limits }
@@ -7043,7 +7063,8 @@ COLDWAR_CZE_1970_reward_fed_republics = {
 }
 
 COLDWAR_CZE_1970_preview_fed_single_plan_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_fed_single_plan_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_fed_single_plan bonus = 0.5 uses = 1 category = CAT_construction }
 	add_ideas = COLDWAR_CZE_1970_spirit_fed_single_plan
 }
@@ -7053,7 +7074,6 @@ COLDWAR_CZE_1970_reward_fed_single_plan = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_fed_single_plan }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_fed_central }
 		}
@@ -7068,7 +7088,8 @@ COLDWAR_CZE_1970_reward_fed_single_plan = {
 
 COLDWAR_CZE_1970_preview_fed_equalisation_focus = {
 	add_ideas = COLDWAR_CZE_1970_spirit_fed_equalisation
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_fed_equalisation_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.0001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_fed_equalisation = {
@@ -7122,7 +7143,8 @@ COLDWAR_CZE_1970_reward_fed_revenue = {
 }
 
 COLDWAR_CZE_1970_preview_fed_bratislava_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_fed_bratislava_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+	modify_treasury_effect = yes
 	119 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -7135,7 +7157,6 @@ COLDWAR_CZE_1970_reward_fed_bratislava = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_fed_bratislava }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_fed_single_plan }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_fed_equalisation }
@@ -7152,7 +7173,8 @@ COLDWAR_CZE_1970_reward_fed_bratislava = {
 }
 
 COLDWAR_CZE_1970_preview_fed_brno_kosice_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_fed_brno_kosice_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.007 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -7170,7 +7192,6 @@ COLDWAR_CZE_1970_reward_fed_brno_kosice = {
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_fed_brno_kosice }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_fed_veto }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_fed_revenue }
@@ -7191,7 +7212,8 @@ COLDWAR_CZE_1970_reward_fed_brno_kosice = {
 }
 
 COLDWAR_CZE_1970_preview_fed_charter_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_fed_charter_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_fed_charter
 }
 
@@ -7200,7 +7222,6 @@ COLDWAR_CZE_1970_reward_fed_charter = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_fed_charter }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_fed_bratislava has_completed_focus = COLDWAR_CZE_1970_fed_brno_kosice }
 		}
@@ -7345,6 +7366,7 @@ COLDWAR_CZE_1970_reward_fed_votes = {
 }
 
 COLDWAR_CZE_1970_preview_fed_successors_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_successor_treaty = yes
 }
 
@@ -7365,7 +7387,8 @@ COLDWAR_CZE_1970_reward_fed_successors = {
 }
 
 COLDWAR_CZE_1970_preview_ind_review_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_review_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_ind_review bonus = 0.5 uses = 1 category = CAT_industry }
 }
 
@@ -7374,7 +7397,6 @@ COLDWAR_CZE_1970_reward_ind_review = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_review }
 		}
 		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
@@ -7508,7 +7530,8 @@ COLDWAR_CZE_1970_reward_ind_exports = {
 }
 
 COLDWAR_CZE_1970_preview_ind_skoda_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_skoda_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -7522,7 +7545,6 @@ COLDWAR_CZE_1970_reward_ind_skoda = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_skoda }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_champions }
 		}
@@ -7539,7 +7561,8 @@ COLDWAR_CZE_1970_reward_ind_skoda = {
 }
 
 COLDWAR_CZE_1970_preview_ind_ostrav_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_ostrav_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	1018 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_infrastructure level = 1 instant_build = yes }
@@ -7552,7 +7575,6 @@ COLDWAR_CZE_1970_reward_ind_ostrav = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			1018 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_infrastructure < 1 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_ostrav }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_skoda }
 		}
@@ -7568,7 +7590,8 @@ COLDWAR_CZE_1970_reward_ind_ostrav = {
 }
 
 COLDWAR_CZE_1970_preview_ind_tatra_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_tatra_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0018 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_ind_tatra bonus = 0.5 uses = 1 category = CAT_tank_engines }
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_ind_tatra_1 bonus = 0.5 uses = 1 category = CAT_armored_personnel_carriers }
 }
@@ -7578,7 +7601,6 @@ COLDWAR_CZE_1970_reward_ind_tatra = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_tatra }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_ostrav }
 		}
@@ -7592,7 +7614,8 @@ COLDWAR_CZE_1970_reward_ind_tatra = {
 }
 
 COLDWAR_CZE_1970_preview_ind_tools_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_tools_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -7605,7 +7628,6 @@ COLDWAR_CZE_1970_reward_ind_tools = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_tools }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_tatra }
 		}
@@ -7643,7 +7665,8 @@ COLDWAR_CZE_1970_reward_ind_manager = {
 }
 
 COLDWAR_CZE_1970_preview_ind_working_capital_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_working_capital_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+	modify_treasury_effect = yes
 	119 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -7656,7 +7679,6 @@ COLDWAR_CZE_1970_reward_ind_working_capital = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_working_capital }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_manager }
 		}
@@ -7694,7 +7716,8 @@ COLDWAR_CZE_1970_reward_ind_quality = {
 }
 
 COLDWAR_CZE_1970_preview_ind_small_firms_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_small_firms_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0055 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -7707,7 +7730,6 @@ COLDWAR_CZE_1970_reward_ind_small_firms = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_small_firms }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_quality }
 		}
@@ -7723,7 +7745,8 @@ COLDWAR_CZE_1970_reward_ind_small_firms = {
 }
 
 COLDWAR_CZE_1970_preview_ind_export_offices_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_export_offices_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -7736,7 +7759,6 @@ COLDWAR_CZE_1970_reward_ind_export_offices = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_export_offices }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_exports }
 		}
@@ -7773,7 +7795,8 @@ COLDWAR_CZE_1970_reward_ind_rail_equip = {
 
 COLDWAR_CZE_1970_preview_ind_external_credit_focus = {
 	add_ideas = COLDWAR_CZE_1970_spirit_ind_external_credit
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_ind_external_credit_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_ind_external_credit = {
@@ -7791,7 +7814,8 @@ COLDWAR_CZE_1970_reward_ind_external_credit = {
 }
 
 COLDWAR_CZE_1970_preview_ind_export_plant_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_export_plant_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
@@ -7804,7 +7828,6 @@ COLDWAR_CZE_1970_reward_ind_export_plant = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE industrial_complex < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_export_plant }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_external_credit }
 		}
@@ -7934,7 +7957,8 @@ COLDWAR_CZE_1970_reward_ind_export_final = {
 }
 
 COLDWAR_CZE_1970_preview_ind_soft_budgets_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_soft_budgets_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_start_4 }
 		remove_ideas = COLDWAR_CZE_1970_spirit_start_4
@@ -7952,7 +7976,6 @@ COLDWAR_CZE_1970_reward_ind_soft_budgets = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_soft_budgets }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_champion_final has_completed_focus = COLDWAR_CZE_1970_ind_contract_final has_completed_focus = COLDWAR_CZE_1970_ind_export_final }
 		}
@@ -8014,7 +8037,8 @@ COLDWAR_CZE_1970_reward_ind_precision = {
 }
 
 COLDWAR_CZE_1970_preview_ind_institutes_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_institutes_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_ind_institutes bonus = 0.5 uses = 2 category = CAT_industry }
 }
 
@@ -8023,7 +8047,6 @@ COLDWAR_CZE_1970_reward_ind_institutes = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_institutes }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_consumer_priority has_completed_focus = COLDWAR_CZE_1970_ind_precision }
 		}
@@ -8036,7 +8059,8 @@ COLDWAR_CZE_1970_reward_ind_institutes = {
 }
 
 COLDWAR_CZE_1970_preview_ind_final_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ind_final_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_start_3 }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_start_3 add_idea = COLDWAR_CZE_1970_spirit_ind_final }
@@ -8049,7 +8073,6 @@ COLDWAR_CZE_1970_reward_ind_final = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ind_final }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ind_institutes }
 		}
@@ -8062,7 +8085,8 @@ COLDWAR_CZE_1970_reward_ind_final = {
 }
 
 COLDWAR_CZE_1970_preview_energy_review_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_review_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_energy_review bonus = 0.5 uses = 1 category = CAT_fuel_efficiency }
 }
 
@@ -8071,7 +8095,6 @@ COLDWAR_CZE_1970_reward_energy_review = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_review }
 		}
 		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
@@ -8083,9 +8106,11 @@ COLDWAR_CZE_1970_reward_energy_review = {
 }
 
 COLDWAR_CZE_1970_preview_energy_losses_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_losses_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_energy_losses
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_energy_losses_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_energy_losses bonus = 0.25 uses = 1 category = CAT_infrastructure }
 	117 = {
 		add_extra_state_shared_building_slots = 1
@@ -8099,7 +8124,6 @@ COLDWAR_CZE_1970_reward_energy_losses = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE energy_infrastructure < 1 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_losses }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_review }
 		}
@@ -8117,7 +8141,8 @@ COLDWAR_CZE_1970_reward_energy_losses = {
 }
 
 COLDWAR_CZE_1970_preview_energy_grid_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_grid_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = energy_infrastructure level = 1 instant_build = yes }
@@ -8136,7 +8161,6 @@ COLDWAR_CZE_1970_reward_energy_grid = {
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE energy_infrastructure < 1 }
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE energy_infrastructure < 1 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_grid }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_losses }
 		}
@@ -8184,7 +8208,8 @@ COLDWAR_CZE_1970_reward_energy_coal = {
 }
 
 COLDWAR_CZE_1970_preview_energy_nuclear_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_nuclear_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_energy_nuclear bonus = 0.5 uses = 1 category = CAT_nuclear_reactors }
 	unlock_decision_tooltip = COLDWAR_CZE_1970_civil_nuclear_investment
 }
@@ -8195,7 +8220,6 @@ COLDWAR_CZE_1970_reward_energy_nuclear = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			custom_trigger_tooltip = { tooltip = COLDWAR_CZE_1970_require_design_and_fuel COLDWAR_CZE_1970_nuclear_design_active = yes COLDWAR_CZE_1970_nuclear_fuel_active = yes }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_nuclear }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_grid }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_energy_coal }
@@ -8210,7 +8234,8 @@ COLDWAR_CZE_1970_reward_energy_nuclear = {
 }
 
 COLDWAR_CZE_1970_preview_energy_coal_plant_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_coal_plant_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = fossil_powerplant level = 1 instant_build = yes }
@@ -8223,7 +8248,6 @@ COLDWAR_CZE_1970_reward_energy_coal_plant = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE fossil_powerplant < 20 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_coal_plant }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_coal }
 		}
@@ -8239,7 +8263,8 @@ COLDWAR_CZE_1970_reward_energy_coal_plant = {
 }
 
 COLDWAR_CZE_1970_preview_energy_filters_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_filters_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_start_6 }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_start_6 add_idea = COLDWAR_CZE_1970_spirit_energy_filters }
@@ -8252,7 +8277,6 @@ COLDWAR_CZE_1970_reward_energy_filters = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_filters }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_coal }
 		}
@@ -8265,7 +8289,8 @@ COLDWAR_CZE_1970_reward_energy_filters = {
 }
 
 COLDWAR_CZE_1970_preview_energy_components_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_components_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_energy_components bonus = 0.5 uses = 1 category = CAT_industry }
 	add_ideas = COLDWAR_CZE_1970_spirit_energy_components
 }
@@ -8276,7 +8301,6 @@ COLDWAR_CZE_1970_reward_energy_components = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_components_active = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_components }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_nuclear }
 		}
@@ -8290,7 +8314,8 @@ COLDWAR_CZE_1970_reward_energy_components = {
 }
 
 COLDWAR_CZE_1970_preview_energy_safety_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_safety_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_energy_safety
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_energy_safety bonus = 0.25 uses = 1 category = CAT_nuclear_reactors }
 }
@@ -8300,7 +8325,6 @@ COLDWAR_CZE_1970_reward_energy_safety = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_safety }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_nuclear }
 		}
@@ -8379,10 +8403,12 @@ COLDWAR_CZE_1970_reward_energy_nuclear_final = {
 }
 
 COLDWAR_CZE_1970_preview_energy_dispatch_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_dispatch_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_energy_dispatch bonus = 0.5 uses = 1 category = CAT_electronics }
 	add_ideas = COLDWAR_CZE_1970_spirit_energy_dispatch
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_energy_dispatch_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_energy_dispatch = {
@@ -8390,7 +8416,6 @@ COLDWAR_CZE_1970_reward_energy_dispatch = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_dispatch }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_coal_final has_completed_focus = COLDWAR_CZE_1970_energy_nuclear_final }
 		}
@@ -8404,7 +8429,8 @@ COLDWAR_CZE_1970_reward_energy_dispatch = {
 }
 
 COLDWAR_CZE_1970_preview_energy_cleanup_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_cleanup_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_energy_output }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_energy_output add_idea = COLDWAR_CZE_1970_spirit_energy_cleanup }
@@ -8417,7 +8443,6 @@ COLDWAR_CZE_1970_reward_energy_cleanup = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_cleanup }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_dispatch }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_energy_output }
@@ -8454,7 +8479,8 @@ COLDWAR_CZE_1970_reward_energy_output = {
 }
 
 COLDWAR_CZE_1970_preview_energy_survey_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_survey_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+	modify_treasury_effect = yes
 	unlock_decision_tooltip = COLDWAR_CZE_1970_uranium_survey
 }
 
@@ -8463,7 +8489,6 @@ COLDWAR_CZE_1970_reward_energy_survey = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_survey }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_dispatch }
 		}
@@ -8514,7 +8539,8 @@ COLDWAR_CZE_1970_reward_energy_uranium_reserve = {
 }
 
 COLDWAR_CZE_1970_preview_energy_final_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_energy_final_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_energy_final bonus = 0.5 uses = 1 category = CAT_fuel_efficiency }
 	add_political_power = 50
 }
@@ -8524,7 +8550,6 @@ COLDWAR_CZE_1970_reward_energy_final = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_energy_final }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_cleanup has_completed_focus = COLDWAR_CZE_1970_energy_output }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_energy_uranium has_completed_focus = COLDWAR_CZE_1970_energy_uranium_reserve }
@@ -8539,7 +8564,8 @@ COLDWAR_CZE_1970_reward_energy_final = {
 }
 
 COLDWAR_CZE_1970_preview_soc_review_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_review_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_soc_review bonus = 0.5 uses = 1 category = CAT_construction }
 }
 
@@ -8548,7 +8574,6 @@ COLDWAR_CZE_1970_reward_soc_review = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_review }
 		}
 		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
@@ -8646,7 +8671,8 @@ COLDWAR_CZE_1970_reward_soc_repair = {
 }
 
 COLDWAR_CZE_1970_preview_soc_bohemia_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_bohemia_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -8659,7 +8685,6 @@ COLDWAR_CZE_1970_reward_soc_bohemia = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_bohemia }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_panel }
 		}
@@ -8675,7 +8700,8 @@ COLDWAR_CZE_1970_reward_soc_bohemia = {
 }
 
 COLDWAR_CZE_1970_preview_soc_moravia_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_moravia_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -8688,7 +8714,6 @@ COLDWAR_CZE_1970_reward_soc_moravia = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_moravia }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_town }
 		}
@@ -8704,7 +8729,8 @@ COLDWAR_CZE_1970_reward_soc_moravia = {
 }
 
 COLDWAR_CZE_1970_preview_soc_insulation_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_insulation_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_soc_insulation bonus = 0.5 uses = 1 category = CAT_fuel_efficiency }
 	119 = {
 		add_extra_state_shared_building_slots = 1
@@ -8718,7 +8744,6 @@ COLDWAR_CZE_1970_reward_soc_insulation = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE energy_infrastructure < 1 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_insulation }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_repair }
 		}
@@ -8740,7 +8765,8 @@ COLDWAR_CZE_1970_preview_soc_compact_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_start_5 add_idea = COLDWAR_CZE_1970_spirit_soc_compact }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_soc_compact }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_soc_compact_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_soc_compact = {
@@ -8758,7 +8784,8 @@ COLDWAR_CZE_1970_reward_soc_compact = {
 }
 
 COLDWAR_CZE_1970_preview_soc_mechanise_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_mechanise_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_soc_farm_autonomy }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_soc_farm_autonomy add_idea = COLDWAR_CZE_1970_spirit_soc_mechanise }
@@ -8778,7 +8805,6 @@ COLDWAR_CZE_1970_reward_soc_mechanise = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE agriculture_district < 10 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_mechanise }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_compact }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_soc_farm_autonomy }
@@ -8821,7 +8847,8 @@ COLDWAR_CZE_1970_reward_soc_farm_autonomy = {
 }
 
 COLDWAR_CZE_1970_preview_soc_food_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_food_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = agriculture_district level = 1 instant_build = yes }
@@ -8835,7 +8862,6 @@ COLDWAR_CZE_1970_reward_soc_food = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE agriculture_district < 10 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_food }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_mechanise has_completed_focus = COLDWAR_CZE_1970_soc_farm_autonomy }
 		}
@@ -8852,7 +8878,8 @@ COLDWAR_CZE_1970_reward_soc_food = {
 }
 
 COLDWAR_CZE_1970_preview_soc_university_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_university_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_start_7 }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_start_7 add_idea = COLDWAR_CZE_1970_spirit_soc_university }
@@ -8869,7 +8896,6 @@ COLDWAR_CZE_1970_reward_soc_university = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_university }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_food }
 		}
@@ -8928,7 +8954,8 @@ COLDWAR_CZE_1970_reward_soc_applied_science = {
 }
 
 COLDWAR_CZE_1970_preview_soc_bratislava_science_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_bratislava_science_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_soc_bratislava_science bonus = 0.5 uses = 1 category = CAT_electronics }
 	119 = {
 		add_extra_state_shared_building_slots = 1
@@ -8942,7 +8969,6 @@ COLDWAR_CZE_1970_reward_soc_bratislava_science = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_bratislava_science }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_basic_science has_completed_focus = COLDWAR_CZE_1970_soc_applied_science }
 		}
@@ -8959,7 +8985,8 @@ COLDWAR_CZE_1970_reward_soc_bratislava_science = {
 }
 
 COLDWAR_CZE_1970_preview_soc_czech_science_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_czech_science_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_soc_czech_science bonus = 0.5 uses = 1 category = CAT_industry }
 	118 = {
 		add_extra_state_shared_building_slots = 1
@@ -8973,7 +9000,6 @@ COLDWAR_CZE_1970_reward_soc_czech_science = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_czech_science }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_basic_science has_completed_focus = COLDWAR_CZE_1970_soc_applied_science }
 		}
@@ -8990,9 +9016,11 @@ COLDWAR_CZE_1970_reward_soc_czech_science = {
 }
 
 COLDWAR_CZE_1970_preview_soc_health_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_health_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_soc_health
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_soc_health_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00008 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = offices level = 1 instant_build = yes }
@@ -9005,7 +9033,6 @@ COLDWAR_CZE_1970_reward_soc_health = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_health }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_bratislava_science }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_czech_science }
@@ -9023,7 +9050,8 @@ COLDWAR_CZE_1970_reward_soc_health = {
 }
 
 COLDWAR_CZE_1970_preview_soc_final_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_soc_final_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_stability = 0.04
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_soc_final bonus = 0.25 uses = 1 category = CAT_industry }
 }
@@ -9033,7 +9061,6 @@ COLDWAR_CZE_1970_reward_soc_final = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_soc_final }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_soc_health }
 		}
@@ -9132,7 +9159,8 @@ COLDWAR_CZE_1970_reward_army_territorial = {
 }
 
 COLDWAR_CZE_1970_preview_army_tanks_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_tanks_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0018 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_army_tanks bonus = 0.5 uses = 1 category = CAT_tanks }
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_army_tanks_1 bonus = 0.5 uses = 1 category = CAT_tank_engines }
 }
@@ -9142,7 +9170,6 @@ COLDWAR_CZE_1970_reward_army_tanks = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_tanks }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_mechanised }
 		}
@@ -9156,7 +9183,8 @@ COLDWAR_CZE_1970_reward_army_tanks = {
 }
 
 COLDWAR_CZE_1970_preview_army_ifv_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_ifv_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_army_ifv bonus = 0.5 uses = 1 category = CAT_infantry_fighting_vehicles }
 	119 = {
 		add_extra_state_shared_building_slots = 1
@@ -9170,7 +9198,6 @@ COLDWAR_CZE_1970_reward_army_ifv = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE arms_factory < 35 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_ifv }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_mechanised }
 		}
@@ -9187,7 +9214,8 @@ COLDWAR_CZE_1970_reward_army_ifv = {
 }
 
 COLDWAR_CZE_1970_preview_army_reserves_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_reserves_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_army_reserves
 }
 
@@ -9196,7 +9224,6 @@ COLDWAR_CZE_1970_reward_army_reserves = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_reserves }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_territorial }
 		}
@@ -9296,7 +9323,8 @@ COLDWAR_CZE_1970_reward_army_territory_final = {
 }
 
 COLDWAR_CZE_1970_preview_army_logistics_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_logistics_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_army_logistics bonus = 0.5 uses = 1 category = CAT_infrastructure }
 	add_ideas = COLDWAR_CZE_1970_spirit_army_logistics
 }
@@ -9306,7 +9334,6 @@ COLDWAR_CZE_1970_reward_army_logistics = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_logistics }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_field_final has_completed_focus = COLDWAR_CZE_1970_army_territory_final }
 		}
@@ -9343,7 +9370,8 @@ COLDWAR_CZE_1970_reward_army_quantity = {
 }
 
 COLDWAR_CZE_1970_preview_army_quality_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_quality_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_army_quantity }
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_army_quantity add_idea = COLDWAR_CZE_1970_spirit_army_quality }
@@ -9357,7 +9385,6 @@ COLDWAR_CZE_1970_reward_army_quality = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_quality }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_logistics }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_army_quantity }
@@ -9372,7 +9399,8 @@ COLDWAR_CZE_1970_reward_army_quality = {
 }
 
 COLDWAR_CZE_1970_preview_army_academy_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_academy_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	add_doctrine_cost_reduction = { name = COLDWAR_CZE_1970_bonus_army_academy cost_reduction = 0.35 uses = 1 category = land_doctrine }
 	add_ideas = COLDWAR_CZE_1970_spirit_army_academy
 	117 = {
@@ -9387,7 +9415,6 @@ COLDWAR_CZE_1970_reward_army_academy = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE offices < 50 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_academy }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_quantity has_completed_focus = COLDWAR_CZE_1970_army_quality }
 		}
@@ -9405,7 +9432,8 @@ COLDWAR_CZE_1970_reward_army_academy = {
 }
 
 COLDWAR_CZE_1970_preview_army_maintenance_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_maintenance_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -9419,7 +9447,6 @@ COLDWAR_CZE_1970_reward_army_maintenance = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_maintenance }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_academy }
 		}
@@ -9436,7 +9463,8 @@ COLDWAR_CZE_1970_reward_army_maintenance = {
 }
 
 COLDWAR_CZE_1970_preview_army_production_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_army_production_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = arms_factory level = 1 instant_build = yes }
@@ -9449,7 +9477,6 @@ COLDWAR_CZE_1970_reward_army_production = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE arms_factory < 35 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_army_production }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_army_academy }
 		}
@@ -9466,7 +9493,8 @@ COLDWAR_CZE_1970_reward_army_production = {
 
 COLDWAR_CZE_1970_preview_army_sustain_focus = {
 	add_ideas = COLDWAR_CZE_1970_spirit_army_sustain
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_army_sustain_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.0001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 }
 
 COLDWAR_CZE_1970_reward_army_sustain = {
@@ -9531,7 +9559,8 @@ COLDWAR_CZE_1970_reward_army_national = {
 }
 
 COLDWAR_CZE_1970_preview_air_review_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_review_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_air_review bonus = 0.5 uses = 1 category = CAT_aircraft }
 }
 
@@ -9540,7 +9569,6 @@ COLDWAR_CZE_1970_reward_air_review = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_review }
 		}
 		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
@@ -9582,7 +9610,8 @@ COLDWAR_CZE_1970_preview_air_frontline_focus = {
 		swap_ideas = { remove_idea = COLDWAR_CZE_1970_spirit_air_training add_idea = COLDWAR_CZE_1970_spirit_air_frontline }
 	}
 	else = { add_ideas = COLDWAR_CZE_1970_spirit_air_frontline }
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_air_frontline_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00008 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_air_frontline bonus = 0.25 uses = 1 category = CAT_aircraft }
 }
 
@@ -9603,7 +9632,8 @@ COLDWAR_CZE_1970_reward_air_frontline = {
 }
 
 COLDWAR_CZE_1970_preview_air_aero_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_aero_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_air_aero bonus = 0.5 uses = 2 category = CAT_aircraft }
 }
 
@@ -9612,7 +9642,6 @@ COLDWAR_CZE_1970_reward_air_aero = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_aero }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_training }
 		}
@@ -9625,7 +9654,8 @@ COLDWAR_CZE_1970_reward_air_aero = {
 }
 
 COLDWAR_CZE_1970_preview_air_bases_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_bases_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+	modify_treasury_effect = yes
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = air_base level = 1 instant_build = yes }
@@ -9643,7 +9673,6 @@ COLDWAR_CZE_1970_reward_air_bases = {
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE air_base < 10 }
 			119 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE air_base < 10 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_bases }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_frontline }
 		}
@@ -9663,7 +9692,8 @@ COLDWAR_CZE_1970_reward_air_bases = {
 }
 
 COLDWAR_CZE_1970_preview_air_network_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_network_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0045 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = radar_station level = 1 instant_build = yes }
@@ -9681,7 +9711,6 @@ COLDWAR_CZE_1970_reward_air_network = {
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE radar_station < 6 }
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE radar_station < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_network }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_aero has_completed_focus = COLDWAR_CZE_1970_air_bases }
 		}
@@ -9701,7 +9730,8 @@ COLDWAR_CZE_1970_reward_air_network = {
 }
 
 COLDWAR_CZE_1970_preview_air_sam_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_sam_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+	modify_treasury_effect = yes
 	1018 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = anti_air_building level = 1 instant_build = yes }
@@ -9719,7 +9749,6 @@ COLDWAR_CZE_1970_reward_air_sam = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			1018 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE anti_air_building < 5 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_sam }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_network }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_air_dispersal }
@@ -9760,9 +9789,11 @@ COLDWAR_CZE_1970_reward_air_dispersal = {
 }
 
 COLDWAR_CZE_1970_preview_air_safety_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_safety_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_air_safety
-	custom_effect_tooltip = COLDWAR_CZE_1970_weekly_air_safety_tt
+	set_temp_variable = { COLDWAR_CZE_1970_policy_quote = { value = gdp_total multiply = 0.00004 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+	add_to_variable = { COLDWAR_CZE_1970_programmes_weekly_expense = COLDWAR_CZE_1970_policy_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 	118 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = air_base level = 1 instant_build = yes }
@@ -9775,7 +9806,6 @@ COLDWAR_CZE_1970_reward_air_safety = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			118 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE air_base < 10 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_safety }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_sam has_completed_focus = COLDWAR_CZE_1970_air_dispersal }
 		}
@@ -9792,7 +9822,8 @@ COLDWAR_CZE_1970_reward_air_safety = {
 }
 
 COLDWAR_CZE_1970_preview_air_engines_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_engines_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_air_engines bonus = 0.5 uses = 1 category = CAT_fuel_efficiency }
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_air_engines_1 bonus = 0.5 uses = 1 category = CAT_aircraft }
 }
@@ -9802,7 +9833,6 @@ COLDWAR_CZE_1970_reward_air_engines = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_engines }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_safety }
 		}
@@ -9816,7 +9846,8 @@ COLDWAR_CZE_1970_reward_air_engines = {
 }
 
 COLDWAR_CZE_1970_preview_air_overhaul_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_overhaul_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
 	117 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = arms_factory level = 1 instant_build = yes }
@@ -9829,7 +9860,6 @@ COLDWAR_CZE_1970_reward_air_overhaul = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			117 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE arms_factory < 35 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_overhaul }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_safety }
 		}
@@ -9845,7 +9875,8 @@ COLDWAR_CZE_1970_reward_air_overhaul = {
 }
 
 COLDWAR_CZE_1970_preview_air_final_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_air_final_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+	modify_treasury_effect = yes
 	add_political_power = 50
 	add_doctrine_cost_reduction = { name = COLDWAR_CZE_1970_bonus_air_final cost_reduction = 0.25 uses = 1 category = land_doctrine }
 }
@@ -9855,7 +9886,6 @@ COLDWAR_CZE_1970_reward_air_final = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_air_final }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_engines }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_air_overhaul }
@@ -9973,7 +10003,8 @@ COLDWAR_CZE_1970_reward_foreign_west = {
 }
 
 COLDWAR_CZE_1970_preview_foreign_service_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_foreign_service_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_foreign_service
 }
 
@@ -9982,7 +10013,6 @@ COLDWAR_CZE_1970_reward_foreign_service = {
 		limit = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_foreign_service }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_foreign_bloc has_completed_focus = COLDWAR_CZE_1970_foreign_bridge has_completed_focus = COLDWAR_CZE_1970_foreign_west }
 		}
@@ -9995,6 +10025,7 @@ COLDWAR_CZE_1970_reward_foreign_service = {
 }
 
 COLDWAR_CZE_1970_preview_offer_oil_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_oil = yes
 }
 
@@ -10014,6 +10045,7 @@ COLDWAR_CZE_1970_reward_offer_oil = {
 }
 
 COLDWAR_CZE_1970_preview_offer_reactor_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_reactor = yes
 }
 
@@ -10033,6 +10065,7 @@ COLDWAR_CZE_1970_reward_offer_reactor = {
 }
 
 COLDWAR_CZE_1970_preview_offer_components_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_components = yes
 }
 
@@ -10053,6 +10086,7 @@ COLDWAR_CZE_1970_reward_offer_components = {
 }
 
 COLDWAR_CZE_1970_preview_offer_power_pool_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_power_pool = yes
 }
 
@@ -10075,6 +10109,7 @@ COLDWAR_CZE_1970_reward_offer_power_pool = {
 }
 
 COLDWAR_CZE_1970_preview_offer_interkosmos_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_interkosmos = yes
 }
 
@@ -10094,6 +10129,7 @@ COLDWAR_CZE_1970_reward_offer_interkosmos = {
 }
 
 COLDWAR_CZE_1970_preview_offer_gdr_auto_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_gdr_auto = yes
 }
 
@@ -10113,6 +10149,7 @@ COLDWAR_CZE_1970_reward_offer_gdr_auto = {
 }
 
 COLDWAR_CZE_1970_preview_offer_gdr_rail_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_gdr_rail = yes
 }
 
@@ -10132,6 +10169,7 @@ COLDWAR_CZE_1970_reward_offer_gdr_rail = {
 }
 
 COLDWAR_CZE_1970_preview_offer_pol_rail_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_pol_rail = yes
 }
 
@@ -10151,6 +10189,7 @@ COLDWAR_CZE_1970_reward_offer_pol_rail = {
 }
 
 COLDWAR_CZE_1970_preview_offer_pol_air_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_pol_environment = yes
 }
 
@@ -10170,6 +10209,7 @@ COLDWAR_CZE_1970_reward_offer_pol_air = {
 }
 
 COLDWAR_CZE_1970_preview_offer_hun_dam_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_hun_dam = yes
 }
 
@@ -10190,6 +10230,7 @@ COLDWAR_CZE_1970_reward_offer_hun_dam = {
 }
 
 COLDWAR_CZE_1970_preview_offer_hun_river_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_hun_river = yes
 }
 
@@ -10210,6 +10251,7 @@ COLDWAR_CZE_1970_reward_offer_hun_river = {
 }
 
 COLDWAR_CZE_1970_preview_offer_frg_treaty_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_frg_treaty = yes
 }
 
@@ -10229,6 +10271,7 @@ COLDWAR_CZE_1970_reward_offer_frg_treaty = {
 }
 
 COLDWAR_CZE_1970_preview_offer_frg_tech_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_frg_technology = yes
 }
 
@@ -10249,6 +10292,7 @@ COLDWAR_CZE_1970_reward_offer_frg_tech = {
 }
 
 COLDWAR_CZE_1970_preview_offer_aus_claims_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_aus_claims = yes
 }
 
@@ -10268,6 +10312,7 @@ COLDWAR_CZE_1970_reward_offer_aus_claims = {
 }
 
 COLDWAR_CZE_1970_preview_offer_aus_trade_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_aus_trade = yes
 }
 
@@ -10288,6 +10333,7 @@ COLDWAR_CZE_1970_reward_offer_aus_trade = {
 }
 
 COLDWAR_CZE_1970_preview_offer_yug_engineering_focus = {
+	custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — MD headline (24.11.2026)
 	COLDWAR_CZE_1970_preview_offer_yug_engineering = yes
 }
 
@@ -10346,7 +10392,8 @@ COLDWAR_CZE_1970_reward_cmea_entry = {
 }
 
 COLDWAR_CZE_1970_preview_cmea_machinery_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_cmea_machinery_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_cmea_machinery bonus = 0.5 uses = 1 category = CAT_industry }
 	unlock_decision_tooltip = COLDWAR_CZE_1970_machinery_dossier
 }
@@ -10357,7 +10404,6 @@ COLDWAR_CZE_1970_reward_cmea_machinery = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			has_idea = COLDWAR_CMEA_member
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_cmea_machinery }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_cmea_entry }
 		}
@@ -10395,7 +10441,8 @@ COLDWAR_CZE_1970_reward_cmea_standards = {
 }
 
 COLDWAR_CZE_1970_preview_cmea_research_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_cmea_research_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_cmea_research bonus = 0.5 uses = 1 category = CAT_electronics }
 	if = {
 		limit = { has_idea = COLDWAR_CZE_1970_spirit_cmea_standards }
@@ -10410,7 +10457,6 @@ COLDWAR_CZE_1970_reward_cmea_research = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			has_idea = COLDWAR_CMEA_member
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_cmea_research }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_cmea_machinery }
 			NOT = { has_completed_focus = COLDWAR_CZE_1970_cmea_standards }
@@ -10483,7 +10529,8 @@ COLDWAR_CZE_1970_reward_ec_entry = {
 }
 
 COLDWAR_CZE_1970_preview_ec_research_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ec_research_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_ec_research bonus = 0.5 uses = 1 category = CAT_electronics }
 	add_ideas = COLDWAR_CZE_1970_spirit_ec_research
 }
@@ -10494,7 +10541,6 @@ COLDWAR_CZE_1970_reward_ec_research = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			has_idea = COLDWAR_EC_member
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ec_research }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ec_entry }
 		}
@@ -10508,7 +10554,8 @@ COLDWAR_CZE_1970_reward_ec_research = {
 }
 
 COLDWAR_CZE_1970_preview_ec_standards_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ec_standards_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+	modify_treasury_effect = yes
 	add_ideas = COLDWAR_CZE_1970_spirit_ec_standards
 }
 
@@ -10518,7 +10565,6 @@ COLDWAR_CZE_1970_reward_ec_standards = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			has_idea = COLDWAR_EC_member
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ec_standards }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ec_research }
 		}
@@ -10531,7 +10577,8 @@ COLDWAR_CZE_1970_reward_ec_standards = {
 }
 
 COLDWAR_CZE_1970_preview_ec_regions_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_ec_regions_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+	modify_treasury_effect = yes
 	120 = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = { type = infrastructure level = 1 instant_build = yes }
@@ -10546,7 +10593,6 @@ COLDWAR_CZE_1970_reward_ec_regions = {
 			tag = CZE
 			has_idea = COLDWAR_EC_member
 			120 = { is_owned_by = CZE is_controlled_by = CZE is_fully_controlled_by = CZE infrastructure < 6 }
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_ec_regions }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_ec_standards }
 		}
@@ -10563,7 +10609,8 @@ COLDWAR_CZE_1970_reward_ec_regions = {
 }
 
 COLDWAR_CZE_1970_preview_space_instruments_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_space_instruments_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_space_instruments bonus = 0.5 uses = 1 category = CAT_electronics }
 	add_ideas = COLDWAR_CZE_1970_spirit_space_instruments
 }
@@ -10574,7 +10621,6 @@ COLDWAR_CZE_1970_reward_space_instruments = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_interkosmos_active = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_space_instruments }
 		}
 		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
@@ -10588,7 +10634,8 @@ COLDWAR_CZE_1970_reward_space_instruments = {
 }
 
 COLDWAR_CZE_1970_preview_space_crew_focus = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_setup_space_crew_tt
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+	modify_treasury_effect = yes
 	add_tech_bonus = { name = COLDWAR_CZE_1970_bonus_space_crew bonus = 0.25 uses = 1 category = CAT_aircraft }
 	unlock_decision_tooltip = COLDWAR_CZE_1970_interkosmos_dossier
 }
@@ -10599,7 +10646,6 @@ COLDWAR_CZE_1970_reward_space_crew = {
 			COLDWAR_CZE_1970_is_scenario = yes
 			tag = CZE
 			COLDWAR_CZE_1970_interkosmos_active = yes
-			check_variable = { gdp_total > 0 }
 			NOT = { has_country_flag = COLDWAR_CZE_1970_earned_space_crew }
 			OR = { has_completed_focus = COLDWAR_CZE_1970_space_instruments }
 		}

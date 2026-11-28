@@ -1,4 +1,6 @@
 # IMPERIA COLD WAR — International Production (player-only outsourcing network)
+# Update 19.11.2026 (b): sanctions no longer block contracts.
+# Update 19.11.2026: v3. Screenshot mode (global flag icwp_open_all) lets players choose AI countries as producers.
 # Update 08.11.2026: v2 rebuild. Player-only contracts, open end, country location profile, no world loops.
 
 # Country takes part in the network. Set once a human player opened or used it; never cleared,
@@ -15,26 +17,30 @@ icwp_player_ready = {
 }
 
 # Pair guards run in client scope with the host in PREV.
+# Update 19.11.2026 (b): economic and financial sanctions no longer block or break contracts, so a sanctioned
+# country can still become a workshop of the world. Only war and a trade embargo stop production.
 icwp_trade_clear = {
 	exists = yes
 	PREV = { exists = yes }
 	NOT = { has_war_with = PREV }
 	NOT = { is_embargoing = PREV }
 	PREV = { NOT = { is_embargoing = PREV } }
-	NOT = { is_in_array = { array = imp_eco_sanc_on_us value = PREV } }
-	NOT = { is_in_array = { array = imp_eco_sanc_by_us value = PREV } }
-	PREV = {
-		NOT = { is_in_array = { array = imp_eco_sanc_on_us value = PREV } }
-		NOT = { is_in_array = { array = imp_eco_sanc_by_us value = PREV } }
-	}
 }
 
+# Kept for the callers; sanctions do not matter any more.
 icwp_finance_clear = {
-	NOT = { is_in_array = { array = imp_fin_sanc_on_us value = PREV } }
-	NOT = { is_in_array = { array = imp_fin_sanc_by_us value = PREV } }
-	PREV = {
-		NOT = { is_in_array = { array = imp_fin_sanc_on_us value = PREV } }
-		NOT = { is_in_array = { array = imp_fin_sanc_by_us value = PREV } }
+	always = yes
+}
+
+# Host has room for one more client: 8, 15 with Special Economic Zones, 30 with Open Door Manufacturing
+# (icwp_max_clients is set by icwp_host_profile; 8 until the first profile).
+icwp_host_has_slot = {
+	if = {
+		limit = { check_variable = { icwp_max_clients > 0 } }
+		check_variable = { icwp_clients^num < icwp_max_clients }
+	}
+	else = {
+		check_variable = { icwp_clients^num < 8 }
 	}
 }
 
@@ -46,7 +52,13 @@ icwp_host_open = {
 # Offer check: client scope, host in PREV. Same rules as the market scan and the acceptance.
 icwp_can_offer_to = {
 	icwp_player_ready = yes
-	PREV = { icwp_player_ready = yes }
+	OR = {
+		PREV = { icwp_player_ready = yes }
+		AND = {
+			has_global_flag = icwp_open_all
+			PREV = { IMP_is_1970_scenario = yes NOT = { has_country_flag = hide_money } }
+		}
+	}
 	NOT = { tag = PREV }
 	icwp_trade_clear = yes
 	icwp_finance_clear = yes
@@ -56,14 +68,14 @@ icwp_can_offer_to = {
 		is_in_array = { array = icwp_hosts value = PREV }
 		AND = {
 			check_variable = { icwp_hosts^num < 6 }
-			PREV = { check_variable = { icwp_clients^num < 8 } icwp_host_open = yes }
+			PREV = { icwp_host_has_slot = yes icwp_host_open = yes }
 		}
 	}
 	OR = {
 		NOT = { is_in_array = { array = icwp_hosts value = PREV } }
 		AND = {
 			check_variable = { icwp_s@PREV = 1 }
-			check_variable = { icwp_u@PREV < 10 }
+			check_variable = { icwp_u@PREV < 22 }
 		}
 	}
 }

@@ -1,0 +1,101 @@
+# IMPERIA COLD WAR — Internal faction event costs (2026-11-13)
+# Licence: part of the Imperia Cold War mod, based on Millennium Dawn. Not for reuse outside the mod without permission of the Imperia team.
+# Update 2026-11-13: options that win a faction's favour cost more. One-time costs x1.5, recurring costs x1.25.
+#   All monetary costs are a share of the payer's current GDP (no fixed billion charges).
+#   Building purchases inside these effects keep their native price (converted to a GDP share) and grant one shared slot per level.
+
+# IMPERIA COLD WAR — Political power: the native lose_pp_for_* amounts x1.5 (minimum and cap x1.5 as well)
+COLDWAR_ifac_lose_pp_for_15_days = {
+	set_temp_variable = { pp_gain = political_power_daily }
+	multiply_temp_variable = { pp_gain = -22.5 }
+	clamp_temp_variable = { var = pp_gain min = -750 max = -38 }
+	add_political_power = pp_gain
+}
+COLDWAR_ifac_lose_pp_for_month = {
+	set_temp_variable = { pp_gain = political_power_daily }
+	multiply_temp_variable = { pp_gain = -45 }
+	clamp_temp_variable = { var = pp_gain min = -750 max = -75 }
+	add_political_power = pp_gain
+}
+COLDWAR_ifac_lose_pp_for_2_months = {
+	set_temp_variable = { pp_gain = political_power_daily }
+	multiply_temp_variable = { pp_gain = -90 }
+	clamp_temp_variable = { var = pp_gain min = -750 max = -113 }
+	add_political_power = pp_gain
+}
+COLDWAR_ifac_lose_pp_for_4_months = {
+	set_temp_variable = { pp_gain = political_power_daily }
+	multiply_temp_variable = { pp_gain = -180 }
+	clamp_temp_variable = { var = pp_gain min = -750 max = -150 }
+	add_political_power = pp_gain
+}
+
+# IMPERIA COLD WAR — Money: the native small/medium expenditure x1.5
+COLDWAR_ifac_small_expenditure = {
+	# IMPERIA COLD WAR — 0.3% of GDP (native 0.2%)
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+	modify_treasury_effect = yes
+}
+COLDWAR_ifac_medium_expenditure = {
+	# IMPERIA COLD WAR — 0.6% of GDP (native 0.4%)
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.006 } }
+	modify_treasury_effect = yes
+}
+
+# IMPERIA COLD WAR — Buildings: native price as GDP share (one factory = 0.8% of GDP, renewable infrastructure = 0.85% of GDP)
+COLDWAR_ifac_two_random_arms_factory = {
+	every_controlled_state = {
+		limit = { free_shared_building_slots = yes }
+		random_select_amount = 2
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = arms_factory
+			level = 1
+			instant_build = yes
+		}
+	}
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.016 } }
+	modify_treasury_effect = yes
+}
+COLDWAR_ifac_one_random_renewable_energy_infra = {
+	every_controlled_state = {
+		limit = { renewable_energy_infra_random_build_loc = yes }
+		random_select_amount = 1
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = renewable_energy_infra
+			level = 1
+			instant_build = yes
+		}
+	}
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0085 } }
+	modify_treasury_effect = yes
+}
+COLDWAR_ifac_two_random_renewable_energy_infra = {
+	every_controlled_state = {
+		limit = { renewable_energy_infra_random_build_loc = yes }
+		random_select_amount = 2
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = renewable_energy_infra
+			level = 1
+			instant_build = yes
+		}
+	}
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.017 } }
+	modify_treasury_effect = yes
+}
+COLDWAR_ifac_three_random_renewable_energy_infra = {
+	every_controlled_state = {
+		limit = { renewable_energy_infra_random_build_loc = yes }
+		random_select_amount = 3
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = renewable_energy_infra
+			level = 1
+			instant_build = yes
+		}
+	}
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0255 } }
+	modify_treasury_effect = yes
+}

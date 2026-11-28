@@ -641,30 +641,56 @@ country_event = {
 
 	is_triggered_only = yes
 
+	# IMPERIA COLD WAR — B9: petitions cost half (1% of GDP for a factory, 0.75% for infrastructure, +25% per open Union project); Moscow's AI files most of them away unless the treasury is full
 	option = {
 		name = COLDWAR_SOV.29.a
 		ai_chance = {
-			base = 2
-			modifier = { factor = 0.4 check_variable = { COLDWAR_SOV_republic_burden > 0 } }
-			modifier = { factor = 0 check_variable = { COLDWAR_SOV_republic_burden > 1 } }
-			modifier = { factor = 0 check_variable = { treasury < 0 } }
+			base = 1
+			modifier = { factor = 0 check_variable = { COLDWAR_SOV_republic_burden > 0 } }
+			modifier = { factor = 0 check_variable = { COLDWAR_SOV_petition_burden > 0 } }
+			modifier = { factor = 0 check_variable = { treasury < 20 } }
+			modifier = { factor = 3 check_variable = { treasury > 60 } }
 		}
-		FROM = { set_temp_variable = { COLDWAR_SOV_prop_building = 1 } COLDWAR_SOV_build_union_project = yes }
+		set_temp_variable = { COLDWAR_SOV_petition_rate = 1 }
+		# preview with the formula of COLDWAR_SOV_build_union_project (MD treasury line); the transaction itself runs hidden below
+		set_temp_variable = { COLDWAR_SOV_pv_mult = COLDWAR_SOV_republic_burden }
+		add_to_temp_variable = { COLDWAR_SOV_pv_mult = COLDWAR_SOV_petition_burden }
+		multiply_temp_variable = { COLDWAR_SOV_pv_mult = 0.25 }
+		add_to_temp_variable = { COLDWAR_SOV_pv_mult = 1 }
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.01 }
+		multiply_temp_variable = { treasury_change = COLDWAR_SOV_pv_mult }
+		effect_tooltip = { modify_treasury_effect = yes }
+		custom_effect_tooltip = COLDWAR_SOV.29.a_tt
+		hidden_effect = { FROM = { set_temp_variable = { COLDWAR_SOV_petition_rate = 1 } set_temp_variable = { COLDWAR_SOV_prop_building = 1 } COLDWAR_SOV_build_union_project = yes } }
 	}
 	option = {
 		name = COLDWAR_SOV.29.b
 		ai_chance = {
-			base = 2
-			modifier = { factor = 0.4 check_variable = { COLDWAR_SOV_republic_burden > 0 } }
-			modifier = { factor = 0 check_variable = { COLDWAR_SOV_republic_burden > 1 } }
-			modifier = { factor = 0 check_variable = { treasury < 0 } }
+			base = 1
+			modifier = { factor = 0 check_variable = { COLDWAR_SOV_republic_burden > 0 } }
+			modifier = { factor = 0 check_variable = { COLDWAR_SOV_petition_burden > 0 } }
+			modifier = { factor = 0 check_variable = { treasury < 20 } }
+			modifier = { factor = 3 check_variable = { treasury > 60 } }
 		}
-		FROM = { set_temp_variable = { COLDWAR_SOV_prop_building = 2 } COLDWAR_SOV_build_union_project = yes }
+		set_temp_variable = { COLDWAR_SOV_petition_rate = 1 }
+		# preview with the formula of COLDWAR_SOV_build_union_project (MD treasury line); the transaction itself runs hidden below
+		set_temp_variable = { COLDWAR_SOV_pv_mult = COLDWAR_SOV_republic_burden }
+		add_to_temp_variable = { COLDWAR_SOV_pv_mult = COLDWAR_SOV_petition_burden }
+		multiply_temp_variable = { COLDWAR_SOV_pv_mult = 0.25 }
+		add_to_temp_variable = { COLDWAR_SOV_pv_mult = 1 }
+		set_temp_variable = { treasury_change = gdp_total }
+		multiply_temp_variable = { treasury_change = -0.0075 }
+		multiply_temp_variable = { treasury_change = COLDWAR_SOV_pv_mult }
+		effect_tooltip = { modify_treasury_effect = yes }
+		custom_effect_tooltip = COLDWAR_SOV.29.b_tt
+		hidden_effect = { FROM = { set_temp_variable = { COLDWAR_SOV_petition_rate = 1 } set_temp_variable = { COLDWAR_SOV_prop_building = 2 } COLDWAR_SOV_build_union_project = yes } }
 	}
 	option = {
 		name = COLDWAR_SOV.29.c
+		custom_effect_tooltip = COLDWAR_SOV.29.c_tt
 		ai_chance = {
-			base = 5
+			base = 8
 		}
 	}
 }
@@ -1166,7 +1192,7 @@ country_event = {
 	}
 	mean_time_to_happen = {
 		days = 3650
-		modifier = { factor = 2 has_completed_focus = COLDWAR_SOV_vver_reactors }
+		modifier = { factor = 2 has_completed_focus = COLDWAR_SOV_eco_vver }
 	}
 
 	immediate = {
@@ -8105,5 +8131,18 @@ country_event = {
 		hidden_effect = {
 			clr_country_flag = COLDWAR_SOV_sov01_147_pending
 		}
+	}
+}
+
+# IMPERIA COLD WAR — B9: a granted petition weighs on the budget for 60 days (consumer goods +5%), then this hidden event lifts it
+country_event = {
+	id = COLDWAR_SOV.190
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_SOV.190"
+		hidden_effect = { add_to_variable = { COLDWAR_SOV_petition_burden = -1 } }
+		COLDWAR_SOV_update_republic_burden = yes
 	}
 }

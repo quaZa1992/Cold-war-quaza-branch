@@ -17,35 +17,6 @@ COLDWAR_CHL_intervention_context = {
 		NOT = { has_country_flag = COLDWAR_CHL_rupture_resolved }
 	}
 }
-COLDWAR_CHL_can_prepare_intervention = {
-	COLDWAR_CHL_intervention_context = yes
-	hidden_trigger = {
-		NOT = { has_country_flag = COLDWAR_CHL_intervention_in_progress }
-	}
-	hidden_trigger = {
-		NOT = { has_country_flag = COLDWAR_CHL_intervention_prepared }
-	}
-	hidden_trigger = {
-		NOT = { has_country_flag = COLDWAR_CHL_rupture_event_seen }
-	}
-}
-COLDWAR_CHL_can_resolve_rupture = {
-	COLDWAR_CHL_intervention_context = yes
-	OR = {
-		hidden_trigger = { has_country_flag = COLDWAR_CHL_intervention_prepared }
-		AND = {
-			hidden_trigger = {
-				NOT = { has_country_flag = COLDWAR_CHL_intervention_in_progress }
-			}
-			hidden_trigger = { date > 1973.9.10 }
-			hidden_trigger = { date < 1974.1.1 }
-			hidden_trigger = { has_country_flag = COLDWAR_CHL_constitutional_crisis }
-			hidden_trigger = { has_country_flag = COLDWAR_CHL_high_confrontation }
-			hidden_trigger = { has_country_flag = COLDWAR_CHL_military_intervention_condition }
-			check_variable = { ruling_party = 18 }
-		}
-	}
-}
 COLDWAR_CHL_congress_alternative_majority = {
 	hidden_trigger = { has_country_flag = COLDWAR_CHL_election_ballot_counted }
 	hidden_trigger = {
@@ -88,7 +59,8 @@ COLDWAR_CHL_can_event_transport = {
 		NOT = { has_country_flag = COLDWAR_CHL_transport_event_seen }
 	}
 }
-COLDWAR_CHL_can_event_rupture = { COLDWAR_CHL_can_resolve_rupture = yes }
+# IMPERIA COLD WAR — 24.11.2026: news only, fired by the focus Constitutional Crisis
+COLDWAR_CHL_can_event_rupture = { has_country_flag = COLDWAR_CHL_constitutional_crisis_applied }
 COLDWAR_CHL_can_event_junta = {
 	hidden_trigger = { COLDWAR_CHL_is_scenario = yes }
 	hidden_trigger = { has_country_flag = COLDWAR_CHL_military_government }
@@ -133,4 +105,43 @@ COLDWAR_CHL_can_event_andean = {
 	hidden_trigger = {
 		NOT = { has_country_flag = COLDWAR_CHL_andean_reviewed }
 	}
+}
+# IMPERIA COLD WAR — 24.11.2026: coup path focus conditions (replace the decision Secure the Officer Corps and the CHL.5/CHL.6 choices).
+COLDWAR_CHL_junta_choice_open = {
+	hidden_trigger = { has_country_flag = COLDWAR_CHL_military_government }
+	OR = {
+		hidden_trigger = { NOT = { has_country_flag = COLDWAR_CHL_junta_decided } }
+		hidden_trigger = { has_country_flag = COLDWAR_CHL_pinochet_presidency }
+		hidden_trigger = { has_country_flag = COLDWAR_CHL_constitutional_military_council }
+	}
+}
+COLDWAR_CHL_can_complete_secure_officer_corps = {
+	hidden_trigger = { NOT = { has_country_flag = COLDWAR_CHL_secure_officer_corps_applied } }
+	COLDWAR_CHL_intervention_context = yes
+	has_completed_focus = COLDWAR_CHL_professional_review
+	has_political_power > 74
+}
+COLDWAR_CHL_can_complete_constitutional_crisis = {
+	hidden_trigger = { NOT = { has_country_flag = COLDWAR_CHL_constitutional_crisis_applied } }
+	COLDWAR_CHL_intervention_context = yes
+	OR = {
+		has_stability < 0.55
+		custom_trigger_tooltip = { tooltip = COLDWAR_CHL_crisis_condition_tt has_country_flag = COLDWAR_CHL_constitutional_crisis }
+	}
+}
+COLDWAR_CHL_can_complete_uphold_constitution = {
+	hidden_trigger = {
+		NOT = { has_country_flag = COLDWAR_CHL_uphold_constitution_applied }
+		NOT = { has_completed_focus = COLDWAR_CHL_military_takeover }
+	}
+	COLDWAR_CHL_intervention_context = yes
+	has_political_power > 49
+}
+COLDWAR_CHL_can_complete_military_takeover = {
+	hidden_trigger = {
+		NOT = { has_country_flag = COLDWAR_CHL_military_takeover_applied }
+		NOT = { has_completed_focus = COLDWAR_CHL_uphold_constitution }
+	}
+	COLDWAR_CHL_intervention_context = yes
+	has_war_support > 0.39
 }

@@ -1,0 +1,272 @@
+# IMPERIA COLD WAR — United Kingdom 1970 REVOLUTIONARY union effects.
+# COLDWAR | The Congress territorial vote takes effect immediately.
+COLDWAR_ENG_REVOLUTIONARY_enact_devolution = {
+    if = {
+        limit = {
+            original_tag = ENG
+            COLDWAR_ENG_REVOLUTIONARY_government = yes
+            check_variable = { COLDWAR_ENG_REVOLUTIONARY_union_mode = 2 }
+            NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_devolution_enacted }
+        }
+        set_country_flag = COLDWAR_ENG_REVOLUTIONARY_devolution_enacted
+        set_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_mode_devolved
+        set_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_structure_committed
+        set_country_flag = COLDWAR_ENG_REVOLUTIONARY_devolution_authorised
+        set_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_english_republic
+        set_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_ENGLAND
+        # Legacy saves which already constituted England must not repeat the
+        # subject-government appointments or autonomy transactions.
+        if = { limit = { NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_english_republic_constituted } }
+            if = {
+        limit = {
+            NOT = { country_exists = SCO }
+            any_owned_state = { is_core_of = SCO }
+            NOT = { any_owned_state = { is_core_of = SCO NOT = { is_controlled_by = ENG } } }
+            NOT = { any_state = { is_core_of = SCO NOT = { is_owned_by = ENG } } }
+        }
+        release_puppet = SCO
+        set_temp_variable = { COLDWAR_ENG_B3_new_SCO = 1 } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: a newly released country is set up here, an existing one decides by event
+    }
+    if = {
+        limit = { SCO = { is_subject_of = ENG } check_variable = { COLDWAR_ENG_B3_new_SCO = 1 } } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: setup of the newly released country
+        SCO = { set_variable = { ruling_party = 4 } set_politics = { ruling_party = communism elections_allowed = no } set_leader = yes }
+        set_autonomy = { target = SCO autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member }
+        SCO = { set_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_SCOTLAND }
+    }
+    else_if = { limit = { SCO = { is_subject_of = ENG } } SCO = { country_event = { id = COLDWAR_ENG_REVOLUTIONARY_FOREIGN.9042 } } } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: an existing Scottish government decides itself
+            if = {
+        limit = {
+            NOT = { country_exists = WAS }
+            any_owned_state = { is_core_of = WAS }
+            NOT = { any_owned_state = { is_core_of = WAS NOT = { is_controlled_by = ENG } } }
+            NOT = { any_state = { is_core_of = WAS NOT = { is_owned_by = ENG } } }
+        }
+        release_puppet = WAS
+        set_temp_variable = { COLDWAR_ENG_B3_new_WAS = 1 } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: a newly released country is set up here, an existing one decides by event
+    }
+    if = {
+        limit = { WAS = { is_subject_of = ENG } check_variable = { COLDWAR_ENG_B3_new_WAS = 1 } } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: setup of the newly released country
+        WAS = { set_variable = { ruling_party = 4 } set_politics = { ruling_party = communism elections_allowed = no } set_leader = yes }
+        set_autonomy = { target = WAS autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member }
+        WAS = { set_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_WALES }
+    }
+    else_if = { limit = { WAS = { is_subject_of = ENG } } WAS = { country_event = { id = COLDWAR_ENG_REVOLUTIONARY_FOREIGN.9045 } } } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: an existing Welsh government decides itself
+        }
+        COLDWAR_ENG_REVOLUTIONARY_sync_irish_member_identity = yes
+    }
+}
+COLDWAR_ENG_REVOLUTIONARY_sync_irish_member_identity = {
+    if = {
+        limit = {
+            original_tag = ENG
+            has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_ENGLAND
+            IRE = { exists = yes is_subject_of = ENG NOT = { has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_IRELAND } }
+            NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_name_declined } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: no repeat offer while the refusal stands
+        }
+        # Identity only: joining through an RP/peace settlement must never
+        # silently rewrite Irish politics, autonomy, states or armies.
+        # IMPERIA COLD WAR — B3 MD standard 24.11.2026: Ireland chooses its own name in its own event
+        IRE = { country_event = { id = COLDWAR_ENG_REVOLUTIONARY_FOREIGN.9039 } }
+    }
+}
+COLDWAR_ENG_REVOLUTIONARY_union_charter_refresh = {
+    if = {
+        limit = {
+            COLDWAR_ENG_REVOLUTIONARY_government_settled = yes
+            has_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_charter_completed
+            has_country_flag = COLDWAR_ENG_REVOLUTIONARY_common_services_funded
+            has_government = communism
+            original_tag = ENG
+            OR = {
+                has_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_mode_unitary
+                AND = {
+                    has_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_mode_devolved
+                    OR = { SCO = {
+        is_subject_of = ENG
+        has_autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member
+        has_government = communism
+        NOT = { has_war_with = ENG }
+        NOT = { is_in_array = { array = imp_eco_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_mil_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_fin_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_dip_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_eco_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_mil_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_fin_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_dip_sanc_on_us value = ENG } }
+        ENG = {
+            NOT = { is_in_array = { array = imp_eco_sanc_by_us value = SCO } }
+            NOT = { is_in_array = { array = imp_mil_sanc_by_us value = SCO } }
+            NOT = { is_in_array = { array = imp_fin_sanc_by_us value = SCO } }
+            NOT = { is_in_array = { array = imp_dip_sanc_by_us value = SCO } }
+            NOT = { is_in_array = { array = imp_eco_sanc_on_us value = SCO } }
+            NOT = { is_in_array = { array = imp_mil_sanc_on_us value = SCO } }
+            NOT = { is_in_array = { array = imp_fin_sanc_on_us value = SCO } }
+            NOT = { is_in_array = { array = imp_dip_sanc_on_us value = SCO } }
+        }
+    } WAS = {
+        is_subject_of = ENG
+        has_autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member
+        has_government = communism
+        NOT = { has_war_with = ENG }
+        NOT = { is_in_array = { array = imp_eco_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_mil_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_fin_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_dip_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_eco_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_mil_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_fin_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_dip_sanc_on_us value = ENG } }
+        ENG = {
+            NOT = { is_in_array = { array = imp_eco_sanc_by_us value = WAS } }
+            NOT = { is_in_array = { array = imp_mil_sanc_by_us value = WAS } }
+            NOT = { is_in_array = { array = imp_fin_sanc_by_us value = WAS } }
+            NOT = { is_in_array = { array = imp_dip_sanc_by_us value = WAS } }
+            NOT = { is_in_array = { array = imp_eco_sanc_on_us value = WAS } }
+            NOT = { is_in_array = { array = imp_mil_sanc_on_us value = WAS } }
+            NOT = { is_in_array = { array = imp_fin_sanc_on_us value = WAS } }
+            NOT = { is_in_array = { array = imp_dip_sanc_on_us value = WAS } }
+        }
+    } IRE = {
+        is_subject_of = ENG
+        has_autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member
+        has_government = communism
+        NOT = { has_war_with = ENG }
+        NOT = { is_in_array = { array = imp_eco_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_mil_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_fin_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_dip_sanc_by_us value = ENG } }
+        NOT = { is_in_array = { array = imp_eco_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_mil_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_fin_sanc_on_us value = ENG } }
+        NOT = { is_in_array = { array = imp_dip_sanc_on_us value = ENG } }
+        ENG = {
+            NOT = { is_in_array = { array = imp_eco_sanc_by_us value = IRE } }
+            NOT = { is_in_array = { array = imp_mil_sanc_by_us value = IRE } }
+            NOT = { is_in_array = { array = imp_fin_sanc_by_us value = IRE } }
+            NOT = { is_in_array = { array = imp_dip_sanc_by_us value = IRE } }
+            NOT = { is_in_array = { array = imp_eco_sanc_on_us value = IRE } }
+            NOT = { is_in_array = { array = imp_mil_sanc_on_us value = IRE } }
+            NOT = { is_in_array = { array = imp_fin_sanc_on_us value = IRE } }
+            NOT = { is_in_array = { array = imp_dip_sanc_on_us value = IRE } }
+        }
+    } }
+                }
+            }
+        }
+        if = { limit = { NOT = { has_idea = COLDWAR_ENG_REVOLUTIONARY_union_charter_host } } add_ideas = COLDWAR_ENG_REVOLUTIONARY_union_charter_host }
+    }
+    else = { if = { limit = { has_idea = COLDWAR_ENG_REVOLUTIONARY_union_charter_host } remove_ideas = COLDWAR_ENG_REVOLUTIONARY_union_charter_host } }
+    every_subject_country = {
+        if = {
+            limit = {
+                has_autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member
+                has_government = communism
+                NOT = { has_war_with = ENG }
+                NOT = { is_in_array = { array = imp_eco_sanc_by_us value = ENG } }
+                NOT = { is_in_array = { array = imp_mil_sanc_by_us value = ENG } }
+                NOT = { is_in_array = { array = imp_fin_sanc_by_us value = ENG } }
+                NOT = { is_in_array = { array = imp_dip_sanc_by_us value = ENG } }
+                NOT = { is_in_array = { array = imp_eco_sanc_on_us value = ENG } }
+                NOT = { is_in_array = { array = imp_mil_sanc_on_us value = ENG } }
+                NOT = { is_in_array = { array = imp_fin_sanc_on_us value = ENG } }
+                NOT = { is_in_array = { array = imp_dip_sanc_on_us value = ENG } }
+                ENG = {
+                    has_government = communism
+                    COLDWAR_ENG_REVOLUTIONARY_government_settled = yes
+                    has_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_charter_completed
+                    NOT = { is_in_array = { array = imp_eco_sanc_by_us value = PREV } }
+                    NOT = { is_in_array = { array = imp_mil_sanc_by_us value = PREV } }
+                    NOT = { is_in_array = { array = imp_fin_sanc_by_us value = PREV } }
+                    NOT = { is_in_array = { array = imp_dip_sanc_by_us value = PREV } }
+                    NOT = { is_in_array = { array = imp_eco_sanc_on_us value = PREV } }
+                    NOT = { is_in_array = { array = imp_mil_sanc_on_us value = PREV } }
+                    NOT = { is_in_array = { array = imp_fin_sanc_on_us value = PREV } }
+                    NOT = { is_in_array = { array = imp_dip_sanc_on_us value = PREV } }
+                }
+            }
+            if = { limit = { NOT = { has_idea = COLDWAR_ENG_REVOLUTIONARY_union_charter_member } } add_ideas = COLDWAR_ENG_REVOLUTIONARY_union_charter_member }
+        }
+        else = { if = { limit = { has_idea = COLDWAR_ENG_REVOLUTIONARY_union_charter_member } remove_ideas = COLDWAR_ENG_REVOLUTIONARY_union_charter_member } }
+    }
+}
+
+COLDWAR_ENG_REVOLUTIONARY_record_irish_war = {
+    if = { limit = { original_tag = ENG COLDWAR_ENG_REVOLUTIONARY_government = yes has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_wargoal_issued has_war_with = IRE }
+        set_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_war_observed
+    }
+}
+
+# Repair a false acceptance made by a third-party observer of the old invitation.
+COLDWAR_ENG_REVOLUTIONARY_repair_false_irish_acceptance = {
+ if = {
+  limit = {
+   original_tag = ENG
+   COLDWAR_ENG_REVOLUTIONARY_government = yes
+   has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_member_accepted
+   NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_war_observed }
+   IRE = {
+    exists = yes
+    is_subject_of = ENG
+    has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_refused
+    NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_membership_accepted }
+   }
+  }
+  set_autonomy = { target = IRE autonomy_state = autonomy_free end_wars = no end_civil_wars = no }
+  clr_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_member_accepted
+  set_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_refused
+  IRE = { if = { limit = { has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_IRELAND } drop_cosmetic_tag = yes } }
+ }
+}
+
+COLDWAR_ENG_REVOLUTIONARY_install_irish_subject_government = {
+    if = { limit = {
+        original_tag = ENG
+        COLDWAR_ENG_REVOLUTIONARY_government = yes
+        has_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_war_observed
+        NOT = { has_war_with = IRE }
+        NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_government_offered } # IMPERIA COLD WAR — B3 MD standard 24.11.2026: one offer per year
+        IRE = {
+            exists = yes
+            is_subject_of = ENG
+            NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_subject_government_installed }
+        }
+    }
+        # IMPERIA COLD WAR — B3 MD standard 24.11.2026: Ireland decides on the proposed government in its own event
+        set_country_flag = { flag = COLDWAR_ENG_REVOLUTIONARY_irish_government_offered days = 365 } IRE = { country_event = { id = COLDWAR_ENG_REVOLUTIONARY_FOREIGN.9033 } }
+    }
+}
+COLDWAR_ENG_REVOLUTIONARY_restore_devolved_irish_settlement = {
+    if = { limit = {
+        original_tag = ENG COLDWAR_ENG_REVOLUTIONARY_government = yes check_variable = { COLDWAR_ENG_REVOLUTIONARY_union_mode = 2 }
+        has_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_war_observed
+        has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_wargoal_issued NOT = { has_war_with = IRE }
+        NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_devolved_irish_settlement_resolved }
+        NOT = { any_owned_state = { OR = { state = 27 state = 28 state = 29 } NOT = { is_controlled_by = ENG } } }
+    }
+        if = { limit = {
+            NOT = { country_exists = IRE } OR = { 27 = { is_owned_by = ENG is_controlled_by = ENG } 28 = { is_owned_by = ENG is_controlled_by = ENG } 29 = { is_owned_by = ENG is_controlled_by = ENG } }
+        }
+            if = { limit = { 27 = { is_owned_by = ENG is_controlled_by = ENG } } IRE = { transfer_state = 27 } } if = { limit = { 28 = { is_owned_by = ENG is_controlled_by = ENG } } IRE = { transfer_state = 28 } } if = { limit = { 29 = { is_owned_by = ENG is_controlled_by = ENG } } IRE = { transfer_state = 29 } }
+            if = { limit = { IRE = { exists = yes } }
+                IRE = { set_variable = { ruling_party = 4 } set_politics = { ruling_party = communism elections_allowed = no } set_leader = yes }
+                set_autonomy = { target = IRE autonomy_state = COLDWAR_ENG_REVOLUTIONARY_union_member end_wars = no end_civil_wars = no }
+                COLDWAR_ENG_REVOLUTIONARY_install_irish_subject_government = yes
+                COLDWAR_ENG_REVOLUTIONARY_sync_irish_member_identity = yes
+                set_country_flag = COLDWAR_ENG_REVOLUTIONARY_devolved_irish_settlement_resolved
+                country_event = { id = COLDWAR_ENG_REVOLUTIONARY_ireland.6 hours = 1 }
+            }
+        }
+        else_if = { limit = { country_exists = IRE OR = { 27 = { is_owned_by = ENG is_controlled_by = ENG } 28 = { is_owned_by = ENG is_controlled_by = ENG } 29 = { is_owned_by = ENG is_controlled_by = ENG } } }
+            # IMPERIA COLD WAR — B3 MD standard 24.11.2026: Ireland decides in its own event whether to take the states
+            IRE = { country_event = { id = COLDWAR_ENG_REVOLUTIONARY_FOREIGN.9036 } }
+            set_country_flag = COLDWAR_ENG_REVOLUTIONARY_devolved_irish_settlement_resolved
+        }
+        else_if = { limit = {
+            has_country_flag = COLDWAR_ENG_REVOLUTIONARY_irish_war_observed
+            country_exists = IRE NOT = { OR = { 27 = { is_owned_by = ENG is_controlled_by = ENG } 28 = { is_owned_by = ENG is_controlled_by = ENG } 29 = { is_owned_by = ENG is_controlled_by = ENG } } }
+        }
+            set_country_flag = COLDWAR_ENG_REVOLUTIONARY_devolved_irish_settlement_resolved
+        }
+    }
+}

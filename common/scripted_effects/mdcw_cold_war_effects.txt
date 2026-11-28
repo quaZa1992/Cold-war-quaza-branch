@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR: Update 24.11.2026: Overview bar widths for the redesigned tab (world bars 212 px, bloc bars 164 px for 0-100 %).
+# IMPERIA COLD WAR update 20.11.2026: quaZa import: bilateral treaties of the imported 1970 trees are rechecked on sanctions.
 # IMPERIA COLD WAR — Compact Cyprus 1970 integration.
 # IMPERIA CW — Cold War: effects — scripted effects.
 ###############################################################
@@ -21,8 +23,8 @@ mdcw_cw_add_tension = {
 
 mdcw_cw_update_tension_display = {
 	set_variable = { global.mdcw_cw_bar_tension = global.mdcw_cw_tension }
-	multiply_variable = { global.mdcw_cw_bar_tension = 3 }
-	subtract_from_variable = { global.mdcw_cw_bar_tension = 300 }
+	multiply_variable = { global.mdcw_cw_bar_tension = 2.12 } # COLDWAR 24.11.2026: bar 212 px
+	subtract_from_variable = { global.mdcw_cw_bar_tension = 212 }
 	round_variable = global.mdcw_cw_bar_tension
 	if = {
 		limit = { check_variable = { var = global.mdcw_cw_tension value = 80 compare = greater_than_or_equals } }
@@ -439,6 +441,7 @@ mdcw_cw_initialize = {
 		every_country = {
 			mdcw_cw_setup_country = yes
 		}
+		COLDWAR_cw_v4_init_leaders = yes # COLDWAR CW v4
 		clr_global_flag = mdcw_cw_startup_running
 		set_global_flag = mdcw_cw_initialized
 		mdcw_cw_update_tension_display = yes
@@ -462,26 +465,42 @@ mdcw_cw_recalculate_all = {
 
 # Global. Rebuilds member lists and bloc strength from scratch (self-healing).
 # The member lists are filled strongest rank first, so the interface shows them sorted.
+# COLDWAR CW v4: four blocs (bloc founding removed 20.11.2026).
 mdcw_cw_rebuild_blocs = {
 	clear_array = global.mdcw_cw_members_na
 	set_variable = { global.mdcw_cw_power_0 = 0 }
 	set_variable = { global.mdcw_cw_count_0 = 0 }
 	clear_array = global.mdcw_cw_members_west
+	clear_array = global.COLDWAR_cw_core_list_1 # COLDWAR CW v4 ui
+	clear_array = global.COLDWAR_cw_out_list_1
 	set_variable = { global.mdcw_cw_power_1 = 0 }
 	set_variable = { global.mdcw_cw_count_1 = 0 }
+	set_variable = { global.COLDWAR_cw_outsiders_1 = 0 } # COLDWAR CW v4 outlook ui
 	set_variable = { global.mdcw_cw_core_1 = 0 }
 	set_variable = { global.mdcw_cw_estranged_1 = 0 }
 	clear_array = global.mdcw_cw_members_soviet
+	clear_array = global.COLDWAR_cw_core_list_2 # COLDWAR CW v4 ui
+	clear_array = global.COLDWAR_cw_out_list_2
 	set_variable = { global.mdcw_cw_power_2 = 0 }
 	set_variable = { global.mdcw_cw_count_2 = 0 }
+	set_variable = { global.COLDWAR_cw_outsiders_2 = 0 } # COLDWAR CW v4 outlook ui
 	set_variable = { global.mdcw_cw_core_2 = 0 }
 	set_variable = { global.mdcw_cw_estranged_2 = 0 }
 	clear_array = global.mdcw_cw_members_beijing
+	clear_array = global.COLDWAR_cw_core_list_3 # COLDWAR CW v4 ui
+	clear_array = global.COLDWAR_cw_out_list_3
 	set_variable = { global.mdcw_cw_power_3 = 0 }
 	set_variable = { global.mdcw_cw_count_3 = 0 }
+	set_variable = { global.COLDWAR_cw_outsiders_3 = 0 } # COLDWAR CW v4 outlook ui
 	set_variable = { global.mdcw_cw_core_3 = 0 }
 	set_variable = { global.mdcw_cw_estranged_3 = 0 }
 	set_variable = { global.mdcw_cw_mil_programs = 0 }
+	clear_temp_array = COLDWAR_cw_rank_20
+	clear_temp_array = COLDWAR_cw_rank_12
+	clear_temp_array = COLDWAR_cw_rank_7
+	clear_temp_array = COLDWAR_cw_rank_4
+	clear_temp_array = COLDWAR_cw_rank_2
+	clear_temp_array = COLDWAR_cw_rank_1
 	every_country = {
 		limit = { has_country_flag = mdcw_cw_initialized }
 		mdcw_cw_update_bloc_value = yes
@@ -489,6 +508,16 @@ mdcw_cw_rebuild_blocs = {
 		if = {
 			limit = { has_country_flag = mdcw_cw_estranged }
 			multiply_variable = { mdcw_cw_bloc_pts = 0.5 }
+		}
+		# COLDWAR CW v4 outlook: members without the bloc's outlook count less
+		clr_country_flag = COLDWAR_cw_outsider
+		if = {
+			limit = {
+				check_variable = { mdcw_cw_alignment > 0 }
+				NOT = { COLDWAR_cw_core_of_own_bloc = yes }
+			}
+			set_country_flag = COLDWAR_cw_outsider
+			multiply_variable = { mdcw_cw_bloc_pts = 0.6 }
 		}
 		if = {
 			limit = { check_variable = { mdcw_cw_alignment = 0 } }
@@ -499,6 +528,10 @@ mdcw_cw_rebuild_blocs = {
 			limit = { check_variable = { mdcw_cw_alignment = 1 } }
 			add_to_variable = { global.mdcw_cw_power_1 = mdcw_cw_bloc_pts }
 			add_to_variable = { global.mdcw_cw_count_1 = 1 }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_variable = { global.COLDWAR_cw_outsiders_1 = 1 }
+			}
 			if = {
 				limit = { has_country_flag = mdcw_cw_estranged }
 				add_to_variable = { global.mdcw_cw_estranged_1 = 1 }
@@ -513,6 +546,10 @@ mdcw_cw_rebuild_blocs = {
 			add_to_variable = { global.mdcw_cw_power_2 = mdcw_cw_bloc_pts }
 			add_to_variable = { global.mdcw_cw_count_2 = 1 }
 			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_variable = { global.COLDWAR_cw_outsiders_2 = 1 }
+			}
+			if = {
 				limit = { has_country_flag = mdcw_cw_estranged }
 				add_to_variable = { global.mdcw_cw_estranged_2 = 1 }
 			}
@@ -526,6 +563,10 @@ mdcw_cw_rebuild_blocs = {
 			add_to_variable = { global.mdcw_cw_power_3 = mdcw_cw_bloc_pts }
 			add_to_variable = { global.mdcw_cw_count_3 = 1 }
 			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_variable = { global.COLDWAR_cw_outsiders_3 = 1 }
+			}
+			if = {
 				limit = { has_country_flag = mdcw_cw_estranged }
 				add_to_variable = { global.mdcw_cw_estranged_3 = 1 }
 			}
@@ -535,12 +576,16 @@ mdcw_cw_rebuild_blocs = {
 			}
 		}
 		add_to_variable = { global.mdcw_cw_mil_programs = mdcw_cw_mil_prog_out }
+		# COLDWAR CW v4: one pass sorts by rank (was one world loop per rank)
+		if = { limit = { check_variable = { mdcw_cw_bloc_value = 20 } } add_to_temp_array = { COLDWAR_cw_rank_20 = THIS.id } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value = 12 } } add_to_temp_array = { COLDWAR_cw_rank_12 = THIS.id } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value = 7 } } add_to_temp_array = { COLDWAR_cw_rank_7 = THIS.id } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value = 4 } } add_to_temp_array = { COLDWAR_cw_rank_4 = THIS.id } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value = 2 } } add_to_temp_array = { COLDWAR_cw_rank_2 = THIS.id } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value = 1 } } add_to_temp_array = { COLDWAR_cw_rank_1 = THIS.id } }
 	}
-	every_country = {
-		limit = {
-			has_country_flag = mdcw_cw_initialized
-			check_variable = { mdcw_cw_bloc_value = 20 }
-		}
+	for_each_scope_loop = {
+		array = COLDWAR_cw_rank_20
 		if = {
 			limit = { check_variable = { mdcw_cw_alignment = 0 } }
 			add_to_array = { global.mdcw_cw_members_na = THIS.id }
@@ -548,21 +593,33 @@ mdcw_cw_rebuild_blocs = {
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 1 } }
 			add_to_array = { global.mdcw_cw_members_west = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_1 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_1 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 2 } }
 			add_to_array = { global.mdcw_cw_members_soviet = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_2 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_2 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 3 } }
 			add_to_array = { global.mdcw_cw_members_beijing = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_3 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_3 = THIS.id } }
 		}
 	}
-	every_country = {
-		limit = {
-			has_country_flag = mdcw_cw_initialized
-			check_variable = { mdcw_cw_bloc_value = 12 }
-		}
+	for_each_scope_loop = {
+		array = COLDWAR_cw_rank_12
 		if = {
 			limit = { check_variable = { mdcw_cw_alignment = 0 } }
 			add_to_array = { global.mdcw_cw_members_na = THIS.id }
@@ -570,21 +627,33 @@ mdcw_cw_rebuild_blocs = {
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 1 } }
 			add_to_array = { global.mdcw_cw_members_west = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_1 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_1 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 2 } }
 			add_to_array = { global.mdcw_cw_members_soviet = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_2 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_2 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 3 } }
 			add_to_array = { global.mdcw_cw_members_beijing = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_3 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_3 = THIS.id } }
 		}
 	}
-	every_country = {
-		limit = {
-			has_country_flag = mdcw_cw_initialized
-			check_variable = { mdcw_cw_bloc_value = 7 }
-		}
+	for_each_scope_loop = {
+		array = COLDWAR_cw_rank_7
 		if = {
 			limit = { check_variable = { mdcw_cw_alignment = 0 } }
 			add_to_array = { global.mdcw_cw_members_na = THIS.id }
@@ -592,21 +661,33 @@ mdcw_cw_rebuild_blocs = {
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 1 } }
 			add_to_array = { global.mdcw_cw_members_west = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_1 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_1 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 2 } }
 			add_to_array = { global.mdcw_cw_members_soviet = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_2 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_2 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 3 } }
 			add_to_array = { global.mdcw_cw_members_beijing = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_3 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_3 = THIS.id } }
 		}
 	}
-	every_country = {
-		limit = {
-			has_country_flag = mdcw_cw_initialized
-			check_variable = { mdcw_cw_bloc_value = 4 }
-		}
+	for_each_scope_loop = {
+		array = COLDWAR_cw_rank_4
 		if = {
 			limit = { check_variable = { mdcw_cw_alignment = 0 } }
 			add_to_array = { global.mdcw_cw_members_na = THIS.id }
@@ -614,21 +695,33 @@ mdcw_cw_rebuild_blocs = {
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 1 } }
 			add_to_array = { global.mdcw_cw_members_west = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_1 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_1 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 2 } }
 			add_to_array = { global.mdcw_cw_members_soviet = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_2 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_2 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 3 } }
 			add_to_array = { global.mdcw_cw_members_beijing = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_3 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_3 = THIS.id } }
 		}
 	}
-	every_country = {
-		limit = {
-			has_country_flag = mdcw_cw_initialized
-			check_variable = { mdcw_cw_bloc_value = 2 }
-		}
+	for_each_scope_loop = {
+		array = COLDWAR_cw_rank_2
 		if = {
 			limit = { check_variable = { mdcw_cw_alignment = 0 } }
 			add_to_array = { global.mdcw_cw_members_na = THIS.id }
@@ -636,21 +729,33 @@ mdcw_cw_rebuild_blocs = {
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 1 } }
 			add_to_array = { global.mdcw_cw_members_west = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_1 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_1 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 2 } }
 			add_to_array = { global.mdcw_cw_members_soviet = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_2 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_2 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 3 } }
 			add_to_array = { global.mdcw_cw_members_beijing = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_3 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_3 = THIS.id } }
 		}
 	}
-	every_country = {
-		limit = {
-			has_country_flag = mdcw_cw_initialized
-			check_variable = { mdcw_cw_bloc_value = 1 }
-		}
+	for_each_scope_loop = {
+		array = COLDWAR_cw_rank_1
 		if = {
 			limit = { check_variable = { mdcw_cw_alignment = 0 } }
 			add_to_array = { global.mdcw_cw_members_na = THIS.id }
@@ -658,14 +763,29 @@ mdcw_cw_rebuild_blocs = {
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 1 } }
 			add_to_array = { global.mdcw_cw_members_west = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_1 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_1 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 2 } }
 			add_to_array = { global.mdcw_cw_members_soviet = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_2 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_2 = THIS.id } }
 		}
 		else_if = {
 			limit = { check_variable = { mdcw_cw_alignment = 3 } }
 			add_to_array = { global.mdcw_cw_members_beijing = THIS.id }
+			if = {
+				limit = { has_country_flag = COLDWAR_cw_outsider }
+				add_to_array = { global.COLDWAR_cw_out_list_3 = THIS.id }
+			}
+			else = { add_to_array = { global.COLDWAR_cw_core_list_3 = THIS.id } }
 		}
 	}
 	mdcw_cw_update_bloc_weights = yes
@@ -703,9 +823,9 @@ mdcw_cw_update_bloc_weights = {
 	set_variable = { global.mdcw_cw_scale_0 = mdcw_cw_t_a }
 	# Bar on the bloc card
 	set_variable = { global.mdcw_cw_bar_bloc_0 = global.mdcw_cw_share_0 }
-	clamp_variable = { var = global.mdcw_cw_bar_bloc_0 min = 0 max = 0.6 }
-	multiply_variable = { global.mdcw_cw_bar_bloc_0 = 266.6667 }
-	subtract_from_variable = { global.mdcw_cw_bar_bloc_0 = 160 }
+	clamp_variable = { var = global.mdcw_cw_bar_bloc_0 min = 0 max = 1 } # COLDWAR 24.11.2026: bar is 0-100 % of world power, 164 px
+	multiply_variable = { global.mdcw_cw_bar_bloc_0 = 164 }
+	subtract_from_variable = { global.mdcw_cw_bar_bloc_0 = 164 }
 	round_variable = global.mdcw_cw_bar_bloc_0
 	set_variable = { global.mdcw_cw_fx_0_network_pp_factor = 0.05 }
 	multiply_variable = { global.mdcw_cw_fx_0_network_pp_factor = global.mdcw_cw_scale_0 }
@@ -745,16 +865,20 @@ mdcw_cw_update_bloc_weights = {
 	multiply_variable = { global.mdcw_cw_core_pct_1 = 100 }
 	round_variable = global.mdcw_cw_core_pct_1
 	set_variable = { global.mdcw_cw_cohesion_1 = global.mdcw_cw_core_share_1 }
-	multiply_variable = { global.mdcw_cw_cohesion_1 = 0.3 }
-	add_to_variable = { global.mdcw_cw_cohesion_1 = 0.85 }
+	multiply_variable = { global.mdcw_cw_cohesion_1 = 1 } # COLDWAR CW v4 outlook
+	add_to_variable = { global.mdcw_cw_cohesion_1 = 0.5 }
 	multiply_temp_variable = { mdcw_cw_t_a = global.mdcw_cw_cohesion_1 }
 	set_variable = { global.mdcw_cw_scale_1 = mdcw_cw_t_a }
 	# Bar on the bloc card
 	set_variable = { global.mdcw_cw_bar_bloc_1 = global.mdcw_cw_share_1 }
-	clamp_variable = { var = global.mdcw_cw_bar_bloc_1 min = 0 max = 0.6 }
-	multiply_variable = { global.mdcw_cw_bar_bloc_1 = 266.6667 }
-	subtract_from_variable = { global.mdcw_cw_bar_bloc_1 = 160 }
+	clamp_variable = { var = global.mdcw_cw_bar_bloc_1 min = 0 max = 1 } # COLDWAR 24.11.2026: bar is 0-100 % of world power, 164 px
+	multiply_variable = { global.mdcw_cw_bar_bloc_1 = 164 }
+	subtract_from_variable = { global.mdcw_cw_bar_bloc_1 = 164 }
 	round_variable = global.mdcw_cw_bar_bloc_1
+	set_variable = { global.COLDWAR_cw_bar_coh_1 = global.mdcw_cw_core_share_1 } # COLDWAR CW v4 ui
+	multiply_variable = { global.COLDWAR_cw_bar_coh_1 = 160 }
+	subtract_from_variable = { global.COLDWAR_cw_bar_coh_1 = 160 }
+	round_variable = global.COLDWAR_cw_bar_coh_1
 	set_variable = { global.mdcw_cw_fx_1_network_roi = 0.004 }
 	multiply_variable = { global.mdcw_cw_fx_1_network_roi = global.mdcw_cw_scale_1 }
 	set_variable = { global.mdcw_cw_fx_1_network_interest = -0.25 }
@@ -773,8 +897,8 @@ mdcw_cw_update_bloc_weights = {
 	multiply_variable = { global.mdcw_cw_fx_1_leader_army_pay = global.mdcw_cw_scale_1 }
 	set_variable = { global.mdcw_cw_upkeep_1 = global.mdcw_cw_power_1 }
 	if = {
-		limit = { country_exists = USA }
-		USA = { set_temp_variable = { mdcw_cw_t_lv = mdcw_cw_bloc_value } }
+		limit = { has_variable = global.mdcw_cw_leader_1 }
+		var:global.mdcw_cw_leader_1 = { set_temp_variable = { mdcw_cw_t_lv = mdcw_cw_bloc_value } }
 		subtract_from_variable = { global.mdcw_cw_upkeep_1 = mdcw_cw_t_lv }
 	}
 	multiply_variable = { global.mdcw_cw_upkeep_1 = 0.005 }
@@ -785,26 +909,26 @@ mdcw_cw_update_bloc_weights = {
 	if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_1 value = 0.45 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_1 = 3 }
-		set_variable = { global.mdcw_cw_tier_bonus_1 = 3 }
-		set_variable = { global.mdcw_cw_tier_factor_1 = 1.15 }
+		set_variable = { global.mdcw_cw_tier_bonus_1 = 4 }
+		set_variable = { global.mdcw_cw_tier_factor_1 = 1.2 } # COLDWAR 24.11.2026: was 1.15 (bonus 3), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_1 value = 0.3 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_1 = 2 }
-		set_variable = { global.mdcw_cw_tier_bonus_1 = 2 }
-		set_variable = { global.mdcw_cw_tier_factor_1 = 1.1 }
+		set_variable = { global.mdcw_cw_tier_bonus_1 = 3 }
+		set_variable = { global.mdcw_cw_tier_factor_1 = 1.13 } # COLDWAR 24.11.2026: was 1.1 (bonus 2), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_1 value = 0.15 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_1 = 1 }
 		set_variable = { global.mdcw_cw_tier_bonus_1 = 1 }
-		set_variable = { global.mdcw_cw_tier_factor_1 = 1 }
+		set_variable = { global.mdcw_cw_tier_factor_1 = 1.05 } # COLDWAR 24.11.2026: was 1 (bonus 1), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_1 value = 0 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_1 = 0 }
 		set_variable = { global.mdcw_cw_tier_bonus_1 = 0 }
-		set_variable = { global.mdcw_cw_tier_factor_1 = 1 }
+		set_variable = { global.mdcw_cw_tier_factor_1 = 1.02 } # COLDWAR 24.11.2026: was 1 (bonus 0), bloc growth instead of pillar events
 	}
 	# Soviet Bloc
 	set_variable = { global.mdcw_cw_share_2 = 0 }
@@ -838,16 +962,20 @@ mdcw_cw_update_bloc_weights = {
 	multiply_variable = { global.mdcw_cw_core_pct_2 = 100 }
 	round_variable = global.mdcw_cw_core_pct_2
 	set_variable = { global.mdcw_cw_cohesion_2 = global.mdcw_cw_core_share_2 }
-	multiply_variable = { global.mdcw_cw_cohesion_2 = 0.3 }
-	add_to_variable = { global.mdcw_cw_cohesion_2 = 0.85 }
+	multiply_variable = { global.mdcw_cw_cohesion_2 = 1 } # COLDWAR CW v4 outlook
+	add_to_variable = { global.mdcw_cw_cohesion_2 = 0.5 }
 	multiply_temp_variable = { mdcw_cw_t_a = global.mdcw_cw_cohesion_2 }
 	set_variable = { global.mdcw_cw_scale_2 = mdcw_cw_t_a }
 	# Bar on the bloc card
 	set_variable = { global.mdcw_cw_bar_bloc_2 = global.mdcw_cw_share_2 }
-	clamp_variable = { var = global.mdcw_cw_bar_bloc_2 min = 0 max = 0.6 }
-	multiply_variable = { global.mdcw_cw_bar_bloc_2 = 266.6667 }
-	subtract_from_variable = { global.mdcw_cw_bar_bloc_2 = 160 }
+	clamp_variable = { var = global.mdcw_cw_bar_bloc_2 min = 0 max = 1 } # COLDWAR 24.11.2026: bar is 0-100 % of world power, 164 px
+	multiply_variable = { global.mdcw_cw_bar_bloc_2 = 164 }
+	subtract_from_variable = { global.mdcw_cw_bar_bloc_2 = 164 }
 	round_variable = global.mdcw_cw_bar_bloc_2
+	set_variable = { global.COLDWAR_cw_bar_coh_2 = global.mdcw_cw_core_share_2 } # COLDWAR CW v4 ui
+	multiply_variable = { global.COLDWAR_cw_bar_coh_2 = 160 }
+	subtract_from_variable = { global.COLDWAR_cw_bar_coh_2 = 160 }
+	round_variable = global.COLDWAR_cw_bar_coh_2
 	set_variable = { global.mdcw_cw_fx_2_network_oil_res = 0.1 }
 	multiply_variable = { global.mdcw_cw_fx_2_network_oil_res = global.mdcw_cw_scale_2 }
 	set_variable = { global.mdcw_cw_fx_2_network_equip = -0.05 }
@@ -866,8 +994,8 @@ mdcw_cw_update_bloc_weights = {
 	multiply_variable = { global.mdcw_cw_fx_2_leader_oil_exp = global.mdcw_cw_scale_2 }
 	set_variable = { global.mdcw_cw_upkeep_2 = global.mdcw_cw_power_2 }
 	if = {
-		limit = { country_exists = SOV }
-		SOV = { set_temp_variable = { mdcw_cw_t_lv = mdcw_cw_bloc_value } }
+		limit = { has_variable = global.mdcw_cw_leader_2 }
+		var:global.mdcw_cw_leader_2 = { set_temp_variable = { mdcw_cw_t_lv = mdcw_cw_bloc_value } }
 		subtract_from_variable = { global.mdcw_cw_upkeep_2 = mdcw_cw_t_lv }
 	}
 	multiply_variable = { global.mdcw_cw_upkeep_2 = 0.01 }
@@ -878,26 +1006,26 @@ mdcw_cw_update_bloc_weights = {
 	if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_2 value = 0.45 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_2 = 3 }
-		set_variable = { global.mdcw_cw_tier_bonus_2 = 3 }
-		set_variable = { global.mdcw_cw_tier_factor_2 = 1.15 }
+		set_variable = { global.mdcw_cw_tier_bonus_2 = 4 }
+		set_variable = { global.mdcw_cw_tier_factor_2 = 1.2 } # COLDWAR 24.11.2026: was 1.15 (bonus 3), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_2 value = 0.3 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_2 = 2 }
-		set_variable = { global.mdcw_cw_tier_bonus_2 = 2 }
-		set_variable = { global.mdcw_cw_tier_factor_2 = 1.1 }
+		set_variable = { global.mdcw_cw_tier_bonus_2 = 3 }
+		set_variable = { global.mdcw_cw_tier_factor_2 = 1.13 } # COLDWAR 24.11.2026: was 1.1 (bonus 2), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_2 value = 0.15 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_2 = 1 }
 		set_variable = { global.mdcw_cw_tier_bonus_2 = 1 }
-		set_variable = { global.mdcw_cw_tier_factor_2 = 1 }
+		set_variable = { global.mdcw_cw_tier_factor_2 = 1.05 } # COLDWAR 24.11.2026: was 1 (bonus 1), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_2 value = 0 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_2 = 0 }
 		set_variable = { global.mdcw_cw_tier_bonus_2 = 0 }
-		set_variable = { global.mdcw_cw_tier_factor_2 = 1 }
+		set_variable = { global.mdcw_cw_tier_factor_2 = 1.02 } # COLDWAR 24.11.2026: was 1 (bonus 0), bloc growth instead of pillar events
 	}
 	# Beijing Camp
 	set_variable = { global.mdcw_cw_share_3 = 0 }
@@ -931,16 +1059,20 @@ mdcw_cw_update_bloc_weights = {
 	multiply_variable = { global.mdcw_cw_core_pct_3 = 100 }
 	round_variable = global.mdcw_cw_core_pct_3
 	set_variable = { global.mdcw_cw_cohesion_3 = global.mdcw_cw_core_share_3 }
-	multiply_variable = { global.mdcw_cw_cohesion_3 = 0.3 }
-	add_to_variable = { global.mdcw_cw_cohesion_3 = 0.85 }
+	multiply_variable = { global.mdcw_cw_cohesion_3 = 1 } # COLDWAR CW v4 outlook
+	add_to_variable = { global.mdcw_cw_cohesion_3 = 0.5 }
 	multiply_temp_variable = { mdcw_cw_t_a = global.mdcw_cw_cohesion_3 }
 	set_variable = { global.mdcw_cw_scale_3 = mdcw_cw_t_a }
 	# Bar on the bloc card
 	set_variable = { global.mdcw_cw_bar_bloc_3 = global.mdcw_cw_share_3 }
-	clamp_variable = { var = global.mdcw_cw_bar_bloc_3 min = 0 max = 0.6 }
-	multiply_variable = { global.mdcw_cw_bar_bloc_3 = 266.6667 }
-	subtract_from_variable = { global.mdcw_cw_bar_bloc_3 = 160 }
+	clamp_variable = { var = global.mdcw_cw_bar_bloc_3 min = 0 max = 1 } # COLDWAR 24.11.2026: bar is 0-100 % of world power, 164 px
+	multiply_variable = { global.mdcw_cw_bar_bloc_3 = 164 }
+	subtract_from_variable = { global.mdcw_cw_bar_bloc_3 = 164 }
 	round_variable = global.mdcw_cw_bar_bloc_3
+	set_variable = { global.COLDWAR_cw_bar_coh_3 = global.mdcw_cw_core_share_3 } # COLDWAR CW v4 ui
+	multiply_variable = { global.COLDWAR_cw_bar_coh_3 = 160 }
+	subtract_from_variable = { global.COLDWAR_cw_bar_coh_3 = 160 }
+	round_variable = global.COLDWAR_cw_bar_coh_3
 	set_variable = { global.mdcw_cw_fx_3_network_build = 0.04 }
 	multiply_variable = { global.mdcw_cw_fx_3_network_build = global.mdcw_cw_scale_3 }
 	set_variable = { global.mdcw_cw_fx_3_network_train = -0.05 }
@@ -955,8 +1087,8 @@ mdcw_cw_update_bloc_weights = {
 	multiply_variable = { global.mdcw_cw_fx_3_leader_consumer = global.mdcw_cw_scale_3 }
 	set_variable = { global.mdcw_cw_upkeep_3 = global.mdcw_cw_power_3 }
 	if = {
-		limit = { country_exists = CHI }
-		CHI = { set_temp_variable = { mdcw_cw_t_lv = mdcw_cw_bloc_value } }
+		limit = { has_variable = global.mdcw_cw_leader_3 }
+		var:global.mdcw_cw_leader_3 = { set_temp_variable = { mdcw_cw_t_lv = mdcw_cw_bloc_value } }
 		subtract_from_variable = { global.mdcw_cw_upkeep_3 = mdcw_cw_t_lv }
 	}
 	multiply_variable = { global.mdcw_cw_upkeep_3 = 0.008 }
@@ -967,27 +1099,28 @@ mdcw_cw_update_bloc_weights = {
 	if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_3 value = 0.45 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_3 = 3 }
-		set_variable = { global.mdcw_cw_tier_bonus_3 = 3 }
-		set_variable = { global.mdcw_cw_tier_factor_3 = 1.15 }
+		set_variable = { global.mdcw_cw_tier_bonus_3 = 4 }
+		set_variable = { global.mdcw_cw_tier_factor_3 = 1.2 } # COLDWAR 24.11.2026: was 1.15 (bonus 3), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_3 value = 0.3 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_3 = 2 }
-		set_variable = { global.mdcw_cw_tier_bonus_3 = 2 }
-		set_variable = { global.mdcw_cw_tier_factor_3 = 1.1 }
+		set_variable = { global.mdcw_cw_tier_bonus_3 = 3 }
+		set_variable = { global.mdcw_cw_tier_factor_3 = 1.13 } # COLDWAR 24.11.2026: was 1.1 (bonus 2), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_3 value = 0.15 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_3 = 1 }
 		set_variable = { global.mdcw_cw_tier_bonus_3 = 1 }
-		set_variable = { global.mdcw_cw_tier_factor_3 = 1 }
+		set_variable = { global.mdcw_cw_tier_factor_3 = 1.05 } # COLDWAR 24.11.2026: was 1 (bonus 1), bloc growth instead of pillar events
 	}
 	else_if = {
 		limit = { check_variable = { var = global.mdcw_cw_share_3 value = 0 compare = greater_than_or_equals } }
 		set_variable = { global.mdcw_cw_tier_3 = 0 }
 		set_variable = { global.mdcw_cw_tier_bonus_3 = 0 }
-		set_variable = { global.mdcw_cw_tier_factor_3 = 1 }
+		set_variable = { global.mdcw_cw_tier_factor_3 = 1.02 } # COLDWAR 24.11.2026: was 1 (bonus 0), bloc growth instead of pillar events
 	}
+	COLDWAR_cw_v4_update_pillar_slots = yes # COLDWAR CW v4
 }
 
 # Global. Counts Imperia sanctions between two opposing blocs (read only; the sanction
@@ -1072,6 +1205,13 @@ mdcw_cw_update_bloc_effects = {
 		limit = { NOT = { has_dynamic_modifier = { modifier = mdcw_cw_bloc_modifier_beijing } } }
 		add_dynamic_modifier = { modifier = mdcw_cw_bloc_modifier_beijing }
 	}
+	set_variable = { mdcw_cw_b_army_xp = 0 }
+	set_variable = { mdcw_cw_b_lic_cost = 0 }
+	set_variable = { mdcw_cw_b_lic_speed = 0 }
+	set_variable = { mdcw_cw_b_infra_cost = 0 }
+	set_variable = { mdcw_cw_b_reactor_cost = 0 }
+	set_variable = { mdcw_cw_b_drift_nationalist = 0 }
+	set_variable = { mdcw_cw_b_drift_neutral = 0 }
 	set_variable = { mdcw_cw_b_trade = 0 }
 	set_variable = { mdcw_cw_b_glob = 0 }
 	set_variable = { mdcw_cw_b_fidef = 0 }
@@ -1113,6 +1253,10 @@ mdcw_cw_update_bloc_effects = {
 			limit = { has_country_flag = mdcw_cw_estranged }
 			multiply_temp_variable = { mdcw_cw_t_scale = 0.5 }
 		}
+		if = { # COLDWAR CW v4 outlook
+			limit = { has_country_flag = COLDWAR_cw_outsider }
+			multiply_temp_variable = { mdcw_cw_t_scale = 0.6 }
+		}
 		set_temp_variable = { mdcw_cw_t_fx = 0.004 }
 		multiply_temp_variable = { mdcw_cw_t_fx = mdcw_cw_t_scale }
 		add_to_variable = { mdcw_cw_b_roi = mdcw_cw_t_fx }
@@ -1126,7 +1270,7 @@ mdcw_cw_update_bloc_effects = {
 		multiply_temp_variable = { mdcw_cw_t_fx = mdcw_cw_t_scale }
 		add_to_variable = { mdcw_cw_b_sanc_eff = mdcw_cw_t_fx }
 		if = {
-			limit = { original_tag = USA }
+			limit = { has_country_flag = mdcw_cw_leads_1 }
 			# leadership, scaled
 			set_temp_variable = { mdcw_cw_t_fx = 0.2 }
 			multiply_temp_variable = { mdcw_cw_t_fx = global.mdcw_cw_scale_1 }
@@ -1170,6 +1314,10 @@ mdcw_cw_update_bloc_effects = {
 			limit = { has_country_flag = mdcw_cw_estranged }
 			multiply_temp_variable = { mdcw_cw_t_scale = 0.5 }
 		}
+		if = { # COLDWAR CW v4 outlook
+			limit = { has_country_flag = COLDWAR_cw_outsider }
+			multiply_temp_variable = { mdcw_cw_t_scale = 0.6 }
+		}
 		set_temp_variable = { mdcw_cw_t_fx = 0.1 }
 		multiply_temp_variable = { mdcw_cw_t_fx = mdcw_cw_t_scale }
 		add_to_variable = { mdcw_cw_b_oil_res = mdcw_cw_t_fx }
@@ -1183,7 +1331,7 @@ mdcw_cw_update_bloc_effects = {
 		multiply_temp_variable = { mdcw_cw_t_fx = mdcw_cw_t_scale }
 		add_to_variable = { mdcw_cw_b_prod_growth = mdcw_cw_t_fx }
 		if = {
-			limit = { original_tag = SOV }
+			limit = { has_country_flag = mdcw_cw_leads_2 }
 			# leadership, scaled
 			set_temp_variable = { mdcw_cw_t_fx = 0.2 }
 			multiply_temp_variable = { mdcw_cw_t_fx = global.mdcw_cw_scale_2 }
@@ -1235,6 +1383,10 @@ mdcw_cw_update_bloc_effects = {
 			limit = { has_country_flag = mdcw_cw_estranged }
 			multiply_temp_variable = { mdcw_cw_t_scale = 0.5 }
 		}
+		if = { # COLDWAR CW v4 outlook
+			limit = { has_country_flag = COLDWAR_cw_outsider }
+			multiply_temp_variable = { mdcw_cw_t_scale = 0.6 }
+		}
 		set_temp_variable = { mdcw_cw_t_fx = 0.04 }
 		multiply_temp_variable = { mdcw_cw_t_fx = mdcw_cw_t_scale }
 		add_to_variable = { mdcw_cw_b_build = mdcw_cw_t_fx }
@@ -1245,7 +1397,7 @@ mdcw_cw_update_bloc_effects = {
 		multiply_temp_variable = { mdcw_cw_t_fx = mdcw_cw_t_scale }
 		add_to_variable = { mdcw_cw_b_stab = mdcw_cw_t_fx }
 		if = {
-			limit = { original_tag = CHI }
+			limit = { has_country_flag = mdcw_cw_leads_3 }
 			# leadership, scaled
 			set_temp_variable = { mdcw_cw_t_fx = 0.15 }
 			multiply_temp_variable = { mdcw_cw_t_fx = global.mdcw_cw_scale_3 }
@@ -1294,6 +1446,7 @@ mdcw_cw_update_bloc_effects = {
 		multiply_temp_variable = { mdcw_cw_t_fx = mdcw_cw_t_scale }
 		add_to_variable = { mdcw_cw_b_sanc_res = mdcw_cw_t_fx }
 	}
+	COLDWAR_cw_v4_apply_pillars = yes # COLDWAR CW v4
 	set_variable = { mdcw_cw_bloc_upkeep_weekly = mdcw_cw_bloc_upkeep }
 	multiply_variable = { mdcw_cw_bloc_upkeep_weekly = 12 }
 	divide_variable = { mdcw_cw_bloc_upkeep_weekly = 52 }
@@ -2007,21 +2160,21 @@ mdcw_cw_recalculate_capacity = {
 	}
 	if = {
 		limit = {
-			original_tag = USA
+			has_country_flag = mdcw_cw_leads_1
 			check_variable = { mdcw_cw_alignment = 1 }
 		}
 		add_to_variable = { mdcw_cw_cap_max = global.mdcw_cw_tier_bonus_1 }
 	}
 	if = {
 		limit = {
-			original_tag = SOV
+			has_country_flag = mdcw_cw_leads_2
 			check_variable = { mdcw_cw_alignment = 2 }
 		}
 		add_to_variable = { mdcw_cw_cap_max = global.mdcw_cw_tier_bonus_2 }
 	}
 	if = {
 		limit = {
-			original_tag = CHI
+			has_country_flag = mdcw_cw_leads_3
 			check_variable = { mdcw_cw_alignment = 3 }
 		}
 		add_to_variable = { mdcw_cw_cap_max = global.mdcw_cw_tier_bonus_3 }
@@ -2051,17 +2204,17 @@ mdcw_cw_calculate_switch_costs = {
 	set_temp_variable = { mdcw_cw_t_disc = 0 }
 	if = {
 		limit = {
-			country_exists = USA
-			NOT = { original_tag = USA }
-			USA = { mdcw_cw_has_active_program_to_prev = yes }
+			has_variable = global.mdcw_cw_leader_1
+			NOT = { has_country_flag = mdcw_cw_leads_1 }
+			var:global.mdcw_cw_leader_1 = { mdcw_cw_has_active_program_to_prev = yes }
 		}
 		set_temp_variable = { mdcw_cw_t_disc = 0.25 }
 	}
 	if = {
 		limit = {
-			country_exists = USA
-			NOT = { original_tag = USA }
-			USA = {
+			has_variable = global.mdcw_cw_leader_1
+			NOT = { has_country_flag = mdcw_cw_leads_1 }
+			var:global.mdcw_cw_leader_1 = {
 				check_variable = { mdcw_cw_pps_party@PREV > 0 }
 				check_variable = { PREV.mdcw_cw_pps_access@THIS = 2 }
 			}
@@ -2086,17 +2239,17 @@ mdcw_cw_calculate_switch_costs = {
 	set_temp_variable = { mdcw_cw_t_disc = 0 }
 	if = {
 		limit = {
-			country_exists = SOV
-			NOT = { original_tag = SOV }
-			SOV = { mdcw_cw_has_active_program_to_prev = yes }
+			has_variable = global.mdcw_cw_leader_2
+			NOT = { has_country_flag = mdcw_cw_leads_2 }
+			var:global.mdcw_cw_leader_2 = { mdcw_cw_has_active_program_to_prev = yes }
 		}
 		set_temp_variable = { mdcw_cw_t_disc = 0.25 }
 	}
 	if = {
 		limit = {
-			country_exists = SOV
-			NOT = { original_tag = SOV }
-			SOV = {
+			has_variable = global.mdcw_cw_leader_2
+			NOT = { has_country_flag = mdcw_cw_leads_2 }
+			var:global.mdcw_cw_leader_2 = {
 				check_variable = { mdcw_cw_pps_party@PREV > 0 }
 				check_variable = { PREV.mdcw_cw_pps_access@THIS = 2 }
 			}
@@ -2121,17 +2274,17 @@ mdcw_cw_calculate_switch_costs = {
 	set_temp_variable = { mdcw_cw_t_disc = 0 }
 	if = {
 		limit = {
-			country_exists = CHI
-			NOT = { original_tag = CHI }
-			CHI = { mdcw_cw_has_active_program_to_prev = yes }
+			has_variable = global.mdcw_cw_leader_3
+			NOT = { has_country_flag = mdcw_cw_leads_3 }
+			var:global.mdcw_cw_leader_3 = { mdcw_cw_has_active_program_to_prev = yes }
 		}
 		set_temp_variable = { mdcw_cw_t_disc = 0.25 }
 	}
 	if = {
 		limit = {
-			country_exists = CHI
-			NOT = { original_tag = CHI }
-			CHI = {
+			has_variable = global.mdcw_cw_leader_3
+			NOT = { has_country_flag = mdcw_cw_leads_3 }
+			var:global.mdcw_cw_leader_3 = {
 				check_variable = { mdcw_cw_pps_party@PREV > 0 }
 				check_variable = { PREV.mdcw_cw_pps_access@THIS = 2 }
 			}
@@ -2456,6 +2609,10 @@ mdcw_cw_recalculate_country = {
 		if = {
 			limit = { mdcw_cw_same_bloc_as_prev = yes }
 			multiply_temp_variable = { mdcw_cw_t_eff = 1.25 }
+			if = { # COLDWAR CW v4 prog2: the bloc bonus is for core members
+				limit = { PREV = { has_country_flag = COLDWAR_cw_outsider } }
+				multiply_temp_variable = { mdcw_cw_t_eff = 0.8 }
+			}
 			if = {
 				limit = { check_variable = { mdcw_cw_alignment = 1 } }
 				multiply_temp_variable = { mdcw_cw_t_eff = global.mdcw_cw_tier_factor_1 }
@@ -2473,12 +2630,34 @@ mdcw_cw_recalculate_country = {
 			limit = { mdcw_cw_opposing_to_prev = yes }
 			multiply_temp_variable = { mdcw_cw_t_eff = 0.75 }
 		}
+		# COLDWAR CW v4 prog: strength of the donor (THIS = donor, PREV = receiver): power rank x GDP gap
+		set_temp_variable = { COLDWAR_cw_t_dstr = 0.6 }
+		if = { limit = { check_variable = { mdcw_cw_bloc_value > 19 } } set_temp_variable = { COLDWAR_cw_t_dstr = 1.5 } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value > 11 } } set_temp_variable = { COLDWAR_cw_t_dstr = 1.3 } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value > 6 } } set_temp_variable = { COLDWAR_cw_t_dstr = 1.1 } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value > 3 } } set_temp_variable = { COLDWAR_cw_t_dstr = 1 } }
+		else_if = { limit = { check_variable = { mdcw_cw_bloc_value > 1 } } set_temp_variable = { COLDWAR_cw_t_dstr = 0.8 } }
+		PREV = { set_temp_variable = { COLDWAR_cw_t_rgdp = gdp_total } }
+		clamp_temp_variable = { var = COLDWAR_cw_t_rgdp min = 0.01 }
+		set_temp_variable = { COLDWAR_cw_t_ratio = gdp_total }
+		divide_temp_variable = { COLDWAR_cw_t_ratio = COLDWAR_cw_t_rgdp }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ratio > 9.99 } } multiply_temp_variable = { COLDWAR_cw_t_dstr = 1.3 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_ratio > 2.99 } } multiply_temp_variable = { COLDWAR_cw_t_dstr = 1.15 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_ratio < 1 } } multiply_temp_variable = { COLDWAR_cw_t_dstr = 0.75 } }
 		# Construction Assistance
 		if = {
 			limit = { check_variable = { mdcw_cw_p1_state@PREV = 1 } }
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p1_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = num_of_civilian_factories }
+			divide_temp_variable = { COLDWAR_cw_t_field = 250 }
+			add_to_temp_variable = { COLDWAR_cw_t_field = 0.8 }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p1@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = 0.08 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_construction = mdcw_cw_t_val } }
@@ -2489,6 +2668,13 @@ mdcw_cw_recalculate_country = {
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p2_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = 1 }
+			add_to_temp_variable = { COLDWAR_cw_t_field = modifier@research_speed_factor }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p2@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = 0.06 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_research = mdcw_cw_t_val } }
@@ -2499,6 +2685,14 @@ mdcw_cw_recalculate_country = {
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p3_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = num_of_factories }
+			divide_temp_variable = { COLDWAR_cw_t_field = 400 }
+			add_to_temp_variable = { COLDWAR_cw_t_field = 0.8 }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p3@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = 0.1 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_eff_growth = mdcw_cw_t_val } }
@@ -2512,6 +2706,14 @@ mdcw_cw_recalculate_country = {
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p4_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = num_of_factories }
+			divide_temp_variable = { COLDWAR_cw_t_field = 400 }
+			add_to_temp_variable = { COLDWAR_cw_t_field = 0.8 }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p4@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = 0.03 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_productivity = mdcw_cw_t_val } }
@@ -2522,6 +2724,12 @@ mdcw_cw_recalculate_country = {
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p5_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = 1 }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p5@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = -0.03 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_consumer = mdcw_cw_t_val } }
@@ -2532,6 +2740,14 @@ mdcw_cw_recalculate_country = {
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p6_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = num_of_military_factories }
+			divide_temp_variable = { COLDWAR_cw_t_field = 150 }
+			add_to_temp_variable = { COLDWAR_cw_t_field = 0.8 }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p6@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = -0.1 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_training = mdcw_cw_t_val } }
@@ -2545,6 +2761,14 @@ mdcw_cw_recalculate_country = {
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p7_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = num_of_military_factories }
+			divide_temp_variable = { COLDWAR_cw_t_field = 150 }
+			add_to_temp_variable = { COLDWAR_cw_t_field = 0.8 }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p7@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = 0.06 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_mil_output = mdcw_cw_t_val } }
@@ -2555,6 +2779,13 @@ mdcw_cw_recalculate_country = {
 			set_temp_variable = { mdcw_cw_t_sf = mdcw_cw_p8_size@PREV }
 			multiply_temp_variable = { mdcw_cw_t_sf = 0.5 }
 			multiply_temp_variable = { mdcw_cw_t_sf = mdcw_cw_t_eff }
+			# COLDWAR CW v4 prog: field strength of the donor for this programme
+			set_temp_variable = { COLDWAR_cw_t_field = 1 }
+			add_to_temp_variable = { COLDWAR_cw_t_field = modifier@political_power_factor }
+			clamp_temp_variable = { var = COLDWAR_cw_t_field min = 0.8 max = 1.3 }
+			multiply_temp_variable = { COLDWAR_cw_t_field = COLDWAR_cw_t_dstr }
+			multiply_temp_variable = { mdcw_cw_t_sf = COLDWAR_cw_t_field }
+			set_variable = { COLDWAR_cw_str_p8@PREV = COLDWAR_cw_t_field }
 			set_temp_variable = { mdcw_cw_t_val = 0.05 }
 			multiply_temp_variable = { mdcw_cw_t_val = mdcw_cw_t_sf }
 			PREV = { add_to_variable = { mdcw_cw_r_pp = mdcw_cw_t_val } }
@@ -2638,11 +2869,15 @@ mdcw_cw_recalculate_country = {
 	add_to_variable = { mdcw_cw_n_bureaucracy = mdcw_cw_g_bureaucracy }
 	set_variable = { mdcw_cw_n_out = mdcw_cw_out^num }
 	set_variable = { mdcw_cw_n_in = mdcw_cw_in^num }
+	# COLDWAR CW v4 prog2: costs follow our GDP (the amounts above are those of an economy of 1000)
+	multiply_variable = { mdcw_cw_cost_monthly = gdp_total }
+	divide_variable = { mdcw_cw_cost_monthly = 1000 }
 	set_variable = { mdcw_cw_cost_weekly = mdcw_cw_cost_monthly }
 	multiply_variable = { mdcw_cw_cost_weekly = 12 }
 	divide_variable = { mdcw_cw_cost_weekly = 52 }
 	mdcw_cw_recalculate_capacity = yes
 	mdcw_cw_calculate_switch_costs = yes
+	COLDWAR_cw_pps_drift_update = yes # COLDWAR CW v4 prog
 	force_update_dynamic_modifier = yes
 }
 
@@ -2682,7 +2917,7 @@ mdcw_cw_start_program_1 = {
 	set_variable = { mdcw_cw_p1_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p1_state@PREV = 1 }
 	set_variable = { mdcw_cw_p1_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p1_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p1_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -2757,7 +2992,7 @@ mdcw_cw_start_program_2 = {
 	set_variable = { mdcw_cw_p2_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p2_state@PREV = 1 }
 	set_variable = { mdcw_cw_p2_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p2_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p2_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -2832,7 +3067,7 @@ mdcw_cw_start_program_3 = {
 	set_variable = { mdcw_cw_p3_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p3_state@PREV = 1 }
 	set_variable = { mdcw_cw_p3_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p3_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p3_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -2907,7 +3142,7 @@ mdcw_cw_start_program_4 = {
 	set_variable = { mdcw_cw_p4_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p4_state@PREV = 1 }
 	set_variable = { mdcw_cw_p4_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p4_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p4_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -2982,7 +3217,7 @@ mdcw_cw_start_program_5 = {
 	set_variable = { mdcw_cw_p5_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p5_state@PREV = 1 }
 	set_variable = { mdcw_cw_p5_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p5_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p5_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -3057,7 +3292,7 @@ mdcw_cw_start_program_6 = {
 	set_variable = { mdcw_cw_p6_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p6_state@PREV = 1 }
 	set_variable = { mdcw_cw_p6_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p6_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p6_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -3132,7 +3367,7 @@ mdcw_cw_start_program_7 = {
 	set_variable = { mdcw_cw_p7_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p7_state@PREV = 1 }
 	set_variable = { mdcw_cw_p7_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p7_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p7_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -3207,7 +3442,7 @@ mdcw_cw_start_program_8 = {
 	set_variable = { mdcw_cw_p8_size@PREV = mdcw_cw_t_size }
 	set_variable = { mdcw_cw_p8_state@PREV = 1 }
 	set_variable = { mdcw_cw_p8_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_p8_end@PREV = 365 }
+	add_to_variable = { mdcw_cw_p8_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
 	mdcw_cw_link_add = yes
 	add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
 	reverse_add_opinion_modifier = { target = PREV modifier = mdcw_cw_program_partner }
@@ -3536,13 +3771,12 @@ mdcw_cw_expire_links_with_prev = {
 
 ### Public Political Support ###
 # Sponsor scope, PREV = target. Party index comes from mdcw_cw_send_party (0-23).
-mdcw_cw_start_pps = {
+mdcw_cw_start_pps = { # COLDWAR CW v4 leaders
 	set_variable = { mdcw_cw_pps_party@PREV = mdcw_cw_send_party }
 	add_to_variable = { mdcw_cw_pps_party@PREV = 1 }
 	set_variable = { mdcw_cw_pps_end@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_pps_end@PREV = 365 }
-	set_variable = { mdcw_cw_pps_cd@PREV = global.num_days }
-	add_to_variable = { mdcw_cw_pps_cd@PREV = 730 }
+	add_to_variable = { mdcw_cw_pps_end@PREV = 36500 } # COLDWAR CW v4 prog: runs until one side ends it
+	set_variable = { mdcw_cw_pps_cd@PREV = 0 } # COLDWAR CW v4 prog: the rest period starts when a campaign ends
 	PREV = { set_variable = { mdcw_cw_pps_access@PREV = 0 } }
 	mdcw_cw_link_add = yes
 	if = {
@@ -3559,23 +3793,23 @@ mdcw_cw_start_pps = {
 		if = {
 			limit = {
 				PREV = { check_variable = { mdcw_cw_alignment = 1 } }
-				country_exists = USA
+				has_variable = global.mdcw_cw_leader_1
 			}
-			USA = { add_opinion_modifier = { target = PREV modifier = mdcw_cw_foreign_interference } }
+			var:global.mdcw_cw_leader_1 = { add_opinion_modifier = { target = PREV modifier = mdcw_cw_foreign_interference } }
 		}
 		if = {
 			limit = {
 				PREV = { check_variable = { mdcw_cw_alignment = 2 } }
-				country_exists = SOV
+				has_variable = global.mdcw_cw_leader_2
 			}
-			SOV = { add_opinion_modifier = { target = PREV modifier = mdcw_cw_foreign_interference } }
+			var:global.mdcw_cw_leader_2 = { add_opinion_modifier = { target = PREV modifier = mdcw_cw_foreign_interference } }
 		}
 		if = {
 			limit = {
 				PREV = { check_variable = { mdcw_cw_alignment = 3 } }
-				country_exists = CHI
+				has_variable = global.mdcw_cw_leader_3
 			}
-			CHI = { add_opinion_modifier = { target = PREV modifier = mdcw_cw_foreign_interference } }
+			var:global.mdcw_cw_leader_3 = { add_opinion_modifier = { target = PREV modifier = mdcw_cw_foreign_interference } }
 		}
 	}
 	else_if = {
@@ -3602,6 +3836,8 @@ mdcw_cw_end_pps = {
 		set_temp_variable = { mdcw_cw_t_party = mdcw_cw_pps_party@PREV }
 		subtract_from_temp_variable = { mdcw_cw_t_party = 1 }
 		set_variable = { mdcw_cw_pps_party@PREV = 0 }
+		set_variable = { mdcw_cw_pps_cd@PREV = global.num_days } # COLDWAR CW v4 prog
+		add_to_variable = { mdcw_cw_pps_cd@PREV = 180 }
 		set_variable = { mdcw_cw_pps_end@PREV = 0 }
 		set_variable = { mdcw_cw_pps_left@PREV = 0 }
 		PREV = { set_variable = { mdcw_cw_pps_access@PREV = 0 } }
@@ -3644,26 +3880,26 @@ mdcw_cw_apply_pps = {
 			set_temp_variable = { mdcw_cw_t_amount = 0 }
 			if = {
 				limit = { check_variable = { PREV.mdcw_cw_pps_access@THIS = 0 } }
-				set_temp_variable = { mdcw_cw_t_amount = 0.000250 }
+				set_temp_variable = { mdcw_cw_t_amount = 0.0075 }
 			}
 			else_if = {
 				limit = { check_variable = { PREV.mdcw_cw_pps_access@THIS = 1 } }
-				set_temp_variable = { mdcw_cw_t_amount = 0.000625 }
+				set_temp_variable = { mdcw_cw_t_amount = 0.01 }
 			}
 			else_if = {
 				limit = { check_variable = { PREV.mdcw_cw_pps_access@THIS = 2 } }
-				set_temp_variable = { mdcw_cw_t_amount = 0.001250 }
+				set_temp_variable = { mdcw_cw_t_amount = 0.0125 }
 			}
 			else_if = {
 				limit = { check_variable = { PREV.mdcw_cw_pps_access@THIS = 3 } }
-				set_temp_variable = { mdcw_cw_t_amount = 0.000125 }
+				set_temp_variable = { mdcw_cw_t_amount = 0.005 }
 			}
 			multiply_temp_variable = { mdcw_cw_t_amount = mdcw_cw_t_res }
 			# Sponsor's broadcasting (THIS = sponsor)
 			set_temp_variable = { mdcw_cw_t_sup = 1 }
 			add_to_temp_variable = { mdcw_cw_t_sup = modifier@mdcw_cw_support_effectiveness }
 			multiply_temp_variable = { mdcw_cw_t_amount = mdcw_cw_t_sup }
-			set_temp_variable = { mdcw_cw_t_room = 0.002 }
+			set_temp_variable = { mdcw_cw_t_room = 0.03 } # COLDWAR CW v4 prog: the outlook moves daily (drift), the party gains its share monthly
 			subtract_from_temp_variable = { mdcw_cw_t_room = mdcw_cw_t_pps_total }
 			clamp_temp_variable = { var = mdcw_cw_t_amount min = 0 max = mdcw_cw_t_room }
 			if = {
@@ -3674,12 +3910,16 @@ mdcw_cw_apply_pps = {
 				PREV = {
 					set_temp_variable = { party_index = mdcw_cw_t_party }
 					set_temp_variable = { party_popularity_increase = mdcw_cw_t_amount }
-					set_temp_variable = { temp_outlook_increase = mdcw_cw_t_amount }
+					set_temp_variable = { temp_outlook_increase = 0 }
 					change_relative_party_popularity = yes
 					set_temp_variable = { temp_outlook_increase = 0 }
 				}
 			}
 		}
+	}
+	if = { # COLDWAR CW v4 prog
+		limit = { check_variable = { mdcw_cw_t_pps_total > 0 } }
+		recalculate_party = yes
 	}
 }
 
@@ -3719,9 +3959,9 @@ mdcw_cw_change_alignment = {
 		if = {
 			limit = {
 				check_variable = { mdcw_cw_t_old = 1 }
-				country_exists = USA
+				has_variable = global.mdcw_cw_leader_1
 			}
-			USA = {
+			var:global.mdcw_cw_leader_1 = {
 				add_opinion_modifier = { target = PREV modifier = mdcw_cw_bloc_defection }
 				set_variable = { mdcw_cw_ev3_partner = PREV.id }
 				set_variable = { mdcw_cw_ev3_old = mdcw_cw_t_old }
@@ -3732,9 +3972,9 @@ mdcw_cw_change_alignment = {
 		if = {
 			limit = {
 				check_variable = { mdcw_cw_t_old = 2 }
-				country_exists = SOV
+				has_variable = global.mdcw_cw_leader_2
 			}
-			SOV = {
+			var:global.mdcw_cw_leader_2 = {
 				add_opinion_modifier = { target = PREV modifier = mdcw_cw_bloc_defection }
 				set_variable = { mdcw_cw_ev3_partner = PREV.id }
 				set_variable = { mdcw_cw_ev3_old = mdcw_cw_t_old }
@@ -3745,9 +3985,9 @@ mdcw_cw_change_alignment = {
 		if = {
 			limit = {
 				check_variable = { mdcw_cw_t_old = 3 }
-				country_exists = CHI
+				has_variable = global.mdcw_cw_leader_3
 			}
-			CHI = {
+			var:global.mdcw_cw_leader_3 = {
 				add_opinion_modifier = { target = PREV modifier = mdcw_cw_bloc_defection }
 				set_variable = { mdcw_cw_ev3_partner = PREV.id }
 				set_variable = { mdcw_cw_ev3_old = mdcw_cw_t_old }
@@ -3790,10 +4030,10 @@ mdcw_cw_change_alignment = {
 	if = {
 		limit = {
 			check_variable = { mdcw_cw_alignment = 1 }
-			country_exists = USA
-			NOT = { original_tag = USA }
+			has_variable = global.mdcw_cw_leader_1
+			NOT = { has_country_flag = mdcw_cw_leads_1 }
 		}
-		USA = {
+		var:global.mdcw_cw_leader_1 = {
 			set_variable = { mdcw_cw_ev3_partner = PREV.id }
 			set_variable = { mdcw_cw_ev3_old = mdcw_cw_t_old }
 			set_variable = { mdcw_cw_ev3_new = mdcw_cw_new_alignment }
@@ -3803,10 +4043,10 @@ mdcw_cw_change_alignment = {
 	if = {
 		limit = {
 			check_variable = { mdcw_cw_alignment = 2 }
-			country_exists = SOV
-			NOT = { original_tag = SOV }
+			has_variable = global.mdcw_cw_leader_2
+			NOT = { has_country_flag = mdcw_cw_leads_2 }
 		}
-		SOV = {
+		var:global.mdcw_cw_leader_2 = {
 			set_variable = { mdcw_cw_ev3_partner = PREV.id }
 			set_variable = { mdcw_cw_ev3_old = mdcw_cw_t_old }
 			set_variable = { mdcw_cw_ev3_new = mdcw_cw_new_alignment }
@@ -3816,10 +4056,10 @@ mdcw_cw_change_alignment = {
 	if = {
 		limit = {
 			check_variable = { mdcw_cw_alignment = 3 }
-			country_exists = CHI
-			NOT = { original_tag = CHI }
+			has_variable = global.mdcw_cw_leader_3
+			NOT = { has_country_flag = mdcw_cw_leads_3 }
 		}
-		CHI = {
+		var:global.mdcw_cw_leader_3 = {
 			set_variable = { mdcw_cw_ev3_partner = PREV.id }
 			set_variable = { mdcw_cw_ev3_old = mdcw_cw_t_old }
 			set_variable = { mdcw_cw_ev3_new = mdcw_cw_new_alignment }
@@ -3838,16 +4078,16 @@ mdcw_cw_change_alignment = {
 		mdcw_cw_recalculate_country = yes
 	}
 	if = {
-		limit = { country_exists = USA }
-		USA = { mdcw_cw_recalculate_country = yes }
+		limit = { has_variable = global.mdcw_cw_leader_1 }
+		var:global.mdcw_cw_leader_1 = { mdcw_cw_recalculate_country = yes }
 	}
 	if = {
-		limit = { country_exists = SOV }
-		SOV = { mdcw_cw_recalculate_country = yes }
+		limit = { has_variable = global.mdcw_cw_leader_2 }
+		var:global.mdcw_cw_leader_2 = { mdcw_cw_recalculate_country = yes }
 	}
 	if = {
-		limit = { country_exists = CHI }
-		CHI = { mdcw_cw_recalculate_country = yes }
+		limit = { has_variable = global.mdcw_cw_leader_3 }
+		var:global.mdcw_cw_leader_3 = { mdcw_cw_recalculate_country = yes }
 	}
 	mdcw_cw_touch_gui = yes
 }
@@ -3883,6 +4123,7 @@ mdcw_cw_update_estrangement = {
 ### Monthly ###
 # Global, once per month.
 mdcw_cw_global_monthly = {
+	COLDWAR_cw_v4_global_monthly = yes # COLDWAR CW v4: bloc leaders and pillars
 	# Blocs and sanctions first: they set the tension baseline.
 	mdcw_cw_rebuild_blocs = yes
 	# Tension drifts back to its baseline (40 plus sanctions between the blocs).
@@ -4080,6 +4321,18 @@ mdcw_cw_update_world_situation = {
 	multiply_variable = { global.mdcw_cw_mc_tension = 0.7 }
 	set_variable = { global.mdcw_cw_mc_wars = global.mdcw_cw_bloc_wars }
 	multiply_variable = { global.mdcw_cw_mc_wars = 3 }
+	# IMPERIA COLD WAR 24.11.2026: every other war and war crimes in the news also shake the markets (Enes: "61 Stable trotz Krieg macht keinen Sinn")
+	set_variable = { global.mdcw_cw_other_wars = 0 }
+	every_country = {
+		limit = { has_war = yes }
+		add_to_variable = { global.mdcw_cw_other_wars = 0.5 }
+	}
+	subtract_from_variable = { global.mdcw_cw_other_wars = global.mdcw_cw_bloc_wars }
+	clamp_variable = { var = global.mdcw_cw_other_wars min = 0 }
+	set_variable = { global.mdcw_cw_mc_other = global.mdcw_cw_other_wars }
+	clamp_variable = { var = global.mdcw_cw_mc_other min = 0 max = 20 }
+	set_variable = { global.mdcw_cw_mc_crimes = global.COLDWAR_WM_market_shock }
+	clamp_variable = { var = global.mdcw_cw_mc_crimes min = 0 max = 15 }
 	set_variable = { global.mdcw_cw_mc_frag = global.mdcw_cw_x_econ }
 	multiply_variable = { global.mdcw_cw_mc_frag = 0.15 }
 	clamp_variable = { var = global.mdcw_cw_mc_frag min = 0 max = 10 }
@@ -4092,6 +4345,8 @@ mdcw_cw_update_world_situation = {
 	set_variable = { global.mdcw_cw_market = 100 }
 	subtract_from_variable = { global.mdcw_cw_market = global.mdcw_cw_mc_tension }
 	subtract_from_variable = { global.mdcw_cw_market = global.mdcw_cw_mc_wars }
+	subtract_from_variable = { global.mdcw_cw_market = global.mdcw_cw_mc_other }
+	subtract_from_variable = { global.mdcw_cw_market = global.mdcw_cw_mc_crimes }
 	subtract_from_variable = { global.mdcw_cw_market = global.mdcw_cw_mc_frag }
 	subtract_from_variable = { global.mdcw_cw_market = global.mdcw_cw_mc_oil }
 	clamp_variable = { var = global.mdcw_cw_market min = 5 max = 100 }
@@ -4153,12 +4408,12 @@ mdcw_cw_update_world_situation = {
 		set_variable = { global.mdcw_cw_arms_tier = 1 }
 	}
 	set_variable = { global.mdcw_cw_bar_market = global.mdcw_cw_market }
-	multiply_variable = { global.mdcw_cw_bar_market = 3 }
-	subtract_from_variable = { global.mdcw_cw_bar_market = 300 }
+	multiply_variable = { global.mdcw_cw_bar_market = 2.12 } # COLDWAR 24.11.2026: bar 212 px
+	subtract_from_variable = { global.mdcw_cw_bar_market = 212 }
 	round_variable = global.mdcw_cw_bar_market
 	set_variable = { global.mdcw_cw_bar_arms = global.mdcw_cw_arms }
-	multiply_variable = { global.mdcw_cw_bar_arms = 3 }
-	subtract_from_variable = { global.mdcw_cw_bar_arms = 300 }
+	multiply_variable = { global.mdcw_cw_bar_arms = 2.12 } # COLDWAR 24.11.2026: bar 212 px
+	subtract_from_variable = { global.mdcw_cw_bar_arms = 212 }
 	round_variable = global.mdcw_cw_bar_arms
 	mdcw_cw_update_tension_display = yes
 	mdcw_cw_update_oil_display = yes
@@ -4409,7 +4664,13 @@ mdcw_cw_update_world_market = {
 # Hook in the Imperia sanction actions (imp_sanctions_diplomatic_actions.txt).
 # THIS = sanctioned country, ROOT = sanctioning country, temp mdcw_cw_t_sanc_type:
 # 1 diplomatic, 2 financial, 3 economic, 4 military. The sanction itself is done by Imperia.
-mdcw_cw_on_sanction_imposed = {
+mdcw_cw_on_sanction_imposed = { # COLDWAR CW v4 leaders
+	# IMPERIA COLD WAR — Yugoslavia 1970: offers from Belgrade break for good when a sanction is imposed. # COLDWAR YUG 1970
+	if = { limit = { country_exists = SER SER = { has_country_flag = COLDWAR_YUG_initialized } } SER = { COLDWAR_YUG_deals_check = yes } } # COLDWAR YUG 1970
+	# IMPERIA COLD WAR — Imported 1970 trees (CZE, KOR, NKO, POL, AFG, SVN): treaties are rechecked when a sanction changes.
+	COLDWAR_1970_pair_recheck = yes
+	# IMPERIA COLD WAR — Pakistan 1970: bilateral deals are rechecked when a sanction changes.
+	if = { limit = { country_exists = PAK PAK = { has_country_flag = COLDWAR_PAK_initialized } } PAK = { COLDWAR_PAK_deals_check = yes } }
 	if = {
 		limit = {
 			has_global_flag = mdcw_cw_initialized
@@ -4592,23 +4853,23 @@ mdcw_cw_on_sanction_imposed = {
 			if = {
 				limit = {
 					check_variable = { ROOT.mdcw_cw_alignment = 1 }
-					country_exists = USA
+					has_variable = global.mdcw_cw_leader_1
 				}
-				USA = { add_opinion_modifier = { target = ROOT modifier = mdcw_cw_bloc_solidarity } }
+				var:global.mdcw_cw_leader_1 = { add_opinion_modifier = { target = ROOT modifier = mdcw_cw_bloc_solidarity } }
 			}
 			if = {
 				limit = {
 					check_variable = { ROOT.mdcw_cw_alignment = 2 }
-					country_exists = SOV
+					has_variable = global.mdcw_cw_leader_2
 				}
-				SOV = { add_opinion_modifier = { target = ROOT modifier = mdcw_cw_bloc_solidarity } }
+				var:global.mdcw_cw_leader_2 = { add_opinion_modifier = { target = ROOT modifier = mdcw_cw_bloc_solidarity } }
 			}
 			if = {
 				limit = {
 					check_variable = { ROOT.mdcw_cw_alignment = 3 }
-					country_exists = CHI
+					has_variable = global.mdcw_cw_leader_3
 				}
-				CHI = { add_opinion_modifier = { target = ROOT modifier = mdcw_cw_bloc_solidarity } }
+				var:global.mdcw_cw_leader_3 = { add_opinion_modifier = { target = ROOT modifier = mdcw_cw_bloc_solidarity } }
 			}
 		}
 	}
@@ -4619,7 +4880,11 @@ mdcw_cw_on_sanction_imposed = {
 }
 
 # Hook in the Imperia lift actions. Same scopes. A bloc leader lifting its own sanction ends the call.
-mdcw_cw_on_sanction_lifted = {
+mdcw_cw_on_sanction_lifted = { # COLDWAR CW v4 leaders
+	# IMPERIA COLD WAR — Imported 1970 trees (CZE, KOR, NKO, POL, AFG, SVN): treaties are rechecked when a sanction changes.
+	COLDWAR_1970_pair_recheck = yes
+	# IMPERIA COLD WAR — Pakistan 1970: bilateral deals are rechecked when a sanction changes.
+	if = { limit = { country_exists = PAK PAK = { has_country_flag = COLDWAR_PAK_initialized } } PAK = { COLDWAR_PAK_deals_check = yes } }
 	if = {
 		limit = {
 			has_global_flag = mdcw_cw_initialized
@@ -4751,23 +5016,23 @@ mdcw_cw_take_loan = {
 
 # Country scope (a bloc leader). Pairs with a detente initiative of another bloc leader
 # taken in the last days, otherwise leaves an open offer.
-mdcw_cw_detente_initiative = {
+mdcw_cw_detente_initiative = { # COLDWAR CW v4 leaders
 	if = {
 		limit = { check_variable = { mdcw_cw_alignment = 1 } }
 		if = {
 			limit = {
 				has_global_flag = mdcw_cw_detente_offer_2
-				country_exists = SOV
+				has_variable = global.mdcw_cw_leader_2
 			}
 			clr_global_flag = mdcw_cw_detente_offer_2
 			set_temp_variable = { mdcw_cw_tension_delta = -5 }
 			mdcw_cw_add_tension = yes
 			add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
-			SOV = {
+			var:global.mdcw_cw_leader_2 = {
 				add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
 			}
 			set_temp_variable = { mdcw_cw_t_ev12_a = THIS.id }
-			SOV = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
+			var:global.mdcw_cw_leader_2 = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
 			every_country = {
 				limit = { is_ai = no }
 				set_variable = { mdcw_cw_ev12_a = mdcw_cw_t_ev12_a }
@@ -4778,17 +5043,17 @@ mdcw_cw_detente_initiative = {
 		else_if = {
 			limit = {
 				has_global_flag = mdcw_cw_detente_offer_3
-				country_exists = CHI
+				has_variable = global.mdcw_cw_leader_3
 			}
 			clr_global_flag = mdcw_cw_detente_offer_3
 			set_temp_variable = { mdcw_cw_tension_delta = -5 }
 			mdcw_cw_add_tension = yes
 			add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
-			CHI = {
+			var:global.mdcw_cw_leader_3 = {
 				add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
 			}
 			set_temp_variable = { mdcw_cw_t_ev12_a = THIS.id }
-			CHI = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
+			var:global.mdcw_cw_leader_3 = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
 			every_country = {
 				limit = { is_ai = no }
 				set_variable = { mdcw_cw_ev12_a = mdcw_cw_t_ev12_a }
@@ -4805,17 +5070,17 @@ mdcw_cw_detente_initiative = {
 		if = {
 			limit = {
 				has_global_flag = mdcw_cw_detente_offer_1
-				country_exists = USA
+				has_variable = global.mdcw_cw_leader_1
 			}
 			clr_global_flag = mdcw_cw_detente_offer_1
 			set_temp_variable = { mdcw_cw_tension_delta = -5 }
 			mdcw_cw_add_tension = yes
 			add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
-			USA = {
+			var:global.mdcw_cw_leader_1 = {
 				add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
 			}
 			set_temp_variable = { mdcw_cw_t_ev12_a = THIS.id }
-			USA = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
+			var:global.mdcw_cw_leader_1 = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
 			every_country = {
 				limit = { is_ai = no }
 				set_variable = { mdcw_cw_ev12_a = mdcw_cw_t_ev12_a }
@@ -4826,17 +5091,17 @@ mdcw_cw_detente_initiative = {
 		else_if = {
 			limit = {
 				has_global_flag = mdcw_cw_detente_offer_3
-				country_exists = CHI
+				has_variable = global.mdcw_cw_leader_3
 			}
 			clr_global_flag = mdcw_cw_detente_offer_3
 			set_temp_variable = { mdcw_cw_tension_delta = -5 }
 			mdcw_cw_add_tension = yes
 			add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
-			CHI = {
+			var:global.mdcw_cw_leader_3 = {
 				add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
 			}
 			set_temp_variable = { mdcw_cw_t_ev12_a = THIS.id }
-			CHI = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
+			var:global.mdcw_cw_leader_3 = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
 			every_country = {
 				limit = { is_ai = no }
 				set_variable = { mdcw_cw_ev12_a = mdcw_cw_t_ev12_a }
@@ -4853,17 +5118,17 @@ mdcw_cw_detente_initiative = {
 		if = {
 			limit = {
 				has_global_flag = mdcw_cw_detente_offer_1
-				country_exists = USA
+				has_variable = global.mdcw_cw_leader_1
 			}
 			clr_global_flag = mdcw_cw_detente_offer_1
 			set_temp_variable = { mdcw_cw_tension_delta = -5 }
 			mdcw_cw_add_tension = yes
 			add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
-			USA = {
+			var:global.mdcw_cw_leader_1 = {
 				add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
 			}
 			set_temp_variable = { mdcw_cw_t_ev12_a = THIS.id }
-			USA = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
+			var:global.mdcw_cw_leader_1 = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
 			every_country = {
 				limit = { is_ai = no }
 				set_variable = { mdcw_cw_ev12_a = mdcw_cw_t_ev12_a }
@@ -4874,17 +5139,17 @@ mdcw_cw_detente_initiative = {
 		else_if = {
 			limit = {
 				has_global_flag = mdcw_cw_detente_offer_2
-				country_exists = SOV
+				has_variable = global.mdcw_cw_leader_2
 			}
 			clr_global_flag = mdcw_cw_detente_offer_2
 			set_temp_variable = { mdcw_cw_tension_delta = -5 }
 			mdcw_cw_add_tension = yes
 			add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
-			SOV = {
+			var:global.mdcw_cw_leader_2 = {
 				add_timed_idea = { idea = mdcw_cw_detente_agreement days = 365 }
 			}
 			set_temp_variable = { mdcw_cw_t_ev12_a = THIS.id }
-			SOV = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
+			var:global.mdcw_cw_leader_2 = { set_temp_variable = { mdcw_cw_t_ev12_b = THIS.id } }
 			every_country = {
 				limit = { is_ai = no }
 				set_variable = { mdcw_cw_ev12_a = mdcw_cw_t_ev12_a }
@@ -4913,7 +5178,7 @@ mdcw_cw_update_programme_days = {
 }
 
 # on_war_relation_added: ROOT = attacker, FROM = defender.
-mdcw_cw_on_war_relation = {
+mdcw_cw_on_war_relation = { # COLDWAR CW v4 leaders
 	if = {
 		limit = {
 			ROOT = { check_variable = { mdcw_cw_alignment > 0 } }
@@ -4925,8 +5190,8 @@ mdcw_cw_on_war_relation = {
 		if = {
 			limit = {
 				OR = {
-					ROOT = { OR = { original_tag = USA original_tag = SOV original_tag = CHI } }
-					FROM = { OR = { original_tag = USA original_tag = SOV original_tag = CHI } }
+					ROOT = { OR = { has_country_flag = mdcw_cw_leads_1 has_country_flag = mdcw_cw_leads_2 has_country_flag = mdcw_cw_leads_3 } }
+					FROM = { OR = { has_country_flag = mdcw_cw_leads_1 has_country_flag = mdcw_cw_leads_2 has_country_flag = mdcw_cw_leads_3 } }
 				}
 			}
 			if = {

@@ -1,0 +1,68 @@
+# IMPERIA COLD WAR — Covert Action v2: coup plot minigame.
+# Target scope. Changes the plot meter by COLDWAR_coup_delta (temp) and keeps it within 0 to 100.
+COLDWAR_coup_change_plot = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_coup_plot_active } }
+		set_country_flag = COLDWAR_coup_plot_active
+		set_variable = { COLDWAR_coup_plot = 0 }
+	}
+	custom_effect_tooltip = COLDWAR_coup_plot_change_tt
+	add_to_variable = { COLDWAR_coup_plot = COLDWAR_coup_delta }
+	clamp_variable = { var = COLDWAR_coup_plot min = 0 max = 100 }
+	round_variable = COLDWAR_coup_plot
+	if = {
+		limit = { check_variable = { COLDWAR_coup_plot < 1 } }
+		COLDWAR_coup_end_plot = yes
+	}
+}
+
+# Monthly: plots lose momentum unless they are fed.
+COLDWAR_coup_monthly = {
+	set_temp_variable = { COLDWAR_coup_delta = -2 }
+	COLDWAR_coup_change_plot = yes
+}
+
+# Ends the plot and protects the country for a while.
+COLDWAR_coup_end_plot = {
+	clr_country_flag = COLDWAR_coup_plot_active
+	set_variable = { COLDWAR_coup_plot = 0 }
+	set_country_flag = { flag = COLDWAR_coup_proofed days = 180 value = 1 }
+}
+
+# Mission timed out: the backed party seizes power.
+COLDWAR_coup_succeeds = {
+	add_stability = -0.10
+	add_war_support = -0.05
+	if = {
+		limit = { has_variable = COLDWAR_coup_party }
+		set_party_index_to_ruling_party = yes
+		if = {
+			limit = { NOT = { check_variable = { party_index = COLDWAR_coup_party } } }
+			set_temp_variable = { rul_party_temp = COLDWAR_coup_party }
+			change_ruling_party_effect = yes
+		}
+	}
+	if = {
+		limit = { has_variable = COLDWAR_coup_backer }
+		var:COLDWAR_coup_backer = { country_event = { id = COLDWAR_coup.4 hours = 6 } }
+	}
+	COLDWAR_coup_end_plot = yes
+}
+
+# Mission completed below 70: the plot is crushed and its backer is named.
+COLDWAR_coup_crushed = {
+	add_stability = 0.03
+	if = {
+		limit = { has_variable = COLDWAR_coup_backer }
+		var:COLDWAR_coup_backer = {
+			PREV = { add_opinion_modifier = { target = PREV modifier = cyber_hostile_attack_opinion } }
+			country_event = { id = COLDWAR_coup.2 hours = 6 }
+		}
+	}
+	if = {
+		limit = { has_variable = global.mdcw_cw_tension }
+		set_temp_variable = { mdcw_cw_tension_delta = 3 }
+		mdcw_cw_add_tension = yes
+	}
+	COLDWAR_coup_end_plot = yes
+}

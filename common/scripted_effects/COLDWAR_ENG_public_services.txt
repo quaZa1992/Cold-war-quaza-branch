@@ -1,0 +1,79 @@
+# IMPERIA COLD WAR — British public programmes and sterling reserves.
+COLDWAR_ENG_public_sterling_relief = {
+	if = {
+		limit = { has_idea = IMP_ENG_1970_sterling_pressure }
+		swap_ideas = { remove_idea = IMP_ENG_1970_sterling_pressure add_idea = COLDWAR_ENG_public_sterling_reserve_facility }
+	}
+}
+
+COLDWAR_ENG_public_sterling_settlement = {
+	if = {
+		limit = { has_idea = COLDWAR_ENG_public_sterling_reserve_facility }
+		remove_ideas = COLDWAR_ENG_public_sterling_reserve_facility
+	}
+}
+
+COLDWAR_ENG_public_migrate = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_ENG_public_programmes_migrated } NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_initialized } }
+		if = {
+			limit = { OR = { has_completed_focus = IMP_ENG_1970_labour_nhs_capacity has_country_flag = COLDWAR_ENG_POLISH_source_81404d238c5277 } }
+			set_country_flag = COLDWAR_ENG_NHS_district_wards
+		}
+		if = {
+			limit = { OR = { has_completed_focus = IMP_ENG_1970_labour_1979_health_and_training has_country_flag = COLDWAR_ENG_POLISH_source_7fef2573aef1db } }
+			set_country_flag = COLDWAR_ENG_NHS_clinical_training
+		}
+		if = {
+			limit = { OR = { has_completed_focus = IMP_ENG_1970_labour_1983_nhs_recovery has_country_flag = COLDWAR_ENG_POLISH_source_a5bc63c21d10d8 } }
+			set_country_flag = COLDWAR_ENG_NHS_district_sessions
+		}
+		if = {
+			limit = { OR = { has_completed_focus = IMP_ENG_1970_labour_1987_protect_nhs has_country_flag = COLDWAR_ENG_POLISH_source_01818f3eebf7ef } }
+			set_country_flag = COLDWAR_ENG_NHS_district_nursing
+		}
+		if = {
+			limit = { OR = { has_completed_focus = IMP_ENG_1970_labour_1992_health_commitment has_country_flag = COLDWAR_ENG_POLISH_source_8be76e628236a2 } }
+			set_country_flag = COLDWAR_ENG_NHS_community_care
+		}
+		if = {
+			limit = { has_idea = IMP_ENG_1970_sterling_pressure OR = { has_completed_focus = IMP_ENG_1970_conservative_sterling_first has_completed_focus = IMP_ENG_1970_labour_sterling_review has_completed_focus = COLDWAR_ENG_DOMESTIC_1970_sterling_followup } }
+			COLDWAR_ENG_public_sterling_relief = yes
+		}
+		if = {
+			limit = { has_idea = COLDWAR_ENG_public_sterling_reserve_facility OR = { has_completed_focus = IMP_ENG_1970_conservative_savings_exports has_completed_focus = IMP_ENG_1970_labour_recovery_programme has_completed_focus = COLDWAR_ENG_DOMESTIC_1974_credit_followup } }
+			COLDWAR_ENG_public_sterling_settlement = yes
+		}
+		if = { limit = { OR = { has_completed_focus = IMP_ENG_1970_labour_irc_support has_country_flag = COLDWAR_ENG_POLISH_source_7c720197269c70 has_country_flag = COLDWAR_ENG_POLISH_source_14244158169773 } } set_country_flag = COLDWAR_ENG_public_irc_recorded }
+		set_country_flag = COLDWAR_ENG_public_programmes_migrated
+	}
+}
+
+COLDWAR_ENG_NHS_weekly_expenses = {
+	set_variable = { COLDWAR_ENG_NHS_weekly_outlay = 0 }
+	if = {
+		limit = { IMP_is_1970_scenario = yes OR = { NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_initialized } AND = { has_country_flag = COLDWAR_ENG_CRISIS_revolutionary_won check_variable = { ruling_party = 4 } } } }
+		set_temp_variable = { COLDWAR_ENG_NHS_annual_share = 0 }
+		if = {
+			limit = { has_country_flag = COLDWAR_ENG_NHS_clinical_training }
+			add_to_temp_variable = { COLDWAR_ENG_NHS_annual_share = 0.00052 }
+		}
+		if = {
+			limit = { has_country_flag = COLDWAR_ENG_NHS_district_sessions }
+			add_to_temp_variable = { COLDWAR_ENG_NHS_annual_share = 0.00104 }
+		}
+		if = {
+			limit = { has_country_flag = COLDWAR_ENG_NHS_district_nursing }
+			add_to_temp_variable = { COLDWAR_ENG_NHS_annual_share = 0.00052 }
+		}
+		if = {
+			limit = { has_country_flag = COLDWAR_ENG_NHS_community_care }
+			add_to_temp_variable = { COLDWAR_ENG_NHS_annual_share = 0.00052 }
+		}
+		set_variable = { COLDWAR_ENG_NHS_weekly_outlay = gdp_total }
+		multiply_variable = { COLDWAR_ENG_NHS_weekly_outlay = COLDWAR_ENG_NHS_annual_share }
+		divide_variable = { COLDWAR_ENG_NHS_weekly_outlay = 52 }
+		add_to_variable = { additional_expenses_rate = COLDWAR_ENG_NHS_weekly_outlay }
+	}
+}
+

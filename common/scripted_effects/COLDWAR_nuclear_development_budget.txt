@@ -3,6 +3,7 @@
 # for warheads, scaled by GDP/c and inflation. This is a rate calculation;
 # native MD treasury accounting pays it, so refreshing the GUI cannot charge twice.
 # Scripted budget literals must use at most five fractional digits for native fixed-point parsing.
+# IMPERIA COLD WAR update 25.11.2026: no longer depends on the temp variable inflation_multiplier, which only exists inside expense_modifier_calculations.
 @math_expressions_max = 100000000
 
 COLDWAR_calculate_nuclear_development_budget = {
@@ -33,7 +34,8 @@ COLDWAR_price_nuclear_development_budget = {
 		COLDWAR_nuclear_development_weekly_cost = {
 			value = COLDWAR_nuclear_development_weekly_base
 			multiply = { value = gdp_per_capita divide = 36 clamp = { min = 0.4 max = 1.2 } }
-			multiply = inflation_multiplier
+			# IMPERIA COLD WAR update 25.11.2026: inflation read directly from the native modifier, so the value is also correct outside the money-system pass.
+			multiply = { value = 1 add = modifier@inflation_cost_multiplier_modifier }
 			clamp = { min = 0 max = @math_expressions_max }
 		}
 	}

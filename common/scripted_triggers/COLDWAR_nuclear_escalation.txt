@@ -1,4 +1,5 @@
 # IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.
+# IMPERIA COLD WAR update 24.11.2026: nuclear raid release conditions split into separate tooltip lines.
 COLDWAR_nr_first_use_policy = {
 	COLDWAR_nr_nuclear_power = yes
 	is_ai = no
@@ -75,12 +76,22 @@ COLDWAR_nr_raid_target_from = {
 	}
 }
 COLDWAR_nr_can_prepare_nuclear_operation = {
+	# IMPERIA COLD WAR update 24.11.2026: each release condition shows its own yes/no line in the raid window.
 	if = {
 		limit = { COLDWAR_nr_enabled = yes }
 		custom_trigger_tooltip = {
-			tooltip = COLDWAR_nr_tt_prepare_first_use
+			tooltip = COLDWAR_nr_tt_valid_target
 			COLDWAR_nr_raid_target_from = yes
-			OR = { has_war_with = FROM COLDWAR_nr_ultimatum_for_from = yes }
+		}
+		OR = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_at_war_with_target
+				has_war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_ultimatum_running
+				COLDWAR_nr_ultimatum_for_from = yes
+			}
 		}
 	}
 	else = { has_war_with = FROM }
@@ -92,12 +103,22 @@ COLDWAR_nr_can_prepare_tactical_operation = {
 	}
 }
 COLDWAR_nr_can_launch_nuclear_operation = {
+	# IMPERIA COLD WAR update 24.11.2026: each release condition shows its own yes/no line in the raid window.
 	if = {
 		limit = { COLDWAR_nr_enabled = yes }
 		custom_trigger_tooltip = {
-			tooltip = COLDWAR_nr_tt_launch_first_use
+			tooltip = COLDWAR_nr_tt_valid_target
 			COLDWAR_nr_raid_target_from = yes
-			OR = { has_war_with = FROM COLDWAR_nr_release_for_from = yes }
+		}
+		OR = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_at_war_with_target
+				has_war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_nr_tt_release_authority
+				COLDWAR_nr_release_for_from = yes
+			}
 		}
 	}
 	else = { has_war_with = FROM }

@@ -1,3 +1,7 @@
+# IMPERIA COLD WAR — 24.11.2026 MD standard (B10, tools/md_standard_fix_20261124/B10/b10_hand_fixes.py): state checks only in rewards; offer previews show the real effects.
+# IMPERIA COLD WAR — 24.11.2026: deal foci send an offer event (COLDWAR_DEAL); reward only if the partner signs.
+# IMPERIA COLD WAR — 1970 focus and legacy mechanic corrections.
+# Update 22.11.2026: include_locked removed for non-shared buildings (error.log).
 # IMPERIA COLD WAR — Scripted national building-grant integration.
 # IMPERIA CW — Cold War: libya 1970 — national focus tree.
 # Libya, 1970-2000: the Revolutionary Republic and the Jamahiriya.
@@ -25,6 +29,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_a_revolution_barely_one_year_old
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = revolutionary_government
 		x = 15
 		y = 0
@@ -46,6 +51,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_consolidate_the_rcc
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = national_unity
 		x = 15
 		y = 1
@@ -70,6 +76,7 @@ focus_tree = {
 	# Sovereignty
 	focus = {
 		id = LBA_1970_close_the_foreign_bases
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = military_bases
 		x = 9
 		y = 2
@@ -87,16 +94,30 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_a_sovereign_mediterranean_state
+		search_filters = { FOCUS_FILTER_ARMY FOCUS_FILTER_NAVY }
 		icon = focus_generic_armed_neutrality
 		x = 9
 		y = 3
 		cost = 5
 		prerequisite = { focus = LBA_1970_close_the_foreign_bases }
-		available = { original_tag = LBA is_subject = no }
+		available = {
+			original_tag = LBA
+			is_subject = no # IMPERIA COLD WAR — building room is checked in the reward
+		}
+		cancel_if_invalid = yes
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_a_sovereign_mediterranean_state"
 			add_war_support = 0.03
-			391 = { add_building_construction = { type = dockyard level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						is_coastal = yes
+						free_building_slots = { building = dockyard size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = dockyard level = 1 instant_build = yes }
+				} }
 			add_doctrine_cost_reduction = { name = LBA_1970_mediterranean_doctrine_bonus cost_reduction = 0.30 uses = 1 category = naval_doctrine }
 			if = { limit = { country_exists = EGY } EGY = { add_opinion_modifier = { target = ROOT modifier = given_gift } } }
 		}
@@ -106,6 +127,7 @@ focus_tree = {
 	# Revolutionary administration
 	focus = {
 		id = LBA_1970_the_arab_socialist_union
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Generic_Factionalism
 		x = 12
 		y = 2
@@ -130,6 +152,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_a_revolutionary_administration
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_DIPLOMACY FOCUS_FILTER_INDUSTRY }
 		icon = examine_foreign_laws
 		x = 12
 		y = 3
@@ -180,15 +203,14 @@ focus_tree = {
 					}
 				}
 				set_temp_variable = {
-					treasury_change = -5.00
-				}
+					treasury_change = -5.00 }
 				modify_treasury_effect = yes
 			}
 			hidden_effect = {
 				COLDWAR_GRANT_complete_LBA_1970_a_revolutionary_administration = yes
 			}
 		}
-		ai_will_do = {
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }
 			base = 350
 			modifier = {
 				add = 650
@@ -202,6 +224,7 @@ focus_tree = {
 	# Oil sovereignty
 	focus = {
 		id = LBA_1970_renegotiate_the_concessions
+		search_filters = { FOCUS_FILTER_RESOURCE FOCUS_FILTER_ECONOMY }
 		icon = oil_trade
 		x = 15
 		y = 2
@@ -219,6 +242,7 @@ focus_tree = {
 	# The NOC was founded in 1970. Offers secure expertise for its later expansion.
 	focus = {
 		id = LBA_1970_establish_the_national_oil_corporation
+		search_filters = { FOCUS_FILTER_RESOURCE }
 		icon = oil_corpos
 		x = 15
 		y = 3
@@ -236,6 +260,7 @@ focus_tree = {
 	# Each offer triggers a foreign decision. A refusal leaves the other offers open.
 	focus = {
 		id = LBA_1970_request_algerian_oil_assistance
+		search_filters = { FOCUS_FILTER_RESOURCE }
 		icon = align_to_algeria
 		x = 11
 		y = 4
@@ -250,7 +275,8 @@ focus_tree = {
 		}
 		cancel_if_invalid = yes
 		completion_reward = {
-			custom_effect_tooltip = LBA_1970_algerian_oil_offer_tt
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — real effects in the offer preview
+			effect_tooltip = { LBA_1970_accept_algerian_oil_mission = yes }
 			hidden_effect = {
 				set_country_flag = LBA_1970_oil_offer_pending
 				ALG = { country_event = { id = LBA1970Oil.1 days = 1 } }
@@ -261,6 +287,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_retain_foreign_technical_staff
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_DIPLOMACY }
 		icon = italy_deal
 		x = 14
 		y = 4
@@ -275,7 +302,8 @@ focus_tree = {
 		}
 		cancel_if_invalid = yes
 		completion_reward = {
-			custom_effect_tooltip = LBA_1970_italian_oil_offer_tt
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — real effects in the offer preview
+			effect_tooltip = { LBA_1970_accept_italian_oil_mission = yes }
 			hidden_effect = {
 				set_country_flag = LBA_1970_oil_offer_pending
 				ITA = { country_event = { id = LBA1970Oil.2 days = 1 } }
@@ -286,6 +314,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_request_french_oil_engineers
+		search_filters = { FOCUS_FILTER_RESOURCE }
 		icon = trade_with_france
 		x = 17
 		y = 4
@@ -300,7 +329,8 @@ focus_tree = {
 		}
 		cancel_if_invalid = yes
 		completion_reward = {
-			custom_effect_tooltip = LBA_1970_french_oil_offer_tt
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — real effects in the offer preview
+			effect_tooltip = { LBA_1970_accept_french_oil_mission = yes }
 			hidden_effect = {
 				set_country_flag = LBA_1970_oil_offer_pending
 				FRA = { country_event = { id = LBA1970Oil.3 days = 1 } }
@@ -311,6 +341,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_invite_soviet_petroleum_specialists
+		search_filters = { FOCUS_FILTER_RESOURCE }
 		icon = sov_engineer_troops
 		x = 20
 		y = 4
@@ -325,7 +356,8 @@ focus_tree = {
 		}
 		cancel_if_invalid = yes
 		completion_reward = {
-			custom_effect_tooltip = LBA_1970_soviet_oil_offer_tt
+			custom_effect_tooltip = TT_IF_THEY_ACCEPT # IMPERIA COLD WAR — real effects in the offer preview
+			effect_tooltip = { LBA_1970_accept_soviet_oil_mission = yes }
 			hidden_effect = {
 				set_country_flag = LBA_1970_oil_offer_pending
 				SOV = { country_event = { id = LBA1970Oil.4 days = 1 } }
@@ -336,6 +368,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_six_month_technical_transfer
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		icon = maghreb_oil
 		x = 15
 		y = 5
@@ -368,6 +401,7 @@ focus_tree = {
 	# A slow domestic fallback prevents a four-way diplomatic refusal from deadlocking the tree.
 	focus = {
 		id = LBA_1970_domestic_oil_training
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_RESOURCE }
 		icon = oil_production
 		x = 20
 		y = 5
@@ -389,11 +423,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -12.50 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 50 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 50 }
 	}
 
 	focus = {
 		id = LBA_1970_libyanise_the_oil_sector
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_RESOURCE }
 		icon = modern_refinery_industry
 		x = 15
 		y = 6
@@ -413,11 +448,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -5.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_oil_revenues_for_the_people
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_RESOURCE }
 		icon = libyan_oil
 		x = 15
 		y = 7
@@ -434,11 +470,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -7.50 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
 	}
 	# Literacy, agriculture and basic infrastructure
 	focus = {
 		id = LBA_1970_a_national_literacy_campaign
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_RESEARCH }
 		icon = education_reform
 		x = 23
 		y = 2
@@ -455,11 +492,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_primary_schools_and_rural_teachers
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
 		icon = education_reform
 		x = 23
 		y = 3
@@ -469,15 +507,24 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_primary_schools_and_rural_teachers"
 			LBA_1970_raise_literacy_large = yes
-			391 = { add_building_construction = { type = offices level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = offices size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = offices level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -5.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_create_the_ministry_of_agriculture
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_ECONOMY }
 		icon = agriculture
 		x = 23
 		y = 4
@@ -490,31 +537,49 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_roads_power_and_schools
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_INFRASTRUCTURE }
 		icon = construct_infrastructure
 		x = 23
 		y = 5
 		cost = 10
 		prerequisite = { focus = LBA_1970_create_the_ministry_of_agriculture }
-		available = { original_tag = LBA controls_state = 391 controls_state = 395 }
+		available = { original_tag = LBA } # IMPERIA COLD WAR — state checks only in the reward
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_roads_power_and_schools"
 			LBA_1970_improve_infrastructure = yes
-			391 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
-			395 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = infrastructure size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				} }
+			395 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = infrastructure size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				} }
 			LBA_1970_raise_literacy_large = yes
 			set_temp_variable = { treasury_change = -7.50 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 350 modifier = { add = 650 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_the_revolution_delivers
+		search_filters = { FOCUS_FILTER_ECONOMY FOCUS_FILTER_STABILITY }
 		icon = economic_prosperity
 		x = 15
 		y = 8
@@ -539,6 +604,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_launch_the_popular_revolution
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = revolutionary_primitivism
 		x = 15
 		y = 9
@@ -562,6 +628,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_cultural_revolution
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Generic_Ripping_Papers
 		x = 15
 		y = 10
@@ -582,6 +649,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_green_book_peoples_authority
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Green_book
 		x = 13
 		y = 11
@@ -604,6 +672,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_green_book_workers_as_partners
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		icon = central_planned_economy2
 		x = 19
 		y = 16
@@ -624,6 +693,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_green_book_social_foundations
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = family
 		x = 19
 		y = 17
@@ -644,6 +714,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_1975_rcc_crisis
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Generic_Factionalism
 		x = 9
 		y = 11
@@ -665,6 +736,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_gaddafi_prevails
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Fatherly_leader
 		x = 9
 		y = 12
@@ -692,6 +764,7 @@ focus_tree = {
 	# the Jamahiriya is proclaimed. This is a separate republic, not a Gaddafi model.
 	focus = {
 		id = LBA_1970_muhayshi_seizes_the_rcc
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Generic_Factionalism
 		x = 6
 		y = 12
@@ -721,6 +794,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_restore_collective_rcc_rule
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = national_unity
 		x = 6
 		y = 13
@@ -739,25 +813,35 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_rebuild_the_ministries
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_INDUSTRY }
 		icon = focus_generic_improve_the_administration
 		x = 6
 		y = 14
 		cost = 10
 		prerequisite = { focus = LBA_1970_restore_collective_rcc_rule }
-		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes controls_state = 391 }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes } # IMPERIA COLD WAR — state checks only in the reward
 		cancel_if_invalid = yes
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_rebuild_the_ministries"
 			LBA_1970_improve_administration = yes
-			391 = { add_building_construction = { type = offices level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = offices size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = offices level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -5.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 100 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 100 }
 	}
 
 	focus = {
 		id = LBA_1970_a_constitutional_arab_republic
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Election_graphics
 		x = 6
 		y = 15
@@ -776,6 +860,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_repair_relations_with_egypt
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = align_to_egypt
 		x = 6
 		y = 16
@@ -795,6 +880,7 @@ focus_tree = {
 	# The post-coup republic has its own institutions, budget and officer corps.
 	focus = {
 		id = LBA_1970_local_consultative_councils
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_POLITICAL }
 		icon = Election_graphics
 		x = 0
 		y = 17
@@ -807,11 +893,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -2.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 100 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 100 }
 	}
 
 	focus = {
 		id = LBA_1970_provincial_budget
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_ECONOMY }
 		icon = focus_generic_improve_the_administration
 		x = 0
 		y = 18
@@ -824,11 +911,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 100 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 100 }
 	}
 
 	focus = {
 		id = LBA_1970_noc_under_the_republic
+		search_filters = { FOCUS_FILTER_RESOURCE FOCUS_FILTER_POLITICAL }
 		icon = libyan_oil
 		x = 3
 		y = 17
@@ -845,6 +933,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_budget_for_schools_and_water
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_ECONOMY }
 		icon = education_reform
 		x = 3
 		y = 18
@@ -857,28 +946,38 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 100 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 100 }
 	}
 
 	focus = {
 		id = LBA_1970_contracted_industrial_projects
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_INDUSTRY }
 		icon = industrial_complexes
 		x = 3
 		y = 19
 		cost = 10
 		prerequisite = { focus = LBA_1970_budget_for_schools_and_water }
-		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes controls_state = 391 }
+		available = { original_tag = LBA has_country_flag = LBA_1970_muhayshi_government emerging_autocracy_are_in_power = yes } # IMPERIA COLD WAR — state checks only in the reward
 		cancel_if_invalid = yes
 		completion_reward = {
-			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = industrial_complex size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -4.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 100 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 100 }
 	}
 
 	focus = {
 		id = LBA_1970_republican_officer_corps
+		search_filters = { FOCUS_FILTER_ARMY }
 		icon = general_staff
 		x = 6
 		y = 17
@@ -895,6 +994,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_border_security_pact
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = diplomacy
 		x = 6
 		y = 18
@@ -912,6 +1012,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_republican_arab_diplomacy
+		search_filters = { FOCUS_FILTER_DIPLOMACY FOCUS_FILTER_POLITICAL }
 		icon = align_to_arab_league
 		x = 6
 		y = 19
@@ -929,6 +1030,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_codify_the_third_international_theory
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		icon = Green_book
 		x = 15
 		y = 13
@@ -953,6 +1055,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_proclaim_the_jamahiriya
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = revolutionary_government
 		x = 15
 		y = 14
@@ -982,6 +1085,7 @@ focus_tree = {
 	# competing Gaddafi regimes. Muhayshi's alternative diverged in 1975.
 	focus = {
 		id = LBA_1970_balance_the_dual_state
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Green_book
 		x = 15
 		y = 15
@@ -1002,6 +1106,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_gaddafi_above_the_institutions
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Fatherly_leader
 		x = 15
 		y = 16
@@ -1025,6 +1130,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_organise_revolutionary_committees
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Green_book
 		x = 15
 		y = 17
@@ -1040,6 +1146,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_manage_the_security_services
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		icon = secret_police
 		x = 15
 		y = 18
@@ -1060,6 +1167,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_great_green_charter
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Green_book
 		x = 15
 		y = 19
@@ -1075,6 +1183,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_jamahiriya_endures
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = national_unity
 		x = 15
 		y = 20
@@ -1097,6 +1206,7 @@ focus_tree = {
 	# Human capital and the Great Man-Made River
 	focus = {
 		id = LBA_1970_libyanise_the_technical_workforce
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_RESEARCH }
 		icon = education_reform
 		x = 12
 		y = 14
@@ -1110,11 +1220,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -5.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_establish_the_gmmr_authority
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_POLITICAL }
 		icon = water_conservation
 		x = 12
 		y = 15
@@ -1127,51 +1238,86 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -5.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_gmmr_phase_one_sarir_to_benghazi
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_INFRASTRUCTURE }
 		icon = baku_erzurum
 		x = 12
 		y = 16
 		cost = 10
 		prerequisite = { focus = LBA_1970_establish_the_gmmr_authority }
-		available = { original_tag = LBA controls_state = 395 controls_state = 397 }
+		available = { original_tag = LBA } # IMPERIA COLD WAR — state checks only in the reward
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_gmmr_phase_one_sarir_to_benghazi"
 			LBA_1970_improve_infrastructure = yes
 			LBA_1970_improve_agriculture = yes
-			395 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
-			397 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			395 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = infrastructure size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				} }
+			397 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = infrastructure size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -10.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_gmmr_phase_two_hasawna_to_tripoli
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_INFRASTRUCTURE }
 		icon = baku_supsa
 		x = 12
 		y = 17
 		cost = 10
 		prerequisite = { focus = LBA_1970_gmmr_phase_one_sarir_to_benghazi }
-		available = { original_tag = LBA controls_state = 391 controls_state = 919 }
+		available = { original_tag = LBA } # IMPERIA COLD WAR — state checks only in the reward
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_gmmr_phase_two_hasawna_to_tripoli"
 			LBA_1970_improve_agriculture = yes
-			391 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
-			919 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = infrastructure size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				} }
+			919 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = infrastructure size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -12.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	# Oil-development models
 	focus = {
 		id = LBA_1970_complete_state_control
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_POLITICAL }
 		icon = central_planned_economy3
 		x = 2
 		y = 14
@@ -1188,11 +1334,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -5.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_state_industrial_boards
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_INDUSTRY }
 		icon = central_planned_economy2
 		x = 2
 		y = 15
@@ -1201,16 +1348,25 @@ focus_tree = {
 		available = { original_tag = LBA }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_state_industrial_boards"
-			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = industrial_complex size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				} }
 			add_tech_bonus = { name = LBA_1970_state_industrial_boards_bonus bonus = 0.50 uses = 1 category = CAT_industry }
 			set_temp_variable = { treasury_change = -5.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_minority_foreign_partners
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = trade_with_europe
 		x = 9
 		y = 14
@@ -1229,6 +1385,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_joint_ventures_on_libyan_terms
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_ECONOMY FOCUS_FILTER_DIPLOMACY }
 		icon = italy_trade
 		x = 9
 		y = 15
@@ -1237,17 +1394,26 @@ focus_tree = {
 		available = { original_tag = LBA }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_joint_ventures_on_libyan_terms"
-			395 = { add_building_construction = { type = offices level = 1 instant_build = yes } }
+			395 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = offices size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = offices level = 1 instant_build = yes }
+				} }
 			if = { limit = { country_exists = ITA } ITA = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } } }
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 }
 	}
 
 	# Armed forces
 	focus = {
 		id = LBA_1970_the_army_of_the_revolution
+		search_filters = { FOCUS_FILTER_ARMY }
 		icon = Generic_Army_Focus_Red02
 		x = 25
 		y = 14
@@ -1264,24 +1430,44 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_soviet_arms_contracts
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_DIPLOMACY }
 		icon = examine_foreign_small_arms
 		x = 25
 		y = 15
 		cost = 10
 		prerequisite = { focus = LBA_1970_the_army_of_the_revolution }
 		available = { original_tag = LBA country_exists = SOV }
+		bypass = { NOT = { country_exists = SOV } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_soviet_arms_contracts"
+		log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_soviet_arms_contracts"
+		if = {
+			limit = { country_exists = SOV NOT = { has_war_with = SOV } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_LBA_1970_soviet_arms_contracts_SOV_offered }
+			SOV = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.45 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			add_tech_bonus = { name = LBA_1970_soviet_arms_bonus bonus = 0.50 uses = 2 category = CAT_armor }
 			SOV = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } }
 			set_temp_variable = { treasury_change = -8.00 }
 			modify_treasury_effect = yes
+
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_soviet_arms_contracts"
+#|			add_tech_bonus = { name = LBA_1970_soviet_arms_bonus bonus = 0.50 uses = 2 category = CAT_armor }
+#|			SOV = { add_opinion_modifier = { target = ROOT modifier = large_commercial_relations } }
+#|			set_temp_variable = { treasury_change = -8.00 }
+#|			modify_treasury_effect = yes
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_a_guard_centred_army
+		search_filters = { FOCUS_FILTER_ARMY }
 		icon = Focus_Examine_Foreign_Tanks
 		x = 22
 		y = 16
@@ -1305,6 +1491,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_chadian_gamble
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = attack_chad
 		x = 22
 		y = 17
@@ -1346,6 +1533,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_lessons_of_the_toyota_war
+		search_filters = { FOCUS_FILTER_ARMY }
 		icon = LIB_toyota
 		x = 22
 		y = 18
@@ -1371,6 +1559,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_a_professional_officer_corps
+		search_filters = { FOCUS_FILTER_ARMY }
 		icon = general_staff
 		x = 28
 		y = 16
@@ -1392,6 +1581,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_accept_border_arbitration
+		search_filters = { FOCUS_FILTER_DIPLOMACY FOCUS_FILTER_STABILITY }
 		icon = Generic_Red_Crescent
 		x = 28
 		y = 17
@@ -1408,6 +1598,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_claim_the_gulf_of_sidra
+		search_filters = { FOCUS_FILTER_NAVY FOCUS_FILTER_DIPLOMACY }
 		icon = Libyan_Air_Force_1
 		x = 25
 		y = 16
@@ -1425,26 +1616,44 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_harden_the_air_defences
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_ARMY FOCUS_FILTER_RESEARCH }
 		icon = air_defense
 		x = 25
 		y = 17
 		cost = 10
 		prerequisite = { focus = LBA_1970_claim_the_gulf_of_sidra }
-		available = { original_tag = LBA controls_state = 391 }
+		available = { original_tag = LBA } # IMPERIA COLD WAR — state checks only in the reward
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_harden_the_air_defences"
 			add_tech_bonus = { name = LBA_1970_air_defence_bonus bonus = 0.50 uses = 2 category = CAT_anti_air category = CAT_manpads }
-			391 = { add_building_construction = { type = radar_station level = 1 instant_build = yes } }
-			395 = { add_building_construction = { type = air_base level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = radar_station size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = radar_station level = 1 instant_build = yes }
+				} }
+			395 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = air_base size > 0 }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = air_base level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -6.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 250 modifier = { add = 700 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 250 modifier = { add = 700 is_historical_focus_on = yes } }
 	}
 
 	# Arab policy and the African turn
 	focus = {
 		id = LBA_1970_the_tripoli_charter
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = align_to_arab_league
 		x = 34
 		y = 14
@@ -1463,6 +1672,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_federation_of_arab_republics
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_DIPLOMACY }
 		icon = one_state_isr_pal
 		x = 34
 		y = 15
@@ -1478,11 +1688,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_support_liberation_movements
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_ARMY }
 		icon = flames_of_rebellion
 		x = 31
 		y = 16
@@ -1510,11 +1721,12 @@ focus_tree = {
 			set_variable = { LBA_1970_assistance_capacity = 1 }
 			set_variable = { LBA_1970_assistance_active = 0 }
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	focus = {
 		id = LBA_1970_arab_unity_frustrated
+		search_filters = { FOCUS_FILTER_DIPLOMACY FOCUS_FILTER_POLITICAL }
 		icon = Generic_Factionalism
 	x = 44
 		y = 16
@@ -1534,6 +1746,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_turn_toward_africa
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_DIPLOMACY }
 		icon = goal_JAP_diplomacy_africa
 	x = 44
 		y = 17
@@ -1550,7 +1763,7 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -4.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 modifier = { add = 500 is_historical_focus_on = yes } }
 	}
 
 	###############################################################
@@ -1559,6 +1772,7 @@ focus_tree = {
 	# Four independent lanes, with no scripted crisis or sanctions outcome.
 	focus = {
 		id = LBA_1970_fund_palestinian_organisations
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = one_state_isr_pal
 		x = 31
 		y = 17
@@ -1575,6 +1789,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_palestinian_arms_workshops
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = examine_foreign_small_arms
 		x = 31
 		y = 18
@@ -1591,6 +1806,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_palestinian_training_mission
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = general_staff
 		x = 31
 		y = 19
@@ -1607,6 +1823,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_arab_liberation_diplomacy
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = align_to_arab_league
 		x = 31
 		y = 20
@@ -1624,6 +1841,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_open_irish_republican_channels
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = flames_of_rebellion
 		x = 35
 		y = 17
@@ -1640,6 +1858,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_irish_arms_network
+		search_filters = { FOCUS_FILTER_ECONOMY }
 		icon = black_market
 		x = 35
 		y = 18
@@ -1656,6 +1875,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_maintain_irish_channel
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = flames_of_rebellion
 		x = 34
 		y = 19
@@ -1670,6 +1890,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_close_irish_channel
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = diplomacy
 	x = 37
 		y = 19
@@ -1688,6 +1909,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_foreign_assistance_directorate
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_DIPLOMACY }
 		icon = national_unity
 	x = 40
 		y = 17
@@ -1701,11 +1923,12 @@ focus_tree = {
 			modify_treasury_effect = yes
 			custom_effect_tooltip = LBA_1970_assistance_capacity_tt
 		}
-		ai_will_do = { base = 300 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 300 }
 	}
 
 	focus = {
 		id = LBA_1970_train_foreign_cadres
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = general_staff
 	x = 40
 		y = 18
@@ -1722,6 +1945,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_host_exile_networks
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_POLITICAL }
 		icon = secret_police
 	x = 40
 		y = 19
@@ -1734,11 +1958,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 }
 	}
 
 	focus = {
 		id = LBA_1970_resistance_liaison_bureau
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = flames_of_rebellion
 	x = 40
 		y = 20
@@ -1756,6 +1981,7 @@ focus_tree = {
 	# Continental diplomacy remains available without coercive escalation.
 	focus = {
 		id = LBA_1970_aid_the_sahel
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Generic_Red_Crescent
 	x = 44
 		y = 18
@@ -1773,6 +1999,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_lead_within_the_oau
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = goal_JAP_diplomacy_africa
 	x = 44
 		y = 19
@@ -1792,12 +2019,13 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_convene_the_sirte_summit
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = align_to_african_union
 	x = 44
 		y = 20
 		cost = 10
 		prerequisite = { focus = LBA_1970_lead_within_the_oau }
-		available = { original_tag = LBA has_war = no emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		available = { has_idea = OAU_member  original_tag = LBA has_war = no emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
 		cancel_if_invalid = yes
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_convene_the_sirte_summit"
@@ -1809,12 +2037,13 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_9_9_99_declaration
+		search_filters = { FOCUS_FILTER_ECONOMY }
 		icon = AFR_western_frank
 	x = 44
 		y = 21
 		cost = 5
 		prerequisite = { focus = LBA_1970_convene_the_sirte_summit }
-		available = { original_tag = LBA has_idea = OAU_member emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
+		available = { date > 1999.9.8  original_tag = LBA has_idea = OAU_member emerging_autocracy_are_in_power = yes has_country_leader = { name = "Muammar Gaddafi" ruling_only = yes } }
 		cancel_if_invalid = yes
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus LBA_1970_the_9_9_99_declaration"
@@ -1829,6 +2058,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_the_pragmatic_jamahiriya
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Green_book
 		x = 15
 		y = 21
@@ -1855,6 +2085,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_champion_an_african_union
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = align_to_african_union
 	x = 44
 		y = 22
@@ -1880,6 +2111,7 @@ focus_tree = {
 	# Islands use actual MD ruling-party triggers, not party popularity.
 	focus = {
 		id = LBA_1970_nfsl_provisional_government
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Election_graphics
 		x = 22
 		y = 24
@@ -1898,6 +2130,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_dissolve_revolutionary_committees
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = focus_generic_improve_the_administration
 		x = 18
 		y = 25
@@ -1914,6 +2147,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_independent_election_commission
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_POLITICAL }
 		icon = Election_graphics
 		x = 18
 		y = 26
@@ -1926,11 +2160,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -2.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 }
 	}
 
 	focus = {
 		id = LBA_1970_elect_constituent_assembly
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Election_graphics
 		x = 18
 		y = 27
@@ -1948,6 +2183,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_audit_the_noc
+		search_filters = { FOCUS_FILTER_RESOURCE }
 		icon = libyan_oil
 		x = 22
 		y = 25
@@ -1965,23 +2201,33 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_small_business_credit
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_INDUSTRY }
 		icon = industrial_complexes
 		x = 22
 		y = 26
 		cost = 10
 		prerequisite = { focus = LBA_1970_audit_the_noc }
-		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes controls_state = 391 }
+		available = { original_tag = LBA has_country_flag = LBA_1970_nfsl_government neutrality_neutral_conservatism_are_in_power = yes } # IMPERIA COLD WAR — state checks only in the reward
 		cancel_if_invalid = yes
 		completion_reward = {
-			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = industrial_complex size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 }
 	}
 
 	focus = {
 		id = LBA_1970_review_foreign_contracts
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = trade_with_europe
 		x = 22
 		y = 27
@@ -1998,6 +2244,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_civilian_control_of_security
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = secret_police
 		x = 26
 		y = 25
@@ -2014,6 +2261,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_review_overseas_commitments
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = diplomacy
 		x = 26
 		y = 26
@@ -2027,6 +2275,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_reopen_diplomatic_missions
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = diplomacy
 		x = 26
 		y = 27
@@ -2045,6 +2294,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_restore_the_crown
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Fatherly_leader
 		x = 39
 		y = 24
@@ -2063,6 +2313,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_interim_basic_law
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Election_graphics
 		x = 35
 		y = 25
@@ -2078,6 +2329,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_parliamentary_crown
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Election_graphics
 	x = 33
 		y = 26
@@ -2095,6 +2347,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_royal_executive
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		icon = Fatherly_leader
 		x = 36
 		y = 26
@@ -2112,6 +2365,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_provincial_representation
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_POLITICAL }
 		icon = national_unity
 		x = 35
 		y = 27
@@ -2124,11 +2378,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -2.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 }
 	}
 
 	focus = {
 		id = LBA_1970_review_the_oil_settlement
+		search_filters = { FOCUS_FILTER_RESOURCE }
 		icon = libyan_oil
 		x = 39
 		y = 25
@@ -2145,23 +2400,33 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_royal_development_budget
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_ECONOMY }
 		icon = industrial_complexes
 		x = 39
 		y = 26
 		cost = 10
 		prerequisite = { focus = LBA_1970_review_the_oil_settlement }
-		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes controls_state = 391 }
+		available = { original_tag = LBA has_country_flag = LBA_1970_senussi_restoration nationalist_monarchists_are_in_power = yes } # IMPERIA COLD WAR — state checks only in the reward
 		cancel_if_invalid = yes
 		completion_reward = {
-			391 = { add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+			391 = { if = {
+					limit = {
+						is_owned_by = LBA
+						is_controlled_by = LBA
+						free_building_slots = { building = industrial_complex size > 0 include_locked = yes }
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+				} }
 			set_temp_variable = { treasury_change = -3.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 }
 	}
 
 	focus = {
 		id = LBA_1970_schools_beyond_the_coast
+		search_filters = { FOCUS_FILTER_EXPENDITURE FOCUS_FILTER_RESEARCH }
 		icon = education_reform
 		x = 39
 		y = 27
@@ -2174,11 +2439,12 @@ focus_tree = {
 			set_temp_variable = { treasury_change = -2.00 }
 			modify_treasury_effect = yes
 		}
-		ai_will_do = { base = 200 }
+		ai_will_do = { modifier = { factor = 0 has_active_mission = bankruptcy_incoming_collapse }  base = 200 }
 	}
 
 	focus = {
 		id = LBA_1970_rebuild_a_national_army
+		search_filters = { FOCUS_FILTER_ARMY }
 		icon = general_staff
 		x = 43
 		y = 25
@@ -2195,6 +2461,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_regional_reconciliation
+		search_filters = { FOCUS_FILTER_DIPLOMACY }
 		icon = diplomacy
 		x = 43
 		y = 26
@@ -2212,6 +2479,7 @@ focus_tree = {
 
 	focus = {
 		id = LBA_1970_mediterranean_agreements
+		search_filters = { FOCUS_FILTER_ECONOMY }
 		icon = trade_with_europe
 		x = 43
 		y = 27

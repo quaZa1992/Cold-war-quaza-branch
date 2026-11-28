@@ -1,0 +1,285 @@
+# IMPERIA COLD WAR — Sami: Sweden 1970 and Nordic cooperation.
+# IMPERIA COLD WAR — Kockums restructuring.
+COLDWAR_SWE_kockums_begin_effect = {
+	if = {
+		limit = {
+			tag = SWE
+			original_tag = SWE
+			exists = yes
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_SWE_systems_initialised
+			NOT = {
+				has_country_flag = COLDWAR_SWE_kockums_drafted
+			}
+			NOT = {
+				has_country_flag = COLDWAR_SWE_delivered_industrial_lifeline
+			}
+		}
+		COLDWAR_SWE_company_profile_refresh_effect = yes
+		if = {
+			limit = {
+				COLDWAR_SWE_kockums_context_available = yes
+			}
+			set_country_flag = {
+				flag = COLDWAR_SWE_kockums_drafted
+				value = 1
+			}
+			set_country_flag = {
+				flag = COLDWAR_SWE_kockums_quoted
+				value = 1
+			}
+			set_country_flag = {
+				flag = COLDWAR_SWE_delivered_industrial_lifeline
+				value = 1
+			}
+			set_country_flag = {
+				flag = COLDWAR_SWE_current_action_industrial_lifeline
+				value = 1
+			}
+			set_country_flag = {
+				flag = COLDWAR_SWE_policy_earned_industrial_lifeline
+				value = 1
+			}
+			clr_country_flag = COLDWAR_SWE_funding_pending_industrial_lifeline
+			set_variable = {
+				COLDWAR_SWE_kockums_cost = {
+					value = gdp_total
+					multiply = 0.015
+				}
+			}
+			set_variable = {
+				COLDWAR_SWE_kockums_cost_million = {
+					value = COLDWAR_SWE_kockums_cost
+					multiply = 1000
+				}
+			}
+			COLDWAR_SWE_kockums_review_effect = yes
+		}
+		else = {
+			set_country_flag = {
+				flag = COLDWAR_SWE_funding_pending_industrial_lifeline
+				value = 1
+			}
+		}
+	}
+}
+COLDWAR_SWE_kockums_review_effect = {
+	if = {
+		limit = {
+			tag = SWE
+			original_tag = SWE
+			exists = yes
+			IMP_is_1970_scenario = yes
+			has_country_flag = COLDWAR_SWE_kockums_drafted
+			NOT = {
+				has_country_flag = COLDWAR_SWE_kockums_settled
+			}
+			NOT = {
+				has_country_flag = COLDWAR_SWE_kockums_window_open
+			}
+			has_country_flag = COLDWAR_SWE_kockums_quoted
+		}
+		set_country_flag = {
+			flag = COLDWAR_SWE_kockums_window_open
+			value = 1
+		}
+		if = {
+			limit = {
+				date > 1974.12.31
+			}
+			country_event = {
+				id = COLDWAR_SWE_KOCKUMS.2
+			}
+		}
+		else = {
+			country_event = {
+				id = COLDWAR_SWE_KOCKUMS.1
+			}
+		}
+	}
+}
+COLDWAR_SWE_kockums_prepare_naval_effect = {
+	if = {
+		limit = {
+			COLDWAR_SWE_kockums_naval_proposal_available = yes
+		}
+		set_variable = {
+			COLDWAR_SWE_kockums_choice = 1
+		}
+		clr_country_flag = COLDWAR_SWE_kockums_window_open
+	}
+}
+COLDWAR_SWE_kockums_settle_naval_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				tag = SWE
+				original_tag = SWE
+				exists = yes
+				IMP_is_1970_scenario = yes
+				has_country_flag = COLDWAR_SWE_systems_initialised
+				has_country_flag = COLDWAR_SWE_kockums_drafted
+				NOT = {
+					has_country_flag = COLDWAR_SWE_kockums_settled
+				}
+			}
+			COLDWAR_SWE_company_profile_refresh_effect = yes
+			COLDWAR_SWE_manufacturing_assets_initialise_effect = yes
+		}
+	}
+	if = {
+		limit = {
+			hidden_trigger = {
+				COLDWAR_SWE_kockums_naval_available = yes
+			}
+		}
+		hidden_effect = {
+			set_country_flag = {
+				flag = COLDWAR_SWE_kockums_settled
+				value = 1
+			}
+			set_country_flag = {
+				flag = COLDWAR_SWE_kockums_naval_chosen
+				value = 1
+			}
+			clr_country_flag = COLDWAR_SWE_kockums_window_open
+		}
+		set_temp_variable = {
+			treasury_change = COLDWAR_SWE_kockums_cost
+		}
+		multiply_temp_variable = {
+			treasury_change = -1
+		}
+		modify_treasury_effect = yes
+		add_tech_bonus = {
+			name = COLDWAR_SWE_kockums_naval_research
+			bonus = 0.5
+			uses = 2
+			category = CAT_attack_submarines
+		}
+		navy_experience = 25
+		550 = {
+			add_dynamic_modifier = {
+				modifier = COLDWAR_SWE_kockums_retraining
+				days = 1095
+			}
+		}
+		add_timed_idea = {
+			idea = COLDWAR_SWE_kockums_naval_training
+			days = 365
+		}
+	}
+	else = {
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SWE
+					original_tag = SWE
+					exists = yes
+					IMP_is_1970_scenario = yes
+					has_country_flag = COLDWAR_SWE_kockums_drafted
+					NOT = {
+						has_country_flag = COLDWAR_SWE_kockums_settled
+					}
+				}
+				clr_country_flag = COLDWAR_SWE_kockums_window_open
+			}
+		}
+	}
+}
+COLDWAR_SWE_kockums_prepare_merchant_effect = {
+	if = {
+		limit = {
+			COLDWAR_SWE_kockums_merchant_proposal_available = yes
+		}
+		set_variable = {
+			COLDWAR_SWE_kockums_choice = 2
+		}
+		clr_country_flag = COLDWAR_SWE_kockums_window_open
+	}
+}
+COLDWAR_SWE_kockums_settle_merchant_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				tag = SWE
+				original_tag = SWE
+				exists = yes
+				IMP_is_1970_scenario = yes
+				has_country_flag = COLDWAR_SWE_systems_initialised
+				has_country_flag = COLDWAR_SWE_kockums_drafted
+				NOT = {
+					has_country_flag = COLDWAR_SWE_kockums_settled
+				}
+			}
+			COLDWAR_SWE_company_profile_refresh_effect = yes
+			COLDWAR_SWE_manufacturing_assets_initialise_effect = yes
+		}
+	}
+	if = {
+		limit = {
+			hidden_trigger = {
+				COLDWAR_SWE_kockums_merchant_available = yes
+			}
+		}
+		hidden_effect = {
+			set_country_flag = {
+				flag = COLDWAR_SWE_kockums_settled
+				value = 1
+			}
+			set_country_flag = {
+				flag = COLDWAR_SWE_kockums_merchant_chosen
+				value = 1
+			}
+			clr_country_flag = COLDWAR_SWE_kockums_window_open
+		}
+		set_temp_variable = {
+			treasury_change = COLDWAR_SWE_kockums_cost
+		}
+		multiply_temp_variable = {
+			treasury_change = -1
+		}
+		modify_treasury_effect = yes
+		550 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = dockyard
+				level = 1
+				instant_build = yes
+			}
+		}
+		custom_effect_tooltip = COLDWAR_SWE_kockums_company_yard_tt
+		hidden_effect = {
+			550 = {
+				add_to_variable = {
+					COLDWAR_SWE_company_owned_dockyards = 1
+				}
+			}
+			add_to_variable = {
+				COLDWAR_SWE_company_kockums_owned_dockyards = 1
+			}
+			add_to_variable = {
+				COLDWAR_SWE_company_kockums_public_support_received = COLDWAR_SWE_kockums_cost
+			}
+			COLDWAR_SWE_company_profile_refresh_effect = yes
+			COLDWAR_SWE_manufacturing_assets_refresh_effect = yes
+		}
+	}
+	else = {
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SWE
+					original_tag = SWE
+					exists = yes
+					IMP_is_1970_scenario = yes
+					has_country_flag = COLDWAR_SWE_kockums_drafted
+					NOT = {
+						has_country_flag = COLDWAR_SWE_kockums_settled
+					}
+				}
+				clr_country_flag = COLDWAR_SWE_kockums_window_open
+			}
+		}
+	}
+}

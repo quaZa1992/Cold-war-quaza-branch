@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — Update 24.11.2026: states hit by War Measures keep losing people (0.4% a week while the flight flag runs).
 # IMPERIA COLD WAR — North Korean arrivals in the original Imperia refugee ledger.
 # IMPERIA CW — Cold War: Imperia refugees effects — scripted effects.
 #########################################################################################
@@ -10,77 +11,106 @@ imp_refugees_calc_refs =
 	every_owned_state = {
 		if = {
 			## We only want this to run on states that are contested. E.g. frontline states
-			limit = { 
-				ROOT = { NOT = { has_full_control_of_state = PREV } }
+			limit = {
+				OR = {
+					ROOT = { NOT = { has_full_control_of_state = PREV } }
+					has_state_flag = COLDWAR_WM_flight # COLDWAR War Measures: people keep fleeing after a measure
+				}
 			}
 
-			## Every week, 0.25% of a state's population will be displaced.
-			set_temp_variable = { imp_displaced_pops_k = state_population_k }
-			divide_temp_variable = { imp_displaced_pops_k = 400 }
-
-			## Add them to the total stats
-			ROOT = { add_to_variable = { imp_civ_casualties_k = imp_displaced_pops_k } }
-
-			## Remove them from the state's population.
-			set_temp_variable = { imp_ref_t = 0 }
-			subtract_from_temp_variable = { imp_ref_t = imp_displaced_pops_k }
-			multiply_temp_variable = { imp_ref_t = 1000 }
-			add_manpower = imp_ref_t
-
-			## Nations with low gdpc often produce more internally displaced & casualties than states with higher gdpc
-			## For the sake of a clear cutoff point, let's say 20k USD gdpc
-			if = {
-				## This is for conflicts in nations above 20k GDP
-				limit = { check_variable = { ROOT.mdcw_era_gdpc > 20 } } # COLDWAR era reference (2000 $)
-
-				## First wave: ~20% of the refugees are casualties and will die. 
-
-				## Second wave: ~40% of the refugees will flee into bordering nations.
-				set_temp_variable = { imp_ref_local_k_t = imp_displaced_pops_k }
-				multiply_temp_variable = { imp_ref_local_k_t = 0.40 }
-				ROOT = { add_to_variable = { imp_monthly_refugees_local_k = imp_ref_local_k_t } }
-
-				# Update statistics
-				add_to_variable = { global.imp_total_refugees_k = imp_ref_local_k_t }
-				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_local_k_t } }
-				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_local_k_t } }
-
-				## Third wave: ~40% of the refugees will flee to the international refugee pool
-				set_temp_variable = { imp_ref_int_k_t = imp_displaced_pops_k }
-				multiply_temp_variable = { imp_ref_int_k_t = 0.40 }
-				add_to_variable = { global.imp_monthly_refugees_global_k = imp_ref_int_k_t }
-
-				# Update Statistics
-				add_to_variable = { global.imp_total_refugees_k = imp_ref_int_k_t }
-				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_int_k_t } }
-				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_int_k_t } }
-			}
-			else = {
-				## This is for conflicts in nations below 20k GDP
-
-				## First wave: ~50% of the refugees are casualties and will die. 
-
-				## Second wave: ~30% of the refugees will flee into bordering nations.
-				set_temp_variable = { imp_ref_local_k_t = imp_displaced_pops_k }
-				multiply_temp_variable = { imp_ref_local_k_t = 0.30 }
-				ROOT = { add_to_variable = { imp_monthly_refugees_local_k = imp_ref_local_k_t } }
-
-				# Update statistics
-				add_to_variable = { global.imp_total_refugees_k = imp_ref_local_k_t }
-				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_local_k_t } }
-				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_local_k_t } }
-
-				## Third wave: ~20% of the refugees will flee to the international refugee pool
-				set_temp_variable = { imp_ref_int_k_t = imp_displaced_pops_k }
-				multiply_temp_variable = { imp_ref_int_k_t = 0.20 }
-				add_to_variable = { global.imp_monthly_refugees_global_k = imp_ref_int_k_t }
-
-				# Update Statistics
-				add_to_variable = { global.imp_total_refugees_k = imp_ref_int_k_t }
-				ROOT = { add_to_variable = { imp_total_refugees_k = imp_ref_int_k_t } }
-				ROOT = { add_to_variable = { imp_m_r_statistic_k = imp_ref_int_k_t } }
-			}
+			imp_refugees_calc_state = yes
 		}
+		else_if = {
+			limit = { has_variable = imp_ref_base_k ROOT = { has_war = no } }
+			clear_variable = imp_ref_base_k
+			clear_variable = imp_ref_drained_k
+		}
+	}
+}
+
+# IMPERIA COLD WAR: shared state refugee posting for the native weekly pass.
+imp_refugees_calc_state = {
+	## Every week, 0.25% of a state's population will be displaced.
+	set_temp_variable = { imp_displaced_pops_k = state_population_k }
+	divide_temp_variable = { imp_displaced_pops_k = 400 }
+	if = { limit = { has_state_flag = COLDWAR_WM_flight } multiply_temp_variable = { imp_displaced_pops_k = 1.6 } } # COLDWAR War Measures: 0.4% a week
+	if = { limit = { has_state_flag = COLDWAR_PK_relief } multiply_temp_variable = { imp_displaced_pops_k = 0.5 } } # COLDWAR Peacekeepers: refugee relief halves the flight
+	# COLDWAR_ref_cap (24.11.2026, Enes: a war must not empty a country). A state held entirely by the enemy is occupied,
+	# not fought over: a fifth of the flight. No state loses more than a quarter of the people it had when it was first hit.
+	if = { limit = { NOT = { has_variable = imp_ref_base_k } } set_variable = { imp_ref_base_k = state_population_k } }
+	CONTROLLER = { save_event_target_as = imp_ref_ctrl }
+	if = {
+		limit = { NOT = { has_state_flag = COLDWAR_WM_flight } NOT = { is_controlled_by = OWNER } is_fully_controlled_by = event_target:imp_ref_ctrl }
+		multiply_temp_variable = { imp_displaced_pops_k = 0.2 }
+	}
+	set_temp_variable = { imp_ref_room_k = imp_ref_base_k }
+	multiply_temp_variable = { imp_ref_room_k = 0.25 }
+	if = { limit = { has_variable = imp_ref_drained_k } subtract_from_temp_variable = { imp_ref_room_k = imp_ref_drained_k } }
+	clamp_temp_variable = { var = imp_ref_room_k min = 0 }
+	if = { limit = { check_variable = { imp_displaced_pops_k > imp_ref_room_k } } set_temp_variable = { imp_displaced_pops_k = imp_ref_room_k } }
+	add_to_variable = { imp_ref_drained_k = imp_displaced_pops_k }
+
+	## Add them to the total stats
+	OWNER = { add_to_variable = { imp_civ_casualties_k = imp_displaced_pops_k } }
+
+	## Remove them from the state's population.
+	set_temp_variable = { imp_ref_t = 0 }
+	subtract_from_temp_variable = { imp_ref_t = imp_displaced_pops_k }
+	multiply_temp_variable = { imp_ref_t = 1000 }
+	add_manpower = imp_ref_t
+
+	## Nations with low gdpc often produce more internally displaced & casualties than states with higher gdpc
+	## For the sake of a clear cutoff point, let's say 20k USD gdpc
+	if = {
+		## This is for conflicts in nations above 20k GDP
+		limit = { check_variable = { OWNER.mdcw_era_gdpc > 20 } } # COLDWAR era reference (2000 $)
+
+		## First wave: ~20% of the refugees are casualties and will die.
+
+		## Second wave: ~40% of the refugees will flee into bordering nations.
+		set_temp_variable = { imp_ref_local_k_t = imp_displaced_pops_k }
+		multiply_temp_variable = { imp_ref_local_k_t = 0.40 }
+		OWNER = { add_to_variable = { imp_monthly_refugees_local_k = imp_ref_local_k_t } }
+
+		# Update statistics
+		add_to_variable = { global.imp_total_refugees_k = imp_ref_local_k_t }
+		OWNER = { add_to_variable = { imp_total_refugees_k = imp_ref_local_k_t } }
+		OWNER = { add_to_variable = { imp_m_r_statistic_k = imp_ref_local_k_t } }
+
+		## Third wave: ~40% of the refugees will flee to the international refugee pool
+		set_temp_variable = { imp_ref_int_k_t = imp_displaced_pops_k }
+		multiply_temp_variable = { imp_ref_int_k_t = 0.40 }
+		add_to_variable = { global.imp_monthly_refugees_global_k = imp_ref_int_k_t }
+
+		# Update Statistics
+		add_to_variable = { global.imp_total_refugees_k = imp_ref_int_k_t }
+		OWNER = { add_to_variable = { imp_total_refugees_k = imp_ref_int_k_t } }
+		OWNER = { add_to_variable = { imp_m_r_statistic_k = imp_ref_int_k_t } }
+	}
+	else = {
+		## This is for conflicts in nations below 20k GDP
+
+		## First wave: ~50% of the refugees are casualties and will die.
+
+		## Second wave: ~30% of the refugees will flee into bordering nations.
+		set_temp_variable = { imp_ref_local_k_t = imp_displaced_pops_k }
+		multiply_temp_variable = { imp_ref_local_k_t = 0.30 }
+		OWNER = { add_to_variable = { imp_monthly_refugees_local_k = imp_ref_local_k_t } }
+
+		# Update statistics
+		add_to_variable = { global.imp_total_refugees_k = imp_ref_local_k_t }
+		OWNER = { add_to_variable = { imp_total_refugees_k = imp_ref_local_k_t } }
+		OWNER = { add_to_variable = { imp_m_r_statistic_k = imp_ref_local_k_t } }
+
+		## Third wave: ~20% of the refugees will flee to the international refugee pool
+		set_temp_variable = { imp_ref_int_k_t = imp_displaced_pops_k }
+		multiply_temp_variable = { imp_ref_int_k_t = 0.20 }
+		add_to_variable = { global.imp_monthly_refugees_global_k = imp_ref_int_k_t }
+
+		# Update Statistics
+		add_to_variable = { global.imp_total_refugees_k = imp_ref_int_k_t }
+		OWNER = { add_to_variable = { imp_total_refugees_k = imp_ref_int_k_t } }
+		OWNER = { add_to_variable = { imp_m_r_statistic_k = imp_ref_int_k_t } }
 	}
 }
 

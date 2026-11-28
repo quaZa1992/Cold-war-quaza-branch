@@ -1,0 +1,89 @@
+# IMPERIA COLD WAR — Cold War: war with deployed forces (24.11.2026).
+# Called when two countries go to war (on_war_relation_added).
+# Forces already stationed in the other side's territory hold their positions:
+# every state the enemy controls in which only our divisions stand comes under our control.
+# HOI4 exposes unit positions per state, so control passes per state. States where both sides
+# have divisions are left to combat.
+
+# Scope: country whose deployed forces seize positions.
+# Requires event_target:COLDWAR_DEP_enemy.
+COLDWAR_DEP_seize_positions = {
+	save_event_target_as = COLDWAR_DEP_side
+	event_target:COLDWAR_DEP_enemy = {
+		every_controlled_state = {
+			limit = {
+				any_state_division = {
+					OWNER = { tag = event_target:COLDWAR_DEP_side }
+				}
+				NOT = {
+					any_state_division = {
+						OWNER = { has_war_with = event_target:COLDWAR_DEP_side }
+					}
+				}
+			}
+			set_state_province_controller = {
+				controller = event_target:COLDWAR_DEP_side
+				limit = { tag = event_target:COLDWAR_DEP_enemy }
+			}
+			log = "[GetDateText]: COLDWAR_DEP: [event_target:COLDWAR_DEP_side.GetName] holds [This.GetName] at the outbreak of war"
+		}
+	}
+}
+
+# Scope: attacker (ROOT of on_war_relation_added), FROM = defender.
+COLDWAR_DEP_on_war_start = {
+	if = {
+		limit = {
+			has_civil_war = no
+			FROM = { has_civil_war = no }
+		}
+		FROM = { save_event_target_as = COLDWAR_DEP_enemy }
+		COLDWAR_DEP_seize_positions = yes
+		save_event_target_as = COLDWAR_DEP_attacker
+		FROM = {
+			event_target:COLDWAR_DEP_attacker = { save_event_target_as = COLDWAR_DEP_enemy }
+			COLDWAR_DEP_seize_positions = yes
+		}
+	}
+}
+
+# Scope: target (THIS of the diplomatic action), ROOT = sender.
+# Declares war with the sender's justified war goal type.
+COLDWAR_DEP_declare_war = {
+	if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = annex_everything } } }
+		ROOT = { declare_war_on = { target = PREV type = annex_everything } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = puppet_wargoal_focus } } }
+		ROOT = { declare_war_on = { target = PREV type = puppet_wargoal_focus } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = topple_government } } }
+		ROOT = { declare_war_on = { target = PREV type = topple_government } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = liberate_wargoal } } }
+		ROOT = { declare_war_on = { target = PREV type = liberate_wargoal } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = take_core_state } } }
+		ROOT = { declare_war_on = { target = PREV type = take_core_state } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = take_claimed_state } } }
+		ROOT = { declare_war_on = { target = PREV type = take_claimed_state } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = take_state_focus } } }
+		ROOT = { declare_war_on = { target = PREV type = take_state_focus } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = IMP_1970_war_of_attrition } } }
+		ROOT = { declare_war_on = { target = PREV type = IMP_1970_war_of_attrition } }
+	}
+	else_if = {
+		limit = { ROOT = { has_wargoal_against = { target = PREV type = take_state } } }
+		ROOT = { declare_war_on = { target = PREV type = take_state } }
+	}
+}

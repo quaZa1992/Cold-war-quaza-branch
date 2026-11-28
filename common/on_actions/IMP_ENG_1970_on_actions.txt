@@ -1,0 +1,56 @@
+# IMPERIA COLD WAR — United Kingdom 1970 1970 on actions.
+# IMPERIA COLD WAR — P5c ENG 24.11.2026: on_daily_ENG -> on_weekly_ENG (state refresh, no day counters)
+# COLDWAR | Observe the native election and refresh programmes on MD subparty changes.
+on_actions = {
+	on_ruling_party_change = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = ENG
+					IMP_is_1970_scenario = yes
+				}
+				IMP_ENG_1970_refresh_government_branches = yes
+			}
+		}
+	}
+	# MD subparties can change within the same outlook without an engine callback.
+	# Refresh only on a changed numeric party slot; do not replay focus rewards.
+	on_weekly_ENG = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = ENG
+					IMP_is_1970_scenario = yes
+				}
+				# This observes the first native campaign; it cannot start an election.
+				if = {
+					limit = {
+						date > 1970.6.1
+						date < 1971.1.1
+						has_country_flag = elections_in_progress
+						NOT = { has_country_flag = IMP_ENG_1970_government_announced }
+					}
+					set_country_flag = IMP_ENG_1970_native_campaign_seen
+				}
+				if = {
+					limit = {
+						has_country_flag = IMP_ENG_1970_native_campaign_seen
+						NOT = { has_country_flag = elections_in_progress }
+						NOT = { has_variable = ads_budget_effect }
+						NOT = { has_country_flag = coalition_forming }
+					}
+					IMP_ENG_1970_announce_government = yes
+				}
+				if = {
+					limit = {
+						OR = {
+							NOT = { has_country_flag = IMP_ENG_1970_layout_party_cached }
+							NOT = { check_variable = { IMP_ENG_1970_layout_party = ruling_party } }
+						}
+					}
+					IMP_ENG_1970_refresh_government_branches = yes
+				}
+			}
+		}
+	}
+}

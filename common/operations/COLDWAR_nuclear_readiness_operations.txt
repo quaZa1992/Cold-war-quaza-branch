@@ -1,0 +1,310 @@
+# IMPERIA COLD WAR — Strategic Command intelligence operations (25.11.2026).
+# FROM = target country, ROOT = origin country. Player governments only; Strategic Command must be active and the target must hold nuclear missiles.
+# Penetrate Strategic Command: for 120 days (180 on an extra outcome) our assessments of the target are exact, never misjudged and see through its exercises, concealment and disinformation.
+# Exaggerate or Understate Our Readiness: for 90 days (135 on an extra outcome) the target's assessments of us are shifted two levels, unless it has agents inside our strategic command.
+COLDWAR_nr_op_penetrate = {
+	icon = GFX_operations_infiltrate_armed_forces
+	map_icon = GFX_operations_infiltrate_armed_forces_map
+	name = COLDWAR_nr_op_penetrate
+	desc = COLDWAR_nr_op_penetrate_desc
+	priority = 3
+
+	days = 80
+	network_strength = 50
+	operatives = 2
+
+	visible = {
+		is_ai = no
+		COLDWAR_nr_enabled = yes
+		num_of_operatives > 0
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+		NOT = { is_in_faction_with = FROM }
+		FROM = { COLDWAR_nr_nuclear_power = yes }
+	}
+
+	available = {
+		NOT = {
+			check_variable = { COLDWAR_nr_penetrated_until@FROM > global.num_days }
+		}
+	}
+
+	risk_chance = 0.25
+	experience = 2
+	outcome_extra_chance = 0.25
+	risk_modifiers = { operation_risk }
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+
+	outcome_execute = {
+		ROOT = {
+			set_variable = { COLDWAR_nr_penetrated_until@FROM = { value = global.num_days add = 120 } }
+		}
+		custom_effect_tooltip = COLDWAR_nr_op_penetrate_tt
+		hidden_effect = {
+			FROM = { ROOT = { COLDWAR_nr_assess_prev = yes } }
+		}
+	}
+	outcome_extra_execute = {
+		ROOT = {
+			set_variable = { COLDWAR_nr_penetrated_until@FROM = { value = global.num_days add = 180 } }
+		}
+		custom_effect_tooltip = COLDWAR_nr_op_penetrate_extra_tt
+	}
+	outcome_potential = {
+		custom_effect_tooltip = COLDWAR_nr_op_penetrate_tt
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 }
+		infiltration_submarine = { base = 25 }
+		infiltration_paradrop = {
+			base = 25
+			modifier = {
+				ROOT = {
+					has_equipment = { large_plane_air_transport_airframe < 1 }
+					has_equipment = { cv_medium_plane_air_transport_airframe < 1 }
+				}
+				factor = 0.1
+			}
+		}
+		infiltration_diplomatic = {
+			base = 25
+			modifier = {
+				factor = 20
+				ROOT = { has_war = no }
+				FROM = { has_war = no }
+			}
+		}
+	}
+	phases = { #infiltrate the strategic command
+		infiltrate_military_bribe = { base = 25 }
+		infiltrate_military_seduction = { base = 25 }
+		infiltrate_military_ideological_supporter = {
+			base = 25
+			modifier = {
+				FROM = { has_government = ROOT }
+				factor = 0
+			}
+		}
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = {
+			base = 15
+			modifier = {
+				ROOT = {
+					has_equipment = { large_plane_air_transport_airframe < 1 }
+					has_equipment = { cv_medium_plane_air_transport_airframe < 1 }
+				}
+				factor = 0.1
+			}
+		}
+		exfiltration_border = { base = 30 }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 }
+	}
+}
+
+COLDWAR_nr_op_exaggerate = {
+	icon = GFX_operations_fake_intel
+	map_icon = GFX_operations_fake_intel_map
+	name = COLDWAR_nr_op_exaggerate
+	desc = COLDWAR_nr_op_exaggerate_desc
+	priority = 2
+
+	days = 60
+	network_strength = 40
+	operatives = 1
+
+	visible = {
+		is_ai = no
+		COLDWAR_nr_enabled = yes
+		num_of_operatives > 0
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+		NOT = { is_in_faction_with = FROM }
+		FROM = { COLDWAR_nr_nuclear_power = yes }
+	}
+
+	available = {
+		COLDWAR_nr_nuclear_power = yes
+		NOT = {
+			check_variable = { COLDWAR_nr_disinfo_until@FROM > global.num_days }
+		}
+	}
+
+	risk_chance = 0.2
+	experience = 1
+	outcome_extra_chance = 0.25
+	risk_modifiers = { operation_risk }
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+
+	outcome_execute = {
+		ROOT = {
+			set_variable = { COLDWAR_nr_disinfo_kind@FROM = 1 }
+			set_variable = { COLDWAR_nr_disinfo_until@FROM = { value = global.num_days add = 90 } }
+		}
+		custom_effect_tooltip = COLDWAR_nr_op_exaggerate_tt
+	}
+	outcome_extra_execute = {
+		ROOT = {
+			set_variable = { COLDWAR_nr_disinfo_until@FROM = { value = global.num_days add = 135 } }
+		}
+		custom_effect_tooltip = COLDWAR_nr_op_disinfo_extra_tt
+	}
+	outcome_potential = {
+		custom_effect_tooltip = COLDWAR_nr_op_exaggerate_tt
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 }
+		infiltration_submarine = { base = 25 }
+		infiltration_paradrop = {
+			base = 25
+			modifier = {
+				ROOT = {
+					has_equipment = { large_plane_air_transport_airframe < 1 }
+					has_equipment = { cv_medium_plane_air_transport_airframe < 1 }
+				}
+				factor = 0.1
+			}
+		}
+		infiltration_diplomatic = {
+			base = 25
+			modifier = {
+				factor = 20
+				ROOT = { has_war = no }
+				FROM = { has_war = no }
+			}
+		}
+	}
+	phases = { #disinformation
+		fake_intel_deliberate_leaks = { base = 50 }
+		fake_intel_release_pow = { base = 50 }
+	}
+	phases = { #channels
+		fake_intel_utilize_double_agents = { base = 50 }
+		fake_intel_press_releases = { base = 50 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = {
+			base = 15
+			modifier = {
+				ROOT = {
+					has_equipment = { large_plane_air_transport_airframe < 1 }
+					has_equipment = { cv_medium_plane_air_transport_airframe < 1 }
+				}
+				factor = 0.1
+			}
+		}
+		exfiltration_border = { base = 30 }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 }
+	}
+}
+
+COLDWAR_nr_op_understate = {
+	icon = GFX_operations_fake_intel
+	map_icon = GFX_operations_fake_intel_map
+	name = COLDWAR_nr_op_understate
+	desc = COLDWAR_nr_op_understate_desc
+	priority = 2
+
+	days = 60
+	network_strength = 40
+	operatives = 1
+
+	visible = {
+		is_ai = no
+		COLDWAR_nr_enabled = yes
+		num_of_operatives > 0
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+		NOT = { is_in_faction_with = FROM }
+		FROM = { COLDWAR_nr_nuclear_power = yes }
+	}
+
+	available = {
+		COLDWAR_nr_nuclear_power = yes
+		NOT = {
+			check_variable = { COLDWAR_nr_disinfo_until@FROM > global.num_days }
+		}
+	}
+
+	risk_chance = 0.2
+	experience = 1
+	outcome_extra_chance = 0.25
+	risk_modifiers = { operation_risk }
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+
+	outcome_execute = {
+		ROOT = {
+			set_variable = { COLDWAR_nr_disinfo_kind@FROM = 2 }
+			set_variable = { COLDWAR_nr_disinfo_until@FROM = { value = global.num_days add = 90 } }
+		}
+		custom_effect_tooltip = COLDWAR_nr_op_understate_tt
+	}
+	outcome_extra_execute = {
+		ROOT = {
+			set_variable = { COLDWAR_nr_disinfo_until@FROM = { value = global.num_days add = 135 } }
+		}
+		custom_effect_tooltip = COLDWAR_nr_op_disinfo_extra_tt
+	}
+	outcome_potential = {
+		custom_effect_tooltip = COLDWAR_nr_op_understate_tt
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 }
+		infiltration_submarine = { base = 25 }
+		infiltration_paradrop = {
+			base = 25
+			modifier = {
+				ROOT = {
+					has_equipment = { large_plane_air_transport_airframe < 1 }
+					has_equipment = { cv_medium_plane_air_transport_airframe < 1 }
+				}
+				factor = 0.1
+			}
+		}
+		infiltration_diplomatic = {
+			base = 25
+			modifier = {
+				factor = 20
+				ROOT = { has_war = no }
+				FROM = { has_war = no }
+			}
+		}
+	}
+	phases = { #disinformation
+		fake_intel_deliberate_leaks = { base = 50 }
+		fake_intel_release_pow = { base = 50 }
+	}
+	phases = { #channels
+		fake_intel_utilize_double_agents = { base = 50 }
+		fake_intel_press_releases = { base = 50 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = {
+			base = 15
+			modifier = {
+				ROOT = {
+					has_equipment = { large_plane_air_transport_airframe < 1 }
+					has_equipment = { cv_medium_plane_air_transport_airframe < 1 }
+				}
+				factor = 0.1
+			}
+		}
+		exfiltration_border = { base = 30 }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 }
+	}
+}

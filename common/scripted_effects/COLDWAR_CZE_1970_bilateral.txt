@@ -1,16 +1,18 @@
+# IMPERIA COLD WAR — update 24.11.2026: MD money lines (treasury_change from gdp_total) instead of invented expenditure texts; no GDP>0 gates.
 # IMPERIA COLD WAR — Czechoslovakia 1970 bilateral agreements.
 
 COLDWAR_CZE_1970_preview_offer_sovereignty_protocol = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_sovereignty_protocol_ui_cze_setup_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		modify_treasury_effect = yes
 		remove_ideas = COLDWAR_CZE_1970_spirit_start_1
 		add_ideas = COLDWAR_CZE_1970_sovereignty_protocol_cze
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
 	SOV = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_sovereignty_protocol_ui_recipient_setup_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0008 } }
+		modify_treasury_effect = yes
 		add_ideas = COLDWAR_CZE_1970_sovereignty_protocol_recipient
 	}
 }
@@ -20,9 +22,6 @@ COLDWAR_CZE_1970_offer_sovereignty_protocol = {
 			tag = CZE
 			COLDWAR_CZE_1970_sovereignty_protocol_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
 			}
@@ -31,9 +30,6 @@ COLDWAR_CZE_1970_offer_sovereignty_protocol = {
 			}
 			SOV = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
 				}
@@ -44,12 +40,10 @@ COLDWAR_CZE_1970_offer_sovereignty_protocol = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
 		set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_ever_offered
-		SOV = {
-			set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_ever_offered
-		}
+		SOV = { country_event = { id = COLDWAR_CZE_1970_offers.1 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_sovereignty_protocol = {
 	if = {
 		limit = {
@@ -65,24 +59,6 @@ COLDWAR_CZE_1970_accept_sovereignty_protocol = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00200
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -92,21 +68,31 @@ COLDWAR_CZE_1970_accept_sovereignty_protocol = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
-		CZE = {
-			set_variable = {
-				COLDWAR_CZE_1970_slot_soviet_presence = 0
-			}
-			COLDWAR_CZE_1970_refresh_spirits = yes
-		}
 		clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.101 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_sovereignty_protocol = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00200
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_signed
+		set_variable = {
+			COLDWAR_CZE_1970_slot_soviet_presence = 0
+		}
+		COLDWAR_CZE_1970_refresh_spirits = yes
+		clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_sovereignty_protocol = {
 	if = {
 		limit = {
@@ -117,18 +103,25 @@ COLDWAR_CZE_1970_refuse_sovereignty_protocol = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.201 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_sovereignty_protocol = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_sovereignty_protocol_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_oil = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_cze_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_cze_weekly_transfer_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_oil_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_oil_one_time_cze_research_cat_fuel_efficiency
@@ -139,9 +132,12 @@ COLDWAR_CZE_1970_preview_offer_oil = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
 	SOV = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_recipient_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_oil_ui_recipient_weekly_transfer_income
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = var:CZE.gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_income = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_income_tt }
 		add_ideas = COLDWAR_CZE_1970_oil_recipient
 	}
 }
@@ -151,9 +147,6 @@ COLDWAR_CZE_1970_offer_oil = {
 			tag = CZE
 			COLDWAR_CZE_1970_oil_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_oil_signed
 			}
@@ -162,9 +155,6 @@ COLDWAR_CZE_1970_offer_oil = {
 			}
 			SOV = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_oil_signed
 				}
@@ -175,12 +165,10 @@ COLDWAR_CZE_1970_offer_oil = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_oil_offer_open
 		set_country_flag = COLDWAR_CZE_1970_oil_ever_offered
-		SOV = {
-			set_country_flag = COLDWAR_CZE_1970_oil_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_oil_ever_offered
-		}
+		SOV = { country_event = { id = COLDWAR_CZE_1970_offers.2 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_oil = {
 	if = {
 		limit = {
@@ -196,24 +184,6 @@ COLDWAR_CZE_1970_accept_oil = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_oil_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00350
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_oil_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -223,34 +193,40 @@ COLDWAR_CZE_1970_accept_oil = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_oil_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_oil_one_time_cze_research_cat_fuel_efficiency
-				category = CAT_fuel_efficiency
-				bonus = 0.5
-				uses = 1
-			}
-		}
-		CZE = {
-			set_variable = {
-				COLDWAR_CZE_1970_oil_transfer = {
-					value = gdp_total
-					multiply = 0.00006
-				}
-			}
-		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_oil_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_oil_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_oil_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.102 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_oil = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_oil_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00350
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_oil_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_oil_one_time_cze_research_cat_fuel_efficiency
+			category = CAT_fuel_efficiency
+			bonus = 0.5
+			uses = 1
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_oil_transfer = {
+				value = gdp_total
+				multiply = 0.00006
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_oil_signed
+		clr_country_flag = COLDWAR_CZE_1970_oil_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_oil = {
 	if = {
 		limit = {
@@ -261,18 +237,25 @@ COLDWAR_CZE_1970_refuse_oil = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_oil_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_oil_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.202 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_oil = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_oil_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_oil_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_reactor = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_cze_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_cze_weekly_transfer_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.004 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00004 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_reactor_generation_cze
 		add_ideas = COLDWAR_CZE_1970_reactor_cze
 		add_tech_bonus = {
@@ -285,9 +268,12 @@ COLDWAR_CZE_1970_preview_offer_reactor = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
 	SOV = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_recipient_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_reactor_ui_recipient_weekly_transfer_income
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = var:CZE.gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_income = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_income_tt }
 		add_ideas = COLDWAR_CZE_1970_reactor_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_reactor_one_time_recipient_research_cat_industry
@@ -303,9 +289,6 @@ COLDWAR_CZE_1970_offer_reactor = {
 			tag = CZE
 			COLDWAR_CZE_1970_reactor_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_reactor_signed
 			}
@@ -314,9 +297,6 @@ COLDWAR_CZE_1970_offer_reactor = {
 			}
 			SOV = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_reactor_signed
 				}
@@ -327,12 +307,10 @@ COLDWAR_CZE_1970_offer_reactor = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_reactor_offer_open
 		set_country_flag = COLDWAR_CZE_1970_reactor_ever_offered
-		SOV = {
-			set_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_reactor_ever_offered
-		}
+		SOV = { country_event = { id = COLDWAR_CZE_1970_offers.3 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_reactor = {
 	if = {
 		limit = {
@@ -348,24 +326,6 @@ COLDWAR_CZE_1970_accept_reactor = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_reactor_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00400
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_reactor_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -375,18 +335,6 @@ COLDWAR_CZE_1970_accept_reactor = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_reactor_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_reactor_one_time_cze_research_cat_nuclear_reactors
-				category = CAT_nuclear_reactors
-				bonus = 0.5
-				uses = 1
-			}
-		}
-		CZE = {
-			unlock_decision_tooltip = civil_nuclear_investment
-			set_country_flag = COLDWAR_CZE_1970_civil_nuclear_investment_unlocked
-		}
 		SOV = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_reactor_one_time_recipient_research_cat_industry
@@ -395,26 +343,42 @@ COLDWAR_CZE_1970_accept_reactor = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_variable = {
-				COLDWAR_CZE_1970_reactor_transfer = {
-					value = gdp_total
-					multiply = 0.00003
-				}
-			}
-		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_reactor_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_reactor_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.103 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_reactor = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_reactor_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00400
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_reactor_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_reactor_one_time_cze_research_cat_nuclear_reactors
+			category = CAT_nuclear_reactors
+			bonus = 0.5
+			uses = 1
+		}
+		unlock_decision_tooltip = civil_nuclear_investment
+		set_country_flag = COLDWAR_CZE_1970_civil_nuclear_investment_unlocked
+		set_variable = {
+			COLDWAR_CZE_1970_reactor_transfer = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_reactor_signed
+		clr_country_flag = COLDWAR_CZE_1970_reactor_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_reactor = {
 	if = {
 		limit = {
@@ -425,17 +389,23 @@ COLDWAR_CZE_1970_refuse_reactor = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_reactor_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_reactor_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.203 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_reactor = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_reactor_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_reactor_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_components = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.005 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_components_cze
 		117 = {
 			add_extra_state_shared_building_slots = 1
@@ -454,8 +424,10 @@ COLDWAR_CZE_1970_preview_offer_components = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
 	SOV = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_components_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_components_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_components_one_time_recipient_research_cat_nuclear_reactors
@@ -481,9 +453,6 @@ COLDWAR_CZE_1970_offer_components = {
 				}
 			}
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_components_signed
 			}
@@ -492,9 +461,6 @@ COLDWAR_CZE_1970_offer_components = {
 			}
 			SOV = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_components_signed
 				}
@@ -505,12 +471,10 @@ COLDWAR_CZE_1970_offer_components = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_components_offer_open
 		set_country_flag = COLDWAR_CZE_1970_components_ever_offered
-		SOV = {
-			set_country_flag = COLDWAR_CZE_1970_components_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_components_ever_offered
-		}
+		SOV = { country_event = { id = COLDWAR_CZE_1970_offers.4 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_components = {
 	if = {
 		limit = {
@@ -536,24 +500,6 @@ COLDWAR_CZE_1970_accept_components = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_components_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00500
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_components_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -563,24 +509,6 @@ COLDWAR_CZE_1970_accept_components = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_components_signed
-		CZE = {
-			117 = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = industrial_complex
-					level = 1
-					instant_build = no
-				}
-			}
-		}
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_components_one_time_cze_research_cat_industry
-				category = CAT_industry
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		SOV = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_components_one_time_recipient_research_cat_nuclear_reactors
@@ -590,14 +518,40 @@ COLDWAR_CZE_1970_accept_components = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_components_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_components_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.104 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_components = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_components_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00500
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_components_signed
+		117 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = no
+			}
+		}
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_components_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+		clr_country_flag = COLDWAR_CZE_1970_components_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_components = {
 	if = {
 		limit = {
@@ -608,25 +562,35 @@ COLDWAR_CZE_1970_refuse_components = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_components_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_components_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.204 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_components = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_components_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_components_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_power_pool = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_cze_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_cze_weekly_transfer_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0065 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00004 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00004 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_power_pool_cze
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
 	SOV = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_recipient_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_power_pool_ui_recipient_weekly_transfer_income
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = var:CZE.gdp_total multiply = 0.00004 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_income = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_income_tt }
 		add_ideas = COLDWAR_CZE_1970_power_pool_recipient
 	}
 }
@@ -636,9 +600,6 @@ COLDWAR_CZE_1970_offer_power_pool = {
 			tag = CZE
 			COLDWAR_CZE_1970_power_pool_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
 			}
@@ -647,9 +608,6 @@ COLDWAR_CZE_1970_offer_power_pool = {
 			}
 			SOV = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_power_pool_signed
 				}
@@ -660,12 +618,10 @@ COLDWAR_CZE_1970_offer_power_pool = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
 		set_country_flag = COLDWAR_CZE_1970_power_pool_ever_offered
-		SOV = {
-			set_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_power_pool_ever_offered
-		}
+		SOV = { country_event = { id = COLDWAR_CZE_1970_offers.5 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_power_pool = {
 	if = {
 		limit = {
@@ -681,24 +637,6 @@ COLDWAR_CZE_1970_accept_power_pool = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_power_pool_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00650
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_power_pool_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -708,26 +646,34 @@ COLDWAR_CZE_1970_accept_power_pool = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_power_pool_signed
-		CZE = {
-			set_variable = {
-				COLDWAR_CZE_1970_power_pool_transfer = {
-					value = gdp_total
-					multiply = 0.00004
-				}
-			}
-		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_power_pool_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.105 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_power_pool = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_power_pool_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00650
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_power_pool_signed
+		set_variable = {
+			COLDWAR_CZE_1970_power_pool_transfer = {
+				value = gdp_total
+				multiply = 0.00004
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_power_pool_signed
+		clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_power_pool = {
 	if = {
 		limit = {
@@ -738,17 +684,23 @@ COLDWAR_CZE_1970_refuse_power_pool = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.205 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_power_pool = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_power_pool_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_power_pool_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_gdr_auto = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_gdr_auto_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_gdr_auto_one_time_cze_research_cat_industry
@@ -759,8 +711,10 @@ COLDWAR_CZE_1970_preview_offer_gdr_auto = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_DDR
 	DDR = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_auto_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_gdr_auto_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_gdr_auto_one_time_recipient_research_cat_industry
@@ -776,9 +730,6 @@ COLDWAR_CZE_1970_offer_gdr_auto = {
 			tag = CZE
 			COLDWAR_CZE_1970_gdr_auto_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
 			}
@@ -787,9 +738,6 @@ COLDWAR_CZE_1970_offer_gdr_auto = {
 			}
 			DDR = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
 				}
@@ -800,12 +748,10 @@ COLDWAR_CZE_1970_offer_gdr_auto = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
 		set_country_flag = COLDWAR_CZE_1970_gdr_auto_ever_offered
-		DDR = {
-			set_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_gdr_auto_ever_offered
-		}
+		DDR = { country_event = { id = COLDWAR_CZE_1970_offers.6 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_gdr_auto = {
 	if = {
 		limit = {
@@ -821,24 +767,6 @@ COLDWAR_CZE_1970_accept_gdr_auto = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00350
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -848,14 +776,6 @@ COLDWAR_CZE_1970_accept_gdr_auto = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_gdr_auto_one_time_cze_research_cat_industry
-				category = CAT_industry
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		DDR = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_gdr_auto_one_time_recipient_research_cat_industry
@@ -864,18 +784,34 @@ COLDWAR_CZE_1970_accept_gdr_auto = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.106 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_gdr_auto = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00350
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_gdr_auto_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+		set_country_flag = COLDWAR_CZE_1970_gdr_auto_signed
+		clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_gdr_auto = {
 	if = {
 		limit = {
@@ -886,17 +822,23 @@ COLDWAR_CZE_1970_refuse_gdr_auto = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.206 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_gdr_auto = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_gdr_auto_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_gdr_rail = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_gdr_rail_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_gdr_rail_one_time_cze_research_cat_infrastructure
@@ -907,8 +849,10 @@ COLDWAR_CZE_1970_preview_offer_gdr_rail = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_DDR
 	DDR = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_gdr_rail_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_gdr_rail_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_gdr_rail_one_time_recipient_research_cat_infrastructure
@@ -924,9 +868,6 @@ COLDWAR_CZE_1970_offer_gdr_rail = {
 			tag = CZE
 			COLDWAR_CZE_1970_gdr_rail_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
 			}
@@ -935,9 +876,6 @@ COLDWAR_CZE_1970_offer_gdr_rail = {
 			}
 			DDR = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
 				}
@@ -948,12 +886,10 @@ COLDWAR_CZE_1970_offer_gdr_rail = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
 		set_country_flag = COLDWAR_CZE_1970_gdr_rail_ever_offered
-		DDR = {
-			set_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_gdr_rail_ever_offered
-		}
+		DDR = { country_event = { id = COLDWAR_CZE_1970_offers.7 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_gdr_rail = {
 	if = {
 		limit = {
@@ -969,24 +905,6 @@ COLDWAR_CZE_1970_accept_gdr_rail = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00350
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -996,14 +914,6 @@ COLDWAR_CZE_1970_accept_gdr_rail = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_gdr_rail_one_time_cze_research_cat_infrastructure
-				category = CAT_infrastructure
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		DDR = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_gdr_rail_one_time_recipient_research_cat_infrastructure
@@ -1012,18 +922,34 @@ COLDWAR_CZE_1970_accept_gdr_rail = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.107 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_gdr_rail = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00350
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_gdr_rail_one_time_cze_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+		set_country_flag = COLDWAR_CZE_1970_gdr_rail_signed
+		clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_gdr_rail = {
 	if = {
 		limit = {
@@ -1034,17 +960,23 @@ COLDWAR_CZE_1970_refuse_gdr_rail = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.207 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_gdr_rail = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_gdr_rail_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_pol_rail = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_rail_cze
 		1018 = {
 			add_extra_state_shared_building_slots = 1
@@ -1057,8 +989,10 @@ COLDWAR_CZE_1970_preview_offer_pol_rail = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
 	POL = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_rail_recipient
 		custom_effect_tooltip = COLDWAR_CZE_1970_polish_site_choice_tt
 		112 = {
@@ -1086,9 +1020,6 @@ COLDWAR_CZE_1970_offer_pol_rail = {
 			tag = CZE
 			COLDWAR_CZE_1970_pol_rail_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
 			}
@@ -1097,9 +1028,6 @@ COLDWAR_CZE_1970_offer_pol_rail = {
 			}
 			POL = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
 				}
@@ -1110,12 +1038,10 @@ COLDWAR_CZE_1970_offer_pol_rail = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
 		set_country_flag = COLDWAR_CZE_1970_pol_rail_ever_offered
-		POL = {
-			set_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_pol_rail_ever_offered
-		}
+		POL = { country_event = { id = COLDWAR_CZE_1970_offers.8 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_pol_rail = {
 	if = {
 		limit = {
@@ -1195,24 +1121,6 @@ COLDWAR_CZE_1970_accept_pol_rail = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_pol_rail_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00300
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -1222,16 +1130,6 @@ COLDWAR_CZE_1970_accept_pol_rail = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
-		CZE = {
-			1018 = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = no
-				}
-			}
-		}
 		if = {
 			limit = {
 				check_variable = {
@@ -1266,18 +1164,36 @@ COLDWAR_CZE_1970_accept_pol_rail = {
 				}
 			}
 		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.108 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_pol_rail = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00300
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+		1018 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = no
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_pol_rail_signed
+		clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_pol_rail = {
 	if = {
 		limit = {
@@ -1288,23 +1204,31 @@ COLDWAR_CZE_1970_refuse_pol_rail = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.208 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_pol_rail = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_pol_rail_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_pol_environment = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0018 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_environment_cze
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
 	POL = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_environment_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0018 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_environment_recipient
 	}
 }
@@ -1314,9 +1238,6 @@ COLDWAR_CZE_1970_offer_pol_environment = {
 			tag = CZE
 			COLDWAR_CZE_1970_pol_environment_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
 			}
@@ -1325,9 +1246,6 @@ COLDWAR_CZE_1970_offer_pol_environment = {
 			}
 			POL = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
 				}
@@ -1338,12 +1256,10 @@ COLDWAR_CZE_1970_offer_pol_environment = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
 		set_country_flag = COLDWAR_CZE_1970_pol_environment_ever_offered
-		POL = {
-			set_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_pol_environment_ever_offered
-		}
+		POL = { country_event = { id = COLDWAR_CZE_1970_offers.9 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_pol_environment = {
 	if = {
 		limit = {
@@ -1359,24 +1275,6 @@ COLDWAR_CZE_1970_accept_pol_environment = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_pol_environment_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00180
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -1386,18 +1284,28 @@ COLDWAR_CZE_1970_accept_pol_environment = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.109 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_pol_environment = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00180
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+		set_country_flag = COLDWAR_CZE_1970_pol_environment_signed
+		clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_pol_environment = {
 	if = {
 		limit = {
@@ -1408,17 +1316,23 @@ COLDWAR_CZE_1970_refuse_pol_environment = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.209 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_pol_environment = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_pol_environment_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_hun_dam = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_construction_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_cze
 		119 = {
@@ -1430,7 +1344,8 @@ COLDWAR_CZE_1970_preview_offer_hun_dam = {
 			}
 		}
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_operation_cost
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		swap_ideas = {
 			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
 			add_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
@@ -1438,8 +1353,10 @@ COLDWAR_CZE_1970_preview_offer_hun_dam = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
 	HUN = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_construction_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_recipient
 		custom_effect_tooltip = COLDWAR_CZE_1970_hungarian_site_choice_tt
@@ -1461,7 +1378,8 @@ COLDWAR_CZE_1970_preview_offer_hun_dam = {
 			}
 		}
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_operation_cost
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		swap_ideas = {
 			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
 			add_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient
@@ -1474,9 +1392,6 @@ COLDWAR_CZE_1970_offer_hun_dam = {
 			tag = CZE
 			COLDWAR_CZE_1970_hun_dam_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
 			}
@@ -1485,9 +1400,6 @@ COLDWAR_CZE_1970_offer_hun_dam = {
 			}
 			HUN = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
 				}
@@ -1498,12 +1410,10 @@ COLDWAR_CZE_1970_offer_hun_dam = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
 		set_country_flag = COLDWAR_CZE_1970_hun_dam_ever_offered
-		HUN = {
-			set_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_hun_dam_ever_offered
-		}
+		HUN = { country_event = { id = COLDWAR_CZE_1970_offers.10 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_hun_dam = {
 	if = {
 		limit = {
@@ -1572,24 +1482,6 @@ COLDWAR_CZE_1970_accept_hun_dam = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_hun_dam_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00800
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -1599,23 +1491,31 @@ COLDWAR_CZE_1970_accept_hun_dam = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
-		CZE = {
-			set_variable = {
-				COLDWAR_CZE_1970_hun_dam_active_days = 0
-			}
-		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.110 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_hun_dam = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00800
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+		set_variable = {
+			COLDWAR_CZE_1970_hun_dam_active_days = 0
+		}
+		set_country_flag = COLDWAR_CZE_1970_hun_dam_signed
+		clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_hun_dam = {
 	if = {
 		limit = {
@@ -1626,17 +1526,23 @@ COLDWAR_CZE_1970_refuse_hun_dam = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.210 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_hun_dam = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_hun_dam_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_hun_river = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_river_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_hun_river_one_time_cze_research_cat_infrastructure
@@ -1647,8 +1553,10 @@ COLDWAR_CZE_1970_preview_offer_hun_river = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
 	HUN = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_river_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_river_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_hun_river_one_time_recipient_research_cat_infrastructure
@@ -1664,9 +1572,6 @@ COLDWAR_CZE_1970_offer_hun_river = {
 			tag = CZE
 			COLDWAR_CZE_1970_hun_river_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_hun_river_signed
 			}
@@ -1675,9 +1580,6 @@ COLDWAR_CZE_1970_offer_hun_river = {
 			}
 			HUN = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_hun_river_signed
 				}
@@ -1688,12 +1590,10 @@ COLDWAR_CZE_1970_offer_hun_river = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
 		set_country_flag = COLDWAR_CZE_1970_hun_river_ever_offered
-		HUN = {
-			set_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_hun_river_ever_offered
-		}
+		HUN = { country_event = { id = COLDWAR_CZE_1970_offers.11 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_hun_river = {
 	if = {
 		limit = {
@@ -1709,24 +1609,6 @@ COLDWAR_CZE_1970_accept_hun_river = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_hun_river_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00250
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_hun_river_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -1736,14 +1618,6 @@ COLDWAR_CZE_1970_accept_hun_river = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_hun_river_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_hun_river_one_time_cze_research_cat_infrastructure
-				category = CAT_infrastructure
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		HUN = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_hun_river_one_time_recipient_research_cat_infrastructure
@@ -1752,18 +1626,34 @@ COLDWAR_CZE_1970_accept_hun_river = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_hun_river_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.111 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_hun_river = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_hun_river_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00250
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_hun_river_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_hun_river_one_time_cze_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+		set_country_flag = COLDWAR_CZE_1970_hun_river_signed
+		clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_hun_river = {
 	if = {
 		limit = {
@@ -1774,23 +1664,31 @@ COLDWAR_CZE_1970_refuse_hun_river = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.211 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_hun_river = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_hun_river_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_hun_river_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_frg_treaty = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_frg_treaty_cze
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_GER
 	GER = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_treaty_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.001 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_frg_treaty_recipient
 	}
 }
@@ -1800,9 +1698,6 @@ COLDWAR_CZE_1970_offer_frg_treaty = {
 			tag = CZE
 			COLDWAR_CZE_1970_frg_treaty_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
 			}
@@ -1811,9 +1706,6 @@ COLDWAR_CZE_1970_offer_frg_treaty = {
 			}
 			GER = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
 				}
@@ -1824,12 +1716,10 @@ COLDWAR_CZE_1970_offer_frg_treaty = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
 		set_country_flag = COLDWAR_CZE_1970_frg_treaty_ever_offered
-		GER = {
-			set_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_frg_treaty_ever_offered
-		}
+		GER = { country_event = { id = COLDWAR_CZE_1970_offers.12 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_frg_treaty = {
 	if = {
 		limit = {
@@ -1845,24 +1735,6 @@ COLDWAR_CZE_1970_accept_frg_treaty = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00100
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -1872,18 +1744,28 @@ COLDWAR_CZE_1970_accept_frg_treaty = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.112 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_frg_treaty = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00100
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+		set_country_flag = COLDWAR_CZE_1970_frg_treaty_signed
+		clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_frg_treaty = {
 	if = {
 		limit = {
@@ -1894,18 +1776,25 @@ COLDWAR_CZE_1970_refuse_frg_treaty = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.212 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_frg_treaty = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_frg_treaty_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_frg_technology = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_cze_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_cze_weekly_transfer_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0055 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_frg_technology_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_industry
@@ -1922,9 +1811,12 @@ COLDWAR_CZE_1970_preview_offer_frg_technology = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_GER
 	GER = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_recipient_weekly_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_frg_technology_ui_recipient_weekly_transfer_income
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.002 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = var:CZE.gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_income = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_income_tt }
 		add_ideas = COLDWAR_CZE_1970_frg_technology_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_frg_technology_one_time_recipient_research_cat_industry
@@ -1940,9 +1832,6 @@ COLDWAR_CZE_1970_offer_frg_technology = {
 			tag = CZE
 			COLDWAR_CZE_1970_frg_technology_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
 			}
@@ -1951,9 +1840,6 @@ COLDWAR_CZE_1970_offer_frg_technology = {
 			}
 			GER = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
 				}
@@ -1964,12 +1850,10 @@ COLDWAR_CZE_1970_offer_frg_technology = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
 		set_country_flag = COLDWAR_CZE_1970_frg_technology_ever_offered
-		GER = {
-			set_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_frg_technology_ever_offered
-		}
+		GER = { country_event = { id = COLDWAR_CZE_1970_offers.13 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_frg_technology = {
 	if = {
 		limit = {
@@ -1985,24 +1869,6 @@ COLDWAR_CZE_1970_accept_frg_technology = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_frg_technology_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00550
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -2012,22 +1878,6 @@ COLDWAR_CZE_1970_accept_frg_technology = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_industry
-				category = CAT_industry
-				bonus = 0.5
-				uses = 1
-			}
-		}
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_electronics
-				category = CAT_electronics
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		GER = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_frg_technology_one_time_recipient_research_cat_industry
@@ -2036,26 +1886,46 @@ COLDWAR_CZE_1970_accept_frg_technology = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_variable = {
-				COLDWAR_CZE_1970_frg_technology_transfer = {
-					value = gdp_total
-					multiply = 0.00003
-				}
-			}
-		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.113 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_frg_technology = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00550
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_frg_technology_one_time_cze_research_cat_electronics
+			category = CAT_electronics
+			bonus = 0.5
+			uses = 1
+		}
+		set_variable = {
+			COLDWAR_CZE_1970_frg_technology_transfer = {
+				value = gdp_total
+				multiply = 0.00003
+			}
+		}
+		set_country_flag = COLDWAR_CZE_1970_frg_technology_signed
+		clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_frg_technology = {
 	if = {
 		limit = {
@@ -2066,24 +1936,33 @@ COLDWAR_CZE_1970_refuse_frg_technology = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.213 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_frg_technology = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_frg_technology_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_aus_claims = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_aus_claims_cze
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_AUS
 	AUS = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_recipient_setup_income
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_claims_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0005 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { treasury_change = { value = var:CZE.gdp_total multiply = 0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00001 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_aus_claims_recipient
 	}
 }
@@ -2093,9 +1972,6 @@ COLDWAR_CZE_1970_offer_aus_claims = {
 			tag = CZE
 			COLDWAR_CZE_1970_aus_claims_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
 			}
@@ -2104,9 +1980,6 @@ COLDWAR_CZE_1970_offer_aus_claims = {
 			}
 			AUS = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
 				}
@@ -2117,12 +1990,10 @@ COLDWAR_CZE_1970_offer_aus_claims = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
 		set_country_flag = COLDWAR_CZE_1970_aus_claims_ever_offered
-		AUS = {
-			set_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_aus_claims_ever_offered
-		}
+		AUS = { country_event = { id = COLDWAR_CZE_1970_offers.14 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_aus_claims = {
 	if = {
 		limit = {
@@ -2138,24 +2009,6 @@ COLDWAR_CZE_1970_accept_aus_claims = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_aus_claims_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00250
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
 		}
 		AUS = {
 			set_temp_variable = {
@@ -2174,18 +2027,28 @@ COLDWAR_CZE_1970_accept_aus_claims = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.114 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_aus_claims = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00250
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+		set_country_flag = COLDWAR_CZE_1970_aus_claims_signed
+		clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_aus_claims = {
 	if = {
 		limit = {
@@ -2196,17 +2059,23 @@ COLDWAR_CZE_1970_refuse_aus_claims = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.214 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_aus_claims = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_aus_claims_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_aus_trade = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_aus_trade_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_aus_trade_one_time_cze_research_cat_infrastructure
@@ -2217,8 +2086,10 @@ COLDWAR_CZE_1970_preview_offer_aus_trade = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_AUS
 	AUS = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_aus_trade_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_aus_trade_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_aus_trade_one_time_recipient_research_cat_infrastructure
@@ -2234,9 +2105,6 @@ COLDWAR_CZE_1970_offer_aus_trade = {
 			tag = CZE
 			COLDWAR_CZE_1970_aus_trade_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
 			}
@@ -2245,9 +2113,6 @@ COLDWAR_CZE_1970_offer_aus_trade = {
 			}
 			AUS = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
 				}
@@ -2258,12 +2123,10 @@ COLDWAR_CZE_1970_offer_aus_trade = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
 		set_country_flag = COLDWAR_CZE_1970_aus_trade_ever_offered
-		AUS = {
-			set_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_aus_trade_ever_offered
-		}
+		AUS = { country_event = { id = COLDWAR_CZE_1970_offers.15 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_aus_trade = {
 	if = {
 		limit = {
@@ -2279,24 +2142,6 @@ COLDWAR_CZE_1970_accept_aus_trade = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_aus_trade_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00300
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -2306,14 +2151,6 @@ COLDWAR_CZE_1970_accept_aus_trade = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_aus_trade_one_time_cze_research_cat_infrastructure
-				category = CAT_infrastructure
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		AUS = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_aus_trade_one_time_recipient_research_cat_infrastructure
@@ -2322,18 +2159,34 @@ COLDWAR_CZE_1970_accept_aus_trade = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.115 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_aus_trade = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00300
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_aus_trade_one_time_cze_research_cat_infrastructure
+			category = CAT_infrastructure
+			bonus = 0.5
+			uses = 1
+		}
+		set_country_flag = COLDWAR_CZE_1970_aus_trade_signed
+		clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_aus_trade = {
 	if = {
 		limit = {
@@ -2344,17 +2197,23 @@ COLDWAR_CZE_1970_refuse_aus_trade = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.215 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_aus_trade = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_aus_trade_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_yug_engineering = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_yug_engineering_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_yug_engineering_one_time_cze_research_cat_industry
@@ -2365,8 +2224,10 @@ COLDWAR_CZE_1970_preview_offer_yug_engineering = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SER
 	SER = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_yug_engineering_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0035 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_yug_engineering_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_yug_engineering_one_time_recipient_research_cat_industry
@@ -2382,9 +2243,6 @@ COLDWAR_CZE_1970_offer_yug_engineering = {
 			tag = CZE
 			COLDWAR_CZE_1970_yug_engineering_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
 			}
@@ -2393,9 +2251,6 @@ COLDWAR_CZE_1970_offer_yug_engineering = {
 			}
 			SER = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
 				}
@@ -2406,12 +2261,10 @@ COLDWAR_CZE_1970_offer_yug_engineering = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
 		set_country_flag = COLDWAR_CZE_1970_yug_engineering_ever_offered
-		SER = {
-			set_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_yug_engineering_ever_offered
-		}
+		SER = { country_event = { id = COLDWAR_CZE_1970_offers.16 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_yug_engineering = {
 	if = {
 		limit = {
@@ -2427,24 +2280,6 @@ COLDWAR_CZE_1970_accept_yug_engineering = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00350
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -2454,14 +2289,6 @@ COLDWAR_CZE_1970_accept_yug_engineering = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_yug_engineering_one_time_cze_research_cat_industry
-				category = CAT_industry
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		SER = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_yug_engineering_one_time_recipient_research_cat_industry
@@ -2470,18 +2297,34 @@ COLDWAR_CZE_1970_accept_yug_engineering = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.116 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_yug_engineering = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00350
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_yug_engineering_one_time_cze_research_cat_industry
+			category = CAT_industry
+			bonus = 0.5
+			uses = 1
+		}
+		set_country_flag = COLDWAR_CZE_1970_yug_engineering_signed
+		clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_yug_engineering = {
 	if = {
 		limit = {
@@ -2492,17 +2335,23 @@ COLDWAR_CZE_1970_refuse_yug_engineering = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.216 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_yug_engineering = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_yug_engineering_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_interkosmos = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0025 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00003 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_interkosmos_cze
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_interkosmos_one_time_cze_research_cat_electronics
@@ -2513,8 +2362,10 @@ COLDWAR_CZE_1970_preview_offer_interkosmos = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SOV
 	SOV = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_interkosmos_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0012 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_interkosmos_recipient
 		add_tech_bonus = {
 			name = COLDWAR_CZE_1970_interkosmos_one_time_recipient_research_cat_electronics
@@ -2530,9 +2381,6 @@ COLDWAR_CZE_1970_offer_interkosmos = {
 			tag = CZE
 			COLDWAR_CZE_1970_interkosmos_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
 			}
@@ -2541,9 +2389,6 @@ COLDWAR_CZE_1970_offer_interkosmos = {
 			}
 			SOV = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
 				}
@@ -2554,12 +2399,10 @@ COLDWAR_CZE_1970_offer_interkosmos = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
 		set_country_flag = COLDWAR_CZE_1970_interkosmos_ever_offered
-		SOV = {
-			set_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_interkosmos_ever_offered
-		}
+		SOV = { country_event = { id = COLDWAR_CZE_1970_offers.17 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_interkosmos = {
 	if = {
 		limit = {
@@ -2575,24 +2418,6 @@ COLDWAR_CZE_1970_accept_interkosmos = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_interkosmos_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00250
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -2602,14 +2427,6 @@ COLDWAR_CZE_1970_accept_interkosmos = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
-		CZE = {
-			add_tech_bonus = {
-				name = COLDWAR_CZE_1970_interkosmos_one_time_cze_research_cat_electronics
-				category = CAT_electronics
-				bonus = 0.5
-				uses = 1
-			}
-		}
 		SOV = {
 			add_tech_bonus = {
 				name = COLDWAR_CZE_1970_interkosmos_one_time_recipient_research_cat_electronics
@@ -2618,19 +2435,35 @@ COLDWAR_CZE_1970_accept_interkosmos = {
 				uses = 1
 			}
 		}
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
-			set_country_flag = cw_sr_cap_interkosmos_cooperation
-		}
 		clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.117 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_interkosmos = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00250
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+		add_tech_bonus = {
+			name = COLDWAR_CZE_1970_interkosmos_one_time_cze_research_cat_electronics
+			category = CAT_electronics
+			bonus = 0.5
+			uses = 1
+		}
+		set_country_flag = COLDWAR_CZE_1970_interkosmos_signed
+		set_country_flag = cw_sr_cap_interkosmos_cooperation
+		clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_interkosmos = {
 	if = {
 		limit = {
@@ -2641,23 +2474,31 @@ COLDWAR_CZE_1970_refuse_interkosmos = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.217 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_interkosmos = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_interkosmos_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_successor_treaty = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_successor_treaty_cze
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_SLO
 	SLO = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_successor_treaty_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.0015 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_successor_treaty_recipient
 	}
 }
@@ -2667,9 +2508,6 @@ COLDWAR_CZE_1970_offer_successor_treaty = {
 			tag = CZE
 			COLDWAR_CZE_1970_successor_treaty_pair_clear = yes
 			is_ai = no
-			check_variable = {
-				gdp_total > 0
-			}
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
 			}
@@ -2678,9 +2516,6 @@ COLDWAR_CZE_1970_offer_successor_treaty = {
 			}
 			SLO = {
 				is_ai = no
-				check_variable = {
-					gdp_total > 0
-				}
 				NOT = {
 					has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
 				}
@@ -2691,12 +2526,10 @@ COLDWAR_CZE_1970_offer_successor_treaty = {
 		}
 		set_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
 		set_country_flag = COLDWAR_CZE_1970_successor_treaty_ever_offered
-		SLO = {
-			set_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
-			set_country_flag = COLDWAR_CZE_1970_successor_treaty_ever_offered
-		}
+		SLO = { country_event = { id = COLDWAR_CZE_1970_offers.18 } } # IMPERIA COLD WAR — offer by event (24.11.2026)
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_accept_successor_treaty = {
 	if = {
 		limit = {
@@ -2712,24 +2545,6 @@ COLDWAR_CZE_1970_accept_successor_treaty = {
 			NOT = {
 				has_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
 			}
-			check_variable = {
-				gdp_total > 0
-			}
-			CZE = {
-				check_variable = {
-					gdp_total > 0
-				}
-			}
-		}
-		CZE = {
-			set_temp_variable = {
-				treasury_change = {
-					value = gdp_total
-					multiply = -0.00150
-				}
-			}
-			modify_treasury_effect = yes
-			set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
 		}
 		set_temp_variable = {
 			treasury_change = {
@@ -2739,18 +2554,28 @@ COLDWAR_CZE_1970_accept_successor_treaty = {
 		}
 		modify_treasury_effect = yes
 		set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
-		CZE = {
-			set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
-		}
 		clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
-		}
-		CZE = {
-			COLDWAR_CZE_1970_bilateral_refresh = yes
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.118 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_complete_successor_treaty = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open }
+		set_temp_variable = {
+			treasury_change = {
+				value = gdp_total
+				multiply = -0.00150
+			}
+		}
+		modify_treasury_effect = yes
+		set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+		set_country_flag = COLDWAR_CZE_1970_successor_treaty_signed
+		clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
+		COLDWAR_CZE_1970_bilateral_refresh = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: partner part only; the reply event runs the Czechoslovak part.
 COLDWAR_CZE_1970_refuse_successor_treaty = {
 	if = {
 		limit = {
@@ -2761,17 +2586,23 @@ COLDWAR_CZE_1970_refuse_successor_treaty = {
 			}
 		}
 		clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_pending
-		CZE = {
-			clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
-		}
+		CZE = { country_event = { id = COLDWAR_CZE_1970_offers.218 } } # IMPERIA COLD WAR — the Czechoslovak part runs in its own reply event
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: Czechoslovak part of the answer, run by Czechoslovakia itself.
+COLDWAR_CZE_1970_close_successor_treaty = {
+	if = {
+		limit = { has_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open }
+		clr_country_flag = COLDWAR_CZE_1970_successor_treaty_offer_open
 	}
 }
 COLDWAR_CZE_1970_preview_offer_pol_rail_at_112 = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_rail_cze
 		1018 = {
 			add_extra_state_shared_building_slots = 1
@@ -2784,8 +2615,10 @@ COLDWAR_CZE_1970_preview_offer_pol_rail_at_112 = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
 	POL = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_rail_recipient
 		112 = {
 			add_extra_state_shared_building_slots = 1
@@ -2798,11 +2631,12 @@ COLDWAR_CZE_1970_preview_offer_pol_rail_at_112 = {
 	}
 }
 COLDWAR_CZE_1970_preview_offer_pol_rail_at_115 = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_cze_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_rail_cze
 		1018 = {
 			add_extra_state_shared_building_slots = 1
@@ -2815,8 +2649,10 @@ COLDWAR_CZE_1970_preview_offer_pol_rail_at_115 = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_POL
 	POL = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_pol_rail_ui_recipient_weekly_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.003 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00002 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_pol_rail_recipient
 		115 = {
 			add_extra_state_shared_building_slots = 1
@@ -2829,11 +2665,12 @@ COLDWAR_CZE_1970_preview_offer_pol_rail_at_115 = {
 	}
 }
 COLDWAR_CZE_1970_preview_offer_hun_dam_at_121 = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_construction_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_cze
 		119 = {
@@ -2845,7 +2682,8 @@ COLDWAR_CZE_1970_preview_offer_hun_dam_at_121 = {
 			}
 		}
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_operation_cost
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		swap_ideas = {
 			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
 			add_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
@@ -2853,8 +2691,10 @@ COLDWAR_CZE_1970_preview_offer_hun_dam_at_121 = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
 	HUN = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_construction_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_recipient
 		121 = {
@@ -2866,7 +2706,8 @@ COLDWAR_CZE_1970_preview_offer_hun_dam_at_121 = {
 			}
 		}
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_operation_cost
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		swap_ideas = {
 			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
 			add_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient
@@ -2874,11 +2715,12 @@ COLDWAR_CZE_1970_preview_offer_hun_dam_at_121 = {
 	}
 }
 COLDWAR_CZE_1970_preview_offer_hun_dam_at_123 = {
-	custom_effect_tooltip = COLDWAR_CZE_1970_if_they_accept_tt
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_CZE
 	CZE = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_construction_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_cze
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_cze
 		119 = {
@@ -2890,7 +2732,8 @@ COLDWAR_CZE_1970_preview_offer_hun_dam_at_123 = {
 			}
 		}
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_cze_operation_cost
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		swap_ideas = {
 			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_cze
 			add_idea = COLDWAR_CZE_1970_hun_dam_operating_cze
@@ -2898,8 +2741,10 @@ COLDWAR_CZE_1970_preview_offer_hun_dam_at_123 = {
 	}
 	custom_effect_tooltip = COLDWAR_CZE_1970_ui_package_HUN
 	HUN = {
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_setup_cost
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_construction_cost
+		set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+		modify_treasury_effect = yes
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00012 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		add_ideas = COLDWAR_CZE_1970_hun_dam_construction_recipient
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_future_recipient
 		123 = {
@@ -2911,7 +2756,8 @@ COLDWAR_CZE_1970_preview_offer_hun_dam_at_123 = {
 			}
 		}
 		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_operating_heading
-		custom_effect_tooltip = COLDWAR_CZE_1970_hun_dam_ui_recipient_operation_cost
+		set_temp_variable = { COLDWAR_CZE_1970_weekly_quote = { value = gdp_total multiply = 0.00006 } } # IMPERIA COLD WAR — MD weekly line (24.11.2026)
+		add_to_variable = { COLDWAR_CZE_1970_bilateral_weekly_expense = COLDWAR_CZE_1970_weekly_quote tooltip = COLDWAR_CZE_1970_weekly_expense_tt }
 		swap_ideas = {
 			remove_idea = COLDWAR_CZE_1970_hun_dam_construction_recipient
 			add_idea = COLDWAR_CZE_1970_hun_dam_operating_recipient

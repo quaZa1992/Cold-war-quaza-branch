@@ -1,0 +1,293 @@
+# IMPERIA COLD WAR — Strategic Command: peacetime war scares between player nuclear powers (25.11.2026).
+# A report of foreign strategic activity (genuine exercise, genuine alert or routine activity misread by our services) can start a spiral:
+# each visible response (readiness raised, counter-exercise) is reported to the other side, which may respond in turn.
+# From 3 and 6 escalation steps both governments may issue a formal nuclear warning, offer a clarification or wait. A formal crisis is never started automatically.
+# Historical basis: the 1983 war scare around Able Archer 83, when Soviet services read a NATO command-post exercise as possible preparation for attack.
+# Reports: weekly chance 0.4% + 0.02% per point of threat perception + 0.012% per point of Cold War tension; at most one per government every 180 days.
+# Variables on both partners: COLDWAR_ws_partner, COLDWAR_ws_serial, COLDWAR_ws_steps, COLDWAR_ws_my_steps, COLDWAR_ws_their_steps, COLDWAR_ws_last_day, COLDWAR_ws_peak, COLDWAR_ws_origin.
+
+# Scope: player government (weekly).
+COLDWAR_ws_roll_report = {
+	if = {
+		limit = {
+			is_ai = no
+			has_capitulated = no
+			COLDWAR_nr_nuclear_power = yes
+			NOT = { COLDWAR_nr_pair_valid = yes }
+			NOT = { COLDWAR_ws_valid = yes }
+			NOT = { has_country_flag = COLDWAR_ws_report_cd }
+		}
+		set_temp_variable = { COLDWAR_ws_chance = COLDWAR_nr_paranoia }
+		multiply_temp_variable = { COLDWAR_ws_chance = 0.02 }
+		add_to_temp_variable = { COLDWAR_ws_chance = 0.4 }
+		if = {
+			limit = { has_global_flag = mdcw_cw_initialized }
+			set_temp_variable = { COLDWAR_ws_tension_part = global.mdcw_cw_tension }
+			multiply_temp_variable = { COLDWAR_ws_tension_part = 0.012 }
+			add_to_temp_variable = { COLDWAR_ws_chance = COLDWAR_ws_tension_part }
+		}
+		set_temp_variable_to_random = { var = COLDWAR_ws_roll min = 0 max = 100 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_ws_roll < COLDWAR_ws_chance }
+			}
+			save_event_target_as = COLDWAR_ws_recipient
+			random_country = {
+				limit = {
+					exists = yes
+					is_ai = no
+					has_capitulated = no
+					NOT = { tag = event_target:COLDWAR_ws_recipient }
+					NOT = { is_in_faction_with = event_target:COLDWAR_ws_recipient }
+					COLDWAR_nr_nuclear_power = yes
+					NOT = { COLDWAR_nr_pair_valid = yes }
+					NOT = { COLDWAR_ws_valid = yes }
+				}
+				save_event_target_as = COLDWAR_ws_source
+			}
+			if = {
+				limit = { has_event_target = COLDWAR_ws_source }
+				set_country_flag = { flag = COLDWAR_ws_report_cd days = 180 value = 1 }
+				set_variable = { COLDWAR_ws_source_id = event_target:COLDWAR_ws_source.id }
+				# 1 routine activity misread, 2 genuine exercise, 3 genuine alert (Reinforced Readiness or higher)
+				set_variable = { COLDWAR_ws_report_kind = 1 }
+				event_target:COLDWAR_ws_source = {
+					if = {
+						limit = { has_country_flag = COLDWAR_nr_exercise }
+						PREV = { set_variable = { COLDWAR_ws_report_kind = 2 } }
+					}
+					else_if = {
+						limit = {
+							check_variable = { COLDWAR_nr_level > 0 }
+							check_variable = { COLDWAR_nr_level < 4 }
+						}
+						PREV = { set_variable = { COLDWAR_ws_report_kind = 3 } }
+					}
+				}
+				COLDWAR_ws_set_pending = yes
+				set_variable = { COLDWAR_nr_last_signal_bump = 4 }
+				set_temp_variable = { COLDWAR_nr_paranoia_delta = 4 }
+				COLDWAR_nr_add_paranoia = yes
+				country_event = { id = cw_nuclear.35 }
+			}
+		}
+	}
+}
+# Scope: government that received a report; input variable COLDWAR_ws_source_id. A response within 30 days counts towards a war scare.
+COLDWAR_ws_set_pending = {
+	set_variable = { COLDWAR_ws_pending_source = COLDWAR_ws_source_id }
+	set_variable = { COLDWAR_ws_pending_until = { value = global.num_days add = 30 } }
+}
+
+# Scope: government that raises readiness or starts an exercise. Input: temp COLDWAR_ws_resp_kind (1 readiness raised, 2 exercise).
+COLDWAR_ws_response = {
+	if = {
+		limit = {
+			is_ai = no
+			COLDWAR_nr_enabled = yes
+			NOT = { COLDWAR_nr_pair_valid = yes }
+		}
+		set_temp_variable = { COLDWAR_ws_target = 0 }
+		if = {
+			limit = { COLDWAR_ws_valid = yes }
+			set_temp_variable = { COLDWAR_ws_target = COLDWAR_ws_partner }
+		}
+		else_if = {
+			limit = {
+				has_variable = COLDWAR_ws_pending_source
+				check_variable = { COLDWAR_ws_pending_until > global.num_days }
+				var:COLDWAR_ws_pending_source = {
+					exists = yes
+					is_ai = no
+					has_capitulated = no
+					NOT = { COLDWAR_nr_pair_valid = yes }
+					NOT = { COLDWAR_ws_valid = yes }
+				}
+			}
+			COLDWAR_ws_begin = yes
+			set_temp_variable = { COLDWAR_ws_target = COLDWAR_ws_partner }
+		}
+		if = {
+			limit = {
+				check_variable = { COLDWAR_ws_target > 0 }
+				COLDWAR_ws_valid = yes
+			}
+			clear_variable = COLDWAR_ws_pending_source
+			add_to_variable = { COLDWAR_ws_steps = 1 }
+			add_to_variable = { COLDWAR_ws_my_steps = 1 }
+			set_variable = { COLDWAR_ws_last_day = global.num_days }
+			save_event_target_as = COLDWAR_ws_actor
+			var:COLDWAR_ws_partner = {
+				add_to_variable = { COLDWAR_ws_steps = 1 }
+				add_to_variable = { COLDWAR_ws_their_steps = 1 }
+				set_variable = { COLDWAR_ws_last_day = global.num_days }
+				set_variable = { COLDWAR_ws_source_id = event_target:COLDWAR_ws_actor.id }
+				COLDWAR_ws_set_pending = yes
+				set_temp_variable = { COLDWAR_nr_paranoia_delta = 5 }
+				COLDWAR_nr_add_paranoia = yes
+				# An exercise reaches the partner through the exercise notice; a readiness increase through its own report.
+				if = {
+					limit = {
+						check_variable = { COLDWAR_ws_resp_kind = 1 }
+					}
+					country_event = { id = cw_nuclear.38 }
+				}
+			}
+			COLDWAR_ws_check_peak = yes
+			COLDWAR_nr_touch = yes
+		}
+	}
+}
+# Scope: the responding government. Opens a war scare with the source of its pending report.
+COLDWAR_ws_begin = {
+	add_to_variable = { global.COLDWAR_ws_serial_counter = 1 }
+	set_variable = { COLDWAR_ws_partner = COLDWAR_ws_pending_source }
+	set_variable = { COLDWAR_ws_serial = global.COLDWAR_ws_serial_counter }
+	set_variable = { COLDWAR_ws_steps = 0 }
+	set_variable = { COLDWAR_ws_my_steps = 0 }
+	set_variable = { COLDWAR_ws_their_steps = 0 }
+	set_variable = { COLDWAR_ws_peak = 0 }
+	set_variable = { COLDWAR_ws_origin = COLDWAR_ws_report_kind }
+	set_variable = { COLDWAR_ws_origin_country = COLDWAR_ws_pending_source }
+	set_variable = { COLDWAR_ws_last_day = global.num_days }
+	set_country_flag = COLDWAR_ws_active
+	save_event_target_as = COLDWAR_ws_opener
+	var:COLDWAR_ws_partner = {
+		set_variable = { COLDWAR_ws_partner = event_target:COLDWAR_ws_opener.id }
+		set_variable = { COLDWAR_ws_serial = global.COLDWAR_ws_serial_counter }
+		set_variable = { COLDWAR_ws_steps = 0 }
+		set_variable = { COLDWAR_ws_my_steps = 0 }
+		set_variable = { COLDWAR_ws_their_steps = 0 }
+		set_variable = { COLDWAR_ws_peak = 0 }
+		set_variable = { COLDWAR_ws_origin = event_target:COLDWAR_ws_opener.COLDWAR_ws_report_kind }
+		set_variable = { COLDWAR_ws_origin_country = THIS.id }
+		set_variable = { COLDWAR_ws_last_day = global.num_days }
+		set_country_flag = COLDWAR_ws_active
+	}
+}
+# Scope: either partner. At 3 and 6 escalation steps both governments decide how to proceed.
+COLDWAR_ws_check_peak = {
+	if = {
+		limit = {
+			check_variable = { COLDWAR_ws_steps > 5 }
+			check_variable = { COLDWAR_ws_peak < 2 }
+		}
+		set_variable = { COLDWAR_ws_peak = 2 }
+		country_event = { id = cw_nuclear.39 }
+		var:COLDWAR_ws_partner = {
+			set_variable = { COLDWAR_ws_peak = 2 }
+			country_event = { id = cw_nuclear.39 }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { COLDWAR_ws_steps > 2 }
+			check_variable = { COLDWAR_ws_peak < 1 }
+		}
+		set_variable = { COLDWAR_ws_peak = 1 }
+		country_event = { id = cw_nuclear.39 }
+		var:COLDWAR_ws_partner = {
+			set_variable = { COLDWAR_ws_peak = 1 }
+			country_event = { id = cw_nuclear.39 }
+		}
+	}
+}
+# Scope: partner in a war scare (weekly). After 14 quiet days the step count falls by 1 per week; at 0 steps and 30 quiet days the scare ends.
+COLDWAR_ws_weekly = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_ws_active
+			NOT = { COLDWAR_ws_valid = yes }
+		}
+		COLDWAR_ws_clear_self = yes
+	}
+	else_if = {
+		limit = { COLDWAR_ws_valid = yes }
+		set_temp_variable = { COLDWAR_ws_quiet = global.num_days }
+		subtract_from_temp_variable = { COLDWAR_ws_quiet = COLDWAR_ws_last_day }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_ws_quiet > 14 }
+				check_variable = { COLDWAR_ws_steps > 0 }
+			}
+			# Each partner decays its own copy in its own weekly pass.
+			subtract_from_variable = { COLDWAR_ws_steps = 1 }
+			clamp_variable = { var = COLDWAR_ws_steps min = 0 max = 100 }
+		}
+		if = {
+			limit = {
+				check_variable = { COLDWAR_ws_quiet > 29 }
+				check_variable = { COLDWAR_ws_steps < 1 }
+			}
+			COLDWAR_ws_end = yes
+		}
+	}
+}
+# Scope: either partner. Ends the scare with a review for both governments.
+COLDWAR_ws_end = {
+	if = {
+		limit = { COLDWAR_ws_valid = yes }
+		var:COLDWAR_ws_partner = {
+			COLDWAR_ws_store_review = yes
+			country_event = { id = cw_nuclear.41 days = 3 }
+			COLDWAR_ws_clear_self = yes
+		}
+		COLDWAR_ws_store_review = yes
+		country_event = { id = cw_nuclear.41 days = 3 }
+	}
+	COLDWAR_ws_clear_self = yes
+}
+COLDWAR_ws_store_review = {
+	set_variable = { COLDWAR_ws_rv_partner = COLDWAR_ws_partner }
+	set_variable = { COLDWAR_ws_rv_origin = COLDWAR_ws_origin }
+	set_variable = { COLDWAR_ws_rv_origin_country = COLDWAR_ws_origin_country }
+	set_variable = { COLDWAR_ws_rv_mine = COLDWAR_ws_my_steps }
+	set_variable = { COLDWAR_ws_rv_theirs = COLDWAR_ws_their_steps }
+}
+# Scope: any country. Silent end, used when a formal confrontation begins and by the Game Controller reset.
+COLDWAR_ws_clear = {
+	if = {
+		limit = { COLDWAR_ws_valid = yes }
+		var:COLDWAR_ws_partner = { COLDWAR_ws_clear_self = yes }
+	}
+	COLDWAR_ws_clear_self = yes
+}
+COLDWAR_ws_clear_self = {
+	clr_country_flag = COLDWAR_ws_active
+	clr_country_flag = COLDWAR_ws_clarify_sent
+	clear_variable = COLDWAR_ws_partner
+	clear_variable = COLDWAR_ws_serial
+	clear_variable = COLDWAR_ws_pending_source
+	set_variable = { COLDWAR_ws_steps = 0 }
+	set_variable = { COLDWAR_ws_peak = 0 }
+	COLDWAR_nr_touch = yes
+}
+# Scope: government accepting a clarification from its partner. Both: -3 escalation steps, threat perception -15.
+COLDWAR_ws_accept_clarification = {
+	if = {
+		limit = { COLDWAR_ws_valid = yes }
+		subtract_from_variable = { COLDWAR_ws_steps = 3 }
+		clamp_variable = { var = COLDWAR_ws_steps min = 0 max = 100 }
+		set_temp_variable = { COLDWAR_nr_paranoia_delta = -15 }
+		COLDWAR_nr_add_paranoia = yes
+		var:COLDWAR_ws_partner = {
+			subtract_from_variable = { COLDWAR_ws_steps = 3 }
+			clamp_variable = { var = COLDWAR_ws_steps min = 0 max = 100 }
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = -15 }
+			COLDWAR_nr_add_paranoia = yes
+			set_variable = { COLDWAR_ws_clarify_result = 1 }
+			country_event = { id = cw_nuclear.42 }
+		}
+	}
+}
+COLDWAR_ws_reject_clarification = {
+	if = {
+		limit = { COLDWAR_ws_valid = yes }
+		set_temp_variable = { COLDWAR_nr_paranoia_delta = 5 }
+		COLDWAR_nr_add_paranoia = yes
+		var:COLDWAR_ws_partner = {
+			set_variable = { COLDWAR_ws_clarify_result = 2 }
+			country_event = { id = cw_nuclear.42 }
+		}
+	}
+}

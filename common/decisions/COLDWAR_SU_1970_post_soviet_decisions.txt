@@ -1,0 +1,59 @@
+# IMPERIA COLD WAR — Post-communist party identity and political eligibility.
+# IMPERIA COLD WAR — Reversible Soviet and post-Soviet party registers.
+COLDWAR_SU_party_landscape = {
+	COLDWAR_SU_register_new_parties = {
+		allowed = { original_tag = SOV }
+		icon = GFX_decision_generic_political_discourse
+		cost = 50
+		fire_only_once = no
+		visible = { NOT = { has_country_flag = COLDWAR_SU_ps_names } }
+		available = { COLDWAR_PC_soviet_register_available = yes OR = { is_ai = no AND = {
+				is_ai = yes
+				date > 1991.12.23
+				date < 2001.1.1
+				has_civil_war = no
+				OR = { has_global_flag = COLDWAR_SU_end_commonwealth has_global_flag = COLDWAR_SU_end_collapse }
+				COLDWAR_PC_western_elected_government = yes
+			} } }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SU_register_new_parties"
+			custom_effect_tooltip = COLDWAR_SU_register_new_parties_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = SOV original_tag = SOV IMP_is_1970_scenario = yes is_dynamic_country = no NOT = { has_country_flag = COLDWAR_SU_ps_names } COLDWAR_PC_soviet_register_available = yes OR = { is_ai = no AND = {
+				is_ai = yes
+				date > 1991.12.23
+				date < 2001.1.1
+				has_civil_war = no
+				OR = { has_global_flag = COLDWAR_SU_end_commonwealth has_global_flag = COLDWAR_SU_end_collapse }
+				COLDWAR_PC_western_elected_government = yes
+			} } }
+					clr_country_flag = COLDWAR_SU_ps_names_cd
+					set_country_flag = COLDWAR_SU_ps_names
+				}
+			}
+		}
+		ai_will_do = { base = 100 }
+	}
+
+	COLDWAR_SU_keep_soviet_labels = {
+		allowed = { original_tag = SOV }
+		icon = GFX_decision_generic_political_discourse
+		cost = 0
+		fire_only_once = no
+		visible = { has_country_flag = COLDWAR_SU_ps_names }
+		available = { is_ai = no }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SU_keep_soviet_labels"
+			custom_effect_tooltip = COLDWAR_SU_keep_soviet_labels_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = SOV original_tag = SOV IMP_is_1970_scenario = yes is_dynamic_country = no is_ai = no has_country_flag = COLDWAR_SU_ps_names }
+					clr_country_flag = COLDWAR_SU_ps_names_cd
+					clr_country_flag = COLDWAR_SU_ps_names
+				}
+			}
+		}
+		ai_will_do = { base = 0 }
+	}
+}

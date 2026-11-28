@@ -97,7 +97,7 @@ COLDWAR_SOV_plenum_category = {
 				NOT = { has_country_flag = COLDWAR_SOV_plenum_failed_kos }
 			}
 			custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_not_gensec_kos NOT = { has_country_flag = COLDWAR_SOV_gensec_kos } }
-			OR = { custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_bop_le_m0p15 check_variable = { COLDWAR_SOV_bop < -0.149 } } OR = { has_completed_focus = COLDWAR_SOV_deepen_the_kosygin_reform has_completed_focus = COLDWAR_SOV_cybernetic_planning } }
+			OR = { custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_bop_le_m0p15 check_variable = { COLDWAR_SOV_bop < -0.149 } } OR = { has_completed_focus = COLDWAR_SOV_kos_retained_profit has_completed_focus = COLDWAR_SOV_kos_glushkovs_network } }
 			custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_fac_industrial_conglomerates_ge_40 check_variable = { industrial_conglomerates_opinion > 39 } }
 			has_stability > 0.399
 		}
@@ -136,7 +136,7 @@ COLDWAR_SOV_plenum_category = {
 				NOT = { has_country_flag = COLDWAR_SOV_plenum_failed_kos }
 			}
 			custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_not_gensec_kos NOT = { has_country_flag = COLDWAR_SOV_gensec_kos } }
-			OR = { custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_bop_le_m0p15 check_variable = { COLDWAR_SOV_bop < -0.149 } } OR = { has_completed_focus = COLDWAR_SOV_deepen_the_kosygin_reform has_completed_focus = COLDWAR_SOV_cybernetic_planning } }
+			OR = { custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_bop_le_m0p15 check_variable = { COLDWAR_SOV_bop < -0.149 } } OR = { has_completed_focus = COLDWAR_SOV_kos_retained_profit has_completed_focus = COLDWAR_SOV_kos_glushkovs_network } }
 			custom_trigger_tooltip = { tooltip = COLDWAR_SOV_tt_fac_industrial_conglomerates_ge_40 check_variable = { industrial_conglomerates_opinion > 39 } }
 			has_stability > 0.399
 		}
@@ -979,7 +979,7 @@ COLDWAR_SOV_is_union_republic = yes
 	}
 
 	COLDWAR_SOV_ballot_no = {
-		icon = GFX_decision_weapon_on_tabel_dont_use_as_goal_icon
+		icon = GFX_COLDWAR_decision_weapon_on_tabel_dont_use_as_goal_icon
 		allowed = { always = yes }
 		fire_only_once = no
 		visible = {
@@ -1760,6 +1760,7 @@ COLDWAR_SOV_is_union_republic = yes
 		allowed = { always = yes }
 		fire_only_once = no
 		visible = {
+			NOT = { has_global_flag = COLDWAR_GOS_enabled } # COLDWAR SOV v4: the annual report of Gosplan Orders v3 replaces it
 COLDWAR_SOV_is_union_republic = yes
 
 			has_global_flag = COLDWAR_SOV_politburo_system
@@ -1806,9 +1807,22 @@ COLDWAR_SOV_is_union_republic = yes
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_SOV_petition_moscow"
 			SOV = { country_event = { id = COLDWAR_SOV.29 days = 1 } }
+			# IMPERIA COLD WAR — B9: a petition by an AI republic starts a shared one-year AI cooldown and a two-year rest for that republic (players are never blocked)
+			hidden_effect = {
+				if = {
+					limit = { is_ai = yes }
+					set_global_flag = { flag = COLDWAR_SOV_ai_petition_cd days = 365 }
+					set_country_flag = { flag = COLDWAR_SOV_ai_petition_rest days = 730 }
+				}
+			}
 		}
+		# IMPERIA COLD WAR — B9: AI republics petition only when they need it (unstable or hardly industrialised), at most one AI petition a year
 		ai_will_do = {
-			base = 1
+			base = 0
+			modifier = { add = 1 has_stability < 0.45 }
+			modifier = { add = 1 num_of_civilian_factories < 4 }
+			modifier = { factor = 0 has_global_flag = COLDWAR_SOV_ai_petition_cd }
+			modifier = { factor = 0 has_country_flag = COLDWAR_SOV_ai_petition_rest }
 		}
 	}
 

@@ -1,0 +1,411 @@
+# IMPERIA COLD WAR — United Kingdom 1970 MOUNTBATTEN politics effects.
+# Pure provider tools/uk_mountbatten/politics.py.
+COLDWAR_ENG_MOUNTBATTEN_refresh_office = {
+ hidden_effect = {
+  if = {
+   limit = { has_government = nationalist nationalist_monarchists_are_in_power = yes }
+   update_party_name = yes
+  }
+  if = {
+   limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_keep_ministries }
+   COLDWAR_ENG_MOUNTBATTEN_reconstitute_internal_factions = yes
+  }
+ }
+hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_programmes = yes }
+hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_foreign = yes }
+mark_focus_tree_layout_dirty = yes
+}
+
+COLDWAR_ENG_MOUNTBATTEN_establish_countercoup_crown = {
+if = { limit = { hidden_trigger = {  original_tag = ENG IMP_is_1970_scenario = yes date < 2000.1.1 has_country_flag = COLDWAR_ENG_CRISIS_countercoup_success NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_casualty_recorded }  } }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_casualty_recorded }
+ hidden_effect = { set_country_flag = ENG_elizabeth_dead_dead }
+ hidden_effect = { set_country_flag = ENG_royal_elizabeth_dead }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_flag = ENG_royal_family_mechanic_active }  } } ENG_setup_royal_family_mechanic = yes }
+ remove_ideas = ENG_queen_elizabeth_2
+ ENG_royal_family_register_deaths = yes
+ ENG_update_royal_family_modifier = yes
+ country_event = { id = COLDWAR_ENG_MOUNTBATTEN.1 }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_proclaim_crown = {
+if = { limit = { hidden_trigger = {  NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_crown_proclaimed }  } }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_crown_proclaimed }
+ hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_crown = yes }
+ country_event = { id = COLDWAR_ENG_CRISIS.4 days = 1 }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_countercoup_news_sent }  } }
+  hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_countercoup_news_sent } news_event = { id = COLDWAR_ENG_MOUNTBATTEN_NEWS.1 hours = 6 }
+ }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_refresh_crown = {
+if = { limit = { hidden_trigger = {  NOT = { has_country_flag = ENG_monarchy_abolished }  } }
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 1 } COLDWAR_ENG_MOUNTBATTEN_charles_alive = yes  } }
+ if = { limit = { hidden_trigger = {  NOT = { has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_charles }  } } add_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_charles }
+}
+else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_charles  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_charles } }
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 2 } COLDWAR_ENG_MOUNTBATTEN_andrew_alive = yes  } }
+ if = { limit = { hidden_trigger = {  NOT = { has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_andrew }  } } add_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_andrew }
+}
+else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_andrew  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_andrew } }
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 3 } COLDWAR_ENG_MOUNTBATTEN_edward_alive = yes  } }
+ if = { limit = { hidden_trigger = {  NOT = { has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_edward }  } } add_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_edward }
+}
+else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_edward  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_edward } }
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 4 } COLDWAR_ENG_MOUNTBATTEN_anne_alive = yes  } }
+ if = { limit = { hidden_trigger = {  NOT = { has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_anne }  } } add_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_anne }
+}
+else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_anne  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_anne } }
+if = { limit = { hidden_trigger = {  OR = { AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 1 } COLDWAR_ENG_MOUNTBATTEN_charles_alive = yes NOT = { date > 1966.11.13 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 2 } COLDWAR_ENG_MOUNTBATTEN_andrew_alive = yes NOT = { date > 1978.2.18 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 3 } COLDWAR_ENG_MOUNTBATTEN_edward_alive = yes NOT = { date > 1982.3.9 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 4 } COLDWAR_ENG_MOUNTBATTEN_anne_alive = yes NOT = { date > 1968.8.14 } } } NOT = { has_country_flag = ENG_royal_philip_dead }  } }
+ if = { limit = { hidden_trigger = {  NOT = { has_idea = COLDWAR_ENG_MOUNTBATTEN_philip_regency }  } } add_ideas = COLDWAR_ENG_MOUNTBATTEN_philip_regency }
+}
+else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_philip_regency  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_philip_regency } }
+if = { limit = { hidden_trigger = {  OR = { AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 1 } COLDWAR_ENG_MOUNTBATTEN_charles_alive = yes NOT = { date > 1966.11.13 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 2 } COLDWAR_ENG_MOUNTBATTEN_andrew_alive = yes NOT = { date > 1978.2.18 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 3 } COLDWAR_ENG_MOUNTBATTEN_edward_alive = yes NOT = { date > 1982.3.9 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 4 } COLDWAR_ENG_MOUNTBATTEN_anne_alive = yes NOT = { date > 1968.8.14 } } } NOT = { has_country_flag = ENG_royal_philip_dead }  } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_philip_regent } }
+else = { hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_philip_regent } }
+if = { limit = { hidden_trigger = {  OR = { AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 1 } COLDWAR_ENG_MOUNTBATTEN_charles_alive = yes NOT = { date > 1966.11.13 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 2 } COLDWAR_ENG_MOUNTBATTEN_andrew_alive = yes NOT = { date > 1978.2.18 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 3 } COLDWAR_ENG_MOUNTBATTEN_edward_alive = yes NOT = { date > 1982.3.9 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 4 } COLDWAR_ENG_MOUNTBATTEN_anne_alive = yes NOT = { date > 1968.8.14 } } } has_country_flag = ENG_royal_philip_dead  } }
+ if = { limit = { hidden_trigger = {  NOT = { has_idea = COLDWAR_ENG_MOUNTBATTEN_council_regency }  } } add_ideas = COLDWAR_ENG_MOUNTBATTEN_council_regency }
+}
+else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_council_regency  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_council_regency } }
+if = { limit = { hidden_trigger = {  OR = { AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 1 } COLDWAR_ENG_MOUNTBATTEN_charles_alive = yes NOT = { date > 1966.11.13 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 2 } COLDWAR_ENG_MOUNTBATTEN_andrew_alive = yes NOT = { date > 1978.2.18 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 3 } COLDWAR_ENG_MOUNTBATTEN_edward_alive = yes NOT = { date > 1982.3.9 } } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 4 } COLDWAR_ENG_MOUNTBATTEN_anne_alive = yes NOT = { date > 1968.8.14 } } } has_country_flag = ENG_royal_philip_dead  } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_council_regent } }
+else = { hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_council_regent } }
+if = { limit = { hidden_trigger = {  NOT = { OR = { AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 1 } COLDWAR_ENG_MOUNTBATTEN_charles_alive = yes } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 2 } COLDWAR_ENG_MOUNTBATTEN_andrew_alive = yes } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 3 } COLDWAR_ENG_MOUNTBATTEN_edward_alive = yes } AND = { check_variable = { COLDWAR_ENG_MOUNTBATTEN_selected_heir = 4 } COLDWAR_ENG_MOUNTBATTEN_anne_alive = yes } } }  } }
+ if = { limit = { hidden_trigger = {  NOT = { has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_in_abeyance }  } } add_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_in_abeyance }
+}
+else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_in_abeyance  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_in_abeyance } }
+
+ENG_royal_family_register_deaths = yes
+ENG_update_royal_family_modifier = yes
+} else = { if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_charles  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_charles } if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_andrew  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_andrew } if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_edward  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_edward } if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_anne  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_anne } if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_philip_regency  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_philip_regency } if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_council_regency  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_council_regency } if = { limit = { hidden_trigger = {  has_idea = COLDWAR_ENG_MOUNTBATTEN_crown_in_abeyance  } } remove_ideas = COLDWAR_ENG_MOUNTBATTEN_crown_in_abeyance } hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_philip_regent } hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_council_regent } }
+}
+
+COLDWAR_ENG_MOUNTBATTEN_request_commission = {
+if = { limit = { hidden_trigger = {  COLDWAR_ENG_CRISIS_mountbatten_in_office = yes has_country_flag = COLDWAR_ENG_MOUNTBATTEN_crown_proclaimed NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_requested } NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_accepted }  } }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_requested } COLDWAR_ENG_MOUNTBATTEN_accept_commission = yes # IMPERIA COLD WAR — P5 power paths 24.11.2026: the handoff focus accepts the commission, event MOUNTBATTEN.2 removed
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_accept_commission = {
+if = { limit = { hidden_trigger = {  COLDWAR_ENG_CRISIS_mountbatten_in_office = yes has_country_flag = COLDWAR_ENG_MOUNTBATTEN_crown_proclaimed NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_accepted }  } }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_accepted }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_CRISIS_mountbatten_handoff_requested }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_CRISIS_mountbatten_handed_off }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_CRISIS_emergency_interim }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 1 } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 0 } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 0 } }
+ load_focus_tree = { tree = COLDWAR_ENG_MOUNTBATTEN_focus keep_completed = yes }
+ hidden_effect = { set_politics = { ruling_party = THIS elections_allowed = no } }
+ COLDWAR_ENG_MOUNTBATTEN_migrate_completed_holding_focus = yes
+ hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_office = yes }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_reconstitute_internal_factions = {
+ if = {
+  limit = {
+   hidden_trigger = {
+    original_tag = ENG
+    has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active
+    has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_accepted
+    NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_internal_factions_reconstituted }
+   }
+  }
+  if = {
+   limit = { has_idea = fossil_fuel_industry NOT = { has_idea = intelligence_community } }
+   swap_ideas = { remove_idea = fossil_fuel_industry add_idea = intelligence_community }
+  }
+  if = {
+   limit = { has_idea = labour_unions NOT = { has_idea = the_military } }
+   swap_ideas = { remove_idea = labour_unions add_idea = the_military }
+  }
+  hidden_effect = {
+   set_country_flag = COLDWAR_ENG_MOUNTBATTEN_internal_factions_reconstituted
+   if_no_longer_has_faction_clear_previous = yes
+   setup_init_factions = yes
+   initialize_internal_faction_dynamic_modifiers = yes
+   IP_idea_configuration = yes
+  }
+ }
+}
+
+# IMPERIA COLD WAR — P5 power paths 24.11.2026: the nomination fork of the focus tree replaces the candidate events .3/.6/.10/.11/.12
+COLDWAR_ENG_MOUNTBATTEN_offer_successor_candidates = {
+if = { limit = { hidden_trigger = {  COLDWAR_ENG_MOUNTBATTEN_nomination_open = yes  } }
+ COLDWAR_ENG_MOUNTBATTEN_reopen_nomination = yes
+ if = { limit = { hidden_trigger = {  NOT = { COLDWAR_ENG_MOUNTBATTEN_main_in_office = yes }  } }
+  if = { limit = { NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_succession_papers } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_succession_papers }
+  if = { limit = { NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_last_review } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_last_review }
+  country_event = { id = COLDWAR_ENG_MOUNTBATTEN.6 }
+ }
+}
+}
+
+# IMPERIA COLD WAR — P5 power paths 24.11.2026: a nominee who died before taking office frees the nomination fork again
+COLDWAR_ENG_MOUNTBATTEN_reopen_nomination = {
+ if = { limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_nominate_carver } uncomplete_national_focus = { focus = COLDWAR_ENG_MOUNTBATTEN_nominate_carver uncomplete_children = no refund_political_power = no } }
+ if = { limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_nominate_pym } uncomplete_national_focus = { focus = COLDWAR_ENG_MOUNTBATTEN_nominate_pym uncomplete_children = no refund_political_power = no } }
+ if = { limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_nominate_lewin } uncomplete_national_focus = { focus = COLDWAR_ENG_MOUNTBATTEN_nominate_lewin uncomplete_children = no refund_political_power = no } }
+ if = { limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_nominate_carrington } uncomplete_national_focus = { focus = COLDWAR_ENG_MOUNTBATTEN_nominate_carrington uncomplete_children = no refund_political_power = no } }
+ if = { limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_nominate_walker } uncomplete_national_focus = { focus = COLDWAR_ENG_MOUNTBATTEN_nominate_walker uncomplete_children = no refund_political_power = no } }
+ if = { limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_nominate_tyndall } uncomplete_national_focus = { focus = COLDWAR_ENG_MOUNTBATTEN_nominate_tyndall uncomplete_children = no refund_political_power = no } }
+ if = { limit = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_nominate_heir } uncomplete_national_focus = { focus = COLDWAR_ENG_MOUNTBATTEN_nominate_heir uncomplete_children = no refund_political_power = no } }
+}
+
+COLDWAR_ENG_MOUNTBATTEN_begin_succession = {
+if = { limit = { hidden_trigger = {  COLDWAR_ENG_MOUNTBATTEN_main_in_office = yes NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending } NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_sealed } NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }  } }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_offer_successor_candidates = yes
+}
+}
+
+# IMPERIA COLD WAR — P5 power paths 24.11.2026: COLDWAR_ENG_MOUNTBATTEN_request_confirmation removed with the confirmation event .7 (nomination foci seal directly)
+
+COLDWAR_ENG_MOUNTBATTEN_appoint_interim_council = {
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen } check_variable = { ruling_party = 22 }  } }
+ add_country_leader_role = { character = COLDWAR_ENG_char_national_emergency_council country_leader = { ideology = Nat_Autocracy traits = { nationalist_Nat_Autocracy COLDWAR_ENG_PEOPLE_caretaker_mandate } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_install_nominated_successor = {
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }  } }
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 2 } COLDWAR_ENG_MOUNTBATTEN_carver_alive = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 2 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 1 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 1 } }
+ hidden_effect = { set_variable = { ruling_party = 22 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 3 } COLDWAR_ENG_MOUNTBATTEN_pym_alive = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 3 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 1 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 1 } }
+ hidden_effect = { set_variable = { ruling_party = 22 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 4 } COLDWAR_ENG_MOUNTBATTEN_lewin_alive = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 4 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 2 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 2 } }
+ hidden_effect = { set_variable = { ruling_party = 22 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 5 } COLDWAR_ENG_MOUNTBATTEN_carrington_alive = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 5 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 2 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 2 } }
+ hidden_effect = { set_variable = { ruling_party = 22 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 6 } COLDWAR_ENG_MOUNTBATTEN_walker_alive = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 6 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 3 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 3 } }
+ hidden_effect = { set_variable = { ruling_party = 21 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 7 } COLDWAR_ENG_MOUNTBATTEN_tyndall_alive = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 7 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 3 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 3 } }
+ hidden_effect = { set_variable = { ruling_party = 21 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 11 } COLDWAR_ENG_MOUNTBATTEN_charles_eligible = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 11 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 4 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 4 } }
+ hidden_effect = { set_variable = { ruling_party = 23 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 12 } COLDWAR_ENG_MOUNTBATTEN_andrew_eligible = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 12 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 6 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 6 } }
+ hidden_effect = { set_variable = { ruling_party = 23 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 13 } COLDWAR_ENG_MOUNTBATTEN_edward_eligible = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 13 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 7 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 7 } }
+ hidden_effect = { set_variable = { ruling_party = 23 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  check_variable = { COLDWAR_ENG_MOUNTBATTEN_nominated_ruler = 14 } COLDWAR_ENG_MOUNTBATTEN_anne_eligible = yes  } }
+ hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 14 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_route = 5 } } hidden_effect = { set_variable = { COLDWAR_ENG_MOUNTBATTEN_ruler_family = 5 } }
+ hidden_effect = { set_variable = { ruling_party = 23 } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ COLDWAR_ENG_MOUNTBATTEN_install_current = yes
+ COLDWAR_ENG_MOUNTBATTEN_end_personal_aftermath = yes
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+}
+if = { limit = { hidden_trigger = {  NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_chosen }  } }
+ hidden_effect = { clear_variable = COLDWAR_ENG_MOUNTBATTEN_nominated_ruler }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_sealed }
+ COLDWAR_ENG_MOUNTBATTEN_appoint_interim_council = yes
+ COLDWAR_ENG_MOUNTBATTEN_offer_successor_candidates = yes # IMPERIA COLD WAR — P5 power paths 24.11.2026: reopen the nomination fork
+ }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_confirm_successor = {
+if = { limit = { hidden_trigger = {  COLDWAR_ENG_MOUNTBATTEN_nomination_open = yes  } }
+ if = { limit = { hidden_trigger = {  COLDWAR_ENG_MOUNTBATTEN_nominee_valid = yes  } }
+  if = { limit = { hidden_trigger = {  COLDWAR_ENG_MOUNTBATTEN_main_in_office = yes  } }
+   hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_sealed }
+   # IMPERIA COLD WAR — P5 power paths 24.11.2026: handover now by the focus COLDWAR_ENG_MOUNTBATTEN_empty_chair (event .13 removed)
+  }
+  else_if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled  } } COLDWAR_ENG_MOUNTBATTEN_install_nominated_successor = yes }
+ }
+ else = { hidden_effect = { clear_variable = COLDWAR_ENG_MOUNTBATTEN_nominated_ruler } COLDWAR_ENG_MOUNTBATTEN_offer_successor_candidates = yes }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_resume_commission = {
+if = { limit = { hidden_trigger = {  original_tag = ENG IMP_is_1970_scenario = yes date < 2000.1.1 has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_accepted has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_return_pending check_variable = { ruling_party = 22 } check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 1 }  } }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_return_pending }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_sealed  } } COLDWAR_ENG_MOUNTBATTEN_install_nominated_successor = yes }
+ else = { COLDWAR_ENG_MOUNTBATTEN_appoint_interim_council = yes COLDWAR_ENG_MOUNTBATTEN_offer_successor_candidates = yes }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_handle_external_death = {
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_accepted check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 1 } NOT = { COLDWAR_ENG_MOUNTBATTEN_mountbatten_alive = yes } NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled }  } }
+ if = { limit = { hidden_trigger = {  COLDWAR_ENG_MOUNTBATTEN_commission_holds_executive = yes  } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_in_office } }
+ else = { hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_in_office } }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_external_death }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_CRISIS_mountbatten_chairman }
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+ hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_office = yes }
+ if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_in_office  } }
+  if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_sealed  } } COLDWAR_ENG_MOUNTBATTEN_install_nominated_successor = yes }
+  else = { COLDWAR_ENG_MOUNTBATTEN_appoint_interim_council = yes COLDWAR_ENG_MOUNTBATTEN_offer_successor_candidates = yes }
+ }
+ else = { hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_return_pending } hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending } }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_finish_planned_reign = {
+if = { limit = { hidden_trigger = {  original_tag = ENG IMP_is_1970_scenario = yes date < 2000.1.1 has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active has_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_accepted check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 1 } COLDWAR_ENG_MOUNTBATTEN_mountbatten_alive = yes has_country_flag = COLDWAR_ENG_MOUNTBATTEN_planned_death_due has_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_sealed NOT = { has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled }  } }
+ if = { limit = { hidden_trigger = {  COLDWAR_ENG_MOUNTBATTEN_main_in_office = yes  } } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_in_office } }
+ else = { hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_in_office } }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_handled } hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_natural_death }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_CRISIS_mountbatten_dead }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_PEOPLE_mountbatten_dead }
+ hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+ hidden_effect = { clr_country_flag = COLDWAR_ENG_CRISIS_mountbatten_chairman }
+ if = { limit = { hidden_trigger = {  NOT = { has_completed_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }  } } complete_national_focus = COLDWAR_ENG_MOUNTBATTEN_empty_chair }
+ if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_death_in_office  } }
+  COLDWAR_ENG_MOUNTBATTEN_install_nominated_successor = yes
+  country_event = { id = COLDWAR_ENG_MOUNTBATTEN.5 }
+ }
+ else = {
+  hidden_effect = { set_country_flag = COLDWAR_ENG_MOUNTBATTEN_commission_return_pending }
+  hidden_effect = { clr_country_flag = COLDWAR_ENG_MOUNTBATTEN_succession_pending }
+  country_event = { id = COLDWAR_ENG_MOUNTBATTEN.14 }
+ }
+ hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_office = yes }
+}
+}
+
+COLDWAR_ENG_MOUNTBATTEN_finish_natural_reign = {
+COLDWAR_ENG_MOUNTBATTEN_finish_planned_reign = yes
+}
+
+COLDWAR_ENG_MOUNTBATTEN_install_current = {
+COLDWAR_ENG_MOUNTBATTEN_resume_commission = yes
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 1 } check_variable = { ruling_party = 22 } COLDWAR_ENG_MOUNTBATTEN_mountbatten_alive = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Louis Mountbatten" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_louis_mountbatten country_leader = { ideology = Nat_Autocracy traits = { nationalist_Nat_Autocracy COLDWAR_ENG_PEOPLE_service_and_crown } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 2 } check_variable = { ruling_party = 22 } COLDWAR_ENG_MOUNTBATTEN_carver_alive = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Michael Carver" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_michael_carver country_leader = { ideology = Nat_Autocracy traits = { nationalist_Nat_Autocracy COLDWAR_ENG_MOUNTBATTEN_restricted_reformer } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 3 } check_variable = { ruling_party = 22 } COLDWAR_ENG_MOUNTBATTEN_pym_alive = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Francis Pym" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_francis_pym country_leader = { ideology = Nat_Autocracy traits = { nationalist_Nat_Autocracy COLDWAR_ENG_MOUNTBATTEN_restricted_reformer } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 4 } check_variable = { ruling_party = 22 } COLDWAR_ENG_MOUNTBATTEN_lewin_alive = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Terence Lewin" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_terence_lewin country_leader = { ideology = Nat_Autocracy traits = { nationalist_Nat_Autocracy COLDWAR_ENG_MOUNTBATTEN_service_continuity } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 5 } check_variable = { ruling_party = 22 } COLDWAR_ENG_MOUNTBATTEN_carrington_alive = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Lord Carrington" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_lord_carrington country_leader = { ideology = Nat_Autocracy traits = { nationalist_Nat_Autocracy COLDWAR_ENG_MOUNTBATTEN_service_continuity } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 6 } check_variable = { ruling_party = 21 } COLDWAR_ENG_MOUNTBATTEN_walker_alive = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Walter Walker" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_walter_walker country_leader = { ideology = Nat_Fascism traits = { nationalist_Nat_Fascism COLDWAR_ENG_MOUNTBATTEN_national_state } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 7 } check_variable = { ruling_party = 21 } COLDWAR_ENG_MOUNTBATTEN_tyndall_alive = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "John Tyndall" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_john_tyndall country_leader = { ideology = Nat_Fascism traits = { nationalist_Nat_Fascism COLDWAR_ENG_MOUNTBATTEN_national_state } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 11 } check_variable = { ruling_party = 23 } COLDWAR_ENG_MOUNTBATTEN_charles_eligible = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Charles" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_charles country_leader = { ideology = Monarchist traits = { nationalist_Monarchist COLDWAR_ENG_MOUNTBATTEN_royal_executive } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 12 } check_variable = { ruling_party = 23 } COLDWAR_ENG_MOUNTBATTEN_andrew_eligible = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Andrew" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_andrew country_leader = { ideology = Monarchist traits = { nationalist_Monarchist COLDWAR_ENG_MOUNTBATTEN_royal_executive } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 13 } check_variable = { ruling_party = 23 } COLDWAR_ENG_MOUNTBATTEN_edward_eligible = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Edward" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_edward country_leader = { ideology = Monarchist traits = { nationalist_Monarchist COLDWAR_ENG_MOUNTBATTEN_royal_executive } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active check_variable = { COLDWAR_ENG_MOUNTBATTEN_current_ruler = 14 } check_variable = { ruling_party = 23 } COLDWAR_ENG_MOUNTBATTEN_anne_eligible = yes  } }
+ set_politics = { ruling_party = nationalist elections_allowed = no }
+ if = { limit = { hidden_trigger = {  NOT = { has_country_leader = { name = "Anne" ruling_only = yes } }  } }
+  add_country_leader_role = { character = COLDWAR_ENG_char_anne country_leader = { ideology = Monarchist traits = { nationalist_Monarchist COLDWAR_ENG_MOUNTBATTEN_royal_executive } } promote_leader = yes } # IMPERIA COLD WAR — P5b power paths 24.11.2026: leader as history-recruited character # IMPERIA COLD WAR — P5c ENG 24.11.2026: expire only for a real death in office
+ }
+}
+hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_office = yes }
+}
+
+# IMPERIA COLD WAR — P5 power paths 24.11.2026: weekly check (was on_daily_ENG)
+COLDWAR_ENG_MOUNTBATTEN_weekly = {
+if = { limit = { hidden_trigger = {  original_tag = ENG IMP_is_1970_scenario = yes date < 2000.1.1  } }
+ # IMPERIA COLD WAR — P5 power paths 24.11.2026: commission recovery removed, the handoff focus accepts the commission
+ if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_casualty_recorded has_country_flag = COLDWAR_ENG_MOUNTBATTEN_crown_proclaimed  } } hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_crown = yes } }
+ COLDWAR_ENG_MOUNTBATTEN_handle_external_death = yes
+ if = { limit = { hidden_trigger = {  OR = { has_country_leader = { name = "Louis Mountbatten" ruling_only = yes } has_country_leader = { name = "National Emergency Council" ruling_only = yes } }  } } COLDWAR_ENG_MOUNTBATTEN_resume_commission = yes }
+ COLDWAR_ENG_MOUNTBATTEN_finish_planned_reign = yes
+ # IMPERIA COLD WAR — P5 power paths 24.11.2026: legacy reopening removed, nomination runs through the focus tree
+ if = { limit = { hidden_trigger = {  has_country_flag = COLDWAR_ENG_MOUNTBATTEN_regime_active  } } hidden_effect = { COLDWAR_ENG_MOUNTBATTEN_refresh_office = yes } }
+}
+}

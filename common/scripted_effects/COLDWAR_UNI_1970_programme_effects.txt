@@ -1,0 +1,34 @@
+# IMPERIA COLD WAR — The Union Plan v3: the Union fund and the shared programme modifier.
+# temp COLDWAR_UNI_t_share: price as a share of our GDP. The fund pays first; what it cannot cover we pay ourselves.
+COLDWAR_UNI_pay_from_fund = {
+	set_temp_variable = { cw_price = gdp_total }
+	multiply_temp_variable = { cw_price = COLDWAR_UNI_t_share }
+	if = {
+		limit = { check_variable = { global.COLDWAR_UNI_fund > cw_price } }
+		custom_effect_tooltip = COLDWAR_UNI_fund_pays_tt
+		hidden_effect = { subtract_from_variable = { global.COLDWAR_UNI_fund = cw_price } }
+	}
+	else = {
+		custom_effect_tooltip = COLDWAR_UNI_fund_short_tt
+		set_temp_variable = { treasury_change = global.COLDWAR_UNI_fund }
+		subtract_from_temp_variable = { treasury_change = cw_price }
+		hidden_effect = { set_variable = { global.COLDWAR_UNI_fund = 0 } }
+		modify_treasury_effect = yes
+	}
+}
+
+# Moscow (SOV scope) moves temp COLDWAR_UNI_t_share of its GDP into the fund
+COLDWAR_UNI_fill_fund = {
+	set_temp_variable = { cw_amount = gdp_total }
+	multiply_temp_variable = { cw_amount = COLDWAR_UNI_t_share }
+	set_temp_variable = { treasury_change = cw_amount }
+	multiply_temp_variable = { treasury_change = -1 }
+	modify_treasury_effect = yes
+	hidden_effect = { add_to_variable = { global.COLDWAR_UNI_fund = cw_amount } }
+}
+
+# the members of the Union plan carry a flag: joint_trigger and the programme modifier read it (monthly from SOV, and at the start)
+COLDWAR_UNI_refresh_members = {
+	every_country = { limit = { has_country_flag = COLDWAR_UNI_in_plan NOT = { COLDWAR_UNI_is_member = yes } } clr_country_flag = COLDWAR_UNI_in_plan }
+	every_country = { limit = { NOT = { has_country_flag = COLDWAR_UNI_in_plan } COLDWAR_UNI_is_member = yes } set_country_flag = COLDWAR_UNI_in_plan }
+}

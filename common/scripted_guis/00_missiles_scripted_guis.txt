@@ -6065,6 +6065,35 @@ if = { limit = { OR = { COLDWAR_Germany_recognition_subject = no AND = { COLDWAR
 				cyber_mission_not_running = yes
 			}
 
+			cyber_scandal_button_click_enabled = { # COLDWAR covert v2
+				has_cyber_capability_2 = yes
+				command_power > 15
+				cyber_has_valid_target = yes
+				cyber_not_at_capacity = yes
+				set_temp_variable = { cyber_op_trigger = 19 }
+				cyber_mission_not_running = yes
+			}
+
+			cyber_brain_drain_button_click_enabled = { # COLDWAR covert v2
+				has_cyber_capability_3 = yes
+				command_power > 25
+				cyber_has_valid_target = yes
+				cyber_not_at_capacity = yes
+				set_temp_variable = { cyber_op_trigger = 20 }
+				cyber_mission_not_running = yes
+			}
+
+			cyber_coup_plot_button_click_enabled = { # COLDWAR covert v2 coup
+				has_cyber_capability_4 = yes
+				command_power > 59
+				cyber_has_valid_target = yes
+				cyber_not_at_capacity = yes
+				set_temp_variable = { cyber_op_trigger = 21 }
+				cyber_mission_not_running = yes
+				NOT = { has_war_with = current_cyber_nation_target }
+				var:current_cyber_nation_target = { COLDWAR_coup_valid_target = yes }
+			}
+
 			# Defensive operations (self-targeted, consume a capacity slot)
 			cyber_network_hardening_button_click_enabled = {
 				has_cyber_capability_1 = yes
@@ -6172,6 +6201,8 @@ if = { limit = { OR = { COLDWAR_Germany_recognition_subject = no AND = { COLDWAR
 				log = "[GetDateText]: [Root.GetName]: cyber_economic_disruption vs [This.GetName] GUI"
 				add_command_power = -10
 				effect_tooltip = {
+					custom_effect_tooltip = COLDWAR_ca_counterfeit_infl_tt # COLDWAR covert v2
+					custom_effect_tooltip = COLDWAR_ca_strength_tt
 					var:current_cyber_nation_target = {
 						add_timed_idea = { idea = cyber_economic_disruption_malus days = 120 }
 					}
@@ -6265,10 +6296,10 @@ if = { limit = { OR = { COLDWAR_Germany_recognition_subject = no AND = { COLDWAR
 				log = "[GetDateText]: [Root.GetName]: cyber_election_interference vs [This.GetName] GUI"
 				add_command_power = -10
 				effect_tooltip = {
+					custom_effect_tooltip = COLDWAR_ca_fund_party_tt # COLDWAR covert v2
+					custom_effect_tooltip = COLDWAR_ca_strength_tt
 					var:current_cyber_nation_target = {
 						add_timed_idea = { idea = cyber_election_interference_malus days = 180 }
-						set_temp_variable = { party_popularity_increase = -0.04 }
-						change_relative_party_popularity = yes
 						add_stability = -0.02
 					}
 				}
@@ -6308,6 +6339,8 @@ if = { limit = { OR = { COLDWAR_Germany_recognition_subject = no AND = { COLDWAR
 				log = "[GetDateText]: [Root.GetName]: cyber_financial_system_attack vs [This.GetName] GUI"
 				add_command_power = -20
 				effect_tooltip = {
+					custom_effect_tooltip = COLDWAR_ca_speculation_infl_tt # COLDWAR covert v2
+					custom_effect_tooltip = COLDWAR_ca_strength_tt
 					var:current_cyber_nation_target = {
 						add_timed_idea = { idea = cyber_financial_system_attack_malus days = 150 }
 						add_stability = -0.02
@@ -6375,6 +6408,51 @@ if = { limit = { OR = { COLDWAR_Germany_recognition_subject = no AND = { COLDWAR
 				}
 				set_variable = { ROOT.cyber_op_target = current_cyber_nation_target }
 				set_variable = { ROOT.cyber_op_type = 15 }
+				ROOT = { cyber_launch_operation = yes }
+			}
+
+			cyber_scandal_button_click = { # COLDWAR covert v2
+				log = "[GetDateText]: [Root.GetName]: cyber_scandal vs [This.GetName] GUI"
+				add_command_power = -15
+				effect_tooltip = {
+					var:current_cyber_nation_target = {
+						add_timed_idea = { idea = cyber_scandal_malus days = 120 }
+						custom_effect_tooltip = COLDWAR_ca_scandal_party_tt
+					}
+					custom_effect_tooltip = COLDWAR_ca_strength_tt
+				}
+				set_variable = { ROOT.cyber_op_target = current_cyber_nation_target }
+				set_variable = { ROOT.cyber_op_type = 19 }
+				ROOT = { cyber_launch_operation = yes }
+			}
+
+			cyber_brain_drain_button_click = { # COLDWAR covert v2
+				log = "[GetDateText]: [Root.GetName]: cyber_brain_drain vs [This.GetName] GUI"
+				add_command_power = -25
+				effect_tooltip = {
+					var:current_cyber_nation_target = {
+						add_timed_idea = { idea = cyber_brain_drain_malus days = 365 }
+						custom_effect_tooltip = COLDWAR_ca_brain_severe_tt
+					}
+					add_timed_idea = { idea = cyber_brain_drain_gain days = 365 }
+					custom_effect_tooltip = COLDWAR_ca_strength_tt
+				}
+				set_variable = { ROOT.cyber_op_target = current_cyber_nation_target }
+				set_variable = { ROOT.cyber_op_type = 20 }
+				ROOT = { cyber_launch_operation = yes }
+			}
+
+			cyber_coup_plot_button_click = { # COLDWAR covert v2 coup
+				log = "[GetDateText]: [Root.GetName]: cyber_coup_plot vs [This.GetName] GUI"
+				add_command_power = -60
+				set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.015 } }
+				modify_treasury_effect = yes
+				effect_tooltip = {
+					custom_effect_tooltip = COLDWAR_coup_launch_tt
+					custom_effect_tooltip = COLDWAR_ca_strength_tt
+				}
+				set_variable = { ROOT.cyber_op_target = current_cyber_nation_target }
+				set_variable = { ROOT.cyber_op_type = 21 }
 				ROOT = { cyber_launch_operation = yes }
 			}
 

@@ -13,7 +13,7 @@ The SSR intelligence-agency restriction adapts the two-layer button blocker and 
 
 Install the repository as `mod/mdcoldwar` and use the launcher descriptor in the parent `mod` directory. The redundant internal `mdcoldwar.mod` is retained in the external development archive. Large graphics and audio assets use Git LFS; clone with Git LFS installed and download the LFS content.
 
-Development sources were relocated on 31 October 2026 and are stored outside this repository. Workshop releases are prepared separately from the live repository and include game files, licences and bundled provenance notices.
+Development sources were relocated on 31 October 2026 at the user's request. Codex and Claude must read [DEVELOPMENT_FILES_MOVED.md](DEVELOPMENT_FILES_MOVED.md) for their exact E: locations, verification manifest and safe restoration instructions. Workshop releases are prepared separately from the live repository and include actual game files, licences and bundled provenance notices.
 
 This remains a work in progress. A USA 1970 startup, seven days of play, saving and reloading were confirmed. A later first-month crash was recorded; two stale power-rank references were corrected, but the monthly crash still requires an in-game retest. Static file verification is not a runtime compatibility guarantee.
 

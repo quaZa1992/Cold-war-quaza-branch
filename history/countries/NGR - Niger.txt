@@ -1,66 +1,70 @@
+# IMPERIA COLD WAR: Update 24.11.2026: 1970 start influence in MD form (power ranking and influence drift).
+# IMPERIA COLD WAR — Update 24.11.2026: interest group start opinions as plain lines like MD (50).
+# IMPERIA COLD WAR — Update 23.11.2026: history in MD form (no IMP_is_1970_scenario guards; only bookmark is 1970).
+# IMPERIA COLD WAR — Update 23.11.2026: 1970 monetary start profile (inflation, central bank rate, currency strength) in history like MD.
 # IMPERIA COLD WAR — January 1970 researched national technology baseline.
 capital = 331
 
 # IMPERIA CW — Cold War: 1970 scenario country history.
 # Authored Cold War 1970 snapshot; native later history retained.
 1970.1.1 = {
-	if = { limit = { IMP_is_1970_scenario = yes NOT = { has_idea = wto_member } } add_ideas = wto_member } # COLDWAR 1970 GATT contracting party
+	# COLDWAR 24.11.2026: 1970 start influence (MD form)
+	init_influence = yes
+	set_variable = { domestic_influence_amount = 60 }
+	add_to_array = { influence_array = FRA.id }
+	add_to_array = { influence_array_val = 80 }
+	# COLDWAR end 1970 start influence
+	# IMPERIA COLD WAR — Historical January 1970 army recruitment.
+	recruit_character = COLDWAR_1970_officer_ngr_seyni_kountche
+	# IMPERIA COLD WAR — End historical army recruitment.
+
+	if = { limit = { NOT = { has_idea = wto_member } } add_ideas = wto_member } # COLDWAR 1970 GATT contracting party
 	# IMPERIA COLD WAR — January 1970 researched national technology baseline. BEGIN
+	set_country_flag = COLDWAR_1970_world_research_assigned
+	set_country_flag = mdcw_1970_infantry_research_applied
+	set_country_flag = mdcw_1970_air_research_applied
+	set_technology = {
+		popup = no
+		mdcw_anti_tank_1940 = 1
+		mdcw_camouflage_1940 = 1
+		mdcw_cnc_equipment_1940 = 1
+		mdcw_engineering_basics_1940 = 1
+		mdcw_infantry_weapons_1940 = 1
+	}
 	if = {
-		limit = { IMP_is_1970_scenario = yes }
-		set_country_flag = COLDWAR_1970_world_research_assigned
-		set_country_flag = mdcw_1970_infantry_research_applied
-		set_country_flag = mdcw_1970_air_research_applied
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			mdcw_anti_tank_1940 = 1
-			mdcw_camouflage_1940 = 1
-			mdcw_cnc_equipment_1940 = 1
-			mdcw_engineering_basics_1940 = 1
-			mdcw_infantry_weapons_1940 = 1
+			mdcw_m101_model_1940_legacy = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_m101_model_1940_legacy = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_m101_model_1940_nsb = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			mdcw_precision_machine_tools_1940 = 1
-			mdcw_support_weapons_1940 = 1
-			mdcw_util_vehicle_1940 = 1
-			mdcw_tower_cranes_1949 = 1
-			mdcw_infantry_weapons_1950 = 1
-			mdcw_light_4x4_vehicles_1941 = 1
-			mdcw_util_vehicle_1950 = 1
+			mdcw_m101_model_1940_nsb = 1
 		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_precision_machine_tools_1940 = 1
+		mdcw_support_weapons_1940 = 1
+		mdcw_util_vehicle_1940 = 1
+		mdcw_tower_cranes_1949 = 1
+		mdcw_infantry_weapons_1950 = 1
+		mdcw_light_4x4_vehicles_1941 = 1
+		mdcw_util_vehicle_1950 = 1
 	}
 	# IMPERIA COLD WAR — January 1970 researched national technology baseline. END
 	# IMPERIA COLD WAR — January 1970 historical equipment variants. BEGIN
 	if = {
-		limit = { IMP_is_1970_scenario = yes NOT = { has_country_flag = COLDWAR_1970_historical_variants_assigned } }
+		limit = { NOT = { has_country_flag = COLDWAR_1970_historical_variants_assigned } }
 		set_country_flag = COLDWAR_1970_historical_variants_assigned
-		create_equipment_variant = {
-			name = "MAS-36"
-			type = mdcw_infantry_weapons_1940
-		}
 	}
 	# IMPERIA COLD WAR — January 1970 historical equipment variants. END
 	# IMPERIA CW — Cold War: 1970 scenario country history.
 	# COLDWAR HISTORICAL1970 NATIVE IDENTITY BEGIN
-	if = {
-		limit = { IMP_is_1970_scenario = yes }
-		set_country_flag = IMP_1970_historical_politics
-	}
+	set_country_flag = IMP_1970_historical_politics
 	set_popularities = { democratic = 52 communism = 6 fascism = 3 neutrality = 30 nationalist = 9 }
 	set_politics = { ruling_party = democratic elections_allowed = no }
 	clear_array = party_pop_array
@@ -86,8 +90,10 @@ capital = 331
 	create_country_leader = {
 		name = "Hamani Diori"
 		picture = "gfx/Leaders/NGR/NGR_Coldwar_Hamani_Diori.dds"
-		expire = "1974.4.15"
 		ideology = Western_Autocracy
+		traits = {
+			western_Western_Autocracy
+		}
 	}
 	# COLDWAR HISTORICAL1970 NATIVE IDENTITY END
 
@@ -105,62 +111,86 @@ capital = 331
 
 	}
 
-		# Temporary user decision: starting armies, fleets, air wings and equipment deferred.
-		set_oob = "mdcw_1970_empty_land"
-		set_naval_oob = "mdcw_1970_empty_naval"
-		set_air_oob = "mdcw_1970_empty_air"
-	# IMPERIA COLD WAR — 1970 researched monetary, religious and internal-faction baseline. BEGIN
+	# IMPERIA COLD WAR — January 1970 order of battle. BEGIN
+	# Generated by tools/oob_1970/gen.py from data/NGR.py. Units, fleets, air wings and stockpiles in history/units/NGR_1970_*.txt.
+	set_technology = { COLDWAR_1970_oob_service_NGR_land = 1 popup = no }
+	set_naval_oob = "mdcw_1970_empty_naval"   # before the air OOB: carrier air wings need their ships
 	if = {
-		limit = { IMP_is_1970_scenario = yes }
-		set_temp_variable = { COLDWAR_1970_society_faction_added = 0 }
-		set_temp_variable = { COLDWAR_1970_society_farmers_opinion = 50 }
-		if = {
-			limit = { has_variable = farmers_opinion }
-			set_temp_variable = { COLDWAR_1970_society_farmers_opinion = farmers_opinion }
-		}
-		set_temp_variable = { COLDWAR_1970_society_landowners_opinion = 50 }
-		if = {
-			limit = { has_variable = landowners_opinion }
-			set_temp_variable = { COLDWAR_1970_society_landowners_opinion = landowners_opinion }
-		}
-		set_temp_variable = { COLDWAR_1970_society_small_medium_business_owners_opinion = 50 }
-		if = {
-			limit = { has_variable = small_medium_business_owners_opinion }
-			set_temp_variable = { COLDWAR_1970_society_small_medium_business_owners_opinion = small_medium_business_owners_opinion }
-		}
-		if = {
-			limit = { NOT = { has_idea = no_foreign_reserve } }
-			add_ideas = no_foreign_reserve
-		}
-		if = {
-			limit = { NOT = { has_idea = sunni } }
-			add_ideas = sunni
-		}
-		if = {
-			limit = { NOT = { has_idea = farmers } }
-			add_ideas = farmers
-			set_temp_variable = { COLDWAR_1970_society_faction_added = 1 }
-		}
-		if = {
-			limit = { NOT = { has_idea = landowners } }
-			add_ideas = landowners
-			set_temp_variable = { COLDWAR_1970_society_faction_added = 1 }
-		}
-		if = {
-			limit = { NOT = { has_idea = small_medium_business_owners } }
-			add_ideas = small_medium_business_owners
-			set_temp_variable = { COLDWAR_1970_society_faction_added = 1 }
-		}
-		set_variable = { no_foreign_reserve = 1 }
-		set_variable = { farmers_opinion = COLDWAR_1970_society_farmers_opinion }
-		set_variable = { landowners_opinion = COLDWAR_1970_society_landowners_opinion }
-		set_variable = { small_medium_business_owners_opinion = COLDWAR_1970_society_small_medium_business_owners_opinion }
-		if = {
-			limit = { exists = yes check_variable = { COLDWAR_1970_society_faction_added > 0 } }
-			initialize_internal_faction_dynamic_modifiers = yes
+		limit = { has_dlc = "No Step Back" }
+		set_oob = "NGR_1970_nsb"
+		else = {
+			set_oob = "mdcw_1970_empty_land"
 		}
 	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_air_oob = "mdcw_1970_empty_air"
+		else = {
+			set_air_oob = "mdcw_1970_empty_air"
+		}
+	}
+	# IMPERIA COLD WAR — January 1970 order of battle. END
+	# IMPERIA COLD WAR — 1970 researched monetary, religious and internal-faction baseline. BEGIN
+	if = {
+		limit = { NOT = { has_idea = no_foreign_reserve } }
+		add_ideas = no_foreign_reserve
+	}
+	if = {
+		limit = { NOT = { has_idea = sunni } }
+		add_ideas = sunni
+	}
+	if = {
+		limit = { NOT = { has_idea = farmers } }
+		add_ideas = farmers
+	}
+	if = {
+		limit = { NOT = { has_idea = landowners } }
+		add_ideas = landowners
+	}
+	if = {
+		limit = { NOT = { has_idea = small_medium_business_owners } }
+		add_ideas = small_medium_business_owners
+	}
+	set_variable = { no_foreign_reserve = 1 }
+	set_variable = { farmers_opinion = 50 }
+	set_variable = { landowners_opinion = 50 }
+	set_variable = { small_medium_business_owners_opinion = 50 }
 	# IMPERIA COLD WAR — 1970 researched monetary, religious and internal-faction baseline. END
+	# IMPERIA COLD WAR — 1970 nuclear power start state (moved from on_startup, like MD)
+	if = { limit = { has_tech = reactor1 } set_technology = { mdcw_experimental_power_reactors_1954 = 1 mdcw_reactor_fuel_fabrication_1953 = 1 popup = no } }
+	if = { limit = { has_tech = reactor2 } set_technology = { mdcw_reactor_licensing_1957 = 1 popup = no } }
+	COLDWAR_nuc_ensure_modifiers = yes
+	# COLDWAR 1970 NATIONAL PROFILE BEGIN (tools/start_data_1970/apply.py; laws, debt, treasury and taxes like MD 2000.1.1)
+	add_ideas = {
+		corruption_level_07
+		bureau_02
+		police_03
+		edu_02
+		health_01
+		social_01
+		defence_01
+		stable_growth
+		semi_consumption_economy
+		light_regulations
+		partially_privatized_healthcare
+		economic_motivated_mining
+		minimal_maintenance
+		regulated_immigration
+		volunteer_army
+		no_women_in_military
+		intervention_isolation
+		officer_basic_training
+		no_currency_backing
+		imp_ni_slush_fund_eco
+	}
+	set_variable = { debt = 0.4 }
+	set_variable = { treasury = 0.1 }
+	set_variable = { population_tax_rate = 8 }
+	set_variable = { corporate_tax_rate = 15 }
+	# COLDWAR 1970 NATIONAL PROFILE END
+	# COLDWAR 1970 MONETARY PROFILE BEGIN (_dev_work/start_data_1970_monetary/apply_monetary_1970.py; source: WB CPI 1969)
+	set_variable = { inflation_rate_var = 0.08443 }
+	# COLDWAR 1970 MONETARY PROFILE END
 	}
 
 2000.1.1 = {

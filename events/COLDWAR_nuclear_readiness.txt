@@ -1,4 +1,8 @@
 # IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.
+# IMPERIA COLD WAR update 20.11.2026: GC suspension notices (cw_nuclear.94, .95); hidden timers stop while disabled.
+# IMPERIA COLD WAR update 20.11.2026: civil defence tied to public shelters, countdown events instead of daily polling, shelter programme.
+# IMPERIA COLD WAR update 25.11.2026: crisis review (cw_nuclear.30), early-warning false alarms (.31 to .33), signalling expiry (.34), foreign exercise notice (.35) and Game Controller intelligence report (.36).
+# IMPERIA COLD WAR update 25.11.2026: peacetime war scares: report of foreign activity with responses (.35), foreign response (.38), war scare decision (.39), clarification (.40, .42), review (.41).
 add_namespace = cw_nuclear
 country_event = {
 	id = cw_nuclear.1
@@ -340,5 +344,393 @@ country_event = {
 	id = cw_nuclear.90
 	hidden = yes
 	is_triggered_only = yes
+	trigger = { COLDWAR_nr_enabled = yes }
 	immediate = { COLDWAR_nr_first_use_tick = yes }
+}
+country_event = {
+	id = cw_nuclear.91
+	hidden = yes
+	is_triggered_only = yes
+	trigger = { COLDWAR_nr_enabled = yes }
+	immediate = {
+		clr_country_flag = COLDWAR_nr_tick_pending
+		COLDWAR_nr_tick = yes
+	}
+}
+country_event = {
+	id = cw_nuclear.93
+	hidden = yes
+	is_triggered_only = yes
+	trigger = { COLDWAR_nr_enabled = yes }
+	immediate = { COLDWAR_nr_check_crisis = yes }
+}
+country_event = {
+	id = cw_nuclear.94
+	title = cw_nuclear.94.t
+	desc = cw_nuclear.94.d
+	picture = GFX_COLDWAR_nuclear_readiness_strategic_command
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_nr_acknowledge
+		ai_chance = { base = 100 }
+	}
+}
+country_event = {
+	id = cw_nuclear.95
+	title = cw_nuclear.95.t
+	desc = cw_nuclear.95.d
+	picture = GFX_COLDWAR_nuclear_readiness_strategic_command
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_nr_review_command
+		trigger = { is_ai = no COLDWAR_nr_enabled = yes }
+		hidden_effect = { COLDWAR_nr_init = yes set_country_flag = COLDWAR_nr_open COLDWAR_nr_touch = yes }
+	}
+	option = {
+		name = COLDWAR_nr_acknowledge
+		ai_chance = { base = 100 }
+	}
+}
+country_event = {
+	id = cw_nuclear.30
+	title = cw_nuclear.30.t
+	desc = cw_nuclear.30.d
+	picture = GFX_COLDWAR_nuclear_readiness_intelligence_assessment
+	is_triggered_only = yes
+	immediate = { hidden_effect = { clr_country_flag = COLDWAR_nr_review_pending } }
+	option = {
+		name = COLDWAR_nr_review_command
+		trigger = { is_ai = no COLDWAR_nr_enabled = yes }
+		hidden_effect = { COLDWAR_nr_init = yes set_country_flag = COLDWAR_nr_open COLDWAR_nr_touch = yes }
+	}
+	option = {
+		name = COLDWAR_nr_acknowledge
+		ai_chance = { base = 100 }
+	}
+}
+country_event = {
+	id = cw_nuclear.31
+	title = cw_nuclear.31.t
+	desc = cw_nuclear.31.d
+	picture = GFX_COLDWAR_nuclear_readiness_missile_warning
+	is_triggered_only = yes
+	option = {
+		name = cw_nuclear.31.a
+		ai_chance = { base = 100 }
+		custom_effect_tooltip = COLDWAR_nr_tt_alarm_dismiss
+		hidden_effect = {
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = -5 } COLDWAR_nr_add_paranoia = yes
+			country_event = { id = cw_nuclear.32 hours = 6 }
+		}
+	}
+	option = {
+		name = cw_nuclear.31.b
+		trigger = {
+			COLDWAR_nr_nuclear_power = yes
+			NOT = { has_country_flag = COLDWAR_nr_standdown }
+			check_variable = { COLDWAR_nr_level > 3 }
+		}
+		custom_effect_tooltip = COLDWAR_nr_tt_alarm_hold
+		hidden_effect = {
+			set_temp_variable = { COLDWAR_nr_emergency_target = 3 }
+			COLDWAR_nr_emergency_level = yes
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 8 } COLDWAR_nr_add_paranoia = yes
+			country_event = { id = cw_nuclear.32 hours = 6 }
+		}
+	}
+	option = {
+		name = cw_nuclear.31.c
+		trigger = {
+			COLDWAR_nr_nuclear_power = yes
+			NOT = { has_country_flag = COLDWAR_nr_standdown }
+			check_variable = { COLDWAR_nr_level > 1 }
+		}
+		custom_effect_tooltip = COLDWAR_nr_tt_alarm_maximum
+		hidden_effect = {
+			set_temp_variable = { COLDWAR_nr_emergency_target = 1 }
+			COLDWAR_nr_emergency_level = yes
+			add_to_variable = { COLDWAR_nr_fatigue = 10 }
+			clamp_variable = { var = COLDWAR_nr_fatigue min = 0 max = 100 }
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 15 } COLDWAR_nr_add_paranoia = yes
+			COLDWAR_nr_alarm_alert_others = yes
+			COLDWAR_nr_refresh = yes
+			country_event = { id = cw_nuclear.32 hours = 6 }
+		}
+	}
+}
+country_event = {
+	id = cw_nuclear.32
+	title = cw_nuclear.32.t
+	desc = cw_nuclear.32.d
+	picture = GFX_COLDWAR_nuclear_readiness_strategic_command
+	is_triggered_only = yes
+	option = {
+		name = cw_nuclear.32.a
+		trigger = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level < COLDWAR_nr_alarm_prev_level }
+		}
+		custom_effect_tooltip = COLDWAR_nr_tt_alarm_restore
+		hidden_effect = {
+			set_variable = { COLDWAR_nr_level = COLDWAR_nr_alarm_prev_level }
+			set_variable = { COLDWAR_nr_order = COLDWAR_nr_alarm_prev_level }
+			set_variable = { COLDWAR_nr_build_days = 0 }
+			set_variable = { COLDWAR_nr_build_total = 0 }
+			COLDWAR_nr_refresh = yes
+		}
+	}
+	option = {
+		name = cw_nuclear.32.b
+		ai_chance = { base = 100 }
+	}
+}
+country_event = {
+	id = cw_nuclear.33
+	title = cw_nuclear.33.t
+	desc = cw_nuclear.33.d
+	picture = GFX_COLDWAR_nuclear_readiness_counter_alert
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_nr_review_command
+		trigger = { is_ai = no COLDWAR_nr_enabled = yes }
+		custom_effect_tooltip = COLDWAR_nr_tt_paranoia_plus10
+		hidden_effect = { COLDWAR_nr_init = yes set_country_flag = COLDWAR_nr_open COLDWAR_nr_touch = yes }
+	}
+	option = {
+		name = COLDWAR_nr_acknowledge
+		ai_chance = { base = 100 }
+		custom_effect_tooltip = COLDWAR_nr_tt_paranoia_plus10
+	}
+}
+country_event = {
+	id = cw_nuclear.34
+	hidden = yes
+	is_triggered_only = yes
+	trigger = { COLDWAR_nr_enabled = yes }
+	immediate = { COLDWAR_nr_refresh = yes }
+}
+country_event = {
+	id = cw_nuclear.35
+	title = cw_nuclear.35.t
+	desc = cw_nuclear.35.d
+	picture = GFX_COLDWAR_nuclear_readiness_strategic_situation
+	is_triggered_only = yes
+	custom_effect_tooltip = COLDWAR_nr_tt_paranoia_signal
+	option = {
+		name = COLDWAR_ws_opt_routine
+		ai_chance = { base = 100 }
+		custom_effect_tooltip = COLDWAR_ws_tt_routine
+	}
+	option = {
+		name = COLDWAR_ws_opt_assess
+		trigger = {
+			NOT = { has_political_power < 10 }
+			var:COLDWAR_ws_source_id = {
+				exists = yes
+				ROOT = {
+					NOT = {
+						check_variable = { COLDWAR_nr_assess_cd@PREV > global.num_days }
+					}
+				}
+			}
+		}
+		add_political_power = -10
+		custom_effect_tooltip = COLDWAR_ws_tt_assess
+		hidden_effect = {
+			var:COLDWAR_ws_source_id = {
+				ROOT = {
+					set_variable = { COLDWAR_nr_assess_cd@PREV = { value = global.num_days add = 14 } }
+					COLDWAR_nr_assess_prev = yes
+				}
+			}
+		}
+	}
+	option = {
+		name = COLDWAR_ws_opt_raise
+		trigger = {
+			COLDWAR_nr_nuclear_power = yes
+			NOT = { has_country_flag = COLDWAR_nr_standdown }
+			check_variable = { COLDWAR_nr_level > 1 }
+			check_variable = { COLDWAR_nr_build_days = 0 }
+			NOT = { has_political_power < 10 }
+		}
+		add_political_power = -10
+		custom_effect_tooltip = COLDWAR_ws_tt_raise
+		hidden_effect = {
+			set_temp_variable = { COLDWAR_nr_emergency_target = COLDWAR_nr_level }
+			subtract_from_temp_variable = { COLDWAR_nr_emergency_target = 1 }
+			COLDWAR_nr_emergency_level = yes
+			set_temp_variable = { COLDWAR_ws_resp_kind = 1 }
+			COLDWAR_ws_response = yes
+		}
+	}
+	option = {
+		name = COLDWAR_ws_opt_exercise
+		trigger = { COLDWAR_nr_can_exercise = yes }
+		custom_effect_tooltip = COLDWAR_ws_tt_exercise
+		hidden_effect = { COLDWAR_nr_start_exercise = yes }
+	}
+}
+country_event = {
+	id = cw_nuclear.36
+	title = cw_nuclear.36.t
+	desc = cw_nuclear.36.d
+	picture = GFX_COLDWAR_nuclear_readiness_intelligence_assessment
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_nr_review_command
+		trigger = { is_ai = no COLDWAR_nr_enabled = yes }
+		custom_effect_tooltip = COLDWAR_nr_tt_paranoia_plus20
+		hidden_effect = { COLDWAR_nr_init = yes set_country_flag = COLDWAR_nr_open COLDWAR_nr_touch = yes }
+	}
+	option = {
+		name = COLDWAR_nr_acknowledge
+		ai_chance = { base = 100 }
+		custom_effect_tooltip = COLDWAR_nr_tt_paranoia_plus20
+	}
+}
+country_event = {
+	id = cw_nuclear.38
+	title = cw_nuclear.38.t
+	desc = cw_nuclear.38.d
+	picture = GFX_COLDWAR_nuclear_readiness_counter_alert
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_ws_opt_routine
+		ai_chance = { base = 100 }
+		custom_effect_tooltip = COLDWAR_ws_tt_routine
+	}
+	option = {
+		name = COLDWAR_ws_opt_assess
+		trigger = {
+			NOT = { has_political_power < 10 }
+			var:COLDWAR_ws_source_id = {
+				exists = yes
+				ROOT = {
+					NOT = {
+						check_variable = { COLDWAR_nr_assess_cd@PREV > global.num_days }
+					}
+				}
+			}
+		}
+		add_political_power = -10
+		custom_effect_tooltip = COLDWAR_ws_tt_assess
+		hidden_effect = {
+			var:COLDWAR_ws_source_id = {
+				ROOT = {
+					set_variable = { COLDWAR_nr_assess_cd@PREV = { value = global.num_days add = 14 } }
+					COLDWAR_nr_assess_prev = yes
+				}
+			}
+		}
+	}
+	option = {
+		name = COLDWAR_ws_opt_raise
+		trigger = {
+			COLDWAR_nr_nuclear_power = yes
+			NOT = { has_country_flag = COLDWAR_nr_standdown }
+			check_variable = { COLDWAR_nr_level > 1 }
+			check_variable = { COLDWAR_nr_build_days = 0 }
+			NOT = { has_political_power < 10 }
+		}
+		add_political_power = -10
+		custom_effect_tooltip = COLDWAR_ws_tt_raise
+		hidden_effect = {
+			set_temp_variable = { COLDWAR_nr_emergency_target = COLDWAR_nr_level }
+			subtract_from_temp_variable = { COLDWAR_nr_emergency_target = 1 }
+			COLDWAR_nr_emergency_level = yes
+			set_temp_variable = { COLDWAR_ws_resp_kind = 1 }
+			COLDWAR_ws_response = yes
+		}
+	}
+	option = {
+		name = COLDWAR_ws_opt_exercise
+		trigger = { COLDWAR_nr_can_exercise = yes }
+		custom_effect_tooltip = COLDWAR_ws_tt_exercise
+		hidden_effect = { COLDWAR_nr_start_exercise = yes }
+	}
+}
+country_event = {
+	id = cw_nuclear.39
+	title = cw_nuclear.39.t
+	desc = cw_nuclear.39.d
+	picture = GFX_COLDWAR_nuclear_readiness_strategic_command
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_ws_opt_warn
+		trigger = {
+			COLDWAR_ws_valid = yes
+			NOT = { has_political_power < 50 }
+			var:COLDWAR_ws_partner = {
+				ROOT = { COLDWAR_nr_can_warn_prev = yes }
+			}
+		}
+		add_political_power = -50
+		custom_effect_tooltip = COLDWAR_ws_tt_warn
+		hidden_effect = {
+			var:COLDWAR_ws_partner = {
+				ROOT = { COLDWAR_nr_begin_crisis = yes }
+			}
+		}
+	}
+	option = {
+		name = COLDWAR_ws_opt_clarify
+		trigger = {
+			COLDWAR_ws_valid = yes
+			NOT = { has_country_flag = COLDWAR_ws_clarify_sent }
+			NOT = { has_political_power < 25 }
+		}
+		add_political_power = -25
+		custom_effect_tooltip = COLDWAR_ws_tt_clarify
+		hidden_effect = {
+			set_country_flag = COLDWAR_ws_clarify_sent
+			var:COLDWAR_ws_partner = { country_event = { id = cw_nuclear.40 } }
+		}
+	}
+	option = {
+		name = COLDWAR_ws_opt_wait
+		ai_chance = { base = 100 }
+		custom_effect_tooltip = COLDWAR_ws_tt_wait
+	}
+}
+country_event = {
+	id = cw_nuclear.40
+	title = cw_nuclear.40.t
+	desc = cw_nuclear.40.d
+	picture = GFX_COLDWAR_nuclear_readiness_strategic_situation
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_ws_opt_accept
+		trigger = { COLDWAR_ws_valid = yes }
+		custom_effect_tooltip = COLDWAR_ws_tt_accept
+		hidden_effect = { COLDWAR_ws_accept_clarification = yes }
+	}
+	option = {
+		name = COLDWAR_ws_opt_reject
+		ai_chance = { base = 100 }
+		custom_effect_tooltip = COLDWAR_ws_tt_reject
+		hidden_effect = { COLDWAR_ws_reject_clarification = yes }
+	}
+}
+country_event = {
+	id = cw_nuclear.41
+	title = cw_nuclear.41.t
+	desc = cw_nuclear.41.d
+	picture = GFX_COLDWAR_nuclear_readiness_intelligence_assessment
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_nr_acknowledge
+		ai_chance = { base = 100 }
+	}
+}
+country_event = {
+	id = cw_nuclear.42
+	title = cw_nuclear.42.t
+	desc = cw_nuclear.42.d
+	picture = GFX_COLDWAR_nuclear_readiness_strategic_command
+	is_triggered_only = yes
+	option = {
+		name = COLDWAR_nr_acknowledge
+		ai_chance = { base = 100 }
+	}
 }

@@ -1,0 +1,120 @@
+# IMPERIA COLD WAR — Covert Action v2: the target fights a coup plot (MD Thailand coup-watch pattern).
+COLDWAR_coup_plot_category = {
+	COLDWAR_coup_pay_officers = {
+		icon = GFX_decision_generic_fundraising
+		cost = 25
+		days_re_enable = 90
+		fire_only_once = no
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_coup_pay_officers"
+			set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.008 } }
+			modify_treasury_effect = yes
+			set_temp_variable = { COLDWAR_coup_delta = -15 }
+			COLDWAR_coup_change_plot = yes
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 10 check_variable = { COLDWAR_coup_plot > 50 } }
+		}
+	}
+
+	COLDWAR_coup_purge_garrisons = {
+		icon = GFX_decision_generic_military
+		cost = 50
+		days_re_enable = 120
+		fire_only_once = no
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_coup_purge_garrisons"
+			add_stability = -0.04
+			army_experience = -10
+			set_temp_variable = { COLDWAR_coup_delta = -25 }
+			COLDWAR_coup_change_plot = yes
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 10 check_variable = { COLDWAR_coup_plot > 50 } }
+		}
+	}
+
+	COLDWAR_coup_mole_hunt = {
+		icon = GFX_decision_generic_intelligence_operation
+		custom_cost_trigger = { command_power > 24 }
+		custom_cost_text = COLDWAR_coup_cost_cp_25
+		days_re_enable = 120
+		fire_only_once = no
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_coup_mole_hunt"
+			add_command_power = -25
+			if = {
+				limit = { has_variable = COLDWAR_coup_backer }
+				custom_effect_tooltip = COLDWAR_coup_mole_hunt_tt
+				var:COLDWAR_coup_backer = { PREV = { clr_country_flag = has_sleeper_network_tracking_access_from_@PREV } }
+			}
+			set_temp_variable = { COLDWAR_coup_delta = -15 }
+			COLDWAR_coup_change_plot = yes
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 10 check_variable = { COLDWAR_coup_plot > 50 } }
+		}
+	}
+
+	COLDWAR_coup_rally_party = {
+		icon = GFX_decision_generic_political_rally
+		cost = 75
+		days_re_enable = 60
+		fire_only_once = no
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision COLDWAR_coup_rally_party"
+			set_temp_variable = { COLDWAR_coup_delta = -10 }
+			COLDWAR_coup_change_plot = yes
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = { factor = 10 check_variable = { COLDWAR_coup_plot > 50 } }
+		}
+	}
+
+	COLDWAR_coup_colonels_move = {
+		icon = GFX_decision_generic_operation
+
+		activation = {
+			has_country_flag = COLDWAR_coup_plot_active
+			check_variable = { COLDWAR_coup_plot > 84 }
+		}
+
+		is_good = no
+		days_mission_timeout = 60
+		cancel_trigger = { NOT = { has_country_flag = COLDWAR_coup_plot_active } }
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COLDWAR_coup_below_70_tt
+				check_variable = { COLDWAR_coup_plot < 70 }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision complete COLDWAR_coup_colonels_move"
+			country_event = { id = COLDWAR_coup.1 hours = 1 }
+			COLDWAR_coup_crushed = yes
+		}
+
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision timeout COLDWAR_coup_colonels_move"
+			country_event = { id = COLDWAR_coup.3 hours = 1 }
+			COLDWAR_coup_succeeds = yes
+		}
+
+		ai_will_do = { base = 1 }
+	}
+
+}

@@ -1,0 +1,80 @@
+# IMPERIA COLD WAR — Stockpile rewards sized to the MD strategic raid expenditure.
+COLDWAR_SAF_DEFENCE_PLAN_first_reward = {
+ if = {
+  limit = { hidden_trigger = { NOT = { has_country_flag = COLDWAR_SAF_DEFENCE_PLAN_first_issued } } }
+  custom_effect_tooltip = COLDWAR_SAF_DEFENCE_PLAN_direct_nuclear_delivery_tt
+  set_temp_variable = { treasury_change = -0.2 }
+  modify_treasury_effect = yes
+  add_equipment_to_stockpile = { type = nuclear_missile_equipment_2 amount = 20 }
+  hidden_effect = {
+   add_to_variable = { COLDWAR_SAF_DEFENCE_PLAN_issued = 1 }
+   set_country_flag = COLDWAR_SAF_DEFENCE_PLAN_first_issued
+   log = "[GetDateText]: [This.GetName]: The First Device delivered 20 ICBM equipment."
+  }
+ }
+}
+
+COLDWAR_SAF_DEFENCE_PLAN_arsenal_reward = {
+ if = {
+  limit = { hidden_trigger = { check_variable = { COLDWAR_SAF_DEFENCE_PLAN_issued < 6 } } }
+  custom_effect_tooltip = COLDWAR_SAF_DEFENCE_PLAN_direct_nuclear_delivery_tt
+  set_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_batch = 6 }
+  subtract_from_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_batch = COLDWAR_SAF_DEFENCE_PLAN_issued }
+  clamp_temp_variable = { var = COLDWAR_SAF_DEFENCE_PLAN_batch min = 0 max = 5 }
+  set_temp_variable = { treasury_change = { value = COLDWAR_SAF_DEFENCE_PLAN_batch multiply = -0.1 } }
+  modify_treasury_effect = yes
+  set_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_missiles = { value = COLDWAR_SAF_DEFENCE_PLAN_batch multiply = 20 } }
+  add_equipment_to_stockpile = { type = nuclear_missile_equipment_2 amount = COLDWAR_SAF_DEFENCE_PLAN_missiles }
+  hidden_effect = {
+   set_variable = { COLDWAR_SAF_DEFENCE_PLAN_issued = 6 }
+   log = "[GetDateText]: [This.GetName]: A Limited Arsenal delivered [?COLDWAR_SAF_DEFENCE_PLAN_missiles] ICBM equipment."
+  }
+ }
+}
+
+COLDWAR_SAF_DEFENCE_PLAN_upgrade_issued_stockpile = {
+ if = {
+  limit = {
+   NOT = { has_country_flag = COLDWAR_SAF_DEFENCE_PLAN_stockpile_upgraded }
+   COLDWAR_SAF_DEFENCE_PLAN_weapons_ready = yes
+  }
+  set_country_flag = COLDWAR_SAF_DEFENCE_PLAN_stockpile_upgraded
+  if = {
+   limit = {
+    check_variable = { COLDWAR_SAF_DEFENCE_PLAN_issued > 0 }
+    NOT = { has_country_flag = COLDWAR_SAF_DEFENCE_PLAN_suspended }
+    NOT = { has_country_flag = COLDWAR_SAF_DEFENCE_PLAN_arsenal_retired }
+    # Older rearmament cleared the audit flags. Do not restock an empty, potentially retired arsenal.
+    OR = {
+     NOT = { has_completed_focus = COLDWAR_SAF_DEFENCE_PLAN_nuc_dismantle }
+     has_equipment = { nuclear_missile_equipment > 0 }
+    }
+   }
+   set_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_missiles = COLDWAR_SAF_DEFENCE_PLAN_issued }
+   clamp_temp_variable = { var = COLDWAR_SAF_DEFENCE_PLAN_missiles max = 6 }
+   multiply_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_missiles = 20 }
+   subtract_from_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_missiles = num_equipment@nuclear_missile_equipment }
+   if = {
+    limit = { check_variable = { COLDWAR_SAF_DEFENCE_PLAN_missiles > 0 } }
+    add_equipment_to_stockpile = { type = nuclear_missile_equipment_2 amount = COLDWAR_SAF_DEFENCE_PLAN_missiles }
+    log = "[GetDateText]: [This.GetName]: Restored [?COLDWAR_SAF_DEFENCE_PLAN_missiles] ICBM equipment for previously paid Pelindaba loads."
+   }
+  }
+ }
+}
+
+COLDWAR_SAF_DEFENCE_PLAN_commission_first = {
+ if = {
+  limit = { COLDWAR_SAF_DEFENCE_PLAN_can_commission_first = yes }
+  COLDWAR_SAF_DEFENCE_PLAN_upgrade_issued_stockpile = yes
+  COLDWAR_SAF_DEFENCE_PLAN_first_reward = yes
+ }
+}
+
+COLDWAR_SAF_DEFENCE_PLAN_commission_arsenal = {
+ if = {
+  limit = { COLDWAR_SAF_DEFENCE_PLAN_can_commission_arsenal = yes }
+  COLDWAR_SAF_DEFENCE_PLAN_upgrade_issued_stockpile = yes
+  COLDWAR_SAF_DEFENCE_PLAN_arsenal_reward = yes
+ }
+}

@@ -1,0 +1,44 @@
+# IMPERIA COLD WAR — Cold War: war with deployed forces (24.11.2026).
+# HOI4 blocks the native war declaration while our divisions stand in the target's territory.
+# These triggers drive the replacement diplomatic action. ROOT = sender, THIS = target.
+
+# Country scope (THIS = target): ROOT has divisions in a state THIS controls.
+COLDWAR_DEP_root_deployed_in_this = {
+	any_controlled_state = {
+		any_state_division = {
+			OWNER = { tag = ROOT }
+		}
+	}
+}
+
+# Country scope (THIS = target): the same requirements as the native war declaration.
+COLDWAR_DEP_can_declare = {
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_DEP_tt_wargoal
+		ROOT = {
+			OR = {
+				has_wargoal_against = { target = PREV type = annex_everything }
+				has_wargoal_against = { target = PREV type = puppet_wargoal_focus }
+				has_wargoal_against = { target = PREV type = topple_government }
+				has_wargoal_against = { target = PREV type = liberate_wargoal }
+				has_wargoal_against = { target = PREV type = take_core_state }
+				has_wargoal_against = { target = PREV type = take_claimed_state }
+				has_wargoal_against = { target = PREV type = take_state_focus }
+				has_wargoal_against = { target = PREV type = IMP_1970_war_of_attrition }
+				has_wargoal_against = { target = PREV type = take_state }
+			}
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_DEP_tt_no_pact
+		NOT = { has_non_aggression_pact_with = ROOT }
+		NOT = { has_truce_with = ROOT }
+	}
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_DEP_tt_independent
+		is_subject = no
+		ROOT = { is_subject = no }
+	}
+	NOT = { is_in_faction_with = ROOT }
+	NOT = { has_war_with = ROOT }
+}

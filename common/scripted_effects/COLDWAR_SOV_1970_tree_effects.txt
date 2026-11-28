@@ -1,0 +1,92 @@
+# IMPERIA COLD WAR — update 23.11.2026: start spirits moved to the 1970 history files (like MD).
+# IMPERIA COLD WAR — Soviet Union 1970 v4: start, monthly checks and weekly running costs of the rework.
+COLDWAR_SOVR_initialize = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_SOVR_initialized } }
+		set_country_flag = COLDWAR_SOVR_initialized
+		if = { limit = { NOT = { has_global_flag = COLDWAR_PB_initialized } } COLDWAR_PB_setup = yes }
+		COLDWAR_UNI_refresh_members = yes
+		country_event = { id = COLDWAR_SOVR.1 days = 2 }
+	}
+}
+
+COLDWAR_SOVR_monthly = {
+	COLDWAR_PB_monthly_history = yes
+	COLDWAR_PB_balance_drift = yes
+	COLDWAR_PB_update_offices = yes
+	COLDWAR_PB_build_board = yes
+	COLDWAR_UNI_refresh_members = yes
+	if = { limit = { has_country_flag = COLDWAR_SOVR_afghan_war has_war_support < 0.5 } country_event = { id = COLDWAR_SOVR.2 days = 3 } }
+	if = {
+		limit = {
+			country_exists = AFG
+			has_completed_focus = COLDWAR_SOV_for_friendship_with_kabul
+			NOT = { has_global_flag = COLDWAR_SOVR_kabul_asked }
+			NOT = { has_global_flag = COLDWAR_SOVR_kabul_refused }
+			AFG = { has_government = communism OR = { has_civil_war = yes has_stability < 0.3 } }
+		}
+		AFG = { country_event = { id = COLDWAR_SOVR.3 days = 5 } }
+	}
+	if = {
+		limit = {
+			has_completed_focus = COLDWAR_SOV_for_the_kabul_request
+			NOT = { has_completed_focus = COLDWAR_SOV_for_the_limited_contingent }
+			NOT = { has_country_flag = COLDWAR_SOVR_flank_fell }
+			OR = { NOT = { country_exists = AFG } AFG = { NOT = { has_government = communism } } }
+		}
+		set_country_flag = COLDWAR_SOVR_flank_fell
+		country_event = { id = COLDWAR_SOVR.5 days = 2 }
+	}
+}
+
+# Weekly: every running cost of the focuses (share of GDP per year) is recalculated from the current GDP.
+COLDWAR_SOVR_weekly_costs = {
+	set_variable = { COLDWAR_SOVR_weekly_expense = 0 }
+	if = {
+		limit = { original_tag = SOV }
+		set_temp_variable = { cw_share = 0 }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_afghan_advisers }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_aid_to_hanoi }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_aid_to_peking }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_amur_garrisons }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_arab_airlift }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_border_garrisons }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_buran_programme }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_che_arms_on_credit }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_civil_war_in_the_republics }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_com_republic_garrisons }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_correlation_of_forces }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_eighth_squadron }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_fortieth_army }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_fraternal_aid }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_fraternal_party_funds }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_fraternal_subsidies }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_garrisons_in_the_republics }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_gor_allied_aid }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_horn_advisers }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_kabul_credits }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_lost_vodka_revenue }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_military_governors }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_n1_programme }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_offer_0 }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_offer_12 }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_offer_21 }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_offer_34 }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_offer_5 }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_pact_staff }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_polish_credits }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_price_subsidies }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_service_a }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_social_consumption_funds }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_special_administration }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_uds_social_fund }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_uds_southern_aid }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_ui_plant_social_services }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_union_welfare_funds }
+		add_to_temp_variable = { cw_share = COLDWAR_SOVR_weekly_usr_union_militia }
+		set_variable = { COLDWAR_SOVR_weekly_expense = gdp_total }
+		multiply_variable = { COLDWAR_SOVR_weekly_expense = cw_share }
+		divide_variable = { COLDWAR_SOVR_weekly_expense = 52 }
+	}
+	add_to_variable = { additional_expenses_rate = COLDWAR_SOVR_weekly_expense }
+}

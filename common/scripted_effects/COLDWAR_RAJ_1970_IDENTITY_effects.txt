@@ -1,0 +1,39 @@
+# IMPERIA COLD WAR — India's 1970 programmes.
+# COLDWAR | Initialise only missing identities from the existing India leader
+# system. Never replace an explicitly selected leader or replay an installation.
+COLDWAR_RAJ_1970_initialise_missing_party_identity = {
+	if = {
+		limit = { check_variable = { ruling_party = 3 } NOT = { has_variable = COLDWAR_RAJ_PEOPLE_congress_leader } }
+		if = { limit = { date < 1984.10.31 } set_variable = { COLDWAR_RAJ_PEOPLE_congress_leader = 1 } }
+		else_if = { limit = { date < 1991.5.21 } set_variable = { COLDWAR_RAJ_PEOPLE_congress_leader = 2 } }
+		else = { set_variable = { COLDWAR_RAJ_PEOPLE_congress_leader = 3 } }
+	}
+	if = {
+		limit = { check_variable = { ruling_party = 0 } NOT = { has_variable = COLDWAR_RAJ_PEOPLE_janata_leader } }
+		if = { limit = { date < 1979.7.28 } set_variable = { COLDWAR_RAJ_PEOPLE_janata_leader = 1 } }
+		else_if = { limit = { date < 1987.1.1 } set_variable = { COLDWAR_RAJ_PEOPLE_janata_leader = 2 } }
+		else = { set_variable = { COLDWAR_RAJ_PEOPLE_janata_leader = 3 } }
+	}
+	if = { limit = { check_variable = { ruling_party = 14 } NOT = { has_variable = COLDWAR_RAJ_PEOPLE_bjp_leader } } set_variable = { COLDWAR_RAJ_PEOPLE_bjp_leader = 1 } }
+	if = {
+		limit = { check_variable = { ruling_party = 4 } NOT = { has_variable = COLDWAR_RAJ_PEOPLE_cpi_leader } }
+		if = { limit = { date < 1991.5.22 } set_variable = { COLDWAR_RAJ_PEOPLE_cpi_leader = 1 } }
+		else = { set_variable = { COLDWAR_RAJ_PEOPLE_cpi_leader = 3 } }
+	}
+	if = { limit = { check_variable = { ruling_party = 19 } NOT = { has_variable = COLDWAR_RAJ_PEOPLE_cpim_leader } } set_variable = { COLDWAR_RAJ_PEOPLE_cpim_leader = 1 } }
+	if = { limit = { check_variable = { ruling_party = 2 } NOT = { has_variable = COLDWAR_RAJ_PEOPLE_bsp_leader } } set_variable = { COLDWAR_RAJ_PEOPLE_bsp_leader = 1 } }
+	if = {
+		limit = {
+			check_variable = { ruling_party = 18 }
+			OR = { NOT = { has_variable = COLDWAR_RAJ_PEOPLE_dravidian_leader } check_variable = { COLDWAR_RAJ_PEOPLE_dravidian_leader = 0 } }
+		}
+		# Record automatic defaults so a later party split can replace those,
+		# without changing a leader selected deliberately by the player.
+		if = {
+			limit = { has_country_flag = COLDWAR_RAJ_1970_aiadmk_formed date < 1987.12.24 }
+			set_variable = { COLDWAR_RAJ_PEOPLE_dravidian_leader = 1 }
+		}
+		else = { set_variable = { COLDWAR_RAJ_PEOPLE_dravidian_leader = 2 } }
+		set_country_flag = COLDWAR_RAJ_1970_dravidian_identity_auto
+	}
+}

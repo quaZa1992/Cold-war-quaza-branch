@@ -1,0 +1,46 @@
+# IMPERIA COLD WAR — MP telemetry: daily snapshot of every human country and a weekly world fingerprint.
+# All players compute the same game; their game.log lines must be identical. The first differing line marks a desync.
+COLDWAR_tel_snapshot = {
+	set_temp_variable = { tel_pp = political_power }
+	set_temp_variable = { tel_stab = stability }
+	multiply_temp_variable = { tel_stab = 100 }
+	set_temp_variable = { tel_ws = war_support }
+	multiply_temp_variable = { tel_ws = 100 }
+	set_temp_variable = { tel_civ = num_of_civilian_factories }
+	set_temp_variable = { tel_mil = num_of_military_factories }
+	set_temp_variable = { tel_div = num_divisions }
+	set_temp_variable = { tel_states = num_of_controlled_states }
+	set_temp_variable = { tel_mp = manpower_k }
+	set_temp_variable = { tel_war = 0 }
+	if = { limit = { has_war = yes } set_temp_variable = { tel_war = 1 } }
+	log = "COLDWAR_TEL|[GetDateText]|SNAP|[Root.GetTag]|party=[?ruling_party]|pp=[?tel_pp|.1]|stab=[?tel_stab|.1]|ws=[?tel_ws|.1]|treasury=[?treasury|.2]|gdp=[?gdp_total|.2]|debt=[?debt|.2]|civ=[?tel_civ|0]|mil=[?tel_mil|0]|div=[?tel_div|0]|states=[?tel_states|0]|mp_k=[?tel_mp|0]|war=[?tel_war|0]"
+	# weekly world fingerprint, written by the first human country that reaches the day
+	if = {
+		limit = { NOT = { check_variable = { global.COLDWAR_tel_world_next_day > global.num_days } } }
+		set_variable = { global.COLDWAR_tel_world_next_day = global.num_days }
+		add_to_variable = { global.COLDWAR_tel_world_next_day = 7 }
+		set_temp_variable = { tel_w_div = 0 }
+		set_temp_variable = { tel_w_civ = 0 }
+		set_temp_variable = { tel_w_tr = 0 }
+		set_temp_variable = { tel_w_wars = 0 }
+		every_country = {
+			set_temp_variable = { tel_c = num_divisions }
+			add_to_temp_variable = { tel_w_div = tel_c }
+			set_temp_variable = { tel_c = num_of_civilian_factories }
+			add_to_temp_variable = { tel_w_civ = tel_c }
+			if = { limit = { has_variable = treasury } add_to_temp_variable = { tel_w_tr = treasury } }
+			if = { limit = { has_war = yes } add_to_temp_variable = { tel_w_wars = 1 } }
+		}
+		every_country = {
+			limit = { has_variable = gdp_total }
+			set_temp_variable = { tel_s = stability }
+			multiply_temp_variable = { tel_s = 100 }
+			set_temp_variable = { tel_w = 0 }
+			if = { limit = { has_war = yes } set_temp_variable = { tel_w = 1 } }
+			set_temp_variable = { tel_ai = 1 }
+			if = { limit = { is_ai = no } set_temp_variable = { tel_ai = 0 } }
+			log = "COLDWAR_TEL|[GetDateText]|COUNTRY|[This.GetTag]|ai=[?tel_ai|0]|party=[?ruling_party]|treasury=[?treasury|.2]|gdp=[?gdp_total|.2]|debt=[?debt|.2]|stab=[?tel_s|.1]|war=[?tel_w|0]"
+		}
+		log = "COLDWAR_TEL|[GetDateText]|WORLD|div=[?tel_w_div|0]|civ=[?tel_w_civ|0]|treasury_sum=[?tel_w_tr|.1]|at_war=[?tel_w_wars|0]"
+	}
+}

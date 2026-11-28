@@ -383,15 +383,8 @@ COLDWAR_CYP_R2_ACT_gre_escalate_apply = {
 			    set_country_flag = COLDWAR_CYP_R2_nato_was_member
 			    set_country_flag = COLDWAR_CYP_R2_nato_separated
 			}
-			if = {
-			    limit = { TUR = { has_idea = NATO_member } }
-			    TUR = {
-			        set_country_flag = COLDWAR_CYP_R2_nato_was_member
-			        set_country_flag = COLDWAR_CYP_R2_nato_separated
-			    }
-			}
+			# IMPERIA COLD WAR — B8: Turkey is not forced out of NATO by a Greek decision (MP rule A).
 			if = { limit = { has_idea = NATO_member } NATO_leave = yes }
-			TUR = { if = { limit = { has_idea = NATO_member } NATO_leave = yes } }
 			add_to_war = {
 			    targeted_alliance = CYP
 			    enemy = TUR
@@ -415,7 +408,8 @@ COLDWAR_CYP_R2_begin_turkish_operation = {
 	    set_country_flag = COLDWAR_CYP_R2_intervention_receipt_used
 	    set_country_flag = COLDWAR_CYP_R2_intervention_expense_cached
 	    add_timed_idea = { idea = COLDWAR_CYP_R2_cyprus_intervention_forces days = 180 }
-	    declare_war_on = { target = CYP type = annex_everything }
+	    # IMPERIA COLD WAR — B8 24.11.2026: normal war goal instead of forced annex_everything (MP rule A, 24.11.2026)
+	    declare_war_on = { target = CYP type = topple_government }
 	    CYP = {
 	        set_country_flag = COLDWAR_CYP_R2_turkish_intervention_active
 	        set_country_flag = COLDWAR_CYP_R2_crisis_active
@@ -830,7 +824,8 @@ COLDWAR_CYP_R2_ACT_tur_operation_preview = {
 		multiply_temp_variable = { treasury_change = -0.005 }
 		modify_treasury_effect = yes
 		add_timed_idea = { idea = COLDWAR_CYP_R2_cyprus_intervention_forces days = 180 }
-		declare_war_on = { target = CYP type = annex_everything }
+		# IMPERIA COLD WAR — B8 24.11.2026: normal war goal instead of forced annex_everything (MP rule A, 24.11.2026)
+		declare_war_on = { target = CYP type = topple_government }
 		custom_effect_tooltip = COLDWAR_CYP_R2_weekly_intervention_expense_tt
 	}
 }
@@ -890,46 +885,23 @@ COLDWAR_CYP_R2_ACT_gre_volunteers_preview = {
 	effect_tooltip = {
 		add_political_power = -50
 		add_ideas = COLDWAR_CYP_R2_cyprus_volunteer_mission
-		set_temp_variable = { COLDWAR_GRE_R3_MIL_volunteer_expense = gdp_total }
- multiply_temp_variable = { COLDWAR_GRE_R3_MIL_volunteer_expense = 0.0002 }
- add_to_variable = { COLDWAR_GRE_R3_MIL_volunteer_expense = 0 tooltip = COLDWAR_GRE_R3_MIL_weekly_expense_tt }
+		set_temp_variable = { COLDWAR_CYP_R2_tt_weekly = gdp_total }
+ multiply_temp_variable = { COLDWAR_CYP_R2_tt_weekly = 0.0002 }
+ # IMPERIA COLD WAR — MD weekly expense line
+ custom_effect_tooltip = COLDWAR_GRE_R3_MIL_weekly_expense_tt
 	}
 }
 
-COLDWAR_CYP_R2_ACT_gre_escalate_preview = { effect_tooltip = {
+COLDWAR_CYP_R2_ACT_gre_escalate_preview = { effect_tooltip = { # IMPERIA COLD WAR — B8 24.11.2026: Greece only changes its own NATO status; Turkey keeps its choice, readmission goes to the NATO leader (MD NATO_join_via_event).
 add_political_power = -100
 set_temp_variable = { treasury_change = gdp_total }
 multiply_temp_variable = { treasury_change = -0.015 }
 modify_treasury_effect = yes
-GRE = { leave_faction = yes remove_ideas = NATO_member remove_from_tech_sharing_group = NATO_Tech_Share
+NATO_leave = yes
 add_to_variable = { COLDWAR_GRE_R3_MIL_preview_democratic_drift = -0.02 tooltip = COLDWAR_GRE_R3_MIL_democratic_drift_tt }
 add_to_variable = { COLDWAR_GRE_R3_MIL_preview_defensive_war_stability_factor = -0.03 tooltip = COLDWAR_GRE_R3_MIL_defensive_war_stability_factor_tt }
 add_to_variable = { COLDWAR_GRE_R3_MIL_preview_war_support_factor = -0.02 tooltip = COLDWAR_GRE_R3_MIL_war_support_factor_tt }
-}
-TUR = { leave_faction = yes remove_ideas = NATO_member remove_from_tech_sharing_group = NATO_Tech_Share
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_democratic_drift = -0.02 tooltip = COLDWAR_GRE_R3_MIL_democratic_drift_tt }
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_defensive_war_stability_factor = -0.03 tooltip = COLDWAR_GRE_R3_MIL_defensive_war_stability_factor_tt }
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_war_support_factor = -0.02 tooltip = COLDWAR_GRE_R3_MIL_war_support_factor_tt }
-}
-every_country = { limit = { has_idea = NATO_member NOT = { tag = GRE } NOT = { tag = TUR } }
-add_opinion_modifier = { target = GRE modifier = left_nato } diplomatic_relation = { country = GRE relation = military_access active = no } GRE = { diplomatic_relation = { country = PREV relation = military_access active = no } }
-add_opinion_modifier = { target = TUR modifier = left_nato } diplomatic_relation = { country = TUR relation = military_access active = no } TUR = { diplomatic_relation = { country = PREV relation = military_access active = no } }
-}
 add_to_war = { targeted_alliance = CYP enemy = TUR hostility_reason = asked_to_join }
 custom_effect_tooltip = COLDWAR_GRE_R3_MIL_after_related_peace
-GRE = { add_ideas = NATO_member add_to_tech_sharing_group = NATO_Tech_Share
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_democratic_drift = 0.02 tooltip = COLDWAR_GRE_R3_MIL_democratic_drift_tt }
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_defensive_war_stability_factor = 0.03 tooltip = COLDWAR_GRE_R3_MIL_defensive_war_stability_factor_tt }
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_war_support_factor = 0.02 tooltip = COLDWAR_GRE_R3_MIL_war_support_factor_tt }
-}
-TUR = { add_ideas = NATO_member add_to_tech_sharing_group = NATO_Tech_Share
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_democratic_drift = 0.02 tooltip = COLDWAR_GRE_R3_MIL_democratic_drift_tt }
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_defensive_war_stability_factor = 0.03 tooltip = COLDWAR_GRE_R3_MIL_defensive_war_stability_factor_tt }
-add_to_variable = { COLDWAR_GRE_R3_MIL_preview_war_support_factor = 0.02 tooltip = COLDWAR_GRE_R3_MIL_war_support_factor_tt }
-}
-every_country = { limit = { has_idea = NATO_member NOT = { tag = GRE } NOT = { tag = TUR } }
-diplomatic_relation = { country = GRE relation = military_access active = yes } GRE = { diplomatic_relation = { country = PREV relation = military_access active = yes } }
-diplomatic_relation = { country = TUR relation = military_access active = yes } TUR = { diplomatic_relation = { country = PREV relation = military_access active = yes } }
-}
-random_country = { limit = { has_idea = NATO_member is_faction_leader = yes } add_to_faction = GRE add_to_faction = TUR }
+custom_effect_tooltip = COLDWAR_CYP_R2_nato_readmission_offer_tt
 } }

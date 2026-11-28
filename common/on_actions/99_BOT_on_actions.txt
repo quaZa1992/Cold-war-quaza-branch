@@ -1,55 +1,59 @@
+# IMPERIA COLD WAR — 1970 focus and legacy mechanic corrections.
 on_actions = {
 
 	on_weekly_BOT = {
 		effect = {
-			#Sum of BDP-A and BDP-B popularites
-			set_temp_variable = { BDP_total_pop = party_pop_array^14 }
-			add_to_temp_variable = { BDP_total_pop = party_pop_array^16 }
-			#BDP splits if popularity less than 40%
 			if = {
-				limit = { check_variable = { BDP_total_pop < 0.40 } }
-				country_event = Botswana_pulse.5
-			}
-			#If BDP popularity is more than 60%, UDC forms
-			if = {
-				limit = { check_variable = { BDP_total_pop > 0.60 } }
-				random = {
-					chance = 75
-					set_country_flag = BNF_joined_UDC
-				}
-				random = {
-					chance = 75
-					set_country_flag = MELS_joined_UDC
-				}
+				limit = { COLDWAR_md2000_content_allowed = yes }
+				#Sum of BDP-A and BDP-B popularites
+				set_temp_variable = { BDP_total_pop = party_pop_array^14 }
+				add_to_temp_variable = { BDP_total_pop = party_pop_array^16 }
+				#BDP splits if popularity less than 40%
 				if = {
-					limit = { NOT = { has_country_flag = BDP_split } }
+					limit = { check_variable = { BDP_total_pop < 0.40 } }
+					country_event = Botswana_pulse.5
+				}
+				#If BDP popularity is more than 60%, UDC forms
+				if = {
+					limit = { check_variable = { BDP_total_pop > 0.60 } }
 					random = {
 						chance = 75
-						set_country_flag = BMD_joined_UDC
+						set_country_flag = BNF_joined_UDC
 					}
+					random = {
+						chance = 75
+						set_country_flag = MELS_joined_UDC
+					}
+					if = {
+						limit = { NOT = { has_country_flag = BDP_split } }
+						random = {
+							chance = 75
+							set_country_flag = BMD_joined_UDC
+						}
+					}
+					random = {
+						chance = 75
+						set_country_flag = BPP_joined_UDC
+					}
+					random = {
+						chance = 75
+						set_country_flag = ISBO_joined_UDC
+					}
+					random = {
+						chance = 75
+						set_country_flag = BWF_joined_UDC
+					}
+					country_event = Botswana_pulse.6
 				}
-				random = {
-					chance = 75
-					set_country_flag = BPP_joined_UDC
+				#If UDC is in power, split it up
+				if = {
+					limit = {
+						check_variable = { ruling_party = 18 }
+						has_country_flag = UDC_formed
+						NOT = { has_global_flag = BOT_POLITICAL_RAINBOW_FOCUS_PATH }
+					}
+					country_event = Botswana_pulse.7
 				}
-				random = {
-					chance = 75
-					set_country_flag = ISBO_joined_UDC
-				}
-				random = {
-					chance = 75
-					set_country_flag = BWF_joined_UDC
-				}
-				country_event = Botswana_pulse.6
-			}
-			#If UDC is in power, split it up
-			if = {
-				limit = {
-					check_variable = { ruling_party = 18 }
-					has_country_flag = UDC_formed
-					NOT = { has_global_flag = BOT_POLITICAL_RAINBOW_FOCUS_PATH }
-				}
-				country_event = Botswana_pulse.7
 			}
 		}
 	}
@@ -74,47 +78,50 @@ on_actions = {
 
 		effect = {
 			if = {
-				limit = { NOT = { has_variable = chance_to_kill_poachers } }
-				set_variable = { chance_to_kill_poachers = 60 }
-			}
-if = {
-				limit = { NOT = { has_variable = chance_to_not_kill_poachers } }
-				set_variable = { chance_to_not_kill_poachers = 40 }
-			}
-if = {
-				limit = { NOT = { has_variable = no_of_poachers_to_kill } }
-				set_variable = { no_of_poachers_to_kill = 10 }
-			}
-if = {
-				limit = { NOT = { has_variable = no_of_poachers } }
-				set_variable = { no_of_poachers = 40 }
-			}
-			random_list = {
-				chance_to_kill_poachers = {
-					subtract_from_variable = { no_of_poachers = no_of_poachers_to_kill }
-					clamp_variable = { var = no_of_poachers min = 0 }
+				limit = { COLDWAR_md2000_content_allowed = yes }
+				if = {
+					limit = { NOT = { has_variable = chance_to_kill_poachers } }
+					set_variable = { chance_to_kill_poachers = 60 }
 				}
-				chance_to_not_kill_poachers = {
-					add_to_variable = { no_of_poachers = 15 }
+	if = {
+					limit = { NOT = { has_variable = chance_to_not_kill_poachers } }
+					set_variable = { chance_to_not_kill_poachers = 40 }
 				}
-			}
-			if = {
-				limit = {
-					NOT = { has_country_flag = on_yearly_done_BOT }
-					date > 2001.1.1
+	if = {
+					limit = { NOT = { has_variable = no_of_poachers_to_kill } }
+					set_variable = { no_of_poachers_to_kill = 10 }
+				}
+	if = {
+					limit = { NOT = { has_variable = no_of_poachers } }
+					set_variable = { no_of_poachers = 40 }
 				}
 				random_list = {
-					kalahari_expands = {
-						country_event = Botswana_pulse.1
+					chance_to_kill_poachers = {
+						subtract_from_variable = { no_of_poachers = no_of_poachers_to_kill }
+						clamp_variable = { var = no_of_poachers min = 0 }
 					}
-					kalahari_steady = {
-						country_event = Botswana_pulse.2
-					}
-					kalahari_retreats = {
-						country_event = Botswana_pulse.3
+					chance_to_not_kill_poachers = {
+						add_to_variable = { no_of_poachers = 15 }
 					}
 				}
-				set_country_flag = { flag = on_yearly_done_BOT days = 350 value = 1 }
+				if = {
+					limit = {
+						NOT = { has_country_flag = on_yearly_done_BOT }
+						date > 2001.1.1
+					}
+					random_list = {
+						kalahari_expands = {
+							country_event = Botswana_pulse.1
+						}
+						kalahari_steady = {
+							country_event = Botswana_pulse.2
+						}
+						kalahari_retreats = {
+							country_event = Botswana_pulse.3
+						}
+					}
+					set_country_flag = { flag = on_yearly_done_BOT days = 350 value = 1 }
+				}
 			}
 		}
 	}
@@ -124,6 +131,7 @@ if = {
 			if = {
 				limit = {
 					original_tag = BOT
+					COLDWAR_md2000_content_allowed = yes
 					has_country_flag = generic_election_killswitch
 				}
 				#Sum of BDP-A and BDP-B popularites

@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — Sweden and Vietnam 1970 party leadership and portraits.
+# IMPERIA COLD WAR — No calendar leader changes, 20.11.2026: daily observer acts only on deaths.
 # IMPERIA CW — Cold War: VIE 1970 politics — scripted effects.
 # COLDWAR | North Vietnam 1970 political identity and native leader integration.
 # Native MD set_leader remains the only political dispatcher. No parallel menu.
@@ -151,6 +153,11 @@ COLDWAR_VIE_1970_set_leader = {
 	else_if = {
 		limit = { check_variable = { ruling_party = 3 } }
 		if = {
+			limit = { has_variable = COLDWAR_VIE_1970_install_socialist }
+			set_variable = { COLDWAR_VIE_1970_socialist_incumbent = COLDWAR_VIE_1970_install_socialist }
+			clear_variable = COLDWAR_VIE_1970_install_socialist
+		}
+		else_if = {
 			limit = {
 				check_variable = { MDCW_HP_native_retirement = 1 }
 				NOT = { has_country_flag = do_not_retire }
@@ -174,7 +181,7 @@ COLDWAR_VIE_1970_set_leader = {
 			set_variable = { COLDWAR_VIE_1970_socialist_incumbent = 0 }
 			create_country_leader = {
 				name = "Nguyen Xien"
-				picture = "gfx/leaders/VIE/1970/COLDWAR_VIE_1970_nguyen_xien.dds"
+				picture = "gfx/leaders/VIE/1970/COLDWAR_VIE_1970_nguyen_xien_restored.dds"
 				ideology = socialism
 				traits = { }
 			}
@@ -217,7 +224,10 @@ COLDWAR_VIE_1970_set_leader = {
 
 # Idempotent scenario observer. Remembered incumbency survives engine expiry;
 # known current leaders are synchronized first so a later human choice wins.
-# The latest due historical successor is installed once on delayed catch-up.
+# IMPERIA COLD WAR — No calendar leader changes, 20.11.2026: the observer only
+# replaces a dead chief (Le Duan 10.7.1986 -> Truong Chinh, Truong Chinh
+# 30.9.1988 -> Nguyen Van Linh). Chinh is no longer replaced on 18.12.1986.
+# The latest due successor is installed once on delayed catch-up.
 COLDWAR_VIE_1970_update_politics = {
 	if = {
 		limit = { original_tag = VIE IMP_is_1970_scenario = yes is_dynamic_country = no }
@@ -231,7 +241,7 @@ COLDWAR_VIE_1970_update_politics = {
 				limit = { NOT = { has_country_flag = COLDWAR_VIE_1970_alternate_succession } }
 				if = {
 					limit = {
-						date > 1986.12.17
+						date > 1988.9.29
 						OR = {
 							check_variable = { COLDWAR_VIE_1970_communist_incumbent = 0 }
 							check_variable = { COLDWAR_VIE_1970_communist_incumbent = 1 }

@@ -1,0 +1,600 @@
+# IMPERIA COLD WAR — Strategic Command: threat perception, fallible assessments, signalling measures and early-warning false alarms (25.11.2026).
+# Historical basis:
+# - Operation Giant Lance (October 1969): a deliberately visible US nuclear alert intended to make Moscow doubt Washington's restraint.
+# - DEFCON 3 during the October War (1973): readiness raised largely as a political signal.
+# - Soviet operation RYAN (from 1981) and Able Archer 83: a suspicious leadership read a NATO command-post exercise as possible preparation for a first strike.
+# - Early-warning false alarms: Thule radar returns from the rising Moon (1960), a NORAD training tape (1979), a failed computer component (1980), Oko satellites misreading sunlight on clouds (1983).
+# IMPERIA COLD WAR update 25.11.2026: early-warning false alarms only during a formal confrontation; war scare hooks (weekly drift +4, reports, exercises as responses).
+# Threat perception (COLDWAR_nr_paranoia, 0 to 100) exists for player governments only. It biases their assessments towards overstating foreign readiness and produces early-warning false alarms.
+
+# Input: temp variable COLDWAR_nr_paranoia_delta. Scope: the country whose threat perception changes.
+COLDWAR_nr_add_paranoia = {
+	if = {
+		limit = { is_ai = no COLDWAR_nr_enabled = yes }
+		add_to_variable = { COLDWAR_nr_paranoia = COLDWAR_nr_paranoia_delta }
+		clamp_variable = { var = COLDWAR_nr_paranoia min = 0 max = 100 }
+		COLDWAR_nr_paranoia_display = yes
+		COLDWAR_nr_touch = yes
+	}
+}
+COLDWAR_nr_paranoia_display = {
+	set_variable = {
+		COLDWAR_nr_paranoia_frame = { value = COLDWAR_nr_paranoia divide = 5 round = yes add = 1 clamp = { min = 1 max = 21 } }
+	}
+	set_variable = {
+		COLDWAR_nr_misread_pct = { value = COLDWAR_nr_paranoia multiply = 0.35 add = 5 }
+	}
+	set_variable = {
+		COLDWAR_nr_overstate_pct = { value = COLDWAR_nr_paranoia multiply = 0.5 add = 40 }
+	}
+	set_variable = { COLDWAR_nr_alarm_crisis_pct = 0 }
+	set_variable = { COLDWAR_nr_alarm_calm_pct = 0 }
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_paranoia > 29.99999 }
+		}
+		set_variable = { COLDWAR_nr_alarm_crisis_pct = { value = COLDWAR_nr_paranoia divide = 10 } }
+		set_variable = { COLDWAR_nr_alarm_calm_pct = { value = COLDWAR_nr_paranoia divide = 40 } }
+	}
+	set_variable = { COLDWAR_nr_signal_days = 0 }
+	if = {
+		limit = { has_variable = COLDWAR_nr_signal_until }
+		set_variable = {
+			COLDWAR_nr_signal_days = { value = COLDWAR_nr_signal_until subtract = global.num_days clamp = { min = 0 max = 1000 } }
+		}
+	}
+	set_variable = { COLDWAR_nr_signal_cd_days = 0 }
+	if = {
+		limit = { has_variable = COLDWAR_nr_signal_cd_until }
+		set_variable = {
+			COLDWAR_nr_signal_cd_days = { value = COLDWAR_nr_signal_cd_until subtract = global.num_days clamp = { min = 0 max = 1000 } }
+		}
+	}
+}
+
+# Weekly drift: -6 base; +8 active confrontation; +6 foreign ultimatum or release authority; +3 own readiness at Reinforced or higher;
+# up to +4 from Cold War tension (tension x 0.04); -4 direct channel; -6 agreed stand-down.
+COLDWAR_nr_paranoia_weekly = {
+	if = {
+		limit = { is_ai = no }
+		set_temp_variable = { COLDWAR_nr_paranoia_delta = -6 }
+		if = {
+			limit = { COLDWAR_nr_pair_valid = yes }
+			add_to_temp_variable = { COLDWAR_nr_paranoia_delta = 8 }
+			var:COLDWAR_nr_opponent = { set_temp_variable = { COLDWAR_nr_peer_true = COLDWAR_nr_level } }
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_peer_true > 0 }
+					check_variable = { COLDWAR_nr_peer_true < COLDWAR_nr_review_peer_min }
+				}
+				set_variable = { COLDWAR_nr_review_peer_min = COLDWAR_nr_peer_true }
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					COLDWAR_nr_foreign_ultimatum = yes
+					COLDWAR_nr_foreign_release = yes
+				}
+			}
+			add_to_temp_variable = { COLDWAR_nr_paranoia_delta = 6 }
+		}
+		if = {
+			limit = {
+				COLDWAR_nr_nuclear_power = yes
+				check_variable = { COLDWAR_nr_level < 4 }
+			}
+			add_to_temp_variable = { COLDWAR_nr_paranoia_delta = 3 }
+		}
+		if = {
+			limit = { has_global_flag = mdcw_cw_initialized }
+			set_temp_variable = { COLDWAR_nr_tension_share = global.mdcw_cw_tension }
+			multiply_temp_variable = { COLDWAR_nr_tension_share = 0.04 }
+			add_to_temp_variable = { COLDWAR_nr_paranoia_delta = COLDWAR_nr_tension_share }
+		}
+		if = {
+			limit = { has_country_flag = COLDWAR_nr_hotline }
+			add_to_temp_variable = { COLDWAR_nr_paranoia_delta = -4 }
+		}
+		if = {
+			limit = { has_country_flag = COLDWAR_nr_standdown }
+			add_to_temp_variable = { COLDWAR_nr_paranoia_delta = -6 }
+		}
+		if = {
+			limit = { COLDWAR_ws_valid = yes }
+			add_to_temp_variable = { COLDWAR_nr_paranoia_delta = 4 }
+		}
+		COLDWAR_nr_add_paranoia = yes
+		COLDWAR_nr_false_alarm_roll = yes
+		COLDWAR_ws_weekly = yes
+		COLDWAR_ws_roll_report = yes
+	}
+}
+
+# ---------------------------------------------------------------- assessments
+# Scope: the assessed country. Writes temp COLDWAR_nr_shown: the readiness level that foreign intelligence observes.
+# A strategic exercise shows Strategic Alert; concealment shows Increased Vigilance at most.
+COLDWAR_nr_shown_level = {
+	set_temp_variable = { COLDWAR_nr_shown = COLDWAR_nr_level }
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_shown < 1 }
+		}
+		set_temp_variable = { COLDWAR_nr_shown = 5 }
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_nr_exercise
+			check_variable = { COLDWAR_nr_shown > 2 }
+		}
+		set_temp_variable = { COLDWAR_nr_shown = 2 }
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_nr_concealed
+			check_variable = { COLDWAR_nr_shown < 4 }
+		}
+		set_temp_variable = { COLDWAR_nr_shown = 4 }
+	}
+}
+# Scope: assessing country (ROOT), PREV: assessed country.
+# Misjudgement chance: 5% + 0.35% per point of threat perception; 10 points lower with 65% air intelligence (minimum 2%); none for faction members.
+# Share of misjudgements that overstate readiness: 40% + 0.5% per point. At 70 threat perception, 30% of overstatements are two levels.
+# With 65% air intelligence an exercise or concealment is seen through in 50% of assessments.
+# Disinformation fed by the target (operation, 90 days) shifts the reading by two levels and is only identified by agents inside the target's strategic command (operation, 120 days).
+COLDWAR_nr_assess_prev = {
+	PREV = { save_event_target_as = COLDWAR_nr_subject }
+	set_variable = { COLDWAR_nr_assessment = 0 }
+	set_variable = { COLDWAR_nr_assessed_level = 0 }
+	set_variable = { COLDWAR_nr_assess_source = 0 }
+	set_variable = { COLDWAR_nr_assess_note = 0 }
+	if = {
+		limit = {
+			PREV = { COLDWAR_nr_nuclear_power = yes }
+		}
+		set_temp_variable = { COLDWAR_nr_true = PREV.COLDWAR_nr_level }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_true < 1 }
+			}
+			set_temp_variable = { COLDWAR_nr_true = 5 }
+		}
+		PREV = { COLDWAR_nr_shown_level = yes }
+		set_temp_variable = { COLDWAR_nr_deceived = 0 }
+		if = {
+			limit = { is_in_faction_with = PREV }
+			set_temp_variable = { COLDWAR_nr_shown = COLDWAR_nr_true }
+		}
+		# Penetration of the target's strategic command (our operation) and disinformation aimed at us (their operation).
+		set_temp_variable = { COLDWAR_nr_penetrated = 0 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_penetrated_until@PREV > global.num_days }
+			}
+			set_temp_variable = { COLDWAR_nr_penetrated = 1 }
+		}
+		set_temp_variable = { COLDWAR_nr_disinfo = 0 }
+		if = {
+			limit = {
+				NOT = { is_in_faction_with = PREV }
+				check_variable = { PREV.COLDWAR_nr_disinfo_until@THIS > global.num_days }
+			}
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_penetrated = 1 }
+				}
+				set_variable = { COLDWAR_nr_assess_note = 3 }
+				set_temp_variable = { COLDWAR_nr_paranoia_delta = 5 }
+				COLDWAR_nr_add_paranoia = yes
+			}
+			else = {
+				set_temp_variable = { COLDWAR_nr_disinfo = 1 }
+				if = {
+					limit = {
+						check_variable = { PREV.COLDWAR_nr_disinfo_kind@THIS = 1 }
+					}
+					subtract_from_temp_variable = { COLDWAR_nr_shown = 2 }
+				}
+				else = {
+					add_to_temp_variable = { COLDWAR_nr_shown = 2 }
+				}
+				clamp_temp_variable = { var = COLDWAR_nr_shown min = 1 max = 5 }
+			}
+		}
+		set_temp_variable = { COLDWAR_nr_misread = COLDWAR_nr_paranoia }
+		multiply_temp_variable = { COLDWAR_nr_misread = 0.35 }
+		add_to_temp_variable = { COLDWAR_nr_misread = 5 }
+		set_temp_variable_to_random = { var = COLDWAR_nr_roll_see min = 0 max = 100 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_penetrated = 1 }
+			}
+			# Agents inside the strategic command: exact, never misjudged, deception always identified.
+			set_variable = { COLDWAR_nr_assessment = 2 }
+			set_variable = { COLDWAR_nr_assess_source = 5 }
+			set_temp_variable = { COLDWAR_nr_misread = 0 }
+			if = {
+				limit = {
+					NOT = { check_variable = { COLDWAR_nr_shown = COLDWAR_nr_true } }
+				}
+				set_temp_variable = { COLDWAR_nr_shown = COLDWAR_nr_true }
+				if = {
+					limit = {
+						NOT = { check_variable = { COLDWAR_nr_assess_note = 3 } }
+					}
+					set_variable = { COLDWAR_nr_assess_note = 1 }
+					if = {
+						limit = {
+							PREV = { has_country_flag = COLDWAR_nr_concealed }
+						}
+						set_variable = { COLDWAR_nr_assess_note = 2 }
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				intel_level_over = { target = PREV airforce_intel > 0.65 }
+			}
+			set_variable = { COLDWAR_nr_assessment = 2 }
+			set_variable = { COLDWAR_nr_assess_source = 1 }
+			subtract_from_temp_variable = { COLDWAR_nr_misread = 10 }
+			clamp_temp_variable = { var = COLDWAR_nr_misread min = 2 max = 100 }
+			if = {
+				limit = {
+					NOT = { check_variable = { COLDWAR_nr_shown = COLDWAR_nr_true } }
+					check_variable = { COLDWAR_nr_disinfo = 0 }
+					check_variable = { COLDWAR_nr_roll_see < 50 }
+				}
+				set_temp_variable = { COLDWAR_nr_shown = COLDWAR_nr_true }
+				set_variable = { COLDWAR_nr_assess_note = 1 }
+				if = {
+					limit = {
+						PREV = { has_country_flag = COLDWAR_nr_concealed }
+					}
+					set_variable = { COLDWAR_nr_assess_note = 2 }
+					set_temp_variable = { COLDWAR_nr_paranoia_delta = 10 }
+					COLDWAR_nr_add_paranoia = yes
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					is_in_faction_with = PREV
+					COLDWAR_nr_is_opponent_prev = yes
+					PREV = { has_country_flag = COLDWAR_nr_public }
+					intel_level_over = { target = PREV airforce_intel > 0.35 }
+				}
+			}
+			set_variable = { COLDWAR_nr_assessment = 1 }
+			set_variable = { COLDWAR_nr_assess_source = 2 }
+			if = {
+				limit = {
+					OR = {
+						COLDWAR_nr_is_opponent_prev = yes
+						PREV = { has_country_flag = COLDWAR_nr_public }
+					}
+				}
+				set_variable = { COLDWAR_nr_assess_source = 4 }
+			}
+			if = {
+				limit = { is_in_faction_with = PREV }
+				set_variable = { COLDWAR_nr_assess_source = 3 }
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_assessment > 0 }
+			}
+			if = {
+				limit = { is_in_faction_with = PREV }
+				set_temp_variable = { COLDWAR_nr_misread = 0 }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { COLDWAR_nr_shown = COLDWAR_nr_true } }
+				}
+				set_temp_variable = { COLDWAR_nr_deceived = 1 }
+			}
+			set_temp_variable = { COLDWAR_nr_reading = COLDWAR_nr_shown }
+			set_temp_variable_to_random = { var = COLDWAR_nr_roll_err min = 0 max = 100 }
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_roll_err < COLDWAR_nr_misread }
+				}
+				set_temp_variable = { COLDWAR_nr_overstate = COLDWAR_nr_paranoia }
+				multiply_temp_variable = { COLDWAR_nr_overstate = 0.5 }
+				add_to_temp_variable = { COLDWAR_nr_overstate = 40 }
+				set_temp_variable_to_random = { var = COLDWAR_nr_roll_dir min = 0 max = 100 }
+				if = {
+					limit = {
+						check_variable = { COLDWAR_nr_roll_dir < COLDWAR_nr_overstate }
+					}
+					subtract_from_temp_variable = { COLDWAR_nr_reading = 1 }
+					set_temp_variable_to_random = { var = COLDWAR_nr_roll_two min = 0 max = 100 }
+					if = {
+						limit = {
+							check_variable = { COLDWAR_nr_paranoia > 69.99999 }
+							check_variable = { COLDWAR_nr_roll_two < 30 }
+						}
+						subtract_from_temp_variable = { COLDWAR_nr_reading = 1 }
+					}
+				}
+				else = {
+					add_to_temp_variable = { COLDWAR_nr_reading = 1 }
+				}
+				clamp_temp_variable = { var = COLDWAR_nr_reading min = 1 max = 5 }
+			}
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_assessment = 2 }
+				}
+				set_variable = { COLDWAR_nr_assessed_level = COLDWAR_nr_reading }
+				# A concealed strategic or maximum alert that is actually exposed adds Cold War tension once per government every 30 days.
+				if = {
+					limit = {
+						check_variable = { COLDWAR_nr_reading = COLDWAR_nr_true }
+						check_variable = { COLDWAR_nr_true < 3 }
+						PREV = {
+							NOT = { has_country_flag = COLDWAR_nr_public }
+							NOT = { has_country_flag = COLDWAR_nr_exposed_cd }
+						}
+					}
+					COLDWAR_nr_tension_1 = yes
+					PREV = {
+						set_country_flag = { flag = COLDWAR_nr_exposed_cd days = 30 value = 1 }
+					}
+				}
+			}
+			else = {
+				set_variable = { COLDWAR_nr_assessed_level = 1 }
+				if = {
+					limit = {
+						check_variable = { COLDWAR_nr_reading > 3 }
+					}
+					set_variable = { COLDWAR_nr_assessed_level = 5 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { COLDWAR_nr_reading > 1 }
+					}
+					set_variable = { COLDWAR_nr_assessed_level = 3 }
+				}
+			}
+			# Crisis review: compare the reading with the counterpart's actual readiness.
+			if = {
+				limit = { COLDWAR_nr_is_opponent_prev = yes }
+				add_to_variable = { COLDWAR_nr_review_assess = 1 }
+				if = {
+					limit = {
+						NOT = { check_variable = { COLDWAR_nr_reading = COLDWAR_nr_true } }
+					}
+					add_to_variable = { COLDWAR_nr_review_wrong = 1 }
+					if = {
+						limit = {
+							check_variable = { COLDWAR_nr_reading < COLDWAR_nr_true }
+						}
+						add_to_variable = { COLDWAR_nr_review_over = 1 }
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { COLDWAR_nr_deceived = 1 }
+					}
+					add_to_variable = { COLDWAR_nr_review_deceived = 1 }
+				}
+				if = {
+					limit = {
+						check_variable = { COLDWAR_nr_true < COLDWAR_nr_review_peer_min }
+					}
+					set_variable = { COLDWAR_nr_review_peer_min = COLDWAR_nr_true }
+				}
+			}
+		}
+	}
+	country_event = { id = cw_nuclear.14 }
+}
+
+# ---------------------------------------------------------------- crisis review
+# Scope: both participants at the start of a confrontation.
+COLDWAR_nr_review_reset = {
+	set_variable = { COLDWAR_nr_review_assess = 0 }
+	set_variable = { COLDWAR_nr_review_wrong = 0 }
+	set_variable = { COLDWAR_nr_review_over = 0 }
+	set_variable = { COLDWAR_nr_review_deceived = 0 }
+	set_variable = { COLDWAR_nr_review_peer_exercises = 0 }
+	set_variable = { COLDWAR_nr_review_peer_concealed = 0 }
+	set_variable = { COLDWAR_nr_review_alarms = 0 }
+	set_variable = { COLDWAR_nr_review_peer_min = 5 }
+}
+# Scope: a participant whose confrontation is closing. Called before the opponent variable is cleared.
+COLDWAR_nr_review_schedule = {
+	if = {
+		limit = {
+			is_ai = no
+			has_variable = COLDWAR_nr_opponent
+			has_variable = COLDWAR_nr_review_peer_min
+			NOT = { has_country_flag = COLDWAR_nr_review_pending }
+		}
+		set_variable = { COLDWAR_nr_review_peer = COLDWAR_nr_opponent }
+		set_variable = { COLDWAR_nr_rv_assess = COLDWAR_nr_review_assess }
+		set_variable = { COLDWAR_nr_rv_wrong = COLDWAR_nr_review_wrong }
+		set_variable = { COLDWAR_nr_rv_over = COLDWAR_nr_review_over }
+		set_variable = { COLDWAR_nr_rv_deceived = COLDWAR_nr_review_deceived }
+		set_variable = { COLDWAR_nr_rv_exercises = COLDWAR_nr_review_peer_exercises }
+		set_variable = { COLDWAR_nr_rv_concealed = COLDWAR_nr_review_peer_concealed }
+		set_variable = { COLDWAR_nr_rv_alarms = COLDWAR_nr_review_alarms }
+		set_variable = { COLDWAR_nr_rv_peer_min = COLDWAR_nr_review_peer_min }
+		set_country_flag = { flag = COLDWAR_nr_review_pending days = 50 value = 1 }
+		country_event = { id = cw_nuclear.30 days = 45 }
+	}
+}
+
+# ---------------------------------------------------------------- signalling measures
+COLDWAR_nr_start_exercise = {
+	if = {
+		limit = { COLDWAR_nr_can_exercise = yes }
+		add_political_power = -25
+		set_country_flag = { flag = COLDWAR_nr_exercise days = 10 value = 1 }
+		set_country_flag = { flag = COLDWAR_nr_signal_cd days = 60 value = 1 }
+		set_variable = { COLDWAR_nr_signal_until = { value = global.num_days add = 10 } }
+		set_variable = { COLDWAR_nr_signal_cd_until = { value = global.num_days add = 60 } }
+		add_to_variable = { COLDWAR_nr_fatigue = 3 }
+		clamp_variable = { var = COLDWAR_nr_fatigue min = 0 max = 100 }
+		country_event = { id = cw_nuclear.34 days = 11 }
+		set_temp_variable = { COLDWAR_ws_resp_kind = 2 }
+		COLDWAR_ws_response = yes
+		save_event_target_as = COLDWAR_nr_sender
+		every_country = {
+			limit = {
+				is_ai = no
+				exists = yes
+				NOT = { tag = event_target:COLDWAR_nr_sender }
+				NOT = { is_in_faction_with = event_target:COLDWAR_nr_sender }
+			}
+			COLDWAR_nr_init = yes
+			set_variable = { COLDWAR_nr_last_signal_bump = 6 }
+			if = {
+				limit = {
+					COLDWAR_nr_pair_valid = yes
+					check_variable = { COLDWAR_nr_opponent = event_target:COLDWAR_nr_sender.id }
+				}
+				set_variable = { COLDWAR_nr_last_signal_bump = 15 }
+				add_to_variable = { COLDWAR_nr_review_peer_exercises = 1 }
+			}
+			if = {
+				limit = {
+					COLDWAR_ws_valid = yes
+					check_variable = { COLDWAR_ws_partner = event_target:COLDWAR_nr_sender.id }
+				}
+				set_variable = { COLDWAR_nr_last_signal_bump = 15 }
+			}
+			set_variable = { COLDWAR_ws_source_id = event_target:COLDWAR_nr_sender.id }
+			set_variable = { COLDWAR_ws_report_kind = 2 }
+			COLDWAR_ws_set_pending = yes
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = COLDWAR_nr_last_signal_bump }
+			COLDWAR_nr_add_paranoia = yes
+			country_event = { id = cw_nuclear.35 }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_start_concealment = {
+	if = {
+		limit = { COLDWAR_nr_can_conceal = yes }
+		add_political_power = -25
+		set_country_flag = { flag = COLDWAR_nr_concealed days = 30 value = 1 }
+		set_country_flag = { flag = COLDWAR_nr_signal_cd days = 60 value = 1 }
+		set_variable = { COLDWAR_nr_signal_until = { value = global.num_days add = 30 } }
+		set_variable = { COLDWAR_nr_signal_cd_until = { value = global.num_days add = 60 } }
+		country_event = { id = cw_nuclear.34 days = 31 }
+		if = {
+			limit = { COLDWAR_nr_pair_valid = yes }
+			var:COLDWAR_nr_opponent = { add_to_variable = { COLDWAR_nr_review_peer_concealed = 1 } }
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+
+# ---------------------------------------------------------------- early-warning false alarms
+# Weekly chance from 30 threat perception, only during a formal confrontation: threat perception / 10 %. At most one alarm per 60 days.
+# The Game Controller tool (COLDWAR_gc_nr_false_alarm) can also trigger one outside a confrontation.
+COLDWAR_nr_false_alarm_roll = {
+	if = {
+		limit = {
+			is_ai = no
+			has_capitulated = no
+			COLDWAR_nr_nuclear_power = yes
+			COLDWAR_nr_pair_valid = yes
+			check_variable = { COLDWAR_nr_paranoia > 29.99999 }
+			NOT = { has_country_flag = COLDWAR_nr_alarm_cd }
+		}
+		set_temp_variable = { COLDWAR_nr_alarm_chance = COLDWAR_nr_paranoia }
+		divide_temp_variable = { COLDWAR_nr_alarm_chance = 10 }
+		set_temp_variable_to_random = { var = COLDWAR_nr_roll_alarm min = 0 max = 100 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_roll_alarm < COLDWAR_nr_alarm_chance }
+			}
+			COLDWAR_nr_trigger_false_alarm = yes
+		}
+	}
+}
+# Scope: the country that receives an early-warning false alarm (weekly roll or Game Controller).
+# Source: the crisis counterpart, otherwise a random foreign nuclear power outside the faction.
+COLDWAR_nr_trigger_false_alarm = {
+	save_event_target_as = COLDWAR_nr_alarm_target
+	if = {
+		limit = { COLDWAR_nr_pair_valid = yes }
+		var:COLDWAR_nr_opponent = { save_event_target_as = COLDWAR_nr_alarm_source }
+		add_to_variable = { COLDWAR_nr_review_alarms = 1 }
+	}
+	else = {
+		random_country = {
+			limit = {
+				exists = yes
+				NOT = { tag = event_target:COLDWAR_nr_alarm_target }
+				NOT = { is_in_faction_with = event_target:COLDWAR_nr_alarm_target }
+				COLDWAR_nr_nuclear_power = yes
+			}
+			save_event_target_as = COLDWAR_nr_alarm_source
+		}
+	}
+	if = {
+		limit = { has_event_target = COLDWAR_nr_alarm_source }
+		set_country_flag = { flag = COLDWAR_nr_alarm_cd days = 60 value = 1 }
+		set_variable = { COLDWAR_nr_alarm_source_id = event_target:COLDWAR_nr_alarm_source.id }
+		set_variable = { COLDWAR_nr_alarm_prev_level = COLDWAR_nr_level }
+		set_temp_variable_to_random = { var = COLDWAR_nr_cause_roll min = 1 max = 5 }
+		set_variable = { COLDWAR_nr_alarm_cause = COLDWAR_nr_cause_roll }
+		round_variable = COLDWAR_nr_alarm_cause
+		clamp_variable = { var = COLDWAR_nr_alarm_cause min = 1 max = 4 }
+		country_event = { id = cw_nuclear.31 }
+	}
+}
+# Scope: country answering an early-warning alarm. Input: temp COLDWAR_nr_emergency_target. Raises readiness at once, without political power.
+COLDWAR_nr_emergency_level = {
+	if = {
+		limit = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level > COLDWAR_nr_emergency_target }
+		}
+		set_variable = { COLDWAR_nr_level = COLDWAR_nr_emergency_target }
+		set_variable = { COLDWAR_nr_order = COLDWAR_nr_emergency_target }
+		set_variable = { COLDWAR_nr_build_days = 0 }
+		set_variable = { COLDWAR_nr_build_total = 0 }
+		COLDWAR_nr_refresh = yes
+	}
+}
+# Scope: country that ordered Maximum Readiness after an alarm. Foreign player governments outside its faction notice the alert.
+COLDWAR_nr_alarm_alert_others = {
+	set_country_flag = { flag = COLDWAR_nr_public days = 30 value = 1 }
+	save_event_target_as = COLDWAR_nr_sender
+	every_country = {
+		limit = {
+			is_ai = no
+			exists = yes
+			NOT = { tag = event_target:COLDWAR_nr_sender }
+			NOT = { is_in_faction_with = event_target:COLDWAR_nr_sender }
+		}
+		COLDWAR_nr_init = yes
+		set_temp_variable = { COLDWAR_nr_paranoia_delta = 10 }
+		COLDWAR_nr_add_paranoia = yes
+		country_event = { id = cw_nuclear.33 }
+	}
+}
+# Scope: any country. Clears threat perception, signalling measures and alarms (Game Controller reset).
+COLDWAR_nr_paranoia_reset = {
+	clr_country_flag = COLDWAR_nr_exercise
+	clr_country_flag = COLDWAR_nr_concealed
+	clr_country_flag = COLDWAR_nr_signal_cd
+	clr_country_flag = COLDWAR_nr_alarm_cd
+	clr_country_flag = COLDWAR_nr_review_pending
+	clr_country_flag = COLDWAR_ws_report_cd
+	COLDWAR_ws_clear = yes
+	set_variable = { COLDWAR_nr_paranoia = 0 }
+	clear_variable = COLDWAR_nr_signal_until
+	clear_variable = COLDWAR_nr_signal_cd_until
+	COLDWAR_nr_paranoia_display = yes
+}

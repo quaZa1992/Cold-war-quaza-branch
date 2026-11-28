@@ -1,5 +1,12 @@
 # IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.
-COLDWAR_nr_enabled = { IMP_is_1970_scenario = yes has_dlc = "Gotterdammerung" }
+# IMPERIA COLD WAR update 20.11.2026: GC switch (global flag COLDWAR_nr_disabled) turns the whole system off and on.
+# IMPERIA COLD WAR update 20.11.2026: civil defence tied to public shelters, countdown events instead of daily polling, shelter programme.
+# IMPERIA COLD WAR update 25.11.2026: card state triggers for the Strategic Command v2 readiness ladder.
+COLDWAR_nr_available = { IMP_is_1970_scenario = yes has_dlc = "Gotterdammerung" }
+COLDWAR_nr_enabled = {
+	COLDWAR_nr_available = yes
+	NOT = { has_global_flag = COLDWAR_nr_disabled }
+}
 COLDWAR_nr_nuclear_power = {
 	COLDWAR_nr_enabled = yes
 	has_capitulated = no
@@ -170,4 +177,132 @@ COLDWAR_nr_strategic_ready = {
 			}
 		}
 	}
+}
+COLDWAR_nr_heightened_warning = {
+	OR = {
+		has_war = yes
+		has_variable = COLDWAR_nr_opponent
+		AND = {
+			has_country_flag = COLDWAR_nr_initialized
+			check_variable = { COLDWAR_nr_level < 4 }
+		}
+	}
+}
+COLDWAR_nr_has_hardened_shelters = {
+	OR = {
+		has_completed_focus = GEN_1970_ncon_civil_defence_shelters
+		has_country_flag = COLDWAR_SWE_delivered_shelters
+		has_country_flag = COLDWAR_SSR_civil_shelters_rewarded
+	}
+}
+COLDWAR_nr_can_mobilise_civil = {
+	COLDWAR_nr_enabled = yes
+	is_ai = no
+	has_capitulated = no
+	NOT = { has_political_power < 25 }
+	NOT = { has_country_flag = COLDWAR_nr_civil_active }
+	check_variable = { COLDWAR_nr_civil_days = 0 }
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_nr_tt_shelters
+		any_owned_state = { civilian_shelter > 0 }
+	}
+}
+COLDWAR_nr_can_start_programme = {
+	COLDWAR_nr_enabled = yes
+	is_ai = no
+	has_capitulated = no
+	NOT = { has_political_power < 50 }
+	custom_trigger_tooltip = {
+		tooltip = COLDWAR_nr_tt_programme
+		NOT = {
+			has_dynamic_modifier = { modifier = COLDWAR_nr_shelter_programme }
+		}
+	}
+}
+
+# IMPERIA COLD WAR update 25.11.2026: readiness ladder card states (pending target and locked cards).
+COLDWAR_nr_card_pending_5 = {
+	check_variable = { COLDWAR_nr_build_days > 0 }
+	check_variable = { COLDWAR_nr_order = 5 }
+}
+COLDWAR_nr_card_locked_5 = {
+	NOT = { check_variable = { COLDWAR_nr_level = 5 } }
+	NOT = { COLDWAR_nr_card_pending_5 = yes }
+	NOT = { COLDWAR_nr_can_change = yes }
+}
+COLDWAR_nr_card_pending_4 = {
+	check_variable = { COLDWAR_nr_build_days > 0 }
+	check_variable = { COLDWAR_nr_order = 4 }
+}
+COLDWAR_nr_card_locked_4 = {
+	NOT = { check_variable = { COLDWAR_nr_level = 4 } }
+	NOT = { COLDWAR_nr_card_pending_4 = yes }
+	NOT = { COLDWAR_nr_can_change = yes }
+}
+COLDWAR_nr_card_pending_3 = {
+	check_variable = { COLDWAR_nr_build_days > 0 }
+	check_variable = { COLDWAR_nr_order = 3 }
+}
+COLDWAR_nr_card_locked_3 = {
+	NOT = { check_variable = { COLDWAR_nr_level = 3 } }
+	NOT = { COLDWAR_nr_card_pending_3 = yes }
+	NOT = { COLDWAR_nr_can_change = yes }
+}
+COLDWAR_nr_card_pending_2 = {
+	check_variable = { COLDWAR_nr_build_days > 0 }
+	check_variable = { COLDWAR_nr_order = 2 }
+}
+COLDWAR_nr_card_locked_2 = {
+	NOT = { check_variable = { COLDWAR_nr_level = 2 } }
+	NOT = { COLDWAR_nr_card_pending_2 = yes }
+	NOT = { COLDWAR_nr_can_change = yes }
+}
+COLDWAR_nr_card_pending_1 = {
+	check_variable = { COLDWAR_nr_build_days > 0 }
+	check_variable = { COLDWAR_nr_order = 1 }
+}
+COLDWAR_nr_card_locked_1 = {
+	NOT = { check_variable = { COLDWAR_nr_level = 1 } }
+	NOT = { COLDWAR_nr_card_pending_1 = yes }
+	NOT = { COLDWAR_nr_can_change = yes }
+}
+# IMPERIA COLD WAR update 25.11.2026: signalling measures (strategic exercise, concealed readiness).
+COLDWAR_nr_signal_free = {
+	NOT = { has_country_flag = COLDWAR_nr_signal_cd }
+	NOT = { has_country_flag = COLDWAR_nr_exercise }
+	NOT = { has_country_flag = COLDWAR_nr_concealed }
+}
+COLDWAR_nr_can_exercise = {
+	is_ai = no
+	COLDWAR_nr_nuclear_power = yes
+	NOT = { has_political_power < 25 }
+	NOT = { has_country_flag = COLDWAR_nr_standdown }
+	COLDWAR_nr_signal_free = yes
+}
+COLDWAR_nr_can_conceal = {
+	is_ai = no
+	COLDWAR_nr_nuclear_power = yes
+	NOT = { has_political_power < 25 }
+	COLDWAR_nr_signal_free = yes
+}
+# IMPERIA COLD WAR update 25.11.2026: peacetime war scare between two player nuclear powers.
+COLDWAR_ws_valid = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_ws_active
+			has_variable = COLDWAR_ws_partner
+		}
+		var:COLDWAR_ws_partner = {
+			exists = yes
+			has_capitulated = no
+			has_country_flag = COLDWAR_ws_active
+			check_variable = { COLDWAR_ws_partner = PREV.id }
+			check_variable = { COLDWAR_ws_serial = PREV.COLDWAR_ws_serial }
+		}
+	}
+	else = { always = no }
+}
+COLDWAR_ws_has_pending_report = {
+	has_variable = COLDWAR_ws_pending_source
+	check_variable = { COLDWAR_ws_pending_until > global.num_days }
 }

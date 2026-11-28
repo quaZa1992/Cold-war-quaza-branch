@@ -7656,6 +7656,23 @@ COLDWAR_CMEA_submit_application = {
 			array = global.cwcm_members
 			if = { limit = { is_ai = no } set_variable = { cwcm_ev17_target = PREV.id } country_event = { id = COLDWAR_CMEA.17 } }
 		}
+		# COLDWAR 23.11.2026: without a player member the Secretariat tables the admission itself (vote in the June session)
+		if = {
+			limit = {
+				NOT = { any_of_scopes = { array = global.cwcm_members is_ai = no } }
+				COLDWAR_CMEA_free_request_slot = yes
+			}
+			set_temp_variable = { cwcm_t_target = THIS.id }
+			random_scope_in_array = {
+				array = global.cwcm_members
+				limit = { COLDWAR_CMEA_is_secretary = yes }
+				set_temp_variable = { cwcm_t_item = 61 }
+				set_temp_variable = { cwcm_t_opt = 0 }
+				set_temp_variable = { cwcm_t_size = 0 }
+				set_temp_variable = { cwcm_t_ret = 0 }
+				COLDWAR_CMEA_request = yes
+			}
+		}
 		add_to_variable = { global.cwcm_dirty = 1 }
 	}
 }

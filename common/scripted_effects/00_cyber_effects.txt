@@ -343,13 +343,33 @@ cyber_two_roll = {
 # This rolls the dice for attacks, then starts firing effects off
 cyber_execute_operation = {
 	cyber_two_roll = yes
+	# COLDWAR covert v2: how well the operation went decides how hard a success hits (x0.55 to x1.45)
+	set_temp_variable = { COLDWAR_ca_str_t = eff_offense }
+	divide_temp_variable = { COLDWAR_ca_str_t = 100 }
+	add_to_temp_variable = { COLDWAR_ca_str_t = 0.5 }
 
 	if = {
 		limit = {
 			check_variable = { cyber_roll_result > 0 }
 		}
 		ROOT = { country_event = MD_cyber.1 }
+		if = { # COLDWAR covert v2: the defectors of a Brain Drain work for us
+			limit = { check_variable = { cyber_op_cur_type = 20 } }
+			if = {
+				limit = { has_idea = cyber_brain_drain_gain }
+				modify_timed_idea = { idea = cyber_brain_drain_gain days = 180 }
+			}
+			else = { add_timed_idea = { idea = cyber_brain_drain_gain days = 365 } }
+		}
+		set_party_index_to_ruling_party = yes
 		var:cur_target_nation = {
+			set_variable = { COLDWAR_ca_strength = COLDWAR_ca_str_t }
+			set_variable = { COLDWAR_ca_backer_party = party_index }
+			if = { # COLDWAR covert v2 coup: backer of the plot and the party it will install
+				limit = { check_variable = { cyber_op_cur_type = 21 } }
+				set_variable = { COLDWAR_coup_backer = ROOT }
+				set_variable = { COLDWAR_coup_party = party_index }
+			}
 			if = { limit = { check_variable = { cyber_op_cur_type = 9 } }
 				set_country_flag = {
 					flag = has_industrial_espionage_tracking_access_from_@ROOT
@@ -540,6 +560,27 @@ cyber_execute_operation = {
 			check_variable = { cyber_op_cur_type = 15 }
 		}
 		var:cur_target_nation = { clr_country_flag = is_under_zero_day_strike_tracking_attack_by_@ROOT }
+	}
+	else_if = {
+		limit = {
+			check_variable = { cur_target_nation > 0 }
+			check_variable = { cyber_op_cur_type = 19 }
+		}
+		var:cur_target_nation = { clr_country_flag = is_under_scandal_tracking_attack_by_@ROOT }
+	}
+	else_if = {
+		limit = {
+			check_variable = { cur_target_nation > 0 }
+			check_variable = { cyber_op_cur_type = 20 }
+		}
+		var:cur_target_nation = { clr_country_flag = is_under_brain_drain_tracking_attack_by_@ROOT }
+	}
+	else_if = { # COLDWAR covert v2 coup
+		limit = {
+			check_variable = { cur_target_nation > 0 }
+			check_variable = { cyber_op_cur_type = 21 }
+		}
+		var:cur_target_nation = { clr_country_flag = is_under_coup_plot_tracking_attack_by_@ROOT }
 	}
 
 

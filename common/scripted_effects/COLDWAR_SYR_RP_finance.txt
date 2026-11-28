@@ -1,0 +1,30 @@
+# IMPERIA COLD WAR — Syria: treasury debits and monetary previews.
+
+# The caller sets the price in basis points of the paying country's GDP.
+# Quote the same signed billion-dollar amount that MD books to the treasury.
+COLDWAR_SYR_RP_calculate_fee = {
+	set_temp_variable = { treasury_change = gdp_total }
+	multiply_temp_variable = { treasury_change = COLDWAR_SYR_RP_basis_points }
+	divide_temp_variable = { treasury_change = -10000 }
+}
+
+COLDWAR_SYR_RP_show_fee = {
+	COLDWAR_SYR_RP_calculate_fee = yes
+	set_temp_variable = { COLDWAR_SYR_RP_fee_millions = treasury_change }
+	multiply_temp_variable = { COLDWAR_SYR_RP_fee_millions = 1000 }
+	custom_effect_tooltip = COLDWAR_SYR_RP_fee_amount_tt
+}
+
+COLDWAR_SYR_RP_pay_fee = {
+	COLDWAR_SYR_RP_calculate_fee = yes
+	modify_treasury_effect = yes
+}
+
+# Weekly accrual is quoted before rounding cash to the native ledger unit.
+# A unit in the treaty accumulator is one hundred-thousandth of a billion.
+COLDWAR_SYR_RP_show_weekly_transfer = {
+	set_temp_variable = { COLDWAR_SYR_RP_weekly_thousands = SYR.gdp_total }
+	multiply_temp_variable = { COLDWAR_SYR_RP_weekly_thousands = COLDWAR_SYR_RP_signed_units }
+	multiply_temp_variable = { COLDWAR_SYR_RP_weekly_thousands = 10 }
+	custom_effect_tooltip = COLDWAR_SYR_RP_weekly_amount_tt
+}

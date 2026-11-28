@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR update 20.11.2026: quaZa branch import (Poland 1970 Gomulka character); local content retained.
+# Update 22.11.2026: characters recruited at game start in history (MD style); runtime recruit_character removed so characters survive saves and hotjoins.
 # IMPERIA COLD WAR — 1970 world politics and Yugoslav succession integration; upstream content retained.
 # IMPERIA CW — Cold War: IMP 1970 world politics effects — scripted effects.
 IMP_1970_clear_politics = {
@@ -440,7 +442,7 @@ IMP_1970_apply_world_politics = {
 	}
 	else_if = {
 		limit = { original_tag = ISR }
-		ISR70_initialize = yes
+		if = { limit = { NOT = { has_country_flag = COLDWAR_ISR_initialized } } ISR70_initialize = yes } # COLDWAR ISR 1970
 	}
 	else_if = {
 		limit = { original_tag = PAL }
@@ -473,7 +475,7 @@ IMP_1970_apply_world_politics = {
 		IMP_1970_profile_communist_state = yes
 		set_cosmetic_tag = POL_communist
 		# COLDWAR POL 1970: was create_country_leader = { name = "Wladyslaw Gomulka" picture = "gfx/Leaders/POL/POL_Coldwar_Wladyslaw_Gomulka.dds" expire = "1970.12.20" ideology = communist_state }
-		recruit_character = COLDWAR_POL_gomulka promote_character = COLDWAR_POL_gomulka # COLDWAR POL 1970
+		promote_character = COLDWAR_POL_gomulka # COLDWAR POL 1970
 	}
 	else_if = {
 		limit = { original_tag = CZE }
@@ -1214,7 +1216,7 @@ IMP_1970_setup_global_alignment_internal = {
 		give_guarantee = KOR
 		give_guarantee = NZL
 		give_guarantee = PHI
-		give_guarantee = SVN
+		# COLDWAR 24.11.2026: no guarantee for SVN; it pulled all of NATO into the Vietnam War
 		give_guarantee = TAI
 		add_to_faction = BEL
 		add_to_faction = CAN
@@ -1347,6 +1349,50 @@ IMP_1970_setup_global_alignment_internal = {
 			}
 		}
 	}
+	# IMPERIA COLD WAR — Divided Command 1970. BEGIN
+	EGY = {
+		if = {
+			limit = { has_war_with = ISR }
+			add_timed_idea = { idea = COLDWAR_ARAB_1970_divided_command days = 180 }
+			if = { limit = { NOT = { has_idea = COLDWAR_1970_war_resolve } } add_ideas = COLDWAR_1970_war_resolve }
+		}
+	}
+	SYR = {
+		if = {
+			limit = { has_war_with = ISR }
+			add_timed_idea = { idea = COLDWAR_ARAB_1970_divided_command days = 180 }
+			if = { limit = { NOT = { has_idea = COLDWAR_1970_war_resolve } } add_ideas = COLDWAR_1970_war_resolve }
+		}
+	}
+	JOR = {
+		if = {
+			limit = { has_war_with = ISR }
+			add_timed_idea = { idea = COLDWAR_ARAB_1970_divided_command days = 180 }
+			if = { limit = { NOT = { has_idea = COLDWAR_1970_war_resolve } } add_ideas = COLDWAR_1970_war_resolve }
+		}
+	}
+	IRQ = {
+		if = {
+			limit = { has_war_with = ISR }
+			add_timed_idea = { idea = COLDWAR_ARAB_1970_divided_command days = 180 }
+			if = { limit = { NOT = { has_idea = COLDWAR_1970_war_resolve } } add_ideas = COLDWAR_1970_war_resolve }
+		}
+	}
+	PAL = {
+		if = {
+			limit = { has_war_with = ISR }
+			add_timed_idea = { idea = COLDWAR_ARAB_1970_divided_command days = 180 }
+			if = { limit = { NOT = { has_idea = COLDWAR_1970_war_resolve } } add_ideas = COLDWAR_1970_war_resolve }
+		}
+	}
+	ISR = {
+		if = {
+			limit = { OR = { has_war_with = EGY has_war_with = SYR has_war_with = JOR has_war_with = IRQ has_war_with = PAL } NOT = { has_idea = COLDWAR_1970_war_resolve } }
+			add_ideas = COLDWAR_1970_war_resolve
+		}
+	}
+	# IMPERIA COLD WAR — Divided Command 1970. END
+
 
 	SVN = {
 		give_military_access = USA

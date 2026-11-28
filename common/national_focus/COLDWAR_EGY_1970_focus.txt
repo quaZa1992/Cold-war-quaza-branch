@@ -1,3 +1,5 @@
+# IMPERIA COLD WAR — 24.11.2026: deal foci send an offer event (COLDWAR_DEAL); reward only if the partner signs.
+# IMPERIA COLD WAR — 1970 focus and legacy mechanic corrections.
 # IMPERIA COLD WAR — Native doctrine rewards for the approved Egyptian military branches.
 # IMPERIA CW — Cold War: EGY 1970 focus — national focus tree.
 ## COLDWAR | Cold War mod (MD Imperia) - Egypt 1970
@@ -1243,19 +1245,43 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INFLUENCE }
 
+		bypass = { NOT = { country_exists = RAJ } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_na_the_brioni_spirit"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_na_the_brioni_spirit"
+		if = {
+			limit = { country_exists = RAJ NOT = { has_war_with = RAJ } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_na_the_brioni_spirit_RAJ_offered }
+			RAJ = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.1 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			add_opinion_modifier = { target = SER modifier = COLDWAR_EGY_positive_25 }
 			add_opinion_modifier = { target = RAJ modifier = COLDWAR_EGY_positive_25 }
 			if = { limit = { country_exists = RAJ }
-				set_temp_variable = { receiver_nation = ROOT.id }
-				set_temp_variable = { sender_nation = RAJ.id }
-				set_improved_trade_agreement = yes
+			set_temp_variable = { receiver_nation = ROOT.id }
+			set_temp_variable = { sender_nation = RAJ.id }
+			set_improved_trade_agreement = yes
 			}
 			set_temp_variable = { COLDWAR_EGY_outlook_id = 3 }
 			set_temp_variable = { COLDWAR_EGY_outlook_amount = 0.05 }
 			COLDWAR_EGY_change_outlook_popularity = yes
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_na_the_brioni_spirit"
+#|			add_opinion_modifier = { target = SER modifier = COLDWAR_EGY_positive_25 }
+#|			add_opinion_modifier = { target = RAJ modifier = COLDWAR_EGY_positive_25 }
+#|			if = { limit = { country_exists = RAJ }
+#|				set_temp_variable = { receiver_nation = ROOT.id }
+#|				set_temp_variable = { sender_nation = RAJ.id }
+#|				set_improved_trade_agreement = yes
+#|			}
+#|			set_temp_variable = { COLDWAR_EGY_outlook_id = 3 }
+#|			set_temp_variable = { COLDWAR_EGY_outlook_amount = 0.05 }
+#|			COLDWAR_EGY_change_outlook_popularity = yes
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 10
@@ -1863,18 +1889,41 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_INFLUENCE FOCUS_FILTER_MILITARY_LAWS }
 
+		bypass = { NOT = { country_exists = SOV } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_em_advisers_in_every_ministry"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_em_advisers_in_every_ministry"
+		if = {
+			limit = { country_exists = SOV NOT = { has_war_with = SOV } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_em_advisers_in_every_ministry_SOV_offered }
+			SOV = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.7 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			if = { limit = { country_exists = SOV }
-				set_temp_variable = { tag_index = SOV.id }
-				set_temp_variable = { influence_target = ROOT.id }
-				set_temp_variable = { percent_change = 5 }
-				change_influence_percentage = yes
+			set_temp_variable = { tag_index = SOV.id }
+			set_temp_variable = { influence_target = ROOT.id }
+			set_temp_variable = { percent_change = 5 }
+			change_influence_percentage = yes
 			}
 			if = { limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_EGY_armed_forces_modifier } } } hidden_effect = { add_dynamic_modifier = { modifier = COLDWAR_EGY_armed_forces_modifier } } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_EGY_armed_forces_modifier }
 			add_to_variable = { COLDWAR_EGY_armed_forces_training_time_factor = -0.05 tooltip = COLDWAR_training_time_factor_tt }
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_em_advisers_in_every_ministry"
+#|			if = { limit = { country_exists = SOV }
+#|				set_temp_variable = { tag_index = SOV.id }
+#|				set_temp_variable = { influence_target = ROOT.id }
+#|				set_temp_variable = { percent_change = 5 }
+#|				change_influence_percentage = yes
+#|			}
+#|			if = { limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_EGY_armed_forces_modifier } } } hidden_effect = { add_dynamic_modifier = { modifier = COLDWAR_EGY_armed_forces_modifier } } }
+#|			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_EGY_armed_forces_modifier }
+#|			add_to_variable = { COLDWAR_EGY_armed_forces_training_time_factor = -0.05 tooltip = COLDWAR_training_time_factor_tt }
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 3
@@ -6180,15 +6229,44 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_INFLUENCE FOCUS_FILTER_EXPENDITURE }
 
+		bypass = { NOT = { OR = { country_exists = SOV country_exists = USA } } } # COLDWAR deal partners gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_tp_credit_from_all_sides"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_tp_credit_from_all_sides"
+		if = {
+			limit = { country_exists = SOV NOT = { has_war_with = SOV } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_tp_credit_from_all_sides_SOV_offered }
+			SOV = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.13 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
 			COLDWAR_EGY_receive_gdp_share = yes
 			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
 			COLDWAR_EGY_change_debt_gdp_share = yes
-			add_opinion_modifier = { target = USA modifier = COLDWAR_EGY_positive_5 }
+
 			add_opinion_modifier = { target = SOV modifier = COLDWAR_EGY_positive_5 }
+
 		}
+		if = {
+			limit = { country_exists = USA NOT = { has_war_with = USA } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_tp_credit_from_all_sides_USA_offered }
+			USA = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.15 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
+			add_opinion_modifier = { target = USA modifier = COLDWAR_EGY_positive_5 }
+		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_tp_credit_from_all_sides"
+#|			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
+#|			COLDWAR_EGY_receive_gdp_share = yes
+#|			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
+#|			COLDWAR_EGY_change_debt_gdp_share = yes
+#|			add_opinion_modifier = { target = USA modifier = COLDWAR_EGY_positive_5 }
+#|			add_opinion_modifier = { target = SOV modifier = COLDWAR_EGY_positive_5 }
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 3
@@ -7391,8 +7469,7 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_mb_the_coptic_compact"
-			set_temp_variable = { coptic_opinion_change = 10 }
-			modify_coptic_opinion_effect = yes
+			add_political_power = 10
 			add_stability = 0.03
 			set_temp_variable = { temp_opinion = -3 }
 			COLDWAR_EGY_change_the_ulema_opinion_exact = yes
@@ -7428,8 +7505,7 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_mb_the_dhimma_laws"
-			set_temp_variable = { coptic_opinion_change = -15 }
-			modify_coptic_opinion_effect = yes
+			add_political_power = -15
 			set_temp_variable = { temp_opinion = 10 }
 			COLDWAR_EGY_change_the_ulema_opinion_exact = yes
 			add_stability = -0.03
@@ -8020,7 +8096,7 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_tag_protect_the_public_sector"
 			set_temp_variable = { temp_productivity_change = 4 }
 			flat_productivity_change_effect = yes
-			set_country_flag = COLDWAR_EGY_no_privatisation
+			set_country_flag = { flag = COLDWAR_EGY_no_privatisation days = 1825 } # IMPERIA COLD WAR — B5: timed lock
 			set_temp_variable = { temp_opinion = 5 }
 			COLDWAR_EGY_change_labour_unions_opinion_exact = yes
 		}
@@ -8378,18 +8454,41 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INFLUENCE }
 
+		bypass = { NOT = { country_exists = SER } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_tag_the_yugoslav_model"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_tag_the_yugoslav_model"
+		if = {
+			limit = { country_exists = SER NOT = { has_war_with = SER } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_tag_the_yugoslav_model_SER_offered }
+			SER = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.3 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			add_opinion_modifier = { target = SER modifier = COLDWAR_EGY_positive_25 }
 			if = { limit = { country_exists = SER }
-				set_temp_variable = { receiver_nation = ROOT.id }
-				set_temp_variable = { sender_nation = SER.id }
-				set_improved_trade_agreement = yes
+			set_temp_variable = { receiver_nation = ROOT.id }
+			set_temp_variable = { sender_nation = SER.id }
+			set_improved_trade_agreement = yes
 			}
 			if = { limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_EGY_state_modifier } } } hidden_effect = { add_dynamic_modifier = { modifier = COLDWAR_EGY_state_modifier } } }
 			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_EGY_state_modifier }
 			add_to_variable = { COLDWAR_EGY_state_research_speed_factor = 0.02 tooltip = COLDWAR_research_speed_factor_tt }
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_tag_the_yugoslav_model"
+#|			add_opinion_modifier = { target = SER modifier = COLDWAR_EGY_positive_25 }
+#|			if = { limit = { country_exists = SER }
+#|				set_temp_variable = { receiver_nation = ROOT.id }
+#|				set_temp_variable = { sender_nation = SER.id }
+#|				set_improved_trade_agreement = yes
+#|			}
+#|			if = { limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_EGY_state_modifier } } } hidden_effect = { add_dynamic_modifier = { modifier = COLDWAR_EGY_state_modifier } } }
+#|			custom_effect_tooltip = { localization_key = modifies_dynamic_modifier_tt MODIFIER = COLDWAR_EGY_state_modifier }
+#|			add_to_variable = { COLDWAR_EGY_state_research_speed_factor = 0.02 tooltip = COLDWAR_research_speed_factor_tt }
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 3
@@ -17459,22 +17558,59 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_INFLUENCE }
 
+		bypass = { NOT = { OR = { country_exists = FRA country_exists = ITA } } } # COLDWAR deal partners gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_ndp_mediterranean_friends"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_ndp_mediterranean_friends"
+		if = {
+			limit = { country_exists = FRA NOT = { has_war_with = FRA } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_ndp_mediterranean_friends_FRA_offered }
+			FRA = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.9 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			add_opinion_modifier = { target = FRA modifier = COLDWAR_EGY_positive_15 }
-			add_opinion_modifier = { target = ITA modifier = COLDWAR_EGY_positive_15 }
+
 			add_opinion_modifier = { target = GRE modifier = COLDWAR_EGY_positive_15 }
 			if = { limit = { country_exists = FRA }
-				set_temp_variable = { receiver_nation = ROOT.id }
-				set_temp_variable = { sender_nation = FRA.id }
-				set_improved_trade_agreement = yes
+			set_temp_variable = { receiver_nation = ROOT.id }
+			set_temp_variable = { sender_nation = FRA.id }
+			set_improved_trade_agreement = yes
 			}
-			if = { limit = { country_exists = ITA }
-				set_temp_variable = { receiver_nation = ROOT.id }
-				set_temp_variable = { sender_nation = ITA.id }
-				set_improved_trade_agreement = yes
-			}
+
+
 		}
+		if = {
+			limit = { country_exists = ITA NOT = { has_war_with = ITA } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_ndp_mediterranean_friends_ITA_offered }
+			ITA = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.11 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
+			if = { limit = { country_exists = ITA }
+			set_temp_variable = { receiver_nation = ROOT.id }
+			set_temp_variable = { sender_nation = ITA.id }
+			set_improved_trade_agreement = yes
+			}
+			add_opinion_modifier = { target = ITA modifier = COLDWAR_EGY_positive_15 }
+		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_ndp_mediterranean_friends"
+#|			add_opinion_modifier = { target = FRA modifier = COLDWAR_EGY_positive_15 }
+#|			add_opinion_modifier = { target = ITA modifier = COLDWAR_EGY_positive_15 }
+#|			add_opinion_modifier = { target = GRE modifier = COLDWAR_EGY_positive_15 }
+#|			if = { limit = { country_exists = FRA }
+#|				set_temp_variable = { receiver_nation = ROOT.id }
+#|				set_temp_variable = { sender_nation = FRA.id }
+#|				set_improved_trade_agreement = yes
+#|			}
+#|			if = { limit = { country_exists = ITA }
+#|				set_temp_variable = { receiver_nation = ROOT.id }
+#|				set_temp_variable = { sender_nation = ITA.id }
+#|				set_improved_trade_agreement = yes
+#|			}
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 3
@@ -18026,8 +18162,7 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_wafd_crescent_and_cross"
-			set_temp_variable = { coptic_opinion_change = 15 }
-			modify_coptic_opinion_effect = yes
+			add_political_power = 15
 			add_stability = 0.03
 		}
 
@@ -20383,8 +20518,7 @@ focus_tree = {
 			add_stability = -0.03
 			set_temp_variable = { temp_opinion = 10 }
 			COLDWAR_EGY_change_the_ulema_opinion_exact = yes
-			set_temp_variable = { coptic_opinion_change = -15 }
-			modify_coptic_opinion_effect = yes
+			add_political_power = -15
 			country_event = { id = COLDWAR_EGY.6 days = 7 }
 		}
 
@@ -22656,8 +22790,7 @@ focus_tree = {
 			COLDWAR_EGY_change_outlook_popularity = yes
 			set_temp_variable = { temp_opinion = -5 }
 			COLDWAR_EGY_change_the_ulema_opinion_exact = yes
-			set_temp_variable = { coptic_opinion_change = 10 }
-			modify_coptic_opinion_effect = yes
+			add_political_power = 10
 		}
 
 		ai_will_do = {
@@ -23608,7 +23741,105 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_rcc_the_canal_bunker_line"
 			set_temp_variable = { skip_payment = 1 }
-			214 = { add_building_construction = { type = bunker level = 2 instant_build = yes province = { all_provinces = yes limit_to_border = yes } } }
+			214 = { if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 1178 }
+						EGY = { NOT = { AND = { controls_province = 1155 controls_province = 9947 controls_province = 14515 } } }
+						free_building_slots = { building = bunker size > 1 province = 1178 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 1178 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 4073 }
+						EGY = { NOT = { AND = { controls_province = 4143 controls_province = 9947 controls_province = 14515 } } }
+						free_building_slots = { building = bunker size > 1 province = 4073 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 4073 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 12049 }
+						EGY = { NOT = { AND = { controls_province = 1155 } } }
+						free_building_slots = { building = bunker size > 1 province = 12049 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 12049 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 11964 }
+						EGY = { NOT = { AND = { controls_province = 7091 } } }
+						free_building_slots = { building = bunker size > 1 province = 11964 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 11964 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 12004 }
+						EGY = { NOT = { AND = { controls_province = 1080 controls_province = 4055 controls_province = 4143 controls_province = 10126 } } }
+						free_building_slots = { building = bunker size > 1 province = 12004 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 12004 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 14154 }
+						EGY = { NOT = { AND = { controls_province = 9947 } } }
+						free_building_slots = { building = bunker size > 1 province = 14154 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 14154 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 14512 }
+						EGY = { NOT = { AND = { controls_province = 7091 controls_province = 14510 controls_province = 14511 } } }
+						free_building_slots = { building = bunker size > 1 province = 14512 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 14512 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 14513 }
+						EGY = { NOT = { AND = { controls_province = 4143 controls_province = 7011 controls_province = 14510 controls_province = 14515 } } }
+						free_building_slots = { building = bunker size > 1 province = 14513 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 14513 }
+				}
+				if = {
+					limit = {
+						is_owned_by = EGY
+						is_controlled_by = EGY
+						EGY = { controls_province = 14514 }
+						EGY = { NOT = { AND = { controls_province = 14515 } } }
+						free_building_slots = { building = bunker size > 1 province = 14514 }
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = bunker level = 2 instant_build = yes province = 14514 }
+				} }
 			clear_variable = skip_payment
 			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.008 }
 			COLDWAR_EGY_pay_gdp_share = yes
@@ -26582,13 +26813,31 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_EXPENDITURE }
 
+		bypass = { NOT = { country_exists = SOV } } # COLDWAR deal partner gone
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_soviet_credit_lines"
+		log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_soviet_credit_lines"
+		if = {
+			limit = { country_exists = SOV NOT = { has_war_with = SOV } }
+			hidden_effect = { set_country_flag = COLDWAR_DEAL_COLDWAR_EGY_soviet_credit_lines_SOV_offered }
+			SOV = { custom_effect_tooltip = COLDWAR_DEAL_offer_sent_tt country_event = { id = COLDWAR_DEAL.5 days = 1 } }
+		}
+		custom_effect_tooltip = COLDWAR_DEAL_if_they_accept_tt
+		effect_tooltip = {
 			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
 			COLDWAR_EGY_receive_gdp_share = yes
 			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
 			COLDWAR_EGY_change_debt_gdp_share = yes
+
 		}
+		# COLDWAR DEAL ORIGINAL BEGIN
+#|			log = "[GetDateText]: [Root.GetName]: Focus COLDWAR_EGY_soviet_credit_lines"
+#|			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
+#|			COLDWAR_EGY_receive_gdp_share = yes
+#|			set_temp_variable = { COLDWAR_EGY_gdp_share = 0.015 }
+#|			COLDWAR_EGY_change_debt_gdp_share = yes
+#|		
+		# COLDWAR DEAL ORIGINAL END
+	}
 
 		ai_will_do = {
 			base = 3

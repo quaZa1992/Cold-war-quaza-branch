@@ -1,0 +1,775 @@
+# IMPERIA COLD WAR — Cold War blocs v4: generic bloc leaders and bloc pillars.
+# IMPERIA COLD WAR — 20.11.2026: bloc founding removed (no founded blocs, no free seats); the four
+# fixed blocs, their leaders and pillars stay. Old saves: members of a founded bloc return to Non-Aligned.
+
+# Global. Fixed bloc leaders: USA, SOV, CHI (startup and save migration).
+COLDWAR_cw_v4_init_leaders = {
+	if = {
+		limit = {
+			NOT = { has_variable = global.mdcw_cw_leader_1 }
+			country_exists = USA
+		}
+		USA = {
+			set_variable = { global.mdcw_cw_leader_1 = THIS.id }
+			set_country_flag = mdcw_cw_bloc_leader
+			set_country_flag = mdcw_cw_leads_1
+		}
+	}
+	if = {
+		limit = {
+			NOT = { has_variable = global.mdcw_cw_leader_2 }
+			country_exists = SOV
+		}
+		SOV = {
+			set_variable = { global.mdcw_cw_leader_2 = THIS.id }
+			set_country_flag = mdcw_cw_bloc_leader
+			set_country_flag = mdcw_cw_leads_2
+		}
+	}
+	if = {
+		limit = {
+			NOT = { has_variable = global.mdcw_cw_leader_3 }
+			country_exists = CHI
+		}
+		CHI = {
+			set_variable = { global.mdcw_cw_leader_3 = THIS.id }
+			set_country_flag = mdcw_cw_bloc_leader
+			set_country_flag = mdcw_cw_leads_3
+		}
+	}
+	set_global_flag = COLDWAR_cw_v4_leaders_set
+	set_global_flag = COLDWAR_cw_v4_founding_removed
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_cw_v4_pillars_set } }
+		COLDWAR_cw_v4_init_pillars = yes
+	}
+}
+
+# Global, monthly before the bloc rebuild. Save migration, leader checks, pillar offers.
+COLDWAR_cw_v4_global_monthly = {
+	# Save migration (20.11.2026): founded blocs no longer exist.
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_cw_v4_founding_removed } }
+		set_global_flag = COLDWAR_cw_v4_founding_removed
+		every_country = {
+			limit = { check_variable = { mdcw_cw_alignment > 3 } }
+			set_variable = { mdcw_cw_alignment = 0 }
+			clr_country_flag = mdcw_cw_estranged
+			clr_country_flag = mdcw_cw_alignment_locked
+			set_variable = { mdcw_cw_lock_left = 0 }
+			clr_country_flag = mdcw_cw_bloc_leader
+		}
+	}
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_cw_v4_leaders_set } }
+		COLDWAR_cw_v4_init_leaders = yes
+	}
+	if = {
+		limit = { NOT = { has_global_flag = COLDWAR_cw_v4_pillars_set } }
+		COLDWAR_cw_v4_init_pillars = yes
+	}
+	if = {
+		limit = {
+			has_variable = global.mdcw_cw_leader_1
+			var:global.mdcw_cw_leader_1 = { exists = no }
+		}
+		set_temp_variable = { COLDWAR_cw_t_slot = 1 }
+		COLDWAR_cw_v4_leader_lost = yes
+	}
+	if = {
+		limit = {
+			has_variable = global.mdcw_cw_leader_2
+			var:global.mdcw_cw_leader_2 = { exists = no }
+		}
+		set_temp_variable = { COLDWAR_cw_t_slot = 2 }
+		COLDWAR_cw_v4_leader_lost = yes
+	}
+	if = {
+		limit = {
+			has_variable = global.mdcw_cw_leader_3
+			var:global.mdcw_cw_leader_3 = { exists = no }
+		}
+		set_temp_variable = { COLDWAR_cw_t_slot = 3 }
+		COLDWAR_cw_v4_leader_lost = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_variable = global.mdcw_cw_leader_1 }
+			country_exists = USA
+			USA = { check_variable = { mdcw_cw_alignment = 1 } }
+		}
+		USA = {
+			set_variable = { global.mdcw_cw_leader_1 = THIS.id }
+			set_country_flag = mdcw_cw_bloc_leader
+			set_country_flag = mdcw_cw_leads_1
+		}
+	}
+	if = {
+		limit = {
+			NOT = { has_variable = global.mdcw_cw_leader_2 }
+			country_exists = SOV
+			SOV = { check_variable = { mdcw_cw_alignment = 2 } }
+		}
+		SOV = {
+			set_variable = { global.mdcw_cw_leader_2 = THIS.id }
+			set_country_flag = mdcw_cw_bloc_leader
+			set_country_flag = mdcw_cw_leads_2
+		}
+	}
+	if = {
+		limit = {
+			NOT = { has_variable = global.mdcw_cw_leader_3 }
+			country_exists = CHI
+			CHI = { check_variable = { mdcw_cw_alignment = 3 } }
+		}
+		CHI = {
+			set_variable = { global.mdcw_cw_leader_3 = THIS.id }
+			set_country_flag = mdcw_cw_bloc_leader
+			set_country_flag = mdcw_cw_leads_3
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { global.COLDWAR_cw_pillar_slots_1 > 2 }
+			check_variable = { global.COLDWAR_cw_pslot_1_3 = 0 }
+			NOT = { has_global_flag = COLDWAR_cw_poffer_1_3 }
+			has_variable = global.mdcw_cw_leader_1
+		}
+		set_global_flag = COLDWAR_cw_poffer_1_3
+		# IMPERIA COLD WAR 24.11.2026: no pillar choice event any more (Enes); a growing bloc gets better tier values instead
+	}
+	if = {
+		limit = {
+			check_variable = { global.COLDWAR_cw_pillar_slots_1 > 3 }
+			check_variable = { global.COLDWAR_cw_pslot_1_4 = 0 }
+			NOT = { has_global_flag = COLDWAR_cw_poffer_1_4 }
+			has_variable = global.mdcw_cw_leader_1
+		}
+		set_global_flag = COLDWAR_cw_poffer_1_4
+		# IMPERIA COLD WAR 24.11.2026: no pillar choice event any more (Enes); a growing bloc gets better tier values instead
+	}
+	if = {
+		limit = {
+			check_variable = { global.COLDWAR_cw_pillar_slots_2 > 2 }
+			check_variable = { global.COLDWAR_cw_pslot_2_3 = 0 }
+			NOT = { has_global_flag = COLDWAR_cw_poffer_2_3 }
+			has_variable = global.mdcw_cw_leader_2
+		}
+		set_global_flag = COLDWAR_cw_poffer_2_3
+		# IMPERIA COLD WAR 24.11.2026: no pillar choice event any more (Enes); a growing bloc gets better tier values instead
+	}
+	if = {
+		limit = {
+			check_variable = { global.COLDWAR_cw_pillar_slots_2 > 3 }
+			check_variable = { global.COLDWAR_cw_pslot_2_4 = 0 }
+			NOT = { has_global_flag = COLDWAR_cw_poffer_2_4 }
+			has_variable = global.mdcw_cw_leader_2
+		}
+		set_global_flag = COLDWAR_cw_poffer_2_4
+		# IMPERIA COLD WAR 24.11.2026: no pillar choice event any more (Enes); a growing bloc gets better tier values instead
+	}
+	if = {
+		limit = {
+			check_variable = { global.COLDWAR_cw_pillar_slots_3 > 2 }
+			check_variable = { global.COLDWAR_cw_pslot_3_3 = 0 }
+			NOT = { has_global_flag = COLDWAR_cw_poffer_3_3 }
+			has_variable = global.mdcw_cw_leader_3
+		}
+		set_global_flag = COLDWAR_cw_poffer_3_3
+		# IMPERIA COLD WAR 24.11.2026: no pillar choice event any more (Enes); a growing bloc gets better tier values instead
+	}
+	if = {
+		limit = {
+			check_variable = { global.COLDWAR_cw_pillar_slots_3 > 3 }
+			check_variable = { global.COLDWAR_cw_pslot_3_4 = 0 }
+			NOT = { has_global_flag = COLDWAR_cw_poffer_3_4 }
+			has_variable = global.mdcw_cw_leader_3
+		}
+		set_global_flag = COLDWAR_cw_poffer_3_4
+		# IMPERIA COLD WAR 24.11.2026: no pillar choice event any more (Enes); a growing bloc gets better tier values instead
+	}
+}
+
+# Global. temp COLDWAR_cw_t_slot: the leader of that bloc is gone. Fixed blocs keep
+# running without a leader until their historical leader is a member again.
+COLDWAR_cw_v4_leader_lost = {
+	if = {
+		limit = { check_variable = { COLDWAR_cw_t_slot = 1 } }
+		var:global.mdcw_cw_leader_1 = {
+			clr_country_flag = mdcw_cw_leads_1
+			clr_country_flag = mdcw_cw_bloc_leader
+		}
+		clear_variable = global.mdcw_cw_leader_1
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_slot = 2 } }
+		var:global.mdcw_cw_leader_2 = {
+			clr_country_flag = mdcw_cw_leads_2
+			clr_country_flag = mdcw_cw_bloc_leader
+		}
+		clear_variable = global.mdcw_cw_leader_2
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_slot = 3 } }
+		var:global.mdcw_cw_leader_3 = {
+			clr_country_flag = mdcw_cw_leads_3
+			clr_country_flag = mdcw_cw_bloc_leader
+		}
+		clear_variable = global.mdcw_cw_leader_3
+	}
+}
+
+# Country scope, end of mdcw_cw_update_bloc_effects (temp mdcw_cw_t_scale is set there).
+# Applies the active pillars of our bloc. Pillars beyond the slots our share allows rest.
+COLDWAR_cw_v4_apply_pillars = {
+	set_temp_variable = { COLDWAR_cw_t_bloc = mdcw_cw_alignment }
+	set_temp_variable = { COLDWAR_cw_t_allowed = 2 }
+	if = {
+		limit = { check_variable = { mdcw_cw_alignment = 0 } }
+		set_temp_variable = { COLDWAR_cw_t_allowed = global.COLDWAR_cw_pillar_slots_0 }
+		set_temp_variable = { COLDWAR_cw_t_p1 = global.COLDWAR_cw_pslot_0_1 }
+		set_temp_variable = { COLDWAR_cw_t_p2 = global.COLDWAR_cw_pslot_0_2 }
+		set_temp_variable = { COLDWAR_cw_t_p3 = global.COLDWAR_cw_pslot_0_3 }
+		set_temp_variable = { COLDWAR_cw_t_p4 = global.COLDWAR_cw_pslot_0_4 }
+		set_temp_variable = { COLDWAR_cw_t_drift = 0 }
+	}
+	else_if = {
+		limit = { check_variable = { mdcw_cw_alignment = 1 } }
+		set_temp_variable = { COLDWAR_cw_t_allowed = global.COLDWAR_cw_pillar_slots_1 }
+		set_temp_variable = { COLDWAR_cw_t_p1 = global.COLDWAR_cw_pslot_1_1 }
+		set_temp_variable = { COLDWAR_cw_t_p2 = global.COLDWAR_cw_pslot_1_2 }
+		set_temp_variable = { COLDWAR_cw_t_p3 = global.COLDWAR_cw_pslot_1_3 }
+		set_temp_variable = { COLDWAR_cw_t_p4 = global.COLDWAR_cw_pslot_1_4 }
+		set_temp_variable = { COLDWAR_cw_t_drift = 1 }
+	}
+	else_if = {
+		limit = { check_variable = { mdcw_cw_alignment = 2 } }
+		set_temp_variable = { COLDWAR_cw_t_allowed = global.COLDWAR_cw_pillar_slots_2 }
+		set_temp_variable = { COLDWAR_cw_t_p1 = global.COLDWAR_cw_pslot_2_1 }
+		set_temp_variable = { COLDWAR_cw_t_p2 = global.COLDWAR_cw_pslot_2_2 }
+		set_temp_variable = { COLDWAR_cw_t_p3 = global.COLDWAR_cw_pslot_2_3 }
+		set_temp_variable = { COLDWAR_cw_t_p4 = global.COLDWAR_cw_pslot_2_4 }
+		set_temp_variable = { COLDWAR_cw_t_drift = 2 }
+	}
+	else_if = {
+		limit = { check_variable = { mdcw_cw_alignment = 3 } }
+		set_temp_variable = { COLDWAR_cw_t_allowed = global.COLDWAR_cw_pillar_slots_3 }
+		set_temp_variable = { COLDWAR_cw_t_p1 = global.COLDWAR_cw_pslot_3_1 }
+		set_temp_variable = { COLDWAR_cw_t_p2 = global.COLDWAR_cw_pslot_3_2 }
+		set_temp_variable = { COLDWAR_cw_t_p3 = global.COLDWAR_cw_pslot_3_3 }
+		set_temp_variable = { COLDWAR_cw_t_p4 = global.COLDWAR_cw_pslot_3_4 }
+		set_temp_variable = { COLDWAR_cw_t_drift = 2 }
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_cw_t_allowed > 0 }
+			check_variable = { COLDWAR_cw_t_p1 > 0 }
+		}
+		set_temp_variable = { COLDWAR_cw_t_pid = COLDWAR_cw_t_p1 }
+		COLDWAR_cw_v4_apply_one_pillar = yes
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_cw_t_allowed > 1 }
+			check_variable = { COLDWAR_cw_t_p2 > 0 }
+		}
+		set_temp_variable = { COLDWAR_cw_t_pid = COLDWAR_cw_t_p2 }
+		COLDWAR_cw_v4_apply_one_pillar = yes
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_cw_t_allowed > 2 }
+			check_variable = { COLDWAR_cw_t_p3 > 0 }
+		}
+		set_temp_variable = { COLDWAR_cw_t_pid = COLDWAR_cw_t_p3 }
+		COLDWAR_cw_v4_apply_one_pillar = yes
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_cw_t_allowed > 3 }
+			check_variable = { COLDWAR_cw_t_p4 > 0 }
+		}
+		set_temp_variable = { COLDWAR_cw_t_pid = COLDWAR_cw_t_p4 }
+		COLDWAR_cw_v4_apply_one_pillar = yes
+	}
+}
+
+# Country scope. temp COLDWAR_cw_t_pid. Level factors: advantages x1/1.75/2.5, costs x1/1.5/2.
+COLDWAR_cw_v4_apply_one_pillar = {
+	set_temp_variable = { COLDWAR_cw_t_lvl = 1 }
+	if = {
+		limit = { check_variable = { COLDWAR_cw_t_bloc = 0 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_pid = 1 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_1 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 2 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_2 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 3 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_3 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 4 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_4 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 5 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_5 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 6 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_6 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 7 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_7 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 8 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_0_8 } }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_bloc = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_pid = 1 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_1 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 2 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_2 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 3 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_3 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 4 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_4 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 5 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_5 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 6 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_6 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 7 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_7 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 8 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_1_8 } }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_bloc = 2 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_pid = 1 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_1 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 2 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_2 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 3 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_3 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 4 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_4 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 5 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_5 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 6 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_6 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 7 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_7 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 8 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_2_8 } }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_bloc = 3 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_pid = 1 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_1 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 2 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_2 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 3 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_3 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 4 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_4 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 5 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_5 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 6 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_6 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 7 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_7 } }
+		else_if = { limit = { check_variable = { COLDWAR_cw_t_pid = 8 } } set_temp_variable = { COLDWAR_cw_t_lvl = global.COLDWAR_cw_plevel_3_8 } }
+	}
+	set_temp_variable = { COLDWAR_cw_t_pf = 1 }
+	set_temp_variable = { COLDWAR_cw_t_cf = 1 }
+	if = {
+		limit = { check_variable = { COLDWAR_cw_t_lvl = 2 } }
+		set_temp_variable = { COLDWAR_cw_t_pf = 1.75 }
+		set_temp_variable = { COLDWAR_cw_t_cf = 1.5 }
+	}
+	if = {
+		limit = { check_variable = { COLDWAR_cw_t_lvl = 3 } }
+		set_temp_variable = { COLDWAR_cw_t_pf = 2.5 }
+		set_temp_variable = { COLDWAR_cw_t_cf = 2 }
+	}
+	multiply_temp_variable = { COLDWAR_cw_t_pf = mdcw_cw_t_scale }
+	multiply_temp_variable = { COLDWAR_cw_t_cf = mdcw_cw_t_scale }
+	if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 1 } }
+		# Joint Defence Planning
+		set_temp_variable = { mdcw_cw_t_fx = -0.05 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_train = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = 0.05 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_army_xp = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = 0.03 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_mil_pay = mdcw_cw_t_fx }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 2 } }
+		# Arms and Licences
+		set_temp_variable = { mdcw_cw_t_fx = -0.25 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_lic_cost = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = 0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_lic_speed = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.03 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_equip = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.01 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_research = mdcw_cw_t_fx }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 3 } }
+		# Common Market
+		set_temp_variable = { mdcw_cw_t_fx = 0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_trade = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = 0.003 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_roi = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = 5 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_glob = mdcw_cw_t_fx }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 4 } }
+		# Autarky Pact
+		set_temp_variable = { mdcw_cw_t_fx = 0.15 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_sanc_res = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = 0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_oil_res = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_trade = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.02 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_prod_growth = mdcw_cw_t_fx }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 5 } }
+		# Construction Cooperation
+		set_temp_variable = { mdcw_cw_t_fx = 0.05 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_build = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_infra_cost = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = 0.02 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_consumer = mdcw_cw_t_fx }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 6 } }
+		# Research Union
+		set_temp_variable = { mdcw_cw_t_fx = 0.03 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_research = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.02 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_pp_factor = mdcw_cw_t_fx }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 7 } }
+		# Energy Pact
+		set_temp_variable = { mdcw_cw_t_fx = 0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_oil_res = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_reactor_cost = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.05 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_oil_exp = mdcw_cw_t_fx }
+	}
+	else_if = {
+		limit = { check_variable = { COLDWAR_cw_t_pid = 8 } }
+		# Political Front
+		if = {
+			limit = { check_variable = { COLDWAR_cw_t_drift = 0 } }
+			set_temp_variable = { mdcw_cw_t_fx = 0.02 }
+			multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+			add_to_variable = { mdcw_cw_b_drift_neutral = mdcw_cw_t_fx }
+		}
+		if = {
+			limit = { check_variable = { COLDWAR_cw_t_drift = 1 } }
+			set_temp_variable = { mdcw_cw_t_fx = 0.02 }
+			multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+			add_to_variable = { mdcw_cw_b_drift_west = mdcw_cw_t_fx }
+		}
+		if = {
+			limit = { check_variable = { COLDWAR_cw_t_drift = 2 } }
+			set_temp_variable = { mdcw_cw_t_fx = 0.02 }
+			multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+			add_to_variable = { mdcw_cw_b_drift_emerging = mdcw_cw_t_fx }
+		}
+		if = {
+			limit = { check_variable = { COLDWAR_cw_t_drift = 3 } }
+			set_temp_variable = { mdcw_cw_t_fx = 0.02 }
+			multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+			add_to_variable = { mdcw_cw_b_drift_nationalist = mdcw_cw_t_fx }
+		}
+		set_temp_variable = { mdcw_cw_t_fx = 0.1 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_pf }
+		add_to_variable = { mdcw_cw_b_fidef = mdcw_cw_t_fx }
+		set_temp_variable = { mdcw_cw_t_fx = -0.02 }
+		multiply_temp_variable = { mdcw_cw_t_fx = COLDWAR_cw_t_cf }
+		add_to_variable = { mdcw_cw_b_stab = mdcw_cw_t_fx }
+	}
+}
+
+# Global. Pillar slots by share of world power: 2, 3 from 15 %, 4 from 30 %.
+COLDWAR_cw_v4_update_pillar_slots = {
+	set_variable = { global.COLDWAR_cw_pillar_slots_0 = 2 }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_0 value = 0.15 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_0 = 3 } }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_0 value = 0.3 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_0 = 4 } }
+	set_variable = { global.COLDWAR_cw_pillar_slots_1 = 2 }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_1 value = 0.15 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_1 = 3 } }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_1 value = 0.3 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_1 = 4 } }
+	set_variable = { global.COLDWAR_cw_pillar_slots_2 = 2 }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_2 value = 0.15 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_2 = 3 } }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_2 value = 0.3 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_2 = 4 } }
+	set_variable = { global.COLDWAR_cw_pillar_slots_3 = 2 }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_3 value = 0.15 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_3 = 3 } }
+	if = { limit = { check_variable = { var = global.mdcw_cw_share_3 value = 0.3 compare = greater_than_or_equals } } set_variable = { global.COLDWAR_cw_pillar_slots_3 = 4 } }
+}
+
+# Country scope (bloc leader). temp COLDWAR_cw_t_pid: adds the pillar at level 1 to the first free slot.
+COLDWAR_cw_v4_choose_pillar = {
+	set_temp_variable = { COLDWAR_cw_t_ok = 0 }
+	if = {
+		limit = { NOT = { COLDWAR_cw_bloc_has_pillar = yes } }
+	if = {
+		limit = { check_variable = { mdcw_cw_alignment = 0 } }
+		if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_0_1 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_0_1 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_0_2 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_0_2 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_0_3 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_0_3 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_0_4 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_0_4 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 1 } } set_variable = { global.COLDWAR_cw_plevel_0_1 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 2 } } set_variable = { global.COLDWAR_cw_plevel_0_2 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 3 } } set_variable = { global.COLDWAR_cw_plevel_0_3 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 4 } } set_variable = { global.COLDWAR_cw_plevel_0_4 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 5 } } set_variable = { global.COLDWAR_cw_plevel_0_5 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 6 } } set_variable = { global.COLDWAR_cw_plevel_0_6 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 7 } } set_variable = { global.COLDWAR_cw_plevel_0_7 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 8 } } set_variable = { global.COLDWAR_cw_plevel_0_8 = 1 } }
+	}
+	else_if = {
+		limit = { check_variable = { mdcw_cw_alignment = 1 } }
+		if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_1_1 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_1_1 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_1_2 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_1_2 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_1_3 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_1_3 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_1_4 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_1_4 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 1 } } set_variable = { global.COLDWAR_cw_plevel_1_1 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 2 } } set_variable = { global.COLDWAR_cw_plevel_1_2 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 3 } } set_variable = { global.COLDWAR_cw_plevel_1_3 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 4 } } set_variable = { global.COLDWAR_cw_plevel_1_4 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 5 } } set_variable = { global.COLDWAR_cw_plevel_1_5 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 6 } } set_variable = { global.COLDWAR_cw_plevel_1_6 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 7 } } set_variable = { global.COLDWAR_cw_plevel_1_7 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 8 } } set_variable = { global.COLDWAR_cw_plevel_1_8 = 1 } }
+	}
+	else_if = {
+		limit = { check_variable = { mdcw_cw_alignment = 2 } }
+		if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_2_1 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_2_1 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_2_2 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_2_2 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_2_3 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_2_3 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_2_4 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_2_4 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 1 } } set_variable = { global.COLDWAR_cw_plevel_2_1 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 2 } } set_variable = { global.COLDWAR_cw_plevel_2_2 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 3 } } set_variable = { global.COLDWAR_cw_plevel_2_3 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 4 } } set_variable = { global.COLDWAR_cw_plevel_2_4 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 5 } } set_variable = { global.COLDWAR_cw_plevel_2_5 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 6 } } set_variable = { global.COLDWAR_cw_plevel_2_6 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 7 } } set_variable = { global.COLDWAR_cw_plevel_2_7 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 8 } } set_variable = { global.COLDWAR_cw_plevel_2_8 = 1 } }
+	}
+	else_if = {
+		limit = { check_variable = { mdcw_cw_alignment = 3 } }
+		if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_3_1 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_3_1 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_3_2 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_3_2 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_3_3 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_3_3 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		else_if = {
+			limit = { check_variable = { global.COLDWAR_cw_pslot_3_4 = 0 } }
+			set_variable = { global.COLDWAR_cw_pslot_3_4 = COLDWAR_cw_t_pid }
+			set_temp_variable = { COLDWAR_cw_t_ok = 1 }
+		}
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 1 } } set_variable = { global.COLDWAR_cw_plevel_3_1 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 2 } } set_variable = { global.COLDWAR_cw_plevel_3_2 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 3 } } set_variable = { global.COLDWAR_cw_plevel_3_3 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 4 } } set_variable = { global.COLDWAR_cw_plevel_3_4 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 5 } } set_variable = { global.COLDWAR_cw_plevel_3_5 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 6 } } set_variable = { global.COLDWAR_cw_plevel_3_6 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 7 } } set_variable = { global.COLDWAR_cw_plevel_3_7 = 1 } }
+		if = { limit = { check_variable = { COLDWAR_cw_t_ok = 1 } check_variable = { COLDWAR_cw_t_pid = 8 } } set_variable = { global.COLDWAR_cw_plevel_3_8 = 1 } }
+	}
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_cw_t_ok = 1 }
+			check_variable = { COLDWAR_cw_t_pid = 1 }
+		}
+		set_temp_variable = { mdcw_cw_tension_delta = 2 }
+		mdcw_cw_add_tension = yes
+	}
+	if = {
+		limit = { NOT = { check_variable = { COLDWAR_cw_t_norefresh = 1 } } }
+		mdcw_cw_refresh_all_bloc_effects = yes
+	}
+	mdcw_cw_touch_gui = yes
+}
+
+# Global. Historical pillars of the fixed blocs; zero for all other slots.
+COLDWAR_cw_v4_init_pillars = {
+	set_variable = { global.COLDWAR_cw_pslot_0_1 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_0_2 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_0_3 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_0_4 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_1 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_2 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_3 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_4 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_5 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_6 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_7 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_0_8 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_1_1 = 3 }
+	set_variable = { global.COLDWAR_cw_pslot_1_2 = 1 }
+	set_variable = { global.COLDWAR_cw_pslot_1_3 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_1_4 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_1_1 = 1 }
+	set_variable = { global.COLDWAR_cw_plevel_1_2 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_1_3 = 1 }
+	set_variable = { global.COLDWAR_cw_plevel_1_4 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_1_5 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_1_6 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_1_7 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_1_8 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_2_1 = 1 }
+	set_variable = { global.COLDWAR_cw_pslot_2_2 = 2 }
+	set_variable = { global.COLDWAR_cw_pslot_2_3 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_2_4 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_2_1 = 1 }
+	set_variable = { global.COLDWAR_cw_plevel_2_2 = 1 }
+	set_variable = { global.COLDWAR_cw_plevel_2_3 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_2_4 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_2_5 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_2_6 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_2_7 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_2_8 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_3_1 = 4 }
+	set_variable = { global.COLDWAR_cw_pslot_3_2 = 8 }
+	set_variable = { global.COLDWAR_cw_pslot_3_3 = 0 }
+	set_variable = { global.COLDWAR_cw_pslot_3_4 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_3_1 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_3_2 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_3_3 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_3_4 = 1 }
+	set_variable = { global.COLDWAR_cw_plevel_3_5 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_3_6 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_3_7 = 0 }
+	set_variable = { global.COLDWAR_cw_plevel_3_8 = 1 }
+	COLDWAR_cw_v4_update_pillar_slots = yes
+	set_global_flag = COLDWAR_cw_v4_pillars_set
+}
+
+# Receiver scope. Daily outlook drift from every foreign campaign (MD influence style), at most 0.20 a day.
+COLDWAR_cw_pps_drift_update = {
+	set_variable = { COLDWAR_cw_pps_d0 = 0 }
+	set_variable = { COLDWAR_cw_pps_d1 = 0 }
+	set_variable = { COLDWAR_cw_pps_d2 = 0 }
+	set_variable = { COLDWAR_cw_pps_d3 = 0 }
+	set_variable = { COLDWAR_cw_pps_d4 = 0 }
+	if = {
+		limit = { check_variable = { mdcw_cw_in^num > 0 } }
+		for_each_scope_loop = {
+			array = mdcw_cw_in
+			if = {
+				limit = { check_variable = { mdcw_cw_pps_party@PREV > 0 } }
+				set_temp_variable = { COLDWAR_cw_t_drift = 0.04 }
+				if = { limit = { check_variable = { PREV.mdcw_cw_pps_access@THIS = 1 } } set_temp_variable = { COLDWAR_cw_t_drift = 0.08 } }
+				if = { limit = { check_variable = { PREV.mdcw_cw_pps_access@THIS = 2 } } set_temp_variable = { COLDWAR_cw_t_drift = 0.12 } }
+				if = { limit = { check_variable = { PREV.mdcw_cw_pps_access@THIS = 3 } } set_temp_variable = { COLDWAR_cw_t_drift = 0.02 } }
+				set_temp_variable = { COLDWAR_cw_t_sup = 1 }
+				add_to_temp_variable = { COLDWAR_cw_t_sup = modifier@mdcw_cw_support_effectiveness }
+				multiply_temp_variable = { COLDWAR_cw_t_drift = COLDWAR_cw_t_sup }
+				set_variable = { COLDWAR_cw_pps_rate@PREV = COLDWAR_cw_t_drift }
+				set_temp_variable = { outlook_party_index = mdcw_cw_pps_party@PREV }
+				subtract_from_temp_variable = { outlook_party_index = 1 }
+				set_outlook_from_party_index = yes
+				PREV = {
+					if = { limit = { check_variable = { outlook_id = 0 } } add_to_variable = { COLDWAR_cw_pps_d0 = COLDWAR_cw_t_drift } }
+					else_if = { limit = { check_variable = { outlook_id = 1 } } add_to_variable = { COLDWAR_cw_pps_d1 = COLDWAR_cw_t_drift } }
+					else_if = { limit = { check_variable = { outlook_id = 2 } } add_to_variable = { COLDWAR_cw_pps_d2 = COLDWAR_cw_t_drift } }
+					else_if = { limit = { check_variable = { outlook_id = 3 } } add_to_variable = { COLDWAR_cw_pps_d3 = COLDWAR_cw_t_drift } }
+					else_if = { limit = { check_variable = { outlook_id = 4 } } add_to_variable = { COLDWAR_cw_pps_d4 = COLDWAR_cw_t_drift } }
+				}
+			}
+		}
+	}
+	set_temp_variable = { COLDWAR_cw_t_dsum = 0 }
+	add_to_temp_variable = { COLDWAR_cw_t_dsum = COLDWAR_cw_pps_d0 }
+	add_to_temp_variable = { COLDWAR_cw_t_dsum = COLDWAR_cw_pps_d1 }
+	add_to_temp_variable = { COLDWAR_cw_t_dsum = COLDWAR_cw_pps_d2 }
+	add_to_temp_variable = { COLDWAR_cw_t_dsum = COLDWAR_cw_pps_d3 }
+	add_to_temp_variable = { COLDWAR_cw_t_dsum = COLDWAR_cw_pps_d4 }
+	if = {
+		limit = { check_variable = { COLDWAR_cw_t_dsum > 0.2 } }
+		set_temp_variable = { COLDWAR_cw_t_dscale = 0.2 }
+		divide_temp_variable = { COLDWAR_cw_t_dscale = COLDWAR_cw_t_dsum }
+		multiply_variable = { COLDWAR_cw_pps_d0 = COLDWAR_cw_t_dscale }
+		multiply_variable = { COLDWAR_cw_pps_d1 = COLDWAR_cw_t_dscale }
+		multiply_variable = { COLDWAR_cw_pps_d2 = COLDWAR_cw_t_dscale }
+		multiply_variable = { COLDWAR_cw_pps_d3 = COLDWAR_cw_t_dscale }
+		multiply_variable = { COLDWAR_cw_pps_d4 = COLDWAR_cw_t_dscale }
+		set_temp_variable = { COLDWAR_cw_t_dsum = 0.2 }
+	}
+	set_variable = { COLDWAR_cw_pps_dsum = COLDWAR_cw_t_dsum }
+	if = {
+		limit = { check_variable = { COLDWAR_cw_t_dsum > 0 } }
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = COLDWAR_cw_pps_drift } } }
+			add_dynamic_modifier = { modifier = COLDWAR_cw_pps_drift }
+		}
+	}
+	else_if = {
+		limit = { has_dynamic_modifier = { modifier = COLDWAR_cw_pps_drift } }
+		remove_dynamic_modifier = { modifier = COLDWAR_cw_pps_drift }
+	}
+}
+
+# Sponsor scope, PREV = target that expels the campaign.
+COLDWAR_cw_pps_expelled = {
+	PREV = { add_political_power = -50 }
+	add_opinion_modifier = { target = PREV modifier = mdcw_cw_foreign_interference }
+	set_variable = { COLDWAR_cw_ev7_partner = PREV.id }
+	country_event = { id = COLDWAR_cw_v4.7 hours = 6 }
+	mdcw_cw_end_pps = yes
+}

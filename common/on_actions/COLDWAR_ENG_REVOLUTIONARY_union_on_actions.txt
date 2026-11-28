@@ -1,0 +1,30 @@
+# IMPERIA COLD WAR — United Kingdom 1970 REVOLUTIONARY union on actions.
+# IMPERIA COLD WAR — P5c ENG 24.11.2026: on_daily_ENG -> on_weekly_ENG (state refresh, no day counters)
+on_actions = {
+    on_startup = { effect = { every_country = { limit = { NOT = { original_tag = IRE } has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_IRELAND } drop_cosmetic_tag = yes } ENG = { COLDWAR_ENG_REVOLUTIONARY_repair_false_irish_acceptance = yes COLDWAR_ENG_REVOLUTIONARY_enact_devolution = yes COLDWAR_ENG_REVOLUTIONARY_sync_irish_member_identity = yes COLDWAR_ENG_REVOLUTIONARY_record_irish_war = yes COLDWAR_ENG_REVOLUTIONARY_restore_devolved_irish_settlement = yes COLDWAR_ENG_REVOLUTIONARY_install_irish_subject_government = yes } } }
+    on_peaceconference_ended = { effect = { ENG = { COLDWAR_ENG_REVOLUTIONARY_restore_devolved_irish_settlement = yes COLDWAR_ENG_REVOLUTIONARY_install_irish_subject_government = yes } } }
+    on_war_relation_added = { effect = {
+        if = { limit = { ROOT = { original_tag = ENG } FROM = { original_tag = IRE } } ROOT = { COLDWAR_ENG_REVOLUTIONARY_record_irish_war = yes } }
+        if = { limit = { FROM = { original_tag = ENG } ROOT = { original_tag = IRE } } FROM = { COLDWAR_ENG_REVOLUTIONARY_record_irish_war = yes } }
+    } }
+    # Native MD: ROOT is the new subject, FROM is its overlord.
+    on_puppet = { effect = {
+        if = { limit = { ROOT = { original_tag = IRE } FROM = { original_tag = ENG has_cosmetic_tag = COLDWAR_ENG_REVOLUTIONARY_ENGLAND } }
+            FROM = { COLDWAR_ENG_REVOLUTIONARY_sync_irish_member_identity = yes }
+        }
+    } }
+    on_weekly_ENG = {
+        effect = {
+            COLDWAR_ENG_REVOLUTIONARY_enact_devolution = yes
+            COLDWAR_ENG_REVOLUTIONARY_sync_irish_member_identity = yes
+            COLDWAR_ENG_REVOLUTIONARY_record_irish_war = yes
+            COLDWAR_ENG_REVOLUTIONARY_restore_devolved_irish_settlement = yes
+            COLDWAR_ENG_REVOLUTIONARY_install_irish_subject_government = yes
+            if = { limit = { original_tag = ENG COLDWAR_ENG_REVOLUTIONARY_government_settled = yes has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_offer_sent NOT = { has_war_with = IRE } IRE = { exists = yes NOT = { is_subject = yes } NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_answered } NOT = { has_country_flag = COLDWAR_ENG_REVOLUTIONARY_ireland_offer_open } } } IRE = { set_country_flag = { flag = COLDWAR_ENG_REVOLUTIONARY_ireland_offer_open days = 3 } country_event = { id = COLDWAR_ENG_REVOLUTIONARY_ireland.1 days = 1 } } }
+            if = {
+                limit = { original_tag = ENG has_country_flag = COLDWAR_ENG_REVOLUTIONARY_union_charter_completed }
+                COLDWAR_ENG_REVOLUTIONARY_union_charter_refresh = yes
+            }
+        }
+    }
+}

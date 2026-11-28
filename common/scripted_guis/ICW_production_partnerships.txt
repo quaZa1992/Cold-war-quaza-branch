@@ -1,19 +1,24 @@
 # IMPERIA COLD WAR — International Production interface bindings
-# Update 08.11.2026: v2 rebuild. Compact card in the MD economy tab, dialog with Overview, Partner Market and World League.
-# The interface only reads cached variables; lists are bounded by the player's own contracts and the participant list.
+# Update 19.11.2026 (b): card without dirty variable, empty notes as their own windows, no flag under the plaque.
+# Update 19.11.2026: v3. Card in the MD economy tab, dialog with Abroad, At Home, Market and League, real flags,
+# bars and plaques as framed sprites, price offer buttons. The interface only reads cached variables.
+# Update 08.11.2026: v2 rebuild.
 scripted_gui = {
 	icwp_compact = {
 		context_type = player_context
 		window_name = "icwp_compact_window"
 		parent_window_name = icwp_anchor
-		dirty = icwp_gui_rev
+		# No dirty variable here: the card is small and must resolve its texts as soon as the economy tab opens.
 
 		visible = { icwp_player_ready = yes }
 
 		ai_enabled = { always = no }
 
 		properties = {
+			icwp_c_flag = { image = "[Root.GetFlag]" }
 			icwp_c_medal = { frame = icwp_tierf }
+			icwp_c_pill = { frame = icwp_pill_f }
+			icwp_c_bar = { frame = icwp_cardbar_f }
 		}
 
 		effects = {
@@ -21,9 +26,13 @@ scripted_gui = {
 				icwp_register = yes
 				clr_country_flag = icw_econ_dialog_open
 				set_country_flag = icwp_dialog_open
-				set_variable = { icwp_tab = 1 }
+				if = {
+					limit = { NOT = { check_variable = { icwp_tab > 0 } } }
+					set_variable = { icwp_tab = 1 }
+				}
 				icwp_tab_frames = yes
 				icwp_refresh = yes
+				if = { limit = { check_variable = { icwp_tab = 3 } } icwp_scan_market = yes }
 			}
 		}
 	}
@@ -44,10 +53,13 @@ scripted_gui = {
 		ai_enabled = { always = no }
 
 		properties = {
+			icwp_d_flag2 = { image = "[Root.GetFlag]" }
 			icwp_d_medal = { frame = icwp_tierf }
+			icwp_d_bar = { frame = icwp_headbar_f }
 			icwp_tab1 = { frame = icwp_tab1f }
 			icwp_tab2 = { frame = icwp_tab2f }
 			icwp_tab3 = { frame = icwp_tab3f }
+			icwp_tab4 = { frame = icwp_tab4f }
 		}
 
 		effects = {
@@ -63,20 +75,25 @@ scripted_gui = {
 			icwp_tab2_click = {
 				set_variable = { icwp_tab = 2 }
 				icwp_tab_frames = yes
-				icwp_scan_market = yes
+				icwp_refresh = yes
 			}
 			icwp_tab3_click = {
 				set_variable = { icwp_tab = 3 }
 				icwp_tab_frames = yes
-				icwp_touch = yes
+				icwp_scan_market = yes
+			}
+			icwp_tab4_click = {
+				set_variable = { icwp_tab = 4 }
+				icwp_tab_frames = yes
+				icwp_refresh = yes
 			}
 		}
 	}
 
-	icwp_overview = {
+	icwp_abroad = {
 		context_type = player_context
 		parent_scripted_gui = icwp_dialog
-		window_name = "icwp_overview_window"
+		window_name = "icwp_abroad_window"
 		dirty = icwp_gui_rev
 
 		visible = {
@@ -91,24 +108,21 @@ scripted_gui = {
 				array = icwp_hosts
 				entry_container = "icwp_host_row"
 			}
-			icwp_clients_grid = {
-				array = icwp_clients
-				entry_container = "icwp_client_row"
-			}
 		}
 
 		triggers = {
 			icwp_hr_end_click_enabled = { NOT = { has_country_flag = icwp_exit_pending } }
-			icwp_cr_end_click_enabled = { NOT = { has_country_flag = icwp_exit_pending } }
 		}
 
 		properties = {
+			icwp_hr_flag = { image = "[?v.GetFlag]" }
 			icwp_hr_status = { frame = icwp_dh_s^i }
-			icwp_cr_status = { frame = icwp_dc_s^i }
+			icwp_hr_lbl = { frame = icwp_dh_lf^i }
+			icwp_hr_bar = { frame = icwp_dh_bf^i }
 		}
 
 		effects = {
-			# We are the client, v is the host.
+			# We are the client, v is the producer.
 			icwp_hr_wind_click = {
 				set_variable = { icwp_act = v }
 				var:icwp_act = {
@@ -126,7 +140,41 @@ scripted_gui = {
 				icwp_prepare_exit = yes
 				country_event = { id = icwp.5 }
 			}
-			# We are the host, v is the client.
+		}
+	}
+
+	icwp_home = {
+		context_type = player_context
+		parent_scripted_gui = icwp_dialog
+		window_name = "icwp_home_window"
+		dirty = icwp_gui_rev
+
+		visible = {
+			has_country_flag = icwp_dialog_open
+			check_variable = { icwp_tab = 2 }
+		}
+
+		ai_enabled = { always = no }
+
+		dynamic_lists = {
+			icwp_clients_grid = {
+				array = icwp_clients
+				entry_container = "icwp_client_row"
+			}
+		}
+
+		triggers = {
+			icwp_cr_end_click_enabled = { NOT = { has_country_flag = icwp_exit_pending } }
+		}
+
+		properties = {
+			icwp_cr_flag = { image = "[?v.GetFlag]" }
+			icwp_cr_status = { frame = icwp_dc_s^i }
+			icwp_cr_bar = { frame = icwp_dc_bf^i }
+		}
+
+		effects = {
+			# We are the producer, v is the client.
 			icwp_cr_susp_click = {
 				set_variable = { icwp_act = v }
 				var:icwp_act = {
@@ -165,7 +213,7 @@ scripted_gui = {
 
 		visible = {
 			has_country_flag = icwp_dialog_open
-			check_variable = { icwp_tab = 2 }
+			check_variable = { icwp_tab = 3 }
 		}
 
 		ai_enabled = { always = no }
@@ -179,9 +227,16 @@ scripted_gui = {
 
 		properties = {
 			icwp_mk_rowbtn = { frame = icwp_mk_rowf^i }
+			icwp_mk_flag = { image = "[?v.GetFlag]" }
 			icwp_mk_medal = { frame = icwp_mk_tierf^i }
+			icwp_mk_ai = { frame = icwp_mk_ai^i }
 			icwp_mk_reason = { frame = icwp_mk_ok^i }
+			icwp_m_flag = { image = "[?icwp_sel_c.GetFlag]" }
 			icwp_m_reason = { frame = icwp_pv_f }
+			icwp_pm1 = { frame = icwp_pm1f }
+			icwp_pm2 = { frame = icwp_pm2f }
+			icwp_pm3 = { frame = icwp_pm3f }
+			icwp_pm4 = { frame = icwp_pm4f }
 		}
 
 		triggers = {
@@ -190,7 +245,14 @@ scripted_gui = {
 				check_variable = { icwp_pv_ok = 1 }
 			}
 			icwp_less_click_enabled = { check_variable = { icwp_offer_u > 1 } }
-			icwp_more_click_enabled = { check_variable = { icwp_offer_u < 10 } }
+			# The saving of the selected producer and how many producers we use set the limit (see icwp_quote).
+			icwp_more_click_enabled = {
+				check_variable = { icwp_offer_u < 22 }
+				OR = {
+					NOT = { check_variable = { icwp_sel > 0 } }
+					check_variable = { icwp_offer_u < icwp_pv_cap }
+				}
+			}
 		}
 
 		effects = {
@@ -200,20 +262,29 @@ scripted_gui = {
 				set_variable = { icwp_sel_c = v }
 				icwp_row_frames = yes
 				icwp_offer_preview = yes
+				if = {
+					limit = { check_variable = { icwp_offer_u > icwp_pv_cap } check_variable = { icwp_pv_cap > 0 } }
+					set_variable = { icwp_offer_u = icwp_pv_cap }
+					icwp_offer_preview = yes
+				}
 				icwp_touch = yes
 			}
 			icwp_less_click = {
 				subtract_from_variable = { icwp_offer_u = 1 }
-				clamp_variable = { var = icwp_offer_u min = 1 max = 10 }
+				clamp_variable = { var = icwp_offer_u min = 1 max = 22 }
 				icwp_offer_preview = yes
 				icwp_touch = yes
 			}
 			icwp_more_click = {
 				add_to_variable = { icwp_offer_u = 1 }
-				clamp_variable = { var = icwp_offer_u min = 1 max = 10 }
+				clamp_variable = { var = icwp_offer_u min = 1 max = 22 }
 				icwp_offer_preview = yes
 				icwp_touch = yes
 			}
+			icwp_pm1_click = { set_variable = { icwp_offer_pm = -0.10 } icwp_offer_preview = yes icwp_touch = yes }
+			icwp_pm2_click = { set_variable = { icwp_offer_pm = 0 } icwp_offer_preview = yes icwp_touch = yes }
+			icwp_pm3_click = { set_variable = { icwp_offer_pm = 0.10 } icwp_offer_preview = yes icwp_touch = yes }
+			icwp_pm4_click = { set_variable = { icwp_offer_pm = 0.20 } icwp_offer_preview = yes icwp_touch = yes }
 			icwp_m_refresh_click = {
 				icwp_scan_market = yes
 			}
@@ -231,7 +302,7 @@ scripted_gui = {
 
 		visible = {
 			has_country_flag = icwp_dialog_open
-			check_variable = { icwp_tab = 3 }
+			check_variable = { icwp_tab = 4 }
 		}
 
 		ai_enabled = { always = no }
@@ -242,5 +313,75 @@ scripted_gui = {
 				entry_container = "icwp_lg_row"
 			}
 		}
+
+		properties = {
+			icwp_lg_flag = { image = "[?v.GetFlag]" }
+			icwp_lg_bar = { frame = global.icwp_lg_bf^i }
+			icwp_l_medal = { frame = icwp_nextmedal_f }
+			icwp_l_ck1 = { frame = icwp_ck1 }
+			icwp_l_ck2 = { frame = icwp_ck2 }
+			icwp_l_ck3 = { frame = icwp_ck3 }
+			icwp_l_ck4 = { frame = icwp_ck4 }
+		}
+	}
+
+	# Empty note for tab 1, shown only while the list has no entries.
+	icwp_empty_abroad = {
+		context_type = player_context
+		parent_scripted_gui = icwp_dialog
+		window_name = "icwp_empty_abroad_window"
+
+		visible = {
+			has_country_flag = icwp_dialog_open
+			check_variable = { icwp_tab = 1 }
+			NOT = { check_variable = { icwp_hosts^num > 0 } }
+		}
+
+		ai_enabled = { always = no }
+	}
+
+	# Empty note for tab 2, shown only while the list has no entries.
+	icwp_empty_home = {
+		context_type = player_context
+		parent_scripted_gui = icwp_dialog
+		window_name = "icwp_empty_home_window"
+
+		visible = {
+			has_country_flag = icwp_dialog_open
+			check_variable = { icwp_tab = 2 }
+			NOT = { check_variable = { icwp_clients^num > 0 } }
+		}
+
+		ai_enabled = { always = no }
+	}
+
+	# Empty note for tab 3, shown only while the list has no entries.
+	icwp_empty_market = {
+		context_type = player_context
+		parent_scripted_gui = icwp_dialog
+		window_name = "icwp_empty_market_window"
+
+		visible = {
+			has_country_flag = icwp_dialog_open
+			check_variable = { icwp_tab = 3 }
+			NOT = { check_variable = { icwp_mk^num > 0 } }
+		}
+
+		ai_enabled = { always = no }
+	}
+
+	# Empty note for tab 4, shown only while the list has no entries.
+	icwp_empty_league = {
+		context_type = player_context
+		parent_scripted_gui = icwp_dialog
+		window_name = "icwp_empty_league_window"
+
+		visible = {
+			has_country_flag = icwp_dialog_open
+			check_variable = { icwp_tab = 4 }
+			NOT = { check_variable = { global.icwp_lg^num > 0 } }
+		}
+
+		ai_enabled = { always = no }
 	}
 }

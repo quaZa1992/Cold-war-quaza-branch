@@ -1,4 +1,11 @@
+# IMPERIA COLD WAR — Historical military officer recruitment in the 1970 scenario.
+# IMPERIA COLD WAR: Update 24.11.2026: nuclear status, stance, reactor fuel and enrichment at the 1970 start in MD form.
+# IMPERIA COLD WAR: Update 24.11.2026: 1970 start influence in MD form (power ranking and influence drift).
+# IMPERIA COLD WAR — Update 24.11.2026: interest group start opinions as plain lines like MD (50).
+# IMPERIA COLD WAR — Update 23.11.2026: history in MD form (no IMP_is_1970_scenario guards; only bookmark is 1970).
+# IMPERIA COLD WAR — Update 23.11.2026: 1970 monetary start profile (inflation, central bank rate, currency strength) in history like MD.
 # IMPERIA COLD WAR — France 1970 national programme integration.
+# Update 22.11.2026: characters recruited at game start in history (MD style); runtime recruit_character removed so characters survive saves and hotjoins.
 # IMPERIA COLD WAR — January 1970 researched national technology baseline.
 # IMPERIA COLD WAR — France 1970 national programme integration.
 # IMPERIA COLD WAR — January 1970 researched national technology baseline.
@@ -9,599 +16,644 @@ capital = 56
 # IMPERIA CW — Cold War: 1970 scenario country history.
 # Authored Cold War 1970 snapshot; native later history retained.
 1970.1.1 = {
-	if = { limit = { IMP_is_1970_scenario = yes NOT = { has_idea = wto_member } } add_ideas = wto_member } # COLDWAR 1970 GATT contracting party
+	# COLDWAR 24.11.2026: nuclear start 1970 (MD form)
+	add_ideas = { nuclear_power_off full_first_use }
+	complete_special_project = sp:sp_nuclear_energy
+	set_variable = { var_reactor_material_stockpile = 2500 }
+	add_to_array = { global.enrichment_countries = THIS.id }
+	set_country_flag = enabled_nuclear_reactor_fuel_production
+	# COLDWAR end nuclear start 1970
+	# COLDWAR 24.11.2026: 1970 start influence (MD form)
+	init_influence = yes
+	set_variable = { domestic_influence_amount = 650 }
+	add_to_array = { influence_array = USA.id }
+	add_to_array = { influence_array_val = 20 }
+	# COLDWAR end 1970 start influence
+	# IMPERIA COLD WAR — Historical January 1970 army recruitment.
+	recruit_character = COLDWAR_1970_officer_fra_alain_de_boissieu
+	recruit_character = COLDWAR_1970_officer_fra_fourquet
+	recruit_character = COLDWAR_1970_officer_fra_maurin
+	recruit_character = COLDWAR_1970_officer_fra_saulnier
+	recruit_character = COLDWAR_1970_officer_fra_douin
+	recruit_character = COLDWAR_1970_officer_fra_mery
+	recruit_character = COLDWAR_1970_officer_fra_vanbremeersch
+	recruit_character = COLDWAR_1970_officer_fra_lacaze
+	recruit_character = COLDWAR_1970_officer_fra_schmitt
+	recruit_character = COLDWAR_1970_officer_fra_kelche
+	recruit_character = COLDWAR_1970_officer_fra_lanxade
+	# IMPERIA COLD WAR — End historical army recruitment.
+
+	if = { limit = { NOT = { has_idea = wto_member } } add_ideas = wto_member } # COLDWAR 1970 GATT contracting party
 	# IMPERIA COLD WAR — January 1970 researched national technology baseline. BEGIN
+	set_country_flag = COLDWAR_1970_world_research_assigned
+	set_country_flag = mdcw_1970_infantry_research_applied
+	set_country_flag = mdcw_1970_air_research_applied
+	set_technology = {
+		popup = no
+		CV_MR_Fighter1 = 1
+		SP_Anti_Air_0 = 1
+	}
 	if = {
-		limit = { IMP_is_1970_scenario = yes }
-		set_country_flag = COLDWAR_1970_world_research_assigned
-		set_country_flag = mdcw_1970_infantry_research_applied
-		set_country_flag = mdcw_1970_air_research_applied
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			CV_MR_Fighter1 = 1
-			SP_Anti_Air_0 = 1
+			SP_arty_0 = 1
+			mdcw_anti_air_1940 = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				SP_arty_0 = 1
-				mdcw_anti_air_1940 = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_anti_tank_1940 = 1
+		mdcw_camouflage_1940 = 1
+		mdcw_cnc_equipment_1940 = 1
+		mdcw_conventional_track_engineering_1940 = 1
+		mdcw_engineering_basics_1940 = 1
+		mdcw_infantry_weapons_1940 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			mdcw_anti_tank_1940 = 1
-			mdcw_camouflage_1940 = 1
-			mdcw_cnc_equipment_1940 = 1
-			mdcw_conventional_track_engineering_1940 = 1
-			mdcw_engineering_basics_1940 = 1
-			mdcw_infantry_weapons_1940 = 1
+			mdcw_m101_model_1940_legacy = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_m101_model_1940_legacy = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_m101_model_1940_nsb = 1
-				mdcw_nsb_anti_air_1940 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				mdcw_piston_fighter_1940 = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			mdcw_precision_machine_tools_1940 = 1
-			mdcw_special_forces_1940 = 1
-			mdcw_support_weapons_1940 = 1
-			mdcw_util_vehicle_1940 = 1
+			mdcw_m101_model_1940_nsb = 1
+			mdcw_nsb_anti_air_1940 = 1
 		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_ww2_tank_ammunition_1940 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_ww2_tank_chassis_1940_legacy = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_ww2_tank_chassis_1940_nsb = 1
-			}
-		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
 		set_technology = {
 			popup = no
-			nuclear_technology = 1
+			mdcw_piston_fighter_1940 = 1
 		}
-		if = {
-			limit = { has_dlc = "Gotterdammerung" }
-			set_technology = {
-				popup = no
-				air_defense = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "Gotterdammerung" } }
-			set_technology = {
-				popup = no
-				air_defense_non_got = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "Gotterdammerung" }
-			set_technology = {
-				popup = no
-				ballistic_missile = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_precision_machine_tools_1940 = 1
+		mdcw_special_forces_1940 = 1
+		mdcw_support_weapons_1940 = 1
+		mdcw_util_vehicle_1940 = 1
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			basic_computing = 1
+			mdcw_ww2_tank_ammunition_1940 = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				early_bomber = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				helo_ops_tech = 1
-			}
-		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			mdcw_body_armor_1945 = 1
+			mdcw_ww2_tank_chassis_1940_legacy = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				mdcw_early_airframes_1945 = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				small_medium_gun_tech = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			tech_early_naval_weapon_systems = 1
-			tech_naval_systems_engineering = 1
-			mdcw_night_vision_1950 = 1
+			mdcw_ww2_tank_chassis_1940_nsb = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				early_weapons = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		nuclear_technology = 1
+	}
+	if = {
+		limit = { has_dlc = "Gotterdammerung" }
 		set_technology = {
 			popup = no
-			mdcw_regional_grid_1955 = 1
-			mdcw_utility_helicopter_1955 = 1
-			OLV1 = 1
+			air_defense = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				Rec_tank_0 = 1
-			}
-		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "Gotterdammerung" } }
 		set_technology = {
 			popup = no
-			combat_eng_equipment = 1
+			air_defense_non_got = 1
 		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				diesel_engine_tech = 1
-				COLDWAR_1970_service_components_4dae936cdb945f52 = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				COLDWAR_1970_service_components_51da8fa2c7686140 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				COLDWAR_1970_service_components_6aa6904dbe79b6b1 = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "Gotterdammerung" }
 		set_technology = {
 			popup = no
-			mdcw_light_4x4_vehicles_1941 = 1
-			COLDWAR_1970_service_components_a486d2146ed8b849 = 1
+			ballistic_missile = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_155mm_m114_option_legacy = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_155mm_m114_option_nsb = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		basic_computing = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
 		set_technology = {
 			popup = no
-			mdcw_disruptive_camouflage_1943 = 1
-			mdcw_portable_radios_1943 = 1
+			early_bomber = 1
 		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_ww2_tank_ammunition_1943 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_ww2_tank_chassis_1943_legacy = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_ww2_tank_chassis_1943_nsb = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			aircraft_carrier_engineering = 1
+			helo_ops_tech = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				early_fighter = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_body_armor_1945 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
 		set_technology = {
 			popup = no
-			tech_submarine_engineering_1 = 1
-			mdcw_tower_cranes_1949 = 1
+			mdcw_early_airframes_1945 = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_anti_air_1950 = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			mdcw_anti_tank_1950 = 1
+			small_medium_gun_tech = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				mdcw_gen_1_light = 1
-				mdcw_gen_1_medium = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		tech_early_naval_weapon_systems = 1
+		tech_naval_systems_engineering = 1
+		mdcw_night_vision_1950 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
 		set_technology = {
 			popup = no
-			mdcw_infantry_weapons_1950 = 1
+			early_weapons = 1
 		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_nsb_anti_air_1950 = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_regional_grid_1955 = 1
+		mdcw_utility_helicopter_1955 = 1
+		OLV1 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			mdcw_powered_machinery_1950 = 1
-			mdcw_special_forces_1950 = 1
-			mdcw_nylon_armour_vests_1952 = 1
-			mdcw_hydraulic_track_tamping_1953 = 1
-			mdcw_reactor_fuel_fabrication_1953 = 1
-			mdcw_experimental_power_reactors_1954 = 1
+			Rec_tank_0 = 1
 		}
-		if = {
-			limit = { has_dlc = "Gotterdammerung" }
-			set_technology = {
-				popup = no
-				SAM = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "Gotterdammerung" } }
-			set_technology = {
-				popup = no
-				SAM_non_got = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				early_airframe_designs = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		combat_eng_equipment = 1
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			integrated_circuit = 1
-			mdcw_destroyer_hull_1955 = 1
+			diesel_engine_tech = 1
+			COLDWAR_1970_service_components_4dae936cdb945f52 = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_m101_service_model_1955_legacy = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_m101_service_model_1955_nsb = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
 		set_technology = {
 			popup = no
-			mdcw_naval_sam_1955 = 1
-			mdcw_support_weapons_1955 = 1
+			COLDWAR_1970_service_components_51da8fa2c7686140 = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				mdcw_early_aam_1957 = 1
-			}
-		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
 		set_technology = {
 			popup = no
-			corvette_hull_1 = 1
-			cruiser_hull_1 = 1
-			frigate_hull_1 = 1
-			mdcw_grid_dispatch_1965 = 1
-			mdcw_large_hydro_turbines_1965 = 1
+			COLDWAR_1970_service_components_6aa6904dbe79b6b1 = 1
 		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				medium_gun_tech = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				naval_plane1 = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				nsb_transport_helicopter_1 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				strategic_bomber1 = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_light_4x4_vehicles_1941 = 1
+		COLDWAR_1970_service_components_a486d2146ed8b849 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			tech_diesel_power_systems_1 = 1
+			mdcw_155mm_m114_option_legacy = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				transport_helicopter_1 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				transport_plane1 = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			mdcw_combat_engineer_vehicles_1968 = 1
+			mdcw_155mm_m114_option_nsb = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				Early_APC = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mbt_tech_ops = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_disruptive_camouflage_1943 = 1
+		mdcw_portable_radios_1943 = 1
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			mdcw_camouflage_1950 = 1
-			mdcw_cnc_equipment_1950 = 1
+			mdcw_ww2_tank_ammunition_1943 = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				mdcw_early_jet_fighter_1950 = 1
-			}
-		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			mdcw_ready_mixed_concrete_1950 = 1
-			mdcw_util_vehicle_1950 = 1
-			mdcw_unconventional_warfare_1952 = 1
-			mdcw_battle_rifles_1954 = 1
-			mdcw_carrier_hull_1955 = 1
+			mdcw_ww2_tank_chassis_1943_legacy = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				mdcw_gen_2_light = 1
-				mdcw_gen_2_medium = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			mdcw_infantry_weapons_1955 = 1
-			mdcw_numerical_control_1955 = 1
+			mdcw_ww2_tank_chassis_1943_nsb = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				mdcw_delta_wing_1956 = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		aircraft_carrier_engineering = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
 		set_technology = {
 			popup = no
-			reactor1 = 1
-			mdcw_gpmg_support_1957 = 1
-			mdcw_reactor_licensing_1957 = 1
-			mdcw_diesel_submarine_hull_1959 = 1
+			early_fighter = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				gen_3_large = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		tech_submarine_engineering_1 = 1
+		mdcw_tower_cranes_1949 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
 		set_technology = {
 			popup = no
-			mdcw_body_armor_1960 = 1
-			mdcw_continuous_welded_rail_1960 = 1
+			mdcw_anti_air_1950 = 1
 		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			set_technology = {
-				popup = no
-				mdcw_fire_control_1963 = 1
-				mdcw_engines_1964 = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_anti_tank_1950 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
 		set_technology = {
 			popup = no
-			computing_1 = 1
-			destroyer_hull_1 = 1
+			mdcw_gen_1_light = 1
+			mdcw_gen_1_medium = 1
 		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				nsb_artillery_1 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				tech_arty_0 = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_infantry_weapons_1950 = 1
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
 		set_technology = {
 			popup = no
-			mdcw_hydraulic_earthmoving_1954 = 1
+			mdcw_nsb_anti_air_1950 = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "By Blood Alone" } }
-			set_technology = {
-				popup = no
-				mdcw_early_supersonic_fighter_1955 = 1
-			}
-		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_postwar_medium_tank_1955_legacy = 1
-			}
-		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mdcw_postwar_medium_tank_1955_nsb = 1
-			}
-		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_powered_machinery_1950 = 1
+		mdcw_special_forces_1950 = 1
+		mdcw_nylon_armour_vests_1952 = 1
+		mdcw_hydraulic_track_tamping_1953 = 1
+		mdcw_reactor_fuel_fabrication_1953 = 1
+		mdcw_experimental_power_reactors_1954 = 1
+	}
+	if = {
+		limit = { has_dlc = "Gotterdammerung" }
 		set_technology = {
 			popup = no
-			reactor2 = 1
-			mdcw_cnc_equipment_1960 = 1
-			mdcw_precast_construction_1960 = 1
+			SAM = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				mdcw_tracked_apc_1960_legacy = 1
-			}
-		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "Gotterdammerung" } }
 		set_technology = {
 			popup = no
-			mdcw_util_vehicle_1960 = 1
-			mdcw_helicopter_medevac_1962 = 1
-			mdcw_marksman_rifles_1963 = 1
-			carrier_hull_1 = 1
-			special_forces_tech_1 = 1
-			support_weapons = 1
+			SAM_non_got = 1
 		}
-		if = {
-			limit = { NOT = { has_dlc = "No Step Back" } }
-			set_technology = {
-				popup = no
-				APC_1 = 1
-				MBT_1 = 1
-			}
-		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
 		set_technology = {
 			popup = no
-			infantry_weapons_1 = 1
+			early_airframe_designs = 1
 		}
-		if = {
-			limit = { has_dlc = "No Step Back" }
-			set_technology = {
-				popup = no
-				mbt_tech = 1
-			}
+	}
+	set_technology = {
+		popup = no
+		integrated_circuit = 1
+		mdcw_destroyer_hull_1955 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
+		set_technology = {
+			popup = no
+			mdcw_m101_service_model_1955_legacy = 1
+		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			mdcw_m101_service_model_1955_nsb = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_naval_sam_1955 = 1
+		mdcw_support_weapons_1955 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_technology = {
+			popup = no
+			mdcw_early_aam_1957 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		corvette_hull_1 = 1
+		cruiser_hull_1 = 1
+		frigate_hull_1 = 1
+		mdcw_grid_dispatch_1965 = 1
+		mdcw_large_hydro_turbines_1965 = 1
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			medium_gun_tech = 1
+		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
+		set_technology = {
+			popup = no
+			naval_plane1 = 1
+		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			nsb_transport_helicopter_1 = 1
+		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
+		set_technology = {
+			popup = no
+			strategic_bomber1 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		tech_diesel_power_systems_1 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
+		set_technology = {
+			popup = no
+			transport_helicopter_1 = 1
+		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
+		set_technology = {
+			popup = no
+			transport_plane1 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_combat_engineer_vehicles_1968 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
+		set_technology = {
+			popup = no
+			Early_APC = 1
+		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			mbt_tech_ops = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_camouflage_1950 = 1
+		mdcw_cnc_equipment_1950 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
+		set_technology = {
+			popup = no
+			mdcw_early_jet_fighter_1950 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_ready_mixed_concrete_1950 = 1
+		mdcw_util_vehicle_1950 = 1
+		mdcw_unconventional_warfare_1952 = 1
+		mdcw_battle_rifles_1954 = 1
+		mdcw_carrier_hull_1955 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_technology = {
+			popup = no
+			mdcw_gen_2_light = 1
+			mdcw_gen_2_medium = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_infantry_weapons_1955 = 1
+		mdcw_numerical_control_1955 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_technology = {
+			popup = no
+			mdcw_delta_wing_1956 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		reactor1 = 1
+		mdcw_gpmg_support_1957 = 1
+		mdcw_reactor_licensing_1957 = 1
+		mdcw_diesel_submarine_hull_1959 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_technology = {
+			popup = no
+			gen_3_large = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_body_armor_1960 = 1
+		mdcw_continuous_welded_rail_1960 = 1
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_technology = {
+			popup = no
+			mdcw_fire_control_1963 = 1
+			mdcw_engines_1964 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		computing_1 = 1
+		destroyer_hull_1 = 1
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			nsb_artillery_1 = 1
+		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
+		set_technology = {
+			popup = no
+			tech_arty_0 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_hydraulic_earthmoving_1954 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "By Blood Alone" } }
+		set_technology = {
+			popup = no
+			mdcw_early_supersonic_fighter_1955 = 1
+		}
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
+		set_technology = {
+			popup = no
+			mdcw_postwar_medium_tank_1955_legacy = 1
+		}
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			mdcw_postwar_medium_tank_1955_nsb = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		reactor2 = 1
+		mdcw_cnc_equipment_1960 = 1
+		mdcw_precast_construction_1960 = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
+		set_technology = {
+			popup = no
+			mdcw_tracked_apc_1960_legacy = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		mdcw_util_vehicle_1960 = 1
+		mdcw_helicopter_medevac_1962 = 1
+		mdcw_marksman_rifles_1963 = 1
+		carrier_hull_1 = 1
+		special_forces_tech_1 = 1
+		support_weapons = 1
+	}
+	if = {
+		limit = { NOT = { has_dlc = "No Step Back" } }
+		set_technology = {
+			popup = no
+			APC_1 = 1
+			MBT_1 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		infantry_weapons_1 = 1
+	}
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			mbt_tech = 1
 		}
 	}
 	# IMPERIA COLD WAR — January 1970 researched national technology baseline. END
+	# IMPERIA COLD WAR — equipment rework start state. BEGIN
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_technology = {
+			popup = no
+			COLDWAR_tank_ammo_1955 = 1
+			COLDWAR_tank_ammo_1962 = 1
+			COLDWAR_tank_engines_1955 = 1
+			COLDWAR_additional_armour_1955 = 1
+		}
+	}
+	set_technology = {
+		popup = no
+		COLDWAR_naval_torpedoes_1960s = 1
+		COLDWAR_naval_steam_1955 = 1
+	}
+	complete_special_project = sp:sp_COLDWAR_tank_sights_1940s
+	complete_special_project = sp:sp_COLDWAR_tank_sights_1950s
+	complete_special_project = sp:sp_COLDWAR_tank_sights_1960s
+	complete_special_project = sp:sp_COLDWAR_tank_ammo_1955
+	complete_special_project = sp:sp_COLDWAR_tank_ammo_1962
+	complete_special_project = sp:sp_COLDWAR_naval_diesel_1965
+	complete_special_project = sp:sp_COLDWAR_naval_steam_1955
+	# IMPERIA COLD WAR — equipment rework start state. END
 	# IMPERIA COLD WAR — January 1970 historical equipment variants. BEGIN
 	if = {
-		limit = { IMP_is_1970_scenario = yes NOT = { has_country_flag = COLDWAR_1970_historical_variants_assigned } }
+		limit = { NOT = { has_country_flag = COLDWAR_1970_historical_variants_assigned } }
 		set_country_flag = COLDWAR_1970_historical_variants_assigned
-		create_equipment_variant = {
-			name = "MAS 49/56"
-			type = mdcw_infantry_weapons_1955
-		}
 		if = {
 			limit = { has_dlc = "No Step Back" }
 			create_equipment_variant = {
 				name = "AMX-30B"
 				type = medium_tank_chassis_0
 				modules = {
+					special_type_slot_5 = COLDWAR_tank_sights_1960s_module # COLDWAR equipment rework 23.11.2026
 					main_armament_slot = tank_small_medium_cannon
 					secondary_armament_slot = afv_coax_machine_gun
-					ammunition_load_slot = mdcw_tank_mixed_ammo_1940
+					ammunition_load_slot = COLDWAR_mixed_main_ammo_1962 # COLDWAR equipment rework 23.11.2026
 					turret_type_slot = tank_soviet_turret
 					suspension_type_slot = tank_torsion_bar_suspension_medium
 					armor_type_slot = tank_steel_armor_gen1
 					engine_type_slot = tank_diesel_engine_gen1
 					reload_type_slot = manual_loading
-					special_type_slot_4 = tank_battlestation_1
+					special_type_slot_4 = tank_battlestation_1 # COLDWAR equipment rework 23.11.2026
 				}
 				upgrades = {
 					tank_nsb_armor_upgrade = 2
@@ -609,42 +661,27 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "AMX-30B"
-				type = MBT_1
-				upgrades = {
-					tank_armor_upgrade = 1
-					tank_engine_upgrade = 2
-				}
-			}
-		}
 		if = {
 			limit = { has_dlc = "No Step Back" }
 			create_equipment_variant = {
 				name = "AMX-13/75"
 				type = medium_tank_destroyer_chassis_0
 				modules = {
+					special_type_slot_5 = COLDWAR_tank_sights_1940s_module # COLDWAR equipment rework 23.11.2026
 					main_armament_slot = mdcw_tank_gun_1943
 					secondary_armament_slot = afv_coax_machine_gun
-					ammunition_load_slot = mdcw_tank_mixed_ammo_1940
+					ammunition_load_slot = mdcw_tank_mixed_ammo_1940 # COLDWAR equipment rework 23.11.2026
 					turret_type_slot = tank_oscillating_turret
 					suspension_type_slot = tank_torsion_bar_suspension_medium
 					armor_type_slot = mdcw_tank_steel_armor_1943
 					engine_type_slot = afv_gasoline_engine_gen1
 					reload_type_slot = automatic_loading
-					special_type_slot_4 = mdcw_tank_optical_fire_control_1943
+					special_type_slot_4 = mdcw_tank_optical_fire_control_1943 # COLDWAR equipment rework 23.11.2026
 				}
 				upgrades = {
 					tank_nsb_armor_upgrade = 0
 					tank_nsb_engine_upgrade = 3
 				}
-			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "AMX-13/75"
-				type = Rec_tank_0
 			}
 		}
 		if = {
@@ -653,26 +690,21 @@ capital = 56
 				name = "AMX-13/90"
 				type = medium_tank_destroyer_chassis_0
 				modules = {
+					special_type_slot_5 = COLDWAR_tank_sights_1950s_module # COLDWAR equipment rework 23.11.2026
 					main_armament_slot = module_mdcw_90mm_tank_gun_1945
 					secondary_armament_slot = afv_coax_machine_gun
-					ammunition_load_slot = mdcw_tank_mixed_ammo_1940
+					ammunition_load_slot = COLDWAR_mixed_main_ammo_1955 # COLDWAR equipment rework 23.11.2026
 					turret_type_slot = tank_oscillating_turret
 					suspension_type_slot = tank_torsion_bar_suspension_medium
 					armor_type_slot = mdcw_tank_steel_armor_1943
 					engine_type_slot = afv_gasoline_engine_gen1
 					reload_type_slot = automatic_loading
-					special_type_slot_4 = tank_battlestation_1
+					special_type_slot_4 = COLDWAR_tank_battlestation_1955 # COLDWAR equipment rework 23.11.2026
 				}
 				upgrades = {
 					tank_nsb_armor_upgrade = 0
 					tank_nsb_engine_upgrade = 3
 				}
-			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "AMX-13/90"
-				type = Rec_tank_0
 			}
 		}
 		if = {
@@ -694,12 +726,6 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "AMX-VCI"
-				type = mdcw_tracked_apc_1960_model
-			}
-		}
 		if = {
 			limit = { has_dlc = "No Step Back" }
 			create_equipment_variant = {
@@ -708,7 +734,7 @@ capital = 56
 				modules = {
 					main_armament_slot = afv_assault_gun
 					secondary_armament_slot = afv_coax_machine_gun
-					ammunition_load_slot = mdcw_tank_mixed_ammo_1940
+					ammunition_load_slot = COLDWAR_mixed_main_ammo_1962 # COLDWAR equipment rework 23.11.2026
 					turret_type_slot = tank_base_tank_turret
 					suspension_type_slot = tank_wheeled_suspension_medium
 					armor_type_slot = mdcw_tank_steel_armor_1940
@@ -716,12 +742,6 @@ capital = 56
 					reload_type_slot = manual_loading
 					special_type_slot_4 = tank_battlestation_1
 				}
-			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "Panhard AML 60"
-				type = Rec_tank_0
 			}
 		}
 		if = {
@@ -730,22 +750,17 @@ capital = 56
 				name = "Panhard AML 90"
 				type = medium_tank_destroyer_chassis_0
 				modules = {
+					special_type_slot_5 = COLDWAR_tank_sights_1950s_module # COLDWAR equipment rework 23.11.2026
 					main_armament_slot = module_mdcw_90mm_tank_gun_1945
 					secondary_armament_slot = afv_coax_machine_gun
-					ammunition_load_slot = mdcw_tank_mixed_ammo_1940
+					ammunition_load_slot = COLDWAR_mixed_main_ammo_1955 # COLDWAR equipment rework 23.11.2026
 					turret_type_slot = tank_base_tank_turret
 					suspension_type_slot = tank_wheeled_suspension_medium
 					armor_type_slot = mdcw_tank_steel_armor_1940
 					engine_type_slot = afv_gasoline_engine_gen1
 					reload_type_slot = manual_loading
-					special_type_slot_4 = tank_battlestation_1
+					special_type_slot_4 = COLDWAR_tank_battlestation_1955 # COLDWAR equipment rework 23.11.2026
 				}
-			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "Panhard AML 90"
-				type = Rec_tank_0
 			}
 		}
 		if = {
@@ -754,22 +769,17 @@ capital = 56
 				name = "Panhard EBR 75"
 				type = medium_tank_destroyer_chassis_0
 				modules = {
+					special_type_slot_5 = COLDWAR_tank_sights_1940s_module # COLDWAR equipment rework 23.11.2026
 					main_armament_slot = mdcw_tank_gun_1943
 					secondary_armament_slot = afv_coax_machine_gun
-					ammunition_load_slot = mdcw_tank_mixed_ammo_1940
+					ammunition_load_slot = mdcw_tank_mixed_ammo_1940 # COLDWAR equipment rework 23.11.2026
 					turret_type_slot = tank_oscillating_turret
 					suspension_type_slot = tank_wheeled_suspension_medium
 					armor_type_slot = mdcw_tank_steel_armor_1940
 					engine_type_slot = afv_gasoline_engine_gen1
 					reload_type_slot = manual_loading
-					special_type_slot_4 = mdcw_tank_optical_fire_control_1943
+					special_type_slot_4 = mdcw_tank_optical_fire_control_1943 # COLDWAR equipment rework 23.11.2026
 				}
-			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "Panhard EBR 75"
-				type = Rec_tank_0
 			}
 		}
 		if = {
@@ -789,12 +799,6 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "AMX-13 F3"
-				type = SP_arty_0
-			}
-		}
 		if = {
 			limit = { has_dlc = "No Step Back" }
 			create_equipment_variant = {
@@ -812,28 +816,6 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "AMX-13 DCA"
-				type = SP_Anti_Air_0
-			}
-		}
-		create_equipment_variant = {
-			name = "105mm Modele 1950"
-			type = mdcw_m101_service_model_1955_model
-		}
-		create_equipment_variant = {
-			name = "155mm M114"
-			type = mdcw_155mm_m114_option_model
-		}
-		create_equipment_variant = {
-			name = "M20 Super Bazooka"
-			type = mdcw_anti_tank_1950
-		}
-		create_equipment_variant = {
-			name = "Bofors 40mm L/70"
-			type = mdcw_anti_air_1950
-		}
 		if = {
 			limit = { has_dlc = "By Blood Alone" }
 			create_equipment_variant = {
@@ -846,12 +828,6 @@ capital = 56
 					wingform_type_slot = wing_delta
 					fixed_gun_slot = module_mdcw_aircraft_cannon_30mm
 				}
-			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "Mirage IIIC"
-				type = mdcw_early_supersonic_fighter_1955_model
 			}
 		}
 		if = {
@@ -868,12 +844,6 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "Mirage IIIE"
-				type = mdcw_early_jet_bomber_1950_model
-			}
-		}
 		if = {
 			limit = { has_dlc = "By Blood Alone" }
 			create_equipment_variant = {
@@ -887,12 +857,6 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "Mirage IVA"
-				type = mdcw_early_jet_bomber_1950_model
-			}
-		}
 		if = {
 			limit = { has_dlc = "By Blood Alone" }
 			create_equipment_variant = {
@@ -905,49 +869,12 @@ capital = 56
 					wingform_type_slot = wing_straight
 				}
 			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "Nord N.2501 Noratlas"
-				type = transport_plane1
-			}
-		}
-		if = {
-			limit = { has_dlc = "By Blood Alone" }
-			create_equipment_variant = {
-				name = "Transall C-160"
-				type = large_plane_air_transport_airframe_1
-				modules = {
-					fixed_main_weapon_slot = weap_buff_transport
-					engine_type_slot = engine_prop_double_1
-					avionics_type_slot = avionics_manned_1
-					wingform_type_slot = wing_straight
-				}
-			}
-		}
-		else = {
-			create_equipment_variant = {
-				name = "Transall C-160"
-				type = transport_plane1
-			}
-		}
-		create_equipment_variant = {
-			name = "SE.3130 Alouette II"
-			type = transport_helicopter_1
-		}
-		create_equipment_variant = {
-			name = "SA.3160 Alouette III"
-			type = transport_helicopter_1
-		}
-		create_equipment_variant = {
-			name = "SA.330B Puma"
-			type = transport_helicopter_1
 		}
 		create_equipment_variant = {
 			name = "Clemenceau class"
 			type = carrier_hull_1
 			modules = {
-				fixed_ship_engine_slot = module_surface_oil_power
+				fixed_ship_engine_slot = COLDWAR_surface_steam_power_1955 # COLDWAR equipment rework 23.11.2026
 				fixed_ship_radar_slot = module_radar_1
 				fixed_ship_fire_control_system_slot = module_analog_fire_control
 				fixed_ship_flight_deck = module_flight_deck_3
@@ -957,11 +884,11 @@ capital = 56
 			name = "Suffren class"
 			type = destroyer_hull_1
 			modules = {
-				fixed_ship_engine_slot = module_surface_oil_power
+				fixed_ship_engine_slot = COLDWAR_surface_steam_power_1955 # COLDWAR equipment rework 23.11.2026
 				fixed_ship_radar_slot = module_radar_1
 				fixed_ship_fire_control_system_slot = module_screen_analog_fire_control
 				fixed_ship_battery_slot = module_100mm_battery
-				fixed_ship_auxillary_slot = module_naval_mdcw_early_torpedoes
+				fixed_ship_auxillary_slot = COLDWAR_naval_torpedoes_1965 # COLDWAR equipment rework 23.11.2026
 				mid_2_custom_slot = module_anti_submarine_mortar
 				rear_1_custom_slot = module_light_helipad_1
 				front_1_custom_slot = module_naval_mdcw_terrier_launcher_early
@@ -972,7 +899,7 @@ capital = 56
 			name = "T 47 Surcouf class"
 			type = destroyer_hull_1
 			modules = {
-				fixed_ship_engine_slot = module_surface_oil_power
+				fixed_ship_engine_slot = COLDWAR_surface_steam_power_1955 # COLDWAR equipment rework 23.11.2026
 				fixed_ship_radar_slot = module_radar_1
 				fixed_ship_fire_control_system_slot = module_screen_analog_fire_control
 				fixed_ship_battery_slot = module_127mm_battery
@@ -995,7 +922,7 @@ capital = 56
 			name = "Daphne class"
 			type = attack_submarine_hull_1
 			modules = {
-				fixed_ship_battery_slot = module_naval_mdcw_early_torpedoes
+				fixed_ship_battery_slot = COLDWAR_naval_torpedoes_1965 # COLDWAR equipment rework 23.11.2026
 				fixed_ship_engine_slot = module_sub_diesel_electric_power
 				fixed_ship_radar_slot = module_naval_mdcw_early_sonar
 			}
@@ -1014,12 +941,6 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "Etendard IVM"
-				type = mdcw_early_carrier_attack_1950_model
-			}
-		}
 		if = {
 			limit = { has_dlc = "By Blood Alone" }
 			create_equipment_variant = {
@@ -1034,16 +955,6 @@ capital = 56
 				}
 			}
 		}
-		else = {
-			create_equipment_variant = {
-				name = "F-8E(FN) Crusader"
-				type = CV_MR_Fighter1
-			}
-		}
-		create_equipment_variant = {
-			name = "MIM-23A Basic HAWK"
-			type = sam_missile_equipment_1
-		}
 	}
 	# IMPERIA COLD WAR — January 1970 historical equipment variants. END
 	# IMPERIA COLD WAR — Historical national currency; history does not execute law on_add.
@@ -1051,12 +962,9 @@ capital = 56
 	set_variable = { no_foreign_reserve = 1 }
 	# IMPERIA CW — Cold War: 1970 scenario country history.
 	# COLDWAR HISTORICAL1970 NATIVE IDENTITY BEGIN
-	if = {
-		limit = { IMP_is_1970_scenario = yes }
-		set_country_flag = IMP_1970_historical_politics
-	}
+	set_country_flag = IMP_1970_historical_politics
 	set_cosmetic_tag = FRA_1970
-	set_popularities = { democratic = 72 communism = 5 fascism = 2 neutrality = 15 nationalist = 6 }
+	set_popularities = { democratic = 63 communism = 21 fascism = 0 neutrality = 14 nationalist = 2 } # COLDWAR | 1968/69 elections
 	set_politics = { ruling_party = democratic last_election = "1969.6.15" election_frequency = 84 elections_allowed = yes }
 	clear_array = party_pop_array
 	clear_array = party_pop_elect_array
@@ -1067,105 +975,407 @@ capital = 56
 	resize_array = { array = party_pop_elect_array size = 24 value = -1 }
 	resize_array = { array = pos_array size = 24 }
 	resize_array = { array = party_banned_array size = 24 value = 0 }
-	set_variable = { party_pop_array^1 = 0.48 }
-	set_variable = { party_pop_array^2 = 0.14 }
-	set_variable = { party_pop_array^3 = 0.08 }
-	set_variable = { party_pop_array^4 = 0.03 }
-	set_variable = { party_pop_array^7 = 0.02 }
-	set_variable = { party_pop_array^10 = 0.02 }
-	set_variable = { party_pop_array^13 = 0.08 }
-	set_variable = { party_pop_array^14 = 0.10 }
-	set_variable = { party_pop_array^16 = 0.05 }
-	set_variable = { party_pop_array^20 = 0.04 }
-	set_variable = { party_pop_array^22 = 0.03 }
+	# COLDWAR | party popularity after the 1968 legislative and 1969 presidential elections
+	set_variable = { party_pop_array^1 = 0.38 }
+	set_variable = { party_pop_array^2 = 0.09 }
+	set_variable = { party_pop_array^3 = 0.16 }
+	set_variable = { party_pop_array^4 = 0.20 }
+	set_variable = { party_pop_array^5 = 0.01 }
+	set_variable = { party_pop_array^13 = 0.01 }
+	set_variable = { party_pop_array^14 = 0.06 }
+	set_variable = { party_pop_array^16 = 0.03 }
+	set_variable = { party_pop_array^18 = 0.04 }
+	set_variable = { party_pop_array^20 = 0.01 }
+	set_variable = { party_pop_array^22 = 0.01 }
 	set_variable = { ruling_party = 1 }
 	add_to_array = { gov_coalition_array = 2 }
 	create_country_leader = {
 		name = "Georges Pompidou"
-		picture = "gfx/Leaders/FRA/FRA_Coldwar_GeorgesPompidou.dds"
+		desc = COLDWAR_FRA_1970_LEADERS_georges_pompidou_desc
+		picture = "gfx/leaders/FRA/FRA_Coldwar_GeorgesPompidou.dds"
 		expire = "1974.4.2"
 		ideology = conservatism
+		traits = {
+			western_conservatism
+		}
 	}
+	set_country_flag = COLDWAR_FRA_1970_LEADERS_initialized
+	set_country_flag = COLDWAR_FRA_1970_LEADERS_appointed
+	set_variable = { COLDWAR_FRA_1970_LEADERS_active_slot = 1 }
 	# COLDWAR HISTORICAL1970 NATIVE IDENTITY END
 
 	# IMPERIA COLD WAR — France 1970 history integration.
+	mdcw_apply_1970_infantry_research = yes
+	# IMPERIA COLD WAR — Approved France 1970 replacement.
+	load_focus_tree = COLDWAR_FRA_1970_focus # COLDWAR | France 1970 tree (rebuilt 14.11.2026)
+	set_variable = { gdp_per_capita = 2.813 }
+	set_variable = { overall_productivity = 768.381 }
 	if = {
-		limit = { IMP_is_1970_scenario = yes }
-		mdcw_apply_1970_infantry_research = yes
-		# IMPERIA COLD WAR — Approved France 1970 replacement.
-		load_focus_tree = COLDWAR_FRA2_1970_focus
-		COLDWAR_FRA2_initialize = yes
-		set_variable = { gdp_per_capita = 2.813 }
-		set_variable = { overall_productivity = 768.381 }
-		if = {
-			limit = { exists = yes }
+		limit = { exists = yes }
+		set_oob = "mdcw_1970_empty_land"
+	}
+
+	# Historical labour programme: National Immigration Office recruitment and 1963-1965 labour agreements.
+	add_ideas = mdcw_ni_guest_worker_recruitment_programme
+
+	# IMPERIA COLD WAR — January 1970 order of battle. BEGIN
+	# Generated by tools/oob_1970/gen.py from data/FRA.py. Units, fleets, air wings and stockpiles in history/units/FRA_1970_*.txt.
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_technology = { COLDWAR_1970_oob_service_FRA_bba = 1 popup = no }
+	}
+	set_technology = { COLDWAR_1970_oob_service_FRA_naval = 1 popup = no }
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		create_equipment_variant = {
+			name = "Mirage IIIR"
+			type = small_plane_cas_airframe_1
+			modules = {
+				fixed_main_weapon_slot = module_mdcw_unguided_bombs_1945
+				engine_type_slot = engine_light_single_1
+				avionics_type_slot = avionics_manned_1
+				wingform_type_slot = wing_delta
+				fixed_gun_slot = module_mdcw_aircraft_cannon_30mm
+			}
+		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		create_equipment_variant = {
+			name = "Vautour IIN"
+			type = medium_plane_cas_airframe_1
+			modules = {
+				fixed_main_weapon_slot = module_mdcw_unguided_bombs_1945
+				engine_type_slot = engine_jet_double_0
+				avionics_type_slot = avionics_manned_0
+				wingform_type_slot = wing_straight
+			}
+		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		create_equipment_variant = {
+			name = "Super Mystère B2"
+			type = small_plane_airframe_1
+			modules = {
+				fixed_main_weapon_slot = module_mdcw_early_fighter_guns
+				engine_type_slot = engine_light_single_0
+				avionics_type_slot = avionics_manned_0
+				wingform_type_slot = wing_swept
+			}
+		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		create_equipment_variant = {
+			name = "Mystère IVA"
+			type = small_plane_cas_airframe_1
+			modules = {
+				fixed_main_weapon_slot = module_mdcw_unguided_bombs_1945
+				engine_type_slot = engine_light_single_0
+				avionics_type_slot = avionics_manned_0
+				wingform_type_slot = wing_swept
+				fixed_gun_slot = module_mdcw_aircraft_cannon_30mm
+			}
+		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		create_equipment_variant = {
+			name = "F-100D Super Sabre"
+			type = small_plane_cas_airframe_1
+			modules = {
+				fixed_main_weapon_slot = module_mdcw_unguided_bombs_1945
+				engine_type_slot = engine_light_single_1
+				avionics_type_slot = avionics_manned_1
+				wingform_type_slot = wing_swept
+				fixed_gun_slot = module_mdcw_aircraft_cannon_20mm
+			}
+		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		create_equipment_variant = {
+			name = "Transall C-160"
+			type = large_plane_air_transport_airframe_1
+			modules = {
+				fixed_main_weapon_slot = weap_buff_transport
+				engine_type_slot = engine_prop_double_1
+				avionics_type_slot = avionics_manned_1
+				wingform_type_slot = wing_straight
+			}
+		}
+	}
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		create_equipment_variant = {
+			name = "Breguet Atlantic"
+			type = large_plane_maritime_patrol_airframe_1
+			modules = {
+				fixed_main_weapon_slot = weap_as_hardpoint_1
+				engine_type_slot = engine_prop_double_1
+				avionics_type_slot = avionics_manned_1
+				wingform_type_slot = wing_straight
+				special_slot_type_2 = spec_mad_1
+			}
+		}
+	}
+	create_equipment_variant = {
+		name = "Arromanches"
+		type = helicopter_operator_hull_1
+		modules = {
+			fixed_ship_engine_slot = module_surface_oil_power
+			fixed_ship_radar_slot = module_radar_1
+			fixed_ship_fire_control_system_slot = module_analog_fire_control
+			fixed_ship_battery_slot = module_light_flight_deck_1
+			front_1_custom_slot = module_helipads_1
+			mid_1_custom_slot = module_helipads_1
+			rear_1_custom_slot = module_helipads_1
+		}
+	}
+	create_equipment_variant = {
+		name = "Jeanne d'Arc"
+		type = helicopter_operator_hull_1
+		modules = {
+			fixed_ship_engine_slot = module_surface_oil_power
+			fixed_ship_radar_slot = module_radar_1
+			fixed_ship_fire_control_system_slot = module_analog_fire_control
+			fixed_ship_battery_slot = module_light_flight_deck_1
+			front_1_custom_slot = module_helipads_1
+			mid_1_custom_slot = module_helipads_1
+			rear_1_custom_slot = module_helipads_1
+		}
+	}
+	create_equipment_variant = {
+		name = "Colbert class"
+		type = cruiser_hull_1
+		modules = {
+			fixed_ship_engine_slot = COLDWAR_surface_steam_power_1955
+			fixed_ship_radar_slot = module_radar_1
+			fixed_ship_fire_control_system_slot = module_analog_fire_control
+			fixed_ship_battery_slot = module_76mm_battery
+			rear_1_custom_slot = module_light_helipad_1
+			front_1_custom_slot = module_naval_mdcw_terrier_launcher_early
+			fixed_ship_missile_ammo_slot = module_naval_mdcw_terrier_ammo_early
+			fixed_ship_battery_slot_2 = COLDWAR_naval_torpedoes_1965
+		}
+	}
+	create_equipment_variant = {
+		name = "T 53 class"
+		type = destroyer_hull_1
+		modules = {
+			fixed_ship_engine_slot = COLDWAR_surface_steam_power_1955
+			fixed_ship_radar_slot = module_radar_1
+			fixed_ship_fire_control_system_slot = module_screen_analog_fire_control
+			fixed_ship_battery_slot = module_127mm_battery
+			fixed_ship_auxillary_slot = module_naval_mdcw_early_torpedoes
+		}
+	}
+	create_equipment_variant = {
+		name = "Le Normand class"
+		type = frigate_hull_1
+		modules = {
+			fixed_ship_engine_slot = module_light_surface_diesel_power_1
+			fixed_ship_radar_slot = module_radar_1
+			fixed_ship_fire_control_system_slot = module_analog_fire_control
+			fixed_ship_battery_slot = module_100mm_battery
+			fixed_ship_auxillary_slot = module_naval_mdcw_early_torpedoes
+			rear_1_custom_slot = module_anti_submarine_mortar
+		}
+	}
+	create_equipment_variant = {
+		name = "Narval class"
+		type = attack_submarine_hull_1
+		modules = {
+			fixed_ship_battery_slot = COLDWAR_naval_torpedoes_1965
+			fixed_ship_engine_slot = module_sub_diesel_electric_power
+			fixed_ship_radar_slot = module_naval_mdcw_early_sonar
+		}
+	}
+	create_equipment_variant = {
+		name = "Arethuse class"
+		type = attack_submarine_hull_1
+		modules = {
+			fixed_ship_battery_slot = COLDWAR_naval_torpedoes_1965
+			fixed_ship_engine_slot = module_sub_diesel_electric_power
+			fixed_ship_radar_slot = module_naval_mdcw_early_sonar
+		}
+	}
+	set_naval_oob = "FRA_1970_naval_mtg"   # before the air OOB: carrier air wings need their ships
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		set_oob = "FRA_1970_nsb"
+		else = {
 			set_oob = "mdcw_1970_empty_land"
 		}
-
-		# Historical labour programme: National Immigration Office recruitment and 1963-1965 labour agreements.
-		add_ideas = mdcw_ni_guest_worker_recruitment_programme
-
-
-
 	}
-
-		# Temporary user decision: starting armies, fleets, air wings and equipment deferred.
-		set_oob = "mdcw_1970_empty_land"
-		set_naval_oob = "mdcw_1970_empty_naval"
-		set_air_oob = "mdcw_1970_empty_air"
+	if = {
+		limit = { has_dlc = "By Blood Alone" }
+		set_air_oob = "FRA_1970_bba"
+		else = {
+			set_air_oob = "mdcw_1970_empty_air"
+		}
+	}
+	# IMPERIA COLD WAR — January 1970 order of battle. END
 	# IMPERIA COLD WAR — 1970 researched monetary, religious and internal-faction baseline. BEGIN
 	if = {
-		limit = { IMP_is_1970_scenario = yes }
-		set_temp_variable = { COLDWAR_1970_society_faction_added = 0 }
-		set_temp_variable = { COLDWAR_1970_society_industrial_conglomerates_opinion = 50 }
-		if = {
-			limit = { has_variable = industrial_conglomerates_opinion }
-			set_temp_variable = { COLDWAR_1970_society_industrial_conglomerates_opinion = industrial_conglomerates_opinion }
-		}
-		set_temp_variable = { COLDWAR_1970_society_labour_unions_opinion = 50 }
-		if = {
-			limit = { has_variable = labour_unions_opinion }
-			set_temp_variable = { COLDWAR_1970_society_labour_unions_opinion = labour_unions_opinion }
-		}
-		set_temp_variable = { COLDWAR_1970_society_farmers_opinion = 50 }
-		if = {
-			limit = { has_variable = farmers_opinion }
-			set_temp_variable = { COLDWAR_1970_society_farmers_opinion = farmers_opinion }
-		}
-		if = {
-			limit = { NOT = { has_idea = french_franc } }
-			add_ideas = french_franc
-		}
-		if = {
-			limit = { NOT = { has_idea = christian } }
-			add_ideas = christian
-		}
-		if = {
-			limit = { NOT = { has_idea = industrial_conglomerates } }
-			add_ideas = industrial_conglomerates
-			set_temp_variable = { COLDWAR_1970_society_faction_added = 1 }
-		}
-		if = {
-			limit = { NOT = { has_idea = labour_unions } }
-			add_ideas = labour_unions
-			set_temp_variable = { COLDWAR_1970_society_faction_added = 1 }
-		}
-		if = {
-			limit = { NOT = { has_idea = farmers } }
-			add_ideas = farmers
-			set_temp_variable = { COLDWAR_1970_society_faction_added = 1 }
-		}
-		set_variable = { no_foreign_reserve = 1 }
-		set_variable = { industrial_conglomerates_opinion = COLDWAR_1970_society_industrial_conglomerates_opinion }
-		set_variable = { labour_unions_opinion = COLDWAR_1970_society_labour_unions_opinion }
-		set_variable = { farmers_opinion = COLDWAR_1970_society_farmers_opinion }
-		if = {
-			limit = { exists = yes check_variable = { COLDWAR_1970_society_faction_added > 0 } }
-			initialize_internal_faction_dynamic_modifiers = yes
-		}
+		limit = { NOT = { has_idea = french_franc } }
+		add_ideas = french_franc
 	}
+	if = {
+		limit = { NOT = { has_idea = christian } }
+		add_ideas = christian
+	}
+	if = {
+		limit = { NOT = { has_idea = industrial_conglomerates } }
+		add_ideas = industrial_conglomerates
+	}
+	if = {
+		limit = { NOT = { has_idea = labour_unions } }
+		add_ideas = labour_unions
+	}
+	if = {
+		limit = { NOT = { has_idea = farmers } }
+		add_ideas = farmers
+	}
+	set_variable = { no_foreign_reserve = 1 }
+	set_variable = { industrial_conglomerates_opinion = 50 }
+	set_variable = { labour_unions_opinion = 50 }
+	set_variable = { farmers_opinion = 50 }
 	# IMPERIA COLD WAR — 1970 researched monetary, religious and internal-faction baseline. END
+		# IMPERIA COLD WAR — COLDWAR MD-STYLE CHARACTER POOL BEGIN (22.11.2026)
+	# All later Cold War leaders and advisors join the pool at game start like in MD; scripts only promote them later.
+	if = { limit = { NOT = { has_character = CW_PI_FRA_alain_krivine_5 } } recruit_character = CW_PI_FRA_alain_krivine_5 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_emile_zuccarelli_16 } } recruit_character = CW_PI_FRA_emile_zuccarelli_16 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_francois_bayrou_2 } } recruit_character = CW_PI_FRA_francois_bayrou_2 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_francois_doubin_16 } } recruit_character = CW_PI_FRA_francois_doubin_16 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_francois_leotard_2 } } recruit_character = CW_PI_FRA_francois_leotard_2 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_jean_francois_hory_16 } } recruit_character = CW_PI_FRA_jean_francois_hory_16 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_jean_lecanuet_2 } } recruit_character = CW_PI_FRA_jean_lecanuet_2 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_jean_michel_baylet_16 } } recruit_character = CW_PI_FRA_jean_michel_baylet_16 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_michel_crepeau_16 } } recruit_character = CW_PI_FRA_michel_crepeau_16 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_robert_fabre_16 } } recruit_character = CW_PI_FRA_robert_fabre_16 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_roger_gerard_schwartzenberg_16 } } recruit_character = CW_PI_FRA_roger_gerard_schwartzenberg_16 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_valery_giscard_d_estaing_2 } } recruit_character = CW_PI_FRA_valery_giscard_d_estaing_2 }
+	if = { limit = { NOT = { has_character = CW_PI_FRA_yvon_collin_16 } } recruit_character = CW_PI_FRA_yvon_collin_16 }
+	# COLDWAR MD-STYLE CHARACTER POOL END
+	# IMPERIA COLD WAR — 1970 starting special projects BEGIN (23.11.2026, like MD in the history)
+	complete_special_project = sp:sp_aircraft_project
+	complete_special_project = sp:sp_armoured_vehicle_project
+	complete_special_project = sp:sp_naval_vessel_project
+	complete_special_project = sp:sp_helicopter_project
+	complete_special_project = sp:sp_missile_project
+	complete_special_project = sp:sp_space_program
+	# IMPERIA COLD WAR — 1970 starting special projects END
+	# IMPERIA COLD WAR — 1970 start spirits BEGIN (moved from on_startup, like MD)
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_shadow_of_may_3 } } add_ideas = COLDWAR_FRA_shadow_of_may_3 }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_fresh_devaluation } } add_ideas = COLDWAR_FRA_fresh_devaluation }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_le_plan } } add_ideas = COLDWAR_FRA_le_plan }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_thirst_for_oil_3 } } add_ideas = COLDWAR_FRA_thirst_for_oil_3 }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_immature_deterrent } } add_ideas = COLDWAR_FRA_immature_deterrent }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_conscript_army } } add_ideas = COLDWAR_FRA_conscript_army }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_african_cell } } add_ideas = COLDWAR_FRA_african_cell }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_rebel_peripheries } } add_ideas = COLDWAR_FRA_rebel_peripheries }
+	if = { limit = { NOT = { has_idea = COLDWAR_FRA_farm_exodus } } add_ideas = COLDWAR_FRA_farm_exodus }
+	# IMPERIA COLD WAR — 1970 start spirits END
+	# IMPERIA COLD WAR — 1970 nuclear power start state (moved from on_startup, like MD)
+	if = { limit = { has_tech = reactor1 } set_technology = { mdcw_experimental_power_reactors_1954 = 1 mdcw_reactor_fuel_fabrication_1953 = 1 popup = no } }
+	if = { limit = { has_tech = reactor2 } set_technology = { mdcw_reactor_licensing_1957 = 1 popup = no } }
+	COLDWAR_nuc_ensure_modifiers = yes
+	# COLDWAR 1970 NATIONAL PROFILE BEGIN (tools/start_data_1970/apply.py; laws, debt, treasury and taxes like MD 2000.1.1)
+	add_ideas = {
+		corruption_level_02
+		bureau_02
+		police_02
+		edu_04
+		health_03
+		social_03
+		defence_04
+		stable_growth
+		semi_consumption_economy
+		strong_regulations
+		partially_nationalized_healthcare
+		balanced_protections
+		extensive_maintenance
+		slightly_regulated_immigration
+		draft_army
+		volunteer_women
+		intervention_regional_interventionism
+		officer_military_academy
+		no_currency_backing
+		COLDWAR_ni_value_added_tax
 	}
+	set_variable = { debt = 100.7 }
+	set_variable = { treasury = 15.1 }
+	set_variable = { population_tax_rate = 31 }
+	set_variable = { corporate_tax_rate = 31 }
+	# COLDWAR 1970 NATIONAL PROFILE END
+	# COLDWAR 1970 MONETARY PROFILE BEGIN (_dev_work/start_data_1970_monetary/apply_monetary_1970.py; source: WB CPI 1969)
+	set_variable = { inflation_rate_var = 0.07349 }
+	set_variable = { cb_policy_rate = 8 }
+	set_variable = { currency_strength = 1 }
+	# COLDWAR 1970 MONETARY PROFILE END
+	# COLDWAR COVERT ACTION START STATE BEGIN (tools/playtest1_postfix/covert_action_to_history.py, like MD)
+	if = {
+		limit = { has_dlc = "La Resistance" }
+		if = {
+			limit = { has_intelligence_agency = no }
+			create_intelligence_agency = {
+				name = "External Documentation and Counter-Espionage Service (SDECE)"
+				icon = GFX_intelligence_agency_logo_fra
+			}
+		}
+		set_country_flag = MD_skip_treasury_cost
+		if = { limit = { NOT = { has_done_agency_upgrade = upgrade_form_department } } upgrade_intelligence_agency = upgrade_form_department }
+		if = { limit = { NOT = { has_done_agency_upgrade = upgrade_establish_cyber_operations_division } } upgrade_intelligence_agency = upgrade_establish_cyber_operations_division }
+		if = {
+			limit = { NOT = { has_country_flag = COLDWAR_covert_action_start_upgrades } }
+			upgrade_intelligence_agency = upgrade_passive_defense
+			upgrade_intelligence_agency = upgrade_invisible_ink
+			upgrade_intelligence_agency = upgrade_training_centers
+			set_country_flag = COLDWAR_covert_action_start_upgrades
+		}
+		clr_country_flag = MD_skip_treasury_cost
+	}
+	# COLDWAR COVERT ACTION START STATE END
+	# IMPERIA COLD WAR — 1970 strategic missile arsenal BEGIN (tools/strategic_arsenal_1970/apply.py)
+	complete_special_project = sp:sp_nuclear_bomb
+	complete_special_project = sp:sp_nuclear_warhead_program
+	set_technology = {
+		popup = no
+		ballistic_missile = 1
+		ICBM = 1
+		ICBM1 = 1
+		IRBM = 1
+		IRBM1 = 1
+		NIRBM1 = 1
+	}
+	if = {
+		limit = {
+			has_dlc = "Gotterdammerung"
+		}
+		add_equipment_to_stockpile = {
+			type = nuclear_missile_equipment_1
+			amount = 16 # the M1 battery of Le Redoutable, kept as land missiles
+			producer = FRA
+		}
+		add_equipment_to_stockpile = {
+			type = nuclear_ballistic_missile_equipment_1
+			amount = 18 # S2 silos on the Plateau d'Albion
+			producer = FRA
+		}
+	}
+	# IMPERIA COLD WAR — 1970 strategic missile arsenal END
+	# IMPERIA COLD WAR — 1970 advanced industry BEGIN (tools/advanced_industry_1970/apply.py)
+	complete_special_project = sp:sp_microchip_production
+	complete_special_project = sp:sp_composite_production
+	set_technology = {
+		popup = no
+		microchip_production_1 = 1
+		composite_production_1 = 1
+	}
+	# IMPERIA COLD WAR — 1970 advanced industry END
+}
 
 2000.1.1 = {
 	set_variable = { currency_strength = 1.2 }
@@ -1326,12 +1536,12 @@ capital = 56
 			obsolete = yes
 			icon = "gfx/interface/technologies/FRA/LAND/MBT2.dds"
 		}
-		if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			type = medium_tank_chassis_0
-			variant_name = "AMX-30B2"
-			amount = 500
-			producer = FRA
-		} }
+		add_equipment_to_stockpile = {
+		type = medium_tank_chassis_0
+		variant_name = "AMX-30B2"
+		amount = 500
+		producer = FRA
+	}
 		create_equipment_variant = {
 			name = "AMX-30B2 BRENUS"
 			type = medium_tank_chassis_0
@@ -1411,12 +1621,12 @@ capital = 56
 			model = "FRA_MD_medium_armor_entity"
 			design_team = mio:FRA_nexter_manufacturer
 		}
-		if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			type = medium_tank_chassis_2
-			variant_name = "Leclerc S2"
-			amount = 89
-			producer = FRA
-		} }
+		add_equipment_to_stockpile = {
+		type = medium_tank_chassis_2
+		variant_name = "Leclerc S2"
+		amount = 89
+		producer = FRA
+	}
 		create_equipment_variant = {
 			name = "AMX-VCI"
 			type = medium_tank_amphibious_chassis_0
@@ -1481,11 +1691,11 @@ capital = 56
 			 }
 			 icon = "gfx/interface/technologies/FRA/LAND/APC2.dds"
 		 }
-		 if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			 type = medium_tank_amphibious_chassis_1
-			 variant_name = "VAB"
-			 amount = 3000
-		 } }
+		 add_equipment_to_stockpile = {
+		 type = medium_tank_amphibious_chassis_1
+		 variant_name = "VAB"
+		 amount = 3000
+	 }
 		 create_equipment_variant = {
 			 name = "VAB Milan"
 			 type = medium_tank_amphibious_chassis_1
@@ -1532,11 +1742,11 @@ capital = 56
 			 }
 			 icon = "gfx/interface/technologies/FRA/LAND/APC4.dds"
 		 }
-		 if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			 type = medium_tank_amphibious_chassis_1
-			 variant_name = "VAB T20-13"
-			 amount = 700
-		 } }
+		 add_equipment_to_stockpile = {
+		 type = medium_tank_amphibious_chassis_1
+		 variant_name = "VAB T20-13"
+		 amount = 700
+	 }
 		create_equipment_variant = {
 			name = "AMX-10P"
 			type = medium_tank_flame_chassis_1
@@ -1560,11 +1770,11 @@ capital = 56
 			}
 			icon = "gfx/interface/technologies/FRA/LAND/IFV2.dds"
 		}
-		if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			type = medium_tank_flame_chassis_1
-			variant_name = "AMX-10P"
-			amount = 383 #520
-		} }
+		add_equipment_to_stockpile = {
+		type = medium_tank_flame_chassis_1
+		variant_name = "AMX-10P"
+		amount = 383 #520
+	}
 		 create_equipment_variant = {
 			 name = "Mk 61"
 			 type = medium_tank_artillery_chassis_0
@@ -1622,11 +1832,11 @@ capital = 56
 			}
 			icon = "gfx/interface/technologies/FRA/LAND/SPG2.dds"
 		}
-		if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			type = medium_tank_artillery_chassis_1
-			variant_name = "AMX-30 AuF1"
-			amount = 145 #128 deployed
-		} }
+		add_equipment_to_stockpile = {
+		type = medium_tank_artillery_chassis_1
+		variant_name = "AMX-30 AuF1"
+		amount = 145 #128 deployed
+	}
 		create_equipment_variant = {
 			name = "CAESAR"
 			type = medium_tank_artillery_chassis_2
@@ -1714,12 +1924,12 @@ capital = 56
 			 }
 			 icon = "gfx/interface/technologies/FRA/LAND/SPA2.dds"
 		 }
-		 if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			 type = medium_tank_aa_chassis_0
-			 variant_name = "Roland II"
-			 producer = FRA
-			 amount = 113
-		 } }
+		 add_equipment_to_stockpile = {
+		 type = medium_tank_aa_chassis_0
+		 variant_name = "Roland II"
+		 producer = FRA
+		 amount = 113
+	 }
 		 create_equipment_variant = {
 			 name = "ERC-20"
 			 type = medium_tank_aa_chassis_0
@@ -1984,12 +2194,12 @@ capital = 56
 			}
 			mark_older_equipment_obsolete = yes
 		}
-		if = { limit = { NOT = { IMP_is_1970_scenario = yes } } add_equipment_to_stockpile = {
-			type = Heavy_Anti_tank_2
-			variant_name = "VAB Mephisto"
-			producer = FRA
-			amount = 335
-		} }
+		add_equipment_to_stockpile = {
+		type = Heavy_Anti_tank_2
+		variant_name = "VAB Mephisto"
+		producer = FRA
+		amount = 335
+	}
 		create_equipment_variant = {
 			name = "APILAS"
 			type = Anti_tank_2

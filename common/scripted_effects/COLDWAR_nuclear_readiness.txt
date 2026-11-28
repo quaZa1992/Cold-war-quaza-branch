@@ -1,4 +1,10 @@
 # IMPERIA COLD WAR — Cold War: nuclear readiness and crisis diplomacy.
+# IMPERIA COLD WAR update 20.11.2026: GC disable and enable effects (COLDWAR_nr_gc_disable, COLDWAR_nr_gc_enable).
+# IMPERIA COLD WAR update 20.11.2026: daily polling replaced by countdown events and weekly upkeep; civil defence tied to public shelters (capacity, use, protection); national shelter programme.
+# IMPERIA COLD WAR update 24.11.2026: failed missile launches (COLDWAR_nr_dud_launch) skip the counterforce loss.
+# IMPERIA COLD WAR update 25.11.2026: raising readiness counts as a war scare response; a formal confrontation ends any war scare of both governments.
+# IMPERIA COLD WAR update 25.11.2026: threat perception hooks (crisis events, raids, hotline, stand-down), crisis review and weekly drift.
+# IMPERIA COLD WAR update 25.11.2026: weekly costs are shares of current GDP (no reliance on the money-system temp variable inflation_multiplier, which left the GUI showing $0.000B); display variables for the Strategic Command v2 window.
 COLDWAR_nr_touch = {
 	add_to_variable = { COLDWAR_nr_dirty = 1 }
 }
@@ -13,6 +19,10 @@ COLDWAR_nr_init = {
 		set_variable = { COLDWAR_nr_build_days = 0 }
 		set_variable = { COLDWAR_nr_fatigue = 0 }
 		set_variable = { COLDWAR_nr_civil_days = 0 }
+	}
+	if = {
+		limit = { is_ai = no }
+		COLDWAR_nr_shelter_census = yes
 	}
 	COLDWAR_nr_refresh = yes
 }
@@ -102,37 +112,46 @@ COLDWAR_nr_refresh = {
 			remove_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
 		}
 	}
+	COLDWAR_nr_shelter_use = yes
+	if = {
+		limit = {
+			OR = {
+				check_variable = { COLDWAR_nr_build_days > 0 }
+				check_variable = { COLDWAR_nr_civil_days > 0 }
+			}
+		}
+		COLDWAR_nr_schedule_tick = yes
+	}
 	COLDWAR_nr_calculate_budget = yes
 	COLDWAR_nr_validate_first_use = yes
+	COLDWAR_nr_update_display = yes
 	force_update_dynamic_modifier = yes
 	COLDWAR_nr_touch = yes
 }
+# IMPERIA COLD WAR update 25.11.2026: GDP-based weekly costs. Annual shares are expressed in units of 0.01% of GDP;
+# weekly $M = units x gdp_total / 520 (gdp_total is annual GDP in $B). Charged in $B through defence_gain.
+# Strategic forces: 1 unit + 0.005 units per stored missile, at most 25 units (0.25% of GDP), times readiness and fatigue.
+# Civil defence mobilisation: 2 units + 40 units x national shelter coverage.
 COLDWAR_nr_calculate_budget = {
-	set_variable = { COLDWAR_nr_forces_weekly = 0 }
-	set_variable = { COLDWAR_nr_civil_weekly = 0 }
-	set_variable = { COLDWAR_nr_weekly_cost = 0 }
+	set_variable = { COLDWAR_nr_forces_weekly_m = 0 }
+	set_variable = { COLDWAR_nr_civil_weekly_m = 0 }
 	if = {
 		limit = { COLDWAR_nr_nuclear_power = yes has_country_flag = COLDWAR_nr_initialized }
 		set_variable = {
-			COLDWAR_nr_forces_weekly = {
+			COLDWAR_nr_forces_weekly_m = {
 				value = num_equipment@nuclear_missile_equipment
 				add = num_equipment@nuclear_ballistic_missile_equipment
-				multiply = 0.00001
-				add = 0.002
+				multiply = 0.005
+				add = 1
+				clamp = { min = 1 max = 25 }
 				multiply = COLDWAR_nr_cost_factor
 				multiply = {
 					value = 1
 					add = { value = COLDWAR_nr_fatigue multiply = 0.005 }
 				}
-				multiply = {
-					value = gdp_per_capita
-					divide = 36
-					clamp = { min = 0.4 max = 1.2 }
-				}
-				multiply = {
-					value = inflation_multiplier
-					clamp = { min = 0.01 max = 100 }
-				}
+				multiply = gdp_total
+				divide = 520
+				clamp = { min = 0 max = 100000000 }
 			}
 		}
 	}
@@ -144,19 +163,99 @@ COLDWAR_nr_calculate_budget = {
 			}
 		}
 		set_variable = {
-			COLDWAR_nr_civil_weekly = {
-				value = gdp_total
-				multiply = 0.00002
-				add = 0.002
-				multiply = {
-					value = inflation_multiplier
-					clamp = { min = 0.01 max = 100 }
-				}
+			COLDWAR_nr_civil_weekly_m = {
+				value = COLDWAR_nr_shelter_coverage
+				multiply = 40
+				add = 2
+				multiply = gdp_total
+				divide = 520
+				clamp = { min = 0 max = 100000000 }
 			}
 		}
 	}
+	set_variable = { COLDWAR_nr_forces_weekly = { value = COLDWAR_nr_forces_weekly_m divide = 1000 } }
+	set_variable = { COLDWAR_nr_civil_weekly = { value = COLDWAR_nr_civil_weekly_m divide = 1000 } }
 	set_variable = {
 		COLDWAR_nr_weekly_cost = { value = COLDWAR_nr_forces_weekly add = COLDWAR_nr_civil_weekly }
+	}
+}
+# IMPERIA COLD WAR update 25.11.2026: frame and countdown values read by the Strategic Command v2 window.
+COLDWAR_nr_update_display = {
+	set_variable = {
+		COLDWAR_nr_fatigue_frame = { value = COLDWAR_nr_fatigue divide = 5 round = yes add = 1 clamp = { min = 1 max = 21 } }
+	}
+	set_variable = { COLDWAR_nr_prep_frame = 1 }
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_build_days > 0 }
+		}
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_build_total < COLDWAR_nr_build_days }
+			}
+			set_variable = { COLDWAR_nr_build_total = COLDWAR_nr_build_days }
+		}
+		set_variable = {
+			COLDWAR_nr_prep_frame = {
+				value = COLDWAR_nr_build_total
+				subtract = COLDWAR_nr_build_days
+				multiply = 8
+				divide = COLDWAR_nr_build_total
+				round = yes
+				add = 1
+				clamp = { min = 1 max = 9 }
+			}
+		}
+	}
+	set_variable = { COLDWAR_nr_crisis_days = 0 }
+	if = {
+		limit = { has_variable = COLDWAR_nr_until }
+		set_variable = {
+			COLDWAR_nr_crisis_days = { value = COLDWAR_nr_until subtract = global.num_days clamp = { min = 0 max = 1000 } }
+		}
+	}
+	COLDWAR_nr_countdown_frame = yes
+	COLDWAR_nr_paranoia_display = yes
+}
+COLDWAR_nr_countdown_frame = {
+	set_variable = { COLDWAR_nr_fu_frame = 1 }
+	set_temp_variable = { COLDWAR_nr_fu_show_hours = 0 }
+	set_temp_variable = { COLDWAR_nr_fu_show_total = 72 }
+	if = {
+		limit = {
+			OR = { has_country_flag = COLDWAR_nr_fu_waiting has_country_flag = COLDWAR_nr_fu_authorised }
+		}
+		set_temp_variable = { COLDWAR_nr_fu_show_hours = COLDWAR_nr_fu_hours }
+		if = {
+			limit = { has_country_flag = COLDWAR_nr_fu_authorised }
+			set_temp_variable = { COLDWAR_nr_fu_show_total = 168 }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { COLDWAR_nr_fu_incoming_hours > 0 }
+		}
+		set_temp_variable = { COLDWAR_nr_fu_show_hours = COLDWAR_nr_fu_incoming_hours }
+		if = {
+			limit = { COLDWAR_nr_foreign_release = yes }
+			set_temp_variable = { COLDWAR_nr_fu_show_total = 168 }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_fu_show_hours > 0 }
+		}
+		set_variable = {
+			COLDWAR_nr_fu_frame = {
+				value = COLDWAR_nr_fu_show_hours
+				multiply = 12
+				divide = COLDWAR_nr_fu_show_total
+				add = 0.49999
+				round = yes
+				add = 1
+				clamp = { min = 1 max = 13 }
+			}
+		}
 	}
 }
 COLDWAR_nr_order_level_1 = {
@@ -176,6 +275,9 @@ COLDWAR_nr_order_level_1 = {
 			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
 			subtract_from_variable = { COLDWAR_nr_build_days = 1 }
 			multiply_variable = { COLDWAR_nr_build_days = 2 }
+			set_variable = { COLDWAR_nr_build_total = COLDWAR_nr_build_days }
+			set_temp_variable = { COLDWAR_ws_resp_kind = 1 }
+			COLDWAR_ws_response = yes
 		}
 		else = {
 			set_variable = { COLDWAR_nr_level = 1 }
@@ -201,6 +303,9 @@ COLDWAR_nr_order_level_2 = {
 			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
 			subtract_from_variable = { COLDWAR_nr_build_days = 2 }
 			multiply_variable = { COLDWAR_nr_build_days = 2 }
+			set_variable = { COLDWAR_nr_build_total = COLDWAR_nr_build_days }
+			set_temp_variable = { COLDWAR_ws_resp_kind = 1 }
+			COLDWAR_ws_response = yes
 		}
 		else = {
 			set_variable = { COLDWAR_nr_level = 2 }
@@ -226,6 +331,9 @@ COLDWAR_nr_order_level_3 = {
 			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
 			subtract_from_variable = { COLDWAR_nr_build_days = 3 }
 			multiply_variable = { COLDWAR_nr_build_days = 2 }
+			set_variable = { COLDWAR_nr_build_total = COLDWAR_nr_build_days }
+			set_temp_variable = { COLDWAR_ws_resp_kind = 1 }
+			COLDWAR_ws_response = yes
 		}
 		else = {
 			set_variable = { COLDWAR_nr_level = 3 }
@@ -251,6 +359,9 @@ COLDWAR_nr_order_level_4 = {
 			set_variable = { COLDWAR_nr_build_days = COLDWAR_nr_level }
 			subtract_from_variable = { COLDWAR_nr_build_days = 4 }
 			multiply_variable = { COLDWAR_nr_build_days = 2 }
+			set_variable = { COLDWAR_nr_build_total = COLDWAR_nr_build_days }
+			set_temp_variable = { COLDWAR_ws_resp_kind = 1 }
+			COLDWAR_ws_response = yes
 		}
 		else = {
 			set_variable = { COLDWAR_nr_level = 4 }
@@ -291,18 +402,24 @@ COLDWAR_nr_stand_down = {
 	COLDWAR_nr_refresh = yes
 }
 COLDWAR_nr_start_civil = {
+	COLDWAR_nr_shelter_census = yes
 	if = {
-		limit = {
-			COLDWAR_nr_enabled = yes
-			is_ai = no
-			has_capitulated = no
-			NOT = { has_political_power < 25 }
-			NOT = { has_country_flag = COLDWAR_nr_civil_active }
-			check_variable = { COLDWAR_nr_civil_days = 0 }
-		}
+		limit = { COLDWAR_nr_can_mobilise_civil = yes }
 		COLDWAR_nr_init = yes
 		add_political_power = -25
 		set_variable = { COLDWAR_nr_civil_days = 3 }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_shelter_coverage > 0.59999 }
+			}
+			set_variable = { COLDWAR_nr_civil_days = 1 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { COLDWAR_nr_shelter_coverage > 0.29999 }
+			}
+			set_variable = { COLDWAR_nr_civil_days = 2 }
+		}
 		add_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
 		COLDWAR_nr_refresh = yes
 	}
@@ -318,13 +435,16 @@ COLDWAR_nr_end_civil = {
 	}
 	COLDWAR_nr_refresh = yes
 }
-COLDWAR_nr_daily = {
+COLDWAR_nr_schedule_tick = {
 	if = {
 		limit = {
-			NOT = { has_country_flag = COLDWAR_nr_initialized }
+			NOT = { has_country_flag = COLDWAR_nr_tick_pending }
 		}
-		COLDWAR_nr_init = yes
+		set_country_flag = { flag = COLDWAR_nr_tick_pending days = 2 value = 1 }
+		country_event = { id = cw_nuclear.91 days = 1 }
 	}
+}
+COLDWAR_nr_tick = {
 	if = {
 		limit = {
 			check_variable = { COLDWAR_nr_build_days > 0 }
@@ -367,36 +487,9 @@ COLDWAR_nr_daily = {
 			}
 		}
 	}
-	if = {
-		limit = {
-			COLDWAR_nr_nuclear_power = yes
-			check_variable = { COLDWAR_nr_level = 1 }
-		}
-		add_to_variable = { COLDWAR_nr_fatigue = 2 }
-	}
-	else_if = {
-		limit = {
-			COLDWAR_nr_nuclear_power = yes
-			check_variable = { COLDWAR_nr_level = 2 }
-		}
-		add_to_variable = { COLDWAR_nr_fatigue = 1 }
-	}
-	else_if = {
-		limit = {
-			COLDWAR_nr_nuclear_power = yes
-			check_variable = { COLDWAR_nr_level = 3 }
-		}
-		add_to_variable = { COLDWAR_nr_fatigue = 0.25 }
-	}
-	else = {
-		subtract_from_variable = { COLDWAR_nr_fatigue = 2 }
-	}
-	clamp_variable = { var = COLDWAR_nr_fatigue min = 0 max = 100 }
-	if = {
-		limit = { has_capitulated = yes }
-		COLDWAR_nr_stand_down = yes
-		COLDWAR_nr_end_civil = yes
-	}
+	COLDWAR_nr_refresh = yes
+}
+COLDWAR_nr_check_crisis = {
 	if = {
 		limit = { has_variable = COLDWAR_nr_opponent }
 		if = {
@@ -424,7 +517,96 @@ COLDWAR_nr_daily = {
 			}
 		}
 	}
-	COLDWAR_nr_refresh = yes
+}
+COLDWAR_nr_weekly = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = COLDWAR_nr_initialized }
+		}
+		COLDWAR_nr_init = yes
+	}
+	if = {
+		limit = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level = 1 }
+		}
+		add_to_variable = { COLDWAR_nr_fatigue = 14 }
+	}
+	else_if = {
+		limit = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level = 2 }
+		}
+		add_to_variable = { COLDWAR_nr_fatigue = 7 }
+	}
+	else_if = {
+		limit = {
+			COLDWAR_nr_nuclear_power = yes
+			check_variable = { COLDWAR_nr_level = 3 }
+		}
+		add_to_variable = { COLDWAR_nr_fatigue = 1.75 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { COLDWAR_nr_fatigue > 0 }
+		}
+		subtract_from_variable = { COLDWAR_nr_fatigue = 14 }
+	}
+	clamp_variable = { var = COLDWAR_nr_fatigue min = 0 max = 100 }
+	if = {
+		limit = { has_capitulated = yes }
+		COLDWAR_nr_stand_down = yes
+		COLDWAR_nr_end_civil = yes
+	}
+	COLDWAR_nr_check_crisis = yes
+	COLDWAR_nr_paranoia_weekly = yes
+	if = {
+		limit = {
+			OR = {
+				has_country_flag = COLDWAR_nr_civil_active
+				check_variable = { COLDWAR_nr_civil_days > 0 }
+			}
+			NOT = {
+				any_owned_state = { civilian_shelter > 0 }
+			}
+		}
+		COLDWAR_nr_end_civil = yes
+	}
+	if = {
+		limit = { is_ai = no }
+		COLDWAR_nr_shelter_census = yes
+	}
+	if = {
+		limit = {
+			OR = {
+				is_ai = no
+				COLDWAR_nr_nuclear_power = yes
+				has_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+				check_variable = { COLDWAR_nr_fatigue > 0 }
+				has_country_flag = COLDWAR_nr_civil_active
+				check_variable = { COLDWAR_nr_civil_days > 0 }
+				has_variable = COLDWAR_nr_opponent
+			}
+		}
+		COLDWAR_nr_refresh = yes
+	}
+}
+COLDWAR_nr_capitulated = {
+	if = {
+		limit = { has_variable = COLDWAR_nr_opponent }
+		var:COLDWAR_nr_opponent = {
+			if = {
+				limit = {
+					exists = yes
+					check_variable = { COLDWAR_nr_opponent = PREV.id }
+				}
+				COLDWAR_nr_clear_local_crisis = yes
+			}
+		}
+		COLDWAR_nr_clear_local_crisis = yes
+	}
+	COLDWAR_nr_stand_down = yes
+	COLDWAR_nr_end_civil = yes
 }
 COLDWAR_nr_tension_5 = {
 	set_temp_variable = { COLDWAR_nr_tension_applied = 0 }
@@ -499,7 +681,10 @@ COLDWAR_nr_begin_crisis = {
 		set_variable = {
 			COLDWAR_nr_until = { value = global.num_days add = 90 }
 		}
+		country_event = { id = cw_nuclear.93 days = 91 }
 		set_variable = { COLDWAR_nr_pressure = COLDWAR_nr_tension_applied }
+		COLDWAR_nr_review_reset = yes
+		COLDWAR_ws_clear = yes
 		set_country_flag = { flag = COLDWAR_nr_public days = 90 value = 1 }
 		clr_country_flag = COLDWAR_nr_countered
 		clr_country_flag = COLDWAR_nr_hotline
@@ -514,6 +699,9 @@ COLDWAR_nr_begin_crisis = {
 			set_variable = { COLDWAR_nr_pressure = event_target:COLDWAR_nr_sender.COLDWAR_nr_pressure }
 			clr_country_flag = COLDWAR_nr_countered
 			clr_country_flag = COLDWAR_nr_hotline
+			COLDWAR_nr_review_reset = yes
+			COLDWAR_ws_clear = yes
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 12 } COLDWAR_nr_add_paranoia = yes
 			COLDWAR_nr_refresh = yes
 			country_event = { id = cw_nuclear.3 }
 		}
@@ -524,6 +712,7 @@ COLDWAR_nr_begin_crisis = {
 				NOT = { tag = event_target:COLDWAR_nr_sender }
 				NOT = { tag = event_target:COLDWAR_nr_recipient }
 			}
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 3 } COLDWAR_nr_add_paranoia = yes
 			country_event = { id = cw_nuclear.10 }
 		}
 		COLDWAR_nr_refresh = yes
@@ -552,6 +741,7 @@ COLDWAR_nr_counter_signal = {
 		save_event_target_as = COLDWAR_nr_sender
 		var:COLDWAR_nr_opponent = {
 			save_event_target_as = COLDWAR_nr_recipient
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 8 } COLDWAR_nr_add_paranoia = yes
 			country_event = { id = cw_nuclear.4 }
 		}
 		COLDWAR_nr_touch = yes
@@ -645,8 +835,10 @@ COLDWAR_nr_accept_offer_1 = {
 	clear_variable = COLDWAR_nr_offer_cd@event_target:COLDWAR_nr_recipient
 	set_country_flag = COLDWAR_nr_hotline
 	var:COLDWAR_nr_opponent = { clear_variable = COLDWAR_nr_offer_cd@PREV set_country_flag = COLDWAR_nr_hotline COLDWAR_nr_touch = yes }
+	set_temp_variable = { COLDWAR_nr_paranoia_delta = -8 } COLDWAR_nr_add_paranoia = yes
 	country_event = { id = cw_nuclear.5 }
 	var:COLDWAR_nr_opponent = {
+		set_temp_variable = { COLDWAR_nr_paranoia_delta = -8 } COLDWAR_nr_add_paranoia = yes
 		country_event = { id = cw_nuclear.5 }
 	}
 	COLDWAR_nr_touch = yes
@@ -657,7 +849,9 @@ COLDWAR_nr_accept_offer_2 = {
 	set_temp_variable = { COLDWAR_nr_relief = COLDWAR_nr_pressure }
 	multiply_temp_variable = { COLDWAR_nr_relief = -1 }
 	COLDWAR_nr_tension_relief = yes
+	set_temp_variable = { COLDWAR_nr_paranoia_delta = -20 } COLDWAR_nr_add_paranoia = yes
 	var:COLDWAR_nr_opponent = {
+		set_temp_variable = { COLDWAR_nr_paranoia_delta = -20 } COLDWAR_nr_add_paranoia = yes
 		COLDWAR_nr_stand_down = yes
 		set_country_flag = { flag = COLDWAR_nr_standdown days = 30 value = 1 }
 		COLDWAR_nr_clear_local_crisis = yes
@@ -683,6 +877,7 @@ COLDWAR_nr_reject_offer = {
 	}
 }
 COLDWAR_nr_clear_local_crisis = {
+	COLDWAR_nr_review_schedule = yes
 	COLDWAR_nr_clear_first_use = yes
 	if = {
 		limit = { has_variable = COLDWAR_nr_opponent }
@@ -751,78 +946,7 @@ COLDWAR_nr_consult_allies = {
 		}
 	}
 }
-COLDWAR_nr_assess_prev = {
-	PREV = { save_event_target_as = COLDWAR_nr_subject }
-	set_variable = { COLDWAR_nr_assessment = 0 }
-	set_variable = { COLDWAR_nr_assessed_level = 0 }
-	if = {
-		limit = {
-			PREV = { COLDWAR_nr_nuclear_power = yes }
-		}
-		if = {
-			limit = {
-				intel_level_over = { target = PREV airforce_intel > 0.65 }
-			}
-			set_variable = { COLDWAR_nr_assessment = 2 }
-			set_variable = { COLDWAR_nr_assessed_level = PREV.COLDWAR_nr_level }
-			if = {
-				limit = {
-					check_variable = { COLDWAR_nr_assessed_level = 0 }
-				}
-				set_variable = { COLDWAR_nr_assessed_level = 5 }
-			}
-			if = {
-				limit = {
-					PREV = {
-						check_variable = { COLDWAR_nr_level < 3 }
-						NOT = { has_country_flag = COLDWAR_nr_public }
-						NOT = { has_country_flag = COLDWAR_nr_exposed_cd }
-					}
-				}
-				COLDWAR_nr_tension_1 = yes
-				PREV = {
-					set_country_flag = { flag = COLDWAR_nr_exposed_cd days = 30 value = 1 }
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				OR = {
-					is_in_faction_with = PREV
-					COLDWAR_nr_is_opponent_prev = yes
-					PREV = { has_country_flag = COLDWAR_nr_public }
-					intel_level_over = { target = PREV airforce_intel > 0.35 }
-				}
-			}
-			set_variable = { COLDWAR_nr_assessment = 1 }
-			if = {
-				limit = {
-					PREV = {
-						check_variable = { COLDWAR_nr_level > 3 }
-					}
-				}
-				set_variable = { COLDWAR_nr_assessed_level = 5 }
-			}
-			else_if = {
-				limit = {
-					PREV = {
-						check_variable = { COLDWAR_nr_level > 1 }
-					}
-				}
-				set_variable = { COLDWAR_nr_assessed_level = 3 }
-			}
-			else_if = {
-				limit = {
-					PREV = {
-						check_variable = { COLDWAR_nr_level = 1 }
-					}
-				}
-				set_variable = { COLDWAR_nr_assessed_level = 1 }
-			}
-		}
-	}
-	country_event = { id = cw_nuclear.14 }
-}
+# IMPERIA COLD WAR update 25.11.2026: COLDWAR_nr_assess_prev moved to COLDWAR_nuclear_paranoia.txt (fallible assessments).
 COLDWAR_nr_record_raid_tactical = {
 	COLDWAR_nr_resolve_peacetime_operation = yes
 	var:actor_country = {
@@ -850,7 +974,11 @@ COLDWAR_nr_record_raid_tactical = {
 			set_variable = { COLDWAR_nr_last_aggressor = event_target:COLDWAR_nr_attacker.id }
 			clr_country_flag = COLDWAR_nr_standdown
 			set_temp_variable = { COLDWAR_nr_counterforce_fraction = 0.05 }
-			COLDWAR_nr_counterforce_loss = yes
+			# IMPERIA COLD WAR update 24.11.2026: a failed launch destroys nothing, so no counterforce loss.
+			if = {
+				limit = { NOT = { check_variable = { COLDWAR_nr_dud_launch = 1 } } }
+				COLDWAR_nr_counterforce_loss = yes
+			}
 			if = {
 				limit = {
 					COLDWAR_nr_nuclear_power = yes
@@ -860,8 +988,11 @@ COLDWAR_nr_record_raid_tactical = {
 				}
 				set_variable = { COLDWAR_nr_order = 1 }
 				set_variable = { COLDWAR_nr_build_days = 1 }
+				set_variable = { COLDWAR_nr_build_total = 1 }
+				COLDWAR_nr_schedule_tick = yes
 				COLDWAR_nr_touch = yes
 			}
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 100 } COLDWAR_nr_add_paranoia = yes
 			if = {
 				limit = { is_ai = no }
 				country_event = { id = cw_nuclear.12 }
@@ -896,7 +1027,11 @@ COLDWAR_nr_record_raid_state = {
 			set_variable = { COLDWAR_nr_last_aggressor = event_target:COLDWAR_nr_attacker.id }
 			clr_country_flag = COLDWAR_nr_standdown
 			set_temp_variable = { COLDWAR_nr_counterforce_fraction = 0.15 }
-			COLDWAR_nr_counterforce_loss = yes
+			# IMPERIA COLD WAR update 24.11.2026: a failed launch destroys nothing, so no counterforce loss.
+			if = {
+				limit = { NOT = { check_variable = { COLDWAR_nr_dud_launch = 1 } } }
+				COLDWAR_nr_counterforce_loss = yes
+			}
 			if = {
 				limit = {
 					COLDWAR_nr_nuclear_power = yes
@@ -906,8 +1041,11 @@ COLDWAR_nr_record_raid_state = {
 				}
 				set_variable = { COLDWAR_nr_order = 1 }
 				set_variable = { COLDWAR_nr_build_days = 1 }
+				set_variable = { COLDWAR_nr_build_total = 1 }
+				COLDWAR_nr_schedule_tick = yes
 				COLDWAR_nr_touch = yes
 			}
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 100 } COLDWAR_nr_add_paranoia = yes
 			if = {
 				limit = { is_ai = no }
 				country_event = { id = cw_nuclear.12 }
@@ -942,7 +1080,11 @@ COLDWAR_nr_record_raid_strategic = {
 			set_variable = { COLDWAR_nr_last_aggressor = event_target:COLDWAR_nr_attacker.id }
 			clr_country_flag = COLDWAR_nr_standdown
 			set_temp_variable = { COLDWAR_nr_counterforce_fraction = 0.4 }
-			COLDWAR_nr_counterforce_loss = yes
+			# IMPERIA COLD WAR update 24.11.2026: a failed launch destroys nothing, so no counterforce loss.
+			if = {
+				limit = { NOT = { check_variable = { COLDWAR_nr_dud_launch = 1 } } }
+				COLDWAR_nr_counterforce_loss = yes
+			}
 			if = {
 				limit = {
 					COLDWAR_nr_nuclear_power = yes
@@ -952,8 +1094,11 @@ COLDWAR_nr_record_raid_strategic = {
 				}
 				set_variable = { COLDWAR_nr_order = 1 }
 				set_variable = { COLDWAR_nr_build_days = 1 }
+				set_variable = { COLDWAR_nr_build_total = 1 }
+				COLDWAR_nr_schedule_tick = yes
 				COLDWAR_nr_touch = yes
 			}
+			set_temp_variable = { COLDWAR_nr_paranoia_delta = 100 } COLDWAR_nr_add_paranoia = yes
 			if = {
 				limit = { is_ai = no }
 				country_event = { id = cw_nuclear.12 }
@@ -985,11 +1130,224 @@ COLDWAR_nr_counterforce_loss = {
 	}
 	COLDWAR_nr_refresh = yes
 }
-COLDWAR_nr_civilian_protection = {
+COLDWAR_nr_shelter_census = {
+	set_variable = { COLDWAR_nr_shelter_places_k = 0 }
+	set_variable = { COLDWAR_nr_population_k = 0 }
+	every_owned_state = {
+		set_temp_variable = { COLDWAR_nr_state_pop_k = state_population_k }
+		add_to_variable = { PREV.COLDWAR_nr_population_k = COLDWAR_nr_state_pop_k }
+		if = {
+			limit = { civilian_shelter > 0 }
+			set_temp_variable = { COLDWAR_nr_state_places_k = building_level@civilian_shelter }
+			multiply_temp_variable = { COLDWAR_nr_state_places_k = 250 }
+			if = {
+				limit = {
+					check_variable = { COLDWAR_nr_state_places_k > COLDWAR_nr_state_pop_k }
+				}
+				set_temp_variable = { COLDWAR_nr_state_places_k = COLDWAR_nr_state_pop_k }
+			}
+			add_to_variable = { PREV.COLDWAR_nr_shelter_places_k = COLDWAR_nr_state_places_k }
+		}
+	}
+	set_variable = { COLDWAR_nr_shelter_coverage = 0 }
 	if = {
 		limit = {
-			CONTROLLER = { has_country_flag = COLDWAR_nr_civil_active }
+			check_variable = { COLDWAR_nr_population_k > 0 }
 		}
-		multiply_temp_variable = { casualty_rate = 0.8 }
+		set_variable = { COLDWAR_nr_shelter_coverage = COLDWAR_nr_shelter_places_k }
+		divide_variable = { COLDWAR_nr_shelter_coverage = COLDWAR_nr_population_k }
+		clamp_variable = { var = COLDWAR_nr_shelter_coverage min = 0 max = 1 }
+	}
+	set_variable = {
+		COLDWAR_nr_coverage_frame = { value = COLDWAR_nr_shelter_coverage multiply = 20 round = yes add = 1 clamp = { min = 1 max = 21 } }
+	}
+	set_variable = { COLDWAR_nr_shelter_cover_pct = COLDWAR_nr_shelter_coverage }
+	multiply_variable = { COLDWAR_nr_shelter_cover_pct = 100 }
+	set_variable = { COLDWAR_nr_shelter_places_m = COLDWAR_nr_shelter_places_k }
+	divide_variable = { COLDWAR_nr_shelter_places_m = 1000 }
+	set_variable = { COLDWAR_nr_population_m = COLDWAR_nr_population_k }
+	divide_variable = { COLDWAR_nr_population_m = 1000 }
+	COLDWAR_nr_touch = yes
+}
+COLDWAR_nr_shelter_use = {
+	set_variable = { COLDWAR_nr_shelter_use_pct = 35 }
+	if = {
+		limit = { has_country_flag = COLDWAR_nr_civil_active }
+		set_variable = { COLDWAR_nr_shelter_use_pct = 100 }
+	}
+	else_if = {
+		limit = { COLDWAR_nr_heightened_warning = yes }
+		set_variable = { COLDWAR_nr_shelter_use_pct = 60 }
+	}
+}
+COLDWAR_nr_apply_shelters = {
+	set_temp_variable = { COLDWAR_nr_protect = COLDWAR_nr_shelter_hardness }
+	if = {
+		limit = {
+			check_variable = { COLDWAR_nr_protect = 0 }
+		}
+		set_temp_variable = { COLDWAR_nr_protect = 0.75 }
+	}
+	if = {
+		limit = { civilian_shelter > 0 }
+		set_temp_variable = { COLDWAR_nr_state_pop_k = state_population_k }
+		if = {
+			limit = {
+				check_variable = { COLDWAR_nr_state_pop_k > 0 }
+			}
+			set_temp_variable = { COLDWAR_nr_cover = building_level@civilian_shelter }
+			multiply_temp_variable = { COLDWAR_nr_cover = 250 }
+			divide_temp_variable = { COLDWAR_nr_cover = COLDWAR_nr_state_pop_k }
+			clamp_temp_variable = { var = COLDWAR_nr_cover min = 0 max = 1 }
+			set_temp_variable = { COLDWAR_nr_use = 0.35 }
+			CONTROLLER = {
+				if = {
+					limit = { has_country_flag = COLDWAR_nr_civil_active }
+					set_temp_variable = { COLDWAR_nr_use = 1 }
+				}
+				else_if = {
+					limit = { COLDWAR_nr_heightened_warning = yes }
+					set_temp_variable = { COLDWAR_nr_use = 0.6 }
+				}
+			}
+			OWNER = {
+				if = {
+					limit = { COLDWAR_nr_has_hardened_shelters = yes }
+					add_to_temp_variable = { COLDWAR_nr_protect = 0.1 }
+				}
+			}
+			clamp_temp_variable = { var = COLDWAR_nr_protect min = 0 max = 0.95 }
+			multiply_temp_variable = { COLDWAR_nr_cover = COLDWAR_nr_use }
+			multiply_temp_variable = { COLDWAR_nr_cover = COLDWAR_nr_protect }
+			set_temp_variable = { COLDWAR_nr_survival = 1 }
+			subtract_from_temp_variable = { COLDWAR_nr_survival = COLDWAR_nr_cover }
+			multiply_temp_variable = { casualty_rate = COLDWAR_nr_survival }
+		}
+	}
+	CONTROLLER = {
+		if = {
+			limit = { has_country_flag = COLDWAR_nr_civil_active }
+			multiply_temp_variable = { casualty_rate = 0.9 }
+		}
+	}
+}
+COLDWAR_nr_start_shelter_programme = {
+	if = {
+		limit = { COLDWAR_nr_can_start_programme = yes }
+		add_political_power = -50
+		add_dynamic_modifier = { modifier = COLDWAR_nr_shelter_programme days = 180 }
+		COLDWAR_nr_touch = yes
+	}
+}
+COLDWAR_nr_reset_country = {
+	COLDWAR_nr_clear_first_use = yes
+	if = {
+		limit = { has_variable = COLDWAR_nr_opponent }
+		var:COLDWAR_nr_opponent = { save_event_target_as = COLDWAR_nr_cleanup_partner }
+		clear_variable = COLDWAR_nr_offer_until@event_target:COLDWAR_nr_cleanup_partner
+		clear_variable = COLDWAR_nr_offer_kind@event_target:COLDWAR_nr_cleanup_partner
+		clear_variable = COLDWAR_nr_offer_serial@event_target:COLDWAR_nr_cleanup_partner
+		clear_variable = COLDWAR_nr_offer_cd@event_target:COLDWAR_nr_cleanup_partner
+	}
+	clear_variable = COLDWAR_nr_opponent
+	clear_variable = COLDWAR_nr_initiator
+	clear_variable = COLDWAR_nr_until
+	clear_variable = COLDWAR_nr_pressure
+	if = {
+		limit = {
+			has_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+		}
+		remove_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+	}
+	if = {
+		limit = {
+			has_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+		}
+		remove_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+	}
+	if = {
+		limit = {
+			has_dynamic_modifier = { modifier = COLDWAR_nr_shelter_programme }
+		}
+		remove_dynamic_modifier = { modifier = COLDWAR_nr_shelter_programme }
+	}
+	clr_country_flag = COLDWAR_nr_initialized
+	clr_country_flag = COLDWAR_nr_open
+	clr_country_flag = COLDWAR_nr_tick_pending
+	clr_country_flag = COLDWAR_nr_civil_active
+	clr_country_flag = COLDWAR_nr_standdown
+	clr_country_flag = COLDWAR_nr_consulted
+	clr_country_flag = COLDWAR_nr_public
+	clr_country_flag = COLDWAR_nr_countered
+	clr_country_flag = COLDWAR_nr_hotline
+	clr_country_flag = COLDWAR_nr_exposed_cd
+	clr_country_flag = COLDWAR_nr_fu_cooldown
+	set_variable = { COLDWAR_nr_level = 5 }
+	set_variable = { COLDWAR_nr_order = 5 }
+	set_variable = { COLDWAR_nr_build_days = 0 }
+	set_variable = { COLDWAR_nr_build_total = 0 }
+	set_variable = { COLDWAR_nr_civil_days = 0 }
+	set_variable = { COLDWAR_nr_fatigue = 0 }
+	set_variable = { COLDWAR_nr_fatigue_stability = 0 }
+	set_variable = { COLDWAR_nr_ready_share = 0 }
+	set_variable = { COLDWAR_nr_reserve_share = 0 }
+	set_variable = { COLDWAR_nr_ready_count = 0 }
+	set_variable = { COLDWAR_nr_protected_count = 0 }
+	set_variable = { COLDWAR_nr_forces_weekly = 0 }
+	set_variable = { COLDWAR_nr_civil_weekly = 0 }
+	set_variable = { COLDWAR_nr_weekly_cost = 0 }
+	set_variable = { COLDWAR_nr_forces_weekly_m = 0 }
+	set_variable = { COLDWAR_nr_civil_weekly_m = 0 }
+	set_variable = { COLDWAR_nr_fu_incoming_hours = 0 }
+	COLDWAR_nr_paranoia_reset = yes
+	COLDWAR_nr_update_display = yes
+	COLDWAR_nr_touch = yes
+}
+COLDWAR_nr_gc_disable = {
+	if = {
+		limit = {
+			COLDWAR_nr_available = yes
+			NOT = { has_global_flag = COLDWAR_nr_disabled }
+		}
+		set_global_flag = COLDWAR_nr_disabled
+		every_country = {
+			limit = {
+				OR = {
+					has_country_flag = COLDWAR_nr_initialized
+					has_variable = COLDWAR_nr_opponent
+					has_variable = COLDWAR_nr_fu_partner
+					has_dynamic_modifier = { modifier = COLDWAR_nr_strategic_forces }
+					has_dynamic_modifier = { modifier = COLDWAR_nr_civil_defence }
+					has_dynamic_modifier = { modifier = COLDWAR_nr_shelter_programme }
+				}
+			}
+			COLDWAR_nr_reset_country = yes
+		}
+		every_country = {
+			limit = { is_ai = no }
+			country_event = { id = cw_nuclear.94 }
+		}
+	}
+}
+COLDWAR_nr_gc_enable = {
+	if = {
+		limit = {
+			COLDWAR_nr_available = yes
+			has_global_flag = COLDWAR_nr_disabled
+		}
+		clr_global_flag = COLDWAR_nr_disabled
+		every_country = {
+			limit = {
+				OR = {
+					COLDWAR_nr_nuclear_power = yes
+					is_ai = no
+				}
+			}
+			COLDWAR_nr_init = yes
+		}
+		every_country = {
+			limit = { is_ai = no }
+			country_event = { id = cw_nuclear.95 }
+		}
 	}
 }

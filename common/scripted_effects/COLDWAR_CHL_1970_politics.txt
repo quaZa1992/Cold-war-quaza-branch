@@ -477,6 +477,7 @@ COLDWAR_CHL_install_confirmed_candidate = {
 		COLDWAR_CHL_refresh_programmes = yes
 	}
 }
+# IMPERIA COLD WAR — 24.11.2026: leaders are characters recruited in the 1970 history; only promoted here (MD). Pinochet: his officer character gets the leader role.
 COLDWAR_CHL_route_leader = {
 	if = {
 		limit = { COLDWAR_CHL_is_scenario = yes }
@@ -484,6 +485,7 @@ COLDWAR_CHL_route_leader = {
 			limit = {
 				has_country_flag = COLDWAR_CHL_pinochet_presidency
 				check_variable = { ruling_party = 22 }
+				has_character = COLDWAR_1970_officer_chl_augusto_pinochet
 			}
 			if = {
 				limit = {
@@ -491,11 +493,17 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Augusto Pinochet" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = {
-					name = "Augusto Pinochet"
-					picture = "gfx/leaders/mdcw_historical_pool/CHL_augusto_pinochet.dds"
-					ideology = Nat_Autocracy
+				if = {
+					limit = { has_country_flag = COLDWAR_CHL_pinochet_leader_role }
+					promote_character = COLDWAR_1970_officer_chl_augusto_pinochet
+				}
+				else = {
+					set_country_flag = COLDWAR_CHL_pinochet_leader_role
+					add_country_leader_role = {
+						character = COLDWAR_1970_officer_chl_augusto_pinochet
+						promote_leader = yes
+						country_leader = { ideology = Nat_Autocracy expire = "2050.1.1" }
+					}
 				}
 			}
 		}
@@ -503,7 +511,11 @@ COLDWAR_CHL_route_leader = {
 			limit = {
 				has_country_flag = COLDWAR_CHL_military_government
 				check_variable = { ruling_party = 22 }
-				NOT = { has_country_flag = COLDWAR_CHL_pinochet_presidency }
+				OR = {
+					NOT = { has_country_flag = COLDWAR_CHL_pinochet_presidency }
+					NOT = { has_character = COLDWAR_1970_officer_chl_augusto_pinochet }
+				}
+				has_character = COLDWAR_CHL_1970_leader_military_council
 			}
 			if = {
 				limit = {
@@ -511,8 +523,7 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Chilean Military Council" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Chilean Military Council" ideology = Nat_Autocracy }
+				promote_character = COLDWAR_CHL_1970_leader_military_council
 			}
 		}
 		else_if = {
@@ -520,6 +531,7 @@ COLDWAR_CHL_route_leader = {
 				has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed
 				has_country_flag = COLDWAR_CHL_civilian_handover
 				check_variable = { ruling_party = 1 }
+				has_character = COLDWAR_CHL_1970_leader_aylwin
 			}
 			if = {
 				limit = {
@@ -527,18 +539,14 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Patricio Aylwin" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = {
-					name = "Patricio Aylwin"
-					picture = "gfx/leaders/mdcw_historical_pool/CHL_patricio_aylwin.dds"
-					ideology = conservatism
-				}
+				promote_character = COLDWAR_CHL_1970_leader_aylwin
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 1 }
 				NOT = { has_country_flag = COLDWAR_CHL_election_installed }
+				has_character = COLDWAR_CHL_1970_leader_frei
 			}
 			if = {
 				limit = {
@@ -546,12 +554,7 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Eduardo Frei Montalva" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = {
-					name = "Eduardo Frei Montalva"
-					picture = "gfx/leaders/CHL/CHL_Coldwar_Eduardo_Frei_Montalva.dds"
-					ideology = conservatism
-				}
+				promote_character = COLDWAR_CHL_1970_leader_frei
 			}
 		}
 		else_if = {
@@ -559,6 +562,7 @@ COLDWAR_CHL_route_leader = {
 				has_country_flag = COLDWAR_CHL_election_installed
 				check_variable = { ruling_party = 1 }
 				NOT = { has_country_flag = COLDWAR_CHL_civilian_handover }
+				has_character = COLDWAR_CHL_1970_leader_tomic
 			}
 			if = {
 				limit = {
@@ -566,8 +570,7 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Radomiro Tomic" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Radomiro Tomic" ideology = conservatism }
+				promote_character = COLDWAR_CHL_1970_leader_tomic
 			}
 		}
 		else_if = {
@@ -575,6 +578,7 @@ COLDWAR_CHL_route_leader = {
 				has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed
 				has_country_flag = COLDWAR_CHL_civilian_handover
 				check_variable = { ruling_party = 2 }
+				has_character = COLDWAR_CHL_1970_leader_buchi
 			}
 			if = {
 				limit = {
@@ -582,14 +586,14 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Hernán Büchi" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Hernán Büchi" ideology = liberalism }
+				promote_character = COLDWAR_CHL_1970_leader_buchi
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 2 }
 				NOT = { has_country_flag = COLDWAR_CHL_civilian_handover }
+				has_character = COLDWAR_CHL_1970_leader_alessandri
 			}
 			if = {
 				limit = {
@@ -597,13 +601,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Jorge Alessandri" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Jorge Alessandri" ideology = liberalism }
+				promote_character = COLDWAR_CHL_1970_leader_alessandri
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 18 }
+				has_character = COLDWAR_CHL_1970_leader_allende
 			}
 			if = {
 				limit = {
@@ -611,17 +615,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Salvador Allende" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = {
-					name = "Salvador Allende"
-					picture = "gfx/leaders/mdcw_historical_pool/CHL_salvador_allende.dds"
-					ideology = neutral_Social
-				}
+				promote_character = COLDWAR_CHL_1970_leader_allende
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 3 }
+				has_character = COLDWAR_CHL_1970_leader_baltra
 			}
 			if = {
 				limit = {
@@ -629,13 +629,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Alberto Baltra" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Alberto Baltra" ideology = socialism }
+				promote_character = COLDWAR_CHL_1970_leader_baltra
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 4 }
+				has_character = COLDWAR_CHL_1970_leader_corvalan
 			}
 			if = {
 				limit = {
@@ -643,13 +643,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Luis Corvalán" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Luis Corvalán" ideology = communist_state }
+				promote_character = COLDWAR_CHL_1970_leader_corvalan
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 5 }
+				has_character = COLDWAR_CHL_1970_leader_enriquez
 			}
 			if = {
 				limit = {
@@ -657,13 +657,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Miguel Enríquez" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Miguel Enríquez" ideology = anarchist_communism }
+				promote_character = COLDWAR_CHL_1970_leader_enriquez
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 14 }
+				has_character = COLDWAR_CHL_1970_leader_duran
 			}
 			if = {
 				limit = {
@@ -671,13 +671,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Julio Durán" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Julio Durán" ideology = Neutral_conservatism }
+				promote_character = COLDWAR_CHL_1970_leader_duran
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 19 }
+				has_character = COLDWAR_CHL_1970_leader_chonchol
 			}
 			if = {
 				limit = {
@@ -685,13 +685,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Jacques Chonchol" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Jacques Chonchol" ideology = Neutral_Communism }
+				promote_character = COLDWAR_CHL_1970_leader_chonchol
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 20 }
+				has_character = COLDWAR_CHL_1970_leader_correa
 			}
 			if = {
 				limit = {
@@ -699,13 +699,13 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Raúl Correa Labra" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Raúl Correa Labra" ideology = Nat_Populism }
+				promote_character = COLDWAR_CHL_1970_leader_correa
 			}
 		}
 		else_if = {
 			limit = {
 				check_variable = { ruling_party = 0 }
+				has_character = CW_PI_CHL_jaime_guzman_0
 			}
 			if = {
 				limit = {
@@ -713,8 +713,7 @@ COLDWAR_CHL_route_leader = {
 						has_country_leader = { name = "Jaime Guzmán" ruling_only = yes }
 					}
 				}
-				hidden_effect = { kill_country_leader = yes }
-				create_country_leader = { name = "Jaime Guzmán" ideology = Western_Autocracy }
+				promote_character = CW_PI_CHL_jaime_guzman_0
 			}
 		}
 	}
@@ -743,6 +742,13 @@ if = {
 				NOT = { has_country_flag = COLDWAR_CHL_military_government }
 			}
 			set_country_flag = COLDWAR_CHL_military_government
+			# IMPERIA COLD WAR — 24.11.2026: any junta government may choose Pinochet once.
+			if = {
+				limit = {
+					NOT = { has_country_flag = COLDWAR_CHL_junta_decided }
+				}
+				set_country_flag = COLDWAR_CHL_pinochet_available
+			}
 			COLDWAR_CHL_route_leader = yes
 			COLDWAR_CHL_refresh_programmes = yes
 		}
@@ -842,15 +848,7 @@ if = {
 		limit = { has_country_flag = COLDWAR_CHL_pinochet_chicago_applied date > 1981.12.31 }
 		set_country_flag = COLDWAR_CHL_fragile_banks
 	}
-	if = {
-		limit = {
-			has_completed_focus = COLDWAR_CHL_pinochet_handover
-			has_country_flag = COLDWAR_CHL_plebiscite_no_won
-			date > 1989.12.13
-			NOT = { has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed }
-		}
-		COLDWAR_CHL_count_1990_election = yes
-	}
+	# IMPERIA COLD WAR — 24.11.2026: transition election is counted by the focus A Civilian Handover (no daily check)
 	if = {
 		limit = { COLDWAR_CHL_can_event_election = yes }
 		COLDWAR_CHL_trigger_event_election = yes
@@ -892,14 +890,7 @@ if = {
 		limit = { COLDWAR_CHL_can_event_transport = yes }
 		COLDWAR_CHL_trigger_event_transport = yes
 	}
-	if = {
-		limit = { COLDWAR_CHL_can_event_rupture = yes }
-		COLDWAR_CHL_trigger_event_rupture = yes
-	}
-	if = {
-		limit = { COLDWAR_CHL_can_event_junta = yes }
-		COLDWAR_CHL_trigger_event_junta = yes
-	}
+	# IMPERIA COLD WAR — 24.11.2026: CHL.5 and CHL.6 are news fired by the coup path foci (no daily check)
 	if = {
 		limit = { COLDWAR_CHL_can_event_banking = yes }
 		COLDWAR_CHL_trigger_event_banking = yes
@@ -951,13 +942,7 @@ if = {
 		}
 		COLDWAR_CHL_trigger_event_plebiscite = yes
 	}
-	if = {
-		limit = {
-			has_completed_focus = COLDWAR_CHL_pinochet_handover
-			NOT = { has_country_flag = COLDWAR_CHL_handover_event_seen }
-		}
-		COLDWAR_CHL_trigger_event_handover = yes
-	}
+	# IMPERIA COLD WAR — 24.11.2026: CHL.12 is news fired by the focus A Civilian Handover
 }
 }
 COLDWAR_CHL_count_plebiscite_vote = {
@@ -1137,5 +1122,149 @@ COLDWAR_CHL_trigger_event_andean = {
 			COLDWAR_CHL_can_event_andean = yes
 		}
 		country_event = { id = COLDWAR_CHL.14 }
+	}
+}
+
+# IMPERIA COLD WAR — 24.11.2026: political path effects of the coup path foci (were options of CHL.5, CHL.6 and CHL.12).
+COLDWAR_CHL_path_uphold_constitution = {
+	set_temp_variable = { treasury_change = { value = gdp_total multiply = -0.00159 } } # IMPERIA COLD WAR — MD money line (24.11.2026)
+	modify_treasury_effect = yes
+	add_ideas = COLDWAR_CHL_choice_rupture_1
+	set_country_flag = COLDWAR_CHL_constitutional_accord
+	set_country_flag = COLDWAR_CHL_rupture_resolved
+	set_country_flag = COLDWAR_CHL_rupture_choice_resolved
+}
+COLDWAR_CHL_path_military_takeover = {
+	add_ideas = COLDWAR_CHL_choice_rupture_2
+	set_country_flag = COLDWAR_CHL_1970_calendar_superseded
+	set_country_flag = COLDWAR_CHL_military_government
+	set_country_flag = COLDWAR_CHL_pinochet_available
+	set_country_flag = COLDWAR_CHL_repression_occurred
+	set_country_flag = COLDWAR_CHL_rupture_resolved
+	add_ideas = COLDWAR_CHL_repression
+	COLDWAR_CHL_clear_coalition_parameters = yes
+	set_variable = { rul_party_temp = 22 }
+	set_variable = { disable_elections = 1 }
+	set_variable = { change_leader_temp = 0 }
+	COLDWAR_CHL_apply_government_change = yes
+	COLDWAR_CHL_sync_native_outlook = yes
+	set_variable = { COLDWAR_CHL_leader_slot = 22 }
+	COLDWAR_CHL_route_leader = yes
+	COLDWAR_CHL_refresh_programmes = yes
+	set_country_flag = COLDWAR_CHL_rupture_choice_resolved
+}
+COLDWAR_CHL_path_junta_council = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_CHL_junta_decided } }
+		add_ideas = COLDWAR_CHL_choice_junta_1
+	}
+	set_country_flag = COLDWAR_CHL_constitutional_military_council
+	clr_country_flag = COLDWAR_CHL_pinochet_available
+	set_country_flag = COLDWAR_CHL_junta_decided
+	set_country_flag = COLDWAR_CHL_junta_choice_resolved
+}
+COLDWAR_CHL_path_junta_pinochet = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_CHL_junta_decided } }
+		add_ideas = COLDWAR_CHL_choice_junta_2
+	}
+	set_country_flag = COLDWAR_CHL_pinochet_presidency
+	clr_country_flag = COLDWAR_CHL_constitutional_military_council
+	set_country_flag = COLDWAR_CHL_junta_decided
+	COLDWAR_CHL_clear_coalition_parameters = yes
+	set_variable = { rul_party_temp = 22 }
+	set_variable = { disable_elections = 1 }
+	set_variable = { change_leader_temp = 0 }
+	COLDWAR_CHL_apply_government_change = yes
+	COLDWAR_CHL_sync_native_outlook = yes
+	set_variable = { COLDWAR_CHL_leader_slot = 22 }
+	COLDWAR_CHL_route_leader = yes
+	COLDWAR_CHL_refresh_programmes = yes
+	set_country_flag = COLDWAR_CHL_junta_choice_resolved
+}
+COLDWAR_CHL_path_civilian_handover_preview = {
+	add_ideas = COLDWAR_CHL_choice_handover_1
+	custom_effect_tooltip = COLDWAR_CHL_handover_election_tt
+	set_country_flag = COLDWAR_CHL_civilian_handover
+}
+COLDWAR_CHL_path_civilian_handover = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed } }
+		COLDWAR_CHL_count_1990_election = yes
+	}
+	# IMPERIA COLD WAR — 24.11.2026: tie-breaker so the handover never fails: on an exact tie (no confirmed winner) the Christian Democrats (slot 1) take office.
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed } }
+		set_variable = { COLDWAR_CHL_1990_election_confirmed_slot = 1 }
+		set_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed
+		set_country_flag = COLDWAR_CHL_1990_election_counted
+	}
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_CHL_civilian_1990_winner_confirmed
+			NOT = { has_country_flag = COLDWAR_CHL_civilian_handover }
+		}
+		add_ideas = COLDWAR_CHL_choice_handover_1
+		set_country_flag = COLDWAR_CHL_civilian_handover
+		COLDWAR_CHL_install_1990_candidate = yes
+		COLDWAR_CHL_sync_native_outlook = yes
+		COLDWAR_CHL_route_leader = yes
+		COLDWAR_CHL_record_1990_presidential_term = yes
+		COLDWAR_CHL_refresh_programmes = yes
+		set_country_flag = COLDWAR_CHL_handover_choice_resolved
+		COLDWAR_CHL_trigger_event_handover = yes
+	}
+}
+# IMPERIA COLD WAR — 24.11.2026: previews and rewards of the four coup path foci.
+COLDWAR_CHL_preview_focus_secure_officer_corps = {
+	add_political_power = -75
+	custom_effect_tooltip = COLDWAR_CHL_secure_officer_corps_tt
+}
+COLDWAR_CHL_apply_secure_officer_corps = {
+	if = {
+		limit = { COLDWAR_CHL_can_complete_secure_officer_corps = yes }
+		set_country_flag = COLDWAR_CHL_secure_officer_corps_applied
+		add_political_power = -75
+	}
+}
+COLDWAR_CHL_preview_focus_constitutional_crisis = {
+	add_stability = -0.05
+	add_war_support = 0.05
+}
+COLDWAR_CHL_apply_constitutional_crisis = {
+	if = {
+		limit = { COLDWAR_CHL_can_complete_constitutional_crisis = yes }
+		set_country_flag = COLDWAR_CHL_constitutional_crisis_applied
+		set_country_flag = COLDWAR_CHL_constitutional_crisis
+		add_stability = -0.05
+		add_war_support = 0.05
+		COLDWAR_CHL_trigger_event_rupture = yes
+	}
+}
+COLDWAR_CHL_preview_focus_uphold_constitution = {
+	add_political_power = -50
+	COLDWAR_CHL_path_uphold_constitution = yes
+}
+COLDWAR_CHL_apply_uphold_constitution = {
+	if = {
+		limit = { COLDWAR_CHL_can_complete_uphold_constitution = yes }
+		set_country_flag = COLDWAR_CHL_uphold_constitution_applied
+		add_political_power = -50
+		COLDWAR_CHL_path_uphold_constitution = yes
+	}
+}
+COLDWAR_CHL_preview_focus_military_takeover = {
+	add_stability = -0.05
+	add_war_support = -0.05
+	COLDWAR_CHL_path_military_takeover = yes
+}
+COLDWAR_CHL_apply_military_takeover = {
+	if = {
+		limit = { COLDWAR_CHL_can_complete_military_takeover = yes }
+		set_country_flag = COLDWAR_CHL_military_takeover_applied
+		add_stability = -0.05
+		add_war_support = -0.05
+		COLDWAR_CHL_path_military_takeover = yes
+		COLDWAR_CHL_trigger_event_junta = yes
 	}
 }

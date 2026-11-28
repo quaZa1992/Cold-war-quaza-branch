@@ -50,6 +50,7 @@ COLDWAR_NAVY_DDR_complete_naval_reform = {
 }
 
 COLDWAR_NAVY_DDR_preview_combined_military_defense_industries = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			if = {
@@ -58,7 +59,6 @@ COLDWAR_NAVY_DDR_preview_combined_military_defense_industries = {
 					controls_state = 539
 					539 = {
 						is_owned_and_controlled_by = DDR
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				539 = {
@@ -91,21 +91,12 @@ COLDWAR_NAVY_DDR_complete_combined_military_defense_industries = {
 		COLDWAR_NAVY_DDR_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_DDR_ready_combined_military_defense_industries = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = DDR
 					controls_a_coastal_state = yes
 					NOT = { has_country_flag = MD_skip_treasury_cost }
-					OR = {
-						AND = {
-							owns_state = 539
-							controls_state = 539
-							539 = {
-								is_owned_and_controlled_by = DDR
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -113,10 +104,17 @@ COLDWAR_NAVY_DDR_complete_combined_military_defense_industries = {
 						controls_state = 539
 						539 = {
 							is_owned_and_controlled_by = DDR
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					539 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 					}
@@ -195,6 +193,7 @@ COLDWAR_NAVY_DDR_complete_naval_bases = {
 		COLDWAR_NAVY_DDR_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_DDR_ready_naval_bases = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = DDR
@@ -203,30 +202,6 @@ COLDWAR_NAVY_DDR_complete_naval_bases = {
 					check_variable = { COLDWAR_NAVY_DDR_port_quote > 0 }
 					check_variable = { gdp_total > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_DDR_port_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 539
-							controls_state = 539
-							controls_province = 321
-							ROOT = { controls_province = 321 }
-							539 = {
-								is_owned_and_controlled_by = DDR
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 321 }
-							}
-						}
-						AND = {
-							owns_state = 539
-							controls_state = 539
-							controls_province = 9388
-							ROOT = { controls_province = 9388 }
-							539 = {
-								is_owned_and_controlled_by = DDR
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 9388 }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -314,6 +289,7 @@ COLDWAR_NAVY_DDR_complete_surface_ships = {
 }
 
 COLDWAR_NAVY_DDR_preview_dockyards = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_DDR_yard_quote }
@@ -326,7 +302,6 @@ COLDWAR_NAVY_DDR_preview_dockyards = {
 					539 = {
 						is_owned_and_controlled_by = DDR
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				539 = {
@@ -357,6 +332,7 @@ COLDWAR_NAVY_DDR_complete_dockyards = {
 		COLDWAR_NAVY_DDR_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_DDR_ready_dockyards = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = DDR
@@ -365,17 +341,6 @@ COLDWAR_NAVY_DDR_complete_dockyards = {
 					check_variable = { COLDWAR_NAVY_DDR_yard_quote > 0 }
 					check_variable = { gdp_total > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_DDR_yard_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 539
-							controls_state = 539
-							539 = {
-								is_owned_and_controlled_by = DDR
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -384,13 +349,23 @@ COLDWAR_NAVY_DDR_complete_dockyards = {
 						539 = {
 							is_owned_and_controlled_by = DDR
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_DDR_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					539 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_DDR_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
@@ -431,6 +406,7 @@ COLDWAR_NAVY_DDR_complete_naval_doctrine_innovations = {
 }
 
 COLDWAR_NAVY_DDR_preview_large_ship_drydocks = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_DDR_yard_quote }
@@ -443,7 +419,6 @@ COLDWAR_NAVY_DDR_preview_large_ship_drydocks = {
 					539 = {
 						is_owned_and_controlled_by = DDR
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				539 = {
@@ -474,6 +449,7 @@ COLDWAR_NAVY_DDR_complete_large_ship_drydocks = {
 		COLDWAR_NAVY_DDR_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_DDR_ready_large_ship_drydocks = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = DDR
@@ -482,17 +458,6 @@ COLDWAR_NAVY_DDR_complete_large_ship_drydocks = {
 					check_variable = { COLDWAR_NAVY_DDR_yard_quote > 0 }
 					check_variable = { gdp_total > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_DDR_yard_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 539
-							controls_state = 539
-							539 = {
-								is_owned_and_controlled_by = DDR
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -501,13 +466,23 @@ COLDWAR_NAVY_DDR_complete_large_ship_drydocks = {
 						539 = {
 							is_owned_and_controlled_by = DDR
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_DDR_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					539 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_DDR_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
@@ -841,6 +816,7 @@ COLDWAR_NAVY_IRQ_complete_naval_reform = {
 }
 
 COLDWAR_NAVY_IRQ_preview_combined_military_defense_industries = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			if = {
@@ -849,7 +825,6 @@ COLDWAR_NAVY_IRQ_preview_combined_military_defense_industries = {
 					controls_state = 171
 					171 = {
 						is_owned_and_controlled_by = IRQ
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				171 = {
@@ -882,21 +857,12 @@ COLDWAR_NAVY_IRQ_complete_combined_military_defense_industries = {
 		COLDWAR_NAVY_IRQ_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_IRQ_ready_combined_military_defense_industries = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = IRQ
 					controls_a_coastal_state = yes
 					NOT = { has_country_flag = MD_skip_treasury_cost }
-					OR = {
-						AND = {
-							owns_state = 171
-							controls_state = 171
-							171 = {
-								is_owned_and_controlled_by = IRQ
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -904,10 +870,17 @@ COLDWAR_NAVY_IRQ_complete_combined_military_defense_industries = {
 						controls_state = 171
 						171 = {
 							is_owned_and_controlled_by = IRQ
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					171 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 					}
@@ -969,6 +942,7 @@ COLDWAR_NAVY_IRQ_complete_naval_bases = {
 		COLDWAR_NAVY_IRQ_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_IRQ_ready_naval_bases = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = IRQ
@@ -977,19 +951,6 @@ COLDWAR_NAVY_IRQ_complete_naval_bases = {
 					check_variable = { COLDWAR_NAVY_IRQ_port_quote > 0 }
 					check_variable = { gdp_total > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_IRQ_port_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 171
-							controls_state = 171
-							controls_province = 9045
-							ROOT = { controls_province = 9045 }
-							171 = {
-								is_owned_and_controlled_by = IRQ
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 9045 }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -1057,6 +1018,7 @@ COLDWAR_NAVY_IRQ_complete_surface_ships = {
 }
 
 COLDWAR_NAVY_IRQ_preview_dockyards = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_IRQ_yard_quote }
@@ -1069,7 +1031,6 @@ COLDWAR_NAVY_IRQ_preview_dockyards = {
 					171 = {
 						is_owned_and_controlled_by = IRQ
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				171 = {
@@ -1100,6 +1061,7 @@ COLDWAR_NAVY_IRQ_complete_dockyards = {
 		COLDWAR_NAVY_IRQ_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_IRQ_ready_dockyards = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = IRQ
@@ -1108,17 +1070,6 @@ COLDWAR_NAVY_IRQ_complete_dockyards = {
 					check_variable = { COLDWAR_NAVY_IRQ_yard_quote > 0 }
 					check_variable = { gdp_total > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_IRQ_yard_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 171
-							controls_state = 171
-							171 = {
-								is_owned_and_controlled_by = IRQ
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -1127,13 +1078,23 @@ COLDWAR_NAVY_IRQ_complete_dockyards = {
 						171 = {
 							is_owned_and_controlled_by = IRQ
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_IRQ_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					171 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_IRQ_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
@@ -1174,6 +1135,7 @@ COLDWAR_NAVY_IRQ_complete_naval_doctrine_innovations = {
 }
 
 COLDWAR_NAVY_IRQ_preview_large_ship_drydocks = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_IRQ_yard_quote }
@@ -1186,7 +1148,6 @@ COLDWAR_NAVY_IRQ_preview_large_ship_drydocks = {
 					171 = {
 						is_owned_and_controlled_by = IRQ
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				171 = {
@@ -1217,6 +1178,7 @@ COLDWAR_NAVY_IRQ_complete_large_ship_drydocks = {
 		COLDWAR_NAVY_IRQ_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_IRQ_ready_large_ship_drydocks = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = IRQ
@@ -1225,17 +1187,6 @@ COLDWAR_NAVY_IRQ_complete_large_ship_drydocks = {
 					check_variable = { COLDWAR_NAVY_IRQ_yard_quote > 0 }
 					check_variable = { gdp_total > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_IRQ_yard_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 171
-							controls_state = 171
-							171 = {
-								is_owned_and_controlled_by = IRQ
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -1244,13 +1195,23 @@ COLDWAR_NAVY_IRQ_complete_large_ship_drydocks = {
 						171 = {
 							is_owned_and_controlled_by = IRQ
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_IRQ_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					171 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_IRQ_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
@@ -1582,6 +1543,7 @@ COLDWAR_NAVY_SOV_complete_naval_reform = {
 }
 
 COLDWAR_NAVY_SOV_preview_combined_military_defense_industries = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			if = {
@@ -1590,7 +1552,6 @@ COLDWAR_NAVY_SOV_preview_combined_military_defense_industries = {
 					controls_state = 644
 					644 = {
 						is_owned_and_controlled_by = SOV
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				644 = {
@@ -1604,7 +1565,6 @@ COLDWAR_NAVY_SOV_preview_combined_military_defense_industries = {
 					controls_state = 647
 					647 = {
 						is_owned_and_controlled_by = SOV
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				647 = {
@@ -1618,7 +1578,6 @@ COLDWAR_NAVY_SOV_preview_combined_military_defense_industries = {
 					controls_state = 692
 					692 = {
 						is_owned_and_controlled_by = SOV
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				692 = {
@@ -1632,7 +1591,6 @@ COLDWAR_NAVY_SOV_preview_combined_military_defense_industries = {
 					controls_state = 643
 					643 = {
 						is_owned_and_controlled_by = SOV
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				643 = {
@@ -1665,45 +1623,12 @@ COLDWAR_NAVY_SOV_complete_combined_military_defense_industries = {
 		COLDWAR_NAVY_SOV_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_SOV_ready_combined_military_defense_industries = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = SOV
 					controls_a_coastal_state = yes
 					NOT = { has_country_flag = MD_skip_treasury_cost }
-					OR = {
-						AND = {
-							owns_state = 644
-							controls_state = 644
-							644 = {
-								is_owned_and_controlled_by = SOV
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 647
-							controls_state = 647
-							647 = {
-								is_owned_and_controlled_by = SOV
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 692
-							controls_state = 692
-							692 = {
-								is_owned_and_controlled_by = SOV
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 643
-							controls_state = 643
-							643 = {
-								is_owned_and_controlled_by = SOV
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -1711,7 +1636,6 @@ COLDWAR_NAVY_SOV_complete_combined_military_defense_industries = {
 						controls_state = 644
 						644 = {
 							is_owned_and_controlled_by = SOV
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					644 = {
@@ -1725,7 +1649,6 @@ COLDWAR_NAVY_SOV_complete_combined_military_defense_industries = {
 						controls_state = 647
 						647 = {
 							is_owned_and_controlled_by = SOV
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					647 = {
@@ -1739,7 +1662,6 @@ COLDWAR_NAVY_SOV_complete_combined_military_defense_industries = {
 						controls_state = 692
 						692 = {
 							is_owned_and_controlled_by = SOV
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					692 = {
@@ -1753,10 +1675,17 @@ COLDWAR_NAVY_SOV_complete_combined_military_defense_industries = {
 						controls_state = 643
 						643 = {
 							is_owned_and_controlled_by = SOV
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					643 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 					}
@@ -1869,6 +1798,7 @@ COLDWAR_NAVY_SOV_complete_naval_bases = {
 		COLDWAR_NAVY_SOV_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_SOV_ready_naval_bases = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = SOV
@@ -1876,52 +1806,6 @@ COLDWAR_NAVY_SOV_complete_naval_bases = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_SOV_port_quote > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_SOV_port_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 642
-							controls_state = 642
-							controls_province = 6332
-							ROOT = { controls_province = 6332 }
-							642 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 6332 }
-							}
-						}
-						AND = {
-							owns_state = 687
-							controls_state = 687
-							controls_province = 9604
-							ROOT = { controls_province = 9604 }
-							687 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 9604 }
-							}
-						}
-						AND = {
-							owns_state = 687
-							controls_state = 687
-							controls_province = 12559
-							ROOT = { controls_province = 12559 }
-							687 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 12559 }
-							}
-						}
-						AND = {
-							owns_state = 647
-							controls_state = 647
-							controls_province = 11047
-							ROOT = { controls_province = 11047 }
-							647 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 11047 }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -2061,6 +1945,7 @@ COLDWAR_NAVY_SOV_complete_surface_ships = {
 }
 
 COLDWAR_NAVY_SOV_preview_dockyards = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_2_quote }
@@ -2073,7 +1958,6 @@ COLDWAR_NAVY_SOV_preview_dockyards = {
 					644 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 1 include_locked = no }
 					}
 				}
 				644 = {
@@ -2088,7 +1972,6 @@ COLDWAR_NAVY_SOV_preview_dockyards = {
 					647 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 1 include_locked = no }
 					}
 				}
 				647 = {
@@ -2103,7 +1986,6 @@ COLDWAR_NAVY_SOV_preview_dockyards = {
 					692 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 1 include_locked = no }
 					}
 				}
 				692 = {
@@ -2118,7 +2000,6 @@ COLDWAR_NAVY_SOV_preview_dockyards = {
 					643 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 1 include_locked = no }
 					}
 				}
 				643 = {
@@ -2149,6 +2030,7 @@ COLDWAR_NAVY_SOV_complete_dockyards = {
 		COLDWAR_NAVY_SOV_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_SOV_ready_dockyards = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = SOV
@@ -2156,44 +2038,6 @@ COLDWAR_NAVY_SOV_complete_dockyards = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_SOV_yard_2_quote > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_SOV_yard_2_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 644
-							controls_state = 644
-							644 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 1 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 647
-							controls_state = 647
-							647 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 1 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 692
-							controls_state = 692
-							692 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 1 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 643
-							controls_state = 643
-							643 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 1 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -2202,7 +2046,6 @@ COLDWAR_NAVY_SOV_complete_dockyards = {
 						644 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 1 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_2_quote }
@@ -2220,7 +2063,6 @@ COLDWAR_NAVY_SOV_complete_dockyards = {
 						647 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 1 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_2_quote }
@@ -2238,7 +2080,6 @@ COLDWAR_NAVY_SOV_complete_dockyards = {
 						692 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 1 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_2_quote }
@@ -2256,13 +2097,23 @@ COLDWAR_NAVY_SOV_complete_dockyards = {
 						643 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 1 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_2_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					643 = {
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = dockyard level = 2 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_2_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 2
 						add_building_construction = { type = dockyard level = 2 instant_build = yes }
 					}
@@ -2399,6 +2250,7 @@ COLDWAR_NAVY_SOV_complete_light_helicopter_operators = {
 }
 
 COLDWAR_NAVY_SOV_preview_large_ship_drydocks = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_quote }
@@ -2411,7 +2263,6 @@ COLDWAR_NAVY_SOV_preview_large_ship_drydocks = {
 					644 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				644 = {
@@ -2426,7 +2277,6 @@ COLDWAR_NAVY_SOV_preview_large_ship_drydocks = {
 					647 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				647 = {
@@ -2441,7 +2291,6 @@ COLDWAR_NAVY_SOV_preview_large_ship_drydocks = {
 					692 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				692 = {
@@ -2456,7 +2305,6 @@ COLDWAR_NAVY_SOV_preview_large_ship_drydocks = {
 					643 = {
 						is_owned_and_controlled_by = SOV
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				643 = {
@@ -2487,6 +2335,7 @@ COLDWAR_NAVY_SOV_complete_large_ship_drydocks = {
 		COLDWAR_NAVY_SOV_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_SOV_ready_large_ship_drydocks = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = SOV
@@ -2494,44 +2343,6 @@ COLDWAR_NAVY_SOV_complete_large_ship_drydocks = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_SOV_yard_quote > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_SOV_yard_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 644
-							controls_state = 644
-							644 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 647
-							controls_state = 647
-							647 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 692
-							controls_state = 692
-							692 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 643
-							controls_state = 643
-							643 = {
-								is_owned_and_controlled_by = SOV
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -2540,7 +2351,6 @@ COLDWAR_NAVY_SOV_complete_large_ship_drydocks = {
 						644 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_quote }
@@ -2558,7 +2368,6 @@ COLDWAR_NAVY_SOV_complete_large_ship_drydocks = {
 						647 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_quote }
@@ -2576,7 +2385,6 @@ COLDWAR_NAVY_SOV_complete_large_ship_drydocks = {
 						692 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_quote }
@@ -2594,13 +2402,23 @@ COLDWAR_NAVY_SOV_complete_large_ship_drydocks = {
 						643 = {
 							is_owned_and_controlled_by = SOV
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					643 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_SOV_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
@@ -3002,6 +2820,7 @@ COLDWAR_NAVY_UAE_complete_naval_reform = {
 }
 
 COLDWAR_NAVY_UAE_preview_combined_military_defense_industries = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			if = {
@@ -3010,7 +2829,6 @@ COLDWAR_NAVY_UAE_preview_combined_military_defense_industries = {
 					controls_state = 180
 					180 = {
 						is_owned_and_controlled_by = UAE
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				180 = {
@@ -3024,7 +2842,6 @@ COLDWAR_NAVY_UAE_preview_combined_military_defense_industries = {
 					controls_state = 179
 					179 = {
 						is_owned_and_controlled_by = UAE
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				179 = {
@@ -3057,29 +2874,12 @@ COLDWAR_NAVY_UAE_complete_combined_military_defense_industries = {
 		COLDWAR_NAVY_UAE_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_UAE_ready_combined_military_defense_industries = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = UAE
 					controls_a_coastal_state = yes
 					NOT = { has_country_flag = MD_skip_treasury_cost }
-					OR = {
-						AND = {
-							owns_state = 180
-							controls_state = 180
-							180 = {
-								is_owned_and_controlled_by = UAE
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 179
-							controls_state = 179
-							179 = {
-								is_owned_and_controlled_by = UAE
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -3087,7 +2887,6 @@ COLDWAR_NAVY_UAE_complete_combined_military_defense_industries = {
 						controls_state = 180
 						180 = {
 							is_owned_and_controlled_by = UAE
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					180 = {
@@ -3101,10 +2900,17 @@ COLDWAR_NAVY_UAE_complete_combined_military_defense_industries = {
 						controls_state = 179
 						179 = {
 							is_owned_and_controlled_by = UAE
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					179 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 					}
@@ -3166,6 +2972,7 @@ COLDWAR_NAVY_UAE_complete_naval_bases = {
 		COLDWAR_NAVY_UAE_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_UAE_ready_naval_bases = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = UAE
@@ -3173,19 +2980,6 @@ COLDWAR_NAVY_UAE_complete_naval_bases = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_UAE_port_quote > 0 }
 					check_variable = { gdp_total > 0 }
-					OR = {
-						AND = {
-							owns_state = 179
-							controls_state = 179
-							controls_province = 3725
-							ROOT = { controls_province = 3725 }
-							179 = {
-								is_owned_and_controlled_by = UAE
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 3725 }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -3253,6 +3047,7 @@ COLDWAR_NAVY_UAE_complete_surface_ships = {
 }
 
 COLDWAR_NAVY_UAE_preview_dockyards = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
@@ -3265,7 +3060,6 @@ COLDWAR_NAVY_UAE_preview_dockyards = {
 					180 = {
 						is_owned_and_controlled_by = UAE
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				180 = {
@@ -3280,7 +3074,6 @@ COLDWAR_NAVY_UAE_preview_dockyards = {
 					179 = {
 						is_owned_and_controlled_by = UAE
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				179 = {
@@ -3311,6 +3104,7 @@ COLDWAR_NAVY_UAE_complete_dockyards = {
 		COLDWAR_NAVY_UAE_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_UAE_ready_dockyards = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = UAE
@@ -3318,26 +3112,6 @@ COLDWAR_NAVY_UAE_complete_dockyards = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_UAE_yard_quote > 0 }
 					check_variable = { gdp_total > 0 }
-					OR = {
-						AND = {
-							owns_state = 180
-							controls_state = 180
-							180 = {
-								is_owned_and_controlled_by = UAE
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 179
-							controls_state = 179
-							179 = {
-								is_owned_and_controlled_by = UAE
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -3346,7 +3120,6 @@ COLDWAR_NAVY_UAE_complete_dockyards = {
 						180 = {
 							is_owned_and_controlled_by = UAE
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
@@ -3364,13 +3137,23 @@ COLDWAR_NAVY_UAE_complete_dockyards = {
 						179 = {
 							is_owned_and_controlled_by = UAE
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					179 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
@@ -3411,6 +3194,7 @@ COLDWAR_NAVY_UAE_complete_naval_doctrine_innovations = {
 }
 
 COLDWAR_NAVY_UAE_preview_large_ship_drydocks = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
@@ -3423,7 +3207,6 @@ COLDWAR_NAVY_UAE_preview_large_ship_drydocks = {
 					180 = {
 						is_owned_and_controlled_by = UAE
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				180 = {
@@ -3438,7 +3221,6 @@ COLDWAR_NAVY_UAE_preview_large_ship_drydocks = {
 					179 = {
 						is_owned_and_controlled_by = UAE
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				179 = {
@@ -3469,6 +3251,7 @@ COLDWAR_NAVY_UAE_complete_large_ship_drydocks = {
 		COLDWAR_NAVY_UAE_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_UAE_ready_large_ship_drydocks = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = UAE
@@ -3476,26 +3259,6 @@ COLDWAR_NAVY_UAE_complete_large_ship_drydocks = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_UAE_yard_quote > 0 }
 					check_variable = { gdp_total > 0 }
-					OR = {
-						AND = {
-							owns_state = 180
-							controls_state = 180
-							180 = {
-								is_owned_and_controlled_by = UAE
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 179
-							controls_state = 179
-							179 = {
-								is_owned_and_controlled_by = UAE
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -3504,7 +3267,6 @@ COLDWAR_NAVY_UAE_complete_large_ship_drydocks = {
 						180 = {
 							is_owned_and_controlled_by = UAE
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
@@ -3522,13 +3284,23 @@ COLDWAR_NAVY_UAE_complete_large_ship_drydocks = {
 						179 = {
 							is_owned_and_controlled_by = UAE
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					179 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_UAE_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}
@@ -3860,6 +3632,7 @@ COLDWAR_NAVY_USA_complete_naval_reform = {
 }
 
 COLDWAR_NAVY_USA_preview_combined_military_defense_industries = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			if = {
@@ -3868,7 +3641,6 @@ COLDWAR_NAVY_USA_preview_combined_military_defense_industries = {
 					controls_state = 773
 					773 = {
 						is_owned_and_controlled_by = USA
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				773 = {
@@ -3882,7 +3654,6 @@ COLDWAR_NAVY_USA_preview_combined_military_defense_industries = {
 					controls_state = 811
 					811 = {
 						is_owned_and_controlled_by = USA
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				811 = {
@@ -3896,7 +3667,6 @@ COLDWAR_NAVY_USA_preview_combined_military_defense_industries = {
 					controls_state = 768
 					768 = {
 						is_owned_and_controlled_by = USA
-						free_building_slots = { building = arms_factory size > 0 include_locked = no }
 					}
 				}
 				768 = {
@@ -3929,37 +3699,12 @@ COLDWAR_NAVY_USA_complete_combined_military_defense_industries = {
 		COLDWAR_NAVY_USA_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_USA_ready_combined_military_defense_industries = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = USA
 					controls_a_coastal_state = yes
 					NOT = { has_country_flag = MD_skip_treasury_cost }
-					OR = {
-						AND = {
-							owns_state = 773
-							controls_state = 773
-							773 = {
-								is_owned_and_controlled_by = USA
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 811
-							controls_state = 811
-							811 = {
-								is_owned_and_controlled_by = USA
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 768
-							controls_state = 768
-							768 = {
-								is_owned_and_controlled_by = USA
-								free_building_slots = { building = arms_factory size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -3967,7 +3712,6 @@ COLDWAR_NAVY_USA_complete_combined_military_defense_industries = {
 						controls_state = 773
 						773 = {
 							is_owned_and_controlled_by = USA
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					773 = {
@@ -3981,7 +3725,6 @@ COLDWAR_NAVY_USA_complete_combined_military_defense_industries = {
 						controls_state = 811
 						811 = {
 							is_owned_and_controlled_by = USA
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					811 = {
@@ -3995,10 +3738,17 @@ COLDWAR_NAVY_USA_complete_combined_military_defense_industries = {
 						controls_state = 768
 						768 = {
 							is_owned_and_controlled_by = USA
-							free_building_slots = { building = arms_factory size > 0 include_locked = no }
 						}
 					}
 					768 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 					}
@@ -4094,6 +3844,7 @@ COLDWAR_NAVY_USA_complete_naval_bases = {
 		COLDWAR_NAVY_USA_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_USA_ready_naval_bases = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = USA
@@ -4101,41 +3852,6 @@ COLDWAR_NAVY_USA_complete_naval_bases = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_USA_port_quote > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_USA_port_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 811
-							controls_state = 811
-							controls_province = 9671
-							ROOT = { controls_province = 9671 }
-							811 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 9671 }
-							}
-						}
-						AND = {
-							owns_state = 811
-							controls_state = 811
-							controls_province = 9814
-							ROOT = { controls_province = 9814 }
-							811 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 9814 }
-							}
-						}
-						AND = {
-							owns_state = 767
-							controls_state = 767
-							controls_province = 6732
-							ROOT = { controls_province = 6732 }
-							767 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = naval_base size > 0 province = 6732 }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -4255,6 +3971,7 @@ COLDWAR_NAVY_USA_complete_surface_ships = {
 }
 
 COLDWAR_NAVY_USA_preview_dockyards = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_2_quote }
@@ -4267,7 +3984,6 @@ COLDWAR_NAVY_USA_preview_dockyards = {
 					773 = {
 						is_owned_and_controlled_by = USA
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 1 include_locked = no }
 					}
 				}
 				773 = {
@@ -4282,7 +3998,6 @@ COLDWAR_NAVY_USA_preview_dockyards = {
 					811 = {
 						is_owned_and_controlled_by = USA
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 1 include_locked = no }
 					}
 				}
 				811 = {
@@ -4297,7 +4012,6 @@ COLDWAR_NAVY_USA_preview_dockyards = {
 					768 = {
 						is_owned_and_controlled_by = USA
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 1 include_locked = no }
 					}
 				}
 				768 = {
@@ -4328,6 +4042,7 @@ COLDWAR_NAVY_USA_complete_dockyards = {
 		COLDWAR_NAVY_USA_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_USA_ready_dockyards = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = USA
@@ -4335,35 +4050,6 @@ COLDWAR_NAVY_USA_complete_dockyards = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_USA_yard_2_quote > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_USA_yard_2_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 773
-							controls_state = 773
-							773 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 1 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 811
-							controls_state = 811
-							811 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 1 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 768
-							controls_state = 768
-							768 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 1 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -4372,7 +4058,6 @@ COLDWAR_NAVY_USA_complete_dockyards = {
 						773 = {
 							is_owned_and_controlled_by = USA
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 1 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_2_quote }
@@ -4390,7 +4075,6 @@ COLDWAR_NAVY_USA_complete_dockyards = {
 						811 = {
 							is_owned_and_controlled_by = USA
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 1 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_2_quote }
@@ -4408,13 +4092,23 @@ COLDWAR_NAVY_USA_complete_dockyards = {
 						768 = {
 							is_owned_and_controlled_by = USA
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 1 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_2_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					768 = {
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = dockyard level = 2 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_2_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 2
 						add_building_construction = { type = dockyard level = 2 instant_build = yes }
 					}
@@ -4551,6 +4245,7 @@ COLDWAR_NAVY_USA_complete_light_helicopter_operators = {
 }
 
 COLDWAR_NAVY_USA_preview_large_ship_drydocks = {
+	# IMPERIA COLD WAR — B6 24.11.2026: MD build preview: no free-slot precondition
 	effect_tooltip = {
 		effect_tooltip = {
 			set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_quote }
@@ -4563,7 +4258,6 @@ COLDWAR_NAVY_USA_preview_large_ship_drydocks = {
 					773 = {
 						is_owned_and_controlled_by = USA
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				773 = {
@@ -4578,7 +4272,6 @@ COLDWAR_NAVY_USA_preview_large_ship_drydocks = {
 					811 = {
 						is_owned_and_controlled_by = USA
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				811 = {
@@ -4593,7 +4286,6 @@ COLDWAR_NAVY_USA_preview_large_ship_drydocks = {
 					768 = {
 						is_owned_and_controlled_by = USA
 						is_coastal = yes
-						free_building_slots = { building = dockyard size > 0 include_locked = no }
 					}
 				}
 				768 = {
@@ -4624,6 +4316,7 @@ COLDWAR_NAVY_USA_complete_large_ship_drydocks = {
 		COLDWAR_NAVY_USA_quote_prices = yes
 		if = {
 			limit = { COLDWAR_NAVY_USA_ready_large_ship_drydocks = yes }
+			# IMPERIA COLD WAR — B6 24.11.2026: MD build: shared slot added in the effect, no free-slot precondition
 			if = {
 				limit = {
 					tag = USA
@@ -4631,35 +4324,6 @@ COLDWAR_NAVY_USA_complete_large_ship_drydocks = {
 					NOT = { has_country_flag = MD_skip_treasury_cost }
 					check_variable = { COLDWAR_NAVY_USA_yard_quote > 0 }
 					check_variable = { var = treasury value = COLDWAR_NAVY_USA_yard_quote compare = greater_than_or_equals }
-					OR = {
-						AND = {
-							owns_state = 773
-							controls_state = 773
-							773 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 811
-							controls_state = 811
-							811 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-						AND = {
-							owns_state = 768
-							controls_state = 768
-							768 = {
-								is_owned_and_controlled_by = USA
-								is_coastal = yes
-								free_building_slots = { building = dockyard size > 0 include_locked = no }
-							}
-						}
-					}
 				}
 				if = {
 					limit = {
@@ -4668,7 +4332,6 @@ COLDWAR_NAVY_USA_complete_large_ship_drydocks = {
 						773 = {
 							is_owned_and_controlled_by = USA
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_quote }
@@ -4686,7 +4349,6 @@ COLDWAR_NAVY_USA_complete_large_ship_drydocks = {
 						811 = {
 							is_owned_and_controlled_by = USA
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_quote }
@@ -4704,13 +4366,23 @@ COLDWAR_NAVY_USA_complete_large_ship_drydocks = {
 						768 = {
 							is_owned_and_controlled_by = USA
 							is_coastal = yes
-							free_building_slots = { building = dockyard size > 0 include_locked = no }
 						}
 					}
 					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_quote }
 					multiply_temp_variable = { treasury_change = -1 }
 					modify_treasury_effect = yes
 					768 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = dockyard level = 1 instant_build = yes }
+					}
+				}
+				# IMPERIA COLD WAR — B6 24.11.2026: MD build: no named site held, use any owned coastal state
+				else = {
+					set_temp_variable = { treasury_change = COLDWAR_NAVY_USA_yard_quote }
+					multiply_temp_variable = { treasury_change = -1 }
+					modify_treasury_effect = yes
+					random_owned_controlled_state = {
+						limit = { is_coastal = yes }
 						add_extra_state_shared_building_slots = 1
 						add_building_construction = { type = dockyard level = 1 instant_build = yes }
 					}

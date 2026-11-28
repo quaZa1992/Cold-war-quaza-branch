@@ -1,0 +1,50 @@
+# IMPERIA COLD WAR — Namibian transition eligibility.
+COLDWAR_SAF_DEFENCE_transition_offer_is_live = {
+ has_country_flag = { flag = COLDWAR_SAF_DEFENCE_transition_offer_pending days < 180 }
+}
+COLDWAR_SAF_DEFENCE_PLAN_programme_can_spend = {
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_DEFENCE_PLAN_programme_active_tt
+  NOT = { has_country_flag = COLDWAR_SAF_DEFENCE_PLAN_suspended }
+ }
+ hidden_trigger = { NOT = { has_country_flag = MD_skip_treasury_cost } }
+}
+COLDWAR_SAF_DEFENCE_PLAN_weapons_permitted = {
+ has_dlc = "Gotterdammerung"
+ custom_trigger_tooltip = {
+  tooltip = COLDWAR_SAF_DEFENCE_PLAN_weapons_permitted_tt
+  nuclear_grant_allowed = yes
+ }
+}
+COLDWAR_SAF_DEFENCE_PLAN_weapons_ready = {
+ COLDWAR_SAF_DEFENCE_PLAN_weapons_permitted = yes
+ is_special_project_completed = sp:sp_nuclear_warhead_program
+}
+COLDWAR_SAF_DEFENCE_PLAN_can_commission_first = {
+ COLDWAR_SAF_DEFENCE_PLAN_weapons_ready = yes
+ COLDWAR_SAF_DEFENCE_PLAN_programme_can_spend = yes
+ if = {
+  limit = { hidden_trigger = { NOT = { has_country_flag = COLDWAR_SAF_DEFENCE_PLAN_first_issued } } }
+  custom_trigger_tooltip = {
+   tooltip = COLDWAR_SAF_DEFENCE_PLAN_programme_funds_tt
+   NOT = { check_variable = { treasury < 0.2 } }
+  }
+ }
+}
+COLDWAR_SAF_DEFENCE_PLAN_can_commission_arsenal = {
+ COLDWAR_SAF_DEFENCE_PLAN_weapons_ready = yes
+ COLDWAR_SAF_DEFENCE_PLAN_programme_can_spend = yes
+ # Old saves can have a completed first focus with a pending delivery.
+ hidden_trigger = { has_country_flag = COLDWAR_SAF_DEFENCE_PLAN_first_issued }
+ if = {
+  limit = { hidden_trigger = { check_variable = { COLDWAR_SAF_DEFENCE_PLAN_issued < 6 } } }
+  custom_trigger_tooltip = {
+   tooltip = COLDWAR_SAF_DEFENCE_PLAN_programme_funds_tt
+   set_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_batch = 6 }
+   subtract_from_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_batch = COLDWAR_SAF_DEFENCE_PLAN_issued }
+   clamp_temp_variable = { var = COLDWAR_SAF_DEFENCE_PLAN_batch min = 0 max = 5 }
+   multiply_temp_variable = { COLDWAR_SAF_DEFENCE_PLAN_batch = 0.1 }
+   check_variable = { var = treasury value = COLDWAR_SAF_DEFENCE_PLAN_batch compare = greater_than_or_equals }
+  }
+ }
+}

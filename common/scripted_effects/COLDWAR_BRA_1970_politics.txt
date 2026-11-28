@@ -1,4 +1,5 @@
 # IMPERIA COLD WAR — Brazil 1970 party identity runtime effects.
+# IMPERIA COLD WAR — No calendar leader changes, 20.11.2026: party leaders change only on a change of ruling party, a death or a player decision.
 # Native elections continue to choose the MD ruling slot; these helpers register identities.
 
 COLDWAR_BRA_init_politics = {
@@ -295,15 +296,24 @@ COLDWAR_BRA_1970_install_party_leader = {
 			clr_country_flag = no_leader_change
 		}
 		else = { update_set_politics = yes }
-		if = { limit = { check_variable = { ruling_party = 22 } date < 1974.3.15 NOT = { has_country_leader = { name = "Emilio Garrastazu Medici" ruling_only = yes } } }
+		# IMPERIA COLD WAR — No calendar leader changes, 20.11.2026.
+		# A sitting ARENA president or PCB secretary-general stays in office. A successor is chosen only when the party
+		# takes power, when none of its leaders is in office (death), or for ARENA by the player's succession decision.
+		if = { limit = { check_variable = { ruling_party = 22 } OR = { has_country_flag = COLDWAR_BRA_1970_arena_succession_chosen AND = { has_variable = COLDWAR_BRA_1970_leader_last_party NOT = { check_variable = { COLDWAR_BRA_1970_leader_last_party = 22 } } } AND = { NOT = { has_country_leader = { name = "Emilio Garrastazu Medici" ruling_only = yes } } NOT = { has_country_leader = { name = "Ernesto Geisel" ruling_only = yes } } NOT = { has_country_leader = { name = "João Figueiredo" ruling_only = yes } } } } }
+			set_country_flag = COLDWAR_BRA_1970_arena_president_open
+		}
+		if = { limit = { check_variable = { ruling_party = 4 } OR = { AND = { has_variable = COLDWAR_BRA_1970_leader_last_party NOT = { check_variable = { COLDWAR_BRA_1970_leader_last_party = 4 } } } AND = { NOT = { has_country_leader = { name = "Luís Carlos Prestes" ruling_only = yes } } NOT = { has_country_leader = { name = "Giocondo Dias" ruling_only = yes } } NOT = { has_country_leader = { name = "Salomão Malina" ruling_only = yes } } NOT = { has_country_leader = { name = "Roberto Freire" ruling_only = yes } } } } }
+			set_country_flag = COLDWAR_BRA_1970_pcb_leader_open
+		}
+		if = { limit = { check_variable = { ruling_party = 22 } has_country_flag = COLDWAR_BRA_1970_arena_president_open date < 1974.3.15 NOT = { has_country_leader = { name = "Emilio Garrastazu Medici" ruling_only = yes } } }
 			create_country_leader = { name = "Emilio Garrastazu Medici" picture = "gfx/Leaders/BRA/BRA_Coldwar_Emilio_Garrastazu_Medici.dds" ideology = Nat_Autocracy traits = { } }
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { check_variable = { ruling_party = 22 } date > 1974.3.14 date < 1979.3.15 NOT = { has_country_leader = { name = "Ernesto Geisel" ruling_only = yes } } }
-			create_country_leader = { name = "Ernesto Geisel" picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds" ideology = Nat_Autocracy traits = { } }
+		if = { limit = { check_variable = { ruling_party = 22 } has_country_flag = COLDWAR_BRA_1970_arena_president_open date > 1974.3.14 date < 1979.3.15 NOT = { has_country_leader = { name = "Ernesto Geisel" ruling_only = yes } } }
+			create_country_leader = { name = "Ernesto Geisel" picture = "gfx/leaders/BRA/1970/COLDWAR_BRA_1970_geisel.dds" ideology = Nat_Autocracy traits = { } }
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { check_variable = { ruling_party = 22 } date > 1979.3.14 NOT = { has_country_leader = { name = "João Figueiredo" ruling_only = yes } } }
+		if = { limit = { check_variable = { ruling_party = 22 } has_country_flag = COLDWAR_BRA_1970_arena_president_open date > 1979.3.14 NOT = { has_country_leader = { name = "João Figueiredo" ruling_only = yes } } }
 			create_country_leader = { name = "João Figueiredo" picture = "gfx/leaders/mdcw_historical_pool/BRA_joao_figueiredo.dds" ideology = Nat_Autocracy traits = { } }
 			set_correct_ideology_trait = yes
 		}
@@ -338,25 +348,25 @@ COLDWAR_BRA_1970_install_party_leader = {
 			create_country_leader = {
 				name = "Ulysses Guimarães"
 				ideology = liberalism
-				picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+				picture = "gfx/leaders/BRA/1970/COLDWAR_BRA_1970_ulysses.dds"
 				traits = { }
 			}
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { date < 1985.4.22 check_variable = { ruling_party = 2 } check_variable = { COLDWAR_BRA_1970_party_identity_2 = 2 } has_country_flag = COLDWAR_BRA_1970_party_pmdb_registered NOT = { has_country_leader = { name = "Tancredo Neves" ruling_only = yes } } }
+		if = { limit = { date < 1985.4.22 NOT = { has_country_flag = COLDWAR_BRA_1970_choose_ulysses } check_variable = { ruling_party = 2 } check_variable = { COLDWAR_BRA_1970_party_identity_2 = 2 } has_country_flag = COLDWAR_BRA_1970_party_pmdb_registered NOT = { has_country_leader = { name = "Tancredo Neves" ruling_only = yes } } }
 			create_country_leader = {
 				name = "Tancredo Neves"
 				ideology = liberalism
-				picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+				picture = "gfx/leaders/BRA/1970/COLDWAR_BRA_1970_tancredo.dds"
 				traits = { }
 			}
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { date > 1985.4.21 check_variable = { ruling_party = 2 } check_variable = { COLDWAR_BRA_1970_party_identity_2 = 2 } has_country_flag = COLDWAR_BRA_1970_party_pmdb_registered NOT = { has_country_leader = { name = "Ulysses Guimarães" ruling_only = yes } } }
+		if = { limit = { OR = { date > 1985.4.21 has_country_flag = COLDWAR_BRA_1970_choose_ulysses } check_variable = { ruling_party = 2 } check_variable = { COLDWAR_BRA_1970_party_identity_2 = 2 } has_country_flag = COLDWAR_BRA_1970_party_pmdb_registered NOT = { has_country_leader = { name = "Ulysses Guimarães" ruling_only = yes } } }
 			create_country_leader = {
 				name = "Ulysses Guimarães"
 				ideology = liberalism
-				picture = "gfx/interface/coldwar_politburo/portrait_unknown.dds"
+				picture = "gfx/leaders/BRA/1970/COLDWAR_BRA_1970_ulysses.dds"
 				traits = { }
 			}
 			set_correct_ideology_trait = yes
@@ -424,7 +434,7 @@ COLDWAR_BRA_1970_install_party_leader = {
 			}
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { date < 1980.1.1 check_variable = { ruling_party = 4 } OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Luís Carlos Prestes" ruling_only = yes } } }
+		if = { limit = { date < 1980.1.1 check_variable = { ruling_party = 4 } has_country_flag = COLDWAR_BRA_1970_pcb_leader_open OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Luís Carlos Prestes" ruling_only = yes } } }
 			create_country_leader = {
 				name = "Luís Carlos Prestes"
 				ideology = communist_state
@@ -433,7 +443,7 @@ COLDWAR_BRA_1970_install_party_leader = {
 			}
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { date > 1979.12.31 date < 1987.6.17 check_variable = { ruling_party = 4 } OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Giocondo Dias" ruling_only = yes } } }
+		if = { limit = { date > 1979.12.31 date < 1987.6.17 check_variable = { ruling_party = 4 } has_country_flag = COLDWAR_BRA_1970_pcb_leader_open OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Giocondo Dias" ruling_only = yes } } }
 			create_country_leader = {
 				name = "Giocondo Dias"
 				ideology = communist_state
@@ -442,7 +452,7 @@ COLDWAR_BRA_1970_install_party_leader = {
 			}
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { date > 1987.6.16 date < 1991.6.1 check_variable = { ruling_party = 4 } OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Salomão Malina" ruling_only = yes } } }
+		if = { limit = { date > 1987.6.16 date < 1991.6.1 check_variable = { ruling_party = 4 } has_country_flag = COLDWAR_BRA_1970_pcb_leader_open OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Salomão Malina" ruling_only = yes } } }
 			create_country_leader = {
 				name = "Salomão Malina"
 				ideology = communist_state
@@ -451,7 +461,7 @@ COLDWAR_BRA_1970_install_party_leader = {
 			}
 			set_correct_ideology_trait = yes
 		}
-		if = { limit = { date > 1991.5.31 check_variable = { ruling_party = 4 } OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Roberto Freire" ruling_only = yes } } }
+		if = { limit = { date > 1991.5.31 check_variable = { ruling_party = 4 } has_country_flag = COLDWAR_BRA_1970_pcb_leader_open OR = { 	has_country_flag = COLDWAR_BRA_1970_party_pcb_legalized 	has_country_flag = COLDWAR_BRA_1970_pcb_alternative_accession } NOT = { has_country_leader = { name = "Roberto Freire" ruling_only = yes } } }
 			create_country_leader = {
 				name = "Roberto Freire"
 				ideology = communist_state
@@ -494,6 +504,10 @@ COLDWAR_BRA_1970_install_party_leader = {
 		if = { limit = { has_dlc = "Trial of Allegiance" has_country_leader = { name = "Luís Carlos Prestes" ruling_only = yes } }
 			set_country_leader_portrait = { portrait = GFX_portrait_BRA_luis_carlos_prestes }
 		}
+		clr_country_flag = COLDWAR_BRA_1970_arena_president_open
+		clr_country_flag = COLDWAR_BRA_1970_pcb_leader_open
+		clr_country_flag = COLDWAR_BRA_1970_arena_succession_chosen
+		set_variable = { COLDWAR_BRA_1970_leader_last_party = ruling_party }
 	}
 }
 

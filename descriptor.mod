@@ -1,4 +1,3 @@
-# IMPERIA COLD WAR — Steam Workshop publication metadata.
 version="2.0.4"
 name="MD Cold War"
 tags={
@@ -84,5 +83,5 @@ replace_path="common/doctrines/subdoctrines/sea"
 replace_path="common/doctrines/tracks"
 replace_path="common/bookmarks"
 picture="thumbnail.png"
-supported_version="1.19.4.*"
+supported_version="1.20.1.0"
 remote_file_id="3830909060"

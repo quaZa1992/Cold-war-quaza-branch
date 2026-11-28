@@ -1,3 +1,4 @@
+# IMPERIA COLD WAR — 20.11.2026: bloc founding removed; only the four fixed blocs remain.
 # IMPERIA CW — Cold War: triggers — scripted triggers.
 ###############################################################
 # MD Cold War - Cold War Equilibrium
@@ -10,10 +11,17 @@ mdcw_cw_is_active = {
 }
 
 mdcw_cw_is_bloc_leader = {
+	# COLDWAR CW v4: the leader of one of the fixed blocs
 	OR = {
-		original_tag = USA
-		original_tag = SOV
-		original_tag = CHI
+		has_country_flag = mdcw_cw_bloc_leader
+		AND = {
+			NOT = { has_global_flag = COLDWAR_cw_v4_leaders_set }
+			OR = {
+				original_tag = USA
+				original_tag = SOV
+				original_tag = CHI
+			}
+		}
 	}
 }
 
@@ -62,6 +70,8 @@ mdcw_cw_has_active_program_to_prev = {
 # Country scope. The ruling party may join the Western Bloc.
 mdcw_cw_party_fits_west = {
 	OR = {
+		check_variable = { ruling_party = 7 } # COLDWAR CW v4 overlap
+		check_variable = { ruling_party = 18 } # COLDWAR CW v4 overlap
 		check_variable = { ruling_party = 0 }
 		check_variable = { ruling_party = 1 }
 		check_variable = { ruling_party = 2 }
@@ -80,16 +90,29 @@ mdcw_cw_party_fits_west = {
 
 # Country scope. The ruling party is a core party of the Western Bloc.
 mdcw_cw_party_core_west = {
+	# COLDWAR CW v4 wide: parties that fully or half fit the bloc's outlook
 	OR = {
+		check_variable = { ruling_party = 0 }
 		check_variable = { ruling_party = 1 }
 		check_variable = { ruling_party = 2 }
 		check_variable = { ruling_party = 3 }
+		check_variable = { ruling_party = 10 }
+		check_variable = { ruling_party = 13 }
+		check_variable = { ruling_party = 14 }
+		check_variable = { ruling_party = 15 }
+		check_variable = { ruling_party = 16 }
+		check_variable = { ruling_party = 17 }
+		check_variable = { ruling_party = 18 }
+		check_variable = { ruling_party = 22 }
+		check_variable = { ruling_party = 23 }
 	}
 }
 
 # Country scope. The ruling party may join the Soviet Bloc.
 mdcw_cw_party_fits_soviet = {
 	OR = {
+		check_variable = { ruling_party = 13 } # COLDWAR CW v4 overlap
+		check_variable = { ruling_party = 22 } # COLDWAR CW v4 overlap
 		# IMPERIA COLD WAR — The Unbreakable Union BEGIN
 		check_variable = { global.COLDWAR_SU_bloc = 1 }
 		check_variable = { global.COLDWAR_SU_bloc = 3 }
@@ -105,17 +128,25 @@ mdcw_cw_party_fits_soviet = {
 
 # Country scope. The ruling party is a core party of the Soviet Bloc.
 mdcw_cw_party_core_soviet = {
+	# COLDWAR CW v4 wide: parties that fully or half fit the bloc's outlook
 	OR = {
 		check_variable = { ruling_party = 4 }
 		check_variable = { ruling_party = 5 }
+		check_variable = { ruling_party = 6 }
 		check_variable = { ruling_party = 7 }
+		check_variable = { ruling_party = 13 }
+		check_variable = { ruling_party = 18 }
 		check_variable = { ruling_party = 19 }
+		check_variable = { ruling_party = 20 }
+		check_variable = { ruling_party = 22 }
 	}
 }
 
 # Country scope. The ruling party may join the Beijing Camp.
 mdcw_cw_party_fits_beijing = {
 	OR = {
+		check_variable = { ruling_party = 13 } # COLDWAR CW v4 overlap
+		check_variable = { ruling_party = 22 } # COLDWAR CW v4 overlap
 		check_variable = { ruling_party = 4 }
 		check_variable = { ruling_party = 5 }
 		check_variable = { ruling_party = 7 }
@@ -126,33 +157,26 @@ mdcw_cw_party_fits_beijing = {
 
 # Country scope. The ruling party is a core party of the Beijing Camp.
 mdcw_cw_party_core_beijing = {
+	# COLDWAR CW v4 wide: parties that fully or half fit the bloc's outlook
 	OR = {
 		check_variable = { ruling_party = 4 }
 		check_variable = { ruling_party = 5 }
+		check_variable = { ruling_party = 6 }
+		check_variable = { ruling_party = 7 }
+		check_variable = { ruling_party = 13 }
+		check_variable = { ruling_party = 18 }
 		check_variable = { ruling_party = 19 }
+		check_variable = { ruling_party = 20 }
+		check_variable = { ruling_party = 22 }
 	}
 }
 
 # Country scope. Our government fits the bloc we are aligned with (Non-Aligned, bloc
 # leaders and subjects always fit).
 mdcw_cw_fits_own_bloc = {
-	OR = {
-		check_variable = { mdcw_cw_alignment = 0 }
-		mdcw_cw_is_bloc_leader = yes
-		is_subject = yes
-		AND = {
-			check_variable = { mdcw_cw_alignment = 1 }
-			mdcw_cw_party_fits_west = yes
-		}
-		AND = {
-			check_variable = { mdcw_cw_alignment = 2 }
-			mdcw_cw_party_fits_soviet = yes
-		}
-		AND = {
-			check_variable = { mdcw_cw_alignment = 3 }
-			mdcw_cw_party_fits_beijing = yes
-		}
-	}
+	# COLDWAR CW v4 open: no government is estranged for its ideology any more;
+	# a bloc of mixed outlooks is weaker instead (cohesion).
+	always = yes
 }
 
 mdcw_cw_can_change_alignment = {
@@ -234,10 +258,7 @@ mdcw_cw_can_join_west = {
 		tooltip = mdcw_cw_tt_not_current
 		NOT = { check_variable = { mdcw_cw_alignment = 1 } }
 	}
-	custom_trigger_tooltip = {
-		tooltip = mdcw_cw_tt_party_west
-		mdcw_cw_party_fits_west = yes
-	}
+	# COLDWAR CW v4 open: open to every government
 	custom_trigger_tooltip = {
 		tooltip = mdcw_cw_tt_not_neutral
 		NOT = { has_idea = mdcw_ni_armed_neutrality }
@@ -251,10 +272,7 @@ mdcw_cw_can_join_soviet = {
 		tooltip = mdcw_cw_tt_not_current
 		NOT = { check_variable = { mdcw_cw_alignment = 2 } }
 	}
-	custom_trigger_tooltip = {
-		tooltip = mdcw_cw_tt_party_soviet
-		mdcw_cw_party_fits_soviet = yes
-	}
+	# COLDWAR CW v4 open: open to every government
 	custom_trigger_tooltip = {
 		tooltip = mdcw_cw_tt_not_neutral
 		NOT = { has_idea = mdcw_ni_armed_neutrality }
@@ -268,10 +286,7 @@ mdcw_cw_can_join_beijing = {
 		tooltip = mdcw_cw_tt_not_current
 		NOT = { check_variable = { mdcw_cw_alignment = 3 } }
 	}
-	custom_trigger_tooltip = {
-		tooltip = mdcw_cw_tt_party_beijing
-		mdcw_cw_party_fits_beijing = yes
-	}
+	# COLDWAR CW v4 open: open to every government
 	custom_trigger_tooltip = {
 		tooltip = mdcw_cw_tt_not_neutral
 		NOT = { has_idea = mdcw_ni_armed_neutrality }

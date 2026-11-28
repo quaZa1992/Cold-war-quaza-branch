@@ -1,4 +1,7 @@
+# IMPERIA COLD WAR — Update 24.11.2026: partners keep their own agreement spirits (COLDWAR_TUR_1970_SYNC), no foreign-scope effects.
+# IMPERIA COLD WAR — Update 24.11.2026: D-8 partners join by invitation event (COLDWAR_TUR_D8), not directly.
 # IMPERIA COLD WAR — Turkey 1970 diplomacy and bilateral consent.
+# IMPERIA COLD WAR update 21.11.2026: numeric literals without a leading zero (.003) written as 0.003; the parser reports them as malformed tokens.
 COLDWAR_TUR_1970_bonn_protocol_preview = {
 	effect_tooltip = {
 		custom_effect_tooltip = COLDWAR_TUR_1970_if_accept
@@ -92,18 +95,7 @@ COLDWAR_TUR_1970_bonn_protocol_accept = {
 		modify_treasury_effect = yes
 		add_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_GER
 		clr_country_flag = COLDWAR_TUR_1970_pending_bonn_protocol
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_bonn_protocol_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_bonn_protocol
-			clr_country_flag = COLDWAR_TUR_1970_pending_bonn_protocol
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.10 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_bonn_protocol_decline = {
@@ -113,10 +105,7 @@ COLDWAR_TUR_1970_bonn_protocol_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_bonn_protocol
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_bonn_protocol
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_bonn_protocol
-			set_country_flag = COLDWAR_TUR_1970_declined_bonn_protocol
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.11 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_bonn_protocol_reconcile = {
@@ -133,27 +122,21 @@ COLDWAR_TUR_1970_bonn_protocol_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_TUR
 		}
-		GER = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_agreement_bonn_protocol_GER
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_GER
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_TUR
-		if = {
-			limit = {
-				country_exists = GER
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = GER
 			GER = {
-				remove_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_GER
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_agreement_bonn_protocol_GER NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_bonn_protocol COLDWAR_TUR_1970_pair_bonn_protocol_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_bonn_protocol_GER } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_bonn_protocol COLDWAR_TUR_1970_pair_bonn_protocol_clear = yes } }
+				}
 			}
 		}
+		GER = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_soviet_projects_preview = {
@@ -277,34 +260,7 @@ COLDWAR_TUR_1970_soviet_projects_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_SOV
 		clr_country_flag = COLDWAR_TUR_1970_pending_soviet_projects
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_soviet_projects_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			156 = {
-				add_extra_state_shared_building_slots = 1
-			}
-			156 = {
-				add_building_construction = {
-					type = industrial_complex
-					level = 1
-					instant_build = yes
-				}
-			}
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_soviet_projects_2
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_soviet_projects
-			clr_country_flag = COLDWAR_TUR_1970_pending_soviet_projects
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.12 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_soviet_projects_decline = {
@@ -314,10 +270,7 @@ COLDWAR_TUR_1970_soviet_projects_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_soviet_projects
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_soviet_projects
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_soviet_projects
-			set_country_flag = COLDWAR_TUR_1970_declined_soviet_projects
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.13 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_soviet_projects_reconcile = {
@@ -334,27 +287,21 @@ COLDWAR_TUR_1970_soviet_projects_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_TUR
 		}
-		SOV = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_agreement_soviet_projects_SOV
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_SOV
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_TUR
-		if = {
-			limit = {
-				country_exists = SOV
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = SOV
 			SOV = {
-				remove_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_SOV
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_agreement_soviet_projects_SOV NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_soviet_projects COLDWAR_TUR_1970_pair_soviet_projects_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_soviet_projects_SOV } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_soviet_projects COLDWAR_TUR_1970_pair_soviet_projects_clear = yes } }
+				}
 			}
 		}
+		SOV = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_iraq_pipeline_preview = {
@@ -472,28 +419,7 @@ COLDWAR_TUR_1970_iraq_pipeline_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ
 		clr_country_flag = COLDWAR_TUR_1970_pending_iraq_pipeline
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_iraq_pipeline_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			161 = {
-				add_extra_state_shared_building_slots = 1
-			}
-			161 = {
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
-				}
-			}
-			add_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_iraq_pipeline
-			clr_country_flag = COLDWAR_TUR_1970_pending_iraq_pipeline
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.14 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_iraq_pipeline_decline = {
@@ -503,10 +429,7 @@ COLDWAR_TUR_1970_iraq_pipeline_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_iraq_pipeline
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_iraq_pipeline
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_iraq_pipeline
-			set_country_flag = COLDWAR_TUR_1970_declined_iraq_pipeline
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.15 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_iraq_pipeline_reconcile = {
@@ -523,27 +446,21 @@ COLDWAR_TUR_1970_iraq_pipeline_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_TUR
 		}
-		IRQ = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_TUR
-		if = {
-			limit = {
-				country_exists = IRQ
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = IRQ
 			IRQ = {
-				remove_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_iraq_pipeline COLDWAR_TUR_1970_pair_iraq_pipeline_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_iraq_pipeline COLDWAR_TUR_1970_pair_iraq_pipeline_clear = yes } }
+				}
 			}
 		}
+		IRQ = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_black_sea_gas_preview = {
@@ -649,28 +566,7 @@ COLDWAR_TUR_1970_black_sea_gas_accept = {
 		modify_treasury_effect = yes
 		add_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV
 		clr_country_flag = COLDWAR_TUR_1970_pending_black_sea_gas
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_black_sea_gas_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			158 = {
-				add_extra_state_shared_building_slots = 1
-			}
-			158 = {
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
-				}
-			}
-			add_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_black_sea_gas
-			clr_country_flag = COLDWAR_TUR_1970_pending_black_sea_gas
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.16 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_black_sea_gas_decline = {
@@ -680,10 +576,7 @@ COLDWAR_TUR_1970_black_sea_gas_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_black_sea_gas
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_black_sea_gas
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_black_sea_gas
-			set_country_flag = COLDWAR_TUR_1970_declined_black_sea_gas
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.17 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_black_sea_gas_reconcile = {
@@ -700,27 +593,21 @@ COLDWAR_TUR_1970_black_sea_gas_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_TUR
 		}
-		SOV = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_TUR
-		if = {
-			limit = {
-				country_exists = SOV
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = SOV
 			SOV = {
-				remove_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_black_sea_gas COLDWAR_TUR_1970_pair_black_sea_gas_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_black_sea_gas COLDWAR_TUR_1970_pair_black_sea_gas_clear = yes } }
+				}
 			}
 		}
+		SOV = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_aegean_talks_preview = {
@@ -816,18 +703,7 @@ COLDWAR_TUR_1970_aegean_talks_accept = {
 		modify_treasury_effect = yes
 		add_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_GRE
 		clr_country_flag = COLDWAR_TUR_1970_pending_aegean_talks
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_aegean_talks_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_aegean_talks
-			clr_country_flag = COLDWAR_TUR_1970_pending_aegean_talks
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.18 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_aegean_talks_decline = {
@@ -837,10 +713,7 @@ COLDWAR_TUR_1970_aegean_talks_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_aegean_talks
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_aegean_talks
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_aegean_talks
-			set_country_flag = COLDWAR_TUR_1970_declined_aegean_talks
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.19 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_aegean_talks_reconcile = {
@@ -857,27 +730,21 @@ COLDWAR_TUR_1970_aegean_talks_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_TUR
 		}
-		GRE = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_agreement_aegean_talks_GRE
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_GRE
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_TUR
-		if = {
-			limit = {
-				country_exists = GRE
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = GRE
 			GRE = {
-				remove_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_GRE
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_agreement_aegean_talks_GRE NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_aegean_talks COLDWAR_TUR_1970_pair_aegean_talks_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_aegean_talks_GRE } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_aegean_talks COLDWAR_TUR_1970_pair_aegean_talks_clear = yes } }
+				}
 			}
 		}
+		GRE = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_d8_pak_preview = {
@@ -998,24 +865,7 @@ COLDWAR_TUR_1970_d8_pak_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_d8_PAK_partner
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_pak
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_d8_pak_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_d8_pak_0
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_d8_PAK_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_d8_pak
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_pak
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.20 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_pak_decline = {
@@ -1025,10 +875,7 @@ COLDWAR_TUR_1970_d8_pak_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_d8_pak
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_pak
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_pak
-			set_country_flag = COLDWAR_TUR_1970_declined_d8_pak
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.21 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_pak_reconcile = {
@@ -1045,27 +892,21 @@ COLDWAR_TUR_1970_d8_pak_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_d8_PAK_TUR
 		}
-		PAK = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_d8_PAK_partner
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_d8_PAK_partner
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_d8_PAK_TUR
-		if = {
-			limit = {
-				country_exists = PAK
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = PAK
 			PAK = {
-				remove_ideas = COLDWAR_TUR_1970_d8_PAK_partner
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_d8_PAK_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_pak COLDWAR_TUR_1970_pair_d8_pak_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_d8_PAK_partner } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_pak COLDWAR_TUR_1970_pair_d8_pak_clear = yes } }
+				}
 			}
 		}
+		PAK = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_d8_egy_preview = {
@@ -1186,24 +1027,7 @@ COLDWAR_TUR_1970_d8_egy_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_d8_EGY_partner
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_egy
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_d8_egy_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_d8_egy_0
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_d8_EGY_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_d8_egy
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_egy
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.22 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_egy_decline = {
@@ -1213,10 +1037,7 @@ COLDWAR_TUR_1970_d8_egy_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_d8_egy
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_egy
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_egy
-			set_country_flag = COLDWAR_TUR_1970_declined_d8_egy
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.23 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_egy_reconcile = {
@@ -1233,27 +1054,21 @@ COLDWAR_TUR_1970_d8_egy_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_d8_EGY_TUR
 		}
-		EGY = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_d8_EGY_partner
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_d8_EGY_partner
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_d8_EGY_TUR
-		if = {
-			limit = {
-				country_exists = EGY
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = EGY
 			EGY = {
-				remove_ideas = COLDWAR_TUR_1970_d8_EGY_partner
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_d8_EGY_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_egy COLDWAR_TUR_1970_pair_d8_egy_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_d8_EGY_partner } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_egy COLDWAR_TUR_1970_pair_d8_egy_clear = yes } }
+				}
 			}
 		}
+		EGY = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_d8_per_preview = {
@@ -1374,24 +1189,7 @@ COLDWAR_TUR_1970_d8_per_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_d8_PER_partner
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_per
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_d8_per_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_d8_per_0
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_d8_PER_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_d8_per
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_per
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.24 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_per_decline = {
@@ -1401,10 +1199,7 @@ COLDWAR_TUR_1970_d8_per_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_d8_per
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_per
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_per
-			set_country_flag = COLDWAR_TUR_1970_declined_d8_per
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.25 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_per_reconcile = {
@@ -1421,27 +1216,21 @@ COLDWAR_TUR_1970_d8_per_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_d8_PER_TUR
 		}
-		PER = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_d8_PER_partner
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_d8_PER_partner
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_d8_PER_TUR
-		if = {
-			limit = {
-				country_exists = PER
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = PER
 			PER = {
-				remove_ideas = COLDWAR_TUR_1970_d8_PER_partner
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_d8_PER_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_per COLDWAR_TUR_1970_pair_d8_per_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_d8_PER_partner } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_per COLDWAR_TUR_1970_pair_d8_per_clear = yes } }
+				}
 			}
 		}
+		PER = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_d8_ban_preview = {
@@ -1562,24 +1351,7 @@ COLDWAR_TUR_1970_d8_ban_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_d8_BAN_partner
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_ban
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_d8_ban_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_d8_ban_0
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_d8_BAN_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_d8_ban
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_ban
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.26 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_ban_decline = {
@@ -1589,10 +1361,7 @@ COLDWAR_TUR_1970_d8_ban_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_d8_ban
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_ban
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_ban
-			set_country_flag = COLDWAR_TUR_1970_declined_d8_ban
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.27 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_ban_reconcile = {
@@ -1609,27 +1378,21 @@ COLDWAR_TUR_1970_d8_ban_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_d8_BAN_TUR
 		}
-		BAN = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_d8_BAN_partner
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_d8_BAN_partner
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_d8_BAN_TUR
-		if = {
-			limit = {
-				country_exists = BAN
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = BAN
 			BAN = {
-				remove_ideas = COLDWAR_TUR_1970_d8_BAN_partner
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_d8_BAN_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ban COLDWAR_TUR_1970_pair_d8_ban_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_d8_BAN_partner } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ban COLDWAR_TUR_1970_pair_d8_ban_clear = yes } }
+				}
 			}
 		}
+		BAN = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_d8_ind_preview = {
@@ -1750,24 +1513,7 @@ COLDWAR_TUR_1970_d8_ind_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_d8_IND_partner
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_ind
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_d8_ind_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_d8_ind_0
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_d8_IND_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_d8_ind
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_ind
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.28 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_ind_decline = {
@@ -1777,10 +1523,7 @@ COLDWAR_TUR_1970_d8_ind_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_d8_ind
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_ind
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_ind
-			set_country_flag = COLDWAR_TUR_1970_declined_d8_ind
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.29 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_ind_reconcile = {
@@ -1797,27 +1540,21 @@ COLDWAR_TUR_1970_d8_ind_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_d8_IND_TUR
 		}
-		IND = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_d8_IND_partner
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_d8_IND_partner
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_d8_IND_TUR
-		if = {
-			limit = {
-				country_exists = IND
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = IND
 			IND = {
-				remove_ideas = COLDWAR_TUR_1970_d8_IND_partner
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_d8_IND_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ind COLDWAR_TUR_1970_pair_d8_ind_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_d8_IND_partner } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ind COLDWAR_TUR_1970_pair_d8_ind_clear = yes } }
+				}
 			}
 		}
+		IND = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_d8_may_preview = {
@@ -1938,24 +1675,7 @@ COLDWAR_TUR_1970_d8_may_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_d8_MAY_partner
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_may
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_d8_may_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_d8_may_0
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_d8_MAY_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_d8_may
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_may
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.30 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_may_decline = {
@@ -1965,10 +1685,7 @@ COLDWAR_TUR_1970_d8_may_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_d8_may
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_may
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_may
-			set_country_flag = COLDWAR_TUR_1970_declined_d8_may
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.31 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_may_reconcile = {
@@ -1985,27 +1702,21 @@ COLDWAR_TUR_1970_d8_may_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_d8_MAY_TUR
 		}
-		MAY = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_d8_MAY_partner
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_d8_MAY_partner
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_d8_MAY_TUR
-		if = {
-			limit = {
-				country_exists = MAY
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = MAY
 			MAY = {
-				remove_ideas = COLDWAR_TUR_1970_d8_MAY_partner
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_d8_MAY_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_may COLDWAR_TUR_1970_pair_d8_may_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_d8_MAY_partner } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_may COLDWAR_TUR_1970_pair_d8_may_clear = yes } }
+				}
 			}
 		}
+		MAY = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_d8_nig_preview = {
@@ -2126,24 +1837,7 @@ COLDWAR_TUR_1970_d8_nig_accept = {
 		}
 		add_ideas = COLDWAR_TUR_1970_d8_NIG_partner
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_nig
-		TUR = {
-			set_temp_variable = {
-				treasury_change = COLDWAR_TUR_1970_quote_d8_nig_tur
-			}
-			multiply_temp_variable = {
-				treasury_change = -1
-			}
-			modify_treasury_effect = yes
-			add_tech_bonus = {
-				name = COLDWAR_TUR_1970_research_d8_nig_0
-				bonus = 0.5
-				uses = 1
-				category = CAT_industry
-			}
-			add_ideas = COLDWAR_TUR_1970_d8_NIG_TUR
-			set_country_flag = COLDWAR_TUR_1970_signed_d8_nig
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_nig
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.32 } } # IMPERIA COLD WAR — Turkey applies its part in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_nig_decline = {
@@ -2153,10 +1847,7 @@ COLDWAR_TUR_1970_d8_nig_decline = {
 			has_country_flag = COLDWAR_TUR_1970_pending_d8_nig
 		}
 		clr_country_flag = COLDWAR_TUR_1970_pending_d8_nig
-		TUR = {
-			clr_country_flag = COLDWAR_TUR_1970_pending_d8_nig
-			set_country_flag = COLDWAR_TUR_1970_declined_d8_nig
-		}
+		TUR = { country_event = { id = COLDWAR_TUR_1970_SYNC.33 } } # IMPERIA COLD WAR — Turkey records the refusal in its own event
 	}
 }
 COLDWAR_TUR_1970_d8_nig_reconcile = {
@@ -2173,27 +1864,21 @@ COLDWAR_TUR_1970_d8_nig_reconcile = {
 			}
 			add_ideas = COLDWAR_TUR_1970_d8_NIG_TUR
 		}
-		NIG = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_d8_NIG_partner
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_d8_NIG_partner
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_TUR_1970_d8_NIG_TUR
-		if = {
-			limit = {
-				country_exists = NIG
-			}
+	}
+	if = { # IMPERIA COLD WAR — the partner keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = NIG
 			NIG = {
-				remove_ideas = COLDWAR_TUR_1970_d8_NIG_partner
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_d8_NIG_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_nig COLDWAR_TUR_1970_pair_d8_nig_clear = yes } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_d8_NIG_partner } TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_nig COLDWAR_TUR_1970_pair_d8_nig_clear = yes } }
+				}
 			}
 		}
+		NIG = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_tur_consult_preview = {
@@ -2766,6 +2451,7 @@ COLDWAR_TUR_1970_d8_nig_event_preview = {
 }
 COLDWAR_TUR_1970_found_d8_preview = {
 	effect_tooltip = {
+		custom_effect_tooltip = COLDWAR_TUR_1970_d8_founding_tt
 		set_temp_variable = {
 			treasury_change = gdp_total
 		}
@@ -2776,27 +2462,13 @@ COLDWAR_TUR_1970_found_d8_preview = {
 		TUR = {
 			add_ideas = COLDWAR_TUR_1970_d8_membership
 		}
-		PAK = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
-		}
-		EGY = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
-		}
-		PER = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
-		}
-		BAN = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
-		}
-		IND = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
-		}
-		MAY = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
-		}
-		NIG = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
-		}
+		PAK = { custom_effect_tooltip = COLDWAR_TUR_1970_d8_invite_tt }
+		EGY = { custom_effect_tooltip = COLDWAR_TUR_1970_d8_invite_tt }
+		PER = { custom_effect_tooltip = COLDWAR_TUR_1970_d8_invite_tt }
+		BAN = { custom_effect_tooltip = COLDWAR_TUR_1970_d8_invite_tt }
+		IND = { custom_effect_tooltip = COLDWAR_TUR_1970_d8_invite_tt }
+		MAY = { custom_effect_tooltip = COLDWAR_TUR_1970_d8_invite_tt }
+		NIG = { custom_effect_tooltip = COLDWAR_TUR_1970_d8_invite_tt }
 	}
 }
 COLDWAR_TUR_1970_found_d8_apply = {
@@ -2820,26 +2492,33 @@ COLDWAR_TUR_1970_found_d8_apply = {
 		TUR = {
 			add_ideas = COLDWAR_TUR_1970_d8_membership
 		}
-		PAK = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
+		if = { # COLDWAR 24.11.2026: invitation event instead of direct membership
+			limit = { country_exists = PAK NOT = { has_war_with = PAK } }
+			PAK = { set_country_flag = COLDWAR_TUR_1970_d8_invited country_event = { id = COLDWAR_TUR_D8.1 days = 1 } }
 		}
-		EGY = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
+		if = { # COLDWAR 24.11.2026: invitation event instead of direct membership
+			limit = { country_exists = EGY NOT = { has_war_with = EGY } }
+			EGY = { set_country_flag = COLDWAR_TUR_1970_d8_invited country_event = { id = COLDWAR_TUR_D8.1 days = 1 } }
 		}
-		PER = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
+		if = { # COLDWAR 24.11.2026: invitation event instead of direct membership
+			limit = { country_exists = PER NOT = { has_war_with = PER } }
+			PER = { set_country_flag = COLDWAR_TUR_1970_d8_invited country_event = { id = COLDWAR_TUR_D8.1 days = 1 } }
 		}
-		BAN = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
+		if = { # COLDWAR 24.11.2026: invitation event instead of direct membership
+			limit = { country_exists = BAN NOT = { has_war_with = BAN } }
+			BAN = { set_country_flag = COLDWAR_TUR_1970_d8_invited country_event = { id = COLDWAR_TUR_D8.1 days = 1 } }
 		}
-		IND = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
+		if = { # COLDWAR 24.11.2026: invitation event instead of direct membership
+			limit = { country_exists = IND NOT = { has_war_with = IND } }
+			IND = { set_country_flag = COLDWAR_TUR_1970_d8_invited country_event = { id = COLDWAR_TUR_D8.1 days = 1 } }
 		}
-		MAY = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
+		if = { # COLDWAR 24.11.2026: invitation event instead of direct membership
+			limit = { country_exists = MAY NOT = { has_war_with = MAY } }
+			MAY = { set_country_flag = COLDWAR_TUR_1970_d8_invited country_event = { id = COLDWAR_TUR_D8.1 days = 1 } }
 		}
-		NIG = {
-			add_ideas = COLDWAR_TUR_1970_d8_membership
+		if = { # COLDWAR 24.11.2026: invitation event instead of direct membership
+			limit = { country_exists = NIG NOT = { has_war_with = NIG } }
+			NIG = { set_country_flag = COLDWAR_TUR_1970_d8_invited country_event = { id = COLDWAR_TUR_D8.1 days = 1 } }
 		}
 		set_country_flag = COLDWAR_TUR_1970_done_found_d8
 	}
@@ -2850,7 +2529,7 @@ COLDWAR_TUR_1970_north_annex_preview = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.2
+			treasury_change = -0.2
 		}
 		modify_treasury_effect = yes
 		transfer_state = 146
@@ -2867,7 +2546,7 @@ COLDWAR_TUR_1970_north_annex_apply = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.2
+			treasury_change = -0.2
 		}
 		modify_treasury_effect = yes
 		transfer_state = 146
@@ -2882,7 +2561,7 @@ COLDWAR_TUR_1970_aegean_claim_preview = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.06
+			treasury_change = -0.06
 		}
 		modify_treasury_effect = yes
 		create_wargoal = {
@@ -2908,7 +2587,7 @@ COLDWAR_TUR_1970_aegean_claim_apply = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.06
+			treasury_change = -0.06
 		}
 		modify_treasury_effect = yes
 		create_wargoal = {
@@ -2932,7 +2611,7 @@ COLDWAR_TUR_1970_crete_claim_preview = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.12
+			treasury_change = -0.12
 		}
 		modify_treasury_effect = yes
 		add_state_claim = 144
@@ -2948,7 +2627,7 @@ COLDWAR_TUR_1970_crete_claim_apply = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.12
+			treasury_change = -0.12
 		}
 		modify_treasury_effect = yes
 		add_state_claim = 144
@@ -2962,7 +2641,7 @@ COLDWAR_TUR_1970_thrace_claim_preview = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.12
+			treasury_change = -0.12
 		}
 		modify_treasury_effect = yes
 		add_state_claim = 974
@@ -2978,7 +2657,7 @@ COLDWAR_TUR_1970_thrace_claim_apply = {
 			treasury_change = gdp_total
 		}
 		multiply_temp_variable = {
-			treasury_change = -.12
+			treasury_change = -0.12
 		}
 		modify_treasury_effect = yes
 		add_state_claim = 974
@@ -3024,27 +2703,21 @@ COLDWAR_TUR_1970_tur_terms_reconcile = {
 			}
 			add_ideas = COLDWAR_CYP_R2_turkish_terms
 		}
-		CYP = {
-			if = {
-				limit = {
-					NOT = {
-						has_idea = COLDWAR_TUR_1970_agreement_tur_terms_CYP
-					}
-				}
-				add_ideas = COLDWAR_TUR_1970_agreement_tur_terms_CYP
-			}
-		}
 	}
 	else = {
 		remove_ideas = COLDWAR_CYP_R2_turkish_terms
-		if = {
-			limit = {
-				country_exists = CYP
-			}
+	}
+	if = { # IMPERIA COLD WAR — Cyprus keeps its own spirit in step (event, no foreign-scope effect)
+		limit = {
+			country_exists = CYP
 			CYP = {
-				remove_ideas = COLDWAR_TUR_1970_agreement_tur_terms_CYP
+				OR = {
+					AND = { has_idea = COLDWAR_TUR_1970_agreement_tur_terms_CYP NOT = { AND = { has_country_flag = COLDWAR_CYP_R2_security_terms_accepted TUR = { has_country_flag = COLDWAR_CYP_R2_tur_terms_signed COLDWAR_TUR_1970_pair_tur_terms_clear = yes } } } }
+					AND = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_tur_terms_CYP } has_country_flag = COLDWAR_CYP_R2_security_terms_accepted TUR = { has_country_flag = COLDWAR_CYP_R2_tur_terms_signed COLDWAR_TUR_1970_pair_tur_terms_clear = yes } }
+				}
 			}
 		}
+		CYP = { country_event = { id = COLDWAR_TUR_1970_SYNC.1 } }
 	}
 }
 COLDWAR_TUR_1970_north_subject_preview = {
@@ -3190,6 +2863,446 @@ COLDWAR_TUR_1970_tur_terms_settlement_preview = {
 			add_ideas = COLDWAR_CYP_R2_turkish_terms
 		}
 		CYP = {
+			add_ideas = COLDWAR_TUR_1970_agreement_tur_terms_CYP
+		}
+	}
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_bonn_protocol_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_bonn_protocol_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_bonn_protocol
+	clr_country_flag = COLDWAR_TUR_1970_pending_bonn_protocol
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_bonn_protocol_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_bonn_protocol
+	set_country_flag = COLDWAR_TUR_1970_declined_bonn_protocol
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_soviet_projects_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_soviet_projects_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	156 = {
+		add_extra_state_shared_building_slots = 1
+	}
+	156 = {
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+		}
+	}
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_soviet_projects_2
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_soviet_projects
+	clr_country_flag = COLDWAR_TUR_1970_pending_soviet_projects
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_soviet_projects_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_soviet_projects
+	set_country_flag = COLDWAR_TUR_1970_declined_soviet_projects
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_iraq_pipeline_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_iraq_pipeline_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	161 = {
+		add_extra_state_shared_building_slots = 1
+	}
+	161 = {
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+		}
+	}
+	add_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_iraq_pipeline
+	clr_country_flag = COLDWAR_TUR_1970_pending_iraq_pipeline
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_iraq_pipeline_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_iraq_pipeline
+	set_country_flag = COLDWAR_TUR_1970_declined_iraq_pipeline
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_black_sea_gas_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_black_sea_gas_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	158 = {
+		add_extra_state_shared_building_slots = 1
+	}
+	158 = {
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+		}
+	}
+	add_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_black_sea_gas
+	clr_country_flag = COLDWAR_TUR_1970_pending_black_sea_gas
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_black_sea_gas_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_black_sea_gas
+	set_country_flag = COLDWAR_TUR_1970_declined_black_sea_gas
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_aegean_talks_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_aegean_talks_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_aegean_talks
+	clr_country_flag = COLDWAR_TUR_1970_pending_aegean_talks
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_aegean_talks_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_aegean_talks
+	set_country_flag = COLDWAR_TUR_1970_declined_aegean_talks
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_d8_pak_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_d8_pak_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_d8_pak_0
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_d8_PAK_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_d8_pak
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_pak
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_d8_pak_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_pak
+	set_country_flag = COLDWAR_TUR_1970_declined_d8_pak
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_d8_egy_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_d8_egy_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_d8_egy_0
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_d8_EGY_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_d8_egy
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_egy
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_d8_egy_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_egy
+	set_country_flag = COLDWAR_TUR_1970_declined_d8_egy
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_d8_per_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_d8_per_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_d8_per_0
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_d8_PER_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_d8_per
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_per
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_d8_per_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_per
+	set_country_flag = COLDWAR_TUR_1970_declined_d8_per
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_d8_ban_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_d8_ban_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_d8_ban_0
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_d8_BAN_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_d8_ban
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_ban
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_d8_ban_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_ban
+	set_country_flag = COLDWAR_TUR_1970_declined_d8_ban
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_d8_ind_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_d8_ind_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_d8_ind_0
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_d8_IND_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_d8_ind
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_ind
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_d8_ind_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_ind
+	set_country_flag = COLDWAR_TUR_1970_declined_d8_ind
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_d8_may_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_d8_may_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_d8_may_0
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_d8_MAY_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_d8_may
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_may
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_d8_may_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_may
+	set_country_flag = COLDWAR_TUR_1970_declined_d8_may
+}
+# IMPERIA COLD WAR — Turkey's part of the agreement, run in Turkey's return event.
+COLDWAR_TUR_1970_d8_nig_tur_part = {
+	set_temp_variable = {
+		treasury_change = COLDWAR_TUR_1970_quote_d8_nig_tur
+	}
+	multiply_temp_variable = {
+		treasury_change = -1
+	}
+	modify_treasury_effect = yes
+	add_tech_bonus = {
+		name = COLDWAR_TUR_1970_research_d8_nig_0
+		bonus = 0.5
+		uses = 1
+		category = CAT_industry
+	}
+	add_ideas = COLDWAR_TUR_1970_d8_NIG_TUR
+	set_country_flag = COLDWAR_TUR_1970_signed_d8_nig
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_nig
+}
+# IMPERIA COLD WAR — Turkey records a refusal in its own return event.
+COLDWAR_TUR_1970_d8_nig_tur_declined = {
+	clr_country_flag = COLDWAR_TUR_1970_pending_d8_nig
+	set_country_flag = COLDWAR_TUR_1970_declined_d8_nig
+}
+# IMPERIA COLD WAR — partner scope: add or remove its own Turkish agreement spirits (sent by COLDWAR_TUR_1970_SYNC.1).
+COLDWAR_TUR_1970_partner_self_check = {
+	if = {
+		limit = { original_tag = GER }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_agreement_bonn_protocol_GER NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_bonn_protocol COLDWAR_TUR_1970_pair_bonn_protocol_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_GER
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_bonn_protocol_GER } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_bonn_protocol COLDWAR_TUR_1970_pair_bonn_protocol_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_agreement_bonn_protocol_GER
+		}
+	}
+	if = {
+		limit = { original_tag = SOV }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_agreement_soviet_projects_SOV NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_soviet_projects COLDWAR_TUR_1970_pair_soviet_projects_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_SOV
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_soviet_projects_SOV } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_soviet_projects COLDWAR_TUR_1970_pair_soviet_projects_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_agreement_soviet_projects_SOV
+		}
+	}
+	if = {
+		limit = { original_tag = IRQ }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_iraq_pipeline COLDWAR_TUR_1970_pair_iraq_pipeline_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_iraq_pipeline COLDWAR_TUR_1970_pair_iraq_pipeline_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_agreement_iraq_pipeline_IRQ
+		}
+	}
+	if = {
+		limit = { original_tag = SOV }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_black_sea_gas COLDWAR_TUR_1970_pair_black_sea_gas_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_black_sea_gas COLDWAR_TUR_1970_pair_black_sea_gas_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_agreement_black_sea_gas_SOV
+		}
+	}
+	if = {
+		limit = { original_tag = GRE }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_agreement_aegean_talks_GRE NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_aegean_talks COLDWAR_TUR_1970_pair_aegean_talks_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_GRE
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_aegean_talks_GRE } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_aegean_talks COLDWAR_TUR_1970_pair_aegean_talks_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_agreement_aegean_talks_GRE
+		}
+	}
+	if = {
+		limit = { original_tag = PAK }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_d8_PAK_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_pak COLDWAR_TUR_1970_pair_d8_pak_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_d8_PAK_partner
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_d8_PAK_partner } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_pak COLDWAR_TUR_1970_pair_d8_pak_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_d8_PAK_partner
+		}
+	}
+	if = {
+		limit = { original_tag = EGY }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_d8_EGY_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_egy COLDWAR_TUR_1970_pair_d8_egy_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_d8_EGY_partner
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_d8_EGY_partner } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_egy COLDWAR_TUR_1970_pair_d8_egy_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_d8_EGY_partner
+		}
+	}
+	if = {
+		limit = { original_tag = PER }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_d8_PER_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_per COLDWAR_TUR_1970_pair_d8_per_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_d8_PER_partner
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_d8_PER_partner } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_per COLDWAR_TUR_1970_pair_d8_per_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_d8_PER_partner
+		}
+	}
+	if = {
+		limit = { original_tag = BAN }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_d8_BAN_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ban COLDWAR_TUR_1970_pair_d8_ban_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_d8_BAN_partner
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_d8_BAN_partner } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ban COLDWAR_TUR_1970_pair_d8_ban_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_d8_BAN_partner
+		}
+	}
+	if = {
+		limit = { original_tag = IND }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_d8_IND_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ind COLDWAR_TUR_1970_pair_d8_ind_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_d8_IND_partner
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_d8_IND_partner } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_ind COLDWAR_TUR_1970_pair_d8_ind_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_d8_IND_partner
+		}
+	}
+	if = {
+		limit = { original_tag = MAY }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_d8_MAY_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_may COLDWAR_TUR_1970_pair_d8_may_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_d8_MAY_partner
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_d8_MAY_partner } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_may COLDWAR_TUR_1970_pair_d8_may_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_d8_MAY_partner
+		}
+	}
+	if = {
+		limit = { original_tag = NIG }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_d8_NIG_partner NOT = { TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_nig COLDWAR_TUR_1970_pair_d8_nig_clear = yes } } }
+			remove_ideas = COLDWAR_TUR_1970_d8_NIG_partner
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_d8_NIG_partner } country_exists = TUR TUR = { has_country_flag = COLDWAR_TUR_1970_signed_d8_nig COLDWAR_TUR_1970_pair_d8_nig_clear = yes } }
+			add_ideas = COLDWAR_TUR_1970_d8_NIG_partner
+		}
+	}
+	if = {
+		limit = { original_tag = CYP }
+		if = {
+			limit = { has_idea = COLDWAR_TUR_1970_agreement_tur_terms_CYP NOT = { AND = { has_country_flag = COLDWAR_CYP_R2_security_terms_accepted TUR = { has_country_flag = COLDWAR_CYP_R2_tur_terms_signed COLDWAR_TUR_1970_pair_tur_terms_clear = yes } } } }
+			remove_ideas = COLDWAR_TUR_1970_agreement_tur_terms_CYP
+		}
+		else_if = {
+			limit = { NOT = { has_idea = COLDWAR_TUR_1970_agreement_tur_terms_CYP } has_country_flag = COLDWAR_CYP_R2_security_terms_accepted country_exists = TUR TUR = { has_country_flag = COLDWAR_CYP_R2_tur_terms_signed COLDWAR_TUR_1970_pair_tur_terms_clear = yes } }
 			add_ideas = COLDWAR_TUR_1970_agreement_tur_terms_CYP
 		}
 	}

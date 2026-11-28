@@ -1,0 +1,758 @@
+# IMPERIA COLD WAR — India 1970 postwar administration and outcome recording
+
+COLDWAR_RAJ_1970_pak_occupation_apply_civil = {
+ if = { limit = { original_tag = RAJ COLDWAR_RAJ_1970_pak_war_total_settlement = yes COLDWAR_RAJ_1970_pak_subject_of_raj = yes }
+  COLDWAR_RAJ_1970_dir_pak_civil_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+ }
+}
+
+COLDWAR_RAJ_1970_pak_occupation_apply_military = {
+ if = { limit = { original_tag = RAJ COLDWAR_RAJ_1970_pak_war_total_settlement = yes COLDWAR_RAJ_1970_pak_subject_of_raj = yes }
+  COLDWAR_RAJ_1970_dir_pak_military_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+ }
+}
+
+# Occupation focus completion APIs. Every subject-side effect rechecks
+# subjecthood at completion time, and daily cleanup removes paired policy ideas
+# if PAK later regains independence or ceases to exist.
+COLDWAR_RAJ_1970_pakistan_occupation_claims_complete = {
+	effect_tooltip = { add_timed_idea = { idea = COLDWAR_RAJ_1970_pak_authority_prep days = 365 } }
+	hidden_effect = {
+		if = {
+			limit = { COLDWAR_RAJ_1970_pak_war_total_settlement = yes COLDWAR_RAJ_1970_pak_subject_of_raj = yes }
+			add_timed_idea = { idea = COLDWAR_RAJ_1970_pak_authority_prep days = 365 }
+		}
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_civil_complete = {
+	COLDWAR_RAJ_1970_pak_occupation_apply_civil = yes
+}
+COLDWAR_RAJ_1970_pakistan_occupation_military_complete = {
+	COLDWAR_RAJ_1970_pak_occupation_apply_military = yes
+}
+COLDWAR_RAJ_1970_pakistan_occupation_council_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_council_complete } } }
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_council_complete }
+		COLDWAR_RAJ_1970_dir_pak_council_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_military_staff_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_military_staff_complete } } }
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_military_staff_complete }
+		COLDWAR_RAJ_1970_dir_pak_military_staff_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_civic_elections_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_elections_complete } } }
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_elections_complete }
+		COLDWAR_RAJ_1970_dir_pak_elections_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_central_rule_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_central_rule_complete } } }
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_central_rule_complete }
+		COLDWAR_RAJ_1970_dir_pak_central_rule_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_garrisons_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_garrison_complete } } }
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_garrison_complete }
+		COLDWAR_RAJ_1970_dir_pak_garrison_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_training_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_training_complete } } }
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_training_complete }
+		COLDWAR_RAJ_1970_dir_pak_training_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_civil_review_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_civil_reviewed } } }
+		add_stability = 0.02
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_civil_reviewed }
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_mil_review_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_military_reviewed } } }
+		army_experience = 20
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_military_reviewed }
+	}
+}
+COLDWAR_RAJ_1970_pakistan_occupation_future_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_pakistan_future_reviewed } } }
+		add_political_power = 25
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pakistan_future_reviewed }
+	}
+}
+
+COLDWAR_RAJ_1970_pak_occupation_subject_cleanup = {
+	if = {
+		limit = { NOT = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes } }
+		remove_ideas = COLDWAR_RAJ_1970_pak_authority_prep
+		remove_ideas = { COLDWAR_RAJ_1970_raj_pak_civil_cost COLDWAR_RAJ_1970_raj_pak_military_cost COLDWAR_RAJ_1970_pak_civil_council_raj COLDWAR_RAJ_1970_pak_military_staff_raj COLDWAR_RAJ_1970_pak_elections_raj COLDWAR_RAJ_1970_pak_central_rule_raj COLDWAR_RAJ_1970_pak_garrison_raj COLDWAR_RAJ_1970_pak_training_raj }
+		if = {
+			limit = { # IMPERIA COLD WAR — B4 MD standard fix
+				country_exists = PAK # IMPERIA COLD WAR — B4 MD standard fix
+				NOT = { has_country_flag = COLDWAR_RAJ_1970_dir_pak_cleanup_sent } # IMPERIA COLD WAR — B4 MD standard fix
+				PAK = { OR = { has_cosmetic_tag = COLDWAR_RAJ_1970_PAK_CIVIL has_cosmetic_tag = COLDWAR_RAJ_1970_PAK_MIL has_idea = COLDWAR_RAJ_1970_pak_civil_burden has_idea = COLDWAR_RAJ_1970_pak_military_burden has_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed has_country_flag = COLDWAR_RAJ_1970_pak_military_leader_installed } } # IMPERIA COLD WAR — B4 MD standard fix
+			}
+			set_country_flag = { flag = COLDWAR_RAJ_1970_dir_pak_cleanup_sent days = 30 } # IMPERIA COLD WAR — B4 MD standard fix
+			PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.9 days = 1 } } # IMPERIA COLD WAR — B4 MD standard fix
+		}
+	}
+}
+
+COLDWAR_RAJ_1970_ban_occupation_apply = {
+	if = { limit = { COLDWAR_RAJ_1970_ban_subject_of_raj = yes }
+		COLDWAR_RAJ_1970_dir_ban_occupation_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+
+# Counterfactual occupation leadership. Prefer a real Indian commander with an
+# existing portrait, never duplicating a current ruler of India or Pakistan.
+COLDWAR_RAJ_1970_ban_install_military_governor = {
+	if = {
+		limit = { COLDWAR_RAJ_1970_ban_subject_of_raj = yes NOT = { BAN = { has_country_flag = COLDWAR_RAJ_1970_ban_military_governor_installed } } }
+		COLDWAR_RAJ_1970_dir_ban_military_governor_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+
+# Fictional civilian commissioner for the integration administration.
+COLDWAR_RAJ_1970_ban_install_civilian_commissioner = {
+	if = {
+		limit = { COLDWAR_RAJ_1970_ban_subject_of_raj = yes NOT = { BAN = { has_country_flag = COLDWAR_RAJ_1970_ban_civilian_commissioner_installed } } }
+		COLDWAR_RAJ_1970_dir_ban_civil_commissioner_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+
+# Bangladesh focus completion APIs. Independent settlement is handled by the
+# paired foreign-affairs helper and intentionally is not duplicated here.
+COLDWAR_RAJ_1970_bangladesh_settlement_future_complete = {
+	if = {
+		limit = { NOT = { has_country_flag = COLDWAR_RAJ_1970_bangladesh_settlement_open } }
+		add_political_power = 35
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_bangladesh_settlement_open }
+	}
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_annex_complete = {
+	effect_tooltip = { add_ideas = COLDWAR_RAJ_1970_ban_annex_reward }
+	if = {
+		limit = {
+			COLDWAR_RAJ_1970_pak_war_total_settlement = yes
+			COLDWAR_RAJ_1970_ban_annex_eligible = yes
+			NOT = {
+				OR = {
+					has_country_flag = COLDWAR_RAJ_1970_bangladesh_annexed
+					has_country_flag = COLDWAR_RAJ_1970_bangladesh_peace_territory_recorded
+				}
+			}
+		}
+		hidden_effect = { add_ideas = COLDWAR_RAJ_1970_ban_annex_reward }
+		every_owned_state = {
+			limit = {
+				COLDWAR_RAJ_1970_ban_indian_held_state = yes
+				NOT = { is_core_of = RAJ }
+			}
+			add_compliance = 5
+		}
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_bangladesh_peace_territory_recorded }
+	}
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_protect_complete = {
+	unlock_decision_tooltip = COLDWAR_RAJ_1970_ban_choose_civil_administration
+	if = { # IMPERIA COLD WAR — B4 MD standard fix
+		limit = { COLDWAR_RAJ_1970_pak_war_total_settlement = yes COLDWAR_RAJ_1970_ban_subject_of_raj = yes } # IMPERIA COLD WAR — B4 MD standard fix
+		COLDWAR_RAJ_1970_dir_ban_occupation_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_integrate_complete = {
+	if = { # IMPERIA COLD WAR — B4 MD standard fix
+		limit = { # IMPERIA COLD WAR — B4 MD standard fix
+			COLDWAR_RAJ_1970_pak_war_total_settlement = yes # IMPERIA COLD WAR — B4 MD standard fix
+			COLDWAR_RAJ_1970_ban_subject_of_raj = yes # IMPERIA COLD WAR — B4 MD standard fix
+			COLDWAR_RAJ_1970_ban_radical_government = yes # IMPERIA COLD WAR — B4 MD standard fix
+			NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_integration_started } # IMPERIA COLD WAR — B4 MD standard fix
+		}
+		COLDWAR_RAJ_1970_dir_ban_integration_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_treaty_complete = {
+	effect_tooltip = { add_ideas = COLDWAR_RAJ_1970_ban_treaty_reward_raj }
+	hidden_effect = {
+		if = {
+			limit = {
+				COLDWAR_RAJ_1970_foreign_bangladesh_settlement_independent_valid = yes
+				has_country_flag = COLDWAR_RAJ_1970_foreign_bangladesh_settlement_independent_active
+				BAN = { has_country_flag = COLDWAR_RAJ_1970_foreign_bangladesh_settlement_independent_active }
+			}
+			set_country_flag = COLDWAR_RAJ_1970_bangladesh_reconstruction_reviewed
+		}
+		COLDWAR_RAJ_1970_bangladesh_settlement_treaty_maintain = yes
+	}
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_treaty_maintain = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_RAJ_1970_bangladesh_reconstruction_reviewed
+			COLDWAR_RAJ_1970_foreign_bangladesh_settlement_independent_valid = yes
+			has_country_flag = COLDWAR_RAJ_1970_foreign_bangladesh_settlement_independent_active
+			BAN = { has_country_flag = COLDWAR_RAJ_1970_foreign_bangladesh_settlement_independent_active }
+		}
+		if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_ban_treaty_reward_raj } } add_ideas = COLDWAR_RAJ_1970_ban_treaty_reward_raj }
+	}
+	else = { remove_ideas = COLDWAR_RAJ_1970_ban_treaty_reward_raj }
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_annex_cost_complete = {
+	if = {
+		limit = {
+			COLDWAR_RAJ_1970_pak_war_total_settlement = yes
+			COLDWAR_RAJ_1970_ban_annex_eligible = yes
+			NOT = { has_idea = COLDWAR_RAJ_1970_ban_annex_cost }
+		}
+		if = {
+			limit = { has_idea = COLDWAR_RAJ_1970_ban_annex_reward }
+			swap_ideas = { remove_idea = COLDWAR_RAJ_1970_ban_annex_reward add_idea = COLDWAR_RAJ_1970_ban_annex_cost }
+		}
+		else = { add_ideas = COLDWAR_RAJ_1970_ban_annex_cost }
+	}
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_protectorate_cost_complete = {
+	if = { limit = { COLDWAR_RAJ_1970_ban_subject_of_raj = yes }
+		COLDWAR_RAJ_1970_dir_ban_protectorate_cost_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+	}
+}
+
+COLDWAR_RAJ_1970_ban_subject_cleanup = {
+	if = {
+		limit = {
+			OR = { has_idea = COLDWAR_RAJ_1970_ban_annex_reward has_idea = COLDWAR_RAJ_1970_ban_annex_cost }
+			NOT = { COLDWAR_RAJ_1970_ban_annex_eligible = yes }
+		}
+		remove_ideas = { COLDWAR_RAJ_1970_ban_annex_reward COLDWAR_RAJ_1970_ban_annex_cost }
+	}
+	if = {
+		limit = { NOT = { COLDWAR_RAJ_1970_ban_subject_of_raj = yes } }
+		remove_ideas = { COLDWAR_RAJ_1970_raj_ban_occupation_cost COLDWAR_RAJ_1970_raj_ban_integration_cost COLDWAR_RAJ_1970_ban_protectorate_cost_raj }
+		if = {
+			limit = { # IMPERIA COLD WAR — B4 MD standard fix
+				country_exists = BAN # IMPERIA COLD WAR — B4 MD standard fix
+				NOT = { has_country_flag = COLDWAR_RAJ_1970_dir_ban_cleanup_sent } # IMPERIA COLD WAR — B4 MD standard fix
+				BAN = { OR = { has_cosmetic_tag = COLDWAR_RAJ_1970_BAN_OCC has_cosmetic_tag = COLDWAR_RAJ_1970_BAN_CIVIL has_cosmetic_tag = COLDWAR_RAJ_1970_BAN_INTEGRATION has_idea = COLDWAR_RAJ_1970_ban_occupation_burden has_idea = COLDWAR_RAJ_1970_ban_integration_burden has_idea = COLDWAR_RAJ_1970_ban_protectorate_cost_ban } } # IMPERIA COLD WAR — B4 MD standard fix
+			}
+			set_country_flag = { flag = COLDWAR_RAJ_1970_dir_ban_cleanup_sent days = 30 } # IMPERIA COLD WAR — B4 MD standard fix
+			BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.15 days = 1 } } # IMPERIA COLD WAR — B4 MD standard fix
+		}
+	}
+}
+COLDWAR_RAJ_1970_bangladesh_settlement_integration_year_1_complete = {
+	if = {
+		limit = {
+			COLDWAR_RAJ_1970_ban_integration_ready = yes
+			hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_integration_year_1_complete } }
+		}
+		COLDWAR_RAJ_1970_dir_ban_year_1_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_ban_integration_year_1_complete }
+	}
+}
+
+COLDWAR_RAJ_1970_bangladesh_settlement_integration_year_2_complete = {
+	if = {
+		limit = {
+			COLDWAR_RAJ_1970_ban_integration_ready = yes
+			hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_integration_year_2_complete } }
+		}
+		COLDWAR_RAJ_1970_dir_ban_year_2_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_ban_integration_year_2_complete }
+	}
+}
+
+COLDWAR_RAJ_1970_bangladesh_settlement_integration_year_3_complete = {
+	if = {
+		limit = {
+			COLDWAR_RAJ_1970_ban_integration_ready = yes
+			hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_integration_year_3_complete } }
+		}
+		COLDWAR_RAJ_1970_dir_ban_year_3_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_ban_integration_year_3_complete }
+	}
+}
+
+COLDWAR_RAJ_1970_bangladesh_settlement_integration_year_4_complete = {
+	if = {
+		limit = {
+			COLDWAR_RAJ_1970_ban_integration_ready = yes
+			hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_integration_year_4_complete } }
+		}
+		COLDWAR_RAJ_1970_dir_ban_year_4_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_ban_integration_year_4_complete }
+	}
+}
+
+COLDWAR_RAJ_1970_bangladesh_settlement_integration_year_5_complete = {
+	if = {
+		limit = {
+			COLDWAR_RAJ_1970_ban_integration_ready = yes
+			hidden_trigger = { NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_integration_year_5_complete } }
+		}
+		COLDWAR_RAJ_1970_dir_ban_year_5_send = yes # IMPERIA COLD WAR — B4 MD standard fix
+		hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_ban_integration_year_5_complete }
+	}
+}
+
+# IMPERIA COLD WAR — the 1971 war and its outcome
+COLDWAR_RAJ_1970_pak_war_begin = {
+	if = {
+		limit = { COLDWAR_RAJ_1970_pak_can_record_war = yes }
+		set_country_flag = COLDWAR_RAJ_1970_pak_war_instance_active
+		set_country_flag = COLDWAR_RAJ_1970_pak_war_scoped
+		PAK = {
+			every_owned_state = {
+				limit = { NOT = { OR = { state = 490 state = 492 state = 493 state = 494 } } }
+				set_state_flag = COLDWAR_RAJ_1970_pak_war_prewar_west
+			}
+		}
+		every_owned_state = { set_state_flag = COLDWAR_RAJ_1970_pak_war_prewar_india }
+	}
+}
+
+COLDWAR_RAJ_1970_pak_war_observe_capitulation = {
+	if = {
+		limit = { ROOT = { original_tag = PAK } FROM = { original_tag = RAJ } }
+		RAJ = { set_country_flag = COLDWAR_RAJ_1970_pak_war_capitulation_victory_observed }
+	}
+	if = {
+		limit = { ROOT = { original_tag = RAJ } FROM = { original_tag = PAK } }
+		RAJ = { set_country_flag = COLDWAR_RAJ_1970_pak_war_capitulation_defeat_observed }
+	}
+}
+
+# Use the recorded 1971 frontier and the winner's actual cores and claims.
+# Terms are settled once, after peace and before the aftermath focuses open.
+
+COLDWAR_RAJ_1970_pak_war_resolve = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_RAJ_1970_pak_war_instance_active
+			NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_war_resolved }
+			NOT = { has_war_with = PAK }
+		}
+		set_country_flag = COLDWAR_RAJ_1970_pak_war_resolved
+		clr_country_flag = COLDWAR_RAJ_1970_pak_war_instance_active
+		if = { limit = { has_idea = COLDWAR_RAJ_1970_war_crisis } remove_ideas = COLDWAR_RAJ_1970_war_crisis }
+		if = {
+			limit = { is_subject_of = PAK }
+			set_country_flag = COLDWAR_RAJ_1970_pak_war_defeat_verified
+		}
+		else_if = {
+			limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes }
+			set_country_flag = COLDWAR_RAJ_1970_pak_war_victory_verified
+		}
+		else_if = {
+			limit = {
+				OR = {
+					PAK = { exists = yes any_owned_state = { has_state_flag = COLDWAR_RAJ_1970_pak_war_prewar_india } }
+					AND = {
+						has_country_flag = COLDWAR_RAJ_1970_pak_war_capitulation_defeat_observed
+						NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_war_capitulation_victory_observed }
+					}
+				}
+			}
+			set_country_flag = COLDWAR_RAJ_1970_pak_war_defeat_verified
+		}
+		else_if = {
+			limit = {
+				OR = {
+					COLDWAR_RAJ_1970_pak_western_land_gained = yes
+					COLDWAR_RAJ_1970_ban_subject_of_raj = yes
+					COLDWAR_RAJ_1970_ban_annex_eligible = yes
+				}
+			}
+			set_country_flag = COLDWAR_RAJ_1970_pak_war_victory_verified
+		}
+		else_if = {
+			limit = {
+				COLDWAR_RAJ_1970_pak_western_border_intact = yes
+				COLDWAR_RAJ_1970_ban_independent_homeland = yes
+			}
+			set_country_flag = COLDWAR_RAJ_1970_pak_war_stalemate_verified
+		}
+		else_if = {
+			limit = {
+				OR = {
+					AND = {
+						has_country_flag = COLDWAR_RAJ_1970_pak_war_capitulation_victory_observed
+						NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_war_capitulation_defeat_observed }
+					}
+					AND = {
+						has_country_flag = COLDWAR_RAJ_1970_pak_war_peace_winner_observed
+						NOT = { country_exists = PAK }
+					}
+				}
+			}
+			set_country_flag = COLDWAR_RAJ_1970_pak_war_victory_verified
+		}
+		else = { set_country_flag = COLDWAR_RAJ_1970_pak_war_stalemate_verified }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+# Preserve already chosen postwar paths. Convert an unclaimed legacy eastern
+# victory into the historical route if the settled map meets its conditions.
+COLDWAR_RAJ_1970_pak_migrate_legacy_settlement = {
+	if = {
+		limit = {
+			has_country_flag = COLDWAR_RAJ_1970_pak_war_resolved
+			NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_war_scoped }
+			NOT = { has_country_flag = COLDWAR_RAJ_1970_pak_war_routes_migrated }
+		}
+		set_country_flag = COLDWAR_RAJ_1970_pak_war_routes_migrated
+		if = {
+			limit = {
+				COLDWAR_RAJ_1970_pak_war_verified_victory = yes
+				NOT = { has_completed_focus = COLDWAR_RAJ_1970_pakistan_war_victory }
+				NOT = { has_completed_focus = COLDWAR_RAJ_1970_pakistan_occupation_authority }
+				NOT = { has_completed_focus = COLDWAR_RAJ_1970_bangladesh_settlement_future }
+				COLDWAR_RAJ_1970_pak_western_border_intact = yes
+				COLDWAR_RAJ_1970_ban_independent_homeland = yes
+			}
+			clr_country_flag = COLDWAR_RAJ_1970_pak_war_victory_verified
+			set_country_flag = COLDWAR_RAJ_1970_pak_war_stalemate_verified
+		}
+	}
+}
+
+# Appoint a reserved administrator only after the settlement. Earlier saves may lack the reserved character.
+COLDWAR_RAJ_1970_pak_restore_occupation_leader = {
+ if = { limit = { is_subject_of = RAJ has_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed }
+  if = { limit = { date < 1974.10.2 }
+   if = {
+    limit = { has_character = COLDWAR_RAJ_1970_pak_civil_nurul }
+    if = { limit = { has_country_flag = COLDWAR_RAJ_1970_pak_civil_nurul_role } promote_character = COLDWAR_RAJ_1970_pak_civil_nurul }
+    else = { add_country_leader_role = { character = COLDWAR_RAJ_1970_pak_civil_nurul promote_leader = yes country_leader = { ideology = Nat_Autocracy expire = "2000.1.1" } } set_country_flag = COLDWAR_RAJ_1970_pak_civil_nurul_role }
+   }
+   else = { create_country_leader = { name = "Nurul Amin" picture = "gfx/leaders/PAK/COLDWAR_PAK_PEOPLE_noor_amin.dds" ideology = Nat_Autocracy expire = "2000.1.1" } }
+  }
+  else = {
+   if = {
+    limit = { has_character = COLDWAR_RAJ_1970_pak_civil_tariq }
+    if = { limit = { has_country_flag = COLDWAR_RAJ_1970_pak_civil_tariq_role } promote_character = COLDWAR_RAJ_1970_pak_civil_tariq }
+    else = { add_country_leader_role = { character = COLDWAR_RAJ_1970_pak_civil_tariq promote_leader = yes country_leader = { ideology = Nat_Autocracy expire = "2000.1.1" } } set_country_flag = COLDWAR_RAJ_1970_pak_civil_tariq_role }
+   }
+   else = { create_country_leader = { name = "Tariq Mahmood" picture = "gfx/leaders/generic_generals/southasia/southasia_general_2.dds" ideology = Nat_Autocracy expire = "2000.1.1" } }
+   set_country_flag = COLDWAR_RAJ_1970_pak_fictional_civil_chair
+  }
+ }
+ else_if = { limit = { is_subject_of = RAJ has_country_flag = COLDWAR_RAJ_1970_pak_military_leader_installed }
+  if = { limit = { NOT = { RAJ = { has_country_leader = { name = "J. F. R. Jacob" ruling_only = yes } } } NOT = { BAN = { has_country_leader = { name = "J. F. R. Jacob" ruling_only = yes } } } }
+   if = {
+    limit = { has_character = COLDWAR_RAJ_1970_pak_military_jacob }
+    if = { limit = { has_country_flag = COLDWAR_RAJ_1970_pak_military_jacob_role } promote_character = COLDWAR_RAJ_1970_pak_military_jacob }
+    else = { add_country_leader_role = { character = COLDWAR_RAJ_1970_pak_military_jacob promote_leader = yes country_leader = { ideology = Nat_Autocracy expire = "2000.1.1" } } set_country_flag = COLDWAR_RAJ_1970_pak_military_jacob_role }
+   }
+   else = { create_country_leader = { name = "J. F. R. Jacob" picture = "gfx/leaders/RAJ/COLDWAR_RAJ_PEOPLE_jacob.dds" ideology = Nat_Autocracy expire = "2000.1.1" } }
+  }
+  else_if = { limit = { NOT = { RAJ = { has_country_leader = { name = "Sam Manekshaw" ruling_only = yes } } } NOT = { BAN = { has_country_leader = { name = "Sam Manekshaw" ruling_only = yes } } } }
+   if = {
+    limit = { has_character = COLDWAR_RAJ_1970_pak_military_manekshaw }
+    if = { limit = { has_country_flag = COLDWAR_RAJ_1970_pak_military_manekshaw_role } promote_character = COLDWAR_RAJ_1970_pak_military_manekshaw }
+    else = { add_country_leader_role = { character = COLDWAR_RAJ_1970_pak_military_manekshaw promote_leader = yes country_leader = { ideology = Nat_Autocracy expire = "2000.1.1" } } set_country_flag = COLDWAR_RAJ_1970_pak_military_manekshaw_role }
+   }
+   else = { create_country_leader = { name = "Sam Manekshaw" picture = "gfx/leaders/RAJ/COLDWAR_RAJ_PEOPLE_manekshaw.dds" ideology = Nat_Autocracy expire = "2000.1.1" } }
+  }
+  else = {
+   if = {
+    limit = { has_character = COLDWAR_RAJ_1970_pak_military_sharma }
+    if = { limit = { has_country_flag = COLDWAR_RAJ_1970_pak_military_sharma_role } promote_character = COLDWAR_RAJ_1970_pak_military_sharma }
+    else = { add_country_leader_role = { character = COLDWAR_RAJ_1970_pak_military_sharma promote_leader = yes country_leader = { ideology = Nat_Autocracy expire = "2000.1.1" } } set_country_flag = COLDWAR_RAJ_1970_pak_military_sharma_role }
+   }
+   else = { create_country_leader = { name = "R. K. Sharma" picture = "gfx/leaders/generic_generals/southasia/southasia_general_3.dds" ideology = Nat_Autocracy expire = "2000.1.1" } }
+  }
+ }
+}
+COLDWAR_RAJ_1970_pak_refresh_occupation_leader = {
+ if = { limit = { COLDWAR_RAJ_1970_pak_subject_of_raj = yes PAK = { check_variable = { ruling_party = 22 } OR = {
+  AND = { has_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed date < 1974.10.2 NOT = { has_country_leader = { name = "Nurul Amin" ruling_only = yes } } }
+  AND = { has_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed date > 1974.10.1 NOT = { has_country_leader = { name = "Tariq Mahmood" ruling_only = yes } } }
+  AND = { has_country_flag = COLDWAR_RAJ_1970_pak_military_leader_installed NOT = { has_country_leader = { name = "J. F. R. Jacob" ruling_only = yes } } NOT = { has_country_leader = { name = "Sam Manekshaw" ruling_only = yes } } NOT = { has_country_leader = { name = "R. K. Sharma" ruling_only = yes } } }
+ } } } PAK = { update_set_politics = yes COLDWAR_RAJ_1970_pak_restore_occupation_leader = yes } }
+}
+
+# IMPERIA COLD WAR 24.11.2026 (B4): occupation directives are offers by event
+# India sends the event; the subject applies its part in its own option; India applies its part in the return event.
+COLDWAR_RAJ_1970_dir_ban_military_governor_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { # IMPERIA COLD WAR — B4 MD standard fix
+		limit = { NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_military_governor_installed } } # IMPERIA COLD WAR — B4 MD standard fix
+		set_temp_variable = { rul_party_temp = 22 } set_temp_variable = { disable_elections = 1 } set_temp_variable = { change_leader_temp = 1 } # IMPERIA COLD WAR — B4 MD standard fix
+		change_ruling_party_effect = yes # IMPERIA COLD WAR — B4 MD standard fix
+		kill_country_leader = yes # IMPERIA COLD WAR — B4 MD standard fix
+		if = { # IMPERIA COLD WAR — B4 MD standard fix
+			limit = { NOT = { RAJ = { has_country_leader = { name = "J. F. R. Jacob" ruling_only = yes } } } NOT = { PAK = { has_country_leader = { name = "J. F. R. Jacob" ruling_only = yes } } } } # IMPERIA COLD WAR — B4 MD standard fix
+			create_country_leader = { name = "J. F. R. Jacob" picture = "gfx/leaders/RAJ/COLDWAR_RAJ_PEOPLE_jacob.dds" ideology = Nat_Autocracy expire = "2000.1.1" } # IMPERIA COLD WAR — B4 MD standard fix
+		} # IMPERIA COLD WAR — B4 MD standard fix
+		else_if = { # IMPERIA COLD WAR — B4 MD standard fix
+			limit = { NOT = { RAJ = { has_country_leader = { name = "Sam Manekshaw" ruling_only = yes } } } NOT = { PAK = { has_country_leader = { name = "Sam Manekshaw" ruling_only = yes } } } } # IMPERIA COLD WAR — B4 MD standard fix
+			create_country_leader = { name = "Sam Manekshaw" picture = "gfx/leaders/RAJ/COLDWAR_RAJ_PEOPLE_manekshaw.dds" ideology = Nat_Autocracy expire = "2000.1.1" } # IMPERIA COLD WAR — B4 MD standard fix
+		} # IMPERIA COLD WAR — B4 MD standard fix
+		else_if = { # IMPERIA COLD WAR — B4 MD standard fix
+			limit = { NOT = { RAJ = { has_country_leader = { name = "K. Sundarji" ruling_only = yes } } } NOT = { PAK = { has_country_leader = { name = "K. Sundarji" ruling_only = yes } } } } # IMPERIA COLD WAR — B4 MD standard fix
+			create_country_leader = { name = "K. Sundarji" picture = "gfx/leaders/RAJ/COLDWAR_RAJ_PEOPLE_sundarji.dds" ideology = Nat_Autocracy expire = "2000.1.1" } # IMPERIA COLD WAR — B4 MD standard fix
+		} # IMPERIA COLD WAR — B4 MD standard fix
+		else = { # IMPERIA COLD WAR — B4 MD standard fix
+			create_country_leader = { name = "Arvind Menon" picture = "gfx/leaders/generic_generals/southasia/southasia_general_1.dds" ideology = Nat_Autocracy } # IMPERIA COLD WAR — B4 MD standard fix
+		} # IMPERIA COLD WAR — B4 MD standard fix
+		set_country_flag = COLDWAR_RAJ_1970_ban_military_governor_installed # IMPERIA COLD WAR — B4 MD standard fix
+	} # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_civil_commissioner_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { # IMPERIA COLD WAR — B4 MD standard fix
+		limit = { NOT = { has_country_flag = COLDWAR_RAJ_1970_ban_civilian_commissioner_installed } } # IMPERIA COLD WAR — B4 MD standard fix
+		set_temp_variable = { rul_party_temp = 22 } set_temp_variable = { disable_elections = 1 } set_temp_variable = { change_leader_temp = 1 } # IMPERIA COLD WAR — B4 MD standard fix
+		change_ruling_party_effect = yes # IMPERIA COLD WAR — B4 MD standard fix
+		kill_country_leader = yes # IMPERIA COLD WAR — B4 MD standard fix
+		create_country_leader = { name = "Anil Rao" picture = "gfx/leaders/generic_generals/southasia/southasia_general_2.dds" ideology = Nat_Autocracy } # IMPERIA COLD WAR — B4 MD standard fix
+		set_country_flag = COLDWAR_RAJ_1970_ban_civilian_commissioner_installed # IMPERIA COLD WAR — B4 MD standard fix
+		set_country_flag = COLDWAR_RAJ_1970_ban_fictional_civilian_commissioner # IMPERIA COLD WAR — B4 MD standard fix
+	} # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_civil_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	set_cosmetic_tag = COLDWAR_RAJ_1970_PAK_CIVIL # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_civil_burden } } add_ideas = COLDWAR_RAJ_1970_pak_civil_burden } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed clr_country_flag = COLDWAR_RAJ_1970_pak_military_leader_installed } # IMPERIA COLD WAR — B4 MD standard fix
+
+	custom_effect_tooltip = COLDWAR_RAJ_1970_occupation_elections_tt # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { # IMPERIA COLD WAR — B4 MD standard fix
+		set_temp_variable = { rul_party_temp = 22 } set_temp_variable = { disable_elections = 1 } set_temp_variable = { change_leader_temp = 1 } # IMPERIA COLD WAR — B4 MD standard fix
+		change_ruling_party_effect = yes # IMPERIA COLD WAR — B4 MD standard fix
+		update_set_politics = yes # IMPERIA COLD WAR — B4 MD standard fix
+		COLDWAR_RAJ_1970_pak_restore_occupation_leader = yes # IMPERIA COLD WAR — B4 MD standard fix
+	} # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_civil_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_raj_pak_civil_cost } } add_ideas = COLDWAR_RAJ_1970_raj_pak_civil_cost } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_civil_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_civil_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_civil_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.1 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_military_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	set_cosmetic_tag = COLDWAR_RAJ_1970_PAK_MIL # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_military_burden } } add_ideas = COLDWAR_RAJ_1970_pak_military_burden } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { set_country_flag = COLDWAR_RAJ_1970_pak_military_leader_installed clr_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed } # IMPERIA COLD WAR — B4 MD standard fix
+
+	custom_effect_tooltip = COLDWAR_RAJ_1970_occupation_elections_tt # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { # IMPERIA COLD WAR — B4 MD standard fix
+		set_temp_variable = { rul_party_temp = 22 } set_temp_variable = { disable_elections = 1 } set_temp_variable = { change_leader_temp = 1 } # IMPERIA COLD WAR — B4 MD standard fix
+		change_ruling_party_effect = yes # IMPERIA COLD WAR — B4 MD standard fix
+		update_set_politics = yes # IMPERIA COLD WAR — B4 MD standard fix
+		COLDWAR_RAJ_1970_pak_restore_occupation_leader = yes # IMPERIA COLD WAR — B4 MD standard fix
+	} # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_military_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_raj_pak_military_cost } } add_ideas = COLDWAR_RAJ_1970_raj_pak_military_cost } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_military_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_military_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_military_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.2 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_council_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_civil_council_pak } } add_ideas = COLDWAR_RAJ_1970_pak_civil_council_pak } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_council_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_civil_council_raj } } add_ideas = COLDWAR_RAJ_1970_pak_civil_council_raj } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_council_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_council_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_council_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.3 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_military_staff_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_military_staff_pak } } add_ideas = COLDWAR_RAJ_1970_pak_military_staff_pak } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_military_staff_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_military_staff_raj } } add_ideas = COLDWAR_RAJ_1970_pak_military_staff_raj } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_military_staff_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_military_staff_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_military_staff_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.4 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_elections_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_elections_pak } } add_ideas = COLDWAR_RAJ_1970_pak_elections_pak } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_elections_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_elections_raj } } add_ideas = COLDWAR_RAJ_1970_pak_elections_raj } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_elections_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_elections_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_elections_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.5 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_central_rule_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_central_rule_pak } } add_ideas = COLDWAR_RAJ_1970_pak_central_rule_pak } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_central_rule_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_central_rule_raj } } add_ideas = COLDWAR_RAJ_1970_pak_central_rule_raj } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_central_rule_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_central_rule_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_central_rule_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.6 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_garrison_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_garrison_pak } } add_ideas = COLDWAR_RAJ_1970_pak_garrison_pak } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_garrison_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_garrison_raj } } add_ideas = COLDWAR_RAJ_1970_pak_garrison_raj } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_garrison_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_garrison_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_garrison_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.7 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_training_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_training_pak } } add_ideas = COLDWAR_RAJ_1970_pak_training_pak } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_training_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_pak_training_raj } } add_ideas = COLDWAR_RAJ_1970_pak_training_raj } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_training_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_training_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_pak_training_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.8 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_cleanup_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { OR = { has_cosmetic_tag = COLDWAR_RAJ_1970_PAK_CIVIL has_cosmetic_tag = COLDWAR_RAJ_1970_PAK_MIL } } drop_cosmetic_tag = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	remove_ideas = { COLDWAR_RAJ_1970_pak_civil_burden COLDWAR_RAJ_1970_pak_military_burden COLDWAR_RAJ_1970_pak_civil_council_pak COLDWAR_RAJ_1970_pak_military_staff_pak COLDWAR_RAJ_1970_pak_elections_pak COLDWAR_RAJ_1970_pak_central_rule_pak COLDWAR_RAJ_1970_pak_garrison_pak COLDWAR_RAJ_1970_pak_training_pak } # IMPERIA COLD WAR — B4 MD standard fix
+	if = { # IMPERIA COLD WAR — B4 MD standard fix
+		limit = { OR = { has_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed has_country_flag = COLDWAR_RAJ_1970_pak_military_leader_installed } } # IMPERIA COLD WAR — B4 MD standard fix
+		clr_country_flag = COLDWAR_RAJ_1970_pak_civil_leader_installed # IMPERIA COLD WAR — B4 MD standard fix
+		clr_country_flag = COLDWAR_RAJ_1970_pak_military_leader_installed # IMPERIA COLD WAR — B4 MD standard fix
+		clr_country_flag = COLDWAR_RAJ_1970_pak_fictional_civil_chair # IMPERIA COLD WAR — B4 MD standard fix
+		set_leader = yes # IMPERIA COLD WAR — B4 MD standard fix
+	} # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_pak_cleanup_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_pak_cleanup_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = PAK } PAK = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.9 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_occupation_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	set_cosmetic_tag = COLDWAR_RAJ_1970_BAN_OCC # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_ban_occupation_burden } } add_ideas = COLDWAR_RAJ_1970_ban_occupation_burden } # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_occupation_elections_tt # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { COLDWAR_RAJ_1970_dir_ban_military_governor_subject = yes } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_occupation_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_raj_ban_occupation_cost } } add_ideas = COLDWAR_RAJ_1970_raj_ban_occupation_cost } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_occupation_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_occupation_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_ban_occupation_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.10 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_military_governor_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	set_cosmetic_tag = COLDWAR_RAJ_1970_BAN_OCC # IMPERIA COLD WAR — B4 MD standard fix
+	clr_country_flag = COLDWAR_RAJ_1970_ban_civilian_commissioner_installed # IMPERIA COLD WAR — B4 MD standard fix
+	clr_country_flag = COLDWAR_RAJ_1970_ban_fictional_civilian_commissioner # IMPERIA COLD WAR — B4 MD standard fix
+	clr_country_flag = COLDWAR_RAJ_1970_ban_military_governor_installed # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_occupation_elections_tt # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { COLDWAR_RAJ_1970_dir_ban_military_governor_subject = yes } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_military_governor_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_military_governor_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.11 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_civil_commissioner_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	set_cosmetic_tag = COLDWAR_RAJ_1970_BAN_CIVIL # IMPERIA COLD WAR — B4 MD standard fix
+	clr_country_flag = COLDWAR_RAJ_1970_ban_military_governor_installed # IMPERIA COLD WAR — B4 MD standard fix
+	clr_country_flag = COLDWAR_RAJ_1970_ban_fictional_military_governor # IMPERIA COLD WAR — B4 MD standard fix
+	clr_country_flag = COLDWAR_RAJ_1970_ban_civilian_commissioner_installed # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_occupation_elections_tt # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { COLDWAR_RAJ_1970_dir_ban_civil_commissioner_subject = yes } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_civil_commissioner_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_civil_commissioner_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.12 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_integration_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	set_cosmetic_tag = COLDWAR_RAJ_1970_BAN_INTEGRATION # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_ban_integration_burden } } add_ideas = COLDWAR_RAJ_1970_ban_integration_burden } # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_occupation_elections_tt # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { COLDWAR_RAJ_1970_dir_ban_civil_commissioner_subject = yes } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_integration_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	set_country_flag = COLDWAR_RAJ_1970_ban_integration_started # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_raj_ban_integration_cost } } add_ideas = COLDWAR_RAJ_1970_raj_ban_integration_cost } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_integration_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_integration_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_ban_integration_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.13 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_protectorate_cost_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_ban_protectorate_cost_ban } } add_ideas = COLDWAR_RAJ_1970_ban_protectorate_cost_ban } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_protectorate_cost_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { NOT = { has_idea = COLDWAR_RAJ_1970_ban_protectorate_cost_raj } } add_ideas = COLDWAR_RAJ_1970_ban_protectorate_cost_raj } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_protectorate_cost_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_protectorate_cost_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_ban_protectorate_cost_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.14 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_cleanup_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	if = { limit = { OR = { has_cosmetic_tag = COLDWAR_RAJ_1970_BAN_OCC has_cosmetic_tag = COLDWAR_RAJ_1970_BAN_CIVIL has_cosmetic_tag = COLDWAR_RAJ_1970_BAN_INTEGRATION } } drop_cosmetic_tag = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	remove_ideas = { COLDWAR_RAJ_1970_ban_occupation_burden COLDWAR_RAJ_1970_ban_integration_burden COLDWAR_RAJ_1970_ban_protectorate_cost_ban } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_cleanup_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_cleanup_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.15 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_1_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	add_political_power = 35 # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_1_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_year_1_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.16 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_2_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	army_experience = 12 # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_2_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_year_2_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.17 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_3_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	add_stability = 0.03 # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_3_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_year_3_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.18 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_4_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	add_tech_bonus = { name = COLDWAR_RAJ_1970_bangladesh_settlement_integration_year_4 bonus = 0.35 uses = 1 category = CAT_construction } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_4_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_year_4_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.19 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_5_subject = { # IMPERIA COLD WAR — B4 MD standard fix
+	remove_ideas = COLDWAR_RAJ_1970_ban_integration_burden add_stability = 0.025 # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_5_india = { # IMPERIA COLD WAR — B4 MD standard fix
+	remove_ideas = COLDWAR_RAJ_1970_raj_ban_integration_cost # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix
+COLDWAR_RAJ_1970_dir_ban_year_5_send = { # IMPERIA COLD WAR — B4 MD standard fix
+	custom_effect_tooltip = COLDWAR_RAJ_1970_dir_ban_year_5_send_tt # IMPERIA COLD WAR — B4 MD standard fix
+	effect_tooltip = { COLDWAR_RAJ_1970_dir_ban_year_5_india = yes } # IMPERIA COLD WAR — B4 MD standard fix
+	hidden_effect = { if = { limit = { country_exists = BAN } BAN = { country_event = { id = COLDWAR_RAJ_DIRECTIVE.20 days = 1 } } } } # IMPERIA COLD WAR — B4 MD standard fix
+} # IMPERIA COLD WAR — B4 MD standard fix

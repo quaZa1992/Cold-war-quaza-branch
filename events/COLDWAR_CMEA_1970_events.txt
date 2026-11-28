@@ -192,6 +192,23 @@ country_event = {
 
 	is_triggered_only = yes
 
+	# IMPERIA COLD WAR 23.11.2026: one click puts the admission on the agenda (playtest 1: players could not find where to accept applicants)
+	option = {
+		name = COLDWAR_CMEA.17.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_CMEA.17 option a"
+		trigger = {
+			COLDWAR_CMEA_player_member = yes
+			COLDWAR_CMEA_free_request_slot = yes
+			OR = { has_political_power > 49.99 AND = { COLDWAR_CMEA_is_secretary = yes has_political_power > 24.99 } }
+			var:cwcm_ev17_target = { exists = yes check_variable = { cwcm_status = 2 } NOT = { COLDWAR_CMEA_target_busy = yes } }
+		}
+		set_temp_variable = { cwcm_t_item = 61 }
+		set_temp_variable = { cwcm_t_target = cwcm_ev17_target }
+		set_temp_variable = { cwcm_t_opt = 0 }
+		set_temp_variable = { cwcm_t_size = 0 }
+		set_temp_variable = { cwcm_t_ret = 0 }
+		COLDWAR_CMEA_request = yes
+	}
 	option = {
 		name = COLDWAR_CMEA.ok
 		log = "[GetDateText]: [Root.GetName]: event COLDWAR_CMEA.17"
@@ -314,5 +331,20 @@ news_event = {
 			}
 			else = { clr_country_flag = COLDWAR_CMEA_news_busy }
 		}
+	}
+}
+
+# IMPERIA COLD WAR — 22.11.2026: notice that a proposal is on the agenda (playtest 1)
+country_event = {
+	id = COLDWAR_CMEA.41
+	title = COLDWAR_CMEA.41.t
+	desc = COLDWAR_CMEA.41.d
+	picture = GFX_political_deal
+
+	is_triggered_only = yes
+
+	option = {
+		name = COLDWAR_CMEA.41.a
+		log = "[GetDateText]: [Root.GetName]: event COLDWAR_CMEA.41 option a"
 	}
 }
